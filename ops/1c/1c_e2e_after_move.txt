@@ -1,0 +1,36 @@
+### 阶段 1c-激活 · 迁移到 xiai 后的端到端复跑（幂等：tmp.pdf 13-19，期望 inserted=0）
+### 2026-09-20 14:50:24 CST
+
+[14:50:24] === ① 经 5164/feicui 建 job（真链路：5164 → 5195 前端代理 → 5196 API）===
+[14:50:24] POST /feicui/api/jobs → 201
+{
+  "job_id": "job-6e7471ff9c464695b9463cdad5122246",
+  "state": "QUEUED",
+  "total_pages": 7,
+  "created_at": "2026-09-20T14:50:24+08:00"
+}
+[14:50:24] === ② 立刻重复建同书 ⇒ 期望 409 ===
+[14:50:24] POST（重复） → 409
+{
+  "error": "ACTIVE_JOB_EXISTS",
+  "detail": "同 pdf_path 已有活跃 job（§3.2 S-5：同一本书同时只允许一个活跃 job）",
+  "job_id": "job-6e7471ff9c464695b9463cdad5122246",
+  "state": "QUEUED",
+  "total_pages": 7,
+  "created_at": "2026-09-20T14:50:24+08:00"
+}
+[14:50:24] === ③ E2 采样（人不出手）===
+t+   0.0s state=QUEUED         done=0/7 failed=[] detected=None inserted=None updated=None skipped=None ocr_empty=None
+t+   3.0s state=QUEUED         done=0/7 failed=[] detected=None inserted=None updated=None skipped=None ocr_empty=None
+t+   6.1s state=QUEUED         done=0/7 failed=[] detected=None inserted=None updated=None skipped=None ocr_empty=None
+t+   9.1s state=RUNNING        done=0/7 failed=[] detected=None inserted=None updated=None skipped=None ocr_empty=None
+t+  12.2s state=RUNNING        done=0/7 failed=[] detected=None inserted=None updated=None skipped=None ocr_empty=None
+t+  15.2s state=RUNNING        done=0/7 failed=[] detected=None inserted=None updated=None skipped=None ocr_empty=None
+t+  18.2s state=DONE           done=7/7 failed=[] detected=None inserted=None updated=None skipped=None ocr_empty=None
+[14:50:43] === ④ 库内复算交叉核对（只读）===
+Traceback (most recent call last):
+  File "/Users/kevin/bistro/xiai/feicui/ops/1c/e2e_run.py", line 151, in <module>
+    raise SystemExit(main())
+  File "/Users/kevin/bistro/xiai/feicui/ops/1c/e2e_run.py", line 101, in main
+    conn = sqlite3.connect(f"file:{DB}?mode=ro", uri=True, timeout=30.0)
+sqlite3.OperationalError: unable to open database file

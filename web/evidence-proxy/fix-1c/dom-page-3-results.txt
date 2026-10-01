@@ -1,0 +1,40 @@
+# E3 /feicui/jobs/abc/results 结果页
+# location: http://localhost:5164/feicui/jobs/abc/results
+
+feicui
+印谱解析任务台 · 端口 5195 · API 5196
+任务页
+后端未启动 / 未连接
+目标 http://127.0.0.1:5196 连不上（ ECONNREFUSED ）。本页不展示任何示例或估算数据。
+启动提示：cd /Users/kevin/bistro/shu/feicui && ./venv/bin/uvicorn app:app --host 127.0.0.1 --port 5196
+最后探测时点：2026-09-20 12:13:00
+结果页（预留）· E3
+
+job_id ＝
+abc
+· 契约形状＝ 6 字段信封
+items
+page
+limit
+total
+has_more
+next_cursor
+
+分页参数
+刷新
+page（1-based）
+limit
+10
+20
+50
+100
+cursor（可选，E3 游标）
+
+最近成功取数时点：—
+
+后端未启动 / 未连接：E3 无法获取
+
+判负细节 ECONNREFUSED
+
+契约依据：feicui/docs/feicui.spec.md v1.1（md5 4264927baf24bb7f48e12366cd861fe7）— 前端只读引用， 未修改规范文件。
+本工程＝阶段 1a 前端骨架；后端（FastAPI:5196）在另一路。零 CDN / 零外链资源。

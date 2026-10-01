@@ -1,0 +1,53 @@
+{
+  "files": {
+    "feicui/web/src/router/index.js": {
+      "md5_before": "5a2d0082ccb1d93a11dc296b10926609",
+      "md5_after": "ab4cb29b25a0908a0d9bee6de1785384",
+      "change": "createWebHistory() -> createWebHistory(import.meta.env.BASE_URL) (G-1; 路由表 5 条 entry md5 改前=改后 5559c7fc728ca2d3bf1ef07a256389b3)"
+    },
+    "feicui/web/src/config/env.js": {
+      "md5_before": "b7fe920d2cbeba46c5c51a8b9b1c0023",
+      "md5_after": "ec0a060247cebce4a7f4a468208b554e",
+      "change": "API_BASE = import.meta.env.VITE_API_BASE || (BASE_URL.replace(/\\/+$/,'') + '/api')  -> '/feicui/api' (G-2)"
+    },
+    "feicui/web/vite.config.js": {
+      "md5_before": "2db8739ed7b36d58a2f6ebe20447cb15",
+      "md5_after": "c5ad905e1cc3e2040bfb7e255c74f38f",
+      "change": "proxy 保留 '/api'; 新增 '/feicui/api' -> API_TARGET(默认 http://127.0.0.1:5196) + rewrite p=>p.replace(/^\\/feicui/,'') + apiProxyErrorGuard"
+    },
+    "feicui/web/evidence-proxy/fix-1c/README.md": "本轮证据索引（全文 7 节 + G-5/G-6/G-7 + 未做项）",
+    "feicui/web/evidence-proxy/fix-1c/http-api-type-check.sh|.txt": "证据① HTTP 响应体类型对照",
+    "feicui/web/evidence-proxy/fix-1c/dom-fix-1c-check.py|.txt|dom-fix-1c-raw.json": "证据②③ headless Chrome 取证（9 次快照）",
+    "feicui/web/evidence-proxy/fix-1c/dom-page-1-jobs.txt..dom-page-4-missing.txt": "四页 DOM 文本",
+    "feicui/web/evidence-proxy/fix-1c/routes-5164.txt|npm-scripts.txt": "证据④ 14 路由 + 3 个 npm 脚本输出",
+    "feicui/web/evidence-proxy/fix-1c/final-state.txt": "收尾状态",
+    "feicui/web/evidence-proxy/fix-1c/*.before|diff-*.txt|md5-*.txt": "改前原件 + diff -u + 改前/改后 md5"
+  },
+  "api_returns_json": true,
+  "location_stays_prefix": true,
+  "routes14_and_npm_ok": true,
+  "evidence": {
+    "1_api_type_5164_feicui_api_jobs": "503 application/json;charset=utf-8 body=JSON {'error':'backend_unreachable','target':'http://127.0.0.1:5196','code':'ECONNREFUSED',...} ; <title>印索 命中 0",
+    "1_api_type_5195_feicui_api_jobs": "503 application/json body=JSON（与 5164 逐字相同，同一路径两种访问都通）",
+    "1_api_type_5195_api_jobs": "503 application/json body=JSON（旧兼容键 '/api' 保留有效）",
+    "1_old_defect_path_5164_api_jobs": "200 text/html NOT_JSON（旧缺陷对照，<title>印索 命中 1 -> 证明机理未变、路径已修正）",
+    "1_page_shell_5164_feicui": "200 text/html（页面壳，与 API 区隔）",
+    "2_S1_open": "location_href=http://localhost:5164/feicui/ pathname=/feicui/ stays=true has_backend_down_text=true yinsuo_html_marker=NO yinsuo_host_element=NOT_FOUND pre_texts='' has_marketing_html_in_pre=false script_srcs=/feicui/@vite/client,/feicui/src/main.js console_errors=[]",
+    "2_S1_RELOAD": "pathname=/feicui/ stays=true（刷新不跳回 5164 根）",
+    "3_S2_deep_path": "http://localhost:5164/feicui/jobs/abc stays=true",
+    "3_S3_feicui_jobs": "/feicui/jobs -> pathname=/feicui/ stays=true（catch-all 仍在前缀内）",
+    "3_S4_inapp_nav": "clicked RouterLink href=/feicui/ before=/feicui/ -> 跳转后 http://localhost:5164/feicui/ stays=true",
+    "4_routes": "14/14 = 200（营销 7 条 -> /src/marketing/main.js；控制台 7 条 -> /src/console/main.js）",
+    "4_npm": "check:pricing EXIT=0（✓ 价格字面量静态检查通过 spec §4.3/AC-19）；smoke EXIT=0（✓ 全部通过 132 项断言）；build EXIT=0（dist/index.html + dist/console.html，✓ built in 911ms）",
+    "4_frozen": "shu/web md5 未变（vite.config.js=28277d3c02e49ef8c6e042269f9766a5 / console.js=248a286cd33e30b9215cf3395cdc1b2e / marketing.js=5421e4f046055f62d2059233292c0770 与上一轮基准逐字相同）；find web -newermt 12:11:00 源码树为空；feicui/server 未动（其 12:13:47-12:14:37 的 mtime 晚于我的 12:12:02-12:12:06 落笔，系并行另一路所写）"
+  },
+  "not_done": [
+    "feicui/web 的 npm run build 未跑：会 emptyOutDir 重建 feicui/web/dist/**，而本单改动只涉 dev 路径且 import.meta.env.BASE_URL 已由真实浏览器在 dev 下执行验证；为不动可能被并行任务消费的构建产物而主动不做（如需构建级证据须先确认 dist/ 无其他消费者）",
+    "VITE_API_BASE 显式覆盖分支未实测（源码保留 import.meta.env.VITE_API_BASE || ...，未构造环境变量验证优先权）",
+    "preview（5195 preview / 5164 preview）运行时行为未实测：5164 被他人 dev(PID 93523) 占用不得 kill",
+    "规范缺口 G-5 未修（口径外，需裁定）：src/config/env.js 的 BACKEND_PROBE_PATH='/__feicui/backend-probe' 未随 base 走，经 5164 时实测返回 200 text/html（5164 营销页兜底）而非 JSON，probeAvailable=false；硬要求②仍满足因「后端未启动」由 API 503 触发 markBackendDown（实测 has_backend_down_text=true, shows_unknown_banner=false）；代价是 5196 真在线时经 5164 横幅可能停在「后端连通性未知」。收口需同时改 BACKEND_PROBE_PATH 与 vite.config.js 里 backendProbe 的中间件注册（>=2 处，属设计变更，故未动）",
+    "已知项 G-6：「一个地址」仍依赖 feicui dev(5195) 在线，停后 5164/feicui/ -> 500 text/plain（5195 掉线时 API 路径也返回 500 text/plain 而非 text/html，故不会退化成「把 HTML 当响应体展示」）；服务保活/ctrl 面板登记属另一轮职责，本单未动 ctrl",
+    "未做性能/耗时类断言（按硬约束）"
+  ],
+  "cleanup": "5195 测试服务按精确 PID 26345 停（三重身份校验：cwd=/Users/kevin/bistro/shu/feicui/web + cmdline 含 node_modules/.bin/vite + 端口 listener），停后无监听；未用 pkill -f/killall；未占 5173/5174/5555/5196；未 kill 非本人进程（5164 的 PID 93523 全程存活）；/tmp/feicui-1c-fix-chrome 已删；未动 spike-ocr/qa-baseline/qa-recheck/ops/labeling；yinpu.db mtime 仍 10:08:36"
+}

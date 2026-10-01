@@ -1,0 +1,6 @@
+{
+ "checked_items": 83,
+ "items_with_undeclared_missing_required": [],
+ "declared_missing_required_total": 248,
+ "verdict": "AC-08 PASS（缺字段的每条都给出了 missing_required）"
+}

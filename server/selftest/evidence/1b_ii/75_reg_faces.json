@@ -1,0 +1,19 @@
+{
+ "faces_dir": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui_1bii_if1g4zzx/faces_reg",
+ "files": [
+  "TMP/p0013_00.webp",
+  "TMP/p0013_01.webp",
+  "TMP/p0013_02.webp",
+  "TMP/p0013_03.webp",
+  "TMP/p0013_04.webp",
+  "TMP/p0013_05.webp",
+  "TMP/p0014_00.webp",
+  "TMP/p0014_01.webp",
+  "TMP/p0014_02.webp",
+  "TMP/p0014_03.webp",
+  "TMP/p0014_04.webp",
+  "TMP/p0014_05.webp",
+  "TMP/p0014_06.webp"
+ ],
+ "note": "影像落临时目录（FEICUI_FACES_DIR）⇒ 未动 feicui/output/ 既有产物"
+}

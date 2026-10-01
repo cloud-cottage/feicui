@@ -1,0 +1,79 @@
+[
+ {
+  "case": "page=0",
+  "path": "/api/jobs/job-879526c0f8164e48a5106deef6f0b752/stamps?page=0&limit=7",
+  "code": 400,
+  "body": {
+   "detail": {
+    "error": "BAD_PARAM",
+    "detail": "page 必须 >= 1：0"
+   }
+  }
+ },
+ {
+  "case": "limit=0",
+  "path": "/api/jobs/job-879526c0f8164e48a5106deef6f0b752/stamps?limit=0",
+  "code": 400,
+  "body": {
+   "detail": {
+    "error": "BAD_PARAM",
+    "detail": "limit 必须 >= 1：0"
+   }
+  }
+ },
+ {
+  "case": "limit=501",
+  "path": "/api/jobs/job-879526c0f8164e48a5106deef6f0b752/stamps?limit=501",
+  "code": 400,
+  "body": {
+   "detail": {
+    "error": "BAD_PARAM",
+    "detail": "limit 上限 500（收到 501）"
+   }
+  }
+ },
+ {
+  "case": "page 与 cursor 同给",
+  "path": "/api/jobs/job-879526c0f8164e48a5106deef6f0b752/stamps?page=1&limit=7&cursor=p1_i0",
+  "code": 400,
+  "body": {
+   "detail": {
+    "error": "BAD_PARAM",
+    "detail": "page 与 cursor 互斥：二选一（翻页请一路用 cursor）"
+   }
+  }
+ },
+ {
+  "case": "cursor 形态非法",
+  "path": "/api/jobs/job-879526c0f8164e48a5106deef6f0b752/stamps?limit=7&cursor=zzz",
+  "code": 400,
+  "body": {
+   "detail": {
+    "error": "BAD_PARAM",
+    "detail": "cursor 非法：'zzz'（E3 形态 = p<page>_i<idx>）"
+   }
+  }
+ },
+ {
+  "case": "limit 非整数",
+  "path": "/api/jobs/job-879526c0f8164e48a5106deef6f0b752/stamps?limit=abc",
+  "code": 400,
+  "body": {
+   "detail": {
+    "error": "BAD_PARAM",
+    "detail": "limit 必须为整数：'abc'"
+   }
+  }
+ },
+ {
+  "case": "未知 job",
+  "path": "/api/jobs/job-does-not-exist/stamps?limit=7",
+  "code": 404,
+  "body": {
+   "detail": {
+    "error": "JOB_NOT_FOUND",
+    "detail": "job 不存在：job-does-not-exist"
+   }
+  }
+ }
+]

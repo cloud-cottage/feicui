@@ -1,0 +1,7 @@
+=== EVAL RESULT ===
+{"href":"http://localhost:5164/feicui/","banner":"后端已连接（\nhttp://127.0.0.1:5196\n）· 最后探测 2026-09-20 13:17:00","bannerClass":"banner banner--up","payloadShown":null,"beforeCreate":{"items":[],"page":1,"limit":5,"total":0,"has_more":false,"next_cursor":null},"notices":["201 已建 job\nHTTP 201\n\n响应时点 2026-09-20 13:17:04\n\njob_id ＝ job-b87c4878f9914400b1f86a13613041c2 · state ＝ QUEUED · total_pages ＝ 7 · created_at ＝ 2026-09-20T13:17:04+08:00\n\n→ 打开任务详情（E2 真实进度）\n\n原始响应体（原样展示，未改写）","后端列表为空（0 条 job）"],"localJobsRaw":"[{\"job_id\":\"job-b87c4878f9914400b1f86a13613041c2\",\"pdf_path\":\"tmp.pdf\",\"state\":\"QUEUED\",\"created_at\":\"2026-09-20T13:17:04+08:00\",\"recorded_at\":\"2026-09-20T05:17:04.511Z\",\"source\":\"localStorage（本浏览器；来源＝E1 的响应，非后端列表接口）\"}]","hrefAfter":"http://localhost:5164/feicui/"}
+=== CONSOLE (2) ===
+{"type": "debug", "args": ["[vite] connecting..."]}
+{"type": "debug", "args": ["[vite] connected."]}
+=== NETWORK FAILED (0) ===
+=== HTTP >=400 (0) ===

@@ -1,0 +1,2 @@
+-rw-r--r--@ 1 kevin  staff  577536 Sep 20 10:08 /Users/kevin/bistro/shu/feicui/yinpu.db
+-rw-r--r--@ 1 kevin  staff  466944 Sep 20 10:04 /Users/kevin/bistro/shu/feicui/yinpu.db.bak-f2

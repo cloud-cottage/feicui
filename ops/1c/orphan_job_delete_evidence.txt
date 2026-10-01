@@ -1,0 +1,27 @@
+### 阶段 1c-激活 · 删除遗孤 job 行（Kevin 已授权，2026-09-20）
+### 执行 2026-09-20 14:44:30 CST
+
+db       = /Users/kevin/bistro/shu/feicui/yinpu.db
+job_id   = job-3d697531fe834dbcb8c7ce5d3857077d
+time     = 2026-09-20T14:44:30
+
+[0] 备份 = /Users/kevin/bistro/shu/feicui/yinpu.db.bak-1c-before-delete-20260920144430（sqlite3 backup API；不打印文件 md5——WAL 下会漂）
+
+[1] 删除前 jobs 命中行数      = 1
+    {'job_id': 'job-3d697531fe834dbcb8c7ce5d3857077d', 'pdf_path': '/Users/kevin/bistro/shu/feicui/tmp.pdf', 'pdf_name': 'tmp.pdf', 'book_key': None, 'page_from': 13, 'page_to': 19, 'chunk_size': 8, 'total_pages': 7, 'state': 'QUEUED', 'cursor_chunk_lo': None, 'cursor_chunk_hi': None, 'rerun': 0, 'error': None, 'created_at': '2026-09-20T13:12:44+08:00', 'started_at': None, 'finished_at': None, 'updated_at': '2026-09-20T13:12:44+08:00'}
+    删除前 job_pages 命中行数  = 7
+    {'id': 1, 'job_id': 'job-3d697531fe834dbcb8c7ce5d3857077d', 'pdf_name': 'tmp.pdf', 'page': 13, 'chunk_index': 0, 'state': 'PENDING'}
+    {'id': 2, 'job_id': 'job-3d697531fe834dbcb8c7ce5d3857077d', 'pdf_name': 'tmp.pdf', 'page': 14, 'chunk_index': 0, 'state': 'PENDING'}
+    {'id': 3, 'job_id': 'job-3d697531fe834dbcb8c7ce5d3857077d', 'pdf_name': 'tmp.pdf', 'page': 15, 'chunk_index': 0, 'state': 'PENDING'}
+    {'id': 4, 'job_id': 'job-3d697531fe834dbcb8c7ce5d3857077d', 'pdf_name': 'tmp.pdf', 'page': 16, 'chunk_index': 0, 'state': 'PENDING'}
+    {'id': 5, 'job_id': 'job-3d697531fe834dbcb8c7ce5d3857077d', 'pdf_name': 'tmp.pdf', 'page': 17, 'chunk_index': 0, 'state': 'PENDING'}
+    {'id': 6, 'job_id': 'job-3d697531fe834dbcb8c7ce5d3857077d', 'pdf_name': 'tmp.pdf', 'page': 18, 'chunk_index': 0, 'state': 'PENDING'}
+    {'id': 7, 'job_id': 'job-3d697531fe834dbcb8c7ce5d3857077d', 'pdf_name': 'tmp.pdf', 'page': 19, 'chunk_index': 0, 'state': 'PENDING'}
+
+[2] 删除前计数：jobs=1 job_pages=7 stamps=79
+
+[3] 已删除：job_pages=7 行 / jobs=1 行（单事务 BEGIN IMMEDIATE → COMMIT）
+
+[4] 删除后计数：jobs=0 job_pages=0 stamps=79
+    stamps 未变 = True（79 → 79）
+✓ 该 job_id 已不在 jobs 中；job_pages 亦无其残留

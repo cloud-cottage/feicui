@@ -1,0 +1,15 @@
+=== BEFORE-RESTART#2 snapshot 2026-09-20 13:15:59 ===
+{"ok":true,"panel":{"port":5555,"portOpen":true,"pid":21499,"nodeVersion":"v20.20.2","uptimeMs":422546,"startedAt":"2026-09-20T05:08:56.645Z","pm2":{"name":"bistro-ctrl","id":0,"status":"online","managed":true,"source":"pm2-pidfile"},"code":{"path":"/Users/kevin/bistro/ctrl/index.js","size":52052,"mtime":"2026-09-20T05:15:54.087Z","mtimeText":"2026/9/20 13:15:54"},"pids":{"path":"/Users/kevin/bistro/ctrl/logs/pids.json","count":12,"sids":["jiazu-api","jiazu","shu","feicui-api","feicui-web","jinli-api","jinli","cat","aranya-api","liwu-proxy","liwu-web","liwu-app"],"mtimeText":"2026/9/20 13:09:05"}}}
+n= 12 running= 12
+  jiazu-api running 21872
+  jiazu running 21873
+  shu running 21874
+  feicui-api running 21875
+  feicui-web running 21876
+  jinli-api running 21877
+  jinli running 21878
+  cat running 21879
+  aranya-api running 21880
+  liwu-proxy running 21881
+  liwu-web running 21882
+  liwu-app running 21883

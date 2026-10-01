@@ -1,0 +1,39 @@
+--- feicui/web/evidence-proxy/_pristine/shu-web-vite.config.js.before	2026-09-20 11:59:49
++++ web/vite.config.js	2026-09-20 11:59:56
+@@ -4,6 +4,11 @@
+ 
+ const CONSOLE_ENTRY = '/console.html'
+ 
++// 阶段 1c：feicui 前端 dev/preview 的直达目标（端口真源 ctrl/PORTS.md ＝ 5195）。
++// 显式写 127.0.0.1（PORTS.md §1 制度 (d)：本机非生产链路引用一律写 127.0.0.1），
++// feicui 侧亦显式绑 127.0.0.1，避免只绑 IPv6 `::1` 时的 ECONNREFUSED。
++const FEICUI_PROXY = { target: 'http://127.0.0.1:5195', changeOrigin: true }
++
+ /**
+  * 双入口（R13 / spec §2.3-6）：营销入口 index.html（`/`）+ 控制台入口 console.html（`/console/**`）。
+  * 把 `/console` 前缀的浏览器直达请求内部改写为控制台入口 HTML，
+@@ -31,8 +36,22 @@
+   resolve: {
+     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
+   },
+-  server: { port: 5164, strictPort: true },
+-  preview: { port: 5164, strictPort: true },
++  /**
++   * 阶段 1c：`/feicui` 直达代理（不改 Vue 路由表，`/feicui` 只被 proxy 拦截）。
++   * feicui 前端（5195）自身 base 已是 `/feicui/`，故此处**不得 rewrite 前缀**：
++   * 原样把 `/feicui/**` 透传给 127.0.0.1:5195，feicui 侧才能正确解析绝对路径 asset
++   * 并命中其 SPA fallback。证据见 feicui/web/evidence-proxy/。
++   */
++  server: {
++    port: 5164,
++    strictPort: true,
++    proxy: { '/feicui': FEICUI_PROXY },
++  },
++  preview: {
++    port: 5164,
++    strictPort: true,
++    proxy: { '/feicui': FEICUI_PROXY },
++  },
+   build: {
+     outDir: 'dist',
+     emptyOutDir: true,

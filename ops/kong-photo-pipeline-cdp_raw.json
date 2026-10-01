@@ -1,0 +1,2225 @@
+{
+  "run": {
+    "mode": "plain_green",
+    "at": "2026-09-20T18:45:11+0800",
+    "force_png": false,
+    "python_executable": "/Library/Developer/CommandLineTools/usr/bin/python3",
+    "python_version": "3.9.6",
+    "web_socket_client": "1.9.0",
+    "app_origin": "http://127.0.0.1:5163",
+    "debug_port": 9333,
+    "profile": "/tmp/xiai-probe-profile-kong",
+    "chrome_pid": 80811,
+    "browser": "Chrome/153.0.8010.52",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36"
+  },
+  "probe_phase1": {
+    "checks": [
+      {
+        "id": "login",
+        "name": "普通用户登录成功（手机号 + 验证码 1234）",
+        "pass": true,
+        "detail": ""
+      },
+      {
+        "id": "acl",
+        "name": "未登录上传被拒（数据层拒绝）",
+        "pass": true,
+        "detail": "{\"ok\":false,\"reason\":\"UNAUTHENTICATED\",\"message\":\"请先登录后再上传实物照片\"}"
+      },
+      {
+        "id": "limit-over",
+        "name": "① 1.2 MB 文件被拒（可读提示含真实大小与上限）",
+        "pass": true,
+        "detail": "照片过大：所选文件 1.20 MB，上限 1.00 MB（1 MB）。请换一张更小的图，或先用手机/系统自带的压缩再上传。"
+      },
+      {
+        "id": "limit-under",
+        "name": "① 900 KB 文件通过（类型与上限校验）",
+        "pass": true,
+        "detail": "{\"bytes\":923276,\"w\":1052,\"h\":1052}"
+      },
+      {
+        "id": "limit-basis",
+        "name": "① 判据是**文件字节**（900 KB 文件的 base64 串长达 1231036 字符 > 1 MB 上限，仍通过；旧 base64 长度口径必拒）",
+        "pass": true,
+        "detail": "{\"PHOTO_MAX_BYTES\":1048576,\"PHOTO_MAX_LENGTH\":1048576,\"IMAGE_LIMITS_maxInputBytes\":1048576,\"oldRuleWouldReject\":true,\"base64Length\":1231036,\"base64OverOneMiB\":true,\"passedWithBase64OverLimit\":true}"
+      },
+      {
+        "id": "limit-const",
+        "name": "① 上限常量＝1 MB 且不再以 base64 长度为准（PHOTO_MAX_BYTES = PHOTO_MAX_LENGTH = 1048576）",
+        "pass": true,
+        "detail": "PHOTO_MAX_BYTES=1048576 PHOTO_MAX_LENGTH=1048576"
+      },
+      {
+        "id": "artifact-const",
+        "name": "① 产物侧独立上限存在且更宽（IMAGE_LIMITS.maxStoredBytes ≥ 4 MB、> 输入上限；服务层同源同值）",
+        "pass": true,
+        "detail": "{\"IMAGE_LIMITS_maxInputBytes\":1048576,\"IMAGE_LIMITS_maxStoredBytes\":4194304,\"IMAGE_LIMITS_maxStoredMiB\":4,\"PHOTO_ARTIFACT_MAX_BYTES\":4194304,\"PHOTO_MAX_BYTES\":1048576,\"reencodeRoundsMax\":3}"
+      },
+      {
+        "id": "artifact-accept-1p2mb",
+        "name": "① 1.2 MB 的**产物**不再被「输入 1 MB」闸拒（产物侧另有更宽上限）",
+        "pass": true,
+        "detail": "{\"bytes\":1258291,\"ok\":true,\"rowBytes\":1258291,\"rowMime\":\"image/jpeg\",\"message\":\"实物照片已上传\"}"
+      },
+      {
+        "id": "artifact-over-reject",
+        "name": "① 超出**产物侧**上限才拒，且文案＝「本机影像生成失败」（不再甩「照片过大…请换一张更小的图」）",
+        "pass": true,
+        "detail": "{\"bytes\":6291456,\"ok\":false,\"reason\":\"ARTIFACT_TOO_LARGE\",\"message\":\"本机影像生成失败：处理后影像 6.00 MB 超过入库上限 4.00 MB。这与「所选文件 ≤ 1 MB」的输入上限是两回事；请重试，或改用支持 WebP 编码的浏览器后再上传。\",\"misleadingClause\":false}"
+      },
+      {
+        "id": "text-split",
+        "name": "① 两类失败文案分开：①「你选的图太大」（输入超限）②「本机影像生成失败」（产物超限）",
+        "pass": true,
+        "detail": "{\"输入超限\":\"照片过大：所选文件 1.20 MB，上限 1.00 MB（1 MB）。请换一张更小的图，或先用手机/系统自带的压缩再上传。\",\"产物超限\":\"本机影像生成失败：处理后影像 6.00 MB 超过入库上限 4.00 MB。这与「所选文件 ≤ 1 MB」的输入上限是两回事；请重试，或改用支持 WebP 编码的浏览器后再上传。\"}"
+      },
+      {
+        "id": "square-webp",
+        "name": "② 3000×1200 → 方形 + WebP（width == height ≤ 2048、mime image/webp、RIFF/WEBP magic）",
+        "pass": true,
+        "detail": "{\"forcePngMode\":false,\"inputBytes\":75149,\"inputSize\":\"3000 × 1200\",\"outputSize\":\"1200 × 1200\",\"outputBytes\":14992,\"mime\":\"image/webp\",\"bytesReading\":{\"length\":14992,\"productMime\":\"image/webp\",\"productMimeOfBytes\":\"src/utils/image.js::sniffBytesMime\",\"first12Hex\":\"52494646883a000057454250\"}}"
+      },
+      {
+        "id": "downsample",
+        "name": "② 降采样：2600×2600 → 2048×2048（最长边 ≤ 2048）",
+        "pass": true,
+        "detail": "{\"inputBytes\":131832,\"inputSize\":\"2600 × 2600\",\"outputSize\":\"2048 × 2048\",\"outputBytes\":37430,\"mime\":\"image/webp\"}"
+      },
+      {
+        "id": "custom-crop",
+        "name": "② 自定义 crop（模拟用户拖拽/缩放后的方框）被如实执行：side=800 ⇒ 800×800",
+        "pass": true,
+        "detail": "{\"width\":800,\"height\":800,\"bytes\":5476}"
+      },
+      {
+        "id": "upload-1",
+        "name": "上传（处理后二进制）成功并返回行（mime＝image/webp）",
+        "pass": true,
+        "detail": "{\"forcePngMode\":false,\"ok\":true,\"id\":\"ph-mu9owpm7-6qo37\",\"mime\":\"image/webp\",\"message\":\"实物照片已上传\"}"
+      },
+      {
+        "id": "upload-2",
+        "name": "第二张上传成功（id 不同、无覆盖）",
+        "pass": true,
+        "detail": "{\"id1\":\"ph-mu9owpm7-6qo37\",\"id2\":\"ph-mu9owpma-8e4cr\",\"ok2\":true,\"message2\":\"实物照片已上传\"}"
+      },
+      {
+        "id": "row-meta",
+        "name": "元数据行只带标量（width/height/bytes/sha256/mime），**不含 image dataURL**",
+        "pass": true,
+        "detail": "{\"id\":\"ph-mu9owpm7-6qo37\",\"sealId\":\"XAI-0001\",\"stamp_id\":\"XAI-0001\",\"user_id\":\"u-13900001234\",\"note\":\"自测：非方形大图 → 方形 WebP\",\"file_name\":\"photo-3000x1200.jpg\",\"status\":\"APPROVED\",\"mime\":\"image/webp\",\"width\":1200,\"height\":1200,\"bytes\":14992,\"sha256\":\"a51a82442a0e64dd042add92f92b5ac971036953ee260e460f31af7f43e35c27\",\"storage\":\"indexeddb\",\"storage_key\":\"photo:ph-mu9owpm7-6qo37\",\"created_at\":\"2026-09-20T10:45:12.752Z\"}"
+      },
+      {
+        "id": "fallback-png",
+        "name": "⑤ 编码回退（toBlob 强制产出 PNG）⇒ 产出 mime 如实为 image/png（不假称 webp）且**产品真源按字节**同样判出 image/png",
+        "pass": true,
+        "detail": "{\"mime\":\"image/png\",\"bytes\":244283,\"width\":512,\"height\":512,\"inputSize\":\"600 × 600\",\"bytesReading\":{\"length\":244283,\"productMime\":\"image/png\",\"productMimeOfBytes\":\"src/utils/image.js::sniffBytesMime\",\"first12Hex\":\"89504e470d0a1a0a0000000d\"},\"message\":\"当前浏览器未能编码 image/webp，已按实际格式 image/png 入库\"}"
+      },
+      {
+        "id": "fallback-row-mime",
+        "name": "⑤ 编码回退的大产物能入库，且元数据 mime 如实为 image/png（不冒充 webp；产品真源按字节同上）",
+        "pass": true,
+        "detail": "{\"initialBytes\":2832092,\"finalBytes\":2832092,\"finalSize\":\"2048 × 2048\",\"mime\":\"image/png\",\"reencodeRounds\":0,\"bytesReading\":{\"length\":2832092,\"productMime\":\"image/png\",\"productMimeOfBytes\":\"src/utils/image.js::sniffBytesMime\",\"first12Hex\":\"89504e470d0a1a0a0000000d\"},\"upload\":{\"ok\":true,\"rowBytes\":2832092,\"rowMime\":\"image/png\",\"message\":\"实物照片已上传\"}}"
+      },
+      {
+        "id": "artifact-reencode-bounded",
+        "name": "① 产物超上限 ⇒ **有界降质重编**（轮数 ≥1 且 ≤ 硬上界），压进上限后照常入库（不拒用户）",
+        "pass": true,
+        "detail": "{\"ok\":true,\"bytes\":75195,\"initialBytes\":2832092,\"reencodeRounds\":3,\"size\":\"256 × 256\",\"mime\":\"image/png\",\"message\":\"当前浏览器未能编码 image/webp，已按实际格式 image/png 入库；产物超过入库上限 200.0 KB，已自动降质重编 3 轮：2.70 MB → 73.4 KB\"}"
+      },
+      {
+        "id": "artifact-reencode-limit",
+        "name": "① 重编到硬上界仍超限 ⇒ 才拒；文案为「本机影像生成失败/过大」，**不得**再甩「照片过大…请换一张更小的图」",
+        "pass": true,
+        "detail": "{\"ok\":false,\"reason\":\"ARTIFACT_TOO_LARGE\",\"bytes\":0,\"reencodeRounds\":3,\"message\":\"本机影像生成失败：已自动降质重编 3 轮，产出仍有 73.4 KB，超过入库上限 1.0 KB。这与「所选文件 ≤ 1 MB」的输入上限是两回事；请重试，或改用支持 WebP 编码的浏览器后再上传。\",\"misleadingClause\":false}"
+      },
+      {
+        "id": "decode-fail",
+        "name": "⑤ 解码失败（声称 image/png 的文本文件）⇒ 可读错误、不冒充",
+        "pass": true,
+        "detail": "图片解码失败（文件可能已损坏或不是可用的图片），请换一张再试"
+      },
+      {
+        "id": "type-fail",
+        "name": "⑤ 非图片类型（text/plain）⇒ 可读错误",
+        "pass": true,
+        "detail": "这不是图片文件（类型 text/plain），请选择 JPG / PNG / WebP 图片"
+      },
+      {
+        "id": "service-not-image",
+        "name": "⑤ 服务层按字节魔数拒绝非图片内容（不采信声称的 mime）",
+        "pass": true,
+        "detail": "这不是可用的图片内容（无法识别图片格式），请重新选择图片文件（声称类型 image/webp）"
+      },
+      {
+        "id": "legacy-migrate",
+        "name": "③ 老库就地纠正：旧格式行（dataURL 直存）被迁进影像库，行内只剩元数据",
+        "pass": true,
+        "detail": "{\"legacyDataUrlLength\":230078,\"beforeMigrationDataImageHits\":1,\"migration\":{\"ok\":true,\"migrated\":1,\"total\":5,\"leftovers\":0,\"message\":\"已把 1 条旧格式实物照片（整张 dataURL 直存 localStorage）迁入本地影像库，localStorage 只留元数据\"},\"migrationAgain\":{\"ok\":true,\"migrated\":0,\"total\":5,\"leftovers\":0,\"message\":\"无需迁移：实物照片已全部为「元数据 + 二进制分层」形态\"},\"rowAfter\":{\"id\":\"ph-legacy-selftest\",\"sealId\":\"XAI-0001\",\"stamp_id\":\"XAI-0001\",\"user_id\":\"u-13900001234\",\"note\":\"自测：旧格式行（整张 dataURL 直存 localStorage）\",\"file_name\":\"legacy.png\",\"status\":\"APPROVED\",\"created_at\":\"2026-09-20T10:45:13.173Z\",\"mime\":\"image/png\",\"width\":400,\"height\":300,\"bytes\":172541,\"sha256\":\"dd7b8e6fce7d354c81d3d96334a855253eb20c840ce075f82db5c9f78c63a761\",\"storage\":\"indexeddb\",\"storage_key\":\"photo:ph-legacy-selftest\",\"migrated_at\":\"2026-09-20T10:45:13.186Z\",\"migrated_from\":\"localStorage:dataUrl\"},\"rowHasImageField\":false,\"binaryReadOk\":true,\"binaryBytes\":172541,\"digestMatches\":true}"
+      },
+      {
+        "id": "legacy-idempotent",
+        "name": "③ 迁移幂等（再跑一次零写入、零改动）",
+        "pass": true,
+        "detail": "{\"ok\":true,\"migrated\":0,\"total\":5,\"leftovers\":0,\"message\":\"无需迁移：实物照片已全部为「元数据 + 二进制分层」形态\"}"
+      },
+      {
+        "id": "ac33-no-dataimage",
+        "name": "③ localStorage 无任何 `data:image` 命中",
+        "pass": true,
+        "detail": "{\"hits\":0,\"keys\":[]}"
+      },
+      {
+        "id": "ac33-max-value",
+        "name": "③ localStorage 单值 < 64 KiB（判负阈值 65,536 字符）",
+        "pass": true,
+        "detail": "max=4948 (4.83 KiB) @ xiai:v1:faces"
+      },
+      {
+        "id": "ac33-total",
+        "name": "③ localStorage 总量 < 512 KiB",
+        "pass": true,
+        "detail": "total=12376 (12.09 KiB)"
+      },
+      {
+        "id": "ac33-photos-key",
+        "name": "③ `xiai:v1:photos` 只存元数据（长度远小于 64 KiB 且无 data:image）",
+        "pass": true,
+        "detail": "length=2133 (2.08 KiB)"
+      },
+      {
+        "id": "idb-binary",
+        "name": "③ 二进制在 IndexedDB 且可读回：sha256 与元数据一致、字节数与元数据一致、每行都无 image 字段",
+        "pass": true,
+        "detail": "[{\"id\":\"ph-mu9owp84-mqh0f\",\"readOk\":true,\"digestMatchesRow\":true,\"bytesMatch\":true,\"metaOnlyOnRow\":true,\"bytesLength\":1258291},{\"id\":\"ph-mu9owpm7-6qo37\",\"readOk\":true,\"digestMatchesRow\":true,\"bytesMatch\":true,\"metaOnlyOnRow\":true,\"bytesLength\":14992},{\"id\":\"ph-mu9owpma-8e4cr\",\"readOk\":true,\"digestMatchesRow\":true,\"bytesMatch\":true,\"metaOnlyOnRow\":true,\"bytesLength\":37430},{\"id\":\"ph-mu9owprm-og6ll\",\"readOk\":true,\"digestMatchesRow\":true,\"bytesMatch\":true,\"metaOnlyOnRow\":true,\"bytesLength\":2832092},{\"id\":\"ph-legacy-selftest\",\"readOk\":true,\"digestMatchesRow\":true,\"bytesMatch\":true,\"metaOnlyOnRow\":true,\"bytesLength\":172541}]"
+      },
+      {
+        "id": "idb-keys",
+        "name": "③ IndexedDB 键口径为 `photo:<照片 id>`，每行一条二进制（含迁移过来的历史行）",
+        "pass": true,
+        "detail": "[\"photo:ph-legacy-selftest\",\"photo:ph-mu9owp84-mqh0f\",\"photo:ph-mu9owpm7-6qo37\",\"photo:ph-mu9owpma-8e4cr\",\"photo:ph-mu9owprm-og6ll\"]"
+      },
+      {
+        "id": "no-browser-storage-in-views",
+        "name": "页面只经服务层取回二进制（本探针按同一路径 loadPhotoDataUrl 读回）",
+        "pass": true,
+        "detail": "见 ④ 渲染检查"
+      },
+      {
+        "id": "render-service",
+        "name": "④ 画廊渲染路径：按 id 从数据层取回二进制并转 dataURL（刷新前）",
+        "pass": true,
+        "detail": "[{\"id\":\"ph-legacy-selftest\",\"ok\":true,\"mime\":\"image/png\",\"bytes\":172541,\"prefix\":\"data:image/png;base64,iV\",\"message\":\"\"},{\"id\":\"ph-mu9owprm-og6ll\",\"ok\":true,\"mime\":\"image/png\",\"bytes\":2832092,\"prefix\":\"data:image/png;base64,iV\",\"message\":\"\"},{\"id\":\"ph-mu9owpma-8e4cr\",\"ok\":true,\"mime\":\"image/webp\",\"bytes\":37430,\"prefix\":\"data:image/webp;base64,U\",\"message\":\"\"},{\"id\":\"ph-mu9owpm7-6qo37\",\"ok\":true,\"mime\":\"image/webp\",\"bytes\":14992,\"prefix\":\"data:image/webp;base64,U\",\"message\":\"\"},{\"id\":\"ph-mu9owp84-mqh0f\",\"ok\":true,\"mime\":\"image/jpeg\",\"bytes\":1258291,\"prefix\":\"data:image/jpeg;base64,/\",\"message\":\"\"}]"
+      }
+    ],
+    "numbers": {
+      "forcePngMode": false,
+      "user": {
+        "id": "u-13900001234",
+        "role": "user"
+      },
+      "over": {
+        "fileBytes": 1256807,
+        "fileMiB": 1.2,
+        "base64Length": 1675744,
+        "ok": false,
+        "message": "照片过大：所选文件 1.20 MB，上限 1.00 MB（1 MB）。请换一张更小的图，或先用手机/系统自带的压缩再上传。"
+      },
+      "ok900": {
+        "fileBytes": 923276,
+        "fileKiB": 901.6,
+        "base64Length": 1231036,
+        "base64KiB": 1202.2,
+        "ok": true,
+        "width": 1052,
+        "height": 1052,
+        "message": ""
+      },
+      "limitBasis": {
+        "PHOTO_MAX_BYTES": 1048576,
+        "PHOTO_MAX_LENGTH": 1048576,
+        "IMAGE_LIMITS_maxInputBytes": 1048576,
+        "oldRuleWouldReject": true,
+        "base64Length": 1231036,
+        "base64OverOneMiB": true,
+        "passedWithBase64OverLimit": true
+      },
+      "artifactLimits": {
+        "IMAGE_LIMITS_maxInputBytes": 1048576,
+        "IMAGE_LIMITS_maxStoredBytes": 4194304,
+        "IMAGE_LIMITS_maxStoredMiB": 4,
+        "PHOTO_ARTIFACT_MAX_BYTES": 4194304,
+        "PHOTO_MAX_BYTES": 1048576,
+        "reencodeRoundsMax": 3
+      },
+      "artifact1p2": {
+        "bytes": 1258291,
+        "ok": true,
+        "rowBytes": 1258291,
+        "rowMime": "image/jpeg",
+        "message": "实物照片已上传"
+      },
+      "artifactHuge": {
+        "bytes": 6291456,
+        "ok": false,
+        "reason": "ARTIFACT_TOO_LARGE",
+        "message": "本机影像生成失败：处理后影像 6.00 MB 超过入库上限 4.00 MB。这与「所选文件 ≤ 1 MB」的输入上限是两回事；请重试，或改用支持 WebP 编码的浏览器后再上传。",
+        "misleadingClause": false
+      },
+      "big": {
+        "inputBytes": 75149,
+        "inputSize": "3000 × 1200",
+        "outputSize": "1200 × 1200",
+        "outputBytes": 14992,
+        "mime": "image/webp",
+        "bytesReading": {
+          "length": 14992,
+          "productMime": "image/webp",
+          "productMimeOfBytes": "src/utils/image.js::sniffBytesMime",
+          "first12Hex": "52494646883a000057454250"
+        }
+      },
+      "downsample": {
+        "inputBytes": 131832,
+        "inputSize": "2600 × 2600",
+        "outputSize": "2048 × 2048",
+        "outputBytes": 37430,
+        "mime": "image/webp"
+      },
+      "forcedPng": {
+        "mime": "image/png",
+        "bytes": 244283,
+        "width": 512,
+        "height": 512,
+        "inputSize": "600 × 600",
+        "bytesReading": {
+          "length": 244283,
+          "productMime": "image/png",
+          "productMimeOfBytes": "src/utils/image.js::sniffBytesMime",
+          "first12Hex": "89504e470d0a1a0a0000000d"
+        },
+        "message": "当前浏览器未能编码 image/webp，已按实际格式 image/png 入库"
+      },
+      "forcedPngBig": {
+        "initialBytes": 2832092,
+        "finalBytes": 2832092,
+        "finalSize": "2048 × 2048",
+        "mime": "image/png",
+        "reencodeRounds": 0,
+        "bytesReading": {
+          "length": 2832092,
+          "productMime": "image/png",
+          "productMimeOfBytes": "src/utils/image.js::sniffBytesMime",
+          "first12Hex": "89504e470d0a1a0a0000000d"
+        },
+        "upload": {
+          "ok": true,
+          "rowBytes": 2832092,
+          "rowMime": "image/png",
+          "message": "实物照片已上传"
+        }
+      },
+      "forcedReencode": {
+        "ok": true,
+        "bytes": 75195,
+        "initialBytes": 2832092,
+        "reencodeRounds": 3,
+        "size": "256 × 256",
+        "mime": "image/png",
+        "message": "当前浏览器未能编码 image/webp，已按实际格式 image/png 入库；产物超过入库上限 200.0 KB，已自动降质重编 3 轮：2.70 MB → 73.4 KB"
+      },
+      "forcedImpossible": {
+        "ok": false,
+        "reason": "ARTIFACT_TOO_LARGE",
+        "bytes": 0,
+        "reencodeRounds": 3,
+        "message": "本机影像生成失败：已自动降质重编 3 轮，产出仍有 73.4 KB，超过入库上限 1.0 KB。这与「所选文件 ≤ 1 MB」的输入上限是两回事；请重试，或改用支持 WebP 编码的浏览器后再上传。",
+        "misleadingClause": false
+      },
+      "migration": {
+        "legacyDataUrlLength": 230078,
+        "beforeMigrationDataImageHits": 1,
+        "migration": {
+          "ok": true,
+          "migrated": 1,
+          "total": 5,
+          "leftovers": 0,
+          "message": "已把 1 条旧格式实物照片（整张 dataURL 直存 localStorage）迁入本地影像库，localStorage 只留元数据"
+        },
+        "migrationAgain": {
+          "ok": true,
+          "migrated": 0,
+          "total": 5,
+          "leftovers": 0,
+          "message": "无需迁移：实物照片已全部为「元数据 + 二进制分层」形态"
+        },
+        "rowAfter": {
+          "id": "ph-legacy-selftest",
+          "sealId": "XAI-0001",
+          "stamp_id": "XAI-0001",
+          "user_id": "u-13900001234",
+          "note": "自测：旧格式行（整张 dataURL 直存 localStorage）",
+          "file_name": "legacy.png",
+          "status": "APPROVED",
+          "created_at": "2026-09-20T10:45:13.173Z",
+          "mime": "image/png",
+          "width": 400,
+          "height": 300,
+          "bytes": 172541,
+          "sha256": "dd7b8e6fce7d354c81d3d96334a855253eb20c840ce075f82db5c9f78c63a761",
+          "storage": "indexeddb",
+          "storage_key": "photo:ph-legacy-selftest",
+          "migrated_at": "2026-09-20T10:45:13.186Z",
+          "migrated_from": "localStorage:dataUrl"
+        },
+        "rowHasImageField": false,
+        "binaryReadOk": true,
+        "binaryBytes": 172541,
+        "digestMatches": true
+      },
+      "localStorage": {
+        "total": 12376,
+        "totalKiB": 12.09,
+        "maxKey": "xiai:v1:faces",
+        "maxLength": 4948,
+        "maxKiB": 4.83,
+        "dataImageHits": 0,
+        "dataImageKeys": [],
+        "photosKeyLength": 2133,
+        "photosKeyKiB": 2.08,
+        "photosKeyHasDataImage": false,
+        "entries": [
+          {
+            "key": "xiai:v1:faces",
+            "length": 4948,
+            "hasDataImage": false
+          },
+          {
+            "key": "xiai:v1:seals",
+            "length": 2133,
+            "hasDataImage": false
+          },
+          {
+            "key": "xiai:v1:photos",
+            "length": 2133,
+            "hasDataImage": false
+          },
+          {
+            "key": "xiai:v1:corrections",
+            "length": 2,
+            "hasDataImage": false
+          },
+          {
+            "key": "xiai:v1:downloaded",
+            "length": 2,
+            "hasDataImage": false
+          },
+          {
+            "key": "xiai:v1:users",
+            "length": 380,
+            "hasDataImage": false
+          },
+          {
+            "key": "xiai:v1:session",
+            "length": 26,
+            "hasDataImage": false
+          },
+          {
+            "key": "xiai:v1:seeded",
+            "length": 25,
+            "hasDataImage": false
+          },
+          {
+            "key": "xiai:v1:images",
+            "length": 2520,
+            "hasDataImage": false
+          },
+          {
+            "key": "xiai:v1:points",
+            "length": 207,
+            "hasDataImage": false
+          }
+        ]
+      },
+      "indexedDb": {
+        "keys": [
+          "photo:ph-legacy-selftest",
+          "photo:ph-mu9owp84-mqh0f",
+          "photo:ph-mu9owpm7-6qo37",
+          "photo:ph-mu9owpma-8e4cr",
+          "photo:ph-mu9owprm-og6ll"
+        ],
+        "rows": [
+          {
+            "id": "ph-mu9owp84-mqh0f",
+            "key": "photo:ph-mu9owp84-mqh0f",
+            "rowSha256": "b30d4b646ccb4cb70b3710b694b58cd488e377985ffa5705a54d3365b4588863",
+            "readOk": true,
+            "bytesLength": 1258291,
+            "digest": "b30d4b646ccb4cb70b3710b694b58cd488e377985ffa5705a54d3365b4588863",
+            "digestMatchesRow": true,
+            "rowBytes": 1258291,
+            "bytesMatch": true,
+            "metaOnlyOnRow": true,
+            "rowFields": [
+              "id",
+              "sealId",
+              "stamp_id",
+              "user_id",
+              "note",
+              "file_name",
+              "status",
+              "mime",
+              "width",
+              "height",
+              "bytes",
+              "sha256",
+              "storage",
+              "storage_key",
+              "created_at"
+            ]
+          },
+          {
+            "id": "ph-mu9owpm7-6qo37",
+            "key": "photo:ph-mu9owpm7-6qo37",
+            "rowSha256": "a51a82442a0e64dd042add92f92b5ac971036953ee260e460f31af7f43e35c27",
+            "readOk": true,
+            "bytesLength": 14992,
+            "digest": "a51a82442a0e64dd042add92f92b5ac971036953ee260e460f31af7f43e35c27",
+            "digestMatchesRow": true,
+            "rowBytes": 14992,
+            "bytesMatch": true,
+            "metaOnlyOnRow": true,
+            "rowFields": [
+              "id",
+              "sealId",
+              "stamp_id",
+              "user_id",
+              "note",
+              "file_name",
+              "status",
+              "mime",
+              "width",
+              "height",
+              "bytes",
+              "sha256",
+              "storage",
+              "storage_key",
+              "created_at"
+            ]
+          },
+          {
+            "id": "ph-mu9owpma-8e4cr",
+            "key": "photo:ph-mu9owpma-8e4cr",
+            "rowSha256": "e0d4eed2a2f0044f1ebb2f13a93fa32cb29e671258d7866998dd7e75c0c2777e",
+            "readOk": true,
+            "bytesLength": 37430,
+            "digest": "e0d4eed2a2f0044f1ebb2f13a93fa32cb29e671258d7866998dd7e75c0c2777e",
+            "digestMatchesRow": true,
+            "rowBytes": 37430,
+            "bytesMatch": true,
+            "metaOnlyOnRow": true,
+            "rowFields": [
+              "id",
+              "sealId",
+              "stamp_id",
+              "user_id",
+              "note",
+              "file_name",
+              "status",
+              "mime",
+              "width",
+              "height",
+              "bytes",
+              "sha256",
+              "storage",
+              "storage_key",
+              "created_at"
+            ]
+          },
+          {
+            "id": "ph-mu9owprm-og6ll",
+            "key": "photo:ph-mu9owprm-og6ll",
+            "rowSha256": "ae4f6e95a63e6e74d4d5b541b6330be9f2faf53ccf6f9f323e82193f12a37a00",
+            "readOk": true,
+            "bytesLength": 2832092,
+            "digest": "ae4f6e95a63e6e74d4d5b541b6330be9f2faf53ccf6f9f323e82193f12a37a00",
+            "digestMatchesRow": true,
+            "rowBytes": 2832092,
+            "bytesMatch": true,
+            "metaOnlyOnRow": true,
+            "rowFields": [
+              "id",
+              "sealId",
+              "stamp_id",
+              "user_id",
+              "note",
+              "file_name",
+              "status",
+              "mime",
+              "width",
+              "height",
+              "bytes",
+              "sha256",
+              "storage",
+              "storage_key",
+              "created_at"
+            ]
+          },
+          {
+            "id": "ph-legacy-selftest",
+            "key": "photo:ph-legacy-selftest",
+            "rowSha256": "dd7b8e6fce7d354c81d3d96334a855253eb20c840ce075f82db5c9f78c63a761",
+            "readOk": true,
+            "bytesLength": 172541,
+            "digest": "dd7b8e6fce7d354c81d3d96334a855253eb20c840ce075f82db5c9f78c63a761",
+            "digestMatchesRow": true,
+            "rowBytes": 172541,
+            "bytesMatch": true,
+            "metaOnlyOnRow": true,
+            "rowFields": [
+              "id",
+              "sealId",
+              "stamp_id",
+              "user_id",
+              "note",
+              "file_name",
+              "status",
+              "created_at",
+              "mime",
+              "width",
+              "height",
+              "bytes",
+              "sha256",
+              "storage",
+              "storage_key",
+              "migrated_at",
+              "migrated_from"
+            ]
+          }
+        ]
+      },
+      "render": [
+        {
+          "id": "ph-legacy-selftest",
+          "ok": true,
+          "mime": "image/png",
+          "bytes": 172541,
+          "prefix": "data:image/png;base64,iV",
+          "message": ""
+        },
+        {
+          "id": "ph-mu9owprm-og6ll",
+          "ok": true,
+          "mime": "image/png",
+          "bytes": 2832092,
+          "prefix": "data:image/png;base64,iV",
+          "message": ""
+        },
+        {
+          "id": "ph-mu9owpma-8e4cr",
+          "ok": true,
+          "mime": "image/webp",
+          "bytes": 37430,
+          "prefix": "data:image/webp;base64,U",
+          "message": ""
+        },
+        {
+          "id": "ph-mu9owpm7-6qo37",
+          "ok": true,
+          "mime": "image/webp",
+          "bytes": 14992,
+          "prefix": "data:image/webp;base64,U",
+          "message": ""
+        },
+        {
+          "id": "ph-mu9owp84-mqh0f",
+          "ok": true,
+          "mime": "image/jpeg",
+          "bytes": 1258291,
+          "prefix": "data:image/jpeg;base64,/",
+          "message": ""
+        }
+      ]
+    },
+    "errors": [],
+    "phase1At": "2026-09-20T10:45:12.089Z",
+    "phase2At": ""
+  },
+  "probe_phase2_after_reload": {
+    "phase": 2,
+    "at": "2026-09-20T10:45:14.374Z",
+    "session": "{\"userId\":\"u-13900001234\"}",
+    "restoredUser": "u-13900001234",
+    "allRowCount": 5,
+    "rowCount": 5,
+    "allRenderOk": true,
+    "render": [
+      {
+        "id": "ph-legacy-selftest",
+        "ok": true,
+        "prefix": "data:image/png;base64,iV",
+        "bytes": 172541
+      },
+      {
+        "id": "ph-mu9owprm-og6ll",
+        "ok": true,
+        "prefix": "data:image/png;base64,iV",
+        "bytes": 2832092
+      },
+      {
+        "id": "ph-mu9owpma-8e4cr",
+        "ok": true,
+        "prefix": "data:image/webp;base64,U",
+        "bytes": 37430
+      },
+      {
+        "id": "ph-mu9owpm7-6qo37",
+        "ok": true,
+        "prefix": "data:image/webp;base64,U",
+        "bytes": 14992
+      },
+      {
+        "id": "ph-mu9owp84-mqh0f",
+        "ok": true,
+        "prefix": "data:image/jpeg;base64,/",
+        "bytes": 1258291
+      }
+    ],
+    "migratedRowCount": 1,
+    "migratedRows": [
+      {
+        "id": "ph-legacy-selftest",
+        "migrated_from": "localStorage:dataUrl",
+        "migrated_at": "2026-09-20T10:45:13.186Z",
+        "rowHasImageField": false,
+        "rowMime": "image/png",
+        "rowBytes": 172541,
+        "readOk": true,
+        "bytesLength": 172541,
+        "digestMatches": true
+      }
+    ],
+    "indexedDb": {
+      "keys": [
+        "photo:ph-legacy-selftest",
+        "photo:ph-mu9owp84-mqh0f",
+        "photo:ph-mu9owpm7-6qo37",
+        "photo:ph-mu9owpma-8e4cr",
+        "photo:ph-mu9owprm-og6ll"
+      ],
+      "rows": [
+        {
+          "id": "ph-mu9owp84-mqh0f",
+          "key": "photo:ph-mu9owp84-mqh0f",
+          "rowSha256": "b30d4b646ccb4cb70b3710b694b58cd488e377985ffa5705a54d3365b4588863",
+          "readOk": true,
+          "bytesLength": 1258291,
+          "digest": "b30d4b646ccb4cb70b3710b694b58cd488e377985ffa5705a54d3365b4588863",
+          "digestMatchesRow": true,
+          "rowBytes": 1258291,
+          "bytesMatch": true,
+          "metaOnlyOnRow": true,
+          "rowFields": [
+            "id",
+            "sealId",
+            "stamp_id",
+            "user_id",
+            "note",
+            "file_name",
+            "status",
+            "mime",
+            "width",
+            "height",
+            "bytes",
+            "sha256",
+            "storage",
+            "storage_key",
+            "created_at"
+          ]
+        },
+        {
+          "id": "ph-mu9owpm7-6qo37",
+          "key": "photo:ph-mu9owpm7-6qo37",
+          "rowSha256": "a51a82442a0e64dd042add92f92b5ac971036953ee260e460f31af7f43e35c27",
+          "readOk": true,
+          "bytesLength": 14992,
+          "digest": "a51a82442a0e64dd042add92f92b5ac971036953ee260e460f31af7f43e35c27",
+          "digestMatchesRow": true,
+          "rowBytes": 14992,
+          "bytesMatch": true,
+          "metaOnlyOnRow": true,
+          "rowFields": [
+            "id",
+            "sealId",
+            "stamp_id",
+            "user_id",
+            "note",
+            "file_name",
+            "status",
+            "mime",
+            "width",
+            "height",
+            "bytes",
+            "sha256",
+            "storage",
+            "storage_key",
+            "created_at"
+          ]
+        },
+        {
+          "id": "ph-mu9owpma-8e4cr",
+          "key": "photo:ph-mu9owpma-8e4cr",
+          "rowSha256": "e0d4eed2a2f0044f1ebb2f13a93fa32cb29e671258d7866998dd7e75c0c2777e",
+          "readOk": true,
+          "bytesLength": 37430,
+          "digest": "e0d4eed2a2f0044f1ebb2f13a93fa32cb29e671258d7866998dd7e75c0c2777e",
+          "digestMatchesRow": true,
+          "rowBytes": 37430,
+          "bytesMatch": true,
+          "metaOnlyOnRow": true,
+          "rowFields": [
+            "id",
+            "sealId",
+            "stamp_id",
+            "user_id",
+            "note",
+            "file_name",
+            "status",
+            "mime",
+            "width",
+            "height",
+            "bytes",
+            "sha256",
+            "storage",
+            "storage_key",
+            "created_at"
+          ]
+        },
+        {
+          "id": "ph-mu9owprm-og6ll",
+          "key": "photo:ph-mu9owprm-og6ll",
+          "rowSha256": "ae4f6e95a63e6e74d4d5b541b6330be9f2faf53ccf6f9f323e82193f12a37a00",
+          "readOk": true,
+          "bytesLength": 2832092,
+          "digest": "ae4f6e95a63e6e74d4d5b541b6330be9f2faf53ccf6f9f323e82193f12a37a00",
+          "digestMatchesRow": true,
+          "rowBytes": 2832092,
+          "bytesMatch": true,
+          "metaOnlyOnRow": true,
+          "rowFields": [
+            "id",
+            "sealId",
+            "stamp_id",
+            "user_id",
+            "note",
+            "file_name",
+            "status",
+            "mime",
+            "width",
+            "height",
+            "bytes",
+            "sha256",
+            "storage",
+            "storage_key",
+            "created_at"
+          ]
+        },
+        {
+          "id": "ph-legacy-selftest",
+          "key": "photo:ph-legacy-selftest",
+          "rowSha256": "dd7b8e6fce7d354c81d3d96334a855253eb20c840ce075f82db5c9f78c63a761",
+          "readOk": true,
+          "bytesLength": 172541,
+          "digest": "dd7b8e6fce7d354c81d3d96334a855253eb20c840ce075f82db5c9f78c63a761",
+          "digestMatchesRow": true,
+          "rowBytes": 172541,
+          "bytesMatch": true,
+          "metaOnlyOnRow": true,
+          "rowFields": [
+            "id",
+            "sealId",
+            "stamp_id",
+            "user_id",
+            "note",
+            "file_name",
+            "status",
+            "created_at",
+            "mime",
+            "width",
+            "height",
+            "bytes",
+            "sha256",
+            "storage",
+            "storage_key",
+            "migrated_at",
+            "migrated_from"
+          ]
+        }
+      ]
+    },
+    "localStorage": {
+      "total": 12376,
+      "maxLength": 4948,
+      "dataImageHits": 0,
+      "keys": [
+        "xiai:v1:faces",
+        "xiai:v1:seals",
+        "xiai:v1:photos",
+        "xiai:v1:corrections",
+        "xiai:v1:downloaded",
+        "xiai:v1:users",
+        "xiai:v1:session",
+        "xiai:v1:seeded",
+        "xiai:v1:images",
+        "xiai:v1:points"
+      ]
+    }
+  },
+  "seals_replace_path": {
+    "phase": 3,
+    "at": "2026-09-20T10:45:14.521Z",
+    "numbers": {
+      "consts": {
+        "FACE_IMAGE_ARTIFACT_MAX_BYTES": 4194304,
+        "PHOTO_ARTIFACT_MAX_BYTES": 4194304,
+        "STORED_MAX_BYTES": 4194304,
+        "IMAGE_LIMITS_maxStoredBytes": 4194304,
+        "IMAGE_LIMITS_maxInputBytes": 1048576,
+        "FACE_IMAGE_MAX_BYTES_compatAlias": 1048576,
+        "maxReencodeRounds": 3
+      },
+      "admin": {
+        "ok": true,
+        "id": "u-16601061656",
+        "role": "admin"
+      },
+      "face": {
+        "id": "fc-0001-f1",
+        "faceImageIdBefore": "img-0001f"
+      },
+      "normal": {
+        "exported": {
+          "ok": true,
+          "mime": "image/webp",
+          "bytes": 6238,
+          "size": "512 × 512",
+          "bytesReading": {
+            "length": 6238,
+            "productMime": "image/webp",
+            "productMimeOfBytes": "src/utils/image.js::sniffBytesMime",
+            "first12Hex": "524946465618000057454250"
+          }
+        },
+        "result": {
+          "ok": true,
+          "reason": "",
+          "faceImageId": "img-0001f-2",
+          "previousFaceImageId": "img-0001f",
+          "imageMime": "image/webp",
+          "message": "印面图已替换：影像编号 img-0001f → img-0001f-2；旧影像行与二进制保留未删。新影像 512 × 512 · image/webp · 6238 字节"
+        },
+        "faceImageIdAfter": "img-0001f-2",
+        "oldImageRowKept": true,
+        "imageRowCount": 14
+      },
+      "oversizeInjected": {
+        "injectedBytes": 4194305,
+        "injectedMiB": 4,
+        "capBytes": 4194304,
+        "ok": false,
+        "reason": "ARTIFACT_TOO_LARGE",
+        "message": "本机影像生成失败：印面图处理后 4.00 MB 超过入库上限 4.00 MB。这与「所选文件 ≤ 1 MB」的输入上限是两回事；请重试，或改用支持 WebP 编码的浏览器后再上传。",
+        "misleadingClause": false,
+        "faceImageIdUnchanged": true
+      },
+      "pngFallbackBig": {
+        "artifactBytes": 2832092,
+        "artifactMiB": 2.7,
+        "mime": "image/png",
+        "reencodeRounds": 0,
+        "overOldInputGate": true,
+        "underNewArtifactCap": true,
+        "accepted": true,
+        "reason": "",
+        "message": "印面图已替换：影像编号 img-0001f-2 → img-0001f-3；旧影像行与二进制保留未删。新影像 2048 × 2048 · image/png · 2832092 字节"
+      },
+      "inputOver": {
+        "fileBytes": 1258291,
+        "ok": false,
+        "message": "照片过大：所选文件 1.20 MB，上限 1.00 MB（1 MB）。请换一张更小的图，或先用手机/系统自带的压缩再上传。",
+        "mentionsSelectedFile": true,
+        "isInputSideWording": true
+      },
+      "notImage": {
+        "reason": "NOT_IMAGE",
+        "message": "这不是可用的图片内容（无法识别图片格式），请重新选择 JPG / PNG / WebP 图片（声称类型 image/webp）"
+      },
+      "sessionRestored": {
+        "ok": true,
+        "id": "u-13900001234"
+      }
+    },
+    "checks": [
+      {
+        "id": "seals-artifact-const",
+        "name": "A 印面图**产物侧**上限与照片路径**同源同值**（4 MiB；输入上限仍 1 MB；旧导出保留为兼容别名）",
+        "pass": true,
+        "detail": "{\"FACE_IMAGE_ARTIFACT_MAX_BYTES\":4194304,\"PHOTO_ARTIFACT_MAX_BYTES\":4194304,\"STORED_MAX_BYTES\":4194304,\"IMAGE_LIMITS_maxStoredBytes\":4194304,\"IMAGE_LIMITS_maxInputBytes\":1048576,\"FACE_IMAGE_MAX_BYTES_compatAlias\":1048576,\"maxReencodeRounds\":3}"
+      },
+      {
+        "id": "seals-replace-ok",
+        "name": "A 正常小产物 ⇒ 印面图重新上传**成功**（reason 空、指向更新为新影像、旧影像行保留不删）",
+        "pass": true,
+        "detail": "{\"exported\":{\"ok\":true,\"mime\":\"image/webp\",\"bytes\":6238,\"size\":\"512 × 512\",\"bytesReading\":{\"length\":6238,\"productMime\":\"image/webp\",\"productMimeOfBytes\":\"src/utils/image.js::sniffBytesMime\",\"first12Hex\":\"524946465618000057454250\"}},\"result\":{\"ok\":true,\"reason\":\"\",\"faceImageId\":\"img-0001f-2\",\"previousFaceImageId\":\"img-0001f\",\"imageMime\":\"image/webp\",\"message\":\"印面图已替换：影像编号 img-0001f → img-0001f-2；旧影像行与二进制保留未删。新影像 512 × 512 · image/webp · 6238 字节\"},\"faceImageIdAfter\":\"img-0001f-2\",\"oldImageRowKept\":true,\"imageRowCount\":14}"
+      },
+      {
+        "id": "seals-replace-mime-honest",
+        "name": "A 入库元数据 mime ＝**产品真源按字节**判出的格式（不采信声称值、不冒充 webp）",
+        "pass": true,
+        "detail": "{\"rowMime\":\"image/webp\",\"productMime\":\"image/webp\"}"
+      },
+      {
+        "id": "seals-artifact-over-reject",
+        "name": "A 注入「产物 > 4 MiB」⇒ 拒且 reason ＝ ARTIFACT_TOO_LARGE、文案＝「本机影像生成失败」，**不含**「请换一张更小的图」",
+        "pass": true,
+        "detail": "{\"injectedBytes\":4194305,\"injectedMiB\":4,\"capBytes\":4194304,\"ok\":false,\"reason\":\"ARTIFACT_TOO_LARGE\",\"message\":\"本机影像生成失败：印面图处理后 4.00 MB 超过入库上限 4.00 MB。这与「所选文件 ≤ 1 MB」的输入上限是两回事；请重试，或改用支持 WebP 编码的浏览器后再上传。\",\"misleadingClause\":false,\"faceImageIdUnchanged\":true}"
+      },
+      {
+        "id": "seals-artifact-over-no-halfwrite",
+        "name": "A 产物超限被拒时**不留半成品**：印面指向与影像行数均不变",
+        "pass": true,
+        "detail": "{\"faceImageIdUnchanged\":true,\"imageRowCount\":14}"
+      },
+      {
+        "id": "seals-fallback-png-accepted",
+        "name": "A 回退 PNG 大产物（>1 MB 旧闸、<4 MiB 新上限）⇒ **入库成功**（旧实现在此必判 TOO_LARGE 并甩误导文案）",
+        "pass": true,
+        "detail": "{\"artifactBytes\":2832092,\"artifactMiB\":2.7,\"mime\":\"image/png\",\"reencodeRounds\":0,\"overOldInputGate\":true,\"underNewArtifactCap\":true,\"accepted\":true,\"reason\":\"\",\"message\":\"印面图已替换：影像编号 img-0001f-2 → img-0001f-3；旧影像行与二进制保留未删。新影像 2048 × 2048 · image/png · 2832092 字节\"}"
+      },
+      {
+        "id": "seals-input-over-rejected-by-pipeline",
+        "name": "A 输入超 1 MB ⇒ 由管线（`loadImageFile`）拒，文案＝「所选文件…（上限 1 MB）」（输入侧口径，与产物侧分开）",
+        "pass": true,
+        "detail": "{\"fileBytes\":1258291,\"ok\":false,\"message\":\"照片过大：所选文件 1.20 MB，上限 1.00 MB（1 MB）。请换一张更小的图，或先用手机/系统自带的压缩再上传。\",\"mentionsSelectedFile\":true,\"isInputSideWording\":true}"
+      },
+      {
+        "id": "seals-not-image-still",
+        "name": "A 放宽产物上限**不放松**「是不是图片」：认不出的字节仍拒（reason ＝ NOT_IMAGE）",
+        "pass": true,
+        "detail": "{\"reason\":\"NOT_IMAGE\",\"message\":\"这不是可用的图片内容（无法识别图片格式），请重新选择 JPG / PNG / WebP 图片（声称类型 image/webp）\"}"
+      }
+    ]
+  },
+  "probe_phase1_final": {
+    "checks": [
+      {
+        "id": "login",
+        "name": "普通用户登录成功（手机号 + 验证码 1234）",
+        "pass": true,
+        "detail": ""
+      },
+      {
+        "id": "acl",
+        "name": "未登录上传被拒（数据层拒绝）",
+        "pass": true,
+        "detail": "{\"ok\":false,\"reason\":\"UNAUTHENTICATED\",\"message\":\"请先登录后再上传实物照片\"}"
+      },
+      {
+        "id": "limit-over",
+        "name": "① 1.2 MB 文件被拒（可读提示含真实大小与上限）",
+        "pass": true,
+        "detail": "照片过大：所选文件 1.20 MB，上限 1.00 MB（1 MB）。请换一张更小的图，或先用手机/系统自带的压缩再上传。"
+      },
+      {
+        "id": "limit-under",
+        "name": "① 900 KB 文件通过（类型与上限校验）",
+        "pass": true,
+        "detail": "{\"bytes\":923276,\"w\":1052,\"h\":1052}"
+      },
+      {
+        "id": "limit-basis",
+        "name": "① 判据是**文件字节**（900 KB 文件的 base64 串长达 1231036 字符 > 1 MB 上限，仍通过；旧 base64 长度口径必拒）",
+        "pass": true,
+        "detail": "{\"PHOTO_MAX_BYTES\":1048576,\"PHOTO_MAX_LENGTH\":1048576,\"IMAGE_LIMITS_maxInputBytes\":1048576,\"oldRuleWouldReject\":true,\"base64Length\":1231036,\"base64OverOneMiB\":true,\"passedWithBase64OverLimit\":true}"
+      },
+      {
+        "id": "limit-const",
+        "name": "① 上限常量＝1 MB 且不再以 base64 长度为准（PHOTO_MAX_BYTES = PHOTO_MAX_LENGTH = 1048576）",
+        "pass": true,
+        "detail": "PHOTO_MAX_BYTES=1048576 PHOTO_MAX_LENGTH=1048576"
+      },
+      {
+        "id": "artifact-const",
+        "name": "① 产物侧独立上限存在且更宽（IMAGE_LIMITS.maxStoredBytes ≥ 4 MB、> 输入上限；服务层同源同值）",
+        "pass": true,
+        "detail": "{\"IMAGE_LIMITS_maxInputBytes\":1048576,\"IMAGE_LIMITS_maxStoredBytes\":4194304,\"IMAGE_LIMITS_maxStoredMiB\":4,\"PHOTO_ARTIFACT_MAX_BYTES\":4194304,\"PHOTO_MAX_BYTES\":1048576,\"reencodeRoundsMax\":3}"
+      },
+      {
+        "id": "artifact-accept-1p2mb",
+        "name": "① 1.2 MB 的**产物**不再被「输入 1 MB」闸拒（产物侧另有更宽上限）",
+        "pass": true,
+        "detail": "{\"bytes\":1258291,\"ok\":true,\"rowBytes\":1258291,\"rowMime\":\"image/jpeg\",\"message\":\"实物照片已上传\"}"
+      },
+      {
+        "id": "artifact-over-reject",
+        "name": "① 超出**产物侧**上限才拒，且文案＝「本机影像生成失败」（不再甩「照片过大…请换一张更小的图」）",
+        "pass": true,
+        "detail": "{\"bytes\":6291456,\"ok\":false,\"reason\":\"ARTIFACT_TOO_LARGE\",\"message\":\"本机影像生成失败：处理后影像 6.00 MB 超过入库上限 4.00 MB。这与「所选文件 ≤ 1 MB」的输入上限是两回事；请重试，或改用支持 WebP 编码的浏览器后再上传。\",\"misleadingClause\":false}"
+      },
+      {
+        "id": "text-split",
+        "name": "① 两类失败文案分开：①「你选的图太大」（输入超限）②「本机影像生成失败」（产物超限）",
+        "pass": true,
+        "detail": "{\"输入超限\":\"照片过大：所选文件 1.20 MB，上限 1.00 MB（1 MB）。请换一张更小的图，或先用手机/系统自带的压缩再上传。\",\"产物超限\":\"本机影像生成失败：处理后影像 6.00 MB 超过入库上限 4.00 MB。这与「所选文件 ≤ 1 MB」的输入上限是两回事；请重试，或改用支持 WebP 编码的浏览器后再上传。\"}"
+      },
+      {
+        "id": "square-webp",
+        "name": "② 3000×1200 → 方形 + WebP（width == height ≤ 2048、mime image/webp、RIFF/WEBP magic）",
+        "pass": true,
+        "detail": "{\"forcePngMode\":false,\"inputBytes\":75149,\"inputSize\":\"3000 × 1200\",\"outputSize\":\"1200 × 1200\",\"outputBytes\":14992,\"mime\":\"image/webp\",\"bytesReading\":{\"length\":14992,\"productMime\":\"image/webp\",\"productMimeOfBytes\":\"src/utils/image.js::sniffBytesMime\",\"first12Hex\":\"52494646883a000057454250\"}}"
+      },
+      {
+        "id": "downsample",
+        "name": "② 降采样：2600×2600 → 2048×2048（最长边 ≤ 2048）",
+        "pass": true,
+        "detail": "{\"inputBytes\":131832,\"inputSize\":\"2600 × 2600\",\"outputSize\":\"2048 × 2048\",\"outputBytes\":37430,\"mime\":\"image/webp\"}"
+      },
+      {
+        "id": "custom-crop",
+        "name": "② 自定义 crop（模拟用户拖拽/缩放后的方框）被如实执行：side=800 ⇒ 800×800",
+        "pass": true,
+        "detail": "{\"width\":800,\"height\":800,\"bytes\":5476}"
+      },
+      {
+        "id": "upload-1",
+        "name": "上传（处理后二进制）成功并返回行（mime＝image/webp）",
+        "pass": true,
+        "detail": "{\"forcePngMode\":false,\"ok\":true,\"id\":\"ph-mu9owpm7-6qo37\",\"mime\":\"image/webp\",\"message\":\"实物照片已上传\"}"
+      },
+      {
+        "id": "upload-2",
+        "name": "第二张上传成功（id 不同、无覆盖）",
+        "pass": true,
+        "detail": "{\"id1\":\"ph-mu9owpm7-6qo37\",\"id2\":\"ph-mu9owpma-8e4cr\",\"ok2\":true,\"message2\":\"实物照片已上传\"}"
+      },
+      {
+        "id": "row-meta",
+        "name": "元数据行只带标量（width/height/bytes/sha256/mime），**不含 image dataURL**",
+        "pass": true,
+        "detail": "{\"id\":\"ph-mu9owpm7-6qo37\",\"sealId\":\"XAI-0001\",\"stamp_id\":\"XAI-0001\",\"user_id\":\"u-13900001234\",\"note\":\"自测：非方形大图 → 方形 WebP\",\"file_name\":\"photo-3000x1200.jpg\",\"status\":\"APPROVED\",\"mime\":\"image/webp\",\"width\":1200,\"height\":1200,\"bytes\":14992,\"sha256\":\"a51a82442a0e64dd042add92f92b5ac971036953ee260e460f31af7f43e35c27\",\"storage\":\"indexeddb\",\"storage_key\":\"photo:ph-mu9owpm7-6qo37\",\"created_at\":\"2026-09-20T10:45:12.752Z\"}"
+      },
+      {
+        "id": "fallback-png",
+        "name": "⑤ 编码回退（toBlob 强制产出 PNG）⇒ 产出 mime 如实为 image/png（不假称 webp）且**产品真源按字节**同样判出 image/png",
+        "pass": true,
+        "detail": "{\"mime\":\"image/png\",\"bytes\":244283,\"width\":512,\"height\":512,\"inputSize\":\"600 × 600\",\"bytesReading\":{\"length\":244283,\"productMime\":\"image/png\",\"productMimeOfBytes\":\"src/utils/image.js::sniffBytesMime\",\"first12Hex\":\"89504e470d0a1a0a0000000d\"},\"message\":\"当前浏览器未能编码 image/webp，已按实际格式 image/png 入库\"}"
+      },
+      {
+        "id": "fallback-row-mime",
+        "name": "⑤ 编码回退的大产物能入库，且元数据 mime 如实为 image/png（不冒充 webp；产品真源按字节同上）",
+        "pass": true,
+        "detail": "{\"initialBytes\":2832092,\"finalBytes\":2832092,\"finalSize\":\"2048 × 2048\",\"mime\":\"image/png\",\"reencodeRounds\":0,\"bytesReading\":{\"length\":2832092,\"productMime\":\"image/png\",\"productMimeOfBytes\":\"src/utils/image.js::sniffBytesMime\",\"first12Hex\":\"89504e470d0a1a0a0000000d\"},\"upload\":{\"ok\":true,\"rowBytes\":2832092,\"rowMime\":\"image/png\",\"message\":\"实物照片已上传\"}}"
+      },
+      {
+        "id": "artifact-reencode-bounded",
+        "name": "① 产物超上限 ⇒ **有界降质重编**（轮数 ≥1 且 ≤ 硬上界），压进上限后照常入库（不拒用户）",
+        "pass": true,
+        "detail": "{\"ok\":true,\"bytes\":75195,\"initialBytes\":2832092,\"reencodeRounds\":3,\"size\":\"256 × 256\",\"mime\":\"image/png\",\"message\":\"当前浏览器未能编码 image/webp，已按实际格式 image/png 入库；产物超过入库上限 200.0 KB，已自动降质重编 3 轮：2.70 MB → 73.4 KB\"}"
+      },
+      {
+        "id": "artifact-reencode-limit",
+        "name": "① 重编到硬上界仍超限 ⇒ 才拒；文案为「本机影像生成失败/过大」，**不得**再甩「照片过大…请换一张更小的图」",
+        "pass": true,
+        "detail": "{\"ok\":false,\"reason\":\"ARTIFACT_TOO_LARGE\",\"bytes\":0,\"reencodeRounds\":3,\"message\":\"本机影像生成失败：已自动降质重编 3 轮，产出仍有 73.4 KB，超过入库上限 1.0 KB。这与「所选文件 ≤ 1 MB」的输入上限是两回事；请重试，或改用支持 WebP 编码的浏览器后再上传。\",\"misleadingClause\":false}"
+      },
+      {
+        "id": "decode-fail",
+        "name": "⑤ 解码失败（声称 image/png 的文本文件）⇒ 可读错误、不冒充",
+        "pass": true,
+        "detail": "图片解码失败（文件可能已损坏或不是可用的图片），请换一张再试"
+      },
+      {
+        "id": "type-fail",
+        "name": "⑤ 非图片类型（text/plain）⇒ 可读错误",
+        "pass": true,
+        "detail": "这不是图片文件（类型 text/plain），请选择 JPG / PNG / WebP 图片"
+      },
+      {
+        "id": "service-not-image",
+        "name": "⑤ 服务层按字节魔数拒绝非图片内容（不采信声称的 mime）",
+        "pass": true,
+        "detail": "这不是可用的图片内容（无法识别图片格式），请重新选择图片文件（声称类型 image/webp）"
+      },
+      {
+        "id": "legacy-migrate",
+        "name": "③ 老库就地纠正：旧格式行（dataURL 直存）被迁进影像库，行内只剩元数据",
+        "pass": true,
+        "detail": "{\"legacyDataUrlLength\":230078,\"beforeMigrationDataImageHits\":1,\"migration\":{\"ok\":true,\"migrated\":1,\"total\":5,\"leftovers\":0,\"message\":\"已把 1 条旧格式实物照片（整张 dataURL 直存 localStorage）迁入本地影像库，localStorage 只留元数据\"},\"migrationAgain\":{\"ok\":true,\"migrated\":0,\"total\":5,\"leftovers\":0,\"message\":\"无需迁移：实物照片已全部为「元数据 + 二进制分层」形态\"},\"rowAfter\":{\"id\":\"ph-legacy-selftest\",\"sealId\":\"XAI-0001\",\"stamp_id\":\"XAI-0001\",\"user_id\":\"u-13900001234\",\"note\":\"自测：旧格式行（整张 dataURL 直存 localStorage）\",\"file_name\":\"legacy.png\",\"status\":\"APPROVED\",\"created_at\":\"2026-09-20T10:45:13.173Z\",\"mime\":\"image/png\",\"width\":400,\"height\":300,\"bytes\":172541,\"sha256\":\"dd7b8e6fce7d354c81d3d96334a855253eb20c840ce075f82db5c9f78c63a761\",\"storage\":\"indexeddb\",\"storage_key\":\"photo:ph-legacy-selftest\",\"migrated_at\":\"2026-09-20T10:45:13.186Z\",\"migrated_from\":\"localStorage:dataUrl\"},\"rowHasImageField\":false,\"binaryReadOk\":true,\"binaryBytes\":172541,\"digestMatches\":true}"
+      },
+      {
+        "id": "legacy-idempotent",
+        "name": "③ 迁移幂等（再跑一次零写入、零改动）",
+        "pass": true,
+        "detail": "{\"ok\":true,\"migrated\":0,\"total\":5,\"leftovers\":0,\"message\":\"无需迁移：实物照片已全部为「元数据 + 二进制分层」形态\"}"
+      },
+      {
+        "id": "ac33-no-dataimage",
+        "name": "③ localStorage 无任何 `data:image` 命中",
+        "pass": true,
+        "detail": "{\"hits\":0,\"keys\":[]}"
+      },
+      {
+        "id": "ac33-max-value",
+        "name": "③ localStorage 单值 < 64 KiB（判负阈值 65,536 字符）",
+        "pass": true,
+        "detail": "max=4948 (4.83 KiB) @ xiai:v1:faces"
+      },
+      {
+        "id": "ac33-total",
+        "name": "③ localStorage 总量 < 512 KiB",
+        "pass": true,
+        "detail": "total=12376 (12.09 KiB)"
+      },
+      {
+        "id": "ac33-photos-key",
+        "name": "③ `xiai:v1:photos` 只存元数据（长度远小于 64 KiB 且无 data:image）",
+        "pass": true,
+        "detail": "length=2133 (2.08 KiB)"
+      },
+      {
+        "id": "idb-binary",
+        "name": "③ 二进制在 IndexedDB 且可读回：sha256 与元数据一致、字节数与元数据一致、每行都无 image 字段",
+        "pass": true,
+        "detail": "[{\"id\":\"ph-mu9owp84-mqh0f\",\"readOk\":true,\"digestMatchesRow\":true,\"bytesMatch\":true,\"metaOnlyOnRow\":true,\"bytesLength\":1258291},{\"id\":\"ph-mu9owpm7-6qo37\",\"readOk\":true,\"digestMatchesRow\":true,\"bytesMatch\":true,\"metaOnlyOnRow\":true,\"bytesLength\":14992},{\"id\":\"ph-mu9owpma-8e4cr\",\"readOk\":true,\"digestMatchesRow\":true,\"bytesMatch\":true,\"metaOnlyOnRow\":true,\"bytesLength\":37430},{\"id\":\"ph-mu9owprm-og6ll\",\"readOk\":true,\"digestMatchesRow\":true,\"bytesMatch\":true,\"metaOnlyOnRow\":true,\"bytesLength\":2832092},{\"id\":\"ph-legacy-selftest\",\"readOk\":true,\"digestMatchesRow\":true,\"bytesMatch\":true,\"metaOnlyOnRow\":true,\"bytesLength\":172541}]"
+      },
+      {
+        "id": "idb-keys",
+        "name": "③ IndexedDB 键口径为 `photo:<照片 id>`，每行一条二进制（含迁移过来的历史行）",
+        "pass": true,
+        "detail": "[\"photo:ph-legacy-selftest\",\"photo:ph-mu9owp84-mqh0f\",\"photo:ph-mu9owpm7-6qo37\",\"photo:ph-mu9owpma-8e4cr\",\"photo:ph-mu9owprm-og6ll\"]"
+      },
+      {
+        "id": "no-browser-storage-in-views",
+        "name": "页面只经服务层取回二进制（本探针按同一路径 loadPhotoDataUrl 读回）",
+        "pass": true,
+        "detail": "见 ④ 渲染检查"
+      },
+      {
+        "id": "render-service",
+        "name": "④ 画廊渲染路径：按 id 从数据层取回二进制并转 dataURL（刷新前）",
+        "pass": true,
+        "detail": "[{\"id\":\"ph-legacy-selftest\",\"ok\":true,\"mime\":\"image/png\",\"bytes\":172541,\"prefix\":\"data:image/png;base64,iV\",\"message\":\"\"},{\"id\":\"ph-mu9owprm-og6ll\",\"ok\":true,\"mime\":\"image/png\",\"bytes\":2832092,\"prefix\":\"data:image/png;base64,iV\",\"message\":\"\"},{\"id\":\"ph-mu9owpma-8e4cr\",\"ok\":true,\"mime\":\"image/webp\",\"bytes\":37430,\"prefix\":\"data:image/webp;base64,U\",\"message\":\"\"},{\"id\":\"ph-mu9owpm7-6qo37\",\"ok\":true,\"mime\":\"image/webp\",\"bytes\":14992,\"prefix\":\"data:image/webp;base64,U\",\"message\":\"\"},{\"id\":\"ph-mu9owp84-mqh0f\",\"ok\":true,\"mime\":\"image/jpeg\",\"bytes\":1258291,\"prefix\":\"data:image/jpeg;base64,/\",\"message\":\"\"}]"
+      },
+      {
+        "id": "seals-artifact-const",
+        "name": "A 印面图**产物侧**上限与照片路径**同源同值**（4 MiB；输入上限仍 1 MB；旧导出保留为兼容别名）",
+        "pass": true,
+        "detail": "{\"FACE_IMAGE_ARTIFACT_MAX_BYTES\":4194304,\"PHOTO_ARTIFACT_MAX_BYTES\":4194304,\"STORED_MAX_BYTES\":4194304,\"IMAGE_LIMITS_maxStoredBytes\":4194304,\"IMAGE_LIMITS_maxInputBytes\":1048576,\"FACE_IMAGE_MAX_BYTES_compatAlias\":1048576,\"maxReencodeRounds\":3}"
+      },
+      {
+        "id": "seals-replace-ok",
+        "name": "A 正常小产物 ⇒ 印面图重新上传**成功**（reason 空、指向更新为新影像、旧影像行保留不删）",
+        "pass": true,
+        "detail": "{\"exported\":{\"ok\":true,\"mime\":\"image/webp\",\"bytes\":6238,\"size\":\"512 × 512\",\"bytesReading\":{\"length\":6238,\"productMime\":\"image/webp\",\"productMimeOfBytes\":\"src/utils/image.js::sniffBytesMime\",\"first12Hex\":\"524946465618000057454250\"}},\"result\":{\"ok\":true,\"reason\":\"\",\"faceImageId\":\"img-0001f-2\",\"previousFaceImageId\":\"img-0001f\",\"imageMime\":\"image/webp\",\"message\":\"印面图已替换：影像编号 img-0001f → img-0001f-2；旧影像行与二进制保留未删。新影像 512 × 512 · image/webp · 6238 字节\"},\"faceImageIdAfter\":\"img-0001f-2\",\"oldImageRowKept\":true,\"imageRowCount\":14}"
+      },
+      {
+        "id": "seals-replace-mime-honest",
+        "name": "A 入库元数据 mime ＝**产品真源按字节**判出的格式（不采信声称值、不冒充 webp）",
+        "pass": true,
+        "detail": "{\"rowMime\":\"image/webp\",\"productMime\":\"image/webp\"}"
+      },
+      {
+        "id": "seals-artifact-over-reject",
+        "name": "A 注入「产物 > 4 MiB」⇒ 拒且 reason ＝ ARTIFACT_TOO_LARGE、文案＝「本机影像生成失败」，**不含**「请换一张更小的图」",
+        "pass": true,
+        "detail": "{\"injectedBytes\":4194305,\"injectedMiB\":4,\"capBytes\":4194304,\"ok\":false,\"reason\":\"ARTIFACT_TOO_LARGE\",\"message\":\"本机影像生成失败：印面图处理后 4.00 MB 超过入库上限 4.00 MB。这与「所选文件 ≤ 1 MB」的输入上限是两回事；请重试，或改用支持 WebP 编码的浏览器后再上传。\",\"misleadingClause\":false,\"faceImageIdUnchanged\":true}"
+      },
+      {
+        "id": "seals-artifact-over-no-halfwrite",
+        "name": "A 产物超限被拒时**不留半成品**：印面指向与影像行数均不变",
+        "pass": true,
+        "detail": "{\"faceImageIdUnchanged\":true,\"imageRowCount\":14}"
+      },
+      {
+        "id": "seals-fallback-png-accepted",
+        "name": "A 回退 PNG 大产物（>1 MB 旧闸、<4 MiB 新上限）⇒ **入库成功**（旧实现在此必判 TOO_LARGE 并甩误导文案）",
+        "pass": true,
+        "detail": "{\"artifactBytes\":2832092,\"artifactMiB\":2.7,\"mime\":\"image/png\",\"reencodeRounds\":0,\"overOldInputGate\":true,\"underNewArtifactCap\":true,\"accepted\":true,\"reason\":\"\",\"message\":\"印面图已替换：影像编号 img-0001f-2 → img-0001f-3；旧影像行与二进制保留未删。新影像 2048 × 2048 · image/png · 2832092 字节\"}"
+      },
+      {
+        "id": "seals-input-over-rejected-by-pipeline",
+        "name": "A 输入超 1 MB ⇒ 由管线（`loadImageFile`）拒，文案＝「所选文件…（上限 1 MB）」（输入侧口径，与产物侧分开）",
+        "pass": true,
+        "detail": "{\"fileBytes\":1258291,\"ok\":false,\"message\":\"照片过大：所选文件 1.20 MB，上限 1.00 MB（1 MB）。请换一张更小的图，或先用手机/系统自带的压缩再上传。\",\"mentionsSelectedFile\":true,\"isInputSideWording\":true}"
+      },
+      {
+        "id": "seals-not-image-still",
+        "name": "A 放宽产物上限**不放松**「是不是图片」：认不出的字节仍拒（reason ＝ NOT_IMAGE）",
+        "pass": true,
+        "detail": "{\"reason\":\"NOT_IMAGE\",\"message\":\"这不是可用的图片内容（无法识别图片格式），请重新选择 JPG / PNG / WebP 图片（声称类型 image/webp）\"}"
+      }
+    ],
+    "numbers": {
+      "forcePngMode": false,
+      "user": {
+        "id": "u-13900001234",
+        "role": "user"
+      },
+      "over": {
+        "fileBytes": 1256807,
+        "fileMiB": 1.2,
+        "base64Length": 1675744,
+        "ok": false,
+        "message": "照片过大：所选文件 1.20 MB，上限 1.00 MB（1 MB）。请换一张更小的图，或先用手机/系统自带的压缩再上传。"
+      },
+      "ok900": {
+        "fileBytes": 923276,
+        "fileKiB": 901.6,
+        "base64Length": 1231036,
+        "base64KiB": 1202.2,
+        "ok": true,
+        "width": 1052,
+        "height": 1052,
+        "message": ""
+      },
+      "limitBasis": {
+        "PHOTO_MAX_BYTES": 1048576,
+        "PHOTO_MAX_LENGTH": 1048576,
+        "IMAGE_LIMITS_maxInputBytes": 1048576,
+        "oldRuleWouldReject": true,
+        "base64Length": 1231036,
+        "base64OverOneMiB": true,
+        "passedWithBase64OverLimit": true
+      },
+      "artifactLimits": {
+        "IMAGE_LIMITS_maxInputBytes": 1048576,
+        "IMAGE_LIMITS_maxStoredBytes": 4194304,
+        "IMAGE_LIMITS_maxStoredMiB": 4,
+        "PHOTO_ARTIFACT_MAX_BYTES": 4194304,
+        "PHOTO_MAX_BYTES": 1048576,
+        "reencodeRoundsMax": 3
+      },
+      "artifact1p2": {
+        "bytes": 1258291,
+        "ok": true,
+        "rowBytes": 1258291,
+        "rowMime": "image/jpeg",
+        "message": "实物照片已上传"
+      },
+      "artifactHuge": {
+        "bytes": 6291456,
+        "ok": false,
+        "reason": "ARTIFACT_TOO_LARGE",
+        "message": "本机影像生成失败：处理后影像 6.00 MB 超过入库上限 4.00 MB。这与「所选文件 ≤ 1 MB」的输入上限是两回事；请重试，或改用支持 WebP 编码的浏览器后再上传。",
+        "misleadingClause": false
+      },
+      "big": {
+        "inputBytes": 75149,
+        "inputSize": "3000 × 1200",
+        "outputSize": "1200 × 1200",
+        "outputBytes": 14992,
+        "mime": "image/webp",
+        "bytesReading": {
+          "length": 14992,
+          "productMime": "image/webp",
+          "productMimeOfBytes": "src/utils/image.js::sniffBytesMime",
+          "first12Hex": "52494646883a000057454250"
+        }
+      },
+      "downsample": {
+        "inputBytes": 131832,
+        "inputSize": "2600 × 2600",
+        "outputSize": "2048 × 2048",
+        "outputBytes": 37430,
+        "mime": "image/webp"
+      },
+      "forcedPng": {
+        "mime": "image/png",
+        "bytes": 244283,
+        "width": 512,
+        "height": 512,
+        "inputSize": "600 × 600",
+        "bytesReading": {
+          "length": 244283,
+          "productMime": "image/png",
+          "productMimeOfBytes": "src/utils/image.js::sniffBytesMime",
+          "first12Hex": "89504e470d0a1a0a0000000d"
+        },
+        "message": "当前浏览器未能编码 image/webp，已按实际格式 image/png 入库"
+      },
+      "forcedPngBig": {
+        "initialBytes": 2832092,
+        "finalBytes": 2832092,
+        "finalSize": "2048 × 2048",
+        "mime": "image/png",
+        "reencodeRounds": 0,
+        "bytesReading": {
+          "length": 2832092,
+          "productMime": "image/png",
+          "productMimeOfBytes": "src/utils/image.js::sniffBytesMime",
+          "first12Hex": "89504e470d0a1a0a0000000d"
+        },
+        "upload": {
+          "ok": true,
+          "rowBytes": 2832092,
+          "rowMime": "image/png",
+          "message": "实物照片已上传"
+        }
+      },
+      "forcedReencode": {
+        "ok": true,
+        "bytes": 75195,
+        "initialBytes": 2832092,
+        "reencodeRounds": 3,
+        "size": "256 × 256",
+        "mime": "image/png",
+        "message": "当前浏览器未能编码 image/webp，已按实际格式 image/png 入库；产物超过入库上限 200.0 KB，已自动降质重编 3 轮：2.70 MB → 73.4 KB"
+      },
+      "forcedImpossible": {
+        "ok": false,
+        "reason": "ARTIFACT_TOO_LARGE",
+        "bytes": 0,
+        "reencodeRounds": 3,
+        "message": "本机影像生成失败：已自动降质重编 3 轮，产出仍有 73.4 KB，超过入库上限 1.0 KB。这与「所选文件 ≤ 1 MB」的输入上限是两回事；请重试，或改用支持 WebP 编码的浏览器后再上传。",
+        "misleadingClause": false
+      },
+      "migration": {
+        "legacyDataUrlLength": 230078,
+        "beforeMigrationDataImageHits": 1,
+        "migration": {
+          "ok": true,
+          "migrated": 1,
+          "total": 5,
+          "leftovers": 0,
+          "message": "已把 1 条旧格式实物照片（整张 dataURL 直存 localStorage）迁入本地影像库，localStorage 只留元数据"
+        },
+        "migrationAgain": {
+          "ok": true,
+          "migrated": 0,
+          "total": 5,
+          "leftovers": 0,
+          "message": "无需迁移：实物照片已全部为「元数据 + 二进制分层」形态"
+        },
+        "rowAfter": {
+          "id": "ph-legacy-selftest",
+          "sealId": "XAI-0001",
+          "stamp_id": "XAI-0001",
+          "user_id": "u-13900001234",
+          "note": "自测：旧格式行（整张 dataURL 直存 localStorage）",
+          "file_name": "legacy.png",
+          "status": "APPROVED",
+          "created_at": "2026-09-20T10:45:13.173Z",
+          "mime": "image/png",
+          "width": 400,
+          "height": 300,
+          "bytes": 172541,
+          "sha256": "dd7b8e6fce7d354c81d3d96334a855253eb20c840ce075f82db5c9f78c63a761",
+          "storage": "indexeddb",
+          "storage_key": "photo:ph-legacy-selftest",
+          "migrated_at": "2026-09-20T10:45:13.186Z",
+          "migrated_from": "localStorage:dataUrl"
+        },
+        "rowHasImageField": false,
+        "binaryReadOk": true,
+        "binaryBytes": 172541,
+        "digestMatches": true
+      },
+      "localStorage": {
+        "total": 12376,
+        "totalKiB": 12.09,
+        "maxKey": "xiai:v1:faces",
+        "maxLength": 4948,
+        "maxKiB": 4.83,
+        "dataImageHits": 0,
+        "dataImageKeys": [],
+        "photosKeyLength": 2133,
+        "photosKeyKiB": 2.08,
+        "photosKeyHasDataImage": false,
+        "entries": [
+          {
+            "key": "xiai:v1:faces",
+            "length": 4948,
+            "hasDataImage": false
+          },
+          {
+            "key": "xiai:v1:seals",
+            "length": 2133,
+            "hasDataImage": false
+          },
+          {
+            "key": "xiai:v1:photos",
+            "length": 2133,
+            "hasDataImage": false
+          },
+          {
+            "key": "xiai:v1:corrections",
+            "length": 2,
+            "hasDataImage": false
+          },
+          {
+            "key": "xiai:v1:downloaded",
+            "length": 2,
+            "hasDataImage": false
+          },
+          {
+            "key": "xiai:v1:users",
+            "length": 380,
+            "hasDataImage": false
+          },
+          {
+            "key": "xiai:v1:session",
+            "length": 26,
+            "hasDataImage": false
+          },
+          {
+            "key": "xiai:v1:seeded",
+            "length": 25,
+            "hasDataImage": false
+          },
+          {
+            "key": "xiai:v1:images",
+            "length": 2520,
+            "hasDataImage": false
+          },
+          {
+            "key": "xiai:v1:points",
+            "length": 207,
+            "hasDataImage": false
+          }
+        ]
+      },
+      "indexedDb": {
+        "keys": [
+          "photo:ph-legacy-selftest",
+          "photo:ph-mu9owp84-mqh0f",
+          "photo:ph-mu9owpm7-6qo37",
+          "photo:ph-mu9owpma-8e4cr",
+          "photo:ph-mu9owprm-og6ll"
+        ],
+        "rows": [
+          {
+            "id": "ph-mu9owp84-mqh0f",
+            "key": "photo:ph-mu9owp84-mqh0f",
+            "rowSha256": "b30d4b646ccb4cb70b3710b694b58cd488e377985ffa5705a54d3365b4588863",
+            "readOk": true,
+            "bytesLength": 1258291,
+            "digest": "b30d4b646ccb4cb70b3710b694b58cd488e377985ffa5705a54d3365b4588863",
+            "digestMatchesRow": true,
+            "rowBytes": 1258291,
+            "bytesMatch": true,
+            "metaOnlyOnRow": true,
+            "rowFields": [
+              "id",
+              "sealId",
+              "stamp_id",
+              "user_id",
+              "note",
+              "file_name",
+              "status",
+              "mime",
+              "width",
+              "height",
+              "bytes",
+              "sha256",
+              "storage",
+              "storage_key",
+              "created_at"
+            ]
+          },
+          {
+            "id": "ph-mu9owpm7-6qo37",
+            "key": "photo:ph-mu9owpm7-6qo37",
+            "rowSha256": "a51a82442a0e64dd042add92f92b5ac971036953ee260e460f31af7f43e35c27",
+            "readOk": true,
+            "bytesLength": 14992,
+            "digest": "a51a82442a0e64dd042add92f92b5ac971036953ee260e460f31af7f43e35c27",
+            "digestMatchesRow": true,
+            "rowBytes": 14992,
+            "bytesMatch": true,
+            "metaOnlyOnRow": true,
+            "rowFields": [
+              "id",
+              "sealId",
+              "stamp_id",
+              "user_id",
+              "note",
+              "file_name",
+              "status",
+              "mime",
+              "width",
+              "height",
+              "bytes",
+              "sha256",
+              "storage",
+              "storage_key",
+              "created_at"
+            ]
+          },
+          {
+            "id": "ph-mu9owpma-8e4cr",
+            "key": "photo:ph-mu9owpma-8e4cr",
+            "rowSha256": "e0d4eed2a2f0044f1ebb2f13a93fa32cb29e671258d7866998dd7e75c0c2777e",
+            "readOk": true,
+            "bytesLength": 37430,
+            "digest": "e0d4eed2a2f0044f1ebb2f13a93fa32cb29e671258d7866998dd7e75c0c2777e",
+            "digestMatchesRow": true,
+            "rowBytes": 37430,
+            "bytesMatch": true,
+            "metaOnlyOnRow": true,
+            "rowFields": [
+              "id",
+              "sealId",
+              "stamp_id",
+              "user_id",
+              "note",
+              "file_name",
+              "status",
+              "mime",
+              "width",
+              "height",
+              "bytes",
+              "sha256",
+              "storage",
+              "storage_key",
+              "created_at"
+            ]
+          },
+          {
+            "id": "ph-mu9owprm-og6ll",
+            "key": "photo:ph-mu9owprm-og6ll",
+            "rowSha256": "ae4f6e95a63e6e74d4d5b541b6330be9f2faf53ccf6f9f323e82193f12a37a00",
+            "readOk": true,
+            "bytesLength": 2832092,
+            "digest": "ae4f6e95a63e6e74d4d5b541b6330be9f2faf53ccf6f9f323e82193f12a37a00",
+            "digestMatchesRow": true,
+            "rowBytes": 2832092,
+            "bytesMatch": true,
+            "metaOnlyOnRow": true,
+            "rowFields": [
+              "id",
+              "sealId",
+              "stamp_id",
+              "user_id",
+              "note",
+              "file_name",
+              "status",
+              "mime",
+              "width",
+              "height",
+              "bytes",
+              "sha256",
+              "storage",
+              "storage_key",
+              "created_at"
+            ]
+          },
+          {
+            "id": "ph-legacy-selftest",
+            "key": "photo:ph-legacy-selftest",
+            "rowSha256": "dd7b8e6fce7d354c81d3d96334a855253eb20c840ce075f82db5c9f78c63a761",
+            "readOk": true,
+            "bytesLength": 172541,
+            "digest": "dd7b8e6fce7d354c81d3d96334a855253eb20c840ce075f82db5c9f78c63a761",
+            "digestMatchesRow": true,
+            "rowBytes": 172541,
+            "bytesMatch": true,
+            "metaOnlyOnRow": true,
+            "rowFields": [
+              "id",
+              "sealId",
+              "stamp_id",
+              "user_id",
+              "note",
+              "file_name",
+              "status",
+              "created_at",
+              "mime",
+              "width",
+              "height",
+              "bytes",
+              "sha256",
+              "storage",
+              "storage_key",
+              "migrated_at",
+              "migrated_from"
+            ]
+          }
+        ]
+      },
+      "render": [
+        {
+          "id": "ph-legacy-selftest",
+          "ok": true,
+          "mime": "image/png",
+          "bytes": 172541,
+          "prefix": "data:image/png;base64,iV",
+          "message": ""
+        },
+        {
+          "id": "ph-mu9owprm-og6ll",
+          "ok": true,
+          "mime": "image/png",
+          "bytes": 2832092,
+          "prefix": "data:image/png;base64,iV",
+          "message": ""
+        },
+        {
+          "id": "ph-mu9owpma-8e4cr",
+          "ok": true,
+          "mime": "image/webp",
+          "bytes": 37430,
+          "prefix": "data:image/webp;base64,U",
+          "message": ""
+        },
+        {
+          "id": "ph-mu9owpm7-6qo37",
+          "ok": true,
+          "mime": "image/webp",
+          "bytes": 14992,
+          "prefix": "data:image/webp;base64,U",
+          "message": ""
+        },
+        {
+          "id": "ph-mu9owp84-mqh0f",
+          "ok": true,
+          "mime": "image/jpeg",
+          "bytes": 1258291,
+          "prefix": "data:image/jpeg;base64,/",
+          "message": ""
+        }
+      ],
+      "sealsReplace": {
+        "consts": {
+          "FACE_IMAGE_ARTIFACT_MAX_BYTES": 4194304,
+          "PHOTO_ARTIFACT_MAX_BYTES": 4194304,
+          "STORED_MAX_BYTES": 4194304,
+          "IMAGE_LIMITS_maxStoredBytes": 4194304,
+          "IMAGE_LIMITS_maxInputBytes": 1048576,
+          "FACE_IMAGE_MAX_BYTES_compatAlias": 1048576,
+          "maxReencodeRounds": 3
+        },
+        "admin": {
+          "ok": true,
+          "id": "u-16601061656",
+          "role": "admin"
+        },
+        "face": {
+          "id": "fc-0001-f1",
+          "faceImageIdBefore": "img-0001f"
+        },
+        "normal": {
+          "exported": {
+            "ok": true,
+            "mime": "image/webp",
+            "bytes": 6238,
+            "size": "512 × 512",
+            "bytesReading": {
+              "length": 6238,
+              "productMime": "image/webp",
+              "productMimeOfBytes": "src/utils/image.js::sniffBytesMime",
+              "first12Hex": "524946465618000057454250"
+            }
+          },
+          "result": {
+            "ok": true,
+            "reason": "",
+            "faceImageId": "img-0001f-2",
+            "previousFaceImageId": "img-0001f",
+            "imageMime": "image/webp",
+            "message": "印面图已替换：影像编号 img-0001f → img-0001f-2；旧影像行与二进制保留未删。新影像 512 × 512 · image/webp · 6238 字节"
+          },
+          "faceImageIdAfter": "img-0001f-2",
+          "oldImageRowKept": true,
+          "imageRowCount": 14
+        },
+        "oversizeInjected": {
+          "injectedBytes": 4194305,
+          "injectedMiB": 4,
+          "capBytes": 4194304,
+          "ok": false,
+          "reason": "ARTIFACT_TOO_LARGE",
+          "message": "本机影像生成失败：印面图处理后 4.00 MB 超过入库上限 4.00 MB。这与「所选文件 ≤ 1 MB」的输入上限是两回事；请重试，或改用支持 WebP 编码的浏览器后再上传。",
+          "misleadingClause": false,
+          "faceImageIdUnchanged": true
+        },
+        "pngFallbackBig": {
+          "artifactBytes": 2832092,
+          "artifactMiB": 2.7,
+          "mime": "image/png",
+          "reencodeRounds": 0,
+          "overOldInputGate": true,
+          "underNewArtifactCap": true,
+          "accepted": true,
+          "reason": "",
+          "message": "印面图已替换：影像编号 img-0001f-2 → img-0001f-3；旧影像行与二进制保留未删。新影像 2048 × 2048 · image/png · 2832092 字节"
+        },
+        "inputOver": {
+          "fileBytes": 1258291,
+          "ok": false,
+          "message": "照片过大：所选文件 1.20 MB，上限 1.00 MB（1 MB）。请换一张更小的图，或先用手机/系统自带的压缩再上传。",
+          "mentionsSelectedFile": true,
+          "isInputSideWording": true
+        },
+        "notImage": {
+          "reason": "NOT_IMAGE",
+          "message": "这不是可用的图片内容（无法识别图片格式），请重新选择 JPG / PNG / WebP 图片（声称类型 image/webp）"
+        },
+        "sessionRestored": {
+          "ok": true,
+          "id": "u-13900001234"
+        }
+      },
+      "consts": {
+        "FACE_IMAGE_ARTIFACT_MAX_BYTES": 4194304,
+        "PHOTO_ARTIFACT_MAX_BYTES": 4194304,
+        "STORED_MAX_BYTES": 4194304,
+        "IMAGE_LIMITS_maxStoredBytes": 4194304,
+        "IMAGE_LIMITS_maxInputBytes": 1048576,
+        "FACE_IMAGE_MAX_BYTES_compatAlias": 1048576,
+        "maxReencodeRounds": 3
+      },
+      "admin": {
+        "ok": true,
+        "id": "u-16601061656",
+        "role": "admin"
+      },
+      "face": {
+        "id": "fc-0001-f1",
+        "faceImageIdBefore": "img-0001f"
+      },
+      "normal": {
+        "exported": {
+          "ok": true,
+          "mime": "image/webp",
+          "bytes": 6238,
+          "size": "512 × 512",
+          "bytesReading": {
+            "length": 6238,
+            "productMime": "image/webp",
+            "productMimeOfBytes": "src/utils/image.js::sniffBytesMime",
+            "first12Hex": "524946465618000057454250"
+          }
+        },
+        "result": {
+          "ok": true,
+          "reason": "",
+          "faceImageId": "img-0001f-2",
+          "previousFaceImageId": "img-0001f",
+          "imageMime": "image/webp",
+          "message": "印面图已替换：影像编号 img-0001f → img-0001f-2；旧影像行与二进制保留未删。新影像 512 × 512 · image/webp · 6238 字节"
+        },
+        "faceImageIdAfter": "img-0001f-2",
+        "oldImageRowKept": true,
+        "imageRowCount": 14
+      },
+      "oversizeInjected": {
+        "injectedBytes": 4194305,
+        "injectedMiB": 4,
+        "capBytes": 4194304,
+        "ok": false,
+        "reason": "ARTIFACT_TOO_LARGE",
+        "message": "本机影像生成失败：印面图处理后 4.00 MB 超过入库上限 4.00 MB。这与「所选文件 ≤ 1 MB」的输入上限是两回事；请重试，或改用支持 WebP 编码的浏览器后再上传。",
+        "misleadingClause": false,
+        "faceImageIdUnchanged": true
+      },
+      "pngFallbackBig": {
+        "artifactBytes": 2832092,
+        "artifactMiB": 2.7,
+        "mime": "image/png",
+        "reencodeRounds": 0,
+        "overOldInputGate": true,
+        "underNewArtifactCap": true,
+        "accepted": true,
+        "reason": "",
+        "message": "印面图已替换：影像编号 img-0001f-2 → img-0001f-3；旧影像行与二进制保留未删。新影像 2048 × 2048 · image/png · 2832092 字节"
+      },
+      "inputOver": {
+        "fileBytes": 1258291,
+        "ok": false,
+        "message": "照片过大：所选文件 1.20 MB，上限 1.00 MB（1 MB）。请换一张更小的图，或先用手机/系统自带的压缩再上传。",
+        "mentionsSelectedFile": true,
+        "isInputSideWording": true
+      },
+      "notImage": {
+        "reason": "NOT_IMAGE",
+        "message": "这不是可用的图片内容（无法识别图片格式），请重新选择 JPG / PNG / WebP 图片（声称类型 image/webp）"
+      },
+      "sessionRestored": {
+        "ok": true,
+        "id": "u-13900001234"
+      }
+    },
+    "errors": []
+  },
+  "merged_assertions": {
+    "total": 41,
+    "phase1": 33,
+    "seals_replace_path": 8,
+    "page_global_after_reload": 8,
+    "phase1_snapshot_before_reload": 33,
+    "phase3_returned": 8,
+    "dedupe_key": "id",
+    "sources": "probe_phase1(刷新前快照) + __XIAI_PROBE_RESULTS__(刷新后页面全局) + __XIAI_PROBE__.phase3()"
+  },
+  "app_my_photos_before_close": {
+    "cards": 5,
+    "imgs": [
+      {
+        "src": "data:image/png;base64,iVBORw0K",
+        "complete": true,
+        "w": 400,
+        "h": 300
+      },
+      {
+        "src": "data:image/png;base64,iVBORw0K",
+        "complete": true,
+        "w": 2048,
+        "h": 2048
+      },
+      {
+        "src": "data:image/webp;base64,UklGRi6",
+        "complete": true,
+        "w": 2048,
+        "h": 2048
+      },
+      {
+        "src": "data:image/webp;base64,UklGRog",
+        "complete": true,
+        "w": 1200,
+        "h": 1200
+      },
+      {
+        "src": "data:image/jpeg;base64,/9j/4AA",
+        "complete": true,
+        "w": 0,
+        "h": 0
+      }
+    ],
+    "text": "我的实物照片\n\n你为印章上传的实物照片都在这里，点击可回到对应印章。\n\n上传实物照片\n单张上限 ≤ 1.00 MB（1048576 字节），处理全部在浏览器端完成（裁方形 → WebP）\n归属印章\n長壽（XAI-0001）\n騎都尉印（XAI-0002）\n昌（XAI-0003）\n文彭之印（XAI-0004）\n丁敬身印（XAI-0005）\n家在錢塘（XAI-0006）\n乾隆御覽之寶（XAI-0007）\n安持（XAI-0008）\n选择图片（JPG / PNG / WebP，≤ 1 MB）\n\n上限按原始文件字节数判定：≤ 1.00 MB（1048576 字节）。超出会被拒，并提示真实大小。\n\n已上传（"
+  },
+  "app_seal_detail": {
+    "figures": 5,
+    "imgs": [
+      {
+        "src": "data:image/png;base64,iVBORw0K",
+        "w": 400,
+        "caption": "168.5 KB · image/png"
+      },
+      {
+        "src": "data:image/png;base64,iVBORw0K",
+        "w": 2048,
+        "caption": "2.70 MB · image/png"
+      },
+      {
+        "src": "data:image/webp;base64,UklGRi6",
+        "w": 2048,
+        "caption": "36.6 KB · image/webp"
+      },
+      {
+        "src": "data:image/webp;base64,UklGRog",
+        "w": 1200,
+        "caption": "14.6 KB · image/webp"
+      },
+      {
+        "src": "data:image/jpeg;base64,/9j/4AA",
+        "w": 0,
+        "caption": "1.20 MB · image/jpeg"
+      }
+    ]
+  },
+  "app_my_photos_after_reopen": {
+    "cards": 5,
+    "imgs": [
+      {
+        "src": "data:image/png;base64,iVBORw0K",
+        "complete": true,
+        "w": 400,
+        "h": 300
+      },
+      {
+        "src": "data:image/png;base64,iVBORw0K",
+        "complete": true,
+        "w": 2048,
+        "h": 2048
+      },
+      {
+        "src": "data:image/webp;base64,UklGRi6",
+        "complete": true,
+        "w": 2048,
+        "h": 2048
+      },
+      {
+        "src": "data:image/webp;base64,UklGRog",
+        "complete": true,
+        "w": 1200,
+        "h": 1200
+      },
+      {
+        "src": "data:image/jpeg;base64,/9j/4AA",
+        "complete": true,
+        "w": 0,
+        "h": 0
+      }
+    ]
+  },
+  "app_ac33_after_reopen": {
+    "keys": [
+      "xiai:v1:users",
+      "xiai:v1:faces",
+      "xiai:v1:seals",
+      "xiai:v1:photos",
+      "xiai:v1:corrections",
+      "xiai:v1:downloaded",
+      "xiai:v1:seeded",
+      "xiai:v1:session",
+      "xiai:v1:images",
+      "xiai:v1:points"
+    ],
+    "dataImageHits": 0,
+    "dataImageKeys": [],
+    "maxValue": 4950,
+    "maxKey": "xiai:v1:faces",
+    "maxKiB": 4.83,
+    "total": 13298,
+    "totalKiB": 12.99,
+    "photosKeyLength": 2133,
+    "photosKeyKiB": 2.08,
+    "photosHasDataImage": false
+  },
+  "ui_upload_normal": {
+    "input": {
+      "path": "/tmp/xiai-ui-normal.jpg",
+      "bytes": 73006
+    },
+    "preview": {
+      "status": "已就绪：3000 × 1200 px / 71.3 KB（image/jpeg）。拖动方框调整位置，拖四角或滚轮缩放，然后点「上传实物照片」。",
+      "kind": "notice",
+      "canvasPx": [
+        360,
+        360
+      ],
+      "uploadBtn": true
+    },
+    "upload": {
+      "status": "实物照片已上传：71.3 KB → 14.1 KB（1200 × 1200，image/webp），已在下方画廊中。",
+      "cards": 6,
+      "firstSrc": "data:image/webp;base64,UklGRl4"
+    },
+    "row": {
+      "count": 6,
+      "last": {
+        "id": "ph-mu9owzan-xkzrf",
+        "sealId": "XAI-0001",
+        "stamp_id": "XAI-0001",
+        "user_id": "u-13900001234",
+        "note": "",
+        "file_name": "xiai-ui-normal.jpg",
+        "status": "APPROVED",
+        "mime": "image/webp",
+        "width": 1200,
+        "height": 1200,
+        "bytes": 14438,
+        "sha256": "391f3d3650fd7fc3bc1bea8ac8d6020f82cb145bd080a6be9d44a1cace2a6820",
+        "storage": "indexeddb",
+        "storage_key": "photo:ph-mu9owzan-xkzrf",
+        "created_at": "2026-09-20T10:45:25.300Z"
+      }
+    },
+    "idb": {
+      "photoKeys": [
+        "photo:ph-legacy-selftest",
+        "photo:ph-mu9owp84-mqh0f",
+        "photo:ph-mu9owpm7-6qo37",
+        "photo:ph-mu9owpma-8e4cr",
+        "photo:ph-mu9owprm-og6ll",
+        "photo:ph-mu9owzan-xkzrf"
+      ],
+      "sizes": [
+        {
+          "key": "photo:ph-mu9owprm-og6ll",
+          "bytes": 2832092,
+          "head12": "89504e470d0a1a0a0000000d",
+          "mimeByProduct": "image/png",
+          "truthSource": "src/utils/image.js::sniffBytesMime",
+          "metaMime": "image/png",
+          "metaBytes": 2832092,
+          "metaMatchesBinary": true
+        },
+        {
+          "key": "photo:ph-mu9owzan-xkzrf",
+          "bytes": 14438,
+          "head12": "524946465e38000057454250",
+          "mimeByProduct": "image/webp",
+          "truthSource": "src/utils/image.js::sniffBytesMime",
+          "metaMime": "image/webp",
+          "metaBytes": 14438,
+          "metaMatchesBinary": true
+        }
+      ],
+      "truthSource": "src/utils/image.js::sniffBytesMime",
+      "allKeysArePhoto": false
+    }
+  },
+  "ui_upload_input_over": {
+    "input": {
+      "path": "/tmp/xiai-ui-over1mb.jpg",
+      "bytes": 1894831
+    },
+    "status": {
+      "status": "照片过大：所选文件 1.81 MB，上限 1.00 MB（1 MB）。请换一张更小的图，或先用手机/系统自带的压缩再上传。",
+      "kind": "notice notice--error",
+      "hasCanvas": false
+    },
+    "row": {
+      "count": 6,
+      "last": {
+        "id": "ph-mu9owzan-xkzrf",
+        "sealId": "XAI-0001",
+        "stamp_id": "XAI-0001",
+        "user_id": "u-13900001234",
+        "note": "",
+        "file_name": "xiai-ui-normal.jpg",
+        "status": "APPROVED",
+        "mime": "image/webp",
+        "width": 1200,
+        "height": 1200,
+        "bytes": 14438,
+        "sha256": "391f3d3650fd7fc3bc1bea8ac8d6020f82cb145bd080a6be9d44a1cace2a6820",
+        "storage": "indexeddb",
+        "storage_key": "photo:ph-mu9owzan-xkzrf",
+        "created_at": "2026-09-20T10:45:25.300Z"
+      }
+    }
+  },
+  "ui_upload_forced_png": {
+    "skipped": "未设 XIAI_FORCE_PNG=1：本次跑的是真实编码路径（WebP 可用 ⇒ 走不到回退分支）"
+  },
+  "app_ac33_final": {
+    "keys": [
+      "xiai:v1:users",
+      "xiai:v1:faces",
+      "xiai:v1:seals",
+      "xiai:v1:photos",
+      "xiai:v1:corrections",
+      "xiai:v1:downloaded",
+      "xiai:v1:seeded",
+      "xiai:v1:session",
+      "xiai:v1:images",
+      "xiai:v1:points"
+    ],
+    "dataImageHits": 0,
+    "dataImageKeys": [],
+    "maxValue": 4950,
+    "maxKey": "xiai:v1:faces",
+    "maxKiB": 4.83,
+    "total": 13695,
+    "totalKiB": 13.37,
+    "photosKeyLength": 2530,
+    "photosKeyKiB": 2.47,
+    "photosHasDataImage": false
+  },
+  "app_indexeddb_final": {
+    "photoKeys": [
+      "photo:ph-legacy-selftest",
+      "photo:ph-mu9owp84-mqh0f",
+      "photo:ph-mu9owpm7-6qo37",
+      "photo:ph-mu9owpma-8e4cr",
+      "photo:ph-mu9owprm-og6ll",
+      "photo:ph-mu9owzan-xkzrf"
+    ],
+    "sizes": [
+      {
+        "key": "photo:ph-mu9owprm-og6ll",
+        "bytes": 2832092,
+        "head12": "89504e470d0a1a0a0000000d",
+        "mimeByProduct": "image/png",
+        "truthSource": "src/utils/image.js::sniffBytesMime",
+        "metaMime": "image/png",
+        "metaBytes": 2832092,
+        "metaMatchesBinary": true
+      },
+      {
+        "key": "photo:ph-mu9owzan-xkzrf",
+        "bytes": 14438,
+        "head12": "524946465e38000057454250",
+        "mimeByProduct": "image/webp",
+        "truthSource": "src/utils/image.js::sniffBytesMime",
+        "metaMime": "image/webp",
+        "metaBytes": 14438,
+        "metaMatchesBinary": true
+      }
+    ],
+    "truthSource": "src/utils/image.js::sniffBytesMime",
+    "allKeysArePhoto": false
+  },
+  "network": {
+    "total_requests": 169,
+    "internal_count": 169,
+    "external_urls": [],
+    "external_count": 0,
+    "port_5196_urls": [],
+    "square_crop_urls": [],
+    "sample": [
+      "http://127.0.0.1:5163/@vite/client",
+      "http://127.0.0.1:5163/feicui/ops/kong-photo-pipeline-probe.js?t=1789900640404",
+      "http://127.0.0.1:5163/node_modules/vite/dist/client/env.mjs",
+      "http://127.0.0.1:5163/favicon.ico",
+      "blob:http://127.0.0.1:5163/ee9103a2-fc33-4a49-b547-f3f81e6c7cfd",
+      "http://127.0.0.1:5163/feicui/ops/kong-photo-pipeline-probe.html",
+      "http://127.0.0.1:5163/@vite/client",
+      "http://127.0.0.1:5163/feicui/ops/kong-photo-pipeline-probe.js?t=1789900640404",
+      "http://127.0.0.1:5163/node_modules/vite/dist/client/env.mjs",
+      "http://127.0.0.1:5163/favicon.ico",
+      "http://127.0.0.1:5163/my/photos",
+      "http://127.0.0.1:5163/@vite/client",
+      "http://127.0.0.1:5163/src/main.js?t=1789900616343",
+      "http://127.0.0.1:5163/node_modules/.vite/deps/vue.js?v=a54d50c2",
+      "http://127.0.0.1:5163/src/App.vue?t=1789900408028",
+      "http://127.0.0.1:5163/src/router/index.js?t=1789900616343",
+      "http://127.0.0.1:5163/src/services/bootstrap.js?t=1789898280771",
+      "http://127.0.0.1:5163/src/styles/tokens.css?t=1789900596981",
+      "http://127.0.0.1:5163/src/styles/base.css",
+      "http://127.0.0.1:5163/node_modules/vite/dist/client/env.mjs",
+      "http://127.0.0.1:5163/node_modules/.vite/deps/chunk-GKNS7JV4.js?v=a54d50c2",
+      "http://127.0.0.1:5163/node_modules/.vite/deps/vue-router.js?v=a54d50c2",
+      "http://127.0.0.1:5163/src/components/AppHeader.vue?t=1789900408028",
+      "http://127.0.0.1:5163/src/components/AppSidebar.vue?t=1789895990204",
+      "http://127.0.0.1:5163/@id/__x00__plugin-vue:export-helper"
+    ]
+  },
+  "checks_network": [
+    {
+      "id": "net-external-0",
+      "pass": true,
+      "detail": "外部 URL（非 127.0.0.1:5163 origin）：0 条 []"
+    },
+    {
+      "id": "net-5196-0",
+      "pass": true,
+      "detail": "5196 命中：0 条"
+    },
+    {
+      "id": "net-square-crop-0",
+      "pass": true,
+      "detail": "square-crop 命中：0 条"
+    }
+  ],
+  "cleanup": {
+    "pid": 80811,
+    "killed": true,
+    "note": "SIGTERM 后已退出",
+    "exit_code": 0,
+    "exit_signal": null,
+    "port_still_listening": ""
+  },
+  "step_errors": {
+    "poll_predicate": [
+      "关标签重开后渲染: AttributeError: 'str' object has no attribute 'get'",
+      "正常档 预览就绪: AttributeError: 'str' object has no attribute 'get'",
+      "正常档 上传结果: AttributeError: 'str' object has no attribute 'get'"
+    ]
+  }
+}

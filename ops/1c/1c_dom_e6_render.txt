@@ -1,0 +1,30 @@
+### 阶段 1c-激活 · DOM 级证据：结果页**真实渲染出裁图**（自建 headless Chrome + 独立 profile，CDP 9711）
+### 2026-09-20 15:01:46 CST
+### url = http://localhost:5164/feicui/jobs/job-6e7471ff9c464695b9463cdad5122246/results
+### 判定 = img.stampimg 的 naturalWidth > 0（真实字节，非占位图）
+
+=== EVAL RESULT ===
+{"url":"http://localhost:5164/feicui/jobs/job-6e7471ff9c464695b9463cdad5122246/results","title":"feicui ｜ 印谱解析任务台","rows":20,"e6Buttons":20,"imgCount":20,"imgs":[{"src":"/feicui/api/jobs/job-6e7471ff9c464695b9463cdad5122246/stamps/13/0/image","natW":123,"natH":122,"complete":true,"bytesHint":""},{"src":"/feicui/api/jobs/job-6e7471ff9c464695b9463cdad5122246/stamps/13/1/image","natW":142,"natH":145,"complete":true,"bytesHint":""},{"src":"/feicui/api/jobs/job-6e7471ff9c464695b9463cdad5122246/stamps/13/2/image","natW":92,"natH":70,"complete":true,"bytesHint":""},{"src":"/feicui/api/jobs/job-6e7471ff9c464695b9463cdad5122246/stamps/13/3/image","natW":142,"natH":145,"complete":true,"bytesHint":""},{"src":"/feicui/api/jobs/job-6e7471ff9c464695b9463cdad5122246/stamps/13/4/image","natW":125,"natH":126,"complete":true,"bytesHint":""},{"src":"/feicui/api/jobs/job-6e7471ff9c464695b9463cdad5122246/stamps/13/5/image","natW":83,"natH":84,"complete":true,"bytesHint":""},{"src":"/feicui/api/jobs/job-6e7471ff9c464695b9463cdad5122246/stamps/14/0/image","natW":99,"natH":105,"complete":true,"bytesHint":""},{"src":"/feicui/api/jobs/job-6e7471ff9c464695b9463cdad5122246/stamps/14/1/image","natW":76,"natH":111,"complete":true,"bytesHint":""},{"src":"/feicui/api/jobs/job-6e7471ff9c464695b9463cdad5122246/stamps/14/2/image","natW":101,"natH":106,"complete":true,"bytesHint":""},{"src":"/feicui/api/jobs/job-6e7471ff9c464695b9463cdad5122246/stamps/14/3/image","natW":73,"natH":73,"complete":true,"bytesHint":""},{"src":"/feicui/api/jobs/job-6e7471ff9c464695b9463cdad5122246/stamps/14/4/image","natW":140,"natH":136,"complete":true,"bytesHint":""},{"src":"/feicui/api/jobs/job-6e7471ff9c464695b9463cdad5122246/stamps/14/5/image","natW":132,"natH":139,"complete":true,"bytesHint":""},{"src":"/feicui/api/jobs/job-6e7471ff9c464695b9463cdad5122246/stamps/14/6/image","natW":321,"natH":261,"complete":true,"bytesHint":""},{"src":"/feicui/api/jobs/job-6e7471ff9c464695b9463cdad5122246/stamps/15/0/image","natW":158,"natH":158,"complete":true,"bytesHint":""},{"src":"/feicui/api/jobs/job-6e7471ff9c464695b9463cdad5122246/stamps/15/1/image","natW":196,"natH":199,"complete":true,"bytesHint":""},{"src":"/feicui/api/jobs/job-6e7471ff9c464695b9463cdad5122246/stamps/15/2/image","natW":159,"natH":211,"complete":true,"bytesHint":""},{"src":"/feicui/api/jobs/job-6e7471ff9c464695b9463cdad5122246/stamps/15/3/image","natW":98,"natH":137,"complete":true,"bytesHint":""},{"src":"/feicui/api/jobs/job-6e7471ff9c464695b9463cdad5122246/stamps/15/4/image","natW":55,"natH":85,"complete":true,"bytesHint":""},{"src":"/feicui/api/jobs/job-6e7471ff9c464695b9463cdad5122246/stamps/15/5/image","natW":149,"natH":203,"complete":true,"bytesHint":""},{"src":"/feicui/api/jobs/job-6e7471ff9c464695b9463cdad5122246/stamps/15/6/image","natW":126,"natH":165,"complete":true,"bytesHint":""}],"renderedOk":20,"hasUnavailableText":true,"unavailableSnippets":["裁图不可用」+ 原因码，**不用占位图 / 示例图冒充**。"],"okSnippets":["真实裁图 · image/png · output/pairs/p13_0/stamp.png","真实裁图 · image/png · output/pairs/p13_1/stamp.png","真实裁图 · image/png · output/pairs/p13_2/stamp.png","真实裁图 · image/png · output/pairs/p13_3/stamp.png","真实裁图 · image/png · output/pairs/p13_4/stamp.png","真实裁图 · image/png · output/pairs/p13_5/stamp.png"],"contractNoteShown":true,"e6TemplateShown":true}
+=== CONSOLE (2) ===
+{"type": "debug", "args": ["[vite] connecting..."]}
+{"type": "debug", "args": ["[vite] connected."]}
+=== NETWORK FAILED (0) ===
+=== HTTP >=400 (1) ===
+{"status": 404, "url": "http://localhost:5164/favicon.ico"}
+
+=== 判定（Kong 收尾 2026-09-20）===
+rows（E3 items 行）         = 20
+e6Buttons（「取裁图」按钮）  = 20
+imgCount（img.stampimg）    = 20
+renderedOk（naturalWidth>0）= 20   ⇒ **20/20 行真实渲染出裁图**（不再是「裁图不可用」）
+img.src 形态                = /feicui/api/jobs/{job_id}/stamps/{page}/{idx}/image（**3 段**，与 E6 正式契约一致）
+逐图 naturalWidth×Height    = 123x122,142x145,92x70,142x145,125x126,83x84,99x105,76x111,101x106,73x73,
+                              140x136,132x139,321x261,158x158,196x199,159x211,98x137,55x85,149x203,126x165
+真图行文案样本              = 「真实裁图 · image/png · output/pairs/p13_0/stamp.png」（x-feicui-img-path 已还原）
+CONSOLE 异常                = 0（仅 2 条 vite debug）
+NETWORK FAILED              = 0
+HTTP >=400                  = 1（http://localhost:5164/favicon.ico → 404，与 feicui 无关）
+关于 "裁图不可用" 字样      = 仅 1 处，出现在**取图契约说明段**（"取图失败一律如实显示「裁图不可用」+ 原因码"），
+                              **不是**任何行的取图状态 ⇒ 无一行落入 unavailable 分支。
+
+结论：E6 在**真实浏览器渲染层**可用 —— 3 段正式路径 → 200 影像字节 → <img> 解码成功（naturalWidth>0）。

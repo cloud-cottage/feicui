@@ -1,0 +1,18 @@
+db           = /private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui_1bii_if1g4zzx/copy_reg.db
+prod_db      = False
+applied      = 0
+skipped      = 2
+journal_mode = wal
+schema_sha256= d35d052b6aee2a195c6879009c2116b87578a357bbeed829176410ccffd608be
+tables       = export_batches,export_records,images,job_pages,jobs,schema_migrations,seals,sqlite_sequence,stamps
+2026-09-20 13:02:17,371 INFO feicui.pool 池启动：workers=2 db=/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui_1bii_if1g4zzx/copy_reg.db faces=/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui_1bii_if1g4zzx/faces_reg doc_preprocess=True cpu_threads=2 on_conflict=skip worker_python=/Users/kevin/bistro/shu/feicui/venv/bin/python manager_python=/Users/kevin/bistro/shu/feicui/server/.venv/bin/python
+2026-09-20 13:02:17,371 INFO feicui.pool 🔒 单写者锁：/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui_1bii_if1g4zzx/pool_reg.state.lock
+2026-09-20 13:02:17,373 INFO feicui.pool worker#0 已启动 pid=4254（第 1 次）
+2026-09-20 13:02:17,375 INFO feicui.pool worker#1 已启动 pid=4255（第 1 次）
+2026-09-20 13:02:21,658 INFO feicui.pool worker#0 ready pid=4254 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui_1bii_if1g4zzx/faces_reg
+2026-09-20 13:02:21,658 INFO feicui.pool worker#1 ready pid=4255 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui_1bii_if1g4zzx/faces_reg
+2026-09-20 13:02:21,662 INFO feicui.pool 认领 job job-8efa4ad883d24a3e8fae9cacba220086：pdf=/Users/kevin/bistro/shu/feicui/tmp.pdf book_key=TMP 模板别名=黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf 页区间=[13,14] chunk_size=2 残留 RUNNING 页退回 PENDING=0（断点续跑入口）
+2026-09-20 13:02:21,664 INFO feicui.pool 派 chunk c0（页 [13, 14]）→ worker#0 task=job-8efa4ad883d24a3e8fae9cacba220086#c0 [并发在飞=1]
+2026-09-20 13:02:28,770 INFO feicui.pool 提交 chunk c0（页 [13, 14]）：inserted=1 updated=0 skipped=12 failed=[] | 累计 页=2 chunk=1
+2026-09-20 13:02:28,775 INFO feicui.pool job job-8efa4ad883d24a3e8fae9cacba220086 收尾 ⇒ DONE（total=2 done=2 failed=0）
+2026-09-20 13:02:28,776 INFO feicui.pool 池退出：{"chunks_committed": 1, "pages_done": 2, "pages_failed": 0, "detected": 26, "inserted": 1, "updated": 0, "skipped": 12, "ocr_empty": 2, "requeued_pages": 0, "imgs_written": 13, "imgs_reused": 0, "worker_deaths": 0}

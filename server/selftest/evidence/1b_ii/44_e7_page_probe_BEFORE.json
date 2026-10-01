@@ -1,0 +1,227 @@
+{
+ "probe": "E7 page 参数翻页探针",
+ "verified_at": "2026-09-20T12:58:29+0800",
+ "api_version": "1b-ii",
+ "port": 5341,
+ "db": "临时副本库（backup API 一致快照，prod 只读）",
+ "prod_db_sha256_of_stamps_fingerprint_B": "d7abe995bff62761c27052dfc2bdf7bb",
+ "n_jobs": 5,
+ "limit": 1,
+ "created_at_unified": "2026-09-20T00:00:00+08:00",
+ "page_path": [
+  {
+   "request": "/api/jobs?limit=1&page=1",
+   "code": 200,
+   "page": 1,
+   "items": 1,
+   "has_more": true,
+   "next_cursor": "WyIyMDI2LTA5LTIwVDAwOjAwOjAwKzA4OjAwIiwiam9iLTI4N2RmMzhkMTgxNjRlY2ViZmRiOGVlMGZkYWJjZWVhIl0",
+   "total": 5,
+   "ids": [
+    "job-287df38d18164ecebfdb8ee0fdabceea"
+   ],
+   "envelope_keys": [
+    "has_more",
+    "items",
+    "limit",
+    "next_cursor",
+    "page",
+    "total"
+   ],
+   "has_more_consistent": true
+  },
+  {
+   "request": "/api/jobs?limit=1&page=2",
+   "code": 200,
+   "page": 1,
+   "items": 1,
+   "has_more": true,
+   "next_cursor": "WyIyMDI2LTA5LTIwVDAwOjAwOjAwKzA4OjAwIiwiam9iLTI4N2RmMzhkMTgxNjRlY2ViZmRiOGVlMGZkYWJjZWVhIl0",
+   "total": 5,
+   "ids": [
+    "job-287df38d18164ecebfdb8ee0fdabceea"
+   ],
+   "envelope_keys": [
+    "has_more",
+    "items",
+    "limit",
+    "next_cursor",
+    "page",
+    "total"
+   ],
+   "has_more_consistent": true
+  },
+  {
+   "request": "/api/jobs?limit=1&page=3",
+   "code": 200,
+   "page": 1,
+   "items": 1,
+   "has_more": true,
+   "next_cursor": "WyIyMDI2LTA5LTIwVDAwOjAwOjAwKzA4OjAwIiwiam9iLTI4N2RmMzhkMTgxNjRlY2ViZmRiOGVlMGZkYWJjZWVhIl0",
+   "total": 5,
+   "ids": [
+    "job-287df38d18164ecebfdb8ee0fdabceea"
+   ],
+   "envelope_keys": [
+    "has_more",
+    "items",
+    "limit",
+    "next_cursor",
+    "page",
+    "total"
+   ],
+   "has_more_consistent": true
+  },
+  {
+   "request": "/api/jobs?limit=1&page=4",
+   "code": 200,
+   "page": 1,
+   "items": 1,
+   "has_more": true,
+   "next_cursor": "WyIyMDI2LTA5LTIwVDAwOjAwOjAwKzA4OjAwIiwiam9iLTI4N2RmMzhkMTgxNjRlY2ViZmRiOGVlMGZkYWJjZWVhIl0",
+   "total": 5,
+   "ids": [
+    "job-287df38d18164ecebfdb8ee0fdabceea"
+   ],
+   "envelope_keys": [
+    "has_more",
+    "items",
+    "limit",
+    "next_cursor",
+    "page",
+    "total"
+   ],
+   "has_more_consistent": true
+  },
+  {
+   "request": "/api/jobs?limit=1&page=5",
+   "code": 200,
+   "page": 1,
+   "items": 1,
+   "has_more": true,
+   "next_cursor": "WyIyMDI2LTA5LTIwVDAwOjAwOjAwKzA4OjAwIiwiam9iLTI4N2RmMzhkMTgxNjRlY2ViZmRiOGVlMGZkYWJjZWVhIl0",
+   "total": 5,
+   "ids": [
+    "job-287df38d18164ecebfdb8ee0fdabceea"
+   ],
+   "envelope_keys": [
+    "has_more",
+    "items",
+    "limit",
+    "next_cursor",
+    "page",
+    "total"
+   ],
+   "has_more_consistent": true
+  },
+  {
+   "request": "/api/jobs?limit=1&page=6",
+   "code": 200,
+   "page": 1,
+   "items": 1,
+   "has_more": true,
+   "next_cursor": "WyIyMDI2LTA5LTIwVDAwOjAwOjAwKzA4OjAwIiwiam9iLTI4N2RmMzhkMTgxNjRlY2ViZmRiOGVlMGZkYWJjZWVhIl0",
+   "total": 5,
+   "ids": [
+    "job-287df38d18164ecebfdb8ee0fdabceea"
+   ],
+   "envelope_keys": [
+    "has_more",
+    "items",
+    "limit",
+    "next_cursor",
+    "page",
+    "total"
+   ],
+   "has_more_consistent": true
+  },
+  {
+   "request": "/api/jobs?limit=1&page=7",
+   "code": 200,
+   "page": 1,
+   "items": 1,
+   "has_more": true,
+   "next_cursor": "WyIyMDI2LTA5LTIwVDAwOjAwOjAwKzA4OjAwIiwiam9iLTI4N2RmMzhkMTgxNjRlY2ViZmRiOGVlMGZkYWJjZWVhIl0",
+   "total": 5,
+   "ids": [
+    "job-287df38d18164ecebfdb8ee0fdabceea"
+   ],
+   "envelope_keys": [
+    "has_more",
+    "items",
+    "limit",
+    "next_cursor",
+    "page",
+    "total"
+   ],
+   "has_more_consistent": true
+  }
+ ],
+ "cursor_path": [
+  {
+   "request": "/api/jobs?limit=1",
+   "code": 200,
+   "page": 1,
+   "items": 1,
+   "has_more": true,
+   "next_cursor": "WyIyMDI2LTA5LTIwVDAwOjAwOjAwKzA4OjAwIiwiam9iLTI4N2RmMzhkMTgxNjRlY2ViZmRiOGVlMGZkYWJjZWVhIl0",
+   "has_more_consistent": true,
+   "ids": [
+    "job-287df38d18164ecebfdb8ee0fdabceea"
+   ]
+  },
+  {
+   "request": "/api/jobs?limit=1&cursor=WyIyMDI2LTA5LTIwVDAwOjAwOjAwKzA4OjAwIiwiam9iLTI4N2RmMzhkMTgxNjRlY2ViZmRiOGVlMGZkYWJjZWVhIl0",
+   "code": 200,
+   "page": 2,
+   "items": 1,
+   "has_more": true,
+   "next_cursor": "WyIyMDI2LTA5LTIwVDAwOjAwOjAwKzA4OjAwIiwiam9iLWE0NGU4NzA2NDFjYTQ4Y2E4N2IwZjVhNTc5ZjNjZmI3Il0",
+   "has_more_consistent": true,
+   "ids": [
+    "job-a44e870641ca48ca87b0f5a579f3cfb7"
+   ]
+  },
+  {
+   "request": "/api/jobs?limit=1&cursor=WyIyMDI2LTA5LTIwVDAwOjAwOjAwKzA4OjAwIiwiam9iLWE0NGU4NzA2NDFjYTQ4Y2E4N2IwZjVhNTc5ZjNjZmI3Il0",
+   "code": 200,
+   "page": 4,
+   "items": 0,
+   "has_more": true,
+   "next_cursor": null,
+   "has_more_consistent": false,
+   "ids": []
+  }
+ ],
+ "verdict": {
+  "page_path_ids": [
+   "job-287df38d18164ecebfdb8ee0fdabceea",
+   "job-287df38d18164ecebfdb8ee0fdabceea",
+   "job-287df38d18164ecebfdb8ee0fdabceea",
+   "job-287df38d18164ecebfdb8ee0fdabceea",
+   "job-287df38d18164ecebfdb8ee0fdabceea",
+   "job-287df38d18164ecebfdb8ee0fdabceea",
+   "job-287df38d18164ecebfdb8ee0fdabceea"
+  ],
+  "cursor_path_ids": [
+   "job-287df38d18164ecebfdb8ee0fdabceea",
+   "job-a44e870641ca48ca87b0f5a579f3cfb7"
+  ],
+  "want_ids_sql": [
+   "job-287df38d18164ecebfdb8ee0fdabceea",
+   "job-6d3c9c1260c74329b2dd8f7b85e692bb",
+   "job-a44e870641ca48ca87b0f5a579f3cfb7",
+   "job-e29bc689998d4af4b2ba5b25cf3d0735",
+   "job-f429b064407e4f929e418c3ce39aa06c"
+  ],
+  "page_path_equals_cursor_path": false,
+  "page_path_no_overlap_no_miss": false,
+  "cursor_path_no_overlap_no_miss": false,
+  "page_path_no_duplicates": false,
+  "cursor_path_no_duplicates": true,
+  "cursor_guard_broken": "has_more=true 但 next_cursor=null（客户端会死循环）；两页原始报文：{\"request\": \"/api/jobs?limit=1&cursor=WyIyMDI2LTA5LTIwVDAwOjAwOjAwKzA4OjAwIiwiam9iLWE0NGU4NzA2NDFjYTQ4Y2E4N2IwZjVhNTc5ZjNjZmI3Il0\", \"code\": 200, \"page\": 4, \"items\": 0, \"has_more\": true, \"next_cursor\": null, \"has_more_consistent\": false, \"ids\": []}",
+  "page_loop_cap_hit": null,
+  "beyond_last_page": [],
+  "beyond_last_page_ok": false
+ }
+}

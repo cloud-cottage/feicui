@@ -1,0 +1,18 @@
+db           = /Users/kevin/bistro/shu/feicui/var/feicui_work.db
+prod_db      = False
+applied      = 0
+skipped      = 2
+journal_mode = wal
+schema_sha256= d35d052b6aee2a195c6879009c2116b87578a357bbeed829176410ccffd608be
+tables       = export_batches,export_records,images,job_pages,jobs,schema_migrations,seals,sqlite_sequence,stamps
+2026-09-20 13:16:39,906 INFO feicui.pool 池启动：workers=4 db=/Users/kevin/bistro/shu/feicui/var/feicui_work.db faces=/Users/kevin/bistro/shu/feicui/output/faces doc_preprocess=True cpu_threads=2 on_conflict=skip worker_python=/Users/kevin/bistro/shu/feicui/venv/bin/python manager_python=/Users/kevin/bistro/shu/feicui/server/.venv/bin/python
+2026-09-20 13:16:39,906 INFO feicui.pool 🔒 单写者锁：/Users/kevin/bistro/shu/feicui/server/.run/pool.state.lock
+2026-09-20 13:16:39,910 INFO feicui.pool worker#0 已启动 pid=37080（第 1 次）
+2026-09-20 13:16:39,912 INFO feicui.pool worker#1 已启动 pid=37081（第 1 次）
+2026-09-20 13:16:39,913 INFO feicui.pool worker#2 已启动 pid=37082（第 1 次）
+2026-09-20 13:16:39,915 INFO feicui.pool worker#3 已启动 pid=37083（第 1 次）
+2026-09-20 13:16:47,424 INFO feicui.pool worker#2 ready pid=37082 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/output/faces
+2026-09-20 13:16:47,425 INFO feicui.pool worker#3 ready pid=37083 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/output/faces
+2026-09-20 13:16:47,425 INFO feicui.pool worker#1 ready pid=37081 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/output/faces
+2026-09-20 13:16:47,425 INFO feicui.pool worker#0 ready pid=37080 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/output/faces
+2026-09-20 13:16:47,455 INFO feicui.pool 池退出：{"chunks_committed": 0, "pages_done": 0, "pages_failed": 0, "detected": 0, "inserted": 0, "updated": 0, "skipped": 0, "ocr_empty": 0, "requeued_pages": 0, "imgs_written": 0, "imgs_reused": 0, "worker_deaths": 0}

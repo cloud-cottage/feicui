@@ -1,0 +1,48 @@
+{
+  "schema": "yinsuo.feicui.book_codes.v1",
+  "note": "书名 → 书简码 本地映射表。按规范 §9.3 #9：「书简码由平台在首次汇入时签发并回填 feicui」。issued=false 时，seal_code 一律留 null（导出记录里给出 seal_code_candidate 仅作占位线索 + seal_code_state=PENDING_ISSUE，不得当正式码使用）。平台签发后用 `python export.py issue-code --book <pdf_name> --short-code <CODE>` 登记，issued 置 true 后重跑导出即可出正式 seal_code。",
+  "books": {
+    "古玺汇编 文物出版社 罗福颐  ok.pdf": {
+      "key": "GXHB",
+      "short_code": "GXHB",
+      "issued": false,
+      "issued_at": null,
+      "issued_by": null,
+      "short_code_source": "spec_example(规范 §9.3 #9 示例 GXHB-p0013-00，属示例而非签发)",
+      "pdf_path": "~/Downloads/古玺汇编 文物出版社 罗福颐  ok.pdf",
+      "notes": "本地候选简码来自规范示例，**未获平台签发**；seal_code_state=PENDING_ISSUE。"
+    },
+    "秦汉印典 上海书画 金怀英  1997 ok.pdf": {
+      "key": "QHYD",
+      "short_code": "QHYD",
+      "issued": false,
+      "issued_at": null,
+      "issued_by": null,
+      "short_code_source": "local_proposal(规范未给该书示例，QHYD 仅为本地提议，非签发)",
+      "pdf_path": "~/Downloads/秦汉印典 上海书画 金怀英  1997 ok.pdf",
+      "notes": "本地提议简码，**未获平台签发**；seal_code_state=PENDING_ISSUE。"
+    },
+    "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf": {
+      "key": "HMF",
+      "short_code": null,
+      "issued": false,
+      "issued_at": null,
+      "issued_by": null,
+      "short_code_source": null,
+      "pdf_path": "~/Downloads/黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf",
+      "notes": "已有标定模板但 stamps 表中暂无该书记录；留条目供标定/后续导出。"
+    },
+    "tmp.pdf": {
+      "key": "TMP",
+      "short_code": null,
+      "issued": false,
+      "issued_at": null,
+      "issued_by": null,
+      "short_code_source": null,
+      "pdf_path": "tmp.pdf",
+      "template_alias": "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf",
+      "identity_alias_evidence": "tmp.pdf 是上传通道落盘的临时名（processor/app 以 tmp.pdf 保存上传件）。实测：tmp.pdf 共 132 页、每页 521×734pt，与「黄牧甫印谱_(西泠印社)_…」PDF 完全一致；且 tmp.pdf 的 stamps 记录页码 13–16 落在该模板 page_range[13,19] 内 ⇒ 高置信推定 tmp.pdf 即该书上传件。",
+      "notes": "书本身份**未经人工确认**，导出时不自动采信别名（sourceBook 留空 ⇒ DRAFT）；人工确认后填 short_code/issued 并重跑即可。"
+    }
+  }
+}

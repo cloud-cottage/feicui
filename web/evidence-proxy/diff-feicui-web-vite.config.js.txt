@@ -1,0 +1,29 @@
+--- feicui/web/evidence-proxy/_pristine/feicui-web-vite.config.js.before	2026-09-20 11:59:49
++++ feicui/web/vite.config.js	2026-09-20 12:00:15
+@@ -69,7 +69,15 @@
+   }
+ }
+ 
++// ─────────────────────────────────────────────────────────────────────────────
++// URL base（阶段 1c）：feicui 前端被 shu/web（5164）以 `/feicui` 反代直达，
++// 故以 `/feicui/` 为 base ⇒ 生成的 asset 绝对路径自带前缀，无需在 5164 侧 rewrite。
++// dev 与 preview 同 base（预览与直连行为一致）。
++// ─────────────────────────────────────────────────────────────────────────────
++const BASE = '/feicui/'
++
+ export default defineConfig({
++  base: BASE,
+   plugins: [vue(), backendProbe()],
+   resolve: {
+     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
+@@ -83,6 +91,10 @@
+     host: '127.0.0.1',
+     port: PORT,
+     strictPort: true,
++    // HMR（阶段 1c）：被 5164 反代时不依赖其 ws 代理，客户端直连 5195 的 ws。
++    // 5164 侧未配 ws 代理，若沿用默认 clientPort 会出现「页面通、热更连不上」的静默降级，
++    // 故显式钉死 5195（＝本服务端口）。
++    hmr: { clientPort: PORT },
+     proxy: {
+       '/api': {
+         target: API_TARGET,

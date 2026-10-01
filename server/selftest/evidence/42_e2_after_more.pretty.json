@@ -1,0 +1,22 @@
+{
+    "job_id": "job-1a992fadb6b549be96424891605b25d2",
+    "state": "FAILED_PARTIAL",
+    "total_pages": 7,
+    "done_pages": 3,
+    "failed_pages": [
+        15
+    ],
+    "cursor": {
+        "chunk_lo": 0,
+        "chunk_hi": 0
+    },
+    "counters": {
+        "detected": 28,
+        "inserted": 25,
+        "updated": 0,
+        "skipped": 0,
+        "ocr_empty": 19
+    },
+    "started_at": "2026-09-20T11:59:00+08:00",
+    "updated_at": "2026-09-20T11:56:05+08:00"
+}

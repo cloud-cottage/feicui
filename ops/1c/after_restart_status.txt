@@ -1,0 +1,18 @@
+=== AFTER-RESTART snapshot 2026-09-20 13:09:16 ===
+--- /api/self ---
+{"ok":true,"panel":{"port":5555,"portOpen":true,"pid":21499,"nodeVersion":"v20.20.2","uptimeMs":20160,"startedAt":"2026-09-20T05:08:56.645Z","pm2":{"name":"bistro-ctrl","id":0,"status":"online","managed":true,"source":"pm2-pidfile"},"code":{"path":"/Users/kevin/bistro/ctrl/index.js","size":51288,"mtime":"2026-09-20T05:08:34.407Z","mtimeText":"2026/9/20 13:08:34"},"pids":{"path":"/Users/kevin/bistro/ctrl/logs/pids.json","count":12,"sids":["jiazu-api","jiazu","shu","feicui-api","feicui-web","jinli-api","jinli","cat","aranya-api","liwu-proxy","liwu-web","liwu-app"],"mtimeText":"2026/9/20 13:09:05"}}}
+--- /api/status 表（sid | state | running | port | pid | portOpen）---
+条目数=12  running=12
+jiazu-api    | running   | running=True  | 3100 | pid=21872  | portOpen=True | pidInLine=True
+jiazu        | running   | running=True  | 5199 | pid=21873  | portOpen=True | pidInLine=True
+shu          | running   | running=True  | 5164 | pid=21874  | portOpen=True | pidInLine=True
+feicui-api   | running   | running=True  | 5196 | pid=21875  | portOpen=True | pidInLine=True
+feicui-web   | running   | running=True  | 5195 | pid=21876  | portOpen=True | pidInLine=True
+jinli-api    | running   | running=True  | 5778 | pid=21877  | portOpen=True | pidInLine=True
+jinli        | running   | running=True  | 5777 | pid=21878  | portOpen=True | pidInLine=True
+cat          | running   | running=True  | 5701 | pid=21879  | portOpen=True | pidInLine=True
+aranya-api   | running   | running=True  | 5181 | pid=21880  | portOpen=True | pidInLine=True
+liwu-proxy   | running   | running=True  | 3020 | pid=21881  | portOpen=True | pidInLine=True
+liwu-web     | running   | running=True  | 5175 | pid=21882  | portOpen=True | pidInLine=True
+liwu-app     | running   | running=True  | 5176 | pid=21883  | portOpen=True | pidInLine=True
+非running: []

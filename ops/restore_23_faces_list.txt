@@ -1,0 +1,29 @@
+# 23 个印面影像复原：源 → 目标 逐条映射与 md5
+# 批次（源，最新）: exports/fb_20260920_XGXHB_04/images/
+# 映射规则: p{page:04d}_{idx:02d}_FACE.webp  ->  <stamps.img_path 逐字>
+# DB 只读取源，未写库；exports 只读；output 仅新建 DB 期望目录
+# 生成时间: 2026-09-20T14:04:30
+# 列: stamp_id | page | idx | source(rel) | target(=img_path) | size | md5 | webp
+43	24	0	exports/fb_20260920_XGXHB_04/images/p0024_00_FACE.webp	output/古玺汇编 文物出版社 罗福颐  ok/p24_0.webp	82496	118700b82ac965054e3b035a5d8ccbcd	RIFF/WEBP
+44	24	1	exports/fb_20260920_XGXHB_04/images/p0024_01_FACE.webp	output/古玺汇编 文物出版社 罗福颐  ok/p24_1.webp	69612	59902df8c05b5e95d72ab95a9e3484a6	RIFF/WEBP
+45	24	2	exports/fb_20260920_XGXHB_04/images/p0024_02_FACE.webp	output/古玺汇编 文物出版社 罗福颐  ok/p24_2.webp	45292	95c99fdcdb5fd974285a8abe6e69d4d9	RIFF/WEBP
+46	24	3	exports/fb_20260920_XGXHB_04/images/p0024_03_FACE.webp	output/古玺汇编 文物出版社 罗福颐  ok/p24_3.webp	115794	a8d001e7fb400611f9975b7fcfb6f493	RIFF/WEBP
+47	24	4	exports/fb_20260920_XGXHB_04/images/p0024_04_FACE.webp	output/古玺汇编 文物出版社 罗福颐  ok/p24_4.webp	69474	611a110bb17b977922bc010efe5d78f2	RIFF/WEBP
+48	24	5	exports/fb_20260920_XGXHB_04/images/p0024_05_FACE.webp	output/古玺汇编 文物出版社 罗福颐  ok/p24_5.webp	65980	3ee36a644771be0cc9b4c237ccadb6dc	RIFF/WEBP
+49	25	0	exports/fb_20260920_XGXHB_04/images/p0025_00_FACE.webp	output/古玺汇编 文物出版社 罗福颐  ok/p25_0.webp	59292	9fbc5fa010c47fec4c75d1db2a604b52	RIFF/WEBP
+50	25	1	exports/fb_20260920_XGXHB_04/images/p0025_01_FACE.webp	output/古玺汇编 文物出版社 罗福颐  ok/p25_1.webp	72138	3bf04a0ef2d4e45075a66d586dcfd97c	RIFF/WEBP
+51	25	2	exports/fb_20260920_XGXHB_04/images/p0025_02_FACE.webp	output/古玺汇编 文物出版社 罗福颐  ok/p25_2.webp	57628	8a838e2a36e4709a77027502b8f3c521	RIFF/WEBP
+52	25	3	exports/fb_20260920_XGXHB_04/images/p0025_03_FACE.webp	output/古玺汇编 文物出版社 罗福颐  ok/p25_3.webp	87826	2c49de73e67d03013587bb7a869088ec	RIFF/WEBP
+53	25	4	exports/fb_20260920_XGXHB_04/images/p0025_04_FACE.webp	output/古玺汇编 文物出版社 罗福颐  ok/p25_4.webp	66868	58c83c04429b19ae01db23b003909b93	RIFF/WEBP
+54	25	5	exports/fb_20260920_XGXHB_04/images/p0025_05_FACE.webp	output/古玺汇编 文物出版社 罗福颐  ok/p25_5.webp	39402	d7fbde55b173e95d5412c116c3de01c3	RIFF/WEBP
+55	25	6	exports/fb_20260920_XGXHB_04/images/p0025_06_FACE.webp	output/古玺汇编 文物出版社 罗福颐  ok/p25_6.webp	39216	fa837f07c6bbda6869b2f65af811dd15	RIFF/WEBP
+56	26	0	exports/fb_20260920_XGXHB_04/images/p0026_00_FACE.webp	output/古玺汇编 文物出版社 罗福颐  ok/p26_0.webp	73670	0bc8994ea395a9a028c381407e5f686d	RIFF/WEBP
+57	26	1	exports/fb_20260920_XGXHB_04/images/p0026_01_FACE.webp	output/古玺汇编 文物出版社 罗福颐  ok/p26_1.webp	81860	fc812b8f5cf83d4e4f347cc6647313a7	RIFF/WEBP
+58	26	2	exports/fb_20260920_XGXHB_04/images/p0026_02_FACE.webp	output/古玺汇编 文物出版社 罗福颐  ok/p26_2.webp	67954	3f153aec3f5e66764e70ddd67a3970ef	RIFF/WEBP
+59	26	3	exports/fb_20260920_XGXHB_04/images/p0026_03_FACE.webp	output/古玺汇编 文物出版社 罗福颐  ok/p26_3.webp	79610	15103c0b25a19a7c6addc186f00c4757	RIFF/WEBP
+60	26	4	exports/fb_20260920_XGXHB_04/images/p0026_04_FACE.webp	output/古玺汇编 文物出版社 罗福颐  ok/p26_4.webp	64728	d241335cbb17291d3eb7e64091692b90	RIFF/WEBP
+61	26	5	exports/fb_20260920_XGXHB_04/images/p0026_05_FACE.webp	output/古玺汇编 文物出版社 罗福颐  ok/p26_5.webp	60952	bc126b4f9f282d192419b7fab4212273	RIFF/WEBP
+62	26	6	exports/fb_20260920_XGXHB_04/images/p0026_06_FACE.webp	output/古玺汇编 文物出版社 罗福颐  ok/p26_6.webp	64568	9ec090eeee33594b277865f329525de8	RIFF/WEBP
+63	26	7	exports/fb_20260920_XGXHB_04/images/p0026_07_FACE.webp	output/古玺汇编 文物出版社 罗福颐  ok/p26_7.webp	68084	01ced5fbe46c963ab0472024cb617ecb	RIFF/WEBP
+64	26	8	exports/fb_20260920_XGXHB_04/images/p0026_08_FACE.webp	output/古玺汇编 文物出版社 罗福颐  ok/p26_8.webp	83878	b45230a590b263d8721e5a719fa24c3c	RIFF/WEBP
+65	26	9	exports/fb_20260920_XGXHB_04/images/p0026_09_FACE.webp	output/古玺汇编 文物出版社 罗福颐  ok/p26_9.webp	67894	c237eebce3fb43e2cf4c4d49f6dcf0e8	RIFF/WEBP

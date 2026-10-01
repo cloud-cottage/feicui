@@ -1,0 +1,9 @@
+{
+ "killed_by_exact_pid": [],
+ "ports_released": {
+  "5321": true,
+  "5323": true
+ },
+ "scratch_removed": true,
+ "note": "⑤ finally 清理：按精确 PID 停自己的接口层 / 删临时库 / 断言端口已释放；无 pkill / killall"
+}

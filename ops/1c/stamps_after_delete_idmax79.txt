@@ -1,0 +1,17 @@
+### 阶段 1c-激活 · 删除遗孤 job 后指纹复核（id <= 79）
+### 采集 2026-09-20 14:44:34 CST
+
+db       = /Users/kevin/bistro/shu/feicui/yinpu.db
+filter   = id <= 79
+columns  = 10 -> id,pdf_name,page,idx,text,img_path,x1,y1,x2,y2
+rows     = 79
+  tmp.pdf  ->  30
+  古玺汇编 文物出版社 罗福颐  ok.pdf  ->  23
+  秦汉印典 上海书画 金怀英  1997 ok.pdf  ->  26
+  A_raw_md5 = 8a21e57d5bd909fff282214640457c7f
+  A_raw_sha256 = 76d2547a8b502dec93b75a0ed1666d3fc9f7b40c3025a13617b833a9e3a18961
+  B_canon_md5 = d7abe995bff62761c27052dfc2bdf7bb
+  B_canon_sha256 = 19aa714841b366c15c7d53327d3753bbc008b8ef4b6c0bc978542076d11024ea
+  C_free_md5 = 22bdc0a794382b6e6dab7855aaee456f
+  C_free_sha256 = 96c237c0bc49895e15f31d27d56a459a92c7d3cfc713a874011db940b4848b92
+  total_stamps_rows_in_db = 79

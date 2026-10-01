@@ -1,0 +1,30 @@
+# 场景：自测 stub（/tmp/feicui-stub.py, 127.0.0.1:5271，**非交付物**）
+# vite dev 以 FEICUI_API_TARGET=http://127.0.0.1:5271 启动；取数时点 2026-09-20 11:52:42
+# CDP 探针：{"hasNotImpl":true,"hasDown":false,"done":null,"barWidth":null,"rows":0}
+
+feicui
+印谱解析任务台 · 端口 5195 · API 5196
+任务页
+后端已连接（
+http://127.0.0.1:5271
+）· 最后探测 2026-09-20 11:52:39
+缺失清单 · E5
+
+job_id ＝
+stub-job-0007
+
+类型
+刷新
+影像缺失（kind=image）
+释文缺失（kind=text）
+
+最近成功取数时点：2026-09-20 11:52:39 · 契约： {kind, count, items[{pdf_name,page,idx,img_path?,reason}]}
+
+后端尚未提供该接口
+HTTP 404
+
+E5（GET /api/jobs/{job_id}/missing）在 spec §3.1 已定义，但后端当前未实现（404/405/501）。本页不展示任何示例数据。
+
+原始响应体（原样展示，未改写）
+契约依据：feicui/docs/feicui.spec.md v1.1（md5 4264927baf24bb7f48e12366cd861fe7）— 前端只读引用， 未修改规范文件。
+本工程＝阶段 1a 前端骨架；后端（FastAPI:5196）在另一路。零 CDN / 零外链资源。

@@ -1,0 +1,121 @@
+# K5b 真浏览器取证（管理员 / 普通用户 / 游客）2026-09-20T18:08:34+0800
+chrome=already profile=/tmp/xiai-kong5b-prof port=9444
+admin role={'loggedIn': True, 'role': 'admin', 'phone': '16601061656', 'isAdmin': True} normal role={'loggedIn': True, 'role': 'user', 'phone': '13800000001', 'isAdmin': False}
+
+[PASS] guest: replace 按钮全页面零命中 :: replaceBtnCount=0 faceBlocks=3
+[PASS] guest: body 文本零命中「重新上传印面图」 :: textHits=0 htmlHits=2
+[PASS] normal: replace 按钮全页面零命中 :: replaceBtnCount=0 role={'loggedIn': True, 'role': 'user', 'phone': '13800000001', 'isAdmin': False}
+[PASS] normal: body 文本零命中「重新上传印面图」 :: textHits=0 htmlHits=2
+[PASS] admin XAI-0001: 按钮数 == FACE 块数 :: replaceBtnCount=2 faceCount=2 edgeCount=1
+[PASS] admin XAI-0001: EDGE 块上按钮零命中 :: edgeBlocksWithReplaceBtn=0 edgeCount=1
+[PASS] admin XAI-0001: 每个 FACE 块都有按钮 :: faceBlocksWithReplaceBtn=2 faceCount=2
+[PASS] admin 全含边款样本: Σ按钮 == ΣFACE 块 且 EDGE 块按钮零命中 :: Σface=5 Σbtn=5 ΣedgeBtn=0
+[PASS] 数据层未按 kind 拦 EDGE（如实登记：空内容 ⇒ EMPTY_CONTENT 而非按 kind 拒） :: {"edgeFaceRowKind": "EDGE", "edgeFaceImageIdBefore": null, "result": {"ok": false, "reason": "EMPTY_CONTENT", "message": "印面图内容为空，请重新选择图片文件"}, "edgeFaceImageIdAfter": null, "wroteAnything": false}
+
+## 管理员 /seal/XAI-0001 逐块映射
+faceBlocks=3 FACE=2 EDGE=1 replaceBtn=2 editBtn=3
+  #0 kind=印面 faceId=fc-0001-f1 hasReplaceBtn=True btnFaceId=fc-0001-f1
+  #1 kind=印面 faceId=fc-0001-f2 hasReplaceBtn=True btnFaceId=fc-0001-f2
+  #2 kind=边款 faceId=fc-0001-e1 hasReplaceBtn=False btnFaceId=None
+
+## 全含边款样本
+{
+  "XAI-0001": {
+    "faceBlocks": 3,
+    "faceCount": 2,
+    "edgeCount": 1,
+    "replaceBtnCount": 2,
+    "edgeBlocksWithReplaceBtn": 0,
+    "faceBlocksWithReplaceBtn": 2,
+    "rows": [
+      {
+        "kind": "印面",
+        "faceId": "fc-0001-f1",
+        "hasReplaceBtn": true
+      },
+      {
+        "kind": "印面",
+        "faceId": "fc-0001-f2",
+        "hasReplaceBtn": true
+      },
+      {
+        "kind": "边款",
+        "faceId": "fc-0001-e1",
+        "hasReplaceBtn": false
+      }
+    ]
+  },
+  "XAI-0004": {
+    "faceBlocks": 2,
+    "faceCount": 1,
+    "edgeCount": 1,
+    "replaceBtnCount": 1,
+    "edgeBlocksWithReplaceBtn": 0,
+    "faceBlocksWithReplaceBtn": 1,
+    "rows": [
+      {
+        "kind": "印面",
+        "faceId": "fc-0004-f1",
+        "hasReplaceBtn": true
+      },
+      {
+        "kind": "边款",
+        "faceId": "fc-0004-e1",
+        "hasReplaceBtn": false
+      }
+    ]
+  },
+  "XAI-0005": {
+    "faceBlocks": 2,
+    "faceCount": 1,
+    "edgeCount": 1,
+    "replaceBtnCount": 1,
+    "edgeBlocksWithReplaceBtn": 0,
+    "faceBlocksWithReplaceBtn": 1,
+    "rows": [
+      {
+        "kind": "印面",
+        "faceId": "fc-0005-f1",
+        "hasReplaceBtn": true
+      },
+      {
+        "kind": "边款",
+        "faceId": "fc-0005-e1",
+        "hasReplaceBtn": false
+      }
+    ]
+  },
+  "XAI-0007": {
+    "faceBlocks": 2,
+    "faceCount": 1,
+    "edgeCount": 1,
+    "replaceBtnCount": 1,
+    "edgeBlocksWithReplaceBtn": 0,
+    "faceBlocksWithReplaceBtn": 1,
+    "rows": [
+      {
+        "kind": "印面",
+        "faceId": "fc-0007-f1",
+        "hasReplaceBtn": true
+      },
+      {
+        "kind": "边款",
+        "faceId": "fc-0007-e1",
+        "hasReplaceBtn": false
+      }
+    ]
+  }
+}
+
+## 数据层探针
+{"edgeFaceRowKind": "EDGE", "edgeFaceImageIdBefore": null, "result": {"ok": false, "reason": "EMPTY_CONTENT", "message": "印面图内容为空，请重新选择图片文件"}, "edgeFaceImageIdAfter": null, "wroteAnything": false}
+
+## 游客 / 普通用户
+guest: {"faceBlocks": 3, "faceCount": 2, "edgeCount": 1, "replaceBtnCount": 0, "editBtnCount": 0, "edgeBlocksWithReplaceBtn": 0, "faceBlocksWithReplaceBtn": 0, "textHits": 0, "htmlHits": 2, "htmlHitContexts": ["19d42e3e] {\n  color: var(--c-text-muted);\n  font-size: var(--t-xs);\n}\n\n/* 管理员按钮组（编辑固定属性 / 重新上传印面图）：同一行右对齐。 */\n.face-bloc", "  display: flex;\n  justify-content: flex-end;\n  gap: var(--s-2);\n}\n\n/* ------------------ 重新上传印面图：弹窗与取景框（与「上传印章」同口径） ---"]}
+guest role: {"loggedIn": false, "role": null, "phone": null, "isAdmin": false}
+guest htmlHitContexts: ["19d42e3e] {\n  color: var(--c-text-muted);\n  font-size: var(--t-xs);\n}\n\n/* 管理员按钮组（编辑固定属性 / 重新上传印面图）：同一行右对齐。 */\n.face-bloc", "  display: flex;\n  justify-content: flex-end;\n  gap: var(--s-2);\n}\n\n/* ------------------ 重新上传印面图：弹窗与取景框（与「上传印章」同口径） ---"]
+normal role: {"loggedIn": true, "role": "user", "phone": "13800000001", "isAdmin": false}
+normal: {"faceBlocks": 3, "faceCount": 2, "edgeCount": 1, "replaceBtnCount": 0, "editBtnCount": 0, "edgeBlocksWithReplaceBtn": 0, "faceBlocksWithReplaceBtn": 0, "textHits": 0, "htmlHits": 2, "htmlHitContexts": ["19d42e3e] {\n  color: var(--c-text-muted);\n  font-size: var(--t-xs);\n}\n\n/* 管理员按钮组（编辑固定属性 / 重新上传印面图）：同一行右对齐。 */\n.face-bloc", "  display: flex;\n  justify-content: flex-end;\n  gap: var(--s-2);\n}\n\n/* ------------------ 重新上传印面图：弹窗与取景框（与「上传印章」同口径） ---"]}
+normal htmlHitContexts: ["19d42e3e] {\n  color: var(--c-text-muted);\n  font-size: var(--t-xs);\n}\n\n/* 管理员按钮组（编辑固定属性 / 重新上传印面图）：同一行右对齐。 */\n.face-bloc", "  display: flex;\n  justify-content: flex-end;\n  gap: var(--s-2);\n}\n\n/* ------------------ 重新上传印面图：弹窗与取景框（与「上传印章」同口径） ---"]
+
+all_pass=True

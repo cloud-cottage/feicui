@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/Users/kevin/bistro/shu/feicui/server/selftest/verify_1b_ii.py", line 1262, in <module>
+    rc = main()
+         ^^^^^^
+  File "/Users/kevin/bistro/shu/feicui/server/selftest/verify_1b_ii.py", line 1145, in main
+    ckT("7.10 1b-i e2check 逐字段 MATCH", "E2CHECK = MATCH" in rc2.stdout, rc2.stdout.strip().splitlines()[-1:])
+  File "/Users/kevin/bistro/shu/feicui/server/selftest/verify_1b_ii.py", line 191, in ckT
+    say(f"PASS  {name}{('：' + detail) if detail else ''}")
+                        ~~~~~^~~~~~~~
+TypeError: can only concatenate str (not "list") to str

@@ -1,0 +1,2 @@
+2026-09-20 12:28:22,109 INFO feicui.pool 认领 job job-d36d9fbe9e9c4f60a6d7b302cc1064fe：pdf=/Users/kevin/bistro/shu/feicui/tmp.pdf book_key=TMP 模板别名=黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf 页区间=[27,33] chunk_size=2 残留 RUNNING 页退回 PENDING=4（断点续跑入口）
+2026-09-20 12:28:33,333 INFO feicui.pool job job-d36d9fbe9e9c4f60a6d7b302cc1064fe 收尾 ⇒ DONE（total=7 done=7 failed=0）

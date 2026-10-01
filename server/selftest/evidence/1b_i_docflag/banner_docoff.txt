@@ -1,0 +1,4 @@
+  2026-09-20 12:29:40,049 INFO feicui.pool worker#0 ready pid=60695 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=False cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i_docflag/faces/docoff
+  2026-09-20 12:29:40,049 INFO feicui.pool worker#1 ready pid=60696 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=False cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i_docflag/faces/docoff
+  2026-09-20 12:29:42,602 INFO feicui.pool 提交 chunk c0（页 [20, 21]）：inserted=8 updated=0 skipped=0 failed=[] | 累计 页=2 chunk=1
+  2026-09-20 12:29:42,606 INFO feicui.pool job job-c9e1010a41254a5ebad99be6542b7c6d 收尾 ⇒ DONE（total=2 done=2 failed=0）

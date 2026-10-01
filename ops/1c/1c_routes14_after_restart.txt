@@ -1,0 +1,19 @@
+### 阶段 1c-激活 · 重启后 14 条对外路由仍 200（2026-09-20 14:45:05 CST）
+### 扫描面＝yinsuo-web.spec §2.2 的 14 条对外路由（经 5164）
+/                      200
+/pricing               200
+/console               200
+/console/login         200
+/console/register      200
+/console/overview      200
+/console/keys          200
+/console/usage         200
+/console/billing       200
+/docs                  200
+/docs/quickstart       200
+/org                   200
+/demo                  200
+/help                  200
+
+非 200 计数 = 0
+feicui 入口 200 检查 = 200

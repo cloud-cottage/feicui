@@ -1,0 +1,7 @@
+=== EVAL RESULT ===
+{"href":"http://localhost:5164/feicui/jobs/job-b87c4878f9914400b1f86a13613041c2","samples":[{"t":"05:17:37","api":{"state":"DONE","done":7,"total":7,"cursor":{"chunk_lo":null,"chunk_hi":0},"counters":{"detected":29,"inserted":1,"updated":0,"skipped":28,"ocr_empty":2}},"domSnippet":"job-b87c4878f9914400b1f86a13613041c2 立即刷新 轮询间隔 2s · 已完成取数 1 次 S-1（spec §3.2）：进度来自后端库内复算。 本页进度条宽度**只**取自后端 E2 的 done_pages / total_pages；前端**没有**计时器 / 估算 / 插值在推进进度。最近一次成功取数时点 ＝ 2026-09-20 13:17:34（即「数据时点」）。 进度（后端复算值，S-1） state DONE 完成 done_p"}],"stateTextSeen":["完成"],"hrefEnd":"http://localhost:5164/feicui/jobs/job-b87c4878f9914400b1f86a13613041c2"}
+=== CONSOLE (2) ===
+{"type": "debug", "args": ["[vite] connecting..."]}
+{"type": "debug", "args": ["[vite] connected."]}
+=== NETWORK FAILED (0) ===
+=== HTTP >=400 (0) ===

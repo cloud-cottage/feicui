@@ -1,0 +1,34 @@
+{
+  "sample": "/tmp/kong-real.png",
+  "bytes": 187,
+  "head12Hex": "89504e470d0a1a0a0000000d",
+  "product_sniffBytesMime_imagejs": "image/png",
+  "product_sniffMime_assetmeta": "image/png",
+  "probe_magicOf_asis": {
+    "length": 187,
+    "head4": "PNG",
+    "head12": "\u0000\u0000\u0000\r",
+    "isRiff": false,
+    "isWebp": false,
+    "isPng": false,
+    "first12Hex": "89504e470d0a1a0a0000000d"
+  },
+  "probe_magicOf_if_3byte_tag": {
+    "isPng": true
+  },
+  "image_limits": {
+    "maxInputBytes": 1048576,
+    "maxSide": 2048,
+    "quality": 0.85
+  },
+  "probe_tag_of_1_explained": {
+    "bytes_at_1_2_3_4": [
+      80,
+      78,
+      71,
+      13
+    ],
+    "as_string": "PNG\r",
+    "equals_PNG": false
+  }
+}

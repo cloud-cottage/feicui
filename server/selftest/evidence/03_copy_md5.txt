@@ -1,0 +1,1 @@
+MD5 (/Users/kevin/bistro/shu/feicui/server/selftest/evidence/selftest.db) = 254d3ff132d3a8d14dcf8590f45c7232

@@ -1,0 +1,76 @@
+### 阶段 1c-激活 · E2E 后复核
+### 2026-09-20 14:45:47 CST
+
+--- ① 原有 79 行指纹（id <= 79；应与基线逐字相同）---
+db       = /Users/kevin/bistro/shu/feicui/yinpu.db
+filter   = id <= 79
+columns  = 10 -> id,pdf_name,page,idx,text,img_path,x1,y1,x2,y2
+rows     = 79
+  tmp.pdf  ->  30
+  古玺汇编 文物出版社 罗福颐  ok.pdf  ->  23
+  秦汉印典 上海书画 金怀英  1997 ok.pdf  ->  26
+  A_raw_md5 = 8a21e57d5bd909fff282214640457c7f
+  A_raw_sha256 = 76d2547a8b502dec93b75a0ed1666d3fc9f7b40c3025a13617b833a9e3a18961
+  B_canon_md5 = d7abe995bff62761c27052dfc2bdf7bb
+  B_canon_sha256 = 19aa714841b366c15c7d53327d3753bbc008b8ef4b6c0bc978542076d11024ea
+  C_free_md5 = 22bdc0a794382b6e6dab7855aaee456f
+  C_free_sha256 = 96c237c0bc49895e15f31d27d56a459a92c7d3cfc713a874011db940b4848b92
+  total_stamps_rows_in_db = 80
+
+--- ② 本次新增行（id > 79）逐行 ---
+新增行数 = 1
+{'id': 80, 'pdf_name': 'tmp.pdf', 'page': 14, 'idx': 6, 'text': 'N', 'img_path': 'output/faces/TMP/p0014_06.webp', 'x1': 1968.0, 'y1': 845.0, 'x2': 2289.0, 'y2': 1106.0}
+stamps 全表 = 80
+逐书名计数 = [('tmp.pdf', 31), ('古玺汇编 文物出版社 罗福颐  ok.pdf', 23), ('秦汉印典 上海书画 金怀英  1997 ok.pdf', 26)]
+
+--- ③ 池拉起日志（tail 40）---
+journal_mode = wal
+schema_sha256= d35d052b6aee2a195c6879009c2116b87578a357bbeed829176410ccffd608be
+tables       = export_batches,export_records,images,job_pages,jobs,schema_migrations,seals,sqlite_sequence,stamps
+2026-09-20 14:45:22,325 INFO feicui.pool 池启动：workers=4 db=/Users/kevin/bistro/shu/feicui/yinpu.db faces=/Users/kevin/bistro/shu/feicui/output/faces doc_preprocess=True cpu_threads=2 on_conflict=skip worker_python=/Users/kevin/bistro/shu/feicui/venv/bin/python manager_python=/Users/kevin/bistro/shu/feicui/server/.venv/bin/python
+2026-09-20 14:45:22,325 INFO feicui.pool 🔒 单写者锁：/Users/kevin/bistro/shu/feicui/server/.run/pool.state.lock
+2026-09-20 14:45:22,327 INFO feicui.pool worker#0 已启动 pid=45798（第 1 次）
+2026-09-20 14:45:22,329 INFO feicui.pool worker#1 已启动 pid=45799（第 1 次）
+2026-09-20 14:45:22,331 INFO feicui.pool worker#2 已启动 pid=45800（第 1 次）
+2026-09-20 14:45:22,334 INFO feicui.pool worker#3 已启动 pid=45801（第 1 次）
+2026-09-20 14:45:28,846 INFO feicui.pool worker#0 ready pid=45798 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/output/faces
+2026-09-20 14:45:28,847 INFO feicui.pool worker#3 ready pid=45801 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/output/faces
+2026-09-20 14:45:28,847 INFO feicui.pool worker#1 ready pid=45799 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/output/faces
+2026-09-20 14:45:28,847 INFO feicui.pool worker#2 ready pid=45800 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/output/faces
+2026-09-20 14:45:28,853 INFO feicui.pool 认领 job job-502016dd118a4bc6b7d73b5e0313d1b4：pdf=/Users/kevin/bistro/shu/feicui/tmp.pdf book_key=TMP 模板别名=黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf 页区间=[13,19] chunk_size=8 残留 RUNNING 页退回 PENDING=0（断点续跑入口）
+2026-09-20 14:45:28,854 INFO feicui.pool 派 chunk c0（页 [13, 14, 15, 16, 17, 18, 19]）→ worker#0 task=job-502016dd118a4bc6b7d73b5e0313d1b4#c0 [并发在飞=1]
+2026-09-20 14:45:39,498 INFO feicui.pool 提交 chunk c0（页 [13, 14, 15, 16, 17, 18, 19]）：inserted=1 updated=0 skipped=28 failed=[] | 累计 页=7 chunk=1
+2026-09-20 14:45:39,499 INFO feicui.pool job job-502016dd118a4bc6b7d73b5e0313d1b4 收尾 ⇒ DONE（total=7 done=7 failed=0）
+2026-09-20 14:45:39,500 INFO feicui.pool 池退出：{"chunks_committed": 1, "pages_done": 7, "pages_failed": 0, "detected": 58, "inserted": 1, "updated": 0, "skipped": 28, "ocr_empty": 4, "requeued_pages": 0, "imgs_written": 0, "imgs_reused": 29, "worker_deaths": 0}
+--- exit 2026-09-20T14:45:41+08:00 rc=0 pid=45796 reason=E1:job-502016dd118a4bc6b7d73b5e0313d1b4
+
+=== launch 2026-09-20T14:45:42+08:00 reason=startup-catchup args=/Users/kevin/bistro/shu/feicui/server/.venv/bin/python -m app.pool --workers 4 --drain cwd=/Users/kevin/bistro/shu/feicui/server db=/private/tmp/kong-e67/yinpu.test.db prod_allowed=1
+db           = /private/tmp/kong-e67/yinpu.test.db
+prod_db      = False
+applied      = 0
+skipped      = 2
+journal_mode = wal
+schema_sha256= d35d052b6aee2a195c6879009c2116b87578a357bbeed829176410ccffd608be
+tables       = export_batches,export_records,images,job_pages,jobs,schema_migrations,seals,sqlite_sequence,stamps
+2026-09-20 14:45:42,343 INFO feicui.pool 池启动：workers=4 db=/private/tmp/kong-e67/yinpu.test.db faces=/Users/kevin/bistro/shu/feicui/output/faces doc_preprocess=True cpu_threads=2 on_conflict=skip worker_python=/Users/kevin/bistro/shu/feicui/venv/bin/python manager_python=/Users/kevin/bistro/shu/feicui/server/.venv/bin/python
+2026-09-20 14:45:42,343 INFO feicui.pool 🔒 单写者锁：/Users/kevin/bistro/shu/feicui/server/.run/pool.state.lock
+2026-09-20 14:45:42,345 INFO feicui.pool worker#0 已启动 pid=46746（第 1 次）
+2026-09-20 14:45:42,347 INFO feicui.pool worker#1 已启动 pid=46747（第 1 次）
+2026-09-20 14:45:42,348 INFO feicui.pool worker#2 已启动 pid=46748（第 1 次）
+2026-09-20 14:45:42,350 INFO feicui.pool worker#3 已启动 pid=46749（第 1 次）
+2026-09-20 14:45:46,838 INFO feicui.pool worker#0 ready pid=46746 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/output/faces
+2026-09-20 14:45:46,840 INFO feicui.pool worker#2 ready pid=46748 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/output/faces
+2026-09-20 14:45:46,840 INFO feicui.pool worker#3 ready pid=46749 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/output/faces
+2026-09-20 14:45:46,840 INFO feicui.pool worker#1 ready pid=46747 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/output/faces
+2026-09-20 14:45:46,844 INFO feicui.pool 认领 job job-502016dd118a4bc6b7d73b5e0313d1b4：pdf=/Users/kevin/bistro/shu/feicui/tmp.pdf book_key=TMP 模板别名=黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf 页区间=[13,19] chunk_size=8 残留 RUNNING 页退回 PENDING=7（断点续跑入口）
+2026-09-20 14:45:46,846 INFO feicui.pool 派 chunk c0（页 [13, 14, 15, 16, 17, 18, 19]）→ worker#0 task=job-502016dd118a4bc6b7d73b5e0313d1b4#c0 [并发在飞=1]
+
+--- ④ 池/worker 残留巡检（应为空）---
+46745 46386 /Users/kevin/bistro/shu/feicui/server/.venv/bin/python -m app.pool --workers 4 --drain
+46746 46745 /opt/homebrew/Cellar/python@3.11/3.11.16/Frameworks/Python.framework/Versions/3.11/Resources/Python.app/Contents/MacOS/Python /Users/kevin/bistro/shu/feicui/server/worker/feicui_worker.py
+46747 46745 /opt/homebrew/Cellar/python@3.11/3.11.16/Frameworks/Python.framework/Versions/3.11/Resources/Python.app/Contents/MacOS/Python /Users/kevin/bistro/shu/feicui/server/worker/feicui_worker.py
+46748 46745 /opt/homebrew/Cellar/python@3.11/3.11.16/Frameworks/Python.framework/Versions/3.11/Resources/Python.app/Contents/MacOS/Python /Users/kevin/bistro/shu/feicui/server/worker/feicui_worker.py
+46749 46745 /opt/homebrew/Cellar/python@3.11/3.11.16/Frameworks/Python.framework/Versions/3.11/Resources/Python.app/Contents/MacOS/Python /Users/kevin/bistro/shu/feicui/server/worker/feicui_worker.py
+
+--- ⑤ 池自检 ---
+{"db_path":"/Users/kevin/bistro/shu/feicui/yinpu.db","prod_db":true,"pool_running":true,"lock_path":"/Users/kevin/bistro/shu/feicui/server/.run/pool.state.lock","launch_log":"/Users/kevin/bistro/shu/feicui/server/.run/pool-launch.log","active_jobs":[]}

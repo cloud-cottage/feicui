@@ -1,0 +1,7 @@
+核验时点 2026-09-20 12:29:26（Asia/Shanghai）
+MD5 (/Users/kevin/bistro/shu/feicui/yinpu.db) = 254d3ff132d3a8d14dcf8590f45c7232
+-rw-r--r--@ 1 kevin  staff  577536 Sep 20 10:08 /Users/kevin/bistro/shu/feicui/yinpu.db
+inode=59624593 size=577536 mtime=Sep 20 10:08:36 2026
+--- yinpu.db* 旁文件（应无 wal/shm）---
+yinpu.db
+yinpu.db.bak-f2

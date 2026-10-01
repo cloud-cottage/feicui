@@ -1,0 +1,1 @@
+{"scope_rows": 42, "scope_distinct_keys": 42, "scope_dup_groups": [], "scope_unique_ok": true, "table_rows": 42, "table_distinct_keys": 42, "table_unique_ok": true}

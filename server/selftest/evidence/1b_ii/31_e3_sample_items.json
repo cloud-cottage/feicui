@@ -1,0 +1,803 @@
+[
+ {
+  "pdf_name": "tmp.pdf",
+  "request": "/api/jobs/job-879526c0f8164e48a5106deef6f0b752/stamps?limit=7",
+  "page": 1,
+  "limit": 7,
+  "total": 30,
+  "has_more": true,
+  "next_cursor": "p14_i0",
+  "n_items": 7,
+  "keys_of_page": [
+   [
+    13,
+    0
+   ],
+   [
+    13,
+    1
+   ],
+   [
+    13,
+    2
+   ],
+   [
+    13,
+    3
+   ],
+   [
+    13,
+    4
+   ],
+   [
+    13,
+    5
+   ],
+   [
+    14,
+    0
+   ]
+  ],
+  "item0_top_level_keys": [
+   "assets",
+   "batchId",
+   "bbox",
+   "dedupeKey",
+   "dynasty",
+   "ext",
+   "feicui",
+   "material",
+   "missing_required",
+   "reviewStatus",
+   "rightsStatus",
+   "schemaVersion",
+   "sealCode",
+   "sealName",
+   "sealStyle",
+   "sealType",
+   "sizeMm",
+   "sourceBook",
+   "sourcePageNo",
+   "transcription"
+  ]
+ },
+ {
+  "pdf_name": "tmp.pdf",
+  "request": "/api/jobs/job-879526c0f8164e48a5106deef6f0b752/stamps?limit=7&cursor=p14_i0",
+  "page": 2,
+  "limit": 7,
+  "total": 30,
+  "has_more": true,
+  "next_cursor": "p15_i1",
+  "n_items": 7,
+  "keys_of_page": [
+   [
+    14,
+    1
+   ],
+   [
+    14,
+    2
+   ],
+   [
+    14,
+    3
+   ],
+   [
+    14,
+    4
+   ],
+   [
+    14,
+    5
+   ],
+   [
+    15,
+    0
+   ],
+   [
+    15,
+    1
+   ]
+  ],
+  "item0_top_level_keys": [
+   "assets",
+   "batchId",
+   "bbox",
+   "dedupeKey",
+   "dynasty",
+   "ext",
+   "feicui",
+   "material",
+   "missing_required",
+   "reviewStatus",
+   "rightsStatus",
+   "schemaVersion",
+   "sealCode",
+   "sealName",
+   "sealStyle",
+   "sealType",
+   "sizeMm",
+   "sourceBook",
+   "sourcePageNo",
+   "transcription"
+  ]
+ },
+ {
+  "pdf_name": "tmp.pdf",
+  "request": "/api/jobs/job-879526c0f8164e48a5106deef6f0b752/stamps?limit=7&cursor=p15_i1",
+  "page": 3,
+  "limit": 7,
+  "total": 30,
+  "has_more": true,
+  "next_cursor": "p16_i1",
+  "n_items": 7,
+  "keys_of_page": [
+   [
+    15,
+    2
+   ],
+   [
+    15,
+    3
+   ],
+   [
+    15,
+    4
+   ],
+   [
+    15,
+    5
+   ],
+   [
+    15,
+    6
+   ],
+   [
+    16,
+    0
+   ],
+   [
+    16,
+    1
+   ]
+  ],
+  "item0_top_level_keys": [
+   "assets",
+   "batchId",
+   "bbox",
+   "dedupeKey",
+   "dynasty",
+   "ext",
+   "feicui",
+   "material",
+   "missing_required",
+   "reviewStatus",
+   "rightsStatus",
+   "schemaVersion",
+   "sealCode",
+   "sealName",
+   "sealStyle",
+   "sealType",
+   "sizeMm",
+   "sourceBook",
+   "sourcePageNo",
+   "transcription"
+  ]
+ },
+ {
+  "pdf_name": "tmp.pdf",
+  "request": "/api/jobs/job-879526c0f8164e48a5106deef6f0b752/stamps?limit=7&cursor=p16_i1",
+  "page": 4,
+  "limit": 7,
+  "total": 30,
+  "has_more": true,
+  "next_cursor": "p19_i1",
+  "n_items": 7,
+  "keys_of_page": [
+   [
+    16,
+    2
+   ],
+   [
+    17,
+    0
+   ],
+   [
+    17,
+    1
+   ],
+   [
+    18,
+    0
+   ],
+   [
+    18,
+    1
+   ],
+   [
+    19,
+    0
+   ],
+   [
+    19,
+    1
+   ]
+  ],
+  "item0_top_level_keys": [
+   "assets",
+   "batchId",
+   "bbox",
+   "dedupeKey",
+   "dynasty",
+   "ext",
+   "feicui",
+   "material",
+   "missing_required",
+   "reviewStatus",
+   "rightsStatus",
+   "schemaVersion",
+   "sealCode",
+   "sealName",
+   "sealStyle",
+   "sealType",
+   "sizeMm",
+   "sourceBook",
+   "sourcePageNo",
+   "transcription"
+  ]
+ },
+ {
+  "pdf_name": "tmp.pdf",
+  "request": "/api/jobs/job-879526c0f8164e48a5106deef6f0b752/stamps?limit=7&cursor=p19_i1",
+  "page": 5,
+  "limit": 7,
+  "total": 30,
+  "has_more": false,
+  "next_cursor": null,
+  "n_items": 2,
+  "keys_of_page": [
+   [
+    19,
+    2
+   ],
+   [
+    19,
+    3
+   ]
+  ],
+  "item0_top_level_keys": [
+   "assets",
+   "batchId",
+   "bbox",
+   "dedupeKey",
+   "dynasty",
+   "ext",
+   "feicui",
+   "material",
+   "missing_required",
+   "reviewStatus",
+   "rightsStatus",
+   "schemaVersion",
+   "sealCode",
+   "sealName",
+   "sealStyle",
+   "sealType",
+   "sizeMm",
+   "sourceBook",
+   "sourcePageNo",
+   "transcription"
+  ]
+ },
+ {
+  "pdf_name": "古玺汇编 文物出版社 罗福颐  ok.pdf",
+  "request": "/api/jobs/job-a5f7d511ba534c87a764bf82963e8af3/stamps?limit=7",
+  "page": 1,
+  "limit": 7,
+  "total": 23,
+  "has_more": true,
+  "next_cursor": "p25_i0",
+  "n_items": 7,
+  "keys_of_page": [
+   [
+    24,
+    0
+   ],
+   [
+    24,
+    1
+   ],
+   [
+    24,
+    2
+   ],
+   [
+    24,
+    3
+   ],
+   [
+    24,
+    4
+   ],
+   [
+    24,
+    5
+   ],
+   [
+    25,
+    0
+   ]
+  ],
+  "item0_top_level_keys": [
+   "assets",
+   "batchId",
+   "bbox",
+   "dedupeKey",
+   "dynasty",
+   "ext",
+   "feicui",
+   "material",
+   "missing_required",
+   "reviewStatus",
+   "rightsStatus",
+   "schemaVersion",
+   "sealCode",
+   "sealName",
+   "sealStyle",
+   "sealType",
+   "sizeMm",
+   "sourceBook",
+   "sourcePageNo",
+   "transcription"
+  ]
+ },
+ {
+  "pdf_name": "古玺汇编 文物出版社 罗福颐  ok.pdf",
+  "request": "/api/jobs/job-a5f7d511ba534c87a764bf82963e8af3/stamps?limit=7&cursor=p25_i0",
+  "page": 2,
+  "limit": 7,
+  "total": 23,
+  "has_more": true,
+  "next_cursor": "p26_i0",
+  "n_items": 7,
+  "keys_of_page": [
+   [
+    25,
+    1
+   ],
+   [
+    25,
+    2
+   ],
+   [
+    25,
+    3
+   ],
+   [
+    25,
+    4
+   ],
+   [
+    25,
+    5
+   ],
+   [
+    25,
+    6
+   ],
+   [
+    26,
+    0
+   ]
+  ],
+  "item0_top_level_keys": [
+   "assets",
+   "batchId",
+   "bbox",
+   "dedupeKey",
+   "dynasty",
+   "ext",
+   "feicui",
+   "material",
+   "missing_required",
+   "reviewStatus",
+   "rightsStatus",
+   "schemaVersion",
+   "sealCode",
+   "sealName",
+   "sealStyle",
+   "sealType",
+   "sizeMm",
+   "sourceBook",
+   "sourcePageNo",
+   "transcription"
+  ]
+ },
+ {
+  "pdf_name": "古玺汇编 文物出版社 罗福颐  ok.pdf",
+  "request": "/api/jobs/job-a5f7d511ba534c87a764bf82963e8af3/stamps?limit=7&cursor=p26_i0",
+  "page": 3,
+  "limit": 7,
+  "total": 23,
+  "has_more": true,
+  "next_cursor": "p26_i7",
+  "n_items": 7,
+  "keys_of_page": [
+   [
+    26,
+    1
+   ],
+   [
+    26,
+    2
+   ],
+   [
+    26,
+    3
+   ],
+   [
+    26,
+    4
+   ],
+   [
+    26,
+    5
+   ],
+   [
+    26,
+    6
+   ],
+   [
+    26,
+    7
+   ]
+  ],
+  "item0_top_level_keys": [
+   "assets",
+   "batchId",
+   "bbox",
+   "dedupeKey",
+   "dynasty",
+   "ext",
+   "feicui",
+   "material",
+   "missing_required",
+   "reviewStatus",
+   "rightsStatus",
+   "schemaVersion",
+   "sealCode",
+   "sealName",
+   "sealStyle",
+   "sealType",
+   "sizeMm",
+   "sourceBook",
+   "sourcePageNo",
+   "transcription"
+  ]
+ },
+ {
+  "pdf_name": "古玺汇编 文物出版社 罗福颐  ok.pdf",
+  "request": "/api/jobs/job-a5f7d511ba534c87a764bf82963e8af3/stamps?limit=7&cursor=p26_i7",
+  "page": 4,
+  "limit": 7,
+  "total": 23,
+  "has_more": false,
+  "next_cursor": null,
+  "n_items": 2,
+  "keys_of_page": [
+   [
+    26,
+    8
+   ],
+   [
+    26,
+    9
+   ]
+  ],
+  "item0_top_level_keys": [
+   "assets",
+   "batchId",
+   "bbox",
+   "dedupeKey",
+   "dynasty",
+   "ext",
+   "feicui",
+   "material",
+   "missing_required",
+   "reviewStatus",
+   "rightsStatus",
+   "schemaVersion",
+   "sealCode",
+   "sealName",
+   "sealStyle",
+   "sealType",
+   "sizeMm",
+   "sourceBook",
+   "sourcePageNo",
+   "transcription"
+  ]
+ },
+ {
+  "pdf_name": "秦汉印典 上海书画 金怀英  1997 ok.pdf",
+  "request": "/api/jobs/job-578309831721457c989a77a0156a1d78/stamps?limit=7",
+  "page": 1,
+  "limit": 7,
+  "total": 26,
+  "has_more": true,
+  "next_cursor": "p6_i0",
+  "n_items": 7,
+  "keys_of_page": [
+   [
+    5,
+    0
+   ],
+   [
+    5,
+    1
+   ],
+   [
+    5,
+    2
+   ],
+   [
+    5,
+    3
+   ],
+   [
+    5,
+    4
+   ],
+   [
+    5,
+    5
+   ],
+   [
+    6,
+    0
+   ]
+  ],
+  "item0_top_level_keys": [
+   "assets",
+   "batchId",
+   "bbox",
+   "dedupeKey",
+   "dynasty",
+   "ext",
+   "feicui",
+   "material",
+   "missing_required",
+   "reviewStatus",
+   "rightsStatus",
+   "schemaVersion",
+   "sealCode",
+   "sealName",
+   "sealStyle",
+   "sealType",
+   "sizeMm",
+   "sourceBook",
+   "sourcePageNo",
+   "transcription"
+  ]
+ },
+ {
+  "pdf_name": "秦汉印典 上海书画 金怀英  1997 ok.pdf",
+  "request": "/api/jobs/job-578309831721457c989a77a0156a1d78/stamps?limit=7&cursor=p6_i0",
+  "page": 2,
+  "limit": 7,
+  "total": 26,
+  "has_more": true,
+  "next_cursor": "p7_i1",
+  "n_items": 7,
+  "keys_of_page": [
+   [
+    6,
+    1
+   ],
+   [
+    6,
+    2
+   ],
+   [
+    6,
+    3
+   ],
+   [
+    6,
+    4
+   ],
+   [
+    6,
+    5
+   ],
+   [
+    7,
+    0
+   ],
+   [
+    7,
+    1
+   ]
+  ],
+  "item0_top_level_keys": [
+   "assets",
+   "batchId",
+   "bbox",
+   "dedupeKey",
+   "dynasty",
+   "ext",
+   "feicui",
+   "material",
+   "missing_required",
+   "reviewStatus",
+   "rightsStatus",
+   "schemaVersion",
+   "sealCode",
+   "sealName",
+   "sealStyle",
+   "sealType",
+   "sizeMm",
+   "sourceBook",
+   "sourcePageNo",
+   "transcription"
+  ]
+ },
+ {
+  "pdf_name": "秦汉印典 上海书画 金怀英  1997 ok.pdf",
+  "request": "/api/jobs/job-578309831721457c989a77a0156a1d78/stamps?limit=7&cursor=p7_i1",
+  "page": 3,
+  "limit": 7,
+  "total": 26,
+  "has_more": true,
+  "next_cursor": "p8_i2",
+  "n_items": 7,
+  "keys_of_page": [
+   [
+    7,
+    2
+   ],
+   [
+    7,
+    3
+   ],
+   [
+    7,
+    4
+   ],
+   [
+    7,
+    5
+   ],
+   [
+    8,
+    0
+   ],
+   [
+    8,
+    1
+   ],
+   [
+    8,
+    2
+   ]
+  ],
+  "item0_top_level_keys": [
+   "assets",
+   "batchId",
+   "bbox",
+   "dedupeKey",
+   "dynasty",
+   "ext",
+   "feicui",
+   "material",
+   "missing_required",
+   "reviewStatus",
+   "rightsStatus",
+   "schemaVersion",
+   "sealCode",
+   "sealName",
+   "sealStyle",
+   "sealType",
+   "sizeMm",
+   "sourceBook",
+   "sourcePageNo",
+   "transcription"
+  ]
+ },
+ {
+  "pdf_name": "秦汉印典 上海书画 金怀英  1997 ok.pdf",
+  "request": "/api/jobs/job-578309831721457c989a77a0156a1d78/stamps?limit=7&cursor=p8_i2",
+  "page": 4,
+  "limit": 7,
+  "total": 26,
+  "has_more": false,
+  "next_cursor": null,
+  "n_items": 5,
+  "keys_of_page": [
+   [
+    8,
+    3
+   ],
+   [
+    8,
+    4
+   ],
+   [
+    8,
+    5
+   ],
+   [
+    8,
+    6
+   ],
+   [
+    8,
+    7
+   ]
+  ],
+  "item0_top_level_keys": [
+   "assets",
+   "batchId",
+   "bbox",
+   "dedupeKey",
+   "dynasty",
+   "ext",
+   "feicui",
+   "material",
+   "missing_required",
+   "reviewStatus",
+   "rightsStatus",
+   "schemaVersion",
+   "sealCode",
+   "sealName",
+   "sealStyle",
+   "sealType",
+   "sizeMm",
+   "sourceBook",
+   "sourcePageNo",
+   "transcription"
+  ]
+ },
+ {
+  "pdf_name": "__1bii_fixture.pdf",
+  "request": "/api/jobs/job-2f6c054f05c8461fa609e69969c56c61/stamps?limit=7",
+  "page": 1,
+  "limit": 7,
+  "total": 4,
+  "has_more": false,
+  "next_cursor": null,
+  "n_items": 4,
+  "keys_of_page": [
+   [
+    1,
+    0
+   ],
+   [
+    1,
+    1
+   ],
+   [
+    1,
+    2
+   ],
+   [
+    1,
+    3
+   ]
+  ],
+  "item0_top_level_keys": [
+   "assets",
+   "bbox",
+   "dedupeKey",
+   "dynasty",
+   "feicui",
+   "missing_required",
+   "reviewStatus",
+   "sealCode",
+   "sealName",
+   "sealType",
+   "sourceBook",
+   "sourcePageNo",
+   "transcription"
+  ]
+ }
+]

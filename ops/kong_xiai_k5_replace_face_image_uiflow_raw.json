@@ -1,0 +1,706 @@
+{
+  "chrome": "started",
+  "profile": "/tmp/xiai-kong5-prof",
+  "port": 9434,
+  "base": "http://127.0.0.1:5163",
+  "started_at": "2026-09-20T18:01:50+0800",
+  "checks": [
+    {
+      "name": "① 游客（未登录）DOM：印面块 3 个、替换按钮 0 个、文案零命中",
+      "pass": true,
+      "detail": "{\"blocks\": 3, \"replace\": 0, \"edit\": 0, \"text_hit\": false}"
+    },
+    {
+      "name": "① 管理员登录成功（16601061656 / role = admin）",
+      "pass": true,
+      "detail": "{\"phone\": \"16601061656\", \"role\": \"admin\"}"
+    },
+    {
+      "name": "① 管理员 DOM：**每个印面块**各一个「重新上传印面图」按钮（3/3，与「编辑固定属性」同粒度）",
+      "pass": true,
+      "detail": "{\"blocks\": 3, \"replace\": 3, \"face_ids\": [\"fc-0001-f1\", \"fc-0001-f2\", \"fc-0001-e1\"], \"labels\": [\"重新上传印面图\", \"重新上传印面图\", \"重新上传印面图\"], \"edit_buttons\": 3, \"block_ids\": [\"fc-0001-f1\", \"fc-0001-f2\", \"fc-0001-e1\"]}"
+    },
+    {
+      "name": "① 按钮文案正确（「重新上传印面图」）",
+      "pass": true,
+      "detail": "[\"重新上传印面图\", \"重新上传印面图\", \"重新上传印面图\"]"
+    },
+    {
+      "name": "基线：印面 fc-0001-f1 当前影像编号 = img-0001f",
+      "pass": true,
+      "detail": "\"img-0001f\""
+    },
+    {
+      "name": "② 管理员点按钮 ⇒ 打开取景弹窗（标题含印面类别、含选图输入与确认按钮）",
+      "pass": true,
+      "detail": "{\"title\": \"重新上传印面图 · 印面一\", \"lede\": \"印面编号 fc-0001-f1 · 当前影像编号 img-0001f。 替换会**新增**一张影像并把本印面指向新影像，**旧影像与二进制保留**（不删除，可回溯）。 处理全部在本机完成：方形取景 → 转 WebP → 写入本地影像库，不访问任何外部地址。\", \"has_input\": true, \"has_submit\": true}"
+    },
+    {
+      "name": "② 选图后进入**方形取景**：预览已出图 + 取景框 + 可拖拽手柄 + 1 MB 上限提示 + 最长边读数",
+      "pass": true,
+      "detail": "{\"summary\": \"已选 selftest-3000x1200.jpg · 原图 3000 × 1200 · 原文件 104.7 KB ⇒ 入库印面 1200 × 1200 · image/webp · 15.0 KB （最长边 ≤ 2048px、质量 0.85）\", \"hint\": \"本机图片文件（JPG / PNG / WebP），单张不超过 1.00 MB（1048576 字节， 按原始文件字节数判定）。选定后在本机取方形并转成 WebP，再写入本地影像库。\", \"frame\": {\"w\": \"96px\", \"h\": \"96px\", \"left\": \"72px\", \"top\": \"0px\"}, \"preview_ok\": true, \"handle\": true}"
+    },
+    {
+      "name": "② 非方形原图（3000 × 1200）已在预览读数中如实显示，且入库印面为正方形（1200 × 1200 · WebP）",
+      "pass": true,
+      "detail": "已选 selftest-3000x1200.jpg · 原图 3000 × 1200 · 原文件 104.7 KB ⇒ 入库印面 1200 × 1200 · image/webp · 15.0 KB （最长边 ≤ 2048px、质量 0.85）"
+    },
+    {
+      "name": "② 取景框可**真拖拽**（CDP 真鼠标事件）：拖动后位置变化、宽高仍相等（正方形），导出读数仍为方形 WebP",
+      "pass": true,
+      "detail": "{\"after\": {\"left\": \"114px\", \"top\": \"0px\", \"w\": \"96px\", \"h\": \"96px\"}, \"summary\": \"已选 selftest-3000x1200.jpg · 原图 3000 × 1200 · 原文件 104.7 KB ⇒ 入库印面 1200 × 1200 · image/webp · 14.0 KB （最长边 ≤ 2048px、质量 0.85）\", \"before\": {\"x\": 606, \"y\": 445.484375, \"rect\": {\"x\": 558, \"y\": 397.484375, \"w\": 96, \"h\": 96}, \"left\": \"72px\", \"top\": \"0px\", \"w\": \"96px\", \"h\": \"96px\"}}"
+    },
+    {
+      "name": "② 提交后有可读反馈（含「影像编号 旧 → 新」）",
+      "pass": true,
+      "detail": "印面图已替换：影像编号 img-0001f → img-0001f-2；旧影像行与二进制保留未删。新影像 1200 × 1200 · image/webp · 14366 字节"
+    },
+    {
+      "name": "② 印面 face_image_id 已改指向新影像",
+      "pass": true,
+      "detail": "{\"face_image_id\": \"img-0001f-2\", \"new_meta\": {\"id\": \"img-0001f-2\", \"kind\": \"FACE\", \"stamp_id\": \"XAI-0001\", \"width\": 1200, \"height\": 1200, \"bytes\": 14366, \"mime\": \"image/webp\", \"color_mode\": \"RGB\", \"sha256\": \"1e59d387432b5af8805b0ca3881e04b5b6163ac573e86926227808af965e9e7c\"}}"
+    },
+    {
+      "name": "② 新影像：**方形**（width == height）、mime = image/webp、体量如实 > 0",
+      "pass": true,
+      "detail": "{\"id\": \"img-0001f-2\", \"kind\": \"FACE\", \"stamp_id\": \"XAI-0001\", \"width\": 1200, \"height\": 1200, \"bytes\": 14366, \"mime\": \"image/webp\", \"color_mode\": \"RGB\", \"sha256\": \"1e59d387432b5af8805b0ca3881e04b5b6163ac573e86926227808af965e9e7c\"}"
+    },
+    {
+      "name": "② 新影像 kind = FACE 且与印面同一印章（XAI-0001）",
+      "pass": true,
+      "detail": "{\"kind\": \"FACE\", \"stamp_id\": \"XAI-0001\"}"
+    },
+    {
+      "name": "② 影像行数 = 前 + 1（旧行不删）",
+      "pass": true,
+      "detail": "13 → 14"
+    },
+    {
+      "name": "② 旧影像行逐字未改（img-0001f 元数据与基线一致）",
+      "pass": true,
+      "detail": "{\"before\": {\"id\": \"img-0001f\", \"kind\": \"FACE\", \"stamp_id\": \"XAI-0001\", \"width\": 1600, \"height\": 1600, \"bytes\": 184320, \"color_mode\": \"RGB\", \"sha256\": \"3d1f0b2a6c7e4915b8a2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718\"}, \"after\": {\"id\": \"img-0001f\", \"kind\": \"FACE\", \"stamp_id\": \"XAI-0001\", \"width\": 1600, \"height\": 1600, \"bytes\": 184320, \"color_mode\": \"RGB\", \"sha256\": \"3d1f0b2a6c7e4915b8a2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718\"}}"
+    },
+    {
+      "name": "② 二进制已落影像库（键 asset:新影像编号，字节数 = 行内 bytes）",
+      "pass": true,
+      "detail": "{\"asset:img-0001f-2\": 14366, \"asset:img-0001f-3\": 2006}"
+    },
+    {
+      "name": "② **无需刷新**即显示新图（页内标记未丢 ⇒ 未发生导航/刷新；图已加载；图注＝新影像编号）",
+      "pass": true,
+      "detail": "{\"same_page\": \"no-reload-1789898522300\", \"figcaption\": \"印面影像 img-0001f-2\", \"img_ok\": true, \"first_dd\": \"影像编号 img-0001f-2\", \"summary\": \"1200 × 1200 · 14.0 KB · RGB\"}"
+    },
+    {
+      "name": "②′ 第二次替换成功且反馈含「旧 → 新」（旧＝第一次的新编号）",
+      "pass": true,
+      "detail": "印面图已替换：影像编号 img-0001f-2 → img-0001f-3；旧影像行与二进制保留未删。新影像 320 × 320 · image/webp · 2006 字节"
+    },
+    {
+      "name": "②′ 第一次的影像**行**仍在库且逐字未改",
+      "pass": true,
+      "detail": "{\"image_ids\": [\"img-0001f\", \"img-0001g\", \"img-0001e\", \"img-0002f\", \"img-0003f\", \"img-0004f\", \"img-0004e\", \"img-0005f\", \"img-0005e\", \"img-0006f\", \"img-0007f\", \"img-0007e\", \"img-0008f\", \"img-0001f-2\", \"img-0001f-3\"], \"first\": \"img-0001f-2\"}"
+    },
+    {
+      "name": "②′ 第一次的影像**二进制**仍在且字节一致（替换不删旧图）",
+      "pass": true,
+      "detail": "{\"expect\": 14366, \"got\": 14366, \"keys\": [\"asset:img-0001f-2\", \"asset:img-0001f-3\"]}"
+    },
+    {
+      "name": "②′ 影像行数 = 前 + 1（只增不删）",
+      "pass": true,
+      "detail": "14 → 15"
+    },
+    {
+      "name": "④ 持久化：全新加载后印面指向 / 影像行 / 二进制三者一致",
+      "pass": true,
+      "detail": "{\"face_image_id\": \"img-0001f-3\", \"meta\": {\"id\": \"img-0001f-3\", \"kind\": \"FACE\", \"stamp_id\": \"XAI-0001\", \"width\": 320, \"height\": 320, \"bytes\": 2006, \"mime\": \"image/webp\", \"color_mode\": \"RGB\", \"sha256\": \"4a23fc1ff033aa46503b45e6e436f2228f97848fdbd561d614c4bfd9f63ae81d\"}}"
+    },
+    {
+      "name": "④ 持久化：新图在**重新打开**的页面里仍显示（页内标记已丢 ⇒ 确为全新加载）",
+      "pass": true,
+      "detail": "{\"marker_gone\": true, \"figcaption\": \"印面影像 img-0001f-3\", \"img_ok\": true, \"img_is_data_url\": true}"
+    },
+    {
+      "name": "③ 注入影像库写失败 ⇒ 结构化失败（reason = STORAGE_UNAVAILABLE，未抛异常）",
+      "pass": true,
+      "detail": "{\"ok\": false, \"reason\": \"STORAGE_UNAVAILABLE\", \"message\": \"影像库写入失败：影像存储操作失败：注入故障：影像库写入失败\"}"
+    },
+    {
+      "name": "③ 回滚：影像行数不变 + 印面指向不变 + 影像库键集合不变（无半成品行 / 无孤儿二进制）",
+      "pass": true,
+      "detail": "{\"before\": {\"face_image_id\": \"img-0001f-3\", \"image_count\": 15, \"blob_keys\": [\"asset:img-0001f-2\", \"asset:img-0001f-3\"]}, \"after\": {\"face_image_id\": \"img-0001f-3\", \"image_count\": 15, \"blob_keys\": [\"asset:img-0001f-2\", \"asset:img-0001f-3\"]}}"
+    },
+    {
+      "name": "① 普通用户登录（13800000001 / role = user）",
+      "pass": true,
+      "detail": "{\"phone\": \"13800000001\", \"role\": \"user\"}"
+    },
+    {
+      "name": "① 普通用户 DOM：替换按钮命中数 = 0 且文案 / 属性零命中",
+      "pass": true,
+      "detail": "{\"blocks\": 3, \"replace\": 0, \"any_admin_action\": 0, \"dialog\": 0, \"text_hit\": false, \"html_hit\": false}"
+    },
+    {
+      "name": "①′ 普通用户**绕过 UI** 直调服务层 ⇒ FORBIDDEN",
+      "pass": true,
+      "detail": "{\"ok\": false, \"reason\": \"FORBIDDEN\", \"message\": \"仅管理员可以重新上传印面图\"}"
+    },
+    {
+      "name": "①′ 普通用户**绕过服务层**直调数据层 ⇒ FORBIDDEN（数据层独立拒绝）",
+      "pass": true,
+      "detail": "{\"ok\": false, \"reason\": \"FORBIDDEN\", \"message\": \"仅管理员可以重新上传印面图\"}"
+    },
+    {
+      "name": "①′ 越权调用后库零变化（印面指向 / 影像行数 / 二进制键集合）",
+      "pass": true,
+      "detail": "{\"before\": {\"face_image_id\": \"img-0001f-3\", \"image_count\": 15, \"blob_keys\": [\"asset:img-0001f-2\", \"asset:img-0001f-3\"]}, \"after\": {\"face_image_id\": \"img-0001f-3\", \"image_count\": 15, \"blob_keys\": [\"asset:img-0001f-2\", \"asset:img-0001f-3\"]}}"
+    },
+    {
+      "name": "⑤ 网络捕获中不得出现 5196 / square-crop",
+      "pass": true,
+      "detail": "[]"
+    },
+    {
+      "name": "⑤ 网络捕获中不得出现任何外部 URL（全部为 127.0.0.1:5163 / data: / blob:）",
+      "pass": true,
+      "detail": "[]"
+    }
+  ],
+  "guest": {
+    "blocks": 3,
+    "replace": 0,
+    "edit": 0,
+    "text_hit": false
+  },
+  "login_admin_path": "/",
+  "who_admin": {
+    "phone": "16601061656",
+    "role": "admin"
+  },
+  "admin_dom": {
+    "blocks": 3,
+    "replace": 3,
+    "face_ids": [
+      "fc-0001-f1",
+      "fc-0001-f2",
+      "fc-0001-e1"
+    ],
+    "labels": [
+      "重新上传印面图",
+      "重新上传印面图",
+      "重新上传印面图"
+    ],
+    "edit_buttons": 3,
+    "block_ids": [
+      "fc-0001-f1",
+      "fc-0001-f2",
+      "fc-0001-e1"
+    ]
+  },
+  "baseline": {
+    "face_image_id": "img-0001f",
+    "face_row": {
+      "id": "fc-0001-f1",
+      "sealId": "XAI-0001",
+      "stamp_id": "XAI-0001",
+      "kind": "FACE",
+      "face_image_id": "img-0001f",
+      "material": "青銅",
+      "edge_image_ids": [],
+      "transcription_simplified": "长寿",
+      "seal_name": "長壽",
+      "dynasty": "漢",
+      "seal_type": "吉語印",
+      "author": "無名",
+      "transcription": "取「長樂無極、壽比南山」之意，漢人吉語印常用語。",
+      "source": {
+        "book": "《漢印文字徵》",
+        "page": "卷三 十二頁"
+      },
+      "created_at": "2026-01-01T00:00:00.000Z",
+      "updated_at": "2026-01-01T00:00:00.000Z"
+    },
+    "image_count": 13,
+    "image_ids": [
+      "img-0001f",
+      "img-0001g",
+      "img-0001e",
+      "img-0002f",
+      "img-0003f",
+      "img-0004f",
+      "img-0004e",
+      "img-0005f",
+      "img-0005e",
+      "img-0006f",
+      "img-0007f",
+      "img-0007e",
+      "img-0008f"
+    ],
+    "new_meta": {
+      "id": "img-0001f",
+      "kind": "FACE",
+      "stamp_id": "XAI-0001",
+      "width": 1600,
+      "height": 1600,
+      "bytes": 184320,
+      "color_mode": "RGB",
+      "sha256": "3d1f0b2a6c7e4915b8a2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718"
+    },
+    "old_meta": {
+      "id": "img-0001f",
+      "kind": "FACE",
+      "stamp_id": "XAI-0001",
+      "width": 1600,
+      "height": 1600,
+      "bytes": 184320,
+      "color_mode": "RGB",
+      "sha256": "3d1f0b2a6c7e4915b8a2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718"
+    },
+    "blob_keys": [
+      "asset:img-0001f-2",
+      "asset:img-0001f-3"
+    ],
+    "blob_sizes": {
+      "asset:img-0001f-2": 14514,
+      "asset:img-0001f-3": 2006
+    }
+  },
+  "dialog": {
+    "title": "重新上传印面图 · 印面一",
+    "lede": "印面编号 fc-0001-f1 · 当前影像编号 img-0001f。 替换会**新增**一张影像并把本印面指向新影像，**旧影像与二进制保留**（不删除，可回溯）。 处理全部在本机完成：方形取景 → 转 WebP → 写入本地影像库，不访问任何外部地址。",
+    "has_input": true,
+    "has_submit": true
+  },
+  "file": {
+    "name": "selftest-3000x1200.jpg",
+    "bytes": 107232,
+    "type": "image/jpeg"
+  },
+  "preview": {
+    "summary": "已选 selftest-3000x1200.jpg · 原图 3000 × 1200 · 原文件 104.7 KB ⇒ 入库印面 1200 × 1200 · image/webp · 15.0 KB （最长边 ≤ 2048px、质量 0.85）",
+    "hint": "本机图片文件（JPG / PNG / WebP），单张不超过 1.00 MB（1048576 字节， 按原始文件字节数判定）。选定后在本机取方形并转成 WebP，再写入本地影像库。",
+    "frame": {
+      "w": "96px",
+      "h": "96px",
+      "left": "72px",
+      "top": "0px"
+    },
+    "preview_ok": true,
+    "handle": true
+  },
+  "drag_rect": {
+    "x": 606,
+    "y": 445.484375,
+    "rect": {
+      "x": 558,
+      "y": 397.484375,
+      "w": 96,
+      "h": 96
+    },
+    "left": "72px",
+    "top": "0px",
+    "w": "96px",
+    "h": "96px"
+  },
+  "drag": {
+    "after": {
+      "left": "114px",
+      "top": "0px",
+      "w": "96px",
+      "h": "96px"
+    },
+    "summary": "已选 selftest-3000x1200.jpg · 原图 3000 × 1200 · 原文件 104.7 KB ⇒ 入库印面 1200 × 1200 · image/webp · 14.0 KB （最长边 ≤ 2048px、质量 0.85）",
+    "before": {
+      "x": 606,
+      "y": 445.484375,
+      "rect": {
+        "x": 558,
+        "y": 397.484375,
+        "w": 96,
+        "h": 96
+      },
+      "left": "72px",
+      "top": "0px",
+      "w": "96px",
+      "h": "96px"
+    }
+  },
+  "feedback_1": "印面图已替换：影像编号 img-0001f → img-0001f-2；旧影像行与二进制保留未删。新影像 1200 × 1200 · image/webp · 14366 字节",
+  "after_replace_1": {
+    "face_image_id": "img-0001f-2",
+    "face_row": {
+      "id": "fc-0001-f1",
+      "sealId": "XAI-0001",
+      "stamp_id": "XAI-0001",
+      "kind": "FACE",
+      "face_image_id": "img-0001f-2",
+      "material": "青銅",
+      "edge_image_ids": [],
+      "transcription_simplified": "长寿",
+      "seal_name": "長壽",
+      "dynasty": "漢",
+      "seal_type": "吉語印",
+      "author": "無名",
+      "transcription": "取「長樂無極、壽比南山」之意，漢人吉語印常用語。",
+      "source": {
+        "book": "《漢印文字徵》",
+        "page": "卷三 十二頁"
+      },
+      "created_at": "2026-01-01T00:00:00.000Z",
+      "updated_at": "2026-09-20T10:02:04.646Z"
+    },
+    "image_count": 14,
+    "image_ids": [
+      "img-0001f",
+      "img-0001g",
+      "img-0001e",
+      "img-0002f",
+      "img-0003f",
+      "img-0004f",
+      "img-0004e",
+      "img-0005f",
+      "img-0005e",
+      "img-0006f",
+      "img-0007f",
+      "img-0007e",
+      "img-0008f",
+      "img-0001f-2"
+    ],
+    "new_meta": {
+      "id": "img-0001f-2",
+      "kind": "FACE",
+      "stamp_id": "XAI-0001",
+      "width": 1200,
+      "height": 1200,
+      "bytes": 14366,
+      "mime": "image/webp",
+      "color_mode": "RGB",
+      "sha256": "1e59d387432b5af8805b0ca3881e04b5b6163ac573e86926227808af965e9e7c"
+    },
+    "old_meta": {
+      "id": "img-0001f",
+      "kind": "FACE",
+      "stamp_id": "XAI-0001",
+      "width": 1600,
+      "height": 1600,
+      "bytes": 184320,
+      "color_mode": "RGB",
+      "sha256": "3d1f0b2a6c7e4915b8a2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718"
+    },
+    "blob_keys": [
+      "asset:img-0001f-2",
+      "asset:img-0001f-3"
+    ],
+    "blob_sizes": {
+      "asset:img-0001f-2": 14366,
+      "asset:img-0001f-3": 2006
+    }
+  },
+  "dom_after_replace": {
+    "same_page": "no-reload-1789898522300",
+    "figcaption": "印面影像 img-0001f-2",
+    "img_ok": true,
+    "first_dd": "影像编号 img-0001f-2",
+    "summary": "1200 × 1200 · 14.0 KB · RGB"
+  },
+  "second_file_bytes": 10418,
+  "feedback_2": "印面图已替换：影像编号 img-0001f-2 → img-0001f-3；旧影像行与二进制保留未删。新影像 320 × 320 · image/webp · 2006 字节",
+  "after_replace_2": {
+    "face_image_id": "img-0001f-3",
+    "face_row": {
+      "id": "fc-0001-f1",
+      "sealId": "XAI-0001",
+      "stamp_id": "XAI-0001",
+      "kind": "FACE",
+      "face_image_id": "img-0001f-3",
+      "material": "青銅",
+      "edge_image_ids": [],
+      "transcription_simplified": "长寿",
+      "seal_name": "長壽",
+      "dynasty": "漢",
+      "seal_type": "吉語印",
+      "author": "無名",
+      "transcription": "取「長樂無極、壽比南山」之意，漢人吉語印常用語。",
+      "source": {
+        "book": "《漢印文字徵》",
+        "page": "卷三 十二頁"
+      },
+      "created_at": "2026-01-01T00:00:00.000Z",
+      "updated_at": "2026-09-20T10:02:06.065Z"
+    },
+    "image_count": 15,
+    "image_ids": [
+      "img-0001f",
+      "img-0001g",
+      "img-0001e",
+      "img-0002f",
+      "img-0003f",
+      "img-0004f",
+      "img-0004e",
+      "img-0005f",
+      "img-0005e",
+      "img-0006f",
+      "img-0007f",
+      "img-0007e",
+      "img-0008f",
+      "img-0001f-2",
+      "img-0001f-3"
+    ],
+    "new_meta": {
+      "id": "img-0001f-3",
+      "kind": "FACE",
+      "stamp_id": "XAI-0001",
+      "width": 320,
+      "height": 320,
+      "bytes": 2006,
+      "mime": "image/webp",
+      "color_mode": "RGB",
+      "sha256": "4a23fc1ff033aa46503b45e6e436f2228f97848fdbd561d614c4bfd9f63ae81d"
+    },
+    "old_meta": {
+      "id": "img-0001f",
+      "kind": "FACE",
+      "stamp_id": "XAI-0001",
+      "width": 1600,
+      "height": 1600,
+      "bytes": 184320,
+      "color_mode": "RGB",
+      "sha256": "3d1f0b2a6c7e4915b8a2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718"
+    },
+    "blob_keys": [
+      "asset:img-0001f-2",
+      "asset:img-0001f-3"
+    ],
+    "blob_sizes": {
+      "asset:img-0001f-2": 14366,
+      "asset:img-0001f-3": 2006
+    }
+  },
+  "persist": {
+    "db": {
+      "face_image_id": "img-0001f-3",
+      "face_row": {
+        "id": "fc-0001-f1",
+        "sealId": "XAI-0001",
+        "stamp_id": "XAI-0001",
+        "kind": "FACE",
+        "face_image_id": "img-0001f-3",
+        "material": "青銅",
+        "edge_image_ids": [],
+        "transcription_simplified": "长寿",
+        "seal_name": "長壽",
+        "dynasty": "漢",
+        "seal_type": "吉語印",
+        "author": "無名",
+        "transcription": "取「長樂無極、壽比南山」之意，漢人吉語印常用語。",
+        "source": {
+          "book": "《漢印文字徵》",
+          "page": "卷三 十二頁"
+        },
+        "created_at": "2026-01-01T00:00:00.000Z",
+        "updated_at": "2026-09-20T10:02:06.065Z"
+      },
+      "image_count": 15,
+      "image_ids": [
+        "img-0001f",
+        "img-0001g",
+        "img-0001e",
+        "img-0002f",
+        "img-0003f",
+        "img-0004f",
+        "img-0004e",
+        "img-0005f",
+        "img-0005e",
+        "img-0006f",
+        "img-0007f",
+        "img-0007e",
+        "img-0008f",
+        "img-0001f-2",
+        "img-0001f-3"
+      ],
+      "new_meta": {
+        "id": "img-0001f-3",
+        "kind": "FACE",
+        "stamp_id": "XAI-0001",
+        "width": 320,
+        "height": 320,
+        "bytes": 2006,
+        "mime": "image/webp",
+        "color_mode": "RGB",
+        "sha256": "4a23fc1ff033aa46503b45e6e436f2228f97848fdbd561d614c4bfd9f63ae81d"
+      },
+      "old_meta": {
+        "id": "img-0001f",
+        "kind": "FACE",
+        "stamp_id": "XAI-0001",
+        "width": 1600,
+        "height": 1600,
+        "bytes": 184320,
+        "color_mode": "RGB",
+        "sha256": "3d1f0b2a6c7e4915b8a2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718"
+      },
+      "blob_keys": [
+        "asset:img-0001f-2",
+        "asset:img-0001f-3"
+      ],
+      "blob_sizes": {
+        "asset:img-0001f-2": 14366,
+        "asset:img-0001f-3": 2006
+      }
+    },
+    "dom": {
+      "marker_gone": true,
+      "figcaption": "印面影像 img-0001f-3",
+      "img_ok": true,
+      "img_is_data_url": true
+    }
+  },
+  "rollback": {
+    "before": {
+      "face_image_id": "img-0001f-3",
+      "image_count": 15,
+      "blob_keys": [
+        "asset:img-0001f-2",
+        "asset:img-0001f-3"
+      ]
+    },
+    "injected": "IDBObjectStore.prototype.put 抛错",
+    "result": {
+      "ok": false,
+      "reason": "STORAGE_UNAVAILABLE",
+      "message": "影像库写入失败：影像存储操作失败：注入故障：影像库写入失败"
+    },
+    "after": {
+      "face_image_id": "img-0001f-3",
+      "image_count": 15,
+      "blob_keys": [
+        "asset:img-0001f-2",
+        "asset:img-0001f-3"
+      ]
+    }
+  },
+  "normal_login_path": "/",
+  "who_normal": {
+    "phone": "13800000001",
+    "role": "user"
+  },
+  "normal_dom": {
+    "blocks": 3,
+    "replace": 0,
+    "any_admin_action": 0,
+    "dialog": 0,
+    "text_hit": false,
+    "html_hit": false
+  },
+  "normal_bypass": {
+    "before": {
+      "face_image_id": "img-0001f-3",
+      "image_count": 15,
+      "blob_keys": [
+        "asset:img-0001f-2",
+        "asset:img-0001f-3"
+      ]
+    },
+    "service": {
+      "ok": false,
+      "reason": "FORBIDDEN",
+      "message": "仅管理员可以重新上传印面图"
+    },
+    "dataLayer": {
+      "ok": false,
+      "reason": "FORBIDDEN",
+      "message": "仅管理员可以重新上传印面图"
+    },
+    "after": {
+      "face_image_id": "img-0001f-3",
+      "image_count": 15,
+      "blob_keys": [
+        "asset:img-0001f-2",
+        "asset:img-0001f-3"
+      ]
+    }
+  },
+  "network": {
+    "total": 59,
+    "bad": [],
+    "external": [],
+    "sample": [
+      "http://127.0.0.1:5163/",
+      "http://127.0.0.1:5163/@vite/client",
+      "http://127.0.0.1:5163/src/main.js?t=1789898280771",
+      "http://127.0.0.1:5163/node_modules/.vite/deps/vue.js?v=a54d50c2",
+      "http://127.0.0.1:5163/src/App.vue?t=1789898280771",
+      "http://127.0.0.1:5163/src/router/index.js?t=1789898280771",
+      "http://127.0.0.1:5163/src/services/bootstrap.js?t=1789898280771",
+      "http://127.0.0.1:5163/src/styles/tokens.css",
+      "http://127.0.0.1:5163/src/styles/base.css",
+      "http://127.0.0.1:5163/node_modules/vite/dist/client/env.mjs",
+      "http://127.0.0.1:5163/node_modules/.vite/deps/vue-router.js?v=a54d50c2",
+      "http://127.0.0.1:5163/src/components/AppHeader.vue?t=1789898280771"
+    ]
+  },
+  "network_all": [
+    "http://127.0.0.1:5163/",
+    "http://127.0.0.1:5163/@vite/client",
+    "http://127.0.0.1:5163/src/main.js?t=1789898280771",
+    "http://127.0.0.1:5163/node_modules/.vite/deps/vue.js?v=a54d50c2",
+    "http://127.0.0.1:5163/src/App.vue?t=1789898280771",
+    "http://127.0.0.1:5163/src/router/index.js?t=1789898280771",
+    "http://127.0.0.1:5163/src/services/bootstrap.js?t=1789898280771",
+    "http://127.0.0.1:5163/src/styles/tokens.css",
+    "http://127.0.0.1:5163/src/styles/base.css",
+    "http://127.0.0.1:5163/node_modules/vite/dist/client/env.mjs",
+    "http://127.0.0.1:5163/node_modules/.vite/deps/vue-router.js?v=a54d50c2",
+    "http://127.0.0.1:5163/src/components/AppHeader.vue?t=1789898280771",
+    "http://127.0.0.1:5163/src/components/AppSidebar.vue?t=1789895990204",
+    "http://127.0.0.1:5163/@id/__x00__plugin-vue:export-helper",
+    "http://127.0.0.1:5163/node_modules/.vite/deps/chunk-GKNS7JV4.js?v=a54d50c2",
+    "http://127.0.0.1:5163/src/services/auth.js?t=1789898280771",
+    "http://127.0.0.1:5163/src/data/session.js",
+    "http://127.0.0.1:5163/src/services/index.js?t=1789898280771",
+    "http://127.0.0.1:5163/src/components/AppHeader.vue?vue&type=style&index=0&scoped=48a13218&lang.css",
+    "http://127.0.0.1:5163/src/services/seals.js?t=1789898280771",
+    "http://127.0.0.1:5163/src/services/corrections.js?t=1789898280771",
+    "http://127.0.0.1:5163/src/services/photos.js?t=1789898280771",
+    "http://127.0.0.1:5163/src/services/points.js?t=1789898280771",
+    "http://127.0.0.1:5163/src/services/admin.js?t=1789898280771",
+    "http://127.0.0.1:5163/src/data/storage.js",
+    "http://127.0.0.1:5163/src/data/db.js?t=1789898280771",
+    "http://127.0.0.1:5163/src/data/seed.js?t=1789891500968",
+    "http://127.0.0.1:5163/src/utils/image.js",
+    "http://127.0.0.1:5163/src/data/blobstore.js?t=1789896604893",
+    "http://127.0.0.1:5163/src/data/assetmeta.js?t=1789892596870",
+    "http://127.0.0.1:5163/src/views/SquareView.vue?t=1789898280771",
+    "http://127.0.0.1:5163/src/components/FilterBar.vue",
+    "http://127.0.0.1:5163/src/components/SealCard.vue?t=1789895972162",
+    "http://127.0.0.1:5163/src/components/ConfirmDialog.vue",
+    "http://127.0.0.1:5163/src/components/PlaceholderPanel.vue",
+    "http://127.0.0.1:5163/src/components/UploadSealDialog.vue?t=1789898280771",
+    "http://127.0.0.1:5163/src/utils/file.js?t=1789896662767",
+    "http://127.0.0.1:5163/src/views/SquareView.vue?t=1789893040484&vue&type=style&index=0&scoped=98eb030e&lang.css",
+    "http://127.0.0.1:5163/src/components/FilterBar.vue?vue&type=style&index=0&scoped=f4672e2a&lang.css",
+    "http://127.0.0.1:5163/src/utils/format.js",
+    "http://127.0.0.1:5163/src/components/SealCard.vue?vue&type=style&index=0&scoped=c742b940&lang.css",
+    "http://127.0.0.1:5163/src/components/ConfirmDialog.vue?vue&type=style&index=0&scoped=d3e333dd&lang.css",
+    "http://127.0.0.1:5163/src/components/UploadSealDialog.vue?t=1789896654732&vue&type=style&index=0&scoped=89841b47&lang.css",
+    "http://127.0.0.1:5163/favicon.ico",
+    "http://127.0.0.1:5163/seal/XAI-0001",
+    "http://127.0.0.1:5163/src/views/SealDetailView.vue?t=1789898280771",
+    "http://127.0.0.1:5163/src/components/FaceFixedAttributesDialog.vue?t=1789898280771",
+    "http://127.0.0.1:5163/src/views/SealDetailView.vue?t=1789898249326&vue&type=style&index=0&scoped=19d42e3e&lang.css",
+    "http://127.0.0.1:5163/src/components/FaceFixedAttributesDialog.vue?vue&type=style&index=0&scoped=cff7acfd&lang.css",
+    "http://127.0.0.1:5163/login",
+    "http://127.0.0.1:5163/src/views/LoginView.vue?t=1789898280771",
+    "http://127.0.0.1:5163/src/views/LoginView.vue?vue&type=style&index=0&scoped=45f5edd7&lang.css",
+    "http://127.0.0.1:5163/src/data/db.js",
+    "blob:http://127.0.0.1:5163/343c6ef4-6e78-4a89-9506-3a48b6a1cff2",
+    "data:image/png;base64,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",
+    "blob:http://127.0.0.1:5163/ffee5aaa-d031-4e0d-bc5f-8296a3aee607",
+    "data:image/png;base64,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",
+    "http://127.0.0.1:5163/src/services/seals.js",
+    "http://127.0.0.1:5163/src/services/auth.js"
+  ],
+  "passed": 32,
+  "failed": 0,
+  "finished_at": "2026-09-20T18:02:17+0800"
+}

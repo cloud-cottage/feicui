@@ -1,0 +1,7 @@
+== grep -rn BLOB server/app/** ==
+Binary file /Users/kevin/bistro/shu/feicui/server/app/routers/__pycache__/jobs.cpython-311.pyc matches
+/Users/kevin/bistro/shu/feicui/server/app/routers/jobs.py:312:    * **只读**（不解析 / 不 OCR / 不写库 / 不写缓存）、**不占位冒充**、**不读 BLOB**（库内本无 BLOB 列）。
+/Users/kevin/bistro/shu/feicui/server/app/repository.py:585:# §3.2 S-3（6 字段信封）/ S-4（接口层不落业务真值）、§3.5（E6 只读、越界校验、不得读 BLOB）、§3.8（E7）。
+
+== 结论 ==
+ 接口层无任何 BLOB 读取路径（§3.5 纪律③ / §4.1 D-4①）。

@@ -1,0 +1,30 @@
+### final-state（'2026-09-20 12:15:12' CST）
+
+-- 端口占用（我的测试服务已停；5164 为他人进程，全程未动）--
+5164   node 93523 [::1]:5164 
+5173   
+5174   
+5195   
+5196   
+5555   node 93417 *:5555 
+
+-- 5195 停后 ① 的路径行为 --
+http://127.0.0.1:5195/feicui/                 000 unreachable
+http://localhost:5164/feicui/api/jobs         500 text/plain
+http://localhost:5164/feicui/                 500 text/plain
+
+-- 14 条对外路由仍全通 --
+/                      200
+/pricing               200
+/docs                  200
+/docs/quickstart       200
+/org                   200
+/demo                  200
+/help                  200
+/console               200
+/console/login         200
+/console/register      200
+/console/overview      200
+/console/keys          200
+/console/usage         200
+/console/billing       200

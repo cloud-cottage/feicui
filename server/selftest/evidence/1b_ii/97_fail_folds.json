@@ -1,0 +1,6 @@
+{
+ "folded_repeats": 0,
+ "distinct_failed_assertions": 0,
+ "folds": [],
+ "note": "③ 同一断言重复命中折叠计数：逐条打印至多 3 次，其余只计数不刷屏"
+}

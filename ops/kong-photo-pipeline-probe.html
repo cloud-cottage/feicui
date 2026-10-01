@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>玺爱 · 影像处理管线自证探针（Kong）</title>
+    <style>
+      body { font: 13px/1.6 -apple-system, "PingFang SC", sans-serif; margin: 16px; }
+      pre { background: #f5f5f5; padding: 12px; max-height: 70vh; overflow: auto; }
+    </style>
+  </head>
+  <body>
+    <h1>玺爱 · 浏览器端影像处理管线自证探针</h1>
+    <p>
+      本页由 Vite dev server 从**应用自身 origin**（127.0.0.1:5163）提供，因此与玺爱 App 共享同一套
+      localStorage / IndexedDB。打开即自动跑 phase1（结果挂 <code>window.__XIAI_PROBE_RESULTS__</code>）；
+      刷新 / 重开后调用 <code>__XIAI_PROBE__.phase2()</code> 验证「关标签重开仍能读回渲染」。
+    </p>
+    <pre id="out">waiting for probe…</pre>
+    <script src="/feicui/ops/kong-photo-pipeline-probe.js"></script>
+    <script>
+      window.addEventListener('load', () => {
+        const dump = () => {
+          const el = document.getElementById('out')
+          if (window.__XIAI_PROBE_RESULTS__) {
+            el.textContent = JSON.stringify(window.__XIAI_PROBE_RESULTS__, null, 2)
+          } else {
+            el.textContent = 'running…'
+            setTimeout(dump, 400)
+          }
+        }
+        dump()
+      })
+    </script>
+  </body>
+</html>

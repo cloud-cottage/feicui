@@ -1,0 +1,17 @@
+# 5164 对外路由可达性（加 /feicui 代理后）——14 条具名路由，取自 src/router/{marketing,console}.js
+# date: 2026-09-20 12:00:44 CST
+PATH                     STATUS   TITLE/入口特征
+/                        200      印索｜兆级玺印数字引擎 | src="/src/marketing/main.js"
+/pricing                 200      印索｜兆级玺印数字引擎 | src="/src/marketing/main.js"
+/docs                    200      印索｜兆级玺印数字引擎 | src="/src/marketing/main.js"
+/docs/quickstart         200      印索｜兆级玺印数字引擎 | src="/src/marketing/main.js"
+/org                     200      印索｜兆级玺印数字引擎 | src="/src/marketing/main.js"
+/demo                    200      印索｜兆级玺印数字引擎 | src="/src/marketing/main.js"
+/help                    200      印索｜兆级玺印数字引擎 | src="/src/marketing/main.js"
+/console/login           200      印索控制台｜兆级玺印数字引擎 | src="/src/console/main.js"
+/console/register        200      印索控制台｜兆级玺印数字引擎 | src="/src/console/main.js"
+/console                 200      印索控制台｜兆级玺印数字引擎 | src="/src/console/main.js"
+/console/overview        200      印索控制台｜兆级玺印数字引擎 | src="/src/console/main.js"
+/console/keys            200      印索控制台｜兆级玺印数字引擎 | src="/src/console/main.js"
+/console/usage           200      印索控制台｜兆级玺印数字引擎 | src="/src/console/main.js"
+/console/billing         200      印索控制台｜兆级玺印数字引擎 | src="/src/console/main.js"

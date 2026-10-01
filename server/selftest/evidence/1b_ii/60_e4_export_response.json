@@ -1,0 +1,13 @@
+{
+ "code": 200,
+ "body": {
+  "batch_id": "fb_20260920_XTMP_05",
+  "package_dir": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui_1bii_if1g4zzx/exports_tmp_main/fb_20260920_XTMP_05",
+  "counts": {
+   "formal": 0,
+   "draft": 30,
+   "rejected": 30
+  },
+  "selfcheck_ref": null
+ }
+}

@@ -1,0 +1,451 @@
+{
+  "chrome": "already",
+  "profile": "/tmp/xiai-kong4-prof-1789897785",
+  "debug_port": 9444,
+  "base": "http://127.0.0.1:5163",
+  "checks": [
+    {
+      "id": "登录后（管理员）广场「上传印章」按钮可见",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "id": "取证脚本已注入（页面内造图 / 取景框读数 / 存储读数齐备）",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "id": "① 选图入口就位（弹窗打开 + 印面图输入框存在）",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "id": "① 入口文案写明了真实上限（1.00 MB / 1048576 字节）",
+      "pass": true,
+      "detail": "本机图片文件（JPG / PNG / WebP），单张不超过 1.00 MB（1048576 字节）。 选定后在本机取方形并转成 WebP，再写入本地影像库，页面只保留运行时预览。"
+    },
+    {
+      "id": "① 选 1.2 MB 图被拒（未生成预览 / 未进入取景）",
+      "pass": true,
+      "detail": "size=1253125 preview=False"
+    },
+    {
+      "id": "① 拒绝提示可读（含真实上限 1.00 MB 与所选体量）",
+      "pass": true,
+      "detail": "照片过大：所选文件 1.20 MB，上限 1.00 MB（1 MB）。请换一张更小的图，或先用手机/系统自带的压缩再上传。（所选文件 1.20 MB，上限 1.00 MB）"
+    },
+    {
+      "id": "② 非方形原图选出后出现预览 + 方形取景框（框可见且为正方形）",
+      "pass": true,
+      "detail": "{\"x\": 558, \"y\": 797.515625, \"w\": 96, \"h\": 96, \"left\": \"72px\", \"top\": \"0px\", \"width\": \"96px\", \"height\": \"96px\"}"
+    },
+    {
+      "id": "② 预览读数含原图尺寸 3000 × 1200 与入库 WebP 体量",
+      "pass": true,
+      "detail": "已选 wide-3000x1200.png · 原图 3000 × 1200 · 原文件 741.7 KB ⇒ 入库印面 1200 × 1200 · image/webp · 4.1 KB （最长边 ≤ 2048px、质量 0.85）"
+    },
+    {
+      "id": "② 预览图**真的解码可见**（<img> 已加载、非 0 尺寸、非破图）",
+      "pass": true,
+      "detail": "{\"complete\": true, \"naturalWidth\": 3000, \"naturalHeight\": 1200, \"w\": 238, \"h\": 94, \"src\": \"blob:http://\"}"
+    },
+    {
+      "id": "② 拖动前取景框完整落在视口内（保证真实鼠标按到的是方框本身）",
+      "pass": true,
+      "detail": "{\"x\": 558, \"y\": 473.515625, \"w\": 96, \"h\": 96, \"left\": \"72px\", \"top\": \"0px\", \"width\": \"96px\", \"height\": \"96px\", \"fullyInViewport\": true}"
+    },
+    {
+      "id": "② 方形框可用拖动**移动**（left 真实变化）",
+      "pass": true,
+      "detail": "left 72px -> 132px"
+    },
+    {
+      "id": "② 方形框可用手柄**缩放**（宽高真实变小 ⇒ 用户取景真的进了导出）",
+      "pass": true,
+      "detail": "w 96 -> 51 / h 51 -> 51"
+    },
+    {
+      "id": "② 提交成功（服务层 message 原文可读：已新增印章 + 编号 + 印面数）",
+      "pass": true,
+      "detail": "已新增印章《佚名》（XA000000001）与 1 个印面 查看「XA000000001」 | seals 8 -> 9"
+    },
+    {
+      "id": "② 入库影像元数据 width == height",
+      "pass": true,
+      "detail": "width=638 height=638 mime=image/webp bytes=1746"
+    },
+    {
+      "id": "② 入库影像元数据 mime === 'image/webp'",
+      "pass": true,
+      "detail": "mime=image/webp"
+    },
+    {
+      "id": "② 导出尺寸＝用户取景框边长（非默认中心方形 1200，证明取景真的进了导出）",
+      "pass": true,
+      "detail": "width=638"
+    },
+    {
+      "id": "② IndexedDB 读回二进制：真实 WebP（RIFF/WEBP 魔数）且字节数与元数据一致",
+      "pass": true,
+      "detail": "{\"ok\": true, \"length\": 1746, \"head\": [82, 73, 70, 70, 202, 6, 0, 0, 87, 69, 66, 80], \"riff\": true, \"webp\": true, \"valueType\": \"[object Uint8Array]\"}"
+    },
+    {
+      "id": "③ 竖版原图（500×900）也出方形取景框（短边 500 为默认边长）",
+      "pass": true,
+      "detail": "{\"x\": 486, \"y\": 850.515625, \"w\": 133, \"h\": 133, \"left\": \"0px\", \"top\": \"53px\", \"width\": \"133px\", \"height\": \"133px\"}"
+    },
+    {
+      "id": "③ 只填朝代/分类、印文留空 ⇒ 提交成功且编号形如 XA\\d{9}",
+      "pass": true,
+      "detail": "stamp_id=XA000000002 feedback="
+    },
+    {
+      "id": "③ 印文留空如实落库（seal_name 为空字符串，展示层归「佚名」）",
+      "pass": true,
+      "detail": "''"
+    },
+    {
+      "id": "③ 第二枚入库影像仍为正方形 WebP",
+      "pass": true,
+      "detail": "width=500 height=500 mime=image/webp bytes=1298"
+    },
+    {
+      "id": "⑤ 边界内探针（0.90–1.00 MB，≤ 上限）被**接受**并进入取景（上限不是一刀切拒绝）",
+      "pass": true,
+      "detail": "size=969699 preview=True feedback=''"
+    },
+    {
+      "id": "⑤ 边界内上传成功且入库影像仍为正方形 WebP",
+      "pass": true,
+      "detail": "已新增印章《佚名》（XA000000003）与 1 个印面 查看「XA000000003」 | w=440 h=440 mime=image/webp bytes=148814"
+    },
+    {
+      "id": "④ 缺朝代 ⇒ 服务层拒并展示其 message（口径未变）",
+      "pass": true,
+      "detail": "请补全必填项：朝代 | seals 11 -> 11"
+    },
+    {
+      "id": "④ 全程零 5196 / 零 square-crop 调用",
+      "pass": true,
+      "detail": "[]"
+    },
+    {
+      "id": "④ 全程零外链（除本机 5163 资源外无任何请求）",
+      "pass": true,
+      "detail": "[]"
+    }
+  ],
+  "readings": {
+    "after_login_path": "/",
+    "upload_button_visible": true,
+    "prep_1": {
+      "path": "/",
+      "helpers_armed": true,
+      "dialog_open": true
+    },
+    "dialog_open": true,
+    "input_hint": "本机图片文件（JPG / PNG / WebP），单张不超过 1.00 MB（1048576 字节）。 选定后在本机取方形并转成 WebP，再写入本地影像库，页面只保留运行时预览。",
+    "pick_over": {
+      "ok": true,
+      "name": "noise-700x520.png",
+      "size": 1253125,
+      "type": "image/png"
+    },
+    "over_feedback": "照片过大：所选文件 1.20 MB，上限 1.00 MB（1 MB）。请换一张更小的图，或先用手机/系统自带的压缩再上传。（所选文件 1.20 MB，上限 1.00 MB）",
+    "over_preview_exists": false,
+    "prep_2": {
+      "path": "/",
+      "helpers_armed": true,
+      "dialog_open": true
+    },
+    "pick_wide": {
+      "ok": true,
+      "name": "wide-3000x1200.png",
+      "size": 759503,
+      "type": "image/png"
+    },
+    "frame_initial": {
+      "x": 558,
+      "y": 797.515625,
+      "w": 96,
+      "h": 96,
+      "left": "72px",
+      "top": "0px",
+      "width": "96px",
+      "height": "96px"
+    },
+    "summary_initial": "已选 wide-3000x1200.png · 原图 3000 × 1200 · 原文件 741.7 KB ⇒ 入库印面 1200 × 1200 · image/webp · 4.1 KB （最长边 ≤ 2048px、质量 0.85）",
+    "preview_img": {
+      "complete": true,
+      "naturalWidth": 3000,
+      "naturalHeight": 1200,
+      "w": 238,
+      "h": 94,
+      "src": "blob:http://"
+    },
+    "frame_before_move_drag": {
+      "x": 558,
+      "y": 473.515625,
+      "w": 96,
+      "h": 96,
+      "left": "72px",
+      "top": "0px",
+      "width": "96px",
+      "height": "96px",
+      "fullyInViewport": true
+    },
+    "frame_after_move": {
+      "x": 618,
+      "y": 473.515625,
+      "w": 96,
+      "h": 96,
+      "left": "132px",
+      "top": "0px",
+      "width": "96px",
+      "height": "96px"
+    },
+    "frame_before_resize_drag": {
+      "x": 618,
+      "y": 473.515625,
+      "w": 96,
+      "h": 96,
+      "left": "132px",
+      "top": "0px",
+      "width": "96px",
+      "height": "96px",
+      "fullyInViewport": true
+    },
+    "handle_rect": {
+      "x": 711,
+      "y": 566.515625,
+      "viewBottom": 569.515625,
+      "handleTop": 558.515625,
+      "handleBottom": 574.515625
+    },
+    "frame_after_resize": {
+      "x": 618,
+      "y": 474.515625,
+      "w": 51,
+      "h": 51,
+      "left": "132px",
+      "top": "0px",
+      "width": "51px",
+      "height": "51px"
+    },
+    "summary_after_resize": "已选 wide-3000x1200.png · 原图 3000 × 1200 · 原文件 741.7 KB ⇒ 入库印面 638 × 638 · image/webp · 1.7 KB （最长边 ≤ 2048px、质量 0.85）",
+    "form2": {
+      "dynasty": "清",
+      "type": "私印",
+      "name": ""
+    },
+    "feedback2": "",
+    "notice2": "已新增印章《佚名》（XA000000001）与 1 个印面 查看「XA000000001」",
+    "dialog_still_open_2": false,
+    "seals_after_2": 9,
+    "new_seal": {
+      "sealGroupId": "g-000000001",
+      "stamp_id": "XA000000001",
+      "id": "XA000000001",
+      "seal_name": "",
+      "name": "",
+      "transcription": "",
+      "dynasty": "清",
+      "seal_type": "私印",
+      "category": "私印",
+      "seal_style": "",
+      "material": "",
+      "asset_kind": "SEAL",
+      "review_status": "APPROVED",
+      "transcription_simplified": "",
+      "author": "",
+      "source": "manual",
+      "uploaded_by": "u-16601061656",
+      "created_at": "2026-09-20T09:50:00.865Z",
+      "updated_at": "2026-09-20T09:50:00.865Z"
+    },
+    "image_row": {
+      "id": "img-000000001f",
+      "assetId": "img-000000001f",
+      "stamp_id": "XA000000001",
+      "sealId": "XA000000001",
+      "ownerType": "face",
+      "ownerId": "fc-000000001-f1",
+      "kind": "FACE",
+      "sha256": "96ef10c3561d7c02582913effef98914b59107429a3a2907577e99bbf547d648",
+      "bytes": 1746,
+      "width": 638,
+      "height": 638,
+      "colorMode": "RGB",
+      "color_mode": "RGB",
+      "mime": "image/webp",
+      "storage": "indexeddb",
+      "storage_key": "asset:img-000000001f",
+      "source": "manual",
+      "uploaded_by": "u-16601061656",
+      "created_at": "2026-09-20T09:50:00.873Z"
+    },
+    "blob_readback": {
+      "ok": true,
+      "length": 1746,
+      "head": [
+        82,
+        73,
+        70,
+        70,
+        202,
+        6,
+        0,
+        0,
+        87,
+        69,
+        66,
+        80
+      ],
+      "riff": true,
+      "webp": true,
+      "valueType": "[object Uint8Array]"
+    },
+    "prep_3": {
+      "path": "/",
+      "helpers_armed": true,
+      "dialog_open": true
+    },
+    "pick_portrait": {
+      "ok": true,
+      "name": "portrait-500x900.png",
+      "size": 12411,
+      "type": "image/png"
+    },
+    "frame3": {
+      "x": 486,
+      "y": 850.515625,
+      "w": 133,
+      "h": 133,
+      "left": "0px",
+      "top": "53px",
+      "width": "133px",
+      "height": "133px"
+    },
+    "form3": {
+      "dynasty": "漢",
+      "type": "官印",
+      "name": ""
+    },
+    "feedback3": "",
+    "seals_after_3": 10,
+    "new_seal3": {
+      "sealGroupId": "g-000000002",
+      "stamp_id": "XA000000002",
+      "id": "XA000000002",
+      "seal_name": "",
+      "name": "",
+      "transcription": "",
+      "dynasty": "漢",
+      "seal_type": "官印",
+      "category": "官印",
+      "seal_style": "",
+      "material": "",
+      "asset_kind": "SEAL",
+      "review_status": "APPROVED",
+      "transcription_simplified": "",
+      "author": "",
+      "source": "manual",
+      "uploaded_by": "u-16601061656",
+      "created_at": "2026-09-20T09:50:07.029Z",
+      "updated_at": "2026-09-20T09:50:07.029Z"
+    },
+    "image_row3": {
+      "id": "img-000000002f",
+      "assetId": "img-000000002f",
+      "stamp_id": "XA000000002",
+      "sealId": "XA000000002",
+      "ownerType": "face",
+      "ownerId": "fc-000000002-f1",
+      "kind": "FACE",
+      "sha256": "27d58ca8ba640530b5e5825350b9501b2819c9050467397246a8fab5e7659736",
+      "bytes": 1298,
+      "width": 500,
+      "height": 500,
+      "colorMode": "RGB",
+      "color_mode": "RGB",
+      "mime": "image/webp",
+      "storage": "indexeddb",
+      "storage_key": "asset:img-000000002f",
+      "source": "manual",
+      "uploaded_by": "u-16601061656",
+      "created_at": "2026-09-20T09:50:07.034Z"
+    },
+    "prep_5": {
+      "path": "/",
+      "helpers_armed": true,
+      "dialog_open": true
+    },
+    "pick_near": {
+      "ok": true,
+      "name": "noise-640x440.png",
+      "size": 969699,
+      "type": "image/png"
+    },
+    "near_preview_exists": true,
+    "near_feedback": "",
+    "near_summary": "已选 noise-640x440.png · 原图 640 × 440 · 原文件 947.0 KB ⇒ 入库印面 440 × 440 · image/webp · 145.3 KB （最长边 ≤ 2048px、质量 0.85）",
+    "seals_after_5": 11,
+    "notice5": "已新增印章《佚名》（XA000000003）与 1 个印面 查看「XA000000003」",
+    "new_seal5": {
+      "sealGroupId": "g-000000003",
+      "stamp_id": "XA000000003",
+      "id": "XA000000003",
+      "seal_name": "",
+      "name": "",
+      "transcription": "",
+      "dynasty": "明",
+      "seal_type": "私印",
+      "category": "私印",
+      "seal_style": "",
+      "material": "",
+      "asset_kind": "SEAL",
+      "review_status": "APPROVED",
+      "transcription_simplified": "",
+      "author": "",
+      "source": "manual",
+      "uploaded_by": "u-16601061656",
+      "created_at": "2026-09-20T09:50:13.034Z",
+      "updated_at": "2026-09-20T09:50:13.034Z"
+    },
+    "image_row5": {
+      "id": "img-000000003f",
+      "assetId": "img-000000003f",
+      "stamp_id": "XA000000003",
+      "sealId": "XA000000003",
+      "ownerType": "face",
+      "ownerId": "fc-000000003-f1",
+      "kind": "FACE",
+      "sha256": "09fccc98367e33f5c2313425cc11d7a0a0c80e1afa66b538b0458667965e6484",
+      "bytes": 148814,
+      "width": 440,
+      "height": 440,
+      "colorMode": "RGB",
+      "color_mode": "RGB",
+      "mime": "image/webp",
+      "storage": "indexeddb",
+      "storage_key": "asset:img-000000003f",
+      "source": "manual",
+      "uploaded_by": "u-16601061656",
+      "created_at": "2026-09-20T09:50:13.050Z"
+    },
+    "prep_4": {
+      "path": "/",
+      "helpers_armed": true,
+      "dialog_open": true
+    },
+    "feedback4_missing_dynasty": "请补全必填项：朝代",
+    "seals_after_4": 11,
+    "request_count": 136,
+    "non_base_requests": [],
+    "square_crop_requests": []
+  },
+  "image_js_present": true,
+  "passed": 26,
+  "failed": 0,
+  "re_hydrations_of_page_helpers": 0
+}

@@ -1,0 +1,12 @@
+# feicui API 薄接口层（server/）运行时依赖 —— 阶段 1a（Kong）
+#
+# 为什么只有 3 个包：接口层**不碰**解析 / 渲染 / OCR（那是 worker 的活，规范 §1.1 / §1.2 I-2；
+# OCR 依赖栈留在 feicui/venv，见 server/README.md §「解释器矩阵」）。
+#
+# **不含 pymupdf**（Zang 追加口径 1）：`server/app/**` 里没有静态 `import pymupdf`——
+# E1 需要 PDF 页数时，`app/pdfmeta.py` 先用**动态可选导入**（装了才用），否则走**子进程**
+# 调 feicui/venv/bin/python 的 PyMuPDF（即 worker 侧解释器）。故无需在 API 环境重装 23 MB 依赖。
+# 自证命令：grep -rn "pymupdf" server/app   → 仅命中注释/字符串，无静态 import。
+fastapi
+uvicorn
+pydantic

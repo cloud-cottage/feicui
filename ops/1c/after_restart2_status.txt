@@ -1,0 +1,34 @@
+=== 复测 2026-09-20 13:16:32 ===
+{"ok":true,"panel":{"port":5555,"portOpen":true,"pid":35111,"nodeVersion":"v20.20.2","uptimeMs":19814,"startedAt":"2026-09-20T05:16:12.798Z","pm2":{"name":"bistro-ctrl","id":0,"status":"online","managed":true,"source":"pm2-pidfile"},"code":{"path":"/Users/kevin/bistro/ctrl/index.js","size":52052,"mtime":"2026-09-20T05:15:54.087Z","mtimeText":"2026/9/20 13:15:54"},"pids":{"path":"/Users/kevin/bistro/ctrl/logs/pids.json","count":12,"sids":["jiazu-api","jiazu","shu","feicui-api","feicui-web","jinli-api","jinli","cat","aranya-api","liwu-proxy","liwu-web","liwu-app"],"mtimeText":"2026/9/20 13:16:16"}}}
+条目数=12  running=12
+jiazu-api    | running   | running=True | 3100 | pid=35229
+jiazu        | running   | running=True | 5199 | pid=35230
+shu          | running   | running=True | 5164 | pid=35231
+feicui-api   | running   | running=True | 5196 | pid=35232
+feicui-web   | running   | running=True | 5195 | pid=35233
+jinli-api    | running   | running=True | 5778 | pid=35234
+jinli        | running   | running=True | 5777 | pid=35235
+cat          | running   | running=True | 5701 | pid=35236
+aranya-api   | running   | running=True | 5181 | pid=35237
+liwu-proxy   | running   | running=True | 3020 | pid=35238
+liwu-web     | running   | running=True | 5175 | pid=35239
+liwu-app     | running   | running=True | 5176 | pid=35240
+非running: []
+=== API 落在哪个库 ===
+{"ok":true,"api_version":"1b-ii","db_path":"/Users/kevin/bistro/shu/feicui/var/feicui_work.db","db_exists":true,"prod_db":false,"root":"/Users/kevin/bistro/shu/feicui","time":"2026-09-20T13:16:33+08:00","tables_present":{"stamps":true,"jobs":true,"job_pages":true},"journal_mode":"wal"}
+=== 逐端口 lsof ===
+3100   node 35229 *:3100
+5199   node 35344 [::1]:5199
+5164   node 35281 [::1]:5164
+5196   python3.1 35232 127.0.0.1:5196
+5195   node 35350 127.0.0.1:5195
+5778   node 35364 *:5778
+5777   node 35321 [::1]:5777
+5701   node 35310 [::1]:5701
+5181   node 35427 *:5181
+3020   node 35238 *:3020
+5175   node 35389 *:5175
+5176   node 35410 [::1]:5176
+=== 5195/5196 监听者 cwd ===
+pid 35232: /Users/kevin/bistro/shu/feicui/server
+pid 35233: /Users/kevin/bistro/shu/feicui/web

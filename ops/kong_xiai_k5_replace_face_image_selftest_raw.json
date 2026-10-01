@@ -1,0 +1,479 @@
+{
+  "project": "/Users/kevin/bistro/xiai",
+  "started_at": "2026-09-20T10:03:29.476Z",
+  "baseline": {
+    "counts": {
+      "images": 13,
+      "faces": 13,
+      "seals": 8,
+      "blobs": 0
+    },
+    "face_image_id": "img-0001f",
+    "image_ids": [
+      "img-0001f",
+      "img-0001g",
+      "img-0001e",
+      "img-0002f",
+      "img-0003f",
+      "img-0004f",
+      "img-0004e",
+      "img-0005f",
+      "img-0005e",
+      "img-0006f",
+      "img-0007f",
+      "img-0007e",
+      "img-0008f"
+    ]
+  },
+  "forbidden": {
+    "service_call": {
+      "before": {
+        "images": 13,
+        "faces": 13,
+        "seals": 8,
+        "blobs": 0
+      },
+      "result": {
+        "ok": false,
+        "reason": "FORBIDDEN",
+        "previousFaceImageId": "img-0001f",
+        "message": "仅管理员可以重新上传印面图"
+      },
+      "after": {
+        "images": 13,
+        "faces": 13,
+        "seals": 8,
+        "blobs": 0
+      },
+      "face_image_id_after": "img-0001f"
+    },
+    "data_call": {
+      "before": {
+        "images": 13,
+        "faces": 13,
+        "seals": 8,
+        "blobs": 0
+      },
+      "user": {
+        "ok": false,
+        "reason": "FORBIDDEN",
+        "previousFaceImageId": null,
+        "message": "仅管理员可以重新上传印面图"
+      },
+      "guest": {
+        "ok": false,
+        "reason": "FORBIDDEN",
+        "previousFaceImageId": null,
+        "message": "仅管理员可以重新上传印面图"
+      },
+      "after": {
+        "images": 13,
+        "faces": 13,
+        "seals": 8,
+        "blobs": 0
+      },
+      "face_image_id_after": "img-0001f"
+    }
+  },
+  "can_flags": {
+    "admin": true,
+    "user": false,
+    "guest": false,
+    "current_user_is_normal": true
+  },
+  "replace_1": {
+    "before": {
+      "images": 13,
+      "faces": 13,
+      "seals": 8,
+      "blobs": 0
+    },
+    "result": {
+      "ok": true,
+      "faceImageId": "img-0001f-2",
+      "previousFaceImageId": "img-0001f",
+      "deduped": false,
+      "message": "印面图已替换：影像编号 img-0001f → img-0001f-2；旧影像行与二进制保留未删。新影像 1 × 1 · image/png · 74 字节"
+    },
+    "after": {
+      "images": 14,
+      "faces": 13,
+      "seals": 8,
+      "blobs": 1
+    },
+    "face_image_id": "img-0001f-2",
+    "new_row": {
+      "id": "img-0001f-2",
+      "assetId": "img-0001f-2",
+      "stamp_id": "XAI-0001",
+      "sealId": "XAI-0001",
+      "ownerType": "face",
+      "ownerId": "fc-0001-f1",
+      "kind": "FACE",
+      "sha256": "1c887dd3e90bf53184cba48313583c666a05042dbdf3ebfbac397120cc334b50",
+      "bytes": 74,
+      "width": 1,
+      "height": 1,
+      "colorMode": "RGB",
+      "color_mode": "RGB",
+      "mime": "image/png",
+      "storage": "indexeddb",
+      "storage_key": "asset:img-0001f-2",
+      "source": "manual",
+      "uploaded_by": "u-16601061656",
+      "created_at": "2026-09-20T10:03:29.690Z"
+    },
+    "old_row_unchanged": true,
+    "blob_keys": [
+      "asset:img-0001f-2"
+    ],
+    "new_binary_bytes": 74
+  },
+  "view_model": {
+    "face_id": "fc-0001-f1",
+    "face_image_id": "img-0001f-2",
+    "faceImage_id": "img-0001f-2",
+    "primary_face_image_id": "img-0001f-2"
+  },
+  "replace_2": {
+    "before": {
+      "images": 14,
+      "faces": 13,
+      "seals": 8,
+      "blobs": 1
+    },
+    "result": {
+      "ok": true,
+      "faceImageId": "img-0001f-3",
+      "previousFaceImageId": "img-0001f-2"
+    },
+    "after": {
+      "images": 15,
+      "faces": 13,
+      "seals": 8,
+      "blobs": 2
+    },
+    "first_image_id": "img-0001f-2",
+    "first_row_still_there": true,
+    "first_row_unchanged": true,
+    "first_binary_bytes": 74,
+    "blob_keys": [
+      "asset:img-0001f-2",
+      "asset:img-0001f-3"
+    ]
+  },
+  "rollback_binary_fail": {
+    "before": {
+      "images": 15,
+      "faces": 13,
+      "seals": 8,
+      "blobs": 2
+    },
+    "injected": "IDBObjectStore.put 抛错（模拟影像库写入失败）",
+    "result": {
+      "ok": false,
+      "reason": "STORAGE_UNAVAILABLE",
+      "message": "影像库写入失败：影像存储操作失败：注入故障：影像库写入失败"
+    },
+    "after": {
+      "images": 15,
+      "faces": 13,
+      "seals": 8,
+      "blobs": 2
+    },
+    "face_image_id": "img-0001f-3",
+    "blob_keys_before": [
+      "asset:img-0001f-2",
+      "asset:img-0001f-3"
+    ],
+    "blob_keys_after": [
+      "asset:img-0001f-2",
+      "asset:img-0001f-3"
+    ]
+  },
+  "rollback_metadata_fail": {
+    "before": {
+      "images": 15,
+      "faces": 13,
+      "seals": 8,
+      "blobs": 2
+    },
+    "injected": "localStorage 写入 xiai:v1:images 抛错（模拟本地存储不可写）",
+    "injected_write_fails": 1,
+    "result": {
+      "ok": false,
+      "reason": "STORAGE_UNAVAILABLE",
+      "message": "影像元数据未能落盘（本地存储不可写），本次替换已回滚，未产生半成品影像"
+    },
+    "after": {
+      "images": 15,
+      "faces": 13,
+      "seals": 8,
+      "blobs": 2
+    },
+    "face_image_id": "img-0001f-3",
+    "blob_keys_before": [
+      "asset:img-0001f-2",
+      "asset:img-0001f-3"
+    ],
+    "blob_keys_after": [
+      "asset:img-0001f-2",
+      "asset:img-0001f-3"
+    ]
+  },
+  "persistence": {
+    "face_image_id": "img-0001f-3",
+    "image_id": "img-0001f-3",
+    "image_meta": {
+      "width": 1,
+      "height": 1,
+      "bytes": 74,
+      "mime": "image/png"
+    },
+    "binary_bytes": 74,
+    "view_model_faceImage_id": "img-0001f-3"
+  },
+  "dedupe": {
+    "before": {
+      "images": 15,
+      "faces": 13,
+      "seals": 8,
+      "blobs": 2
+    },
+    "result": {
+      "ok": true,
+      "deduped": true,
+      "faceImageId": "img-0001f-3",
+      "previousFaceImageId": "img-0001f-3",
+      "message": "本次所选图与当前印面图内容相同（影像编号 img-0001f-3），未新增影像行，印面指向未变"
+    },
+    "after": {
+      "images": 15,
+      "faces": 13,
+      "seals": 8,
+      "blobs": 2
+    }
+  },
+  "rejects": {
+    "missing_face": {
+      "ok": false,
+      "reason": "MISSING_FACE",
+      "message": "未指定要替换影像的印面"
+    },
+    "empty": {
+      "ok": false,
+      "reason": "EMPTY_CONTENT",
+      "message": "印面图内容为空，请重新选择图片文件"
+    },
+    "not_image": {
+      "ok": false,
+      "reason": "NOT_IMAGE",
+      "message": "这不是可用的图片内容（无法识别图片格式），请重新选择 JPG / PNG / WebP 图片（声称类型 image/webp）"
+    },
+    "too_large": {
+      "ok": false,
+      "reason": "TOO_LARGE",
+      "message": "印面图过大：当前内容 1.00 MB，上限 1.00 MB（1 MB）。请换一张更小的图，或先用手机 / 系统自带的压缩再上传。"
+    },
+    "unknown_face": {
+      "ok": false,
+      "reason": "UNKNOWN_FACE",
+      "message": "未找到该印面：fc-9999-f9"
+    }
+  },
+  "summary": {
+    "passed": 36,
+    "failed": 0,
+    "total": 36
+  },
+  "checks": [
+    {
+      "name": "0 管理员登录（唯一管理员手机号 16601061656）",
+      "pass": true,
+      "detail": "role=admin id=u-16601061656"
+    },
+    {
+      "name": "0 普通用户登录（13800000001，旧管理员号已降级）",
+      "pass": true,
+      "detail": "role=user id=u-13800000001"
+    },
+    {
+      "name": "0 基线：印面 fc-0001-f1 当前影像编号 = img-0001f（种子）",
+      "pass": true,
+      "detail": "face_image_id=img-0001f"
+    },
+    {
+      "name": "① 服务层 · 普通用户直调 replaceFaceImage ⇒ 被拒且 reason = FORBIDDEN",
+      "pass": true,
+      "detail": "ok=false reason=FORBIDDEN message=仅管理员可以重新上传印面图"
+    },
+    {
+      "name": "① 服务层 · 被拒后库零变化（影像行数 / 印面指向 / 二进制数三者均不变）",
+      "pass": true,
+      "detail": "{\"before\":{\"images\":13,\"faces\":13,\"seals\":8,\"blobs\":0},\"after\":{\"images\":13,\"faces\":13,\"seals\":8,\"blobs\":0},\"face_image_id\":\"img-0001f\"}"
+    },
+    {
+      "name": "① 服务层 · 被拒时无未捕获异常（结构化返回）",
+      "pass": true,
+      "detail": "message=仅管理员可以重新上传印面图"
+    },
+    {
+      "name": "① 数据层 · 普通用户 actor 直调 ⇒ reason = FORBIDDEN（不依赖 UI 隐藏入口）",
+      "pass": true,
+      "detail": "{\"ok\":false,\"reason\":\"FORBIDDEN\",\"message\":\"仅管理员可以重新上传印面图\"}"
+    },
+    {
+      "name": "① 数据层 · 游客（actor = null）直调 ⇒ reason = FORBIDDEN",
+      "pass": true,
+      "detail": "{\"ok\":false,\"reason\":\"FORBIDDEN\",\"message\":\"仅管理员可以重新上传印面图\"}"
+    },
+    {
+      "name": "① 数据层 · 两次越权调用后库零变化（影像行数 / 二进制数 / 印面指向）",
+      "pass": true,
+      "detail": "{\"before\":{\"images\":13,\"faces\":13,\"seals\":8,\"blobs\":0},\"after\":{\"images\":13,\"faces\":13,\"seals\":8,\"blobs\":0},\"face_image_id\":\"img-0001f\"}"
+    },
+    {
+      "name": "① canReplaceFaceImage：管理员 true / 普通用户 false / 游客 false",
+      "pass": true,
+      "detail": "{\"admin\":true,\"user\":false,\"guest\":false,\"current_user_is_normal\":true}"
+    },
+    {
+      "name": "② 管理员替换成功（ok = true）",
+      "pass": true,
+      "detail": "{\"ok\":true,\"message\":\"印面图已替换：影像编号 img-0001f → img-0001f-2；旧影像行与二进制保留未删。新影像 1 × 1 · image/png · 74 字节\"}"
+    },
+    {
+      "name": "② 返回含 faceImageId 与 previousFaceImageId（旧 = 种子 img-0001f）",
+      "pass": true,
+      "detail": "{\"faceImageId\":\"img-0001f-2\",\"previousFaceImageId\":\"img-0001f\"}"
+    },
+    {
+      "name": "② 印面 face_image_id 已改指向新影像",
+      "pass": true,
+      "detail": "face_image_id=img-0001f-2 新=img-0001f-2"
+    },
+    {
+      "name": "② 影像行数 = 前 + 1",
+      "pass": true,
+      "detail": "13 → 14"
+    },
+    {
+      "name": "② 旧影像行逐字未改（JSON 比对）",
+      "pass": true,
+      "detail": "old=img-0001f"
+    },
+    {
+      "name": "② 新影像行 kind = FACE 且与印面同一 sealId",
+      "pass": true,
+      "detail": "{\"kind\":\"FACE\",\"stamp_id\":\"XAI-0001\",\"sealId\":\"XAI-0001\",\"ownerId\":\"fc-0001-f1\",\"storage\":\"indexeddb\"}"
+    },
+    {
+      "name": "② 二进制已落影像库（键 asset:<新影像编号>，字节数 = 上传字节数）",
+      "pass": true,
+      "detail": "{\"bytesLength\":74,\"expect\":74,\"keys\":[\"asset:img-0001f-2\"]}"
+    },
+    {
+      "name": "② 印章行未被改写（只增影像 + 改印面指向）",
+      "pass": true,
+      "detail": "seals JSON 逐字比对"
+    },
+    {
+      "name": "② 视图模型 faceViewModel.faceImage 指向新影像（详情页据此渲染）",
+      "pass": true,
+      "detail": "{\"face_id\":\"fc-0001-f1\",\"face_image_id\":\"img-0001f-2\",\"faceImage_id\":\"img-0001f-2\",\"primary_face_image_id\":\"img-0001f-2\"}"
+    },
+    {
+      "name": "②′ 连续替换：第二次的 previousFaceImageId = 第一次的新编号",
+      "pass": true,
+      "detail": "{\"ok\":true,\"previous\":\"img-0001f-2\",\"first\":\"img-0001f-2\"}"
+    },
+    {
+      "name": "②′ 旧影像行仍在库且逐字未改",
+      "pass": true,
+      "detail": "row={\"id\":\"img-0001f-2\",\"assetId\":\"img-0001f-2\",\"stamp_id\":\"XAI-0001\",\"sealId\":\"XAI-0001\",\"ownerType\":\"face\",\"ownerId\":\"fc-0001-f1\",\"kind\":\"FACE\",\"sha256\":\"1c887dd3e90bf53184cba48313583c666a05042dbdf3ebfbac397120cc334b50\",\"bytes\":74,\"width\":1,\"height\":1,\"colorMode\":\"RGB\",\"color_mode\":\"RGB\",\"mime\":\"image/png\",\"storage\":\"indexeddb\",\"storage_key\":\"asset:img-0001f-2\",\"source\":\"manual\",\"uploaded_by\":\"u-16601061656\",\"created_at\":\"2026-09-20T10:03:29.690Z\"}"
+    },
+    {
+      "name": "②′ 旧影像**二进制**仍在且字节一致（替换不删旧图）",
+      "pass": true,
+      "detail": "{\"ok\":true,\"bytes\":74,\"expect\":74}"
+    },
+    {
+      "name": "②′ 影像行数 = 前 + 1（旧行不删、只增新行）",
+      "pass": true,
+      "detail": "14 → 15"
+    },
+    {
+      "name": "③-1 影像二进制写失败 ⇒ 结构化失败（reason = STORAGE_UNAVAILABLE，未抛异常）",
+      "pass": true,
+      "detail": "{\"ok\":false,\"reason\":\"STORAGE_UNAVAILABLE\",\"message\":\"影像库写入失败：影像存储操作失败：注入故障：影像库写入失败\"}"
+    },
+    {
+      "name": "③-1 回滚：影像行数不变（无半成品行）",
+      "pass": true,
+      "detail": "15 → 15"
+    },
+    {
+      "name": "③-1 回滚：印面 face_image_id 不变",
+      "pass": true,
+      "detail": "{\"before\":\"img-0001f-3\",\"after\":\"img-0001f-3\"}"
+    },
+    {
+      "name": "③-1 回滚：影像库键集合不变（无孤儿二进制）",
+      "pass": true,
+      "detail": "{\"before\":[\"asset:img-0001f-2\",\"asset:img-0001f-3\"],\"after\":[\"asset:img-0001f-2\",\"asset:img-0001f-3\"]}"
+    },
+    {
+      "name": "③-2 影像元数据未落盘 ⇒ 结构化失败（reason = STORAGE_UNAVAILABLE）",
+      "pass": true,
+      "detail": "{\"ok\":false,\"reason\":\"STORAGE_UNAVAILABLE\",\"message\":\"影像元数据未能落盘（本地存储不可写），本次替换已回滚，未产生半成品影像\"}"
+    },
+    {
+      "name": "③-2 回滚：影像行数不变",
+      "pass": true,
+      "detail": "15 → 15"
+    },
+    {
+      "name": "③-2 回滚：印面 face_image_id 不变",
+      "pass": true,
+      "detail": "{\"before\":\"img-0001f-3\",\"after\":\"img-0001f-3\"}"
+    },
+    {
+      "name": "③-2 回滚：不留孤儿二进制（键集合不变）",
+      "pass": true,
+      "detail": "{\"before\":[\"asset:img-0001f-2\",\"asset:img-0001f-3\"],\"after\":[\"asset:img-0001f-2\",\"asset:img-0001f-3\"]}"
+    },
+    {
+      "name": "④ 重新读回：印面指向、影像行、二进制三者一致（关标签重开等价）",
+      "pass": true,
+      "detail": "{\"face_image_id\":\"img-0001f-3\",\"image_id\":\"img-0001f-3\",\"image_meta\":{\"width\":1,\"height\":1,\"bytes\":74,\"mime\":\"image/png\"},\"binary_bytes\":74,\"view_model_faceImage_id\":\"img-0001f-3\"}"
+    },
+    {
+      "name": "④ 视图模型重新读取后 faceImage 指向同一影像（详情页刷新后一致）",
+      "pass": true,
+      "detail": "{\"face_image_id\":\"img-0001f-3\",\"faceImage\":\"img-0001f-3\"}"
+    },
+    {
+      "name": "④′ 同内容再传 ⇒ deduped 复用既有影像行（行数不变、指向不变）",
+      "pass": true,
+      "detail": "{\"before\":{\"images\":15,\"faces\":13,\"seals\":8,\"blobs\":2},\"result\":{\"ok\":true,\"deduped\":true,\"faceImageId\":\"img-0001f-3\",\"previousFaceImageId\":\"img-0001f-3\",\"message\":\"本次所选图与当前印面图内容相同（影像编号 img-0001f-3），未新增影像行，印面指向未变\"},\"after\":{\"images\":15,\"faces\":13,\"seals\":8,\"blobs\":2}}"
+    },
+    {
+      "name": "⑤ 拒绝路径均可读（未指定印面 / 空内容 / 非图片 / 超 1 MB / 印面不存在）",
+      "pass": true,
+      "detail": "{\"missing_face\":{\"ok\":false,\"reason\":\"MISSING_FACE\",\"message\":\"未指定要替换影像的印面\"},\"empty\":{\"ok\":false,\"reason\":\"EMPTY_CONTENT\",\"message\":\"印面图内容为空，请重新选择图片文件\"},\"not_image\":{\"ok\":false,\"reason\":\"NOT_IMAGE\",\"message\":\"这不是可用的图片内容（无法识别图片格式），请重新选择 JPG / PNG / WebP 图片（声称类型 image/webp）\"},\"too_large\":{\"ok\":false,\"reason\":\"TOO_LARGE\",\"message\":\"印面图过大：当前内容 1.00 MB，上限 1.00 MB（1 MB）。请换一张更小的图，或先用手机 / 系统自带的压缩再上传。\"},\"unknown_face\":{\"ok\":false,\"reason\":\"UNKNOWN_FACE\",\"message\":\"未找到该印面：fc-9999-f9\"}}"
+    },
+    {
+      "name": "⑤ 拒绝路径均不落库（影像行数不变）",
+      "pass": true,
+      "detail": "15 → 15"
+    }
+  ],
+  "finished_at": "2026-09-20T10:03:29.771Z",
+  "idb_log": {
+    "putFails": 1,
+    "puts": 3
+  },
+  "write_log": {
+    "fails": 1
+  }
+}

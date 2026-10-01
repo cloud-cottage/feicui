@@ -1,0 +1,12 @@
+== 关键包版本（worker 侧，必须与 spike 基线一致）==
+paddleocr==3.7.0
+paddlepaddle==3.3.1
+pymupdf==1.28.2
+numpy==2.3.5
+opencv-python==5.0.0.93
+streamlit==1.63.0
+== feicui/venv 内是否存在 fastapi（应为 ModuleNotFoundError）==
+ModuleNotFoundError: No module named 'fastapi'
+== server/.venv 内是否存在 OCR 栈 / pymupdf（应为 ModuleNotFoundError，§6.5）==
+ModuleNotFoundError: No module named 'paddleocr'
+ModuleNotFoundError: No module named 'fitz'

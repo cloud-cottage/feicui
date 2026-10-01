@@ -1,0 +1,57 @@
+# ═══ feicui（印谱解析工具）根 .gitignore ═══
+# 入库范围 A：只公开「人写的代码 + 文档」。
+# 本文件合并了 server/.gitignore 与 web/.gitignore 的已有规则（见文末各段），
+# 并追加 Zang 与 Kevin 已认可的统一排除口径。
+
+# ── 虚拟环境（本机可重建，不入库）──
+venv/
+server/.venv/
+.venv/
+
+# ── Node / 前端构建 ──
+node_modules/
+web/node_modules/
+dist/
+web/dist/
+
+# ── Python 编译产物 ──
+__pycache__/
+*.pyc
+
+# ── 运行时产物 ──
+server/.run/
+nohup.out
+tmp.pdf
+var/
+
+# ── 数据 / 导出 / 评测 / 标注产物 ──
+output/
+exports/
+qa-baseline/
+qa-recheck/
+labeling/
+spike-ocr/
+
+# ── 顶层数据 JSON（OCR / 恢复报告）──
+/f2_report.json
+/f2_ocr_sample_report.json
+/f2_recover_report.json
+/f2_rerun_report.json
+/f2_stamps_before.json
+/f2_stamps_after.json
+
+# ── 杂项 ──
+.DS_Store
+*.local
+.evidence-tmp
+
+# ── 原 server/.gitignore 规则（路径改写为仓根视角；glob 收紧为递归，
+#    否则嵌套的 selftest/evidence/*/db/*.db 会漏网 —— 见报告）──
+server/selftest/evidence/**/*.db
+server/selftest/evidence/**/*.db-wal
+server/selftest/evidence/**/*.db-shm
+server/selftest/evidence/**/*.log
+server/selftest/evidence/*.db
+server/selftest/evidence/*.db-wal
+server/selftest/evidence/*.db-shm
+server/selftest/evidence/*.log

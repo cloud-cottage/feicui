@@ -1,0 +1,41 @@
+=== 逐端口 lsof 归属（2026-09-20 13:09:20）===
+--- port 3100 ---
+node    21872 kevin   14u  IPv6 0x568713ee69c3e49d      0t0  TCP *:3100 (LISTEN)
+--- port 5199 ---
+node    21980 kevin   21u  IPv6 0x3a130e9f959910df      0t0  TCP [::1]:5199 (LISTEN)
+--- port 5164 ---
+node    21941 kevin   20u  IPv6 0x5f75f8eba144340e      0t0  TCP [::1]:5164 (LISTEN)
+--- port 5196 ---
+python3.1 21875 kevin    6u  IPv4 0xc055e6fb5c07d457      0t0  TCP 127.0.0.1:5196 (LISTEN)
+--- port 5195 ---
+node    21916 kevin   18u  IPv4 0xee1137b7df6ad82a      0t0  TCP 127.0.0.1:5195 (LISTEN)
+--- port 5778 ---
+node    21944 kevin   15u  IPv6 0xff7a19f1aab2b207      0t0  TCP *:5778 (LISTEN)
+--- port 5777 ---
+node    21973 kevin   21u  IPv6 0x7170f7a28ffe71e4      0t0  TCP [::1]:5777 (LISTEN)
+--- port 5701 ---
+node    21956 kevin   30u  IPv6 0x5fff440d5aa4034      0t0  TCP [::1]:5701 (LISTEN)
+--- port 5181 ---
+node    22074 kevin   15u  IPv6 0x8dc6884267fe269      0t0  TCP *:5181 (LISTEN)
+--- port 3020 ---
+node    21881 kevin   15u  IPv6 0x6679f5ebfbc65711      0t0  TCP *:3020 (LISTEN)
+--- port 5175 ---
+node    22059 kevin   19u  IPv4 0x1e4091a64b3bd0a2      0t0  TCP *:5175 (LISTEN)
+--- port 5176 ---
+node    22057 kevin   43u  IPv6 0x7421fb888af236c9      0t0  TCP [::1]:5176 (LISTEN)
+
+=== 新起进程 cwd 核验（lsof -a -p <pid> -d cwd）===
+pid 21874 cwd: /Users/kevin/bistro/shu/web
+pid 21875 cwd: /Users/kevin/bistro/shu/feicui/server
+pid 21876 cwd: /Users/kevin/bistro/shu/feicui/web
+pid 21882 cwd: /Users/kevin/bistro/liwu
+pid 21883 cwd: /Users/kevin/bistro/liwu
+
+=== 5195/5196 真实监听者 + 命令行 ===
+port 5195 listener pid=21916
+21916 21876 21876 node /Users/kevin/bistro/shu/feicui/web/node_modules/.bin/vite
+port 5196 listener pid=21875
+21875 21499 21875 ./.venv/bin/python -m app.main
+
+=== orphan 巡检（ppid==1 的 vite/npm/ts-node/nodemon）===
+1

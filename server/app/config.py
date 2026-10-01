@@ -1,0 +1,164 @@
+"""feicui API 层配置（Kong / 阶段 1a）。
+
+优先级（后者覆盖前者）：
+  1. 内置默认值
+  2. JSON 配置文件：$FEICUI_SERVER_CONFIG，或 server/config.json（存在才读）
+  3. 环境变量：FEICUI_DB / FEICUI_ROOT / FEICUI_API_HOST / FEICUI_API_PORT / PORT / FEICUI_CHUNK_SIZE
+
+规范锚点：`../docs/feicui.spec.md` v1.1 §4.2（影像路径一律相对 feicui/）、§6.1（API 端口 5196）、
+§3.2 S-4（接口层不落业务真值）、PORTS.md 制度 (d)（本机非生产链路一律 127.0.0.1）。
+"""
+from __future__ import annotations
+
+import json
+import os
+from dataclasses import dataclass
+from pathlib import Path
+
+# server/app/config.py -> app -> server -> feicui
+SERVER_DIR = Path(__file__).resolve().parents[1]
+REPO_ROOT = SERVER_DIR.parent  # /Users/kevin/bistro/shu/feicui
+PROD_DB_PATH = (REPO_ROOT.parent / "data" / "yinpu.db").resolve()  # 唯一真源（不得被本层写路径触碰）
+
+DEFAULT_CONFIG_FILE = SERVER_DIR / "config.json"
+
+# CORS 允许来源（**唯一真源**，端点侧不得再散落硬编码）：本机非生产链路一律 `127.0.0.1`（PORTS.md 制度 (d)），
+# 并同时给出 `localhost` 同形项（浏览器地址栏常见形态，与 5195 既有口径同形）。
+#   * `5195` = feicui 前端（既有）；
+#   * `5163` = 玺爱（xiai）dev 前端 —— `POST /api/tools/square-crop` 的调用方（本单新增）。
+# 可用 `FEICUI_CORS_ORIGINS`（逗号分隔）整体覆盖；**任何情况下都不放开 `*`**。
+DEFAULT_CORS_ORIGINS: tuple[str, ...] = (
+    "http://127.0.0.1:5195",
+    "http://localhost:5195",
+    "http://127.0.0.1:5163",
+    "http://localhost:5163",
+)
+
+
+def _load_config_file() -> dict:
+    path = Path(os.environ.get("FEICUI_SERVER_CONFIG", str(DEFAULT_CONFIG_FILE)))
+    if not path.is_file():
+        return {}
+    with path.open("r", encoding="utf-8") as fh:
+        data = json.load(fh)
+    if not isinstance(data, dict):
+        raise ValueError(f"配置文件必须是 JSON 对象：{path}")
+    return data
+
+
+def _resolve_db_path(value: str) -> Path:
+    p = Path(value).expanduser()
+    if not p.is_absolute():
+        p = REPO_ROOT / p
+    return p.resolve()
+
+
+@dataclass(frozen=True)
+class Settings:
+    """进程级只读配置（每次读 API 都是现算，无进程内业务真值缓存）。"""
+
+    db_path: Path
+    root: Path
+    host: str
+    port: int
+    chunk_size: int
+    allow_prod_migrate: bool
+    config_file: str | None
+    debug: bool = False
+    # ---- CORS 允许来源（默认＝DEFAULT_CORS_ORIGINS；`FEICUI_CORS_ORIGINS` 可整体覆盖）----
+    cors_origins: tuple[str, ...] = DEFAULT_CORS_ORIGINS
+    # ---- 执行层（阶段 1b-i）：池 / worker / 影像 口径 ----
+    faces_dir: Path = REPO_ROOT / "output" / "faces"
+    worker_python: Path = REPO_ROOT / "venv" / "bin" / "python"
+    workers: int = 4
+    doc_preprocess: bool = True
+    cpu_threads: int = 2
+    on_conflict: str = "skip"
+    poll_interval: float = 0.5
+    pool_state_path: Path = SERVER_DIR / ".run" / "pool.state.json"
+    worker_log_dir: Path = SERVER_DIR / ".run" / "worker-logs"
+    # ---- E4（阶段 1b-ii）：触发导出的落点与解释器（§3.1 E4 / §6.5） ----
+    # 导出物落点＝feicui/exports（规范 §3.3 §9.6「首版仍走本地目录」）；env FEICUI_EXPORT_ROOT 可重定向
+    # （自测用临时目录，**避免污染既有批次包**——导出根即 export.py 自己的 `FEICUI_EXPORT_ROOT`）。
+    export_root: Path = REPO_ROOT / "exports"
+    # E4 走 **worker 侧解释器**子进程调 `export.py` CLI（§6.5：接口层不装 OCR / 图像栈）
+    export_script: Path = REPO_ROOT / "export.py"
+    export_config_dir: Path = REPO_ROOT / "config"
+    export_timeout_s: float = 180.0
+
+    @property
+    def is_prod_db(self) -> bool:
+        return self.db_path == PROD_DB_PATH
+
+    @property
+    def sqlite_uri(self) -> str:
+        return f"file:{self.db_path}"
+
+
+def get_settings() -> Settings:
+    file_cfg = _load_config_file()
+    env = os.environ
+
+    db_raw = env.get("FEICUI_DB") or file_cfg.get("db_path") or str(PROD_DB_PATH)
+    db_path = _resolve_db_path(str(db_raw))
+
+    root_raw = env.get("FEICUI_ROOT") or file_cfg.get("root") or str(REPO_ROOT)
+    root = Path(root_raw).expanduser().resolve()
+
+    host = env.get("FEICUI_API_HOST") or file_cfg.get("host") or "127.0.0.1"
+
+    port_raw = env.get("FEICUI_API_PORT") or env.get("PORT") or file_cfg.get("port") or 5196
+    port = int(port_raw)
+
+    chunk_raw = env.get("FEICUI_CHUNK_SIZE") or file_cfg.get("chunk_size") or 8
+    chunk_size = max(1, int(chunk_raw))
+
+    # CORS 来源：`FEICUI_CORS_ORIGINS`（逗号分隔）显式给出时**整体覆盖**默认表；否则用 DEFAULT_CORS_ORIGINS。
+    cors_raw = env.get("FEICUI_CORS_ORIGINS")
+    cors_origins = (
+        tuple(o.strip() for o in str(cors_raw).split(",") if o.strip())
+        if cors_raw
+        else DEFAULT_CORS_ORIGINS
+    )
+
+    return Settings(
+        db_path=db_path,
+        root=root,
+        host=host,
+        port=port,
+        chunk_size=chunk_size,
+        allow_prod_migrate=str(env.get("FEICUI_ALLOW_PROD_MIGRATE", "")).lower() in {"1", "true", "yes"},
+        config_file=str(env.get("FEICUI_SERVER_CONFIG", DEFAULT_CONFIG_FILE))
+        if Path(str(env.get("FEICUI_SERVER_CONFIG", DEFAULT_CONFIG_FILE))).is_file()
+        else None,
+        debug=str(env.get("FEICUI_DEBUG", "")).lower() in {"1", "true", "yes"},
+        cors_origins=cors_origins,
+        # ---- 执行层（阶段 1b-i）----
+        faces_dir=Path(env.get("FEICUI_FACES_DIR") or file_cfg.get("faces_dir") or str(REPO_ROOT / "output" / "faces")).expanduser().resolve(),
+        worker_python=Path(
+            env.get("FEICUI_WORKER_PYTHON") or file_cfg.get("worker_python") or str(REPO_ROOT / "venv" / "bin" / "python")
+        ).expanduser(),
+        workers=max(1, int(env.get("FEICUI_WORKERS") or file_cfg.get("workers") or 4)),
+        doc_preprocess=str(env.get("FEICUI_DOC_PREPROCESS", file_cfg.get("doc_preprocess", "1"))).lower()
+        not in {"0", "false", "no", "off"},
+        cpu_threads=max(1, int(env.get("FEICUI_CPU_THREADS") or file_cfg.get("cpu_threads") or 2)),
+        on_conflict=str(env.get("FEICUI_ON_CONFLICT") or file_cfg.get("on_conflict") or "skip").lower(),
+        poll_interval=float(env.get("FEICUI_POOL_POLL") or file_cfg.get("poll_interval") or 0.5),
+        pool_state_path=Path(
+            env.get("FEICUI_POOL_STATE") or file_cfg.get("pool_state_path") or str(SERVER_DIR / ".run" / "pool.state.json")
+        ).expanduser(),
+        worker_log_dir=Path(
+            env.get("FEICUI_WORKER_LOG_DIR") or file_cfg.get("worker_log_dir") or str(SERVER_DIR / ".run" / "worker-logs")
+        ).expanduser(),
+        # ---- E4（阶段 1b-ii）----
+        export_root=Path(
+            env.get("FEICUI_EXPORT_ROOT") or file_cfg.get("export_root") or str(REPO_ROOT / "exports")
+        ).expanduser().resolve(),
+        export_script=Path(
+            env.get("FEICUI_EXPORT_SCRIPT") or file_cfg.get("export_script") or str(REPO_ROOT / "export.py")
+        ).expanduser(),
+        export_config_dir=Path(
+            env.get("FEICUI_CONFIG_DIR") or file_cfg.get("export_config_dir") or str(REPO_ROOT / "config")
+        ).expanduser().resolve(),
+        export_timeout_s=float(env.get("FEICUI_EXPORT_TIMEOUT") or file_cfg.get("export_timeout_s") or 180.0),
+    )

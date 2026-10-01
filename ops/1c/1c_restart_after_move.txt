@@ -1,0 +1,57 @@
+### 阶段 1c-激活 · 面板重启后验收（迁移到 xiai 之后；pm2 restart 不带 --update-env）
+### 2026-09-20 14:50:18 CST
+
+[   0.5s] 条目=12 running=12 非running={}
+
+self = {"ok": true, "panel": {"port": 5555, "portOpen": true, "pid": 54242, "nodeVersion": "v20.20.2", "uptimeMs": 13398, "startedAt": "2026-09-20T06:50:05.491Z", "pm2": {"name": "bistro-ctrl", "id": 0, "status": "online", "managed": true, "source": "pm2-pidfile"}, "code": {"path": "/Users/kevin/bistro/ctrl/index.js", "size": 52651, "mtime": "2026-09-20T06:49:58.669Z", "mtimeText": "2026/9/20 14:49:58"}, "pids": {"path": "/Users/kevin/bistro/ctrl/logs/pids.json", "count": 12, "sids": ["jiazu-api", "jiazu", "shu", "feicui-api", "feicui-web", "jinli-api", "jinli", "cat", "aranya-api", "liwu-proxy", "liwu-web", "liwu-app"], "mtimeText": "2026/9/20 14:50:08"}}}
+
+jiazu-api    | running   | port=3100 pid=54314 portOpen=True cwd=/Users/kevin/bistro/jiazu
+jiazu        | running   | port=5199 pid=54315 portOpen=True cwd=/Users/kevin/bistro/jiazu/frontend
+shu          | running   | port=5164 pid=54316 portOpen=True cwd=/Users/kevin/bistro/xiai/web
+feicui-api   | running   | port=5196 pid=54317 portOpen=True cwd=/Users/kevin/bistro/xiai/feicui/server
+feicui-web   | running   | port=5195 pid=54318 portOpen=True cwd=/Users/kevin/bistro/xiai/feicui/web
+jinli-api    | running   | port=5778 pid=54319 portOpen=True cwd=/Users/kevin/bistro/jinli/backend-ts
+jinli        | running   | port=5777 pid=54320 portOpen=True cwd=/Users/kevin/bistro/jinli/frontend
+cat          | running   | port=5701 pid=54321 portOpen=True cwd=/Users/kevin/bistro/cat
+aranya-api   | running   | port=5181 pid=54322 portOpen=True cwd=/Users/kevin/bistro/aranya_go
+liwu-proxy   | running   | port=3020 pid=54323 portOpen=True cwd=/Users/kevin/bistro/liwu
+liwu-web     | running   | port=5175 pid=54324 portOpen=True cwd=/Users/kevin/bistro/liwu
+liwu-app     | running   | port=5176 pid=54325 portOpen=True cwd=/Users/kevin/bistro/liwu
+
+条目数=12 running=12 非running={}
+
+--- 逐端口 lsof ---
+3100   node 54314 *:3100
+5199   node 54362 [::1]:5199
+5164   node 54415 [::1]:5164
+5196   python3.1 54317 127.0.0.1:5196
+5195   node 54444 127.0.0.1:5195
+5778   node 54370 *:5778
+5777   node 54449 [::1]:5777
+5701   node 54430 [::1]:5701
+5181   node 54526 *:5181
+3020   node 54323 *:3020
+5175   node 54480 *:5175
+5176   node 54518 [::1]:5176
+
+--- API health（经 5164/feicui 代理）---
+{"ok":true,"api_version":"1c-activate","db_path":"/Users/kevin/bistro/xiai/feicui/yinpu.db","db_exists":true,"prod_db":true,"root":"/Users/kevin/bistro/xiai/feicui","time":"2026-09-20T14:50:19+08:00","tables_present":{"stamps":true,"jobs":true,"job_pages":true},"journal_mode":"wal"}
+--- 池自检 ---
+{"db_path":"/Users/kevin/bistro/xiai/feicui/yinpu.db","prod_db":true,"pool_running":false,"lock_path":"/Users/kevin/bistro/xiai/feicui/server/.run/pool.state.lock","launch_log":"/Users/kevin/bistro/xiai/feicui/server/.run/pool-launch.log","active_jobs":[]}
+--- 14 条对外路由 ---
+/                      200
+/pricing               200
+/console               200
+/console/login         200
+/console/register      200
+/console/overview      200
+/console/keys          200
+/console/usage         200
+/console/billing       200
+/docs                  200
+/docs/quickstart       200
+/org                   200
+/demo                  200
+/help                  200
+非200 = 0
+feicui 入口 = 200

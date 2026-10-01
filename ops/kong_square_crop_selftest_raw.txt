@@ -1,0 +1,624 @@
+====================================================================================================
+square-crop 自测｜label=temp-5201/copy-db (final)｜base=http://127.0.0.1:5201｜db=/Users/kevin/bistro/xiai/feicui/yinpu.db｜2026-09-20T17:14:47.456892
+worker 解释器 = /Users/kevin/bistro/xiai/feicui/venv/bin/python（存在＝True）；本层解释器 = /Users/kevin/bistro/xiai/feicui/server/.venv/bin/python
+====================================================================================================
+样本 A:p0013_00.webp：/Users/kevin/bistro/xiai/feicui/output/faces/TMP/p0013_00.webp（30004 B，cv2 解回 343x341）
+样本 B:古玺汇编 p24_0.webp：/Users/kevin/bistro/xiai/feicui/output/古玺汇编 文物出版社 罗福颐  ok/p24_0.webp（82496 B，cv2 解回 595x598）
+  [PASS] 样本存在 — 2 枚真实影像
+造纯白图：/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui_square_selftest__1sj3gye/white.png（200×200，cv2 解回 200x200）
+造双红方块合成图：/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui_square_selftest__1sj3gye/two_red_squares.png（400×400，cv2 解回 400x400）
+调用前 stamps 指纹：rows=89 md5_B=d3932fdcd5e1f1482d115b735e8fb1bb rows<=79=79 md5_B(<=79)=d7abe995bff62761c27052dfc2bdf7bb
+
+---- ① 真实影像 200（含 ② 方形断言 / ③ 顺序断言）----
+    上传 A:p0013_00.webp（p0013_00.webp）
+    → POST http://127.0.0.1:5201/api/tools/square-crop
+    ← 200
+      content-type: application/json
+      content-length: 37316
+      body: {"ok": true, "count": 1, "source": {"width": 343, "height": 341}, "candidates": [{"idx": 0, "bbox": [0, 0, 343, 341], "square": [1, 0, 342, 341], "side": 341, "width": 341, "height": 341, "mime": "image/webp", "sha256": "b540bf974bceca6aa1358f6f914d773a2983d3f83337e23255dfb3415824aad5", "image_base64": "<36652 chars b64>", "area": 48909.0, "aspect": 1.0030395136778116, "degraded": true, "degraded_reasons": ["SHORT_SIDE_CLAMP"]}], "params_used": {"hsv_low": [0, 120, 70], "hsv_high": [10, 255, 255], "min_area_eff": 6172.839506172839, "min_area_source": "templates.json:default·min_area=800.0×processor.AREA_SCALE=7.716049", "pad_ratio": 0.15, "quality": 95, "max_side": 0, "template_source": "builtin(corpus-identical)"}, "degraded": true}
+  [PASS] A:p0013_00.webp 状态码 200 — 实际 200
+  [PASS] A:p0013_00.webp ok=true — ok=True
+  [PASS] A:p0013_00.webp count 与 candidates 长度一致 — count=1 len=1
+  [PASS] A:p0013_00.webp source 与原图尺寸一致 — source=343x341 原图=343x341
+  [PASS] A:p0013_00.webp idx 0..n-1 — idx=[0]
+  [PASS] A:p0013_00.webp 候选按面积降序 — area=[48909.0]
+    第一个候选：{"idx": 0, "bbox": [0, 0, 343, 341], "square": [1, 0, 342, 341], "side": 341, "width": 341, "height": 341, "mime": "image/webp", "sha256": "b540bf974bceca6aa1358f6f914d773a2983d3f83337e23255dfb3415824aad5", "area": 48909.0, "aspect": 1.0030395136778116, "degraded": true, "degraded_reasons": ["SHORT_SIDE_CLAMP"]}
+  [PASS] A:p0013_00.webp 第一候选 mime=image/webp — image/webp
+  [PASS] A:p0013_00.webp 第一候选 width==height（正方形） — 341x341
+  [PASS] A:p0013_00.webp square 是正方形且边长==side — square=[1, 0, 342, 341] side=341
+  [PASS] A:p0013_00.webp square 落在原图内 — square=[1, 0, 342, 341] source=343x341
+  [PASS] A:p0013_00.webp image_base64 无 data URL 前缀且 sha256 自洽 — b64 前 16 字符=UklGRlhrAABXRUJQ
+  [PASS] A:p0013_00.webp sha256 == WebP 字节 sha256 — 声明=b540bf974bceca6aa1358f6f914d773a2983d3f83337e23255dfb3415824aad5 实测=b540bf974bceca6aa1358f6f914d773a2983d3f83337e23255dfb3415824aad5
+  [PASS] A:p0013_00.webp cv2.imdecode 解回且尺寸与声明一致 — 解回=341x341 声明=341x341
+  [PASS] A:p0013_00.webp WebP magic（RIFF/WEBP） — head=b'RIFFXk\x00\x00WEBP'
+    上传 B:古玺汇编 p24_0.webp（p24_0.webp）
+    → POST http://127.0.0.1:5201/api/tools/square-crop
+    ← 200
+      content-type: application/json
+      content-length: 109190
+      body: {"ok": true, "count": 1, "source": {"width": 595, "height": 598}, "candidates": [{"idx": 0, "bbox": [0, 1, 595, 596], "square": [0, 1, 595, 596], "side": 595, "width": 595, "height": 595, "mime": "image/webp", "sha256": "61202d8d9102e5f7bfd24ef1a6d3e75e232da23b4cc2321b64e3594233842a2d", "image_base64": "<108556 chars b64>", "area": 190038.0, "aspect": 1.0, "degraded": false, "degraded_reasons": []}], "params_used": {"hsv_low": [0, 120, 70], "hsv_high": [10, 255, 255], "min_area_eff": 6172.839506172839, "min_area_source": "templates.json:default·min_area=800.0×processor.AREA_SCALE=7.716049", "pad_ratio": 0.15, "quality": 95, "max_side": 0, "template_source": "builtin(corpus-identical)"}, "degraded": false}
+  [PASS] B:古玺汇编 p24_0.webp 状态码 200 — 实际 200
+  [PASS] B:古玺汇编 p24_0.webp ok=true — ok=True
+  [PASS] B:古玺汇编 p24_0.webp count 与 candidates 长度一致 — count=1 len=1
+  [PASS] B:古玺汇编 p24_0.webp source 与原图尺寸一致 — source=595x598 原图=595x598
+  [PASS] B:古玺汇编 p24_0.webp idx 0..n-1 — idx=[0]
+  [PASS] B:古玺汇编 p24_0.webp 候选按面积降序 — area=[190038.0]
+    第一个候选：{"idx": 0, "bbox": [0, 1, 595, 596], "square": [0, 1, 595, 596], "side": 595, "width": 595, "height": 595, "mime": "image/webp", "sha256": "61202d8d9102e5f7bfd24ef1a6d3e75e232da23b4cc2321b64e3594233842a2d", "area": 190038.0, "aspect": 1.0, "degraded": false, "degraded_reasons": []}
+  [PASS] B:古玺汇编 p24_0.webp 第一候选 mime=image/webp — image/webp
+  [PASS] B:古玺汇编 p24_0.webp 第一候选 width==height（正方形） — 595x595
+  [PASS] B:古玺汇编 p24_0.webp square 是正方形且边长==side — square=[0, 1, 595, 596] side=595
+  [PASS] B:古玺汇编 p24_0.webp square 落在原图内 — square=[0, 1, 595, 596] source=595x598
+  [PASS] B:古玺汇编 p24_0.webp image_base64 无 data URL 前缀且 sha256 自洽 — b64 前 16 字符=UklGRgA+AQBXRUJQ
+  [PASS] B:古玺汇编 p24_0.webp sha256 == WebP 字节 sha256 — 声明=61202d8d9102e5f7bfd24ef1a6d3e75e232da23b4cc2321b64e3594233842a2d 实测=61202d8d9102e5f7bfd24ef1a6d3e75e232da23b4cc2321b64e3594233842a2d
+  [PASS] B:古玺汇编 p24_0.webp cv2.imdecode 解回且尺寸与声明一致 — 解回=595x595 声明=595x595
+  [PASS] B:古玺汇编 p24_0.webp WebP magic（RIFF/WEBP） — head=b'RIFF\x00>\x01\x00WEBP'
+
+---- ③b 多候选排序（合成图：220×220 与 120×120 两枚红方块）----
+    合成双红方块图
+    → POST http://127.0.0.1:5201/api/tools/square-crop
+    ← 200
+      content-type: application/json
+      content-length: 2596
+      body: {"ok": true, "count": 2, "source": {"width": 400, "height": 400}, "candidates": [{"idx": 0, "bbox": [0, 0, 274, 274], "square": [0, 0, 274, 274], "side": 274, "width": 274, "height": 274, "mime": "image/webp", "sha256": "64ee0dd41a32c09868d3f1a2ac9983f3d2809fd6bf72d30a215d662569bb74b4", "image_base64": "<928 chars b64>", "area": 48400.0, "aspect": 1.0, "degraded": false, "degraded_reasons": []}, {"idx": 1, "bbox": [232, 232, 389, 389], "square": [232, 232, 389, 389], "side": 157, "width": 157, "height": 157, "mime": "image/webp", "sha256": "6c0ad05c1100c9513d13acac8f82f1914daa9e98caf2a1e154a05f71e364270f", "image_base64": "<756 chars b64>", "area": 14400.0, "aspect": 1.0, "degraded": false, "degraded_reasons": []}], "params_used": {"hsv_low": [0, 120, 70], "hsv_high": [10, 255, 255], "min_area_eff": 6172.839506172839, "min_area_source": "templates.json:default·min_area=800.0×processor.AR
+  [PASS] 双红方块 状态码 200 — 实际 200
+  [PASS] 双红方块 count==2 — count=2 len=2
+  [PASS] 双红方块 候选按面积降序（idx 0 是大的） — area=[48400.0, 14400.0]
+  [PASS] 双红方块 idx 0..n-1 — idx=[0, 1]
+  [PASS] 双红方块 每个候选 square 均为正方形且边长==side — side=[274, 157]
+
+---- 附：quality=80 / max_side=100 生效性（同一张图）----
+    quality=80
+    → POST http://127.0.0.1:5201/api/tools/square-crop
+    ← 200
+      content-type: application/json
+      content-length: 17800
+      body: {"ok": true, "count": 1, "source": {"width": 343, "height": 341}, "candidates": [{"idx": 0, "bbox": [0, 0, 343, 341], "square": [1, 0, 342, 341], "side": 341, "width": 341, "height": 341, "mime": "image/webp", "sha256": "34c14eaad6c6b907756143e3b6a4c6718f20292d9dbb66067036d1283b7d94da", "image_base64": "<17136 chars b64>", "area": 48909.0, "aspect": 1.0030395136778116, "degraded": true, "degraded_reasons": ["SHORT_SIDE_CLAMP"]}], "params_used": {"hsv_low": [0, 120, 70], "hsv_high": [10, 255, 255], "min_area_eff": 6172.839506172839, "min_area_source": "templates.json:default·min_area=800.0×processor.AREA_SCALE=7.716049", "pad_ratio": 0.15, "quality": 80, "max_side": 0, "template_source": "builtin(corpus-identical)"}, "degraded": true}
+    max_side=100
+    → POST http://127.0.0.1:5201/api/tools/square-crop
+    ← 200
+      content-type: application/json
+      content-length: 8878
+      body: {"ok": true, "count": 1, "source": {"width": 343, "height": 341}, "candidates": [{"idx": 0, "bbox": [0, 0, 343, 341], "square": [1, 0, 342, 341], "side": 341, "width": 100, "height": 100, "mime": "image/webp", "sha256": "b4e2e1dceadcbfad20a38a806bd16e2a43fba791ebd56b83329948e215537f9b", "image_base64": "<8212 chars b64>", "area": 48909.0, "aspect": 1.0030395136778116, "degraded": true, "degraded_reasons": ["SHORT_SIDE_CLAMP"]}], "params_used": {"hsv_low": [0, 120, 70], "hsv_high": [10, 255, 255], "min_area_eff": 6172.839506172839, "min_area_source": "templates.json:default·min_area=800.0×processor.AREA_SCALE=7.716049", "pad_ratio": 0.15, "quality": 95, "max_side": 100, "template_source": "builtin(corpus-identical)"}, "degraded": true}
+  [PASS] quality=80 的 WebP 字节数 < quality=95 — q80=12852B q95=27488B
+  [PASS] params_used.quality 如实回传 — 80
+  [PASS] max_side=100 ⇒ 输出 100×100（仍正方形） — 100x100 side=341
+  [PASS] max_side=100 ⇒ params_used.max_side=100 — 100
+
+---- ⑤ 错误路径（400 / 400 / 422，且一律结构化 JSON）----
+    不传文件（只有 pad_ratio 文本字段）
+    → POST http://127.0.0.1:5201/api/tools/square-crop
+    ← 400
+      content-type: application/json
+      content-length: 285
+      body: {"ok": false, "error": "NO_IMAGE", "reason": "缺少文件字段 `image`（multipart/form-data 的文件部分，字段名必须为 image），或该字段为空", "detail": "缺少文件字段 `image`（multipart/form-data 的文件部分，字段名必须为 image），或该字段为空"}
+  [PASS] 缺 image ⇒ 400 — 实际 400
+  [PASS] 缺 image 的响应是 JSON — application/json
+  [PASS] 缺 image 的 reason 可读 — 缺少文件字段 `image`（multipart/form-data 的文件部分，字段名必须为 image），或该字段为空
+    传非图片（text/plain）
+    → POST http://127.0.0.1:5201/api/tools/square-crop
+    ← 400
+      content-type: application/json
+      content-length: 182
+      body: {"ok": false, "error": "DECODE_FAILED", "reason": "上传内容不是可解码的图片（cv2.imdecode 失败）", "detail": "上传内容不是可解码的图片（cv2.imdecode 失败）"}
+  [PASS] 非图片 ⇒ 400 — 实际 400
+  [PASS] 非图片的响应是 JSON — application/json
+    传纯白图（无红掩膜 ⇒ 无候选）
+    → POST http://127.0.0.1:5201/api/tools/square-crop
+    ← 422
+      content-type: application/json
+      content-length: 392
+      body: {"ok": false, "error": "NO_CANDIDATE", "reason": "NO_CANDIDATE", "detail": "NO_CANDIDATE", "source": {"width": 200, "height": 200}, "params_used": {"hsv_low": [0, 120, 70], "hsv_high": [10, 255, 255], "min_area_eff": 6172.839506172839, "min_area_source": "templates.json:default·min_area=800.0×processor.AREA_SCALE=7.716049", "pad_ratio": 0.15, "quality": 95, "max_side": 0, "template_source": "builtin(corpus-identical)"}}
+  [PASS] 纯白图 ⇒ 422 — 实际 422
+  [PASS] 纯白图 reason == NO_CANDIDATE — NO_CANDIDATE
+  [PASS] 纯白图的响应是 JSON（非 HTML 错误页） — application/json
+
+---- ⑥ CORS 实证（预检 + 真实 POST；含未允许 origin 的负例）----
+    预检 Origin=http://127.0.0.1:5163
+    → OPTIONS http://127.0.0.1:5201/api/tools/square-crop
+    ← 200
+      content-type: text/plain; charset=utf-8
+      access-control-allow-origin: http://127.0.0.1:5163
+      access-control-allow-methods: GET, POST, OPTIONS
+      access-control-allow-headers: content-type
+      vary: Origin
+      content-length: 2
+      body: OK
+  [PASS] 预检 http://127.0.0.1:5163 ⇒ 200 — 实际 200
+  [PASS] 预检 http://127.0.0.1:5163 回 Access-Control-Allow-Origin: http://127.0.0.1:5163 — http://127.0.0.1:5163
+  [PASS] 预检 http://127.0.0.1:5163 允许 POST — GET, POST, OPTIONS
+    预检 Origin=http://localhost:5163
+    → OPTIONS http://127.0.0.1:5201/api/tools/square-crop
+    ← 200
+      content-type: text/plain; charset=utf-8
+      access-control-allow-origin: http://localhost:5163
+      access-control-allow-methods: GET, POST, OPTIONS
+      access-control-allow-headers: content-type
+      vary: Origin
+      content-length: 2
+      body: OK
+  [PASS] 预检 http://localhost:5163 ⇒ 200 — 实际 200
+  [PASS] 预检 http://localhost:5163 回 Access-Control-Allow-Origin: http://localhost:5163 — http://localhost:5163
+  [PASS] 预检 http://localhost:5163 允许 POST — GET, POST, OPTIONS
+    真实 POST 带 Origin=http://127.0.0.1:5163
+    → POST http://127.0.0.1:5201/api/tools/square-crop
+    ← 200
+      content-type: application/json
+      access-control-allow-origin: http://127.0.0.1:5163
+      vary: Origin
+      content-length: 37316
+      body: {"ok": true, "count": 1, "source": {"width": 343, "height": 341}, "candidates": [{"idx": 0, "bbox": [0, 0, 343, 341], "square": [1, 0, 342, 341], "side": 341, "width": 341, "height": 341, "mime": "image/webp", "sha256": "b540bf974bceca6aa1358f6f914d773a2983d3f83337e23255dfb3415824aad5", "image_base64": "<36652 chars b64>", "area": 48909.0, "aspect": 1.0030395136778116, "degraded": true, "degraded_reasons": ["SHORT_SIDE_CLAMP"]}], "params_used": {"hsv_low": [0, 120, 70], "hsv_high": [10, 255, 255], "min_area_eff": 6172.839506172839, "min_area_source": "templates.json:default·min_area=800.0×processor.AREA_SCALE=7.716049", "pad_ratio": 0.15, "quality": 95, "max_side": 0, "template_source": "builtin(corpus-identical)"}, "degraded": true}
+  [PASS] 真实 POST 带 Origin=http://127.0.0.1:5163 ⇒ 200 且回 ACAO — status=200 ACAO=http://127.0.0.1:5163
+    未允许 origin 负例 Origin=http://127.0.0.1:59999
+    → OPTIONS http://127.0.0.1:5201/api/tools/square-crop
+    ← 400
+      content-type: text/plain; charset=utf-8
+      access-control-allow-methods: GET, POST, OPTIONS
+      access-control-allow-headers: content-type
+      vary: Origin
+      content-length: 22
+      body: Disallowed CORS origin
+  [PASS] 未允许 origin（http://127.0.0.1:59999）不回 ACAO（证明未放开 `*`） — None
+
+---- ⑦ 独立客户端复核：curl -F（另一套 multipart 编码器；带 Origin）----
+    curl rc=0
+      HTTP/1.1 200 OK
+      date: Sun, 20 Sep 2026 09:14:55 GMT
+      server: uvicorn
+      content-length: 37316
+      content-type: application/json
+      access-control-allow-origin: http://127.0.0.1:5163
+      vary: Origin
+      body: {"ok": true, "count": 1, "source": {"width": 343, "height": 341}, "candidates": [{"idx": 0, "bbox": [0, 0, 343, 341], "square": [1, 0, 342, 341], "side": 341, "width": 341, "height": 341, "mime": "image/webp", "sha256": "b540bf974bceca6aa1358f6f914d773a2983d3f83337e23255dfb3415824aad5", "image_base64": "<36652 chars b64>", "area": 48909.0, "aspect": 1.0030395136778116, "degraded": true, "degraded_reasons": ["SHORT_SIDE_CLAMP"]}], "params_used": {"hsv_low": [0, 120, 70], "hsv_high": [10, 255, 255], "min_area_eff": 6172.839506172839, "min_area_source": "templates.json:default·min_area=800.0×proc
+  [PASS] curl -F 上传 ⇒ HTTP/1.1 200 — HTTP/1.1 200 OK
+  [PASS] curl -F 上传 ⇒ 回 ACAO 5163 — headers 含 ACAO=True
+  [PASS] curl 路径的候选同样满足 正方形 + mime — side=341 341x341 image/webp sha256=b540bf974bceca6a…
+
+调用后 stamps 指纹：rows=89 md5_B=d3932fdcd5e1f1482d115b735e8fb1bb rows<=79=79 md5_B(<=79)=d7abe995bff62761c27052dfc2bdf7bb
+  [PASS] stamps 行数不变 — 89 -> 89
+  [PASS] stamps 内容指纹（B canon / md5）不变 — d3932fdcd5e1f1482d115b735e8fb1bb -> d3932fdcd5e1f1482d115b735e8fb1bb
+  [PASS] stamps A raw 指纹不变 — 5fcbd5afe43d79ae726d64cb6361ecc3 -> 5fcbd5afe43d79ae726d64cb6361ecc3
+  [PASS] 原 79 行（id<=79）子集指纹不变 — rows=79 md5=d7abe995bff62761c27052dfc2bdf7bb -> d7abe995bff62761c27052dfc2bdf7bb
+
+====================================================================================================
+{
+  "label": "temp-5201/copy-db (final)",
+  "base_url": "http://127.0.0.1:5201",
+  "db": "/Users/kevin/bistro/xiai/feicui/yinpu.db",
+  "checks_total": 61,
+  "checks_pass": 61,
+  "checks_fail": 0,
+  "stamps_fingerprint_before": {
+    "rows": 89,
+    "md5_B_canon": "d3932fdcd5e1f1482d115b735e8fb1bb",
+    "sha256_B_canon": "22e909e4f77c0f14ef3532a4bf73eb3ed2015b9c1fd95cd95afbb719da19d7ea",
+    "md5_A_raw": "5fcbd5afe43d79ae726d64cb6361ecc3",
+    "rows_le79": 79,
+    "md5_B_canon_le79": "d7abe995bff62761c27052dfc2bdf7bb"
+  },
+  "stamps_fingerprint_after": {
+    "rows": 89,
+    "md5_B_canon": "d3932fdcd5e1f1482d115b735e8fb1bb",
+    "sha256_B_canon": "22e909e4f77c0f14ef3532a4bf73eb3ed2015b9c1fd95cd95afbb719da19d7ea",
+    "md5_A_raw": "5fcbd5afe43d79ae726d64cb6361ecc3",
+    "rows_le79": 79,
+    "md5_B_canon_le79": "d7abe995bff62761c27052dfc2bdf7bb"
+  }
+}
+结论：ALL PASS（共 61 条断言）
+====================================================================================================
+====================================================================================================
+square-crop 自测｜label=PROD 5196 (panel-restarted) prod-db｜base=http://127.0.0.1:5196｜db=/Users/kevin/bistro/xiai/feicui/yinpu.db｜2026-09-20T17:15:53.475598
+worker 解释器 = /Users/kevin/bistro/xiai/feicui/venv/bin/python（存在＝True）；本层解释器 = /Users/kevin/bistro/xiai/feicui/server/.venv/bin/python
+====================================================================================================
+样本 A:p0013_00.webp：/Users/kevin/bistro/xiai/feicui/output/faces/TMP/p0013_00.webp（30004 B，cv2 解回 343x341）
+样本 B:古玺汇编 p24_0.webp：/Users/kevin/bistro/xiai/feicui/output/古玺汇编 文物出版社 罗福颐  ok/p24_0.webp（82496 B，cv2 解回 595x598）
+  [PASS] 样本存在 — 2 枚真实影像
+造纯白图：/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui_square_selftest_tacisfci/white.png（200×200，cv2 解回 200x200）
+造双红方块合成图：/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui_square_selftest_tacisfci/two_red_squares.png（400×400，cv2 解回 400x400）
+调用前 stamps 指纹：rows=89 md5_B=d3932fdcd5e1f1482d115b735e8fb1bb rows<=79=79 md5_B(<=79)=d7abe995bff62761c27052dfc2bdf7bb
+
+---- ① 真实影像 200（含 ② 方形断言 / ③ 顺序断言）----
+    上传 A:p0013_00.webp（p0013_00.webp）
+    → POST http://127.0.0.1:5196/api/tools/square-crop
+    ← 200
+      content-type: application/json
+      content-length: 37316
+      body: {"ok": true, "count": 1, "source": {"width": 343, "height": 341}, "candidates": [{"idx": 0, "bbox": [0, 0, 343, 341], "square": [1, 0, 342, 341], "side": 341, "width": 341, "height": 341, "mime": "image/webp", "sha256": "b540bf974bceca6aa1358f6f914d773a2983d3f83337e23255dfb3415824aad5", "image_base64": "<36652 chars b64>", "area": 48909.0, "aspect": 1.0030395136778116, "degraded": true, "degraded_reasons": ["SHORT_SIDE_CLAMP"]}], "params_used": {"hsv_low": [0, 120, 70], "hsv_high": [10, 255, 255], "min_area_eff": 6172.839506172839, "min_area_source": "templates.json:default·min_area=800.0×processor.AREA_SCALE=7.716049", "pad_ratio": 0.15, "quality": 95, "max_side": 0, "template_source": "builtin(corpus-identical)"}, "degraded": true}
+  [PASS] A:p0013_00.webp 状态码 200 — 实际 200
+  [PASS] A:p0013_00.webp ok=true — ok=True
+  [PASS] A:p0013_00.webp count 与 candidates 长度一致 — count=1 len=1
+  [PASS] A:p0013_00.webp source 与原图尺寸一致 — source=343x341 原图=343x341
+  [PASS] A:p0013_00.webp idx 0..n-1 — idx=[0]
+  [PASS] A:p0013_00.webp 候选按面积降序 — area=[48909.0]
+    第一个候选：{"idx": 0, "bbox": [0, 0, 343, 341], "square": [1, 0, 342, 341], "side": 341, "width": 341, "height": 341, "mime": "image/webp", "sha256": "b540bf974bceca6aa1358f6f914d773a2983d3f83337e23255dfb3415824aad5", "area": 48909.0, "aspect": 1.0030395136778116, "degraded": true, "degraded_reasons": ["SHORT_SIDE_CLAMP"]}
+  [PASS] A:p0013_00.webp 第一候选 mime=image/webp — image/webp
+  [PASS] A:p0013_00.webp 第一候选 width==height（正方形） — 341x341
+  [PASS] A:p0013_00.webp square 是正方形且边长==side — square=[1, 0, 342, 341] side=341
+  [PASS] A:p0013_00.webp square 落在原图内 — square=[1, 0, 342, 341] source=343x341
+  [PASS] A:p0013_00.webp image_base64 无 data URL 前缀且 sha256 自洽 — b64 前 16 字符=UklGRlhrAABXRUJQ
+  [PASS] A:p0013_00.webp sha256 == WebP 字节 sha256 — 声明=b540bf974bceca6aa1358f6f914d773a2983d3f83337e23255dfb3415824aad5 实测=b540bf974bceca6aa1358f6f914d773a2983d3f83337e23255dfb3415824aad5
+  [PASS] A:p0013_00.webp cv2.imdecode 解回且尺寸与声明一致 — 解回=341x341 声明=341x341
+  [PASS] A:p0013_00.webp WebP magic（RIFF/WEBP） — head=b'RIFFXk\x00\x00WEBP'
+    上传 B:古玺汇编 p24_0.webp（p24_0.webp）
+    → POST http://127.0.0.1:5196/api/tools/square-crop
+    ← 200
+      content-type: application/json
+      content-length: 109190
+      body: {"ok": true, "count": 1, "source": {"width": 595, "height": 598}, "candidates": [{"idx": 0, "bbox": [0, 1, 595, 596], "square": [0, 1, 595, 596], "side": 595, "width": 595, "height": 595, "mime": "image/webp", "sha256": "61202d8d9102e5f7bfd24ef1a6d3e75e232da23b4cc2321b64e3594233842a2d", "image_base64": "<108556 chars b64>", "area": 190038.0, "aspect": 1.0, "degraded": false, "degraded_reasons": []}], "params_used": {"hsv_low": [0, 120, 70], "hsv_high": [10, 255, 255], "min_area_eff": 6172.839506172839, "min_area_source": "templates.json:default·min_area=800.0×processor.AREA_SCALE=7.716049", "pad_ratio": 0.15, "quality": 95, "max_side": 0, "template_source": "builtin(corpus-identical)"}, "degraded": false}
+  [PASS] B:古玺汇编 p24_0.webp 状态码 200 — 实际 200
+  [PASS] B:古玺汇编 p24_0.webp ok=true — ok=True
+  [PASS] B:古玺汇编 p24_0.webp count 与 candidates 长度一致 — count=1 len=1
+  [PASS] B:古玺汇编 p24_0.webp source 与原图尺寸一致 — source=595x598 原图=595x598
+  [PASS] B:古玺汇编 p24_0.webp idx 0..n-1 — idx=[0]
+  [PASS] B:古玺汇编 p24_0.webp 候选按面积降序 — area=[190038.0]
+    第一个候选：{"idx": 0, "bbox": [0, 1, 595, 596], "square": [0, 1, 595, 596], "side": 595, "width": 595, "height": 595, "mime": "image/webp", "sha256": "61202d8d9102e5f7bfd24ef1a6d3e75e232da23b4cc2321b64e3594233842a2d", "area": 190038.0, "aspect": 1.0, "degraded": false, "degraded_reasons": []}
+  [PASS] B:古玺汇编 p24_0.webp 第一候选 mime=image/webp — image/webp
+  [PASS] B:古玺汇编 p24_0.webp 第一候选 width==height（正方形） — 595x595
+  [PASS] B:古玺汇编 p24_0.webp square 是正方形且边长==side — square=[0, 1, 595, 596] side=595
+  [PASS] B:古玺汇编 p24_0.webp square 落在原图内 — square=[0, 1, 595, 596] source=595x598
+  [PASS] B:古玺汇编 p24_0.webp image_base64 无 data URL 前缀且 sha256 自洽 — b64 前 16 字符=UklGRgA+AQBXRUJQ
+  [PASS] B:古玺汇编 p24_0.webp sha256 == WebP 字节 sha256 — 声明=61202d8d9102e5f7bfd24ef1a6d3e75e232da23b4cc2321b64e3594233842a2d 实测=61202d8d9102e5f7bfd24ef1a6d3e75e232da23b4cc2321b64e3594233842a2d
+  [PASS] B:古玺汇编 p24_0.webp cv2.imdecode 解回且尺寸与声明一致 — 解回=595x595 声明=595x595
+  [PASS] B:古玺汇编 p24_0.webp WebP magic（RIFF/WEBP） — head=b'RIFF\x00>\x01\x00WEBP'
+
+---- ③b 多候选排序（合成图：220×220 与 120×120 两枚红方块）----
+    合成双红方块图
+    → POST http://127.0.0.1:5196/api/tools/square-crop
+    ← 200
+      content-type: application/json
+      content-length: 2596
+      body: {"ok": true, "count": 2, "source": {"width": 400, "height": 400}, "candidates": [{"idx": 0, "bbox": [0, 0, 274, 274], "square": [0, 0, 274, 274], "side": 274, "width": 274, "height": 274, "mime": "image/webp", "sha256": "64ee0dd41a32c09868d3f1a2ac9983f3d2809fd6bf72d30a215d662569bb74b4", "image_base64": "<928 chars b64>", "area": 48400.0, "aspect": 1.0, "degraded": false, "degraded_reasons": []}, {"idx": 1, "bbox": [232, 232, 389, 389], "square": [232, 232, 389, 389], "side": 157, "width": 157, "height": 157, "mime": "image/webp", "sha256": "6c0ad05c1100c9513d13acac8f82f1914daa9e98caf2a1e154a05f71e364270f", "image_base64": "<756 chars b64>", "area": 14400.0, "aspect": 1.0, "degraded": false, "degraded_reasons": []}], "params_used": {"hsv_low": [0, 120, 70], "hsv_high": [10, 255, 255], "min_area_eff": 6172.839506172839, "min_area_source": "templates.json:default·min_area=800.0×processor.AR
+  [PASS] 双红方块 状态码 200 — 实际 200
+  [PASS] 双红方块 count==2 — count=2 len=2
+  [PASS] 双红方块 候选按面积降序（idx 0 是大的） — area=[48400.0, 14400.0]
+  [PASS] 双红方块 idx 0..n-1 — idx=[0, 1]
+  [PASS] 双红方块 每个候选 square 均为正方形且边长==side — side=[274, 157]
+
+---- 附：quality=80 / max_side=100 生效性（同一张图）----
+    quality=80
+    → POST http://127.0.0.1:5196/api/tools/square-crop
+    ← 200
+      content-type: application/json
+      content-length: 17800
+      body: {"ok": true, "count": 1, "source": {"width": 343, "height": 341}, "candidates": [{"idx": 0, "bbox": [0, 0, 343, 341], "square": [1, 0, 342, 341], "side": 341, "width": 341, "height": 341, "mime": "image/webp", "sha256": "34c14eaad6c6b907756143e3b6a4c6718f20292d9dbb66067036d1283b7d94da", "image_base64": "<17136 chars b64>", "area": 48909.0, "aspect": 1.0030395136778116, "degraded": true, "degraded_reasons": ["SHORT_SIDE_CLAMP"]}], "params_used": {"hsv_low": [0, 120, 70], "hsv_high": [10, 255, 255], "min_area_eff": 6172.839506172839, "min_area_source": "templates.json:default·min_area=800.0×processor.AREA_SCALE=7.716049", "pad_ratio": 0.15, "quality": 80, "max_side": 0, "template_source": "builtin(corpus-identical)"}, "degraded": true}
+    max_side=100
+    → POST http://127.0.0.1:5196/api/tools/square-crop
+    ← 200
+      content-type: application/json
+      content-length: 8878
+      body: {"ok": true, "count": 1, "source": {"width": 343, "height": 341}, "candidates": [{"idx": 0, "bbox": [0, 0, 343, 341], "square": [1, 0, 342, 341], "side": 341, "width": 100, "height": 100, "mime": "image/webp", "sha256": "b4e2e1dceadcbfad20a38a806bd16e2a43fba791ebd56b83329948e215537f9b", "image_base64": "<8212 chars b64>", "area": 48909.0, "aspect": 1.0030395136778116, "degraded": true, "degraded_reasons": ["SHORT_SIDE_CLAMP"]}], "params_used": {"hsv_low": [0, 120, 70], "hsv_high": [10, 255, 255], "min_area_eff": 6172.839506172839, "min_area_source": "templates.json:default·min_area=800.0×processor.AREA_SCALE=7.716049", "pad_ratio": 0.15, "quality": 95, "max_side": 100, "template_source": "builtin(corpus-identical)"}, "degraded": true}
+  [PASS] quality=80 的 WebP 字节数 < quality=95 — q80=12852B q95=27488B
+  [PASS] params_used.quality 如实回传 — 80
+  [PASS] max_side=100 ⇒ 输出 100×100（仍正方形） — 100x100 side=341
+  [PASS] max_side=100 ⇒ params_used.max_side=100 — 100
+
+---- ⑤ 错误路径（400 / 400 / 422，且一律结构化 JSON）----
+    不传文件（只有 pad_ratio 文本字段）
+    → POST http://127.0.0.1:5196/api/tools/square-crop
+    ← 400
+      content-type: application/json
+      content-length: 285
+      body: {"ok": false, "error": "NO_IMAGE", "reason": "缺少文件字段 `image`（multipart/form-data 的文件部分，字段名必须为 image），或该字段为空", "detail": "缺少文件字段 `image`（multipart/form-data 的文件部分，字段名必须为 image），或该字段为空"}
+  [PASS] 缺 image ⇒ 400 — 实际 400
+  [PASS] 缺 image 的响应是 JSON — application/json
+  [PASS] 缺 image 的 reason 可读 — 缺少文件字段 `image`（multipart/form-data 的文件部分，字段名必须为 image），或该字段为空
+    传非图片（text/plain）
+    → POST http://127.0.0.1:5196/api/tools/square-crop
+    ← 400
+      content-type: application/json
+      content-length: 182
+      body: {"ok": false, "error": "DECODE_FAILED", "reason": "上传内容不是可解码的图片（cv2.imdecode 失败）", "detail": "上传内容不是可解码的图片（cv2.imdecode 失败）"}
+  [PASS] 非图片 ⇒ 400 — 实际 400
+  [PASS] 非图片的响应是 JSON — application/json
+    传纯白图（无红掩膜 ⇒ 无候选）
+    → POST http://127.0.0.1:5196/api/tools/square-crop
+    ← 422
+      content-type: application/json
+      content-length: 392
+      body: {"ok": false, "error": "NO_CANDIDATE", "reason": "NO_CANDIDATE", "detail": "NO_CANDIDATE", "source": {"width": 200, "height": 200}, "params_used": {"hsv_low": [0, 120, 70], "hsv_high": [10, 255, 255], "min_area_eff": 6172.839506172839, "min_area_source": "templates.json:default·min_area=800.0×processor.AREA_SCALE=7.716049", "pad_ratio": 0.15, "quality": 95, "max_side": 0, "template_source": "builtin(corpus-identical)"}}
+  [PASS] 纯白图 ⇒ 422 — 实际 422
+  [PASS] 纯白图 reason == NO_CANDIDATE — NO_CANDIDATE
+  [PASS] 纯白图的响应是 JSON（非 HTML 错误页） — application/json
+
+---- ⑥ CORS 实证（预检 + 真实 POST；含未允许 origin 的负例）----
+    预检 Origin=http://127.0.0.1:5163
+    → OPTIONS http://127.0.0.1:5196/api/tools/square-crop
+    ← 200
+      content-type: text/plain; charset=utf-8
+      access-control-allow-origin: http://127.0.0.1:5163
+      access-control-allow-methods: GET, POST, OPTIONS
+      access-control-allow-headers: content-type
+      vary: Origin
+      content-length: 2
+      body: OK
+  [PASS] 预检 http://127.0.0.1:5163 ⇒ 200 — 实际 200
+  [PASS] 预检 http://127.0.0.1:5163 回 Access-Control-Allow-Origin: http://127.0.0.1:5163 — http://127.0.0.1:5163
+  [PASS] 预检 http://127.0.0.1:5163 允许 POST — GET, POST, OPTIONS
+    预检 Origin=http://localhost:5163
+    → OPTIONS http://127.0.0.1:5196/api/tools/square-crop
+    ← 200
+      content-type: text/plain; charset=utf-8
+      access-control-allow-origin: http://localhost:5163
+      access-control-allow-methods: GET, POST, OPTIONS
+      access-control-allow-headers: content-type
+      vary: Origin
+      content-length: 2
+      body: OK
+  [PASS] 预检 http://localhost:5163 ⇒ 200 — 实际 200
+  [PASS] 预检 http://localhost:5163 回 Access-Control-Allow-Origin: http://localhost:5163 — http://localhost:5163
+  [PASS] 预检 http://localhost:5163 允许 POST — GET, POST, OPTIONS
+    真实 POST 带 Origin=http://127.0.0.1:5163
+    → POST http://127.0.0.1:5196/api/tools/square-crop
+    ← 200
+      content-type: application/json
+      access-control-allow-origin: http://127.0.0.1:5163
+      vary: Origin
+      content-length: 37316
+      body: {"ok": true, "count": 1, "source": {"width": 343, "height": 341}, "candidates": [{"idx": 0, "bbox": [0, 0, 343, 341], "square": [1, 0, 342, 341], "side": 341, "width": 341, "height": 341, "mime": "image/webp", "sha256": "b540bf974bceca6aa1358f6f914d773a2983d3f83337e23255dfb3415824aad5", "image_base64": "<36652 chars b64>", "area": 48909.0, "aspect": 1.0030395136778116, "degraded": true, "degraded_reasons": ["SHORT_SIDE_CLAMP"]}], "params_used": {"hsv_low": [0, 120, 70], "hsv_high": [10, 255, 255], "min_area_eff": 6172.839506172839, "min_area_source": "templates.json:default·min_area=800.0×processor.AREA_SCALE=7.716049", "pad_ratio": 0.15, "quality": 95, "max_side": 0, "template_source": "builtin(corpus-identical)"}, "degraded": true}
+  [PASS] 真实 POST 带 Origin=http://127.0.0.1:5163 ⇒ 200 且回 ACAO — status=200 ACAO=http://127.0.0.1:5163
+    未允许 origin 负例 Origin=http://127.0.0.1:59999
+    → OPTIONS http://127.0.0.1:5196/api/tools/square-crop
+    ← 400
+      content-type: text/plain; charset=utf-8
+      access-control-allow-methods: GET, POST, OPTIONS
+      access-control-allow-headers: content-type
+      vary: Origin
+      content-length: 22
+      body: Disallowed CORS origin
+  [PASS] 未允许 origin（http://127.0.0.1:59999）不回 ACAO（证明未放开 `*`） — None
+
+---- ⑦ 独立客户端复核：curl -F（另一套 multipart 编码器；带 Origin）----
+    curl rc=0
+      HTTP/1.1 200 OK
+      date: Sun, 20 Sep 2026 09:16:03 GMT
+      server: uvicorn
+      content-length: 37316
+      content-type: application/json
+      access-control-allow-origin: http://127.0.0.1:5163
+      vary: Origin
+      body: {"ok": true, "count": 1, "source": {"width": 343, "height": 341}, "candidates": [{"idx": 0, "bbox": [0, 0, 343, 341], "square": [1, 0, 342, 341], "side": 341, "width": 341, "height": 341, "mime": "image/webp", "sha256": "b540bf974bceca6aa1358f6f914d773a2983d3f83337e23255dfb3415824aad5", "image_base64": "<36652 chars b64>", "area": 48909.0, "aspect": 1.0030395136778116, "degraded": true, "degraded_reasons": ["SHORT_SIDE_CLAMP"]}], "params_used": {"hsv_low": [0, 120, 70], "hsv_high": [10, 255, 255], "min_area_eff": 6172.839506172839, "min_area_source": "templates.json:default·min_area=800.0×proc
+  [PASS] curl -F 上传 ⇒ HTTP/1.1 200 — HTTP/1.1 200 OK
+  [PASS] curl -F 上传 ⇒ 回 ACAO 5163 — headers 含 ACAO=True
+  [PASS] curl 路径的候选同样满足 正方形 + mime — side=341 341x341 image/webp sha256=b540bf974bceca6a…
+
+调用后 stamps 指纹：rows=89 md5_B=d3932fdcd5e1f1482d115b735e8fb1bb rows<=79=79 md5_B(<=79)=d7abe995bff62761c27052dfc2bdf7bb
+  [PASS] stamps 行数不变 — 89 -> 89
+  [PASS] stamps 内容指纹（B canon / md5）不变 — d3932fdcd5e1f1482d115b735e8fb1bb -> d3932fdcd5e1f1482d115b735e8fb1bb
+  [PASS] stamps A raw 指纹不变 — 5fcbd5afe43d79ae726d64cb6361ecc3 -> 5fcbd5afe43d79ae726d64cb6361ecc3
+  [PASS] 原 79 行（id<=79）子集指纹不变 — rows=79 md5=d7abe995bff62761c27052dfc2bdf7bb -> d7abe995bff62761c27052dfc2bdf7bb
+
+====================================================================================================
+{
+  "label": "PROD 5196 (panel-restarted) prod-db",
+  "base_url": "http://127.0.0.1:5196",
+  "db": "/Users/kevin/bistro/xiai/feicui/yinpu.db",
+  "checks_total": 61,
+  "checks_pass": 61,
+  "checks_fail": 0,
+  "stamps_fingerprint_before": {
+    "rows": 89,
+    "md5_B_canon": "d3932fdcd5e1f1482d115b735e8fb1bb",
+    "sha256_B_canon": "22e909e4f77c0f14ef3532a4bf73eb3ed2015b9c1fd95cd95afbb719da19d7ea",
+    "md5_A_raw": "5fcbd5afe43d79ae726d64cb6361ecc3",
+    "rows_le79": 79,
+    "md5_B_canon_le79": "d7abe995bff62761c27052dfc2bdf7bb"
+  },
+  "stamps_fingerprint_after": {
+    "rows": 89,
+    "md5_B_canon": "d3932fdcd5e1f1482d115b735e8fb1bb",
+    "sha256_B_canon": "22e909e4f77c0f14ef3532a4bf73eb3ed2015b9c1fd95cd95afbb719da19d7ea",
+    "md5_A_raw": "5fcbd5afe43d79ae726d64cb6361ecc3",
+    "rows_le79": 79,
+    "md5_B_canon_le79": "d7abe995bff62761c27052dfc2bdf7bb"
+  }
+}
+结论：ALL PASS（共 61 条断言）
+====================================================================================================
+====================================================================================================
+square-crop 自测｜label=收尾复核: 5196 面板托管实例(惰性OCR+来源标签修正后)｜base=http://127.0.0.1:5196｜db=/Users/kevin/bistro/xiai/feicui/yinpu.db｜2026-09-20T17:25:00.301657
+worker 解释器 = /Users/kevin/bistro/xiai/feicui/venv/bin/python（存在＝True）；本层解释器 = /Users/kevin/bistro/xiai/feicui/server/.venv/bin/python
+====================================================================================================
+样本 A:p0013_00.webp：/Users/kevin/bistro/xiai/feicui/output/faces/TMP/p0013_00.webp（30004 B，cv2 解回 343x341）
+样本 B:古玺汇编 p24_0.webp：/Users/kevin/bistro/xiai/feicui/output/古玺汇编 文物出版社 罗福颐  ok/p24_0.webp（82496 B，cv2 解回 595x598）
+  [PASS] 样本存在 — 2 枚真实影像
+造纯白图：/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui_square_selftest_wgf_2ao8/white.png（200×200，cv2 解回 200x200）
+造双红方块合成图：/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui_square_selftest_wgf_2ao8/two_red_squares.png（400×400，cv2 解回 400x400）
+调用前 stamps 指纹：rows=89 md5_B=d3932fdcd5e1f1482d115b735e8fb1bb rows<=79=79 md5_B(<=79)=d7abe995bff62761c27052dfc2bdf7bb
+
+---- ① 真实影像 200（含 ② 方形断言 / ③ 顺序断言）----
+    上传 A:p0013_00.webp（p0013_00.webp）
+    → POST http://127.0.0.1:5196/api/tools/square-crop
+    ← 200
+      content-type: application/json
+      content-length: 37417
+      body: {"ok": true, "count": 1, "source": {"width": 343, "height": 341}, "candidates": [{"idx": 0, "bbox": [0, 0, 343, 341], "square": [1, 0, 342, 341], "side": 341, "width": 341, "height": 341, "mime": "image/webp", "sha256": "b540bf974bceca6aa1358f6f914d773a2983d3f83337e23255dfb3415824aad5", "image_base64": "<36652 chars b64>", "area": 48909.0, "aspect": 1.0030395136778116, "degraded": true, "degraded_reasons": ["SHORT_SIDE_CLAMP"]}], "params_used": {"hsv_low": [0, 120, 70], "hsv_high": [10, 255, 255], "min_area_eff": 6172.839506172839, "min_area_source": "builtin(corpus-identical·verified 3/3·square.py:BUILTIN_TEMPLATE_PARAMS)·min_area=800.0×processor.AREA_SCALE=7.716049", "pad_ratio": 0.15, "quality": 95, "max_side": 0, "template_source": "builtin(corpus-identical·verified 3/3·square.py:BUILTIN_TEMPLATE_PARAMS)"}, "degraded": true}
+  [PASS] A:p0013_00.webp 状态码 200 — 实际 200
+  [PASS] A:p0013_00.webp ok=true — ok=True
+  [PASS] A:p0013_00.webp count 与 candidates 长度一致 — count=1 len=1
+  [PASS] A:p0013_00.webp source 与原图尺寸一致 — source=343x341 原图=343x341
+  [PASS] A:p0013_00.webp idx 0..n-1 — idx=[0]
+  [PASS] A:p0013_00.webp 候选按面积降序 — area=[48909.0]
+    第一个候选：{"idx": 0, "bbox": [0, 0, 343, 341], "square": [1, 0, 342, 341], "side": 341, "width": 341, "height": 341, "mime": "image/webp", "sha256": "b540bf974bceca6aa1358f6f914d773a2983d3f83337e23255dfb3415824aad5", "area": 48909.0, "aspect": 1.0030395136778116, "degraded": true, "degraded_reasons": ["SHORT_SIDE_CLAMP"]}
+  [PASS] A:p0013_00.webp 第一候选 mime=image/webp — image/webp
+  [PASS] A:p0013_00.webp 第一候选 width==height（正方形） — 341x341
+  [PASS] A:p0013_00.webp square 是正方形且边长==side — square=[1, 0, 342, 341] side=341
+  [PASS] A:p0013_00.webp square 落在原图内 — square=[1, 0, 342, 341] source=343x341
+  [PASS] A:p0013_00.webp image_base64 无 data URL 前缀且 sha256 自洽 — b64 前 16 字符=UklGRlhrAABXRUJQ
+  [PASS] A:p0013_00.webp sha256 == WebP 字节 sha256 — 声明=b540bf974bceca6aa1358f6f914d773a2983d3f83337e23255dfb3415824aad5 实测=b540bf974bceca6aa1358f6f914d773a2983d3f83337e23255dfb3415824aad5
+  [PASS] A:p0013_00.webp cv2.imdecode 解回且尺寸与声明一致 — 解回=341x341 声明=341x341
+  [PASS] A:p0013_00.webp WebP magic（RIFF/WEBP） — head=b'RIFFXk\x00\x00WEBP'
+    上传 B:古玺汇编 p24_0.webp（p24_0.webp）
+    → POST http://127.0.0.1:5196/api/tools/square-crop
+    ← 200
+      content-type: application/json
+      content-length: 109291
+      body: {"ok": true, "count": 1, "source": {"width": 595, "height": 598}, "candidates": [{"idx": 0, "bbox": [0, 1, 595, 596], "square": [0, 1, 595, 596], "side": 595, "width": 595, "height": 595, "mime": "image/webp", "sha256": "61202d8d9102e5f7bfd24ef1a6d3e75e232da23b4cc2321b64e3594233842a2d", "image_base64": "<108556 chars b64>", "area": 190038.0, "aspect": 1.0, "degraded": false, "degraded_reasons": []}], "params_used": {"hsv_low": [0, 120, 70], "hsv_high": [10, 255, 255], "min_area_eff": 6172.839506172839, "min_area_source": "builtin(corpus-identical·verified 3/3·square.py:BUILTIN_TEMPLATE_PARAMS)·min_area=800.0×processor.AREA_SCALE=7.716049", "pad_ratio": 0.15, "quality": 95, "max_side": 0, "template_source": "builtin(corpus-identical·verified 3/3·square.py:BUILTIN_TEMPLATE_PARAMS)"}, "degraded": false}
+  [PASS] B:古玺汇编 p24_0.webp 状态码 200 — 实际 200
+  [PASS] B:古玺汇编 p24_0.webp ok=true — ok=True
+  [PASS] B:古玺汇编 p24_0.webp count 与 candidates 长度一致 — count=1 len=1
+  [PASS] B:古玺汇编 p24_0.webp source 与原图尺寸一致 — source=595x598 原图=595x598
+  [PASS] B:古玺汇编 p24_0.webp idx 0..n-1 — idx=[0]
+  [PASS] B:古玺汇编 p24_0.webp 候选按面积降序 — area=[190038.0]
+    第一个候选：{"idx": 0, "bbox": [0, 1, 595, 596], "square": [0, 1, 595, 596], "side": 595, "width": 595, "height": 595, "mime": "image/webp", "sha256": "61202d8d9102e5f7bfd24ef1a6d3e75e232da23b4cc2321b64e3594233842a2d", "area": 190038.0, "aspect": 1.0, "degraded": false, "degraded_reasons": []}
+  [PASS] B:古玺汇编 p24_0.webp 第一候选 mime=image/webp — image/webp
+  [PASS] B:古玺汇编 p24_0.webp 第一候选 width==height（正方形） — 595x595
+  [PASS] B:古玺汇编 p24_0.webp square 是正方形且边长==side — square=[0, 1, 595, 596] side=595
+  [PASS] B:古玺汇编 p24_0.webp square 落在原图内 — square=[0, 1, 595, 596] source=595x598
+  [PASS] B:古玺汇编 p24_0.webp image_base64 无 data URL 前缀且 sha256 自洽 — b64 前 16 字符=UklGRgA+AQBXRUJQ
+  [PASS] B:古玺汇编 p24_0.webp sha256 == WebP 字节 sha256 — 声明=61202d8d9102e5f7bfd24ef1a6d3e75e232da23b4cc2321b64e3594233842a2d 实测=61202d8d9102e5f7bfd24ef1a6d3e75e232da23b4cc2321b64e3594233842a2d
+  [PASS] B:古玺汇编 p24_0.webp cv2.imdecode 解回且尺寸与声明一致 — 解回=595x595 声明=595x595
+  [PASS] B:古玺汇编 p24_0.webp WebP magic（RIFF/WEBP） — head=b'RIFF\x00>\x01\x00WEBP'
+
+---- ③b 多候选排序（合成图：220×220 与 120×120 两枚红方块）----
+    合成双红方块图
+    → POST http://127.0.0.1:5196/api/tools/square-crop
+    ← 200
+      content-type: application/json
+      content-length: 2697
+      body: {"ok": true, "count": 2, "source": {"width": 400, "height": 400}, "candidates": [{"idx": 0, "bbox": [0, 0, 274, 274], "square": [0, 0, 274, 274], "side": 274, "width": 274, "height": 274, "mime": "image/webp", "sha256": "64ee0dd41a32c09868d3f1a2ac9983f3d2809fd6bf72d30a215d662569bb74b4", "image_base64": "<928 chars b64>", "area": 48400.0, "aspect": 1.0, "degraded": false, "degraded_reasons": []}, {"idx": 1, "bbox": [232, 232, 389, 389], "square": [232, 232, 389, 389], "side": 157, "width": 157, "height": 157, "mime": "image/webp", "sha256": "6c0ad05c1100c9513d13acac8f82f1914daa9e98caf2a1e154a05f71e364270f", "image_base64": "<756 chars b64>", "area": 14400.0, "aspect": 1.0, "degraded": false, "degraded_reasons": []}], "params_used": {"hsv_low": [0, 120, 70], "hsv_high": [10, 255, 255], "min_area_eff": 6172.839506172839, "min_area_source": "builtin(corpus-identical·verified 3/3·square.py:BU
+  [PASS] 双红方块 状态码 200 — 实际 200
+  [PASS] 双红方块 count==2 — count=2 len=2
+  [PASS] 双红方块 候选按面积降序（idx 0 是大的） — area=[48400.0, 14400.0]
+  [PASS] 双红方块 idx 0..n-1 — idx=[0, 1]
+  [PASS] 双红方块 每个候选 square 均为正方形且边长==side — side=[274, 157]
+
+---- 附：quality=80 / max_side=100 生效性（同一张图）----
+    quality=80
+    → POST http://127.0.0.1:5196/api/tools/square-crop
+    ← 200
+      content-type: application/json
+      content-length: 17901
+      body: {"ok": true, "count": 1, "source": {"width": 343, "height": 341}, "candidates": [{"idx": 0, "bbox": [0, 0, 343, 341], "square": [1, 0, 342, 341], "side": 341, "width": 341, "height": 341, "mime": "image/webp", "sha256": "34c14eaad6c6b907756143e3b6a4c6718f20292d9dbb66067036d1283b7d94da", "image_base64": "<17136 chars b64>", "area": 48909.0, "aspect": 1.0030395136778116, "degraded": true, "degraded_reasons": ["SHORT_SIDE_CLAMP"]}], "params_used": {"hsv_low": [0, 120, 70], "hsv_high": [10, 255, 255], "min_area_eff": 6172.839506172839, "min_area_source": "builtin(corpus-identical·verified 3/3·square.py:BUILTIN_TEMPLATE_PARAMS)·min_area=800.0×processor.AREA_SCALE=7.716049", "pad_ratio": 0.15, "quality": 80, "max_side": 0, "template_source": "builtin(corpus-identical·verified 3/3·square.py:BUILTIN_TEMPLATE_PARAMS)"}, "degraded": true}
+    max_side=100
+    → POST http://127.0.0.1:5196/api/tools/square-crop
+    ← 200
+      content-type: application/json
+      content-length: 8979
+      body: {"ok": true, "count": 1, "source": {"width": 343, "height": 341}, "candidates": [{"idx": 0, "bbox": [0, 0, 343, 341], "square": [1, 0, 342, 341], "side": 341, "width": 100, "height": 100, "mime": "image/webp", "sha256": "b4e2e1dceadcbfad20a38a806bd16e2a43fba791ebd56b83329948e215537f9b", "image_base64": "<8212 chars b64>", "area": 48909.0, "aspect": 1.0030395136778116, "degraded": true, "degraded_reasons": ["SHORT_SIDE_CLAMP"]}], "params_used": {"hsv_low": [0, 120, 70], "hsv_high": [10, 255, 255], "min_area_eff": 6172.839506172839, "min_area_source": "builtin(corpus-identical·verified 3/3·square.py:BUILTIN_TEMPLATE_PARAMS)·min_area=800.0×processor.AREA_SCALE=7.716049", "pad_ratio": 0.15, "quality": 95, "max_side": 100, "template_source": "builtin(corpus-identical·verified 3/3·square.py:BUILTIN_TEMPLATE_PARAMS)"}, "degraded": true}
+  [PASS] quality=80 的 WebP 字节数 < quality=95 — q80=12852B q95=27488B
+  [PASS] params_used.quality 如实回传 — 80
+  [PASS] max_side=100 ⇒ 输出 100×100（仍正方形） — 100x100 side=341
+  [PASS] max_side=100 ⇒ params_used.max_side=100 — 100
+
+---- ⑤ 错误路径（400 / 400 / 422，且一律结构化 JSON）----
+    不传文件（只有 pad_ratio 文本字段）
+    → POST http://127.0.0.1:5196/api/tools/square-crop
+    ← 400
+      content-type: application/json
+      content-length: 285
+      body: {"ok": false, "error": "NO_IMAGE", "reason": "缺少文件字段 `image`（multipart/form-data 的文件部分，字段名必须为 image），或该字段为空", "detail": "缺少文件字段 `image`（multipart/form-data 的文件部分，字段名必须为 image），或该字段为空"}
+  [PASS] 缺 image ⇒ 400 — 实际 400
+  [PASS] 缺 image 的响应是 JSON — application/json
+  [PASS] 缺 image 的 reason 可读 — 缺少文件字段 `image`（multipart/form-data 的文件部分，字段名必须为 image），或该字段为空
+    传非图片（text/plain）
+    → POST http://127.0.0.1:5196/api/tools/square-crop
+    ← 400
+      content-type: application/json
+      content-length: 182
+      body: {"ok": false, "error": "DECODE_FAILED", "reason": "上传内容不是可解码的图片（cv2.imdecode 失败）", "detail": "上传内容不是可解码的图片（cv2.imdecode 失败）"}
+  [PASS] 非图片 ⇒ 400 — 实际 400
+  [PASS] 非图片的响应是 JSON — application/json
+    传纯白图（无红掩膜 ⇒ 无候选）
+    → POST http://127.0.0.1:5196/api/tools/square-crop
+    ← 422
+      content-type: application/json
+      content-length: 493
+      body: {"ok": false, "error": "NO_CANDIDATE", "reason": "NO_CANDIDATE", "detail": "NO_CANDIDATE", "source": {"width": 200, "height": 200}, "params_used": {"hsv_low": [0, 120, 70], "hsv_high": [10, 255, 255], "min_area_eff": 6172.839506172839, "min_area_source": "builtin(corpus-identical·verified 3/3·square.py:BUILTIN_TEMPLATE_PARAMS)·min_area=800.0×processor.AREA_SCALE=7.716049", "pad_ratio": 0.15, "quality": 95, "max_side": 0, "template_source": "builtin(corpus-identical·verified 3/3·square.py:BUILTIN_TEMPLATE_PARAMS)"}}
+  [PASS] 纯白图 ⇒ 422 — 实际 422
+  [PASS] 纯白图 reason == NO_CANDIDATE — NO_CANDIDATE
+  [PASS] 纯白图的响应是 JSON（非 HTML 错误页） — application/json
+
+---- ⑥ CORS 实证（预检 + 真实 POST；含未允许 origin 的负例）----
+    预检 Origin=http://127.0.0.1:5163
+    → OPTIONS http://127.0.0.1:5196/api/tools/square-crop
+    ← 200
+      content-type: text/plain; charset=utf-8
+      access-control-allow-origin: http://127.0.0.1:5163
+      access-control-allow-methods: GET, POST, OPTIONS
+      access-control-allow-headers: content-type
+      vary: Origin
+      content-length: 2
+      body: OK
+  [PASS] 预检 http://127.0.0.1:5163 ⇒ 200 — 实际 200
+  [PASS] 预检 http://127.0.0.1:5163 回 Access-Control-Allow-Origin: http://127.0.0.1:5163 — http://127.0.0.1:5163
+  [PASS] 预检 http://127.0.0.1:5163 允许 POST — GET, POST, OPTIONS
+    预检 Origin=http://localhost:5163
+    → OPTIONS http://127.0.0.1:5196/api/tools/square-crop
+    ← 200
+      content-type: text/plain; charset=utf-8
+      access-control-allow-origin: http://localhost:5163
+      access-control-allow-methods: GET, POST, OPTIONS
+      access-control-allow-headers: content-type
+      vary: Origin
+      content-length: 2
+      body: OK
+  [PASS] 预检 http://localhost:5163 ⇒ 200 — 实际 200
+  [PASS] 预检 http://localhost:5163 回 Access-Control-Allow-Origin: http://localhost:5163 — http://localhost:5163
+  [PASS] 预检 http://localhost:5163 允许 POST — GET, POST, OPTIONS
+    真实 POST 带 Origin=http://127.0.0.1:5163
+    → POST http://127.0.0.1:5196/api/tools/square-crop
+    ← 200
+      content-type: application/json
+      access-control-allow-origin: http://127.0.0.1:5163
+      vary: Origin
+      content-length: 37417
+      body: {"ok": true, "count": 1, "source": {"width": 343, "height": 341}, "candidates": [{"idx": 0, "bbox": [0, 0, 343, 341], "square": [1, 0, 342, 341], "side": 341, "width": 341, "height": 341, "mime": "image/webp", "sha256": "b540bf974bceca6aa1358f6f914d773a2983d3f83337e23255dfb3415824aad5", "image_base64": "<36652 chars b64>", "area": 48909.0, "aspect": 1.0030395136778116, "degraded": true, "degraded_reasons": ["SHORT_SIDE_CLAMP"]}], "params_used": {"hsv_low": [0, 120, 70], "hsv_high": [10, 255, 255], "min_area_eff": 6172.839506172839, "min_area_source": "builtin(corpus-identical·verified 3/3·square.py:BUILTIN_TEMPLATE_PARAMS)·min_area=800.0×processor.AREA_SCALE=7.716049", "pad_ratio": 0.15, "quality": 95, "max_side": 0, "template_source": "builtin(corpus-identical·verified 3/3·square.py:BUILTIN_TEMPLATE_PARAMS)"}, "degraded": true}
+  [PASS] 真实 POST 带 Origin=http://127.0.0.1:5163 ⇒ 200 且回 ACAO — status=200 ACAO=http://127.0.0.1:5163
+    未允许 origin 负例 Origin=http://127.0.0.1:59999
+    → OPTIONS http://127.0.0.1:5196/api/tools/square-crop
+    ← 400
+      content-type: text/plain; charset=utf-8
+      access-control-allow-methods: GET, POST, OPTIONS
+      access-control-allow-headers: content-type
+      vary: Origin
+      content-length: 22
+      body: Disallowed CORS origin
+  [PASS] 未允许 origin（http://127.0.0.1:59999）不回 ACAO（证明未放开 `*`） — None
+
+---- ⑦ 独立客户端复核：curl -F（另一套 multipart 编码器；带 Origin）----
+    curl rc=0
+      HTTP/1.1 200 OK
+      date: Sun, 20 Sep 2026 09:25:02 GMT
+      server: uvicorn
+      content-length: 37417
+      content-type: application/json
+      access-control-allow-origin: http://127.0.0.1:5163
+      vary: Origin
+      body: {"ok": true, "count": 1, "source": {"width": 343, "height": 341}, "candidates": [{"idx": 0, "bbox": [0, 0, 343, 341], "square": [1, 0, 342, 341], "side": 341, "width": 341, "height": 341, "mime": "image/webp", "sha256": "b540bf974bceca6aa1358f6f914d773a2983d3f83337e23255dfb3415824aad5", "image_base64": "<36652 chars b64>", "area": 48909.0, "aspect": 1.0030395136778116, "degraded": true, "degraded_reasons": ["SHORT_SIDE_CLAMP"]}], "params_used": {"hsv_low": [0, 120, 70], "hsv_high": [10, 255, 255], "min_area_eff": 6172.839506172839, "min_area_source": "builtin(corpus-identical·verified 3/3·squa
+  [PASS] curl -F 上传 ⇒ HTTP/1.1 200 — HTTP/1.1 200 OK
+  [PASS] curl -F 上传 ⇒ 回 ACAO 5163 — headers 含 ACAO=True
+  [PASS] curl 路径的候选同样满足 正方形 + mime — side=341 341x341 image/webp sha256=b540bf974bceca6a…
+
+调用后 stamps 指纹：rows=89 md5_B=d3932fdcd5e1f1482d115b735e8fb1bb rows<=79=79 md5_B(<=79)=d7abe995bff62761c27052dfc2bdf7bb
+  [PASS] stamps 行数不变 — 89 -> 89
+  [PASS] stamps 内容指纹（B canon / md5）不变 — d3932fdcd5e1f1482d115b735e8fb1bb -> d3932fdcd5e1f1482d115b735e8fb1bb
+  [PASS] stamps A raw 指纹不变 — 5fcbd5afe43d79ae726d64cb6361ecc3 -> 5fcbd5afe43d79ae726d64cb6361ecc3
+  [PASS] 原 79 行（id<=79）子集指纹不变 — rows=79 md5=d7abe995bff62761c27052dfc2bdf7bb -> d7abe995bff62761c27052dfc2bdf7bb
+
+====================================================================================================
+{
+  "label": "收尾复核: 5196 面板托管实例(惰性OCR+来源标签修正后)",
+  "base_url": "http://127.0.0.1:5196",
+  "db": "/Users/kevin/bistro/xiai/feicui/yinpu.db",
+  "checks_total": 61,
+  "checks_pass": 61,
+  "checks_fail": 0,
+  "stamps_fingerprint_before": {
+    "rows": 89,
+    "md5_B_canon": "d3932fdcd5e1f1482d115b735e8fb1bb",
+    "sha256_B_canon": "22e909e4f77c0f14ef3532a4bf73eb3ed2015b9c1fd95cd95afbb719da19d7ea",
+    "md5_A_raw": "5fcbd5afe43d79ae726d64cb6361ecc3",
+    "rows_le79": 79,
+    "md5_B_canon_le79": "d7abe995bff62761c27052dfc2bdf7bb"
+  },
+  "stamps_fingerprint_after": {
+    "rows": 89,
+    "md5_B_canon": "d3932fdcd5e1f1482d115b735e8fb1bb",
+    "sha256_B_canon": "22e909e4f77c0f14ef3532a4bf73eb3ed2015b9c1fd95cd95afbb719da19d7ea",
+    "md5_A_raw": "5fcbd5afe43d79ae726d64cb6361ecc3",
+    "rows_le79": 79,
+    "md5_B_canon_le79": "d7abe995bff62761c27052dfc2bdf7bb"
+  }
+}
+结论：ALL PASS（共 61 条断言）
+====================================================================================================

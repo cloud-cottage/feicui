@@ -1,0 +1,4 @@
+/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/db/copy_B_serial.db: 清空后 stamps = 0
+/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/db/copy_C_parallel.db: 清空后 stamps = 0
+/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/db/copy_D_resume.db: 清空后 stamps = 0
+/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/db/copy_E_sep.db: 清空后 stamps = 0

@@ -1,0 +1,28 @@
+{
+  "jobs-409": {
+    "has409": true,
+    "hasExisting": true,
+    "hasRaw": false
+  },
+  "job-detail": {
+    "hasNotImpl": false,
+    "hasDown": false,
+    "done": "136 / 544",
+    "barWidth": "25%",
+    "rows": 11
+  },
+  "job-results": {
+    "hasNotImpl": true,
+    "hasDown": false,
+    "done": null,
+    "barWidth": null,
+    "rows": 0
+  },
+  "job-missing": {
+    "hasNotImpl": true,
+    "hasDown": false,
+    "done": null,
+    "barWidth": null,
+    "rows": 0
+  }
+}

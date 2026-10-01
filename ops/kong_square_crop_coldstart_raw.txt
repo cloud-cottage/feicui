@@ -1,0 +1,75 @@
+====================================================================================================
+square-crop 冷启动优化 / 来源标签修正 · 原始自测输出（Kong / 斐萃收尾）
+时间 = 2026-09-20T17:25:31+08:00  主机 = BlueSpace.local  cwd = /Users/kevin/bistro/xiai/feicui
+面板托管实例端口 = 5196（feicui-api，pid=35061,）
+====================================================================================================
+
+>>>> [1/2] server/selftest/verify_square_lazy_ocr.py（惰性替身对 OCR 路径语义等价）
+
+====================================================================================================
+惰性 paddleocr 替身：OCR 路径语义等价自测（不加载真模型）
+  SERVER_DIR=/Users/kevin/bistro/xiai/feicui/server   ROOT=/Users/kevin/bistro/xiai/feicui
+====================================================================================================
+  [PASS] ① 替身被装上 — True
+  [PASS] ② processor.PaddleOCR 解析到替身（不是真包）
+  [PASS] ③ _get_ocr() 用**原样** args/kwargs 构造了真类（use_angle_cls=False, lang=ch 逐字不变） — [{'args': [], 'kwargs': {'use_angle_cls': False, 'lang': 'ch'}}]
+  [PASS] ④ 替身实例真的代理到真类实例（is_fake_real=True）
+  [PASS] ⑤ _get_ocr() 缓存语义不变（两次同一实例）
+  [PASS] ⑥ 真类只被构造一次（未重复加载）
+  [PASS] ⑦ 替身对任意方法透明转发（predict 可用）
+  [PASS] ⑧ OCR 被点用之后 sys.modules 里已换回真包
+  [PASS] ⑨ processor.AREA_SCALE 不变（＝(400/144)²）
+  [PASS] ⑩ processor.detect_stamp_regions 仍在（检测口径不受影响）
+
+---- 反例：FEICUI_SQUARE_NO_LAZY_OCR=1 ⇒ 不装替身（可回滚）----
+  [PASS] ⑪ 开关生效：不装替身 — OFF=False installed=False
+====================================================================================================
+结论：PASS —— 惰性替身对 OCR 路径语义等价，且可一键回滚
+====================================================================================================
+verify_square_lazy_ocr.py exit=0
+
+>>>> [2/2] server/selftest/bench_square_crop_coldstart.py --reps 3（冷启动 A/B + 标签如实性）
+
+====================================================================================================
+square-crop 冷启动 A/B 基准（惰性 paddleocr 替身）
+  worker 解释器 = /Users/kevin/bistro/xiai/feicui/venv/bin/python（存在＝True）
+  本层解释器    = /Users/kevin/bistro/xiai/feicui/server/.venv/bin/python
+  样本          = /Users/kevin/bistro/xiai/feicui/output/faces/TMP/p0013_00.webp（30004 B）
+  轮次          = 每模式 3 次（两模式交错执行，取中位数）
+====================================================================================================
+
+---- ⓪ 前置核验：/Users/kevin/bistro/xiai/feicui/config/templates.json ----
+  [PASS] templates.json 无 `default` 键（⇒ 任何 `templates.json:default` 标签都是失真） — 顶层键=['黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf', '秦汉印典 上海书画 金怀英  1997 ok.pdf', '古玺汇编 文物出版社 罗福颐  ok.pdf']
+  resolve_params → {"hsv_low": [0, 120, 70], "hsv_high": [10, 255, 255], "template_min_area": 800.0, "min_area_eff": null, "pad_ratio": 0.15, "template_source": "builtin(corpus-identical·verified 3/3·square.py:BUILTIN_TEMPLATE_PARAMS)", "template_pad_ratio_default": 0.15}
+
+---- ① 冷启动计时（交错 3 轮）----
+  [1/3] A: 惰性 OCR（优化后）: 0.276s  ok=True  sha256=b540bf974bceca6aa1358f6f914d773a2983d3f83337e23255dfb3415824aad5
+  [1/3] B: 关闭惰性（模拟优化前）: 2.085s  ok=True  sha256=b540bf974bceca6aa1358f6f914d773a2983d3f83337e23255dfb3415824aad5
+  [2/3] A: 惰性 OCR（优化后）: 0.260s  ok=True  sha256=b540bf974bceca6aa1358f6f914d773a2983d3f83337e23255dfb3415824aad5
+  [2/3] B: 关闭惰性（模拟优化前）: 1.724s  ok=True  sha256=b540bf974bceca6aa1358f6f914d773a2983d3f83337e23255dfb3415824aad5
+  [3/3] A: 惰性 OCR（优化后）: 0.251s  ok=True  sha256=b540bf974bceca6aa1358f6f914d773a2983d3f83337e23255dfb3415824aad5
+  [3/3] B: 关闭惰性（模拟优化前）: 1.409s  ok=True  sha256=b540bf974bceca6aa1358f6f914d773a2983d3f83337e23255dfb3415824aad5
+  中位数 A: 惰性 OCR（优化后）: 0.260s   （全部：['0.276', '0.260', '0.251']）
+  中位数 B: 关闭惰性（模拟优化前）: 1.724s   （全部：['2.085', '1.724', '1.409']）
+  ⇒ 前后对比：1.724s → 0.260s（降 1.464s，84.9%）
+
+---- ② 输出字节不变（sha256 全轮次全模式一致）----
+  [PASS] 候选 sha256 全池唯一且非空 — {'b540bf974bceca6aa1358f6f914d773a2983d3f83337e23255dfb3415824aad5'}
+
+---- ③ params_used 一致性 + 来源标签如实性 ----
+  [PASS] A: 惰性 OCR（优化后） 第1轮 min_area_eff 与基准一致 — 6172.839506172839
+  [PASS] A: 惰性 OCR（优化后） 第2轮 min_area_eff 与基准一致 — 6172.839506172839
+  [PASS] A: 惰性 OCR（优化后） 第3轮 min_area_eff 与基准一致 — 6172.839506172839
+  [PASS] B: 关闭惰性（模拟优化前） 第1轮 min_area_eff 与基准一致 — 6172.839506172839
+  [PASS] B: 关闭惰性（模拟优化前） 第2轮 min_area_eff 与基准一致 — 6172.839506172839
+  [PASS] B: 关闭惰性（模拟优化前） 第3轮 min_area_eff 与基准一致 — 6172.839506172839
+  [PASS] min_area_source 以 template_source 为前缀（同口径） — builtin(corpus-identical·verified 3/3·square.py:BUILTIN_TEMPLATE_PARAMS)·min_area=800.0×processor.AREA_SCALE=7.716049
+  [PASS] 两个来源标签都不引用不存在的键 templates.json:default — template_source=builtin(corpus-identical·verified 3/3·square.py:BUILTIN_TEMPLATE_PARAMS)
+  [PASS] 标签如实指出内建兜底常量的位置
+  [PASS] 标签如实给出与语料的核对结果（3 本书逐字一致） — builtin(corpus-identical·verified 3/3·square.py:BUILTIN_TEMPLATE_PARAMS)
+  [PASS] 标签里的 AREA_SCALE 与实际生效换算自洽 — builtin(corpus-identical·verified 3/3·square.py:BUILTIN_TEMPLATE_PARAMS)·min_area=800.0×processor.AREA_SCALE=7.716049
+
+====================================================================================================
+结论：PASS —— 惰性 OCR 生效、输出 sha256 不变、来源标签如实
+====================================================================================================
+bench_square_crop_coldstart.py exit=0

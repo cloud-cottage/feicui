@@ -1,0 +1,1 @@
+{"detail":{"error":"FIELD_NOT_DERIVABLE","detail":"无法派生 total_pages：既未给 page_range，也读不出 PDF 页数（PyMuPDF 不可用 / 文件损坏）","missing":["total_pages"]}}

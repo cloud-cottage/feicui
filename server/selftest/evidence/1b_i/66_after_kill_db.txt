@@ -1,0 +1,5 @@
+== 崩溃后库内游标（页状态保留、无「半页」：提交点=chunk 边界）==
+job_pages 状态分布: [('DONE', 3), ('RUNNING', 4)]
+jobs.state: RUNNING
+stamps 行数: 17
+chunk 级状态: [(0, 'DONE,DONE'), (1, 'RUNNING,RUNNING'), (2, 'RUNNING,RUNNING'), (3, 'DONE')]

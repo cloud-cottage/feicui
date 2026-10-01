@@ -1,0 +1,193 @@
+### npm run check:pricing
+
+> yinsuo-web@0.1.0 check:pricing
+> node scripts/check-price-literals.mjs
+
+✓ 价格字面量静态检查通过（spec §4.3 / AC-19）
+  · 行级豁免 src/config/app-config.js（演示环境额度（spec §11 待决 18：30 天 + 2,000 次），非付费套餐包量；不作为任何商品价格消费）
+  共豁免 1 处命中
+EXIT=0
+
+### npm run smoke
+
+> yinsuo-web@0.1.0 smoke
+> node scripts/build-smoke.mjs
+
+数据源实现：mock
+✓ ⑧ 契约方法总数 = 33（A1–A31；A4/A29 各含 2 子方法）  len=33
+✓ ⑧ 方法清单无重复项
+✓ ⑧ 清单内 33 个方法在适配层全部存在  缺 0 个
+✓ A1 getAppConfig → 注册开关位  {"registerOpen":true,"demoApplyOpen":true,"apiDocsOpen":true,"helpOpen":true,"orgProfileOpen":true,"invoiceEntryOpen":false}
+✓ A3 login 非法账号被拒  账号格式不正确（邮箱或 11 位手机号）
+✓ A3 login 演示账号通过  u_demo00000001
+✓ A4 getSession 返回会话用户
+✓ A5 listApiKeys 返回种子密钥  3 个
+✓ A5/A6 列表不含明文与内部字段
+✓ A5 掩码形态 = 前缀 + 24 个 • + 末 4 位  ys_test_••••••••••••••••••••••••zYEw
+✓ §6.1 kid = key_ + 12 位 Base32  key_PKY54D7O7WSB
+✓ A6 明文 = ys_test_ + 32 位 Base62 = 40 字符  len=40
+✓ A6 响应内明文一次、掩码末 4 位一致
+✓ §6.2 再取列表无法取回明文
+✓ A7 重生 kid 不变、rotatedAt 已写  key_JXSXBHVYQG3O @ 2026-09-20T04:13:17.471Z
+✓ A8 禁用生效
+✓ A9 删除生效
+✓ A10 汇总：调用次数 ≥ 计费调用  calls=517 billable=158 failed=15 原图=84 流量=10235418B
+✓ A10 失败请求单列（不计入计费调用）
+✓ A11 按接口分组且占比合计 = 1  7 组
+✓ A12 固定种子：同会话两次趋势结果一致  30 个桶
+✓ A13 分页 20/页且 total = 汇总口径  total=517 pages=26
+✓ P-M1-04 04-3 趋势轴：近 12 月刻度升序、无重复、末月 = 当期 CST 自然月  2025-10 … 2026-09
+✓ P-M1-04 04-3 趋势轴：近 30 日刻度升序、无重复、末日 = 当期 CST 自然日  2026-08-22 … 2026-09-20
+✓ A12 支持「近 12 月」窗口（月粒度）—— 概览页趋势图切换同一适配层方法重算  12 个有记录的月桶 / 2025-10,2025-11,2025-12,2026-01,2026-02,2026-03,2026-04,2026-05,2026-06,2026-07,2026-08,2026-09
+✓ A14 CSV 带 UTF-8 BOM
+✓ A14 列顺序符合 §7.6
+✓ A14 行集合严格等于筛选结果  rows=122 file=yinsuo-usage-u_demo00000001-202609201213-20260913_20260920_allkeys_allendpoints_allenv.csv
+✓ A14 近 7 日行数 < 近 30 日行数（不是全量导出）
+✓ A15 Σ流水 = 余额 自检通过  余额=¥26,290.00
+✓ A15 月额度余量非负且 = 包量 − 已用  100/2000
+✓ A16 三档且原图单价同价
+✓ A18 算例自洽（年费 + 超量 + 原图）  ¥3,600.00
+✓ A18 ① 默认算例：原图落在每日免费额度内 ⇒ 原图费用 ¥0  30 张 ≤ 每月免费用量 90 张（每日 3 张 × 30 天）
+✓ A18 ① 默认算例：首年合计 = 年费（原图费用为 0）  标准版 首年 ¥3,600.00
+✓ A18 ① 原图费用行口径由配置插值（不含金额字面量）  30 张（每日免费额度 3 张内，不计费）
+✓ A17 场景算例清单含「超额算例」入参（页面据其渲染，不造数字）  入参 100 张/月
+✓ A18 ② 超额算例：免费额度内不计费 + 超出部分按张计费  月需 100 张 ＝ 免费 90 张 ＋ 超出 10 张 × ¥2.00/张 ⇒ 月 ¥20.00；首年 ¥3,620.00
+✓ §4.3 场景文案插值：免费额度与超出单价均来自配置，旧「调取 10 张 高清原图」口径已退役  每月 200 次查阅会话，单次会话浏览 100 方玺印，图像以「展示切片」下发（每方 2 片，不计调用次数）；高清原图：账号维度每日免费额度 3 张（额度内不计费），超出部分按 ¥2.00/张 从充值余额扣减
+✓ A19 下单：订单号 RO+YYYYMMDD+6 位序列  RO20260920000003
+✓ A19 金额越界被拒  充值金额需在 ¥1.00 ~ ¥100,000.00 之间
+✓ A22 模拟成功 → PAID（含假二维码载荷）
+✓ §5.4 重复入账只产生 1 条 RECHARGE 流水  entries=1
+✓ A23 入账后余额增加  ¥26,290.00 → ¥27,290.00
+✓ §5.2 T5 失败分支：余额不变、无流水
+✓ §5.3 终态不可逆
+✓ A21 分页信封 {items,total,page,pageSize,totalPages}  total=4 pages=1 items=4
+✓ A21 支持分页入参（pageSize=1 → 1 条/页）
+✓ A24 分页信封 {items,total,page,pageSize,totalPages}  total=160 pages=1
+✓ §4.4 存在 DEDUCT_QUOTA 流水（只动次数）
+✓ §4.4 存在 ORIGINAL_IMAGE 流水（原图扣余额）
+✓ §3.7 每条流水带余额快照
+✓ D1 流水窗口严格嵌套：今日 ⊊ 近 7 日 ⊊ 近 30 日 ⊊ 全部（修复前五档返回同一集合）  today=5 ⊊ 7d=55 ⊊ 30d=159 ⊊ all=160
+✓ D1 五档（今日／近 7 日／近 30 日／本月／全部）返回集合两两互不相同  集合规模 5/55/159/158/160
+✓ D1 「今日」档不得出现往日的流水（逐行核对 CST 归属日）  今日 5 条，越界 0 条
+✓ D1 「本月」档不得出现往月的流水（逐行核对 CST 归属月）  本月 158 条，越界 0 条
+✓ D1 「today」档行集 = 该窗口内的流水（逐行核对 occurredAt ∈ [窗口起点, now]）  5 条 · 窗口起 2026-09-19T16:00:00.000Z · 越界 0 条
+✓ D1 「7d」档行集 = 该窗口内的流水（逐行核对 occurredAt ∈ [窗口起点, now]）  55 条 · 窗口起 2026-09-13T16:00:00.000Z · 越界 0 条
+✓ D1 「30d」档行集 = 该窗口内的流水（逐行核对 occurredAt ∈ [窗口起点, now]）  159 条 · 窗口起 2026-08-21T16:00:00.000Z · 越界 0 条
+✓ D1 「month」档行集 = 该窗口内的流水（逐行核对 occurredAt ∈ [窗口起点, now]）  158 条 · 窗口起 2026-08-31T16:00:00.000Z · 越界 0 条
+✓ D1 「all」档行集 = 该窗口内的流水（逐行核对 occurredAt ∈ [窗口起点, now]）  160 条 · 窗口起 1970-01-01T00:00:00.000Z · 越界 0 条
+✓ D1 类型多选 × 时间范围同时生效（RECHARGE：今日 ⊊ 全部，且行类型唯一）  今日 1 条 / 全部 2 条
+✓ D1 时间范围 + 分页不回归（20/页、total 与行集一致、相邻页不重叠）  total=160 pages=8 第 2 页 20 条且与第 1 页无交集
+✓ A17 下发充值档位（3 档，逐档落在自定义区间内）与支付渠道（AC-74 硬保证）  ¥1,000.00 / ¥5,000.00 / ¥10,000.00 ∈ [¥1.00, ¥100,000.00] · WECHAT,ALIPAY
+✓ A17 下发扣减与口径开关（年费独立 / 不跨月结转 / 重置时刻 / 原图是否计调用），页面文案据此插值  原图计调用=false · 不跨月结转=true
+✓ A19 三个固定档位逐档下单均成功（不存在「界面可选、提交被拒」的档位）  RO20260920000005,RO20260920000006,RO20260920000007
+✓ A19 自定义金额边界（下限 / 上限）可下单，越界一律当场拦下  ¥1.00 / ¥100,000.00 · 越界拒绝码 AMOUNT_OUT_OF_RANGE/AMOUNT_OUT_OF_RANGE
+✓ §5.2 T1 下单 → CREATED（订单号 RO + YYYYMMDD + 6 位序列）  RO20260920000010
+✓ §5.2 T2 生成支付码 → PENDING_PAY（写占位二维码载荷，页面据此绘 CSS 占位码）  PENDING_PAY / DEMO-QR:RO20260920000010
+✓ §5.2 T2 超时时刻 = 下单 + 配置的待支付分钟数（A1 orderPendingTimeoutMinutes，倒计时来源）  剩余 900s / 配置 15 分钟
+✓ §5.2 T2 幂等：重复生成支付码不重置倒计时（刷新 / 「继续支付」按 expiresAt 恢复，AC-32）  2026-09-20T04:28:48.451Z
+✓ §5.2 T3 模拟支付成功 → PAID（写支付时刻）  2026-09-20T04:13:50.813Z
+✓ §5.2 T4 + §5.4 入账幂等：连续两次入账只产生 1 条「充值入账」流水  入账流水条数=1（第二次 idempotent=true）
+✓ §3.7 入账流水：方向 IN、金额 = 订单金额、余额快照 = 当前余额（流水表可直接核对）  ¥5,000.00 → 余额快照 ¥32,290.00
+✓ §5.4-2/3/4 入账原子：余额 +金额、仅 +1 条流水、Σ流水 = 余额（一致性自检通过）  流水 160 → 161 · 余额 ¥27,290.00 → ¥32,290.00 · Σ流水=¥32,290.00
+✓ §5.2 T5 模拟支付失败 → FAILED（写失败原因）  演示态：模拟支付失败
+✓ §5.2 T6 倒计时归零 → 已关闭（超时）（页面据此置灰「去支付」并给「重新下单」）  待支付超时
+✓ §5.2 T7 用户关闭 → CANCELLED（无余额变动）
+✓ §5.3-1/2 失败 / 超时 / 取消三态零副作用（余额不变、流水零新增）且终态不可逆  余额 ¥32,290.00（不变）· 流水 161 → 161
+✓ §5.2 T8 重新下单 → 新订单号（不复用失败 / 超时订单）  RO20260920000012 → RO20260920000014
+✓ A21 订单列表分页信封 + 状态保持枚举值（页面经展示层映射渲染中文，AC-88 不漏枚举）  total=14 · 状态集 CREATED,CANCELLED,EXPIRED,FAILED,SETTLED
+✓ 展示通道流量含历史种子：今日 < 近 7 日 < 近 30 日（原缺陷：三窗口恒等、平移一天即归零）  today=39820B · 7d=674938B · 30d=2963074B
+✓ A25 玺印条目为占位  total=18
+✓ A26 详情含影像且预览地址为占位（不外链）
+✓ A27 展示切片恰好 2 片（sliceIndex 0,1）  slices=2
+✓ A27 两片各带独立签名 URL（不共用签名、不外链、无真实请求）  about:placeholder#ia_0000000001/slice-0?sig=35fpeo156mt1clbwv7e
+✓ A27 切割元数据齐备（direction/offsetRatio/sourceWidth/sourceHeight）  horizontal@0.5112
+✓ A27 签名 TTL 取自配置且两片签名未过期（§11.2 待决 22 默认 300s）  300s
+✓ AC-79 v1.7 sliceContentCacheKey = `assetId:CST自然日`（同日相同、次日必变、与签名解耦）  ia_0000000001:2026-09-20
+✓ AC-79 v1.7 sliceContentTtlSeconds = 当日剩余秒数（自然日粒度，非固定秒数循环）≠ sigTtlSeconds（两个独立计时）  内容 TTL=42353s（实测当日剩余 42353s）· 签名 TTL=300s
+✓ AC-79 切片内容按 assetId + 当日日期派生：当天固定（可缓存）、重复获取不变（次日轮换由种子含日期保证）  horizontal@0.5112
+✓ AC-79 签名 URL 刷新不改当日切片内容（内容与签名是两个独立计时）  片字节 198966/190247
+✓ AC-80① 切片两片字节均计入图片流量、切片请求不计调用次数  流量 10235418 → 11013844B（+778426B = 2 组 × 389213B） · 调用次数 517 → 517 不变
+✓ AC-80① 展示切片流量并入 A11 按接口聚合（该分组调用次数为 0，只累计图片流量）
+✓ AC-80① 切片流量不产生调用明细行（A13 明细内无 display 请求）
+✓ A27 展示通道不返回原图直链（R17b）、切片字节齐备
+✓ A10 汇总双口径：imageBytes = detailImageBytes（明细行合计）+ displayChannelBytes（展示通道，不计调用）  明细 7272344B + 展示 3741500B = 11013844B
+✓ A14 导出汇总字段与 A10 页面汇总同区间同口径（对客数字可勾稽）  导出 明细 7272344B / 展示 3741500B / 合计 11013844B
+✓ A14 CSV 表尾含双口径汇总两行 + 一行口径注记（导出件自带口径说明）
+✓ A14 summary.note 存在、含「两口径之和」口径句，且与 CSV 注记行文字逐字一致（AC-49 同一文字来源）  图片流量分两口径：明细行合计不含展示通道（切片）流量；展示通道流量只计图片流量、不计调用次数。两口径之和等于汇总图片流量。
+✓ A14 summary 字段集锁定：A10 同名三字段 + note（＋ calls/billableCalls/failedCalls/originalImages/rowCount）  calls,billableCalls,failedCalls,originalImages,detailImageBytes,displayChannelBytes,imageBytes,rowCount,note
+✓ AC-45 三维聚合齐备：按密钥 / 按接口 / 按日三张表都有分组返回  key=3 endpoint=7 day=30
+✓ A11 按接口维含展示通道分组（调用次数 0、只累计图片流量）—— 三维表须为其标注「不计调用」  /v1/assets/{assetId}/display 流量=3741500B calls=0
+✓ AC-45 三维表双口径可相加（按密钥维不含展示通道分组、按接口维含）：行合计 ＋ 展示通道 ＝ 合计  keyΣ=7272344 ｜ endpointΣ=11013844 ｜ 展示通道=3741500 ｜ 合计=11013844
+✓ §7.6 导出文件名形态：yinsuo-usage-<账号>-<yyyyMMddHHmm(CST)>-<区间>-<筛选摘要>.csv  yinsuo-usage-u_demo00000001-202609201214-20260821_20260920_allkeys_allendpoints_allenv.csv
+✓ §7.6 导出文件名随筛选摘要变化（环境 / 密钥命中数进入文件名）  yinsuo-usage-u_demo00000001-202609201214-20260821_20260920_allkeys_allendpoints_live.csv ｜ yinsuo-usage-u_demo00000001-202609201214-20260821_20260920_keys1_allendpoints_allenv.csv
+✓ AC-49 导出数据行集合严格等于当前筛选结果（行数与明细表逐条一致，不是全量导出）  CSV 517 行 / 明细表 total=517 / traceId 全命中=true
+✓ M1-P3c 双口径三数字同单位同精度且显示值可相加（明细 ＋ 展示 ＝ 合计）  6.94 MB ＋ 3.57 MB ＝ 10.51 MB
+✓ M1-P3c 明细「图片字节数」为精确值（与导出 CSV 的 imageBytes 列逐字节一致）  12,345 字节 / 0 字节
+✓ AC-80 展示通道（A25/A26）不返回 originalHighResUrl（原图地址仅在 A31 校通过后签发）  assets=3
+✓ A30 免费额度快照 = {policy,scopeKey,freePerDay,unitPriceCents,usedToday,freeRemainingToday,overageToday,chargedTodayCents,resetAt,cstDate,timezone}  freePerDay=3 used=0 freeRemaining=3 overage=0
+✓ v1.5 更名落地：旧 limitPerDay / remainingToday /（额度对象上的）mode 已退役
+✓ A31 拒绝码枚举三项：UNAUTHENTICATED / INSUFFICIENT_BALANCE / NOT_FOUND（v1.9 枚举级定义；DAILY_LIMIT_EXCEEDED 退役）  UNAUTHENTICATED,INSUFFICIENT_BALANCE,NOT_FOUND
+✓ A31 顺序①：先扣免费额度、额度内不收费  freeApplied=1 usedToday=3
+✓ A31 免费额度内余额不变  ¥32,290.00
+✓ A31 顺序②：免费额度用尽后**不拒绝**，按 unitPriceCents 扣余额  overageAmount=¥2.00 overageToday=1
+✓ A31 `charged.freeApplied` 语义 = 本次占用免费额度张数（0/1），与 overageCount 互补  额度内 1+0 / 超出 0+1
+✓ A31 超量按 ¥2.00/张 扣减且 Σ流水 = 余额 自洽  ¥32,290.00 → ¥32,288.00
+✓ A15/A30 同源：§3.10 v1.5 五个额度字段与 A30 一致（页面不自行累加/相乘，§8.3-3）
+✓ A30 计费态：今日超出张数与扣费金额由适配层派生  overage=1 charged=¥2.00
+✓ A31 继续可下载（不设每日上限）  overageToday=2 charged=¥4.00
+✓ A31 成功返回单独的短期签名原图链接（展示通道不含原图 URL）  about:placeholder#ia_0000000001/original?sig=2xqvz
+✓ AC-85 资源不存在 → 拒绝（NOT_FOUND）且不抵扣、不扣费、不写流水  usedToday=5（不变）余额 ¥32,286.00（不变） 流水条数 163 → 163
+✓ AC-85 不存在资源的 ORIGINAL_IMAGE 流水零写入（relatedAssetId 无悬挂引用）
+✓ A28 首次受理 + 同邮箱重复提交判重  DEMO-20260920-0001
+✓ A29 FAQ 12 条 / 资料包 6 项（§11 待决 17、15）  faq=12 downloads=6
+✓ A4 logout 清空会话
+✓ A31 未登录 → reject UNAUTHENTICATED（R17b）  未登录：原图下载需先登录（spec §8.2 A31）
+✓ A30 未登录 → reject UNAUTHENTICATED（额度为账号维度数据，Zang 终审）  未登录：原图下载额度为账号维度数据，查询前需先登录（spec §8.2 A30）
+✓ A30/A31 复用同一拒绝码枚举（contract.ORIGINAL_DOWNLOAD_ERROR）
+✓ A30 未登录时**不**返回额度快照（不泄露账号维度数据）
+
+✓ 全部通过（132 项断言）
+EXIT=0
+
+### npm run build
+
+> yinsuo-web@0.1.0 build
+> vite build
+
+vite v6.4.3 building for production...
+transforming...
+✓ 75 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/console.html                                    0.57 kB │ gzip:  0.37 kB
+dist/index.html                                      0.78 kB │ gzip:  0.50 kB
+dist/assets/BillingPage-CwYRw4n8.css                 0.12 kB │ gzip:  0.13 kB
+dist/assets/PricingPage-CBsLK-FB.css                 0.19 kB │ gzip:  0.14 kB
+dist/assets/ConsoleShell-Brfh5l72.css                0.22 kB │ gzip:  0.16 kB
+dist/assets/KeysPage-B7MBDLdL.css                    0.76 kB │ gzip:  0.33 kB
+dist/assets/OverviewPage-BR70LSde.css                2.60 kB │ gzip:  0.77 kB
+dist/assets/HomePage-BtUXkSqP.css                    2.84 kB │ gzip:  0.87 kB
+dist/assets/UsagePage-FsaXWRv_.css                   4.71 kB │ gzip:  1.03 kB
+dist/assets/useAppConfig-Dc521GRY.css               23.03 kB │ gzip:  4.84 kB
+dist/assets/NoticeBar-HveMcLZq.js                    0.54 kB │ gzip:  0.36 kB
+dist/assets/_plugin-vue_export-helper-BwMhMWnQ.js    0.70 kB │ gzip:  0.42 kB
+dist/assets/EntryLink-y5BoPjQd.js                    0.85 kB │ gzip:  0.53 kB
+dist/assets/NotFoundPage-BFVAkECc.js                 1.04 kB │ gzip:  0.63 kB
+dist/assets/SegmentedControl-BSi67S0X.js             1.04 kB │ gzip:  0.62 kB
+dist/assets/labels-BYbfXU6g.js                       1.07 kB │ gzip:  0.67 kB
+dist/assets/StateBlock-CrcITjg8.js                   1.26 kB │ gzip:  0.66 kB
+dist/assets/ComingSoonPage-5svqwVU8.js               2.28 kB │ gzip:  1.25 kB
+dist/assets/ConsoleShell-CxbHrp9j.js                 2.74 kB │ gzip:  1.56 kB
+dist/assets/console-XZcdAYiY.js                      3.90 kB │ gzip:  1.61 kB
+dist/assets/marketing-DeZmO9Yb.js                    5.94 kB │ gzip:  2.84 kB
+dist/assets/LoginPage-Ks0nYDh4.js                    6.26 kB │ gzip:  2.84 kB
+dist/assets/RegisterPage-BuaC6nSe.js                 9.21 kB │ gzip:  3.68 kB
+dist/assets/PricingPage-Broa6PfB.js                 11.39 kB │ gzip:  4.32 kB
+dist/assets/KeysPage-C-Vj7oxK.js                    13.77 kB │ gzip:  5.51 kB
+dist/assets/HomePage-BoRrllYv.js                    14.68 kB │ gzip:  6.42 kB
+dist/assets/OverviewPage-BSjXOtDW.js                16.95 kB │ gzip:  7.03 kB
+dist/assets/BillingPage-CXlqs4r8.js                 25.63 kB │ gzip:  9.48 kB
+dist/assets/UsagePage-BUSICxgx.js                   28.52 kB │ gzip: 10.16 kB
+dist/assets/useAppConfig-PrYpNcr6.js               146.42 kB │ gzip: 55.63 kB
+✓ built in 911ms
+EXIT=0

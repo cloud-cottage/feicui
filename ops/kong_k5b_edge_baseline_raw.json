@@ -1,0 +1,39 @@
+{
+  "view_md5_with_fix": "f202894863cb257ac52195e1d145134e",
+  "baseline_repro": {
+    "faceBlocks": 3,
+    "faceCount": 2,
+    "edgeCount": 1,
+    "replaceBtnCount": 3,
+    "editBtnCount": 3,
+    "edgeBlocksWithReplaceBtn": 1,
+    "faceBlocksWithReplaceBtn": 2,
+    "textHits": 3,
+    "htmlHits": 5,
+    "htmlHitContexts": [
+      "19d42e3e] {\n  color: var(--c-text-muted);\n  font-size: var(--t-xs);\n}\n\n/* 管理员按钮组（编辑固定属性 / 重新上传印面图）：同一行右对齐。 */\n.face-bloc",
+      "  display: flex;\n  justify-content: flex-end;\n  gap: var(--s-2);\n}\n\n/* ------------------ 重新上传印面图：弹窗与取景框（与「上传印章」同口径） ---",
+      "n--ghost\" type=\"button\" data-admin-action=\"replace-face-image\" data-face-id=\"fc-0001-f1\"> 重新上传印面图 </button></div></div><",
+      "n--ghost\" type=\"button\" data-admin-action=\"replace-face-image\" data-face-id=\"fc-0001-f2\"> 重新上传印面图 </button></div></div><"
+    ],
+    "rows": [
+      {
+        "kind": "印面",
+        "faceId": "fc-0001-f1",
+        "hasReplaceBtn": true
+      },
+      {
+        "kind": "印面",
+        "faceId": "fc-0001-f2",
+        "hasReplaceBtn": true
+      },
+      {
+        "kind": "边款",
+        "faceId": "fc-0001-e1",
+        "hasReplaceBtn": true
+      }
+    ]
+  },
+  "view_md5_restored": "f202894863cb257ac52195e1d145134e",
+  "restored_equals_fixed": true
+}

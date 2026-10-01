@@ -1,0 +1,314 @@
+{
+  "meta": {
+    "task": "k5b: replace-face-image button restricted to FACE blocks",
+    "base": "http://127.0.0.1:5163",
+    "chrome_profile": "/tmp/xiai-kong5b-prof",
+    "port": 9444,
+    "admin": "16601061656",
+    "normal": "13800000001",
+    "code": "1234",
+    "started_at": "2026-09-20T18:08:34+0800",
+    "finished_at": "2026-09-20T18:09:05+0800"
+  },
+  "checks": [
+    {
+      "name": "guest: replace 按钮全页面零命中",
+      "pass": true,
+      "detail": "replaceBtnCount=0 faceBlocks=3"
+    },
+    {
+      "name": "guest: body 文本零命中「重新上传印面图」",
+      "pass": true,
+      "detail": "textHits=0 htmlHits=2"
+    },
+    {
+      "name": "normal: replace 按钮全页面零命中",
+      "pass": true,
+      "detail": "replaceBtnCount=0 role={'loggedIn': True, 'role': 'user', 'phone': '13800000001', 'isAdmin': False}"
+    },
+    {
+      "name": "normal: body 文本零命中「重新上传印面图」",
+      "pass": true,
+      "detail": "textHits=0 htmlHits=2"
+    },
+    {
+      "name": "admin XAI-0001: 按钮数 == FACE 块数",
+      "pass": true,
+      "detail": "replaceBtnCount=2 faceCount=2 edgeCount=1"
+    },
+    {
+      "name": "admin XAI-0001: EDGE 块上按钮零命中",
+      "pass": true,
+      "detail": "edgeBlocksWithReplaceBtn=0 edgeCount=1"
+    },
+    {
+      "name": "admin XAI-0001: 每个 FACE 块都有按钮",
+      "pass": true,
+      "detail": "faceBlocksWithReplaceBtn=2 faceCount=2"
+    },
+    {
+      "name": "admin 全含边款样本: Σ按钮 == ΣFACE 块 且 EDGE 块按钮零命中",
+      "pass": true,
+      "detail": "Σface=5 Σbtn=5 ΣedgeBtn=0"
+    },
+    {
+      "name": "数据层未按 kind 拦 EDGE（如实登记：空内容 ⇒ EMPTY_CONTENT 而非按 kind 拒）",
+      "pass": true,
+      "detail": "{\"edgeFaceRowKind\": \"EDGE\", \"edgeFaceImageIdBefore\": null, \"result\": {\"ok\": false, \"reason\": \"EMPTY_CONTENT\", \"message\": \"印面图内容为空，请重新选择图片文件\"}, \"edgeFaceImageIdAfter\": null, \"wroteAnything\": false}"
+    }
+  ],
+  "chrome": "already",
+  "guest_role": {
+    "loggedIn": false,
+    "role": null,
+    "phone": null,
+    "isAdmin": false
+  },
+  "guest": {
+    "faceBlocks": 3,
+    "faceCount": 2,
+    "edgeCount": 1,
+    "replaceBtnCount": 0,
+    "editBtnCount": 0,
+    "edgeBlocksWithReplaceBtn": 0,
+    "faceBlocksWithReplaceBtn": 0,
+    "textHits": 0,
+    "htmlHits": 2,
+    "htmlHitContexts": [
+      "19d42e3e] {\n  color: var(--c-text-muted);\n  font-size: var(--t-xs);\n}\n\n/* 管理员按钮组（编辑固定属性 / 重新上传印面图）：同一行右对齐。 */\n.face-bloc",
+      "  display: flex;\n  justify-content: flex-end;\n  gap: var(--s-2);\n}\n\n/* ------------------ 重新上传印面图：弹窗与取景框（与「上传印章」同口径） ---"
+    ],
+    "rows": [
+      {
+        "index": 0,
+        "label": "印面一",
+        "isEdge": false,
+        "kind": "印面",
+        "faceId": "fc-0001-f1",
+        "hasReplaceBtn": false,
+        "btnFaceId": null
+      },
+      {
+        "index": 1,
+        "label": "印面二",
+        "isEdge": false,
+        "kind": "印面",
+        "faceId": "fc-0001-f2",
+        "hasReplaceBtn": false,
+        "btnFaceId": null
+      },
+      {
+        "index": 2,
+        "label": "边款一",
+        "isEdge": true,
+        "kind": "边款",
+        "faceId": "fc-0001-e1",
+        "hasReplaceBtn": false,
+        "btnFaceId": null
+      }
+    ]
+  },
+  "normal_login_path": "/",
+  "normal_role": {
+    "loggedIn": true,
+    "role": "user",
+    "phone": "13800000001",
+    "isAdmin": false
+  },
+  "normal": {
+    "faceBlocks": 3,
+    "faceCount": 2,
+    "edgeCount": 1,
+    "replaceBtnCount": 0,
+    "editBtnCount": 0,
+    "edgeBlocksWithReplaceBtn": 0,
+    "faceBlocksWithReplaceBtn": 0,
+    "textHits": 0,
+    "htmlHits": 2,
+    "htmlHitContexts": [
+      "19d42e3e] {\n  color: var(--c-text-muted);\n  font-size: var(--t-xs);\n}\n\n/* 管理员按钮组（编辑固定属性 / 重新上传印面图）：同一行右对齐。 */\n.face-bloc",
+      "  display: flex;\n  justify-content: flex-end;\n  gap: var(--s-2);\n}\n\n/* ------------------ 重新上传印面图：弹窗与取景框（与「上传印章」同口径） ---"
+    ],
+    "rows": [
+      {
+        "index": 0,
+        "label": "印面一",
+        "isEdge": false,
+        "kind": "印面",
+        "faceId": "fc-0001-f1",
+        "hasReplaceBtn": false,
+        "btnFaceId": null
+      },
+      {
+        "index": 1,
+        "label": "印面二",
+        "isEdge": false,
+        "kind": "印面",
+        "faceId": "fc-0001-f2",
+        "hasReplaceBtn": false,
+        "btnFaceId": null
+      },
+      {
+        "index": 2,
+        "label": "边款一",
+        "isEdge": true,
+        "kind": "边款",
+        "faceId": "fc-0001-e1",
+        "hasReplaceBtn": false,
+        "btnFaceId": null
+      }
+    ]
+  },
+  "admin_login_path": "/",
+  "admin_role": {
+    "loggedIn": true,
+    "role": "admin",
+    "phone": "16601061656",
+    "isAdmin": true
+  },
+  "admin_0001": {
+    "faceBlocks": 3,
+    "faceCount": 2,
+    "edgeCount": 1,
+    "replaceBtnCount": 2,
+    "editBtnCount": 3,
+    "edgeBlocksWithReplaceBtn": 0,
+    "faceBlocksWithReplaceBtn": 2,
+    "textHits": 2,
+    "htmlHits": 4,
+    "htmlHitContexts": [
+      "19d42e3e] {\n  color: var(--c-text-muted);\n  font-size: var(--t-xs);\n}\n\n/* 管理员按钮组（编辑固定属性 / 重新上传印面图）：同一行右对齐。 */\n.face-bloc",
+      "  display: flex;\n  justify-content: flex-end;\n  gap: var(--s-2);\n}\n\n/* ------------------ 重新上传印面图：弹窗与取景框（与「上传印章」同口径） ---",
+      "n--ghost\" type=\"button\" data-admin-action=\"replace-face-image\" data-face-id=\"fc-0001-f1\"> 重新上传印面图 </button></div></div><",
+      "n--ghost\" type=\"button\" data-admin-action=\"replace-face-image\" data-face-id=\"fc-0001-f2\"> 重新上传印面图 </button></div></div><"
+    ],
+    "rows": [
+      {
+        "index": 0,
+        "label": "印面一",
+        "isEdge": false,
+        "kind": "印面",
+        "faceId": "fc-0001-f1",
+        "hasReplaceBtn": true,
+        "btnFaceId": "fc-0001-f1"
+      },
+      {
+        "index": 1,
+        "label": "印面二",
+        "isEdge": false,
+        "kind": "印面",
+        "faceId": "fc-0001-f2",
+        "hasReplaceBtn": true,
+        "btnFaceId": "fc-0001-f2"
+      },
+      {
+        "index": 2,
+        "label": "边款一",
+        "isEdge": true,
+        "kind": "边款",
+        "faceId": "fc-0001-e1",
+        "hasReplaceBtn": false,
+        "btnFaceId": null
+      }
+    ]
+  },
+  "admin_edge_seals": {
+    "XAI-0001": {
+      "faceBlocks": 3,
+      "faceCount": 2,
+      "edgeCount": 1,
+      "replaceBtnCount": 2,
+      "edgeBlocksWithReplaceBtn": 0,
+      "faceBlocksWithReplaceBtn": 2,
+      "rows": [
+        {
+          "kind": "印面",
+          "faceId": "fc-0001-f1",
+          "hasReplaceBtn": true
+        },
+        {
+          "kind": "印面",
+          "faceId": "fc-0001-f2",
+          "hasReplaceBtn": true
+        },
+        {
+          "kind": "边款",
+          "faceId": "fc-0001-e1",
+          "hasReplaceBtn": false
+        }
+      ]
+    },
+    "XAI-0004": {
+      "faceBlocks": 2,
+      "faceCount": 1,
+      "edgeCount": 1,
+      "replaceBtnCount": 1,
+      "edgeBlocksWithReplaceBtn": 0,
+      "faceBlocksWithReplaceBtn": 1,
+      "rows": [
+        {
+          "kind": "印面",
+          "faceId": "fc-0004-f1",
+          "hasReplaceBtn": true
+        },
+        {
+          "kind": "边款",
+          "faceId": "fc-0004-e1",
+          "hasReplaceBtn": false
+        }
+      ]
+    },
+    "XAI-0005": {
+      "faceBlocks": 2,
+      "faceCount": 1,
+      "edgeCount": 1,
+      "replaceBtnCount": 1,
+      "edgeBlocksWithReplaceBtn": 0,
+      "faceBlocksWithReplaceBtn": 1,
+      "rows": [
+        {
+          "kind": "印面",
+          "faceId": "fc-0005-f1",
+          "hasReplaceBtn": true
+        },
+        {
+          "kind": "边款",
+          "faceId": "fc-0005-e1",
+          "hasReplaceBtn": false
+        }
+      ]
+    },
+    "XAI-0007": {
+      "faceBlocks": 2,
+      "faceCount": 1,
+      "edgeCount": 1,
+      "replaceBtnCount": 1,
+      "edgeBlocksWithReplaceBtn": 0,
+      "faceBlocksWithReplaceBtn": 1,
+      "rows": [
+        {
+          "kind": "印面",
+          "faceId": "fc-0007-f1",
+          "hasReplaceBtn": true
+        },
+        {
+          "kind": "边款",
+          "faceId": "fc-0007-e1",
+          "hasReplaceBtn": false
+        }
+      ]
+    }
+  },
+  "data_probe_edge": {
+    "edgeFaceRowKind": "EDGE",
+    "edgeFaceImageIdBefore": null,
+    "result": {
+      "ok": false,
+      "reason": "EMPTY_CONTENT",
+      "message": "印面图内容为空，请重新选择图片文件"
+    },
+    "edgeFaceImageIdAfter": null,
+    "wroteAnything": false
+  },
+  "all_pass": true
+}

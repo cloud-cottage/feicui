@@ -1,0 +1,247 @@
+{
+  "chrome": "already",
+  "profile": "/tmp/xiai-kong3-prof",
+  "checks": [
+    {
+      "name": "既有 8 行编号与印文逐字一致（真 localStorage 读数）",
+      "pass": true,
+      "detail": "[[\"XAI-0001\", \"長壽\"], [\"XAI-0002\", \"騎都尉印\"], [\"XAI-0003\", \"昌\"], [\"XAI-0004\", \"文彭之印\"], [\"XAI-0005\", \"丁敬身印\"], [\"XAI-0006\", \"家在錢塘\"], [\"XAI-0007\", \"乾隆御覽之寶\"], [\"XAI-0008\", \"安持\"]]"
+    },
+    {
+      "name": "新编号匹配 ^XA\\d{9}$（真 localStorage 读数）",
+      "pass": true,
+      "detail": "[\"XA000000001\", \"XA000000002\"]"
+    },
+    {
+      "name": "新编号不与既有冲突",
+      "pass": true,
+      "detail": "rows=10 unique=10"
+    },
+    {
+      "name": "第二次写入后既有 8 行仍逐字未变（整行 JSON 逐字比对，含全部字段）",
+      "pass": true,
+      "detail": "legacy_rows_json 长度 2324 == 2324；before[:80]=[{\"asset_kind\": \"SEAL\", \"author\": \"無名\", \"dynasty\": \"漢\", \"material\": \"青銅\", \"revie"
+    },
+    {
+      "name": "第二次写入得到 XA000000002（递增不撞既有）",
+      "pass": true,
+      "detail": "{\"ok\": true, \"deduped\": true, \"stampId\": \"XA000000002\", \"message\": \"该印章与印面图此前已上传，本次未重复新增\"}"
+    }
+  ],
+  "seals_now": [
+    {
+      "stamp_id": "XAI-0001",
+      "seal_name": "長壽",
+      "source": null
+    },
+    {
+      "stamp_id": "XAI-0002",
+      "seal_name": "騎都尉印",
+      "source": null
+    },
+    {
+      "stamp_id": "XAI-0003",
+      "seal_name": "昌",
+      "source": null
+    },
+    {
+      "stamp_id": "XAI-0004",
+      "seal_name": "文彭之印",
+      "source": null
+    },
+    {
+      "stamp_id": "XAI-0005",
+      "seal_name": "丁敬身印",
+      "source": null
+    },
+    {
+      "stamp_id": "XAI-0006",
+      "seal_name": "家在錢塘",
+      "source": null
+    },
+    {
+      "stamp_id": "XAI-0007",
+      "seal_name": "乾隆御覽之寶",
+      "source": null
+    },
+    {
+      "stamp_id": "XAI-0008",
+      "seal_name": "安持",
+      "source": null
+    },
+    {
+      "stamp_id": "XA000000001",
+      "seal_name": "",
+      "source": "manual"
+    },
+    {
+      "stamp_id": "XA000000002",
+      "seal_name": "",
+      "source": "manual"
+    }
+  ],
+  "second_write": {
+    "ok": true,
+    "deduped": true,
+    "stampId": "XA000000002",
+    "message": "该印章与印面图此前已上传，本次未重复新增"
+  },
+  "seals_after": [
+    {
+      "sealGroupId": "g-0001",
+      "stamp_id": "XAI-0001",
+      "seal_name": "長壽",
+      "transcription": "取「長樂無極、壽比南山」之意，漢人吉語印常用語。",
+      "dynasty": "漢",
+      "seal_type": "吉語印",
+      "seal_style": "白文",
+      "material": "青銅",
+      "asset_kind": "SEAL",
+      "review_status": "APPROVED",
+      "transcription_simplified": "长寿",
+      "author": "無名"
+    },
+    {
+      "sealGroupId": "g-0002",
+      "stamp_id": "XAI-0002",
+      "seal_name": "騎都尉印",
+      "transcription": "漢代武職官印，騎都尉掌羽林騎兵，秩比二千石。",
+      "dynasty": "漢",
+      "seal_type": "官印",
+      "seal_style": "白文",
+      "material": "青銅",
+      "asset_kind": "SEAL",
+      "review_status": "APPROVED",
+      "transcription_simplified": "骑都尉印",
+      "author": "無名"
+    },
+    {
+      "sealGroupId": "g-0003",
+      "stamp_id": "XAI-0003",
+      "seal_name": "昌",
+      "transcription": "單字圓印，戰國私印常見形制，多作佩印之用。",
+      "dynasty": "戰國",
+      "seal_type": "私印",
+      "seal_style": "朱文",
+      "material": "玉",
+      "asset_kind": "SEAL",
+      "review_status": "APPROVED",
+      "transcription_simplified": "昌",
+      "author": "無名"
+    },
+    {
+      "sealGroupId": "g-0004",
+      "stamp_id": "XAI-0004",
+      "seal_name": "文彭之印",
+      "transcription": "明代文人篆刻開山之作，印風秀潤，開吳門一派。",
+      "dynasty": "明",
+      "seal_type": "私印",
+      "seal_style": "朱文",
+      "material": "青田石",
+      "asset_kind": "SEAL",
+      "review_status": "APPROVED",
+      "transcription_simplified": "文彭之印",
+      "author": "文彭"
+    },
+    {
+      "sealGroupId": "g-0005",
+      "stamp_id": "XAI-0005",
+      "seal_name": "丁敬身印",
+      "transcription": "浙派宗師丁敬自用印，切刀澀進，古拗峭折。",
+      "dynasty": "清",
+      "seal_type": "私印",
+      "seal_style": "白文",
+      "material": "壽山石",
+      "asset_kind": "SEAL",
+      "review_status": "APPROVED",
+      "transcription_simplified": "丁敬身印",
+      "author": "丁敬"
+    },
+    {
+      "sealGroupId": "g-0006",
+      "stamp_id": "XAI-0006",
+      "seal_name": "家在錢塘",
+      "transcription": "閒章，寓鄉思。浙派閒章多取里居、志向入印。",
+      "dynasty": "清",
+      "seal_type": "閒章",
+      "seal_style": "白文",
+      "material": "壽山石",
+      "asset_kind": "SEAL",
+      "review_status": "APPROVED",
+      "transcription_simplified": "家在钱塘",
+      "author": "陳豫鍾"
+    },
+    {
+      "sealGroupId": "g-0007",
+      "stamp_id": "XAI-0007",
+      "seal_name": "乾隆御覽之寶",
+      "transcription": "清宮鑒藏璽，多鈐於內府書畫引首，規制宏整。",
+      "dynasty": "清",
+      "seal_type": "鑒藏印",
+      "seal_style": "朱文",
+      "material": "田黃",
+      "asset_kind": "SEAL",
+      "review_status": "APPROVED",
+      "transcription_simplified": "乾隆御览之宝",
+      "author": "清內府"
+    },
+    {
+      "sealGroupId": "g-0008",
+      "stamp_id": "XAI-0008",
+      "seal_name": "安持",
+      "transcription": "陳巨來號安持，元朱文精絕，時稱近代第一。",
+      "dynasty": "近現代",
+      "seal_type": "私印",
+      "seal_style": "朱文",
+      "material": "昌化凍石",
+      "asset_kind": "SEAL",
+      "review_status": "PENDING",
+      "transcription_simplified": "安持",
+      "author": "陳巨來"
+    },
+    {
+      "sealGroupId": "g-000000001",
+      "stamp_id": "XA000000001",
+      "id": "XA000000001",
+      "seal_name": "",
+      "name": "",
+      "transcription": "",
+      "dynasty": "清",
+      "seal_type": "私印",
+      "category": "私印",
+      "seal_style": "",
+      "material": "",
+      "asset_kind": "SEAL",
+      "review_status": "APPROVED",
+      "transcription_simplified": "",
+      "author": "",
+      "source": "manual",
+      "uploaded_by": "u-16601061656",
+      "created_at": "2026-09-20T09:24:47.285Z",
+      "updated_at": "2026-09-20T09:24:47.285Z"
+    },
+    {
+      "sealGroupId": "g-000000002",
+      "stamp_id": "XA000000002",
+      "id": "XA000000002",
+      "seal_name": "",
+      "name": "",
+      "transcription": "",
+      "dynasty": "清",
+      "seal_type": "鑒藏印",
+      "category": "鑒藏印",
+      "seal_style": "",
+      "material": "",
+      "asset_kind": "SEAL",
+      "review_status": "APPROVED",
+      "transcription_simplified": "",
+      "author": "",
+      "source": "manual",
+      "uploaded_by": "u-16601061656",
+      "created_at": "2026-09-20T09:25:44.458Z",
+      "updated_at": "2026-09-20T09:25:44.458Z"
+    }
+  ],
+  "passed": 5,
+  "failed": 0
+}

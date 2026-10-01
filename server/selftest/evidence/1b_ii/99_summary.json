@@ -1,0 +1,24 @@
+{
+ "PASS": 143,
+ "FAIL": 0,
+ "failed_names": [],
+ "distinct_failed_assertions": 0,
+ "folded_repeats": 0,
+ "assertions_run": 143,
+ "expected_assertions": 139,
+ "sections_seen": [
+  "0. 前置取证",
+  "1. 副本库与确定性数据集",
+  "2. 建 job（E1，副本库）",
+  "3. ① E3 分页取结果",
+  "4. ② E7 job 列表",
+  "5. ③ E6 取印面图像",
+  "6. ④ E4 触发导出",
+  "7. ⑤ 1b-i worker 链路回归",
+  "8. 收尾：正式库与正式产物复验"
+ ],
+ "end_reached": true,
+ "scratch": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui_1bii_if1g4zzx",
+ "evidence_dir": "/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_ii",
+ "clock": "2026-09-20T13:02:30+08:00"
+}

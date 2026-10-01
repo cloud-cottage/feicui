@@ -1,0 +1,14 @@
+== 接口层死后（12:28:42）worker 存活核查 ==
+worker pid=59200 kill -0 -> 0 (0=存活)
+worker pid=59201 kill -0 -> 0 (0=存活)
+worker pid=59202 kill -0 -> 0 (0=存活)
+worker pid=59203 kill -0 -> 0 (0=存活)
+== worker ps ==
+  PID  PPID STARTED                      COMMAND
+59200 59195 Sun Sep 20 12:28:36 2026     /opt/homebrew/Cellar/python@3.11/3.11.16/Frameworks/Python.framework/Versions/3.11/Resources/Python
+59201 59195 Sun Sep 20 12:28:36 2026     /opt/homebrew/Cellar/python@3.11/3.11.16/Frameworks/Python.framework/Versions/3.11/Resources/Python
+59202 59195 Sun Sep 20 12:28:36 2026     /opt/homebrew/Cellar/python@3.11/3.11.16/Frameworks/Python.framework/Versions/3.11/Resources/Python
+59203 59195 Sun Sep 20 12:28:36 2026     /opt/homebrew/Cellar/python@3.11/3.11.16/Frameworks/Python.framework/Versions/3.11/Resources/Python
+== 池 ps ==
+  PID STARTED                      COMMAND
+59195 Sun Sep 20 12:28:36 2026     /Users/kevin/bistro/shu/feicui/server/.venv/bin/python -m app.pool --workers 4 --drain

@@ -1,0 +1,59 @@
+{
+  "phase": "1c-code-side",
+  "role": "Kong",
+  "verdict": {
+    "frontend_200": true,
+    "proxy_200": true,
+    "routes14_ok": true
+  },
+  "changed_files": [
+    {
+      "path": "shu/web/vite.config.js",
+      "md5_before": "9b3717baf56b8431a8a9626a88468d23",
+      "md5_after": "28277d3c02e49ef8c6e042269f9766a5",
+      "change": "+ FEICUI_PROXY = {target:'http://127.0.0.1:5195', changeOrigin:true}; + server.proxy['/feicui'] + preview.proxy['/feicui']; no rewrite; nothing else touched"
+    },
+    {
+      "path": "feicui/web/vite.config.js",
+      "md5_before": "9978148140ffd3fcbec81477b43e8b88",
+      "md5_after": "2db8739ed7b36d58a2f6ebe20447cb15",
+      "change": "+ base:'/feicui/'; + server.hmr.clientPort:5195; host/port/strictPort//api-proxy untouched"
+    }
+  ],
+  "untouched_proof": {
+    "shu/web/src/router/marketing.js": "5421e4f046055f62d2059233292c0770 (before==after)",
+    "shu/web/src/router/console.js": "248a286cd33e30b9215cf3395cdc1b2e (before==after)",
+    "feicui/web/src/router/index.js": "5a2d0082ccb1d93a11dc296b10926609 (temporary experiment fully reverted, md5 restored)"
+  },
+  "measurements": {
+    "http://127.0.0.1:5195/feicui/": 200,
+    "http://127.0.0.1:5195/feicui/src/main.js": 200,
+    "http://localhost:5164/feicui/": 200,
+    "http://localhost:5164/feicui/jobs": 200,
+    "http://localhost:5164/feicui/src/main.js": 200,
+    "body_is_feicui_not_5164_spa": "title 'feicui ｜ 印谱解析任务台' | id=\"app\" | /feicui/src/main.js | /feicui/@vite/client (5164 SPA fallback instead: '印索｜兆级玺印数字引擎' / id=\"marketing-app\" / /src/marketing/main.js)",
+    "dom_mount": "app_mount_text_len=647, h1='任务页', script_srcs='/feicui/@vite/client , /feicui/src/main.js', console_errors=[]",
+    "hmr": "GET /feicui/@vite/client contains 'const hmrPort = 5195;'",
+    "routes14": "14/14 == 200 (marketing 7 -> src/marketing/main.js, console 7 -> src/console/main.js)",
+    "npm_scripts": {
+      "check:pricing": "EXIT=0 PASS",
+      "smoke": "EXIT=0 / 132 assertions PASS",
+      "build": "EXIT=0, dist/index.html + dist/console.html"
+    },
+    "after_stop_5195": "14/14 routes still 200; 5164/feicui/ -> 500 (dev proxy ECONNREFUSED)"
+  },
+  "process_discipline": {
+    "5164_foreign_process": "PID 93523 (pre-existing vite dev, another session) left untouched for the entire task; every test ran against it",
+    "own_process": "feicui dev on 5195 started by me; stopped by exact PID 1329 after cwd+cmdline identity check",
+    "forbidden": "no pkill -f / killall; 5173/5174/5555 never used; no perf/timing assertions"
+  },
+  "spec_gaps": [
+    "G-1 blocker for real 'single URL' UX: feicui/web/src/router/index.js:13 createWebHistory() has no base while catch-all is redirect:'/', so /feicui/** is unmatched and history is replaceState'd to http://localhost:5164/ - page renders feicui once but the address bar leaves the prefix (refresh => yinsuo). Fix proven by temporary experiment: createWebHistory(import.meta.env.BASE_URL) (one line, adds no route) keeps location at /feicui/ and /feicui/jobs. NOT landed because src/router/* is on the 'do not touch' list; needs Zang authorization.",
+    "G-2 /feicui/api/** is not reachable: feicui API_BASE='/api' (root-relative); via 5164 it matches neither proxy key, and at 5195 baseMiddleware strips the prefix before proxy matching. Measured: 5164/feicui/api/jobs -> 200 text/html (SPA fallback), 5195/feicui/api/jobs -> 200 text/html, 5195/api/jobs -> 503 application/json (proxy guard works). DOM-level proof: feicui JobsPage shows the yinsuo marketing HTML inside a <PRE> as the raw response body of GET /api/jobs. Options: (a) base-aware API_BASE + feicui proxy key '/feicui/api'; (b) add a second proxy key in shu/web (outside this task's hard spec).",
+    "G-3 preview side evidenced at config-resolution layer only (Vite resolveConfig reads back preview.proxy['/feicui'] + target/changeOrigin/no-rewrite), because 5164 is held by another session's dev process and must not be killed, so preview runtime was not exercised.",
+    "G-4 5164/feicui depends on feicui dev (5195) being up; with 5195 down the path returns 500 from Vite's built-in dev-proxy error handler (not a feicui API code). Serving 'one URL' to a user therefore needs both services running - that is the ctrl-panel registration round, not this one.",
+    "G-5 doc/inventory drift (reported, not fixed): the yinsuo-web-foundation skill's route recipe listed 13 paths and omitted /console/register; the router table has 14 named routes. Skill updated in place this round.",
+    "G-6 feicui/web/dist was rebuilt with base=/feicui/ (gitignored artifact); md5 of all three dist files came out byte-identical to the pre-existing build, so no accepted artifact changed. dist is not covered by any frozen evidence hash."
+  ],
+  "evidence_dir": "/Users/kevin/bistro/shu/feicui/web/evidence-proxy/"
+}

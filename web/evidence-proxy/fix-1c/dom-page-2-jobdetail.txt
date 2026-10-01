@@ -1,0 +1,27 @@
+# E2 /feicui/jobs/abc 任务详情
+# location: http://localhost:5164/feicui/jobs/abc
+
+feicui
+印谱解析任务台 · 端口 5195 · API 5196
+任务页
+后端未启动 / 未连接
+目标 http://127.0.0.1:5196 连不上（ ECONNREFUSED ）。本页不展示任何示例或估算数据。
+启动提示：cd /Users/kevin/bistro/shu/feicui && ./venv/bin/uvicorn app:app --host 127.0.0.1 --port 5196
+最后探测时点：2026-09-20 12:12:59
+任务详情（E2 真实进度）
+
+job_id ＝
+abc
+立即刷新
+轮询间隔 2s · 已完成取数 1 次
+
+S-1（spec §3.2）：进度来自后端库内复算。
+
+本页进度条宽度**只**取自后端 E2 的 done_pages / total_pages；前端**没有**计时器 / 估算 / 插值在推进进度。最近一次成功取数时点 ＝ —（即「数据时点」）。
+
+后端未启动 / 未连接：E2 无法获取
+
+判负细节 ECONNREFUSED；本页不展示任何示例或估算进度
+
+契约依据：feicui/docs/feicui.spec.md v1.1（md5 4264927baf24bb7f48e12366cd861fe7）— 前端只读引用， 未修改规范文件。
+本工程＝阶段 1a 前端骨架；后端（FastAPI:5196）在另一路。零 CDN / 零外链资源。

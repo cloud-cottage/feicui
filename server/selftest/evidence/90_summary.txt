@@ -1,0 +1,2 @@
+FAILS=0
+ALL PASS

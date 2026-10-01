@@ -1,0 +1,7 @@
+{
+ "path": "/api/jobs/job-879526c0f8164e48a5106deef6f0b752/stamps/0/image",
+ "code": 404,
+ "body": {
+  "detail": "Not Found"
+ }
+}

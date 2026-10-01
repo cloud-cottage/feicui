@@ -1,0 +1,49 @@
+### ①-1 经 5164 的 API 路径（页面实际走的路径）
+http://localhost:5164/feicui/api/jobs      status=503  content-type=application/json; charset=utf-8  body=JSON
+    body: {"error":"backend_unreachable","target":"http://127.0.0.1:5196","code":"ECONNREFUSED","note":"此响应由 Vite dev 代理产生（后端连接失败），非 feicui API 响应"}
+    html-marker(<title>印索): 0
+### ①-2 直连 5195 同一路径（对照）
+http://127.0.0.1:5195/feicui/api/jobs      status=503  content-type=application/json; charset=utf-8  body=JSON
+    body: {"error":"backend_unreachable","target":"http://127.0.0.1:5196","code":"ECONNREFUSED","note":"此响应由 Vite dev 代理产生（后端连接失败），非 feicui API 响应"}
+    html-marker(<title>印索): 0
+### ①-3 直连 5195 旧路径（兼容键 '/api' 仍在）
+http://127.0.0.1:5195/api/jobs             status=503  content-type=application/json; charset=utf-8  body=JSON
+    body: {"error":"backend_unreachable","target":"http://127.0.0.1:5196","code":"ECONNREFUSED","note":"此响应由 Vite dev 代理产生（后端连接失败），非 feicui API 响应"}
+    html-marker(<title>印索): 0
+### ①-4 旧缺陷路径对照：5164 根下的 /api（原 API_BASE='/api' 会打到这）
+http://localhost:5164/api/jobs             status=200  content-type=text/html                        body=NOT_JSON
+    body: <!doctype html>
+<html lang="zh-CN">
+  <head>
+    <script type="module" src="/@vite/client"></script>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>�
+    html-marker(<title>印索): 1
+### ①-5 页面壳（应当仍是 text/html，与上面区隔）
+http://localhost:5164/feicui/              status=200  content-type=text/html                        body=NOT_JSON
+    body: <!doctype html>
+<html lang="zh-CN">
+  <head>
+    <script type="module" src="/feicui/@vite/client"></script>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <
+    html-marker(<title>印索): 0
+### ①-6 5195 上的探针端点（dev-only，直连可用）
+http://127.0.0.1:5195/__feicui/backend-probe status=200  content-type=application/json; charset=utf-8  body=JSON
+    body: {"reachable":false,"target":"http://127.0.0.1:5196","detail":"ECONNREFUSED"}
+    html-marker(<title>印索): 0
+### ①-7 探针端点经 5164（已知缺口，记录真实行为）
+http://localhost:5164/__feicui/backend-probe status=200  content-type=text/html                        body=NOT_JSON
+    body: <!doctype html>
+<html lang="zh-CN">
+  <head>
+    <script type="module" src="/@vite/client"></script>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>�
+    html-marker(<title>印索): 1

@@ -1,0 +1,263 @@
+{
+ "probe": "E7 page 参数翻页探针",
+ "verified_at": "2026-09-20T12:58:58+0800",
+ "api_version": "1b-ii",
+ "port": 5342,
+ "db": "临时副本库（backup API 一致快照，prod 只读）",
+ "prod_db_sha256_of_stamps_fingerprint_B": "d7abe995bff62761c27052dfc2bdf7bb",
+ "n_jobs": 5,
+ "limit": 1,
+ "created_at_unified": "2026-09-20T00:00:00+08:00",
+ "page_path": [
+  {
+   "request": "/api/jobs?limit=1&page=1",
+   "code": 200,
+   "page": 1,
+   "items": 1,
+   "has_more": true,
+   "next_cursor": "WyIyMDI2LTA5LTIwVDAwOjAwOjAwKzA4OjAwIiwiam9iLTA0ODY3MTAyODFmOTQwNDY5ZWIzNDI4ZWNiYzJhMDJhIl0",
+   "total": 5,
+   "ids": [
+    "job-0486710281f940469eb3428ecbc2a02a"
+   ],
+   "envelope_keys": [
+    "has_more",
+    "items",
+    "limit",
+    "next_cursor",
+    "page",
+    "total"
+   ],
+   "has_more_consistent": true
+  },
+  {
+   "request": "/api/jobs?limit=1&page=2",
+   "code": 200,
+   "page": 2,
+   "items": 1,
+   "has_more": true,
+   "next_cursor": "WyIyMDI2LTA5LTIwVDAwOjAwOjAwKzA4OjAwIiwiam9iLTVmZGYwNTk4YWVhNDQxNjc5ODBiNjhjODk2NTdjYmNkIl0",
+   "total": 5,
+   "ids": [
+    "job-5fdf0598aea44167980b68c89657cbcd"
+   ],
+   "envelope_keys": [
+    "has_more",
+    "items",
+    "limit",
+    "next_cursor",
+    "page",
+    "total"
+   ],
+   "has_more_consistent": true
+  },
+  {
+   "request": "/api/jobs?limit=1&page=3",
+   "code": 200,
+   "page": 3,
+   "items": 1,
+   "has_more": true,
+   "next_cursor": "WyIyMDI2LTA5LTIwVDAwOjAwOjAwKzA4OjAwIiwiam9iLTYxYTBhMDI0MjczOTQwZjliNmFmZmM2YTFhODRlZmU3Il0",
+   "total": 5,
+   "ids": [
+    "job-61a0a024273940f9b6affc6a1a84efe7"
+   ],
+   "envelope_keys": [
+    "has_more",
+    "items",
+    "limit",
+    "next_cursor",
+    "page",
+    "total"
+   ],
+   "has_more_consistent": true
+  },
+  {
+   "request": "/api/jobs?limit=1&page=4",
+   "code": 200,
+   "page": 4,
+   "items": 1,
+   "has_more": true,
+   "next_cursor": "WyIyMDI2LTA5LTIwVDAwOjAwOjAwKzA4OjAwIiwiam9iLTkxMzE5ZGU2ZTc4MzQ0MTQ5MDI0N2I1YzJjMjAxMTUxIl0",
+   "total": 5,
+   "ids": [
+    "job-91319de6e783441490247b5c2c201151"
+   ],
+   "envelope_keys": [
+    "has_more",
+    "items",
+    "limit",
+    "next_cursor",
+    "page",
+    "total"
+   ],
+   "has_more_consistent": true
+  },
+  {
+   "request": "/api/jobs?limit=1&page=5",
+   "code": 200,
+   "page": 5,
+   "items": 1,
+   "has_more": false,
+   "next_cursor": null,
+   "total": 5,
+   "ids": [
+    "job-b2b0366df48d49f4b2d4f3ffa12aa704"
+   ],
+   "envelope_keys": [
+    "has_more",
+    "items",
+    "limit",
+    "next_cursor",
+    "page",
+    "total"
+   ],
+   "has_more_consistent": true
+  },
+  {
+   "request": "/api/jobs?limit=1&page=6",
+   "code": 200,
+   "page": 6,
+   "items": 0,
+   "has_more": false,
+   "next_cursor": null,
+   "total": 5,
+   "ids": [],
+   "envelope_keys": [
+    "has_more",
+    "items",
+    "limit",
+    "next_cursor",
+    "page",
+    "total"
+   ],
+   "has_more_consistent": true
+  },
+  {
+   "request": "/api/jobs?limit=1&page=7",
+   "code": 200,
+   "page": 7,
+   "items": 0,
+   "has_more": false,
+   "next_cursor": null,
+   "total": 5,
+   "ids": [],
+   "envelope_keys": [
+    "has_more",
+    "items",
+    "limit",
+    "next_cursor",
+    "page",
+    "total"
+   ],
+   "has_more_consistent": true
+  }
+ ],
+ "cursor_path": [
+  {
+   "request": "/api/jobs?limit=1",
+   "code": 200,
+   "page": 1,
+   "items": 1,
+   "has_more": true,
+   "next_cursor": "WyIyMDI2LTA5LTIwVDAwOjAwOjAwKzA4OjAwIiwiam9iLTA0ODY3MTAyODFmOTQwNDY5ZWIzNDI4ZWNiYzJhMDJhIl0",
+   "has_more_consistent": true,
+   "ids": [
+    "job-0486710281f940469eb3428ecbc2a02a"
+   ]
+  },
+  {
+   "request": "/api/jobs?limit=1&cursor=WyIyMDI2LTA5LTIwVDAwOjAwOjAwKzA4OjAwIiwiam9iLTA0ODY3MTAyODFmOTQwNDY5ZWIzNDI4ZWNiYzJhMDJhIl0",
+   "code": 200,
+   "page": 2,
+   "items": 1,
+   "has_more": true,
+   "next_cursor": "WyIyMDI2LTA5LTIwVDAwOjAwOjAwKzA4OjAwIiwiam9iLTVmZGYwNTk4YWVhNDQxNjc5ODBiNjhjODk2NTdjYmNkIl0",
+   "has_more_consistent": true,
+   "ids": [
+    "job-5fdf0598aea44167980b68c89657cbcd"
+   ]
+  },
+  {
+   "request": "/api/jobs?limit=1&cursor=WyIyMDI2LTA5LTIwVDAwOjAwOjAwKzA4OjAwIiwiam9iLTVmZGYwNTk4YWVhNDQxNjc5ODBiNjhjODk2NTdjYmNkIl0",
+   "code": 200,
+   "page": 3,
+   "items": 1,
+   "has_more": true,
+   "next_cursor": "WyIyMDI2LTA5LTIwVDAwOjAwOjAwKzA4OjAwIiwiam9iLTYxYTBhMDI0MjczOTQwZjliNmFmZmM2YTFhODRlZmU3Il0",
+   "has_more_consistent": true,
+   "ids": [
+    "job-61a0a024273940f9b6affc6a1a84efe7"
+   ]
+  },
+  {
+   "request": "/api/jobs?limit=1&cursor=WyIyMDI2LTA5LTIwVDAwOjAwOjAwKzA4OjAwIiwiam9iLTYxYTBhMDI0MjczOTQwZjliNmFmZmM2YTFhODRlZmU3Il0",
+   "code": 200,
+   "page": 4,
+   "items": 1,
+   "has_more": true,
+   "next_cursor": "WyIyMDI2LTA5LTIwVDAwOjAwOjAwKzA4OjAwIiwiam9iLTkxMzE5ZGU2ZTc4MzQ0MTQ5MDI0N2I1YzJjMjAxMTUxIl0",
+   "has_more_consistent": true,
+   "ids": [
+    "job-91319de6e783441490247b5c2c201151"
+   ]
+  },
+  {
+   "request": "/api/jobs?limit=1&cursor=WyIyMDI2LTA5LTIwVDAwOjAwOjAwKzA4OjAwIiwiam9iLTkxMzE5ZGU2ZTc4MzQ0MTQ5MDI0N2I1YzJjMjAxMTUxIl0",
+   "code": 200,
+   "page": 5,
+   "items": 1,
+   "has_more": false,
+   "next_cursor": null,
+   "has_more_consistent": true,
+   "ids": [
+    "job-b2b0366df48d49f4b2d4f3ffa12aa704"
+   ]
+  }
+ ],
+ "verdict": {
+  "page_path_ids": [
+   "job-0486710281f940469eb3428ecbc2a02a",
+   "job-5fdf0598aea44167980b68c89657cbcd",
+   "job-61a0a024273940f9b6affc6a1a84efe7",
+   "job-91319de6e783441490247b5c2c201151",
+   "job-b2b0366df48d49f4b2d4f3ffa12aa704"
+  ],
+  "cursor_path_ids": [
+   "job-0486710281f940469eb3428ecbc2a02a",
+   "job-5fdf0598aea44167980b68c89657cbcd",
+   "job-61a0a024273940f9b6affc6a1a84efe7",
+   "job-91319de6e783441490247b5c2c201151",
+   "job-b2b0366df48d49f4b2d4f3ffa12aa704"
+  ],
+  "want_ids_sql": [
+   "job-0486710281f940469eb3428ecbc2a02a",
+   "job-5fdf0598aea44167980b68c89657cbcd",
+   "job-61a0a024273940f9b6affc6a1a84efe7",
+   "job-91319de6e783441490247b5c2c201151",
+   "job-b2b0366df48d49f4b2d4f3ffa12aa704"
+  ],
+  "page_path_equals_cursor_path": true,
+  "page_path_no_overlap_no_miss": true,
+  "cursor_path_no_overlap_no_miss": true,
+  "page_path_no_duplicates": true,
+  "cursor_path_no_duplicates": true,
+  "cursor_guard_broken": null,
+  "page_loop_cap_hit": null,
+  "beyond_last_page": [
+   {
+    "page": 6,
+    "items": 0,
+    "has_more": false,
+    "next_cursor": null
+   },
+   {
+    "page": 7,
+    "items": 0,
+    "has_more": false,
+    "next_cursor": null
+   }
+  ],
+  "beyond_last_page_ok": true
+ }
+}

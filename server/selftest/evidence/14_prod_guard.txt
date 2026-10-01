@@ -1,0 +1,5 @@
+✗ 拒绝：解析到的 DB 是仓库内正式库 yinpu.db（唯一真源，不得被本层写入）。
+  解析路径 = /Users/kevin/bistro/shu/feicui/yinpu.db
+  若确需对正式库执行，请显式设 FEICUI_ALLOW_PROD_MIGRATE=1（须 Kevin/Zang 明示）；
+  自测请用副本：cp yinpu.db /tmp/feicui_copy.db && FEICUI_DB=/tmp/feicui_copy.db …
+exit=3

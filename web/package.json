@@ -1,0 +1,23 @@
+{
+  "name": "feicui-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "feicui（印谱 PDF 解析工具）独立前端站点：Vue3 + Vite。端口 5195（strictPort），dev 下 /api 经 Vite proxy 转发到 http://127.0.0.1:5196。阶段性产物＝阶段 1a 前端骨架。",
+  "engines": {
+    "node": ">=18.19.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "vue": "3.5.43",
+    "vue-router": "4.6.4"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "5.2.4",
+    "vite": "6.4.3"
+  }
+}

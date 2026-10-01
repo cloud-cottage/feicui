@@ -1,0 +1,14 @@
+/                      200  src=/src/marketing/main.js
+/pricing               200  src=/src/marketing/main.js
+/docs                  200  src=/src/marketing/main.js
+/docs/quickstart       200  src=/src/marketing/main.js
+/org                   200  src=/src/marketing/main.js
+/demo                  200  src=/src/marketing/main.js
+/help                  200  src=/src/marketing/main.js
+/console               200  src=/src/console/main.js
+/console/login         200  src=/src/console/main.js
+/console/register      200  src=/src/console/main.js
+/console/overview      200  src=/src/console/main.js
+/console/keys          200  src=/src/console/main.js
+/console/usage         200  src=/src/console/main.js
+/console/billing       200  src=/src/console/main.js

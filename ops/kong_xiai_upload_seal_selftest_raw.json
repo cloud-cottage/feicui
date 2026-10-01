@@ -1,0 +1,774 @@
+{
+  "phase1_upload_and_permission": {
+    "ok": true,
+    "passed": 26,
+    "total": 26,
+    "checks": [
+      {
+        "id": "AC-33-setup: 测试图 > 200 KiB 且为真实尺寸 PNG",
+        "pass": true,
+        "detail": "325178 bytes"
+      },
+      {
+        "id": "AC-28: 新增成功（ok + 印章 + 印面 + 影像）",
+        "pass": true,
+        "detail": "ok=true stampId=XAI-0009 faceId=fc-0009-f1"
+      },
+      {
+        "id": "AC-28 数据层部分: source=manual / uploaded_by / created_at 均落位",
+        "pass": true,
+        "detail": "{\"source\":\"manual\",\"uploaded_by\":\"u-16601061656\",\"created_at\":\"2026-09-20T08:24:19.481Z\"}"
+      },
+      {
+        "id": "AC-28: 新印章 id 不与既有冲突且计数 +1",
+        "pass": true,
+        "detail": "8 → 9"
+      },
+      {
+        "id": "AC-28: 广场按朝代筛选命中新印章（S_清 ≠ S_all 且含新印章）",
+        "pass": true,
+        "detail": "S_清=4 S_all=9"
+      },
+      {
+        "id": "AC-28: 广场按分类筛选命中新印章（S_私印 ≠ S_all 且含新印章）",
+        "pass": true,
+        "detail": "S_私印=5 S_all=9"
+      },
+      {
+        "id": "AC-28: 朝代∩分类组合筛选 = 交集 且命中新印章",
+        "pass": true,
+        "detail": "S_组合=2"
+      },
+      {
+        "id": "AC-28: 换到别的朝代/分类时集合真的改变（用例具备判负能力）",
+        "pass": true,
+        "detail": "S_漢=2 S_官印=1"
+      },
+      {
+        "id": "AC-33①: localStorage 无单值 ≥ 64 KiB（65,536 字符）",
+        "pass": true,
+        "detail": "max=5329 key=xiai:v1:faces"
+      },
+      {
+        "id": "AC-33②: localStorage 总量 < 512 KiB",
+        "pass": true,
+        "detail": "total=11306 chars"
+      },
+      {
+        "id": "AC-33④: localStorage 内无 data:image/ 长串",
+        "pass": true,
+        "detail": "hits=[]"
+      },
+      {
+        "id": "AC-33③: IndexedDB 内可读回二进制且字节数 > 0",
+        "pass": true,
+        "detail": "ok=true bytes=325178"
+      },
+      {
+        "id": "AC-33③: 读回二进制与上传字节逐字节一致 + sha256 与元数据一致",
+        "pass": true,
+        "detail": "identical=true idbSha=1b705131741afe95… metaSha=1b705131741afe95…"
+      },
+      {
+        "id": "AC-34a: 缺名称 ⇒ 拒绝 + 可读提示 + 无半成品记录",
+        "pass": true,
+        "detail": "{\"reason\":\"MISSING_REQUIRED\",\"missing\":[\"名称\"],\"message\":\"请补全必填项：名称\"}"
+      },
+      {
+        "id": "AC-34b: 缺朝代 ⇒ 拒绝 + 可读提示 + 无半成品记录",
+        "pass": true,
+        "detail": "{\"reason\":\"MISSING_REQUIRED\",\"missing\":[\"朝代\"],\"message\":\"请补全必填项：朝代\"}"
+      },
+      {
+        "id": "AC-34c: 缺分类 ⇒ 拒绝 + 可读提示 + 无半成品记录",
+        "pass": true,
+        "detail": "{\"reason\":\"MISSING_REQUIRED\",\"missing\":[\"分类\"],\"message\":\"请补全必填项：分类\"}"
+      },
+      {
+        "id": "AC-34d: 缺印面图 ⇒ 拒绝 + 可读提示 + 无半成品记录",
+        "pass": true,
+        "detail": "{\"reason\":\"MISSING_REQUIRED\",\"missing\":[\"印面图\"],\"message\":\"请补全必填项：印面图\"}"
+      },
+      {
+        "id": "AC-35: 重复「上传印章」⇒ deduped + 计数不增（印章/印面/影像均不变）",
+        "pass": true,
+        "detail": "{\"ok\":true,\"deduped\":true,\"stampId\":\"XAI-0009\",\"message\":\"该印章与印面图此前已上传，本次未重复新增\"}"
+      },
+      {
+        "id": "AC-35: 同印章重复上传同一张印面图 ⇒ 印面只 1 个、FACE 计数不增、有明确提示",
+        "pass": true,
+        "detail": "{\"faces\":1,\"msg\":\"该印面已存在（同一印章 · 同一类别 · 同一图），本次未重复新增\"}"
+      },
+      {
+        "id": "AC-35: 影像二进制不重复落库（同印章同 sha 复用既有影像行）",
+        "pass": true,
+        "detail": "images 14 → 14"
+      },
+      {
+        "id": "AC-30（普通用户·服务层）: 五类写 ⇒ 结构化拒绝 ok:false 且无未捕获异常",
+        "pass": true,
+        "detail": "[{\"l\":\"服务层 services.seals.createSealWithFace\",\"ok\":false,\"r\":\"PERMISSION_DENIED\"},{\"l\":\"服务层 services.seals.updateSealFixedAttributes\",\"ok\":false,\"r\":\"PERMISSION_DENIED\"},{\"l\":\"服务层 services.corrections.review\",\"ok\":false,\"r\":\"PERMISSION_DENIED\"}]"
+      },
+      {
+        "id": "AC-30（普通用户·数据层）: 五类写 ⇒ PermissionError（结构化拒绝信号）",
+        "pass": true,
+        "detail": "[{\"l\":\"数据层 db.insertSealRow\",\"thrown\":true,\"name\":\"PermissionError\"},{\"l\":\"数据层 db.insertFaceRow\",\"thrown\":true,\"name\":\"PermissionError\"},{\"l\":\"数据层 db.insertImageRow\",\"thrown\":true,\"name\":\"PermissionError\"},{\"l\":\"数据层 db.writeFaceFixedAttributes\",\"thrown\":true,\"name\":\"PermissionError\"},{\"l\":\"数据层 db.writeCorrectionDecision\",\"thrown\":true,\"name\":\"PermissionError\"},{\"l\":\"数据层 db.listPendingCorrectionRowsForAdmin\",\"thrown\":true,\"name\":\"PermissionError\"}]"
+      },
+      {
+        "id": "AC-30（普通用户）: 调用前后计数 / 固定属性原值 / 勘误状态逐项不变",
+        "pass": true,
+        "detail": "{\"before\":{\"seals\":9,\"faces\":14,\"facesFACE\":10,\"images\":14,\"corrections\":1,\"points\":0},\"after\":{\"seals\":9,\"faces\":14,\"facesFACE\":10,\"images\":14,\"corrections\":1,\"points\":0},\"material\":\"壽山石\",\"status\":\"PENDING\"}"
+      },
+      {
+        "id": "AC-30（游客）: 五类写全部被拒（服务层结构化 / 数据层 PermissionError）",
+        "pass": true,
+        "detail": "[{\"l\":\"服务层 createSealWithFace(null)\",\"thrown\":false},{\"l\":\"服务层 updateSealFixedAttributes(null)\",\"thrown\":false},{\"l\":\"服务层 corrections.review(null)\",\"thrown\":false},{\"l\":\"数据层 insertSealRow(null)\",\"thrown\":true,\"name\":\"PermissionError\"},{\"l\":\"数据层 insertFaceRow(null)\",\"thrown\":true,\"name\":\"PermissionError\"},{\"l\":\"数据层 insertImageRow(null)\",\"thrown\":true,\"name\":\"PermissionError\"},{\"l\":\"数据层 writeFaceFixedAttributes(null)\",\"thrown\":true,\"name\":\"PermissionError\"},{\"l\":\"数据层 writeCorrectionDecision(null)\",\"thrown\":true,\"name\":\"PermissionError\"}]"
+      },
+      {
+        "id": "AC-30（游客）: 计数逐项不变；listPendingForAdmin(非管理员) = 空",
+        "pass": true,
+        "detail": "{\"before\":{\"seals\":9,\"faces\":14,\"facesFACE\":10,\"images\":14,\"corrections\":1,\"points\":0},\"after\":{\"seals\":9,\"faces\":14,\"facesFACE\":10,\"images\":14,\"corrections\":1,\"points\":0}}"
+      },
+      {
+        "id": "审核闭环: 管理员看到全部用户 PENDING + 采纳 +10 且只奖一次",
+        "pass": true,
+        "detail": "{\"pendingForAdminLen\":1,\"pendingIsAllUsers\":true,\"first\":{\"ok\":true,\"status\":\"ACCEPTED\",\"reward\":{\"ok\":true,\"awarded\":true,\"balance\":60,\"message\":\"已奖励 10 金\"}},\"second\":{\"ok\":false,\"reason\":\"ALREADY_REVIEWED\",\"message\":\"该勘误已审核，不可重复处理\"},\"submitterPoints\":{\"before\":50,\"after\":60,\"delta\":10},\"rewardLedgerCount\":1,\"notFound\":{\"ok\":false,\"reason\":\"NOT_FOUND\",\"message\":\"未找到该勘误\"}}"
+      }
+    ],
+    "raw": {
+      "env": {
+        "origin": "http://127.0.0.1:5163",
+        "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36",
+        "idb": {
+          "available": true,
+          "db": "xiai:v1:assetblobs",
+          "version": 1,
+          "store": "assets"
+        },
+        "hasSubtle": true,
+        "href": "http://127.0.0.1:5163/src/data/__xiai_selftest__.html"
+      },
+      "image": {
+        "size": "1400x1400 PNG(canvas)",
+        "dataUrlLength": 433594,
+        "byteLength": 325178,
+        "sha256": "1b705131741afe95c4e483a07e312627d05bbe726b44eb5822daa0205c5f50b2",
+        "above200KiB": true
+      },
+      "admin": {
+        "login": true,
+        "role": "admin",
+        "id": "u-16601061656"
+      },
+      "ac28": {
+        "ok": true,
+        "deduped": false,
+        "stampId": "XAI-0009",
+        "faceId": "fc-0009-f1",
+        "message": "已新增印章《自測上傳印》（XAI-0009）与 1 个印面",
+        "imagesLen": 1,
+        "sealFields": {
+          "stamp_id": "XAI-0009",
+          "name": "自測上傳印",
+          "dynasty": "清",
+          "seal_type": "私印",
+          "source": "manual",
+          "uploaded_by": "u-16601061656",
+          "created_at": "2026-09-20T08:24:19.481Z",
+          "faceCount": 1,
+          "hashKeys": "asset_kind,author,category,created_at,dynasty,edgeFaces,edgeImages,faceCount,faceImage,faces,hasEdge,id,images,material,name,review_status,sealGroupId,seal_name,seal_style,seal_type,source,stamp_id,transcription,transcription_simplified,updated_at,uploaded_by"
+        },
+        "row": {
+          "sealGroupId": "g-0009",
+          "stamp_id": "XAI-0009",
+          "id": "XAI-0009",
+          "seal_name": "自測上傳印",
+          "name": "自測上傳印",
+          "transcription": "",
+          "dynasty": "清",
+          "seal_type": "私印",
+          "category": "私印",
+          "seal_style": "",
+          "material": "壽山石",
+          "asset_kind": "SEAL",
+          "review_status": "APPROVED",
+          "transcription_simplified": "",
+          "author": "",
+          "source": "manual",
+          "uploaded_by": "u-16601061656",
+          "created_at": "2026-09-20T08:24:19.481Z",
+          "updated_at": "2026-09-20T08:24:19.481Z"
+        },
+        "filters": {
+          "allLen": 9,
+          "byDynastyLen": 4,
+          "byTypeLen": 5,
+          "comboLens": 2,
+          "otherDynastyLen": 2,
+          "otherTypeLen": 1,
+          "byDynastyHasNew": true,
+          "byTypeHasNew": true,
+          "comboHasNew": true,
+          "comboEqualsIntersection": true,
+          "dynastyOptionsHasQing": true,
+          "typeOptionsHasSi": true
+        }
+      },
+      "ac33": {
+        "localStorage": {
+          "keys": [
+            {
+              "key": "xiai:v1:faces",
+              "length": 5329,
+              "hasDataImage": false
+            },
+            {
+              "key": "xiai:v1:seals",
+              "length": 2547,
+              "hasDataImage": false
+            },
+            {
+              "key": "xiai:v1:photos",
+              "length": 2,
+              "hasDataImage": false
+            },
+            {
+              "key": "xiai:v1:corrections",
+              "length": 2,
+              "hasDataImage": false
+            },
+            {
+              "key": "xiai:v1:downloaded",
+              "length": 2,
+              "hasDataImage": false
+            },
+            {
+              "key": "xiai:v1:users",
+              "length": 249,
+              "hasDataImage": false
+            },
+            {
+              "key": "xiai:v1:session",
+              "length": 26,
+              "hasDataImage": false
+            },
+            {
+              "key": "xiai:v1:seeded",
+              "length": 25,
+              "hasDataImage": false
+            },
+            {
+              "key": "xiai:v1:images",
+              "length": 2975,
+              "hasDataImage": false
+            },
+            {
+              "key": "xiai:v1:points",
+              "length": 2,
+              "hasDataImage": false
+            }
+          ],
+          "keyCount": 10,
+          "maxValueLength": 5329,
+          "maxKey": "xiai:v1:faces",
+          "totalChars": 11306,
+          "xiaiMaxValueLength": 5329,
+          "xiaiMaxKey": "xiai:v1:faces",
+          "xiaiTotalChars": 33477,
+          "dataImageHits": []
+        },
+        "imageId": "img-0009f",
+        "metadataRow": {
+          "id": "img-0009f",
+          "assetId": "img-0009f",
+          "stamp_id": "XAI-0009",
+          "sealId": "XAI-0009",
+          "ownerType": "face",
+          "ownerId": "fc-0009-f1",
+          "kind": "FACE",
+          "sha256": "1b705131741afe95c4e483a07e312627d05bbe726b44eb5822daa0205c5f50b2",
+          "bytes": 325178,
+          "width": 1400,
+          "height": 1400,
+          "colorMode": "RGB",
+          "color_mode": "RGB",
+          "mime": "image/png",
+          "storage": "indexeddb",
+          "storage_key": "asset:img-0009f",
+          "source": "manual",
+          "uploaded_by": "u-16601061656",
+          "created_at": "2026-09-20T08:24:19.602Z"
+        },
+        "idbRead": {
+          "ok": true,
+          "bytesLength": 325178,
+          "shape": "Uint8Array",
+          "sha256": "1b705131741afe95c4e483a07e312627d05bbe726b44eb5822daa0205c5f50b2"
+        },
+        "idbKeys": [
+          "asset:img-0009f"
+        ],
+        "identical": true,
+        "metadataEqualsImage": true
+      },
+      "ac34": [
+        {
+          "id": "AC-34a: 缺名称",
+          "ok": false,
+          "reason": "MISSING_REQUIRED",
+          "missing": [
+            "名称"
+          ],
+          "message": "请补全必填项：名称",
+          "countsStable": true,
+          "counts": {
+            "seals": 9,
+            "faces": 14,
+            "facesFACE": 10,
+            "images": 14,
+            "corrections": 0,
+            "points": 0
+          }
+        },
+        {
+          "id": "AC-34b: 缺朝代",
+          "ok": false,
+          "reason": "MISSING_REQUIRED",
+          "missing": [
+            "朝代"
+          ],
+          "message": "请补全必填项：朝代",
+          "countsStable": true,
+          "counts": {
+            "seals": 9,
+            "faces": 14,
+            "facesFACE": 10,
+            "images": 14,
+            "corrections": 0,
+            "points": 0
+          }
+        },
+        {
+          "id": "AC-34c: 缺分类",
+          "ok": false,
+          "reason": "MISSING_REQUIRED",
+          "missing": [
+            "分类"
+          ],
+          "message": "请补全必填项：分类",
+          "countsStable": true,
+          "counts": {
+            "seals": 9,
+            "faces": 14,
+            "facesFACE": 10,
+            "images": 14,
+            "corrections": 0,
+            "points": 0
+          }
+        },
+        {
+          "id": "AC-34d: 缺印面图",
+          "ok": false,
+          "reason": "MISSING_REQUIRED",
+          "missing": [
+            "印面图"
+          ],
+          "message": "请补全必填项：印面图",
+          "countsStable": true,
+          "counts": {
+            "seals": 9,
+            "faces": 14,
+            "facesFACE": 10,
+            "images": 14,
+            "corrections": 0,
+            "points": 0
+          }
+        }
+      ],
+      "ac35": {
+        "repeatedCreate": {
+          "ok": true,
+          "deduped": true,
+          "stampId": "XAI-0009",
+          "message": "该印章与印面图此前已上传，本次未重复新增"
+        },
+        "repeatedCreateCountsStable": true,
+        "repeatedFace": {
+          "ok": true,
+          "deduped": true,
+          "message": "该印面已存在（同一印章 · 同一类别 · 同一图），本次未重复新增"
+        },
+        "repeatedImage": {
+          "ok": true,
+          "deduped": true,
+          "message": "该影像此前已上传（内容相同），已复用既有影像，未重复落库"
+        },
+        "faceCountOfSeal": 1,
+        "faceUniqueShas": [
+          "1b705131741afe95c4e483a07e312627d05bbe726b44eb5822daa0205c5f50b2"
+        ],
+        "before": {
+          "seals": 9,
+          "faces": 14,
+          "facesFACE": 10,
+          "images": 14,
+          "corrections": 0,
+          "points": 0
+        },
+        "after": {
+          "seals": 9,
+          "faces": 14,
+          "facesFACE": 10,
+          "images": 14,
+          "corrections": 0,
+          "points": 0
+        }
+      },
+      "normalUser": {
+        "login": true,
+        "id": "u-demo",
+        "role": "user",
+        "submitted": true
+      },
+      "ac30normal": {
+        "hits": [
+          {
+            "label": "服务层 services.seals.createSealWithFace",
+            "thrown": false,
+            "value": {
+              "ok": false,
+              "reason": "PERMISSION_DENIED",
+              "message": "仅管理员可以上传印章（新增进藏品库）"
+            }
+          },
+          {
+            "label": "服务层 services.seals.updateSealFixedAttributes",
+            "thrown": false,
+            "value": {
+              "ok": false,
+              "reason": "PERMISSION_DENIED",
+              "message": "仅管理员可以修改印面的固定属性"
+            }
+          },
+          {
+            "label": "服务层 services.corrections.review",
+            "thrown": false,
+            "value": {
+              "ok": false,
+              "reason": "PERMISSION_DENIED",
+              "message": "仅管理员可以审核勘误"
+            }
+          },
+          {
+            "label": "数据层 db.insertSealRow",
+            "thrown": true,
+            "name": "PermissionError",
+            "message": "仅管理员可以上传印章（新增进藏品库）"
+          },
+          {
+            "label": "数据层 db.insertFaceRow",
+            "thrown": true,
+            "name": "PermissionError",
+            "message": "仅管理员可以在印章下新增印面"
+          },
+          {
+            "label": "数据层 db.insertImageRow",
+            "thrown": true,
+            "name": "PermissionError",
+            "message": "仅管理员可以上传印面图"
+          },
+          {
+            "label": "数据层 db.writeFaceFixedAttributes",
+            "thrown": true,
+            "name": "PermissionError",
+            "message": "仅管理员可以修改印面的固定属性"
+          },
+          {
+            "label": "数据层 db.writeCorrectionDecision",
+            "thrown": true,
+            "name": "PermissionError",
+            "message": "仅管理员可以审核勘误"
+          },
+          {
+            "label": "数据层 db.listPendingCorrectionRowsForAdmin",
+            "thrown": true,
+            "name": "PermissionError",
+            "message": "仅管理员可以查看全部用户的待审勘误"
+          }
+        ],
+        "countsStable": true,
+        "fixedAttrUnchanged": true,
+        "correctionStillPending": true,
+        "pendingForAdminEmptyish": 0,
+        "imagesUnchanged": true
+      },
+      "ac30guest": {
+        "hits": [
+          {
+            "label": "服务层 createSealWithFace(null)",
+            "thrown": false,
+            "value": {
+              "ok": false,
+              "reason": "PERMISSION_DENIED",
+              "message": "仅管理员可以上传印章（新增进藏品库）"
+            }
+          },
+          {
+            "label": "服务层 updateSealFixedAttributes(null)",
+            "thrown": false,
+            "value": {
+              "ok": false,
+              "reason": "PERMISSION_DENIED",
+              "message": "仅管理员可以修改印面的固定属性"
+            }
+          },
+          {
+            "label": "服务层 corrections.review(null)",
+            "thrown": false,
+            "value": {
+              "ok": false,
+              "reason": "PERMISSION_DENIED",
+              "message": "仅管理员可以审核勘误"
+            }
+          },
+          {
+            "label": "数据层 insertSealRow(null)",
+            "thrown": true,
+            "name": "PermissionError",
+            "message": "仅管理员可以上传印章（新增进藏品库）"
+          },
+          {
+            "label": "数据层 insertFaceRow(null)",
+            "thrown": true,
+            "name": "PermissionError",
+            "message": "仅管理员可以在印章下新增印面"
+          },
+          {
+            "label": "数据层 insertImageRow(null)",
+            "thrown": true,
+            "name": "PermissionError",
+            "message": "仅管理员可以上传印面图"
+          },
+          {
+            "label": "数据层 writeFaceFixedAttributes(null)",
+            "thrown": true,
+            "name": "PermissionError",
+            "message": "仅管理员可以修改印面的固定属性"
+          },
+          {
+            "label": "数据层 writeCorrectionDecision(null)",
+            "thrown": true,
+            "name": "PermissionError",
+            "message": "仅管理员可以审核勘误"
+          }
+        ],
+        "countsStable": true,
+        "listPendingForAdminEmpty": true
+      },
+      "review": {
+        "pendingForAdminLen": 1,
+        "pendingIsAllUsers": true,
+        "first": {
+          "ok": true,
+          "status": "ACCEPTED",
+          "reward": {
+            "ok": true,
+            "awarded": true,
+            "balance": 60,
+            "message": "已奖励 10 金"
+          }
+        },
+        "second": {
+          "ok": false,
+          "reason": "ALREADY_REVIEWED",
+          "message": "该勘误已审核，不可重复处理"
+        },
+        "submitterPoints": {
+          "before": 50,
+          "after": 60,
+          "delta": 10
+        },
+        "rewardLedgerCount": 1,
+        "notFound": {
+          "ok": false,
+          "reason": "NOT_FOUND",
+          "message": "未找到该勘误"
+        }
+      },
+      "finalCounts": {
+        "seals": 9,
+        "faces": 14,
+        "facesFACE": 10,
+        "images": 14,
+        "corrections": 1,
+        "points": 1
+      }
+    }
+  },
+  "phase2_reload": {
+    "ok": true,
+    "passed": 7,
+    "total": 7,
+    "phase": "reload",
+    "checks": [
+      {
+        "id": "重载后: 上传的印章仍在（source=manual 的记录未丢）",
+        "pass": true,
+        "detail": "[{\"stamp_id\":\"XAI-0009\",\"seal_name\":\"自測上傳印\",\"dynasty\":\"清\",\"seal_type\":\"私印\",\"uploaded_by\":\"u-16601061656\",\"created_at\":\"2026-09-20T08:24:19.481Z\"}]"
+      },
+      {
+        "id": "重载后: 印面仍在（含 FACE 与 face_image_id 指向）",
+        "pass": true,
+        "detail": "[{\"id\":\"fc-0009-f1\",\"kind\":\"FACE\",\"face_image_id\":\"img-0009f\"}]"
+      },
+      {
+        "id": "重载后: 印面图二进制仍能从 IndexedDB 读回且摘要一致（非空态 / 非破图）",
+        "pass": true,
+        "detail": "{\"ok\":true,\"bytes\":325178,\"sha256\":\"1b705131741afe95c4e483a07e312627d05bbe726b44eb5822daa0205c5f50b2\",\"metaSha\":\"1b705131741afe95c4e483a07e312627d05bbe726b44eb5822daa0205c5f50b2\"}"
+      },
+      {
+        "id": "重载后: 服务层能取回可渲染的影像（loadImageDataUrl）",
+        "pass": true,
+        "detail": "{\"ok\":true,\"dataUrlHead\":\"data:image/png;base64,\",\"dataUrlLength\":433594}"
+      },
+      {
+        "id": "重载后: 广场按朝代 / 朝代∩分类仍筛得到该印章",
+        "pass": true,
+        "detail": "{\"byDynasty\":[\"XAI-0005\",\"XAI-0006\",\"XAI-0007\",\"XAI-0009\"],\"combo\":[\"XAI-0005\",\"XAI-0009\"],\"total\":9}"
+      },
+      {
+        "id": "重载后: localStorage 仍无单值 ≥ 64 KiB、总量 < 512 KiB、无 data:image/ 长串",
+        "pass": true,
+        "detail": "{\"max\":{\"key\":\"xiai:v1:faces\",\"length\":5329,\"hasDataImage\":false},\"total\":11742}"
+      },
+      {
+        "id": "重载后: 勘误终态与奖励流水仍在（ACCEPTED + 1 笔奖励）",
+        "pass": true,
+        "detail": "{\"corrections\":[{\"id\":\"cr-mu9jvj5m-pt1hx\",\"status\":\"ACCEPTED\",\"rewarded_at\":\"2026-09-20T08:24:19.643Z\"}],\"rewards\":1}"
+      }
+    ],
+    "raw": {
+      "manualSeals": [
+        {
+          "stamp_id": "XAI-0009",
+          "seal_name": "自測上傳印",
+          "dynasty": "清",
+          "seal_type": "私印",
+          "uploaded_by": "u-16601061656",
+          "created_at": "2026-09-20T08:24:19.481Z"
+        }
+      ],
+      "layers": {
+        "faces": [
+          {
+            "id": "fc-0009-f1",
+            "kind": "FACE",
+            "face_image_id": "img-0009f"
+          }
+        ],
+        "images": [
+          {
+            "id": "img-0009f",
+            "sha256": "1b705131741afe95c4e483a07e312627d05bbe726b44eb5822daa0205c5f50b2",
+            "bytes": 325178,
+            "storage": "indexeddb"
+          }
+        ]
+      },
+      "binary": {
+        "ok": true,
+        "bytes": 325178,
+        "sha256": "1b705131741afe95c4e483a07e312627d05bbe726b44eb5822daa0205c5f50b2",
+        "metaSha": "1b705131741afe95c4e483a07e312627d05bbe726b44eb5822daa0205c5f50b2"
+      },
+      "render": {
+        "ok": true,
+        "dataUrlHead": "data:image/png;base64,",
+        "dataUrlLength": 433594
+      },
+      "filters": {
+        "byDynasty": [
+          "XAI-0005",
+          "XAI-0006",
+          "XAI-0007",
+          "XAI-0009"
+        ],
+        "combo": [
+          "XAI-0005",
+          "XAI-0009"
+        ],
+        "total": 9
+      },
+      "localStorage": {
+        "rows": [
+          {
+            "key": "xiai:v1:users",
+            "length": 249,
+            "hasDataImage": false
+          },
+          {
+            "key": "xiai:v1:faces",
+            "length": 5329,
+            "hasDataImage": false
+          },
+          {
+            "key": "xiai:v1:seals",
+            "length": 2547,
+            "hasDataImage": false
+          },
+          {
+            "key": "xiai:v1:photos",
+            "length": 2,
+            "hasDataImage": false
+          },
+          {
+            "key": "xiai:v1:corrections",
+            "length": 387,
+            "hasDataImage": false
+          },
+          {
+            "key": "xiai:v1:downloaded",
+            "length": 2,
+            "hasDataImage": false
+          },
+          {
+            "key": "xiai:v1:seeded",
+            "length": 25,
+            "hasDataImage": false
+          },
+          {
+            "key": "xiai:v1:session",
+            "length": 26,
+            "hasDataImage": false
+          },
+          {
+            "key": "xiai:v1:images",
+            "length": 2975,
+            "hasDataImage": false
+          },
+          {
+            "key": "xiai:v1:points",
+            "length": 200,
+            "hasDataImage": false
+          }
+        ],
+        "total": 11742,
+        "max": {
+          "key": "xiai:v1:faces",
+          "length": 5329,
+          "hasDataImage": false
+        }
+      },
+      "business": {
+        "corrections": [
+          {
+            "id": "cr-mu9jvj5m-pt1hx",
+            "status": "ACCEPTED",
+            "rewarded_at": "2026-09-20T08:24:19.643Z"
+          }
+        ],
+        "rewards": 1
+      }
+    }
+  }
+}

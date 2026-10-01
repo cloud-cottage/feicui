@@ -1,0 +1,85 @@
+### npm run check:pricing
+
+> yinsuo-web@0.1.0 check:pricing
+> node scripts/check-price-literals.mjs
+
+✓ 价格字面量静态检查通过（spec §4.3 / AC-19）
+  · 行级豁免 src/config/app-config.js（演示环境额度（spec §11 待决 18：30 天 + 2,000 次），非付费套餐包量；不作为任何商品价格消费）
+  共豁免 1 处命中
+EXIT=0
+
+### npm run smoke
+✓ AC-45 三维表双口径可相加（按密钥维不含展示通道分组、按接口维含）：行合计 ＋ 展示通道 ＝ 合计  keyΣ=7272344 ｜ endpointΣ=11013844 ｜ 展示通道=3741500 ｜ 合计=11013844
+✓ §7.6 导出文件名形态：yinsuo-usage-<账号>-<yyyyMMddHHmm(CST)>-<区间>-<筛选摘要>.csv  yinsuo-usage-u_demo00000001-202609201201-20260821_20260920_allkeys_allendpoints_allenv.csv
+✓ §7.6 导出文件名随筛选摘要变化（环境 / 密钥命中数进入文件名）  yinsuo-usage-u_demo00000001-202609201201-20260821_20260920_allkeys_allendpoints_live.csv ｜ yinsuo-usage-u_demo00000001-202609201201-20260821_20260920_keys1_allendpoints_allenv.csv
+✓ AC-49 导出数据行集合严格等于当前筛选结果（行数与明细表逐条一致，不是全量导出）  CSV 517 行 / 明细表 total=517 / traceId 全命中=true
+✓ M1-P3c 双口径三数字同单位同精度且显示值可相加（明细 ＋ 展示 ＝ 合计）  6.94 MB ＋ 3.57 MB ＝ 10.51 MB
+✓ M1-P3c 明细「图片字节数」为精确值（与导出 CSV 的 imageBytes 列逐字节一致）  12,345 字节 / 0 字节
+✓ AC-80 展示通道（A25/A26）不返回 originalHighResUrl（原图地址仅在 A31 校通过后签发）  assets=3
+✓ A30 免费额度快照 = {policy,scopeKey,freePerDay,unitPriceCents,usedToday,freeRemainingToday,overageToday,chargedTodayCents,resetAt,cstDate,timezone}  freePerDay=3 used=0 freeRemaining=3 overage=0
+✓ v1.5 更名落地：旧 limitPerDay / remainingToday /（额度对象上的）mode 已退役
+✓ A31 拒绝码枚举三项：UNAUTHENTICATED / INSUFFICIENT_BALANCE / NOT_FOUND（v1.9 枚举级定义；DAILY_LIMIT_EXCEEDED 退役）  UNAUTHENTICATED,INSUFFICIENT_BALANCE,NOT_FOUND
+✓ A31 顺序①：先扣免费额度、额度内不收费  freeApplied=1 usedToday=3
+✓ A31 免费额度内余额不变  ¥32,290.00
+✓ A31 顺序②：免费额度用尽后**不拒绝**，按 unitPriceCents 扣余额  overageAmount=¥2.00 overageToday=1
+✓ A31 `charged.freeApplied` 语义 = 本次占用免费额度张数（0/1），与 overageCount 互补  额度内 1+0 / 超出 0+1
+✓ A31 超量按 ¥2.00/张 扣减且 Σ流水 = 余额 自洽  ¥32,290.00 → ¥32,288.00
+✓ A15/A30 同源：§3.10 v1.5 五个额度字段与 A30 一致（页面不自行累加/相乘，§8.3-3）
+✓ A30 计费态：今日超出张数与扣费金额由适配层派生  overage=1 charged=¥2.00
+✓ A31 继续可下载（不设每日上限）  overageToday=2 charged=¥4.00
+✓ A31 成功返回单独的短期签名原图链接（展示通道不含原图 URL）  about:placeholder#ia_0000000001/original?sig=2xqvz
+✓ AC-85 资源不存在 → 拒绝（NOT_FOUND）且不抵扣、不扣费、不写流水  usedToday=5（不变）余额 ¥32,286.00（不变） 流水条数 163 → 163
+✓ AC-85 不存在资源的 ORIGINAL_IMAGE 流水零写入（relatedAssetId 无悬挂引用）
+✓ A28 首次受理 + 同邮箱重复提交判重  DEMO-20260920-0001
+✓ A29 FAQ 12 条 / 资料包 6 项（§11 待决 17、15）  faq=12 downloads=6
+✓ A4 logout 清空会话
+✓ A31 未登录 → reject UNAUTHENTICATED（R17b）  未登录：原图下载需先登录（spec §8.2 A31）
+✓ A30 未登录 → reject UNAUTHENTICATED（额度为账号维度数据，Zang 终审）  未登录：原图下载额度为账号维度数据，查询前需先登录（spec §8.2 A30）
+✓ A30/A31 复用同一拒绝码枚举（contract.ORIGINAL_DOWNLOAD_ERROR）
+✓ A30 未登录时**不**返回额度快照（不泄露账号维度数据）
+
+✓ 全部通过（132 项断言）
+PIPE_EXIT=0
+
+### npm run build
+
+> yinsuo-web@0.1.0 build
+> vite build
+
+vite v6.4.3 building for production...
+transforming...
+✓ 75 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/console.html                                    0.57 kB │ gzip:  0.37 kB
+dist/index.html                                      0.78 kB │ gzip:  0.50 kB
+dist/assets/BillingPage-CwYRw4n8.css                 0.12 kB │ gzip:  0.13 kB
+dist/assets/PricingPage-CBsLK-FB.css                 0.19 kB │ gzip:  0.14 kB
+dist/assets/ConsoleShell-Brfh5l72.css                0.22 kB │ gzip:  0.16 kB
+dist/assets/KeysPage-B7MBDLdL.css                    0.76 kB │ gzip:  0.33 kB
+dist/assets/OverviewPage-BR70LSde.css                2.60 kB │ gzip:  0.77 kB
+dist/assets/HomePage-BtUXkSqP.css                    2.84 kB │ gzip:  0.87 kB
+dist/assets/UsagePage-FsaXWRv_.css                   4.71 kB │ gzip:  1.03 kB
+dist/assets/useAppConfig-Dc521GRY.css               23.03 kB │ gzip:  4.84 kB
+dist/assets/NoticeBar-HveMcLZq.js                    0.54 kB │ gzip:  0.36 kB
+dist/assets/_plugin-vue_export-helper-BwMhMWnQ.js    0.70 kB │ gzip:  0.42 kB
+dist/assets/EntryLink-y5BoPjQd.js                    0.85 kB │ gzip:  0.53 kB
+dist/assets/NotFoundPage-BFVAkECc.js                 1.04 kB │ gzip:  0.63 kB
+dist/assets/SegmentedControl-BSi67S0X.js             1.04 kB │ gzip:  0.62 kB
+dist/assets/labels-BYbfXU6g.js                       1.07 kB │ gzip:  0.67 kB
+dist/assets/StateBlock-CrcITjg8.js                   1.26 kB │ gzip:  0.66 kB
+dist/assets/ComingSoonPage-5svqwVU8.js               2.28 kB │ gzip:  1.25 kB
+dist/assets/ConsoleShell-CxbHrp9j.js                 2.74 kB │ gzip:  1.56 kB
+dist/assets/console-XZcdAYiY.js                      3.90 kB │ gzip:  1.61 kB
+dist/assets/marketing-DeZmO9Yb.js                    5.94 kB │ gzip:  2.84 kB
+dist/assets/LoginPage-Ks0nYDh4.js                    6.26 kB │ gzip:  2.84 kB
+dist/assets/RegisterPage-BuaC6nSe.js                 9.21 kB │ gzip:  3.68 kB
+dist/assets/PricingPage-Broa6PfB.js                 11.39 kB │ gzip:  4.32 kB
+dist/assets/KeysPage-C-Vj7oxK.js                    13.77 kB │ gzip:  5.51 kB
+dist/assets/HomePage-BoRrllYv.js                    14.68 kB │ gzip:  6.42 kB
+dist/assets/OverviewPage-BSjXOtDW.js                16.95 kB │ gzip:  7.03 kB
+dist/assets/BillingPage-CXlqs4r8.js                 25.63 kB │ gzip:  9.48 kB
+dist/assets/UsagePage-BUSICxgx.js                   28.52 kB │ gzip: 10.16 kB
+dist/assets/useAppConfig-PrYpNcr6.js               146.42 kB │ gzip: 55.63 kB
+✓ built in 824ms
+EXIT=0

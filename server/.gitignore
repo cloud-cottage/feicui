@@ -1,0 +1,10 @@
+# server/.venv 是**本机可重建**的独立虚拟环境（Kong / 阶段 1a）
+# 依据 Zang 追加口径 4：venv 本体不进版本库、不占空间。
+# 仓库当前**不是 git 仓库**（`git rev-parse` ⇒ fatal: not a git repository），本文件为将来入版本库时预置。
+.venv/
+__pycache__/
+*.pyc
+selftest/evidence/*.db
+selftest/evidence/*.db-wal
+selftest/evidence/*.db-shm
+selftest/evidence/*.log

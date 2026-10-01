@@ -1,0 +1,44 @@
+### 阶段 1c-激活 · 迁移后**最后一次库内复算**（副本库 + 非登记端口 5371；**零正式库写入**）
+### 2026-09-20 15:06:45 CST
+### 脚本 = ops/1c/e2e_run.py  md5=293edda667203bb72908ab93d9b05499（**修复后**的最终修订）
+### 覆盖项 = FEICUI_API_BASE=http://127.0.0.1:5371/api  FEICUI_DB=/tmp/feicui_1c_final2.db
+### 副本库来源 = 正式库 yinpu.db 的 sqlite3 backup API 快照（stamps=89 jobs=5 job_pages=32）
+### 期望 = 同书同页区间重复跑 ⇒ job_pages.inserted=0（on_conflict=skip 幂等）
+
+[15:06:45] === ① 经 http://127.0.0.1:5371/api 建 job（默认＝面板托管链路 5164 → 5195 前端代理 → 5196 API；自测可被 FEICUI_API_BASE 覆盖）===
+[15:06:45] POST /feicui/api/jobs → 201
+{
+  "job_id": "job-2d2f0cea4d5c4df0ac5311cc33dbc41c",
+  "state": "QUEUED",
+  "total_pages": 7,
+  "created_at": "2026-09-20T15:06:45+08:00"
+}
+[15:06:45] === ② 立刻重复建同书 ⇒ 期望 409 ===
+[15:06:46] POST（重复） → 409
+{
+  "error": "ACTIVE_JOB_EXISTS",
+  "detail": "同 pdf_path 已有活跃 job（§3.2 S-5：同一本书同时只允许一个活跃 job）",
+  "job_id": "job-2d2f0cea4d5c4df0ac5311cc33dbc41c",
+  "state": "QUEUED",
+  "total_pages": 7,
+  "created_at": "2026-09-20T15:06:45+08:00"
+}
+[15:06:46] === ③ E2 采样（人不出手）===
+t+   0.0s state=QUEUED         done=0/7 failed=[] detected=None inserted=None updated=None skipped=None ocr_empty=None
+t+   3.0s state=QUEUED         done=0/7 failed=[] detected=None inserted=None updated=None skipped=None ocr_empty=None
+t+   6.1s state=QUEUED         done=0/7 failed=[] detected=None inserted=None updated=None skipped=None ocr_empty=None
+t+   9.2s state=RUNNING        done=0/7 failed=[] detected=None inserted=None updated=None skipped=None ocr_empty=None
+t+  12.2s state=RUNNING        done=0/7 failed=[] detected=None inserted=None updated=None skipped=None ocr_empty=None
+t+  15.2s state=RUNNING        done=0/7 failed=[] detected=None inserted=None updated=None skipped=None ocr_empty=None
+t+  18.2s state=DONE           done=7/7 failed=[] detected=None inserted=None updated=None skipped=None ocr_empty=None
+[15:07:04] === ④ 库内复算交叉核对（只读）===
+jobs 行            = {"job_id": "job-2d2f0cea4d5c4df0ac5311cc33dbc41c", "pdf_path": "/Users/kevin/bistro/xiai/feicui/tmp.pdf", "pdf_name": "tmp.pdf", "book_key": null, "page_from": 13, "page_to": 19, "chunk_size": 8, "total_pages": 7, "state": "DONE", "cursor_chunk_lo": null, "cursor_chunk_hi": 0, "rerun": 0, "error": null, "created_at": "2026-09-20T15:06:45+08:00", "started_at": "2026-09-20T15:06:52+08:00", "finished_at": "2026-09-20T15:07:04+08:00", "updated_at": "2026-09-20T15:07:04+08:00"}
+job_pages 复算     = {"total": 7, "done": 7, "failed": 0, "detected": 29, "inserted": 0, "updated": 0, "skipped": 29, "ocr_empty": 2}
+stamps 全表行数    = 89
+逐页 job_pages     = [{"page": 13, "state": "DONE", "detected": 6, "inserted": 0, "skipped": 6, "ocr_empty": 0, "error": null}, {"page": 14, "state": "DONE", "detected": 7, "inserted": 0, "skipped": 7, "ocr_empty": 1, "error": null}, {"page": 15, "state": "DONE", "detected": 6, "inserted": 0, "skipped": 6, "ocr_empty": 0, "error": null}, {"page": 16, "state": "DONE", "detected": 2, "inserted": 0, "skipped": 2, "ocr_empty": 0, "error": null}, {"page": 17, "state": "DONE", "detected": 2, "inserted": 0, "skipped": 2, "ocr_empty": 0, "error": null}, {"page": 18, "state": "DONE", "detected": 2, "inserted": 0, "skipped": 2, "ocr_empty": 0, "error": null}, {"page": 19, "state": "DONE", "detected": 4, "inserted": 0, "skipped": 4, "ocr_empty": 1, "error": null}]
+
+采样点数 = 7；出现过的 state 序列 = QUEUED -> RUNNING -> DONE
+job_id   = job-2d2f0cea4d5c4df0ac5311cc33dbc41c
+409 分支 = OK
+端到端判定 = PASS
+RC=0

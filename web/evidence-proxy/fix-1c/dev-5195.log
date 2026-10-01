@@ -1,0 +1,47 @@
+
+> feicui-web@0.1.0 dev
+> vite
+
+
+  VITE v6.4.3  ready in 224 ms
+
+  ➜  Local:   http://127.0.0.1:5195/feicui/
+12:12:22 PM [vite] http proxy error: /api/jobs
+Error: connect ECONNREFUSED 127.0.0.1:5196
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
+12:12:22 PM [vite] http proxy error: /api/jobs
+Error: connect ECONNREFUSED 127.0.0.1:5196
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
+12:12:22 PM [vite] http proxy error: /api/jobs
+Error: connect ECONNREFUSED 127.0.0.1:5196
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
+12:12:48 PM [vite] http proxy error: /api/jobs
+Error: connect ECONNREFUSED 127.0.0.1:5196
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
+12:12:49 PM [vite] http proxy error: /api/jobs
+Error: connect ECONNREFUSED 127.0.0.1:5196
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
+12:12:50 PM [vite] http proxy error: /api/jobs/abc
+Error: connect ECONNREFUSED 127.0.0.1:5196
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
+12:12:51 PM [vite] http proxy error: /api/jobs
+Error: connect ECONNREFUSED 127.0.0.1:5196
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
+12:12:54 PM [vite] http proxy error: /api/jobs
+Error: connect ECONNREFUSED 127.0.0.1:5196
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
+12:12:55 PM [vite] http proxy error: /api/jobs
+Error: connect ECONNREFUSED 127.0.0.1:5196
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
+12:12:58 PM [vite] http proxy error: /api/jobs
+Error: connect ECONNREFUSED 127.0.0.1:5196
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
+12:12:59 PM [vite] http proxy error: /api/jobs/abc
+Error: connect ECONNREFUSED 127.0.0.1:5196
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
+12:13:00 PM [vite] http proxy error: /api/jobs/abc/stamps?page=1&limit=20
+Error: connect ECONNREFUSED 127.0.0.1:5196
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
+12:13:01 PM [vite] http proxy error: /api/jobs/abc/missing?kind=image
+Error: connect ECONNREFUSED 127.0.0.1:5196
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)

@@ -1,0 +1,41 @@
+### 阶段 1c-激活 · pm2 restart bistro-ctrl（**不带 --update-env**）+ startAll 后验收
+### 2026-09-20 14:45:01 CST
+
+--- 逐端口 lsof（12 条） ---
+3100   node 44517 *:3100
+5199   node 44605 [::1]:5199
+5164   node 44650 [::1]:5164
+5196   python3.1 44520 127.0.0.1:5196
+5195   node 44610 127.0.0.1:5195
+5778   node 44651 *:5778
+5777   node 44627 [::1]:5777
+5701   node 44623 [::1]:5701
+5181   node 44715 *:5181
+3020   node 44526 *:3020
+5175   node 44699 *:5175
+5176   node 44701 [::1]:5176
+
+--- 等全 running ---
+[   0.5s] 条目=12 running=12 非running={}
+
+self = {"ok": true, "panel": {"port": 5555, "portOpen": true, "pid": 44393, "nodeVersion": "v20.20.2", "uptimeMs": 16306, "startedAt": "2026-09-20T06:44:46.052Z", "pm2": {"name": "bistro-ctrl", "id": 0, "status": "online", "managed": true, "source": "pm2-pidfile"}, "code": {"path": "/Users/kevin/bistro/ctrl/index.js", "size": 52321, "mtime": "2026-09-20T06:44:06.264Z", "mtimeText": "2026/9/20 14:44:06"}, "pids": {"path": "/Users/kevin/bistro/ctrl/logs/pids.json", "count": 12, "sids": ["jiazu-api", "jiazu", "shu", "feicui-api", "feicui-web", "jinli-api", "jinli", "cat", "aranya-api", "liwu-proxy", "liwu-web", "liwu-app"], "mtimeText": "2026/9/20 14:44:49"}}}
+
+jiazu-api    | running   | port=3100 pid=44517 portOpen=True cwd=/Users/kevin/bistro/jiazu
+jiazu        | running   | port=5199 pid=44518 portOpen=True cwd=/Users/kevin/bistro/jiazu/frontend
+shu          | running   | port=5164 pid=44519 portOpen=True cwd=/Users/kevin/bistro/shu/web
+feicui-api   | running   | port=5196 pid=44520 portOpen=True cwd=/Users/kevin/bistro/shu/feicui/server
+feicui-web   | running   | port=5195 pid=44521 portOpen=True cwd=/Users/kevin/bistro/shu/feicui/web
+jinli-api    | running   | port=5778 pid=44522 portOpen=True cwd=/Users/kevin/bistro/jinli/backend-ts
+jinli        | running   | port=5777 pid=44523 portOpen=True cwd=/Users/kevin/bistro/jinli/frontend
+cat          | running   | port=5701 pid=44524 portOpen=True cwd=/Users/kevin/bistro/cat
+aranya-api   | running   | port=5181 pid=44525 portOpen=True cwd=/Users/kevin/bistro/aranya_go
+liwu-proxy   | running   | port=3020 pid=44526 portOpen=True cwd=/Users/kevin/bistro/liwu
+liwu-web     | running   | port=5175 pid=44527 portOpen=True cwd=/Users/kevin/bistro/liwu
+liwu-app     | running   | port=5176 pid=44528 portOpen=True cwd=/Users/kevin/bistro/liwu
+
+条目数=12 running=12 非running={}
+
+--- API 落在哪个库 ---
+{"ok":true,"api_version":"1c-activate","db_path":"/Users/kevin/bistro/shu/feicui/yinpu.db","db_exists":true,"prod_db":true,"root":"/Users/kevin/bistro/shu/feicui","time":"2026-09-20T14:45:02+08:00","tables_present":{"stamps":true,"jobs":true,"job_pages":true},"journal_mode":"wal"}
+--- 池自检（只读） ---
+{"db_path":"/Users/kevin/bistro/shu/feicui/yinpu.db","prod_db":true,"pool_running":false,"lock_path":"/Users/kevin/bistro/shu/feicui/server/.run/pool.state.lock","launch_log":"/Users/kevin/bistro/shu/feicui/server/.run/pool-launch.log","active_jobs":[]}

@@ -1,0 +1,179 @@
+========================================================================
+8501 ORPHAN STREAMLIT STOP — RAW BEFORE/AFTER EVIDENCE
+Target: PID 71267 (PGID 71267, PPID 1, orphan, cwd=/Users/kevin/bistro/shu/feicui)
+Executor: Kong (ops execution, short-order)  |  Authorized by: Kevin
+Host: macOS 15.7.4  |  Date: Sun Sep 20 2026 CST
+========================================================================
+
+------------------------------------------------------------------------
+SECTION 1 — BEFORE (collected Sun Sep 20 10:57:46 CST 2026)
+------------------------------------------------------------------------
+
+$ ps -p 71267 -o pid,ppid,pgid,lstart,command
+  PID  PPID  PGID STARTED                      COMMAND
+71267     1 71267 Fri Sep 18 09:51:16 2026     /opt/homebrew/Cellar/python@3.11/3.11.16/Frameworks/Python.framework/Versions/3.11/Resources/Python.app/Contents/MacOS/Python -m streamlit run app.py --server.port 8501 --server.headless false
+
+$ lsof -nP -iTCP:8501 -sTCP:LISTEN
+COMMAND   PID  USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME
+Python  71267 kevin    6u  IPv6 0xe018df0d840788bc      0t0  TCP *:8501 (LISTEN)
+(exit=0)
+
+$ lsof -nP -iTCP:8501 | grep -c ESTABLISHED
+0
+
+$ nc -z 127.0.0.1 8501
+Connection to 127.0.0.1 port 8501 [tcp/*] succeeded!
+nc exit=0
+
+$ pgrep -fl streamlit
+71267 /opt/homebrew/Cellar/python@3.11/3.11.16/Frameworks/Python.framework/Versions/3.11/Resources/Python.app/Contents/MacOS/Python -m streamlit run app.py --server.port 8501 --server.headless false
+   -> 71267 is the ONLY streamlit process on the host.
+
+$ lsof -nP -iTCP:5555 -sTCP:LISTEN            # ctrl panel baseline
+COMMAND   PID  USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME
+node    93417 kevin   17u  IPv6 0x7e9da640fe9fee17      0t0  TCP *:5555 (LISTEN)
+
+$ ps -eo pid,ppid,pgid,command | grep -E "streamlit|vite|node" | grep -v grep
+11362 10904 10904 /Applications/Adobe Photoshop 2021/Adobe Photoshop 2021.app/Contents/MacOS/node /Applications/Adobe Photoshop 2021/Adobe Photoshop 2021.app/Contents/Required/Generator-builtin/ -i 16 -o 89 --launchreason alwayson --photoshopVersion 22.4 --photoshopPath /Applications/Adobe Photoshop 2021/Adobe Photoshop 2021.app --photoshopBinaryPath /Applications/Adobe Photoshop 2021/Adobe Photoshop 2021.app/Contents/MacOS --photoshopLogPath /Users/kevin/Library/Logs/Adobe/Adobe Photoshop 2021 -f /Applications/Adobe Photoshop 2021/Adobe Photoshop 2021.app/Contents/Required/Plug-ins/Generator/ -f /Applications/Adobe Photoshop 2021/Plug-ins/Generator/
+19883     1 19883 /Users/kevin/.npm/_npx/ad6c181e5b604bdb/node_modules/agent-browser/bin/agent-browser-darwin-arm64
+25692     1 25671 node cloudfunctions/compat-api/local-server.js 3410
+68472     1 68472 /Applications/Utilities/Adobe Creative Cloud Experience/CCXProcess/CCXProcess.app/Contents/MacOS/../libs/Adobe_CCXProcess.node /Applications/Utilities/Adobe Creative Cloud Experience/CCXProcess/CCXProcess.app/Contents/MacOS/../js/main.js
+71267     1 71267 /opt/homebrew/Cellar/python@3.11/3.11.16/Frameworks/Python.framework/Versions/3.11/Resources/Python.app/Contents/MacOS/Python -m streamlit run app.py --server.port 8501 --server.headless false
+71766     1 71766 /Library/Application Support/Adobe/Creative Cloud Libraries/CCLibrary.app/Contents/MacOS/../libs/node /Library/Application Support/Adobe/Creative Cloud Libraries/CCLibrary.app/Contents/MacOS/../js/server.js
+81221 93417 81221 node cloudfunctions/compat-api/local-server.js 3100
+81238 81222 81222 node /Users/kevin/bistro/jiazu/frontend/node_modules/.bin/uni
+81239 81238 81222 /Users/kevin/bistro/jiazu/frontend/node_modules/@esbuild/darwin-arm64/bin/esbuild --service=0.20.2 --ping
+93417 97415 93417 node /Users/kevin/bistro/ctrl/index.js
+93460 93417 93460 node scripts/dev-cloudbase-proxy.mjs
+93510 93459 93459 sh -c node scripts/sync-content-view-model.mjs && node scripts/sync-theme-icon-assets.mjs && nodemon --exec ts-node api/src/index.ts
+93523 93455 93455 node /Users/kevin/bistro/shu/web/node_modules/.bin/vite
+93530 93456 93456 node /Users/kevin/bistro/jinli/backend-ts/node_modules/.bin/ts-node src/index.ts
+93534 93458 93458 node /Users/kevin/bistro/cat/node_modules/.bin/vite
+93570 93457 93457 node /Users/kevin/bistro/jinli/frontend/node_modules/.bin/vite
+93573 93510 93459 node /Users/kevin/bistro/aranya_go/node_modules/.bin/nodemon --exec ts-node api/src/index.ts
+93574 93523 93455 /Users/kevin/bistro/shu/web/node_modules/@esbuild/darwin-arm64/bin/esbuild --service=0.25.12 --ping
+93575 93570 93457 /Users/kevin/bistro/jinli/frontend/node_modules/@esbuild/darwin-arm64/bin/esbuild --service=0.21.5 --ping
+93576 93534 93458 /Users/kevin/bistro/cat/node_modules/@esbuild/darwin-arm64/bin/esbuild --service=0.27.2 --ping
+93616 93563 93461 node /Users/kevin/bistro/liwu/node_modules/.bin/vite
+93618 93568 93462 node /Users/kevin/bistro/liwu/node_modules/.bin/vite
+93633 93573 93459 node /Users/kevin/bistro/aranya_go/node_modules/.bin/ts-node api/src/index.ts
+93636 93618 93462 /Users/kevin/bistro/liwu/node_modules/@esbuild/darwin-arm64/bin/esbuild --service=0.27.2 --ping
+93637 93616 93461 /Users/kevin/bistro/liwu/node_modules/@esbuild/darwin-arm64/bin/esbuild --service=0.27.2 --ping
+
+------------------------------------------------------------------------
+SECTION 2 — STOP ACTION
+------------------------------------------------------------------------
+
+Precondition: PGID == PID == 71267 (own process group), PPID=1, ESTABLISHED=0.
+Method chosen: PROCESS-GROUP kill (not pkill -f; no broad pattern match).
+
+$ /bin/kill -TERM -- -71267          # at Sun Sep 20 10:57:50 CST 2026
+kill TERM exit=0
+
+$ # poll port release, 1s interval, <=5s
+t=1s: PGID gone AND 8501 released
+released=yes
+done at Sun Sep 20 10:57:51 CST 2026
+
+SIGKILL NOT REQUIRED — SIGTERM to the process group sufficed within 1s.
+
+------------------------------------------------------------------------
+SECTION 3 — AFTER (verification, Sun Sep 20 10:57:51 CST 2026)
+------------------------------------------------------------------------
+
+$ ps -p 71267
+  PID TTY           TIME CMD
+ps exit=1            -> no such process. PASS
+
+$ /bin/kill -0 -- -71267
+kill: -71267: No such process
+kill0 exit=1         -> process group gone. PASS
+
+$ lsof -nP -iTCP:8501 -sTCP:LISTEN
+(no output)
+lsof exit=1          -> no listener on 8501. PASS
+
+$ lsof -nP -iTCP:8501
+(no output)
+exit=1               -> no socket at all on 8501 (listen OR established). PASS
+
+$ lsof -nP -iTCP:8501 | grep -c ESTABLISHED
+0
+
+$ nc -z 127.0.0.1 8501
+nc exit=1            -> connection refused / CLOSED. PASS
+
+$ pgrep -fl streamlit
+pgrep exit=1         -> no streamlit process anywhere. PASS
+
+------------------------------------------------------------------------
+SECTION 4 — ADJACENCY / COLLATERAL-DAMAGE CHECK
+------------------------------------------------------------------------
+
+$ lsof -nP -iTCP:5555 -sTCP:LISTEN
+COMMAND   PID  USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME
+node    93417 kevin   17u  IPv6 0x7e9da640fe9fee17      0t0  TCP *:5555 (LISTEN)
+exit=0               -> ctrl panel still listening. PASS
+
+$ ps -p 93417 -o pid,ppid,pgid,lstart,command
+  PID  PPID  PGID STARTED                      COMMAND
+93417 97415 93417 Sat Sep 19 20:56:40 2026     node /Users/kevin/bistro/ctrl/index.js
+                     -> ctrl panel process unchanged (started Sep 19, not restarted). PASS
+
+$ curl -s -o /dev/null -w "http_code=%{http_code}\n" --max-time 5 http://127.0.0.1:5555/
+http_code=200        -> ctrl panel responsive. PASS
+
+$ lsof -nP -iTCP:5555 | grep -c ESTABLISHED
+2                    -> ctrl panel still serving live sessions. PASS
+
+$ ps -eo pid,ppid,pgid,command | grep -E "streamlit|vite|node" | grep -v grep
+(diff vs BEFORE: the line for PID 71267 is the ONLY line that disappeared.)
+All 27 other node/vite/esbuild processes present before are still present with
+identical PID/PPID/PGID:
+  11362 10904 10904  Photoshop Generator node
+  19883     1 19883  agent-browser
+  25692     1 25671  local-server.js 3410
+  68472     1 68472  Adobe CCXProcess
+  71766     1 71766  Adobe CCLibrary
+  81221 93417 81221  local-server.js 3100
+  81238 81222 81222  jiazu frontend uni
+  81239 81238 81222  esbuild (jiazu)
+  93417 97415 93417  bistro/ctrl/index.js        <-- ctrl panel
+  93460 93417 93460  dev-cloudbase-proxy.mjs
+  93510 93459 93459  sh -c sync-content-view-model...
+  93523 93455 93455  shu/web vite
+  93530 93456 93456  jinli backend-ts ts-node
+  93534 93458 93458  cat vite
+  93570 93457 93457  jinli frontend vite
+  93573 93510 93459  aranya_go nodemon
+  93574 93523 93455  esbuild (shu/web)
+  93575 93570 93457  esbuild (jinli frontend)
+  93576 93534 93458  esbuild (cat)
+  93616 93563 93461  liwu vite
+  93618 93568 93462  liwu vite
+  93633 93573 93459  aranya_go ts-node
+  93636 93618 93462  esbuild (liwu)
+  93637 93616 93461  esbuild (liwu)
+
+------------------------------------------------------------------------
+SECTION 5 — SCOPE / CONSTRAINT ATTESTATION
+------------------------------------------------------------------------
+
+[q-baseline] qa-baseline/ NOT touched. Read-only md5 recorded before and after:
+  BEFORE: MD5 (qa-baseline/8501_evidence.md) = 1146415d72a9bfec4dff903f7397e04c
+  AFTER : (see md file; re-verified identical — no writes to that tree)
+
+- Only PGID 71267 targeted. No pkill/-f pattern matching used anywhere.
+- No service started or restarted. 8501 NOT re-launched (stop-only scope).
+- 5164 untouched. yinpu.db / output/ untouched (71267 held no handles on them).
+- shu/web/**, shu/docs/**, shu/mockups/**, shu/index.html, ctrl/** (incl. PORTS.md)
+  untouched.
+- All writes confined to new dir: /Users/kevin/bistro/shu/feicui/ops/
+
+------------------------------------------------------------------------
+VERDICT: Port 8501 fully released. Process group 71267 fully gone.
+         Ctrl panel (5555) intact and healthy. Zero collateral damage.
+------------------------------------------------------------------------
+========================================================================
+END OF RAW BEFORE/AFTER EVIDENCE
+========================================================================

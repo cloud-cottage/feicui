@@ -1,0 +1,40 @@
+{
+  "measured_at": "2026-09-20T18:50 CST",
+  "script": "feicui/ops/kong_assetmeta_d_sites.mjs（只读，不改任何产品文件）",
+  "build": "./node_modules/.bin/esbuild feicui/ops/kong_assetmeta_d_sites.mjs --bundle --format=esm --platform=node --outfile=/tmp/kong_d_sites_recheck.mjs && node /tmp/kong_d_sites_recheck.mjs",
+  "why": "D 项 18:40 的读数（kong_assetmeta_d_sites_raw.json）测到的是**改前**行为；并行单（src/data/** 所有者）在 18:46:20 落地了修复 ⇒ 本文件是**改后**复测读数",
+  "src_md5_at_measure": {
+    "src/data/assetmeta.js": "a47e82ddab746a08cd5c32fbbd408ac0",
+    "src/data/db.js": "f726038a5d17942da7288f39671658d1"
+  },
+  "src_mtime": {
+    "src/data/assetmeta.js": "2026-09-20T18:46:20",
+    "src/data/db.js": "2026-09-20T18:46:44"
+  },
+  "readings": {
+    "call-site-0（真源本体 assetmeta.js:186 sniffMime）": {
+      "sniffMime(png)": "image/png",
+      "sniffMime(junk)": "",
+      "imageSize(junk)": { "width": 0, "height": 0, "colorMode": "RGB" },
+      "改前（18:40 raw）": { "sniffMime(junk)": "image/png" }
+    },
+    "call-site-1 assetmeta.js:293 normalizeImagePayload（写入）": {
+      "normalizeImagePayload(png).mime": "image/png",
+      "normalizeImagePayload(junk).ok": false,
+      "改前（18:40 raw）": { "normalizeImagePayload(junk).mime": "image/png", "normalizeImagePayload(junk).ok": true }
+    },
+    "call-site-2 db.js `migrateLegacyPhotoRows`（旧行迁移）": {
+      "源码形态": "mime: row.mime || sniffMime(parsed.bytes)",
+      "行号": "读数时 db.js:502；db.js 于 18:46:44 变更后为 :505",
+      "认不出的字节会落成 mime": "",
+      "改前（18:40 raw）": "image/png",
+      "关键事实 1": "`parsed.mime`（dataURL 头里**真实**的 MIME）被忽略，回落是这一支唯一的 mime 来源 ⇒ 仍在",
+      "关键事实 2": "落在 db.js（本单**禁改**清单内）⇒ 只登记"
+    },
+    "渲染侧 assetmeta.js:177 bytesToDataUrl 兜底": {
+      "改后": "data:application/octet-s",
+      "改前（18:40 raw）": "data:image/png;base64,AA"
+    }
+  },
+  "conclusion": "「认不出回落 image/png」的三个源头（sniffMime 本体 / bytesToDataUrl 默认值 / normalizeImagePayload 采信声称值）已在 18:46 由并行单修掉；Kong 只做调用点全表登记与复测，未改任何 src/**。db.js 的 `row.mime || sniffMime(parsed.bytes)` 忽略 `parsed.mime` 一处仍在（禁改清单内，登记为规范缺口）。"
+}

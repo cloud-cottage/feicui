@@ -1,0 +1,68 @@
+[
+ {
+  "case": "job 不存在",
+  "path": "/api/jobs/job-nope/stamps/1/0/image",
+  "code": 404,
+  "body": {
+   "detail": {
+    "error": "JOB_NOT_FOUND",
+    "detail": "job 不存在：job-nope"
+   }
+  }
+ },
+ {
+  "case": "记录不存在（该书页区间内的缺号）",
+  "path": "/api/jobs/job-879526c0f8164e48a5106deef6f0b752/stamps/999999/0/image",
+  "code": 404,
+  "body": {
+   "detail": {
+    "error": "STAMP_NOT_FOUND",
+    "detail": "(999999,0) 在 job job-879526c0f8164e48a5106deef6f0b752（tmp.pdf，页 13–19）内不存在"
+   }
+  }
+ },
+ {
+  "case": "fixture img_path='output/../../../../etc/passwd'",
+  "path": "/api/jobs/job-2f6c054f05c8461fa609e69969c56c61/stamps/1/0/image",
+  "code": 404,
+  "body": {
+   "detail": {
+    "error": "IMAGE_UNAVAILABLE",
+    "detail": "img_path 越出 FEICUI_ROOT，拒绝：'output/../../../../etc/passwd'"
+   }
+  }
+ },
+ {
+  "case": "fixture img_path='/etc/passwd'",
+  "path": "/api/jobs/job-2f6c054f05c8461fa609e69969c56c61/stamps/1/1/image",
+  "code": 404,
+  "body": {
+   "detail": {
+    "error": "IMAGE_UNAVAILABLE",
+    "detail": "img_path 为绝对路径，拒绝（须相对 feicui/）：'/etc/passwd'"
+   }
+  }
+ },
+ {
+  "case": "fixture img_path=''",
+  "path": "/api/jobs/job-2f6c054f05c8461fa609e69969c56c61/stamps/1/2/image",
+  "code": 404,
+  "body": {
+   "detail": {
+    "error": "IMAGE_UNAVAILABLE",
+    "detail": "img_path 为空（§3.5 404 第三类）"
+   }
+  }
+ },
+ {
+  "case": "fixture img_path='output/__1bii_missing__.webp'",
+  "path": "/api/jobs/job-2f6c054f05c8461fa609e69969c56c61/stamps/1/3/image",
+  "code": 404,
+  "body": {
+   "detail": {
+    "error": "IMAGE_UNAVAILABLE",
+    "detail": "文件不在盘上：'output/__1bii_missing__.webp'"
+   }
+  }
+ }
+]

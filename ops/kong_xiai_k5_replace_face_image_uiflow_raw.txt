@@ -1,0 +1,36 @@
+# 玺爱 · 「重新上传印面图」端到端取证（真浏览器）2026-09-20T18:01:50+0800 → 2026-09-20T18:02:17+0800
+# profile=/tmp/xiai-kong5-prof port=9434 base=http://127.0.0.1:5163
+PASS | ① 游客（未登录）DOM：印面块 3 个、替换按钮 0 个、文案零命中 | {"blocks": 3, "replace": 0, "edit": 0, "text_hit": false}
+PASS | ① 管理员登录成功（16601061656 / role = admin） | {"phone": "16601061656", "role": "admin"}
+PASS | ① 管理员 DOM：**每个印面块**各一个「重新上传印面图」按钮（3/3，与「编辑固定属性」同粒度） | {"blocks": 3, "replace": 3, "face_ids": ["fc-0001-f1", "fc-0001-f2", "fc-0001-e1"], "labels": ["重新上传印面图", "重新上传印面图", "重新上传印面图"], "edit_buttons": 3, "block_ids": ["fc-0001-f1", "fc-0001-f2", "fc-0001-e1"]}
+PASS | ① 按钮文案正确（「重新上传印面图」） | ["重新上传印面图", "重新上传印面图", "重新上传印面图"]
+PASS | 基线：印面 fc-0001-f1 当前影像编号 = img-0001f | "img-0001f"
+PASS | ② 管理员点按钮 ⇒ 打开取景弹窗（标题含印面类别、含选图输入与确认按钮） | {"title": "重新上传印面图 · 印面一", "lede": "印面编号 fc-0001-f1 · 当前影像编号 img-0001f。 替换会**新增**一张影像并把本印面指向新影像，**旧影像与二进制保留**（不删除，可回溯）。 处理全部在本机完成：方形取景 → 转 WebP → 写入本地影像库，不访问任何外部地址。", "has_input": true, "has_submit": true}
+PASS | ② 选图后进入**方形取景**：预览已出图 + 取景框 + 可拖拽手柄 + 1 MB 上限提示 + 最长边读数 | {"summary": "已选 selftest-3000x1200.jpg · 原图 3000 × 1200 · 原文件 104.7 KB ⇒ 入库印面 1200 × 1200 · image/webp · 15.0 KB （最长边 ≤ 2048px、质量 0.85）", "hint": "本机图片文件（JPG / PNG / WebP），单张不超过 1.00 MB（1048576 字节， 按原始文件字节数判定）。选定后在本机取方形并转成 WebP，再写入本地影像库。", "frame": {"w": "96px", "h": "96px", "left": "72px", "top": "0px"}, "preview_ok": true, "handle": true}
+PASS | ② 非方形原图（3000 × 1200）已在预览读数中如实显示，且入库印面为正方形（1200 × 1200 · WebP） | 已选 selftest-3000x1200.jpg · 原图 3000 × 1200 · 原文件 104.7 KB ⇒ 入库印面 1200 × 1200 · image/webp · 15.0 KB （最长边 ≤ 2048px、质量 0.85）
+PASS | ② 取景框可**真拖拽**（CDP 真鼠标事件）：拖动后位置变化、宽高仍相等（正方形），导出读数仍为方形 WebP | {"after": {"left": "114px", "top": "0px", "w": "96px", "h": "96px"}, "summary": "已选 selftest-3000x1200.jpg · 原图 3000 × 1200 · 原文件 104.7 KB ⇒ 入库印面 1200 × 1200 · image/webp · 14.0 KB （最长边 ≤ 2048px、质量 0.85）", "before": {"x": 606, "y": 445.484375, "rect": {"x": 558, "y": 397.484375, "w": 96, "h": 96}, "left": "72px", "top": "0px", "w": "96px", "h": "96px"}}
+PASS | ② 提交后有可读反馈（含「影像编号 旧 → 新」） | 印面图已替换：影像编号 img-0001f → img-0001f-2；旧影像行与二进制保留未删。新影像 1200 × 1200 · image/webp · 14366 字节
+PASS | ② 印面 face_image_id 已改指向新影像 | {"face_image_id": "img-0001f-2", "new_meta": {"id": "img-0001f-2", "kind": "FACE", "stamp_id": "XAI-0001", "width": 1200, "height": 1200, "bytes": 14366, "mime": "image/webp", "color_mode": "RGB", "sha256": "1e59d387432b5af8805b0ca3881e04b5b6163ac573e86926227808af965e9e7c"}}
+PASS | ② 新影像：**方形**（width == height）、mime = image/webp、体量如实 > 0 | {"id": "img-0001f-2", "kind": "FACE", "stamp_id": "XAI-0001", "width": 1200, "height": 1200, "bytes": 14366, "mime": "image/webp", "color_mode": "RGB", "sha256": "1e59d387432b5af8805b0ca3881e04b5b6163ac573e86926227808af965e9e7c"}
+PASS | ② 新影像 kind = FACE 且与印面同一印章（XAI-0001） | {"kind": "FACE", "stamp_id": "XAI-0001"}
+PASS | ② 影像行数 = 前 + 1（旧行不删） | 13 → 14
+PASS | ② 旧影像行逐字未改（img-0001f 元数据与基线一致） | {"before": {"id": "img-0001f", "kind": "FACE", "stamp_id": "XAI-0001", "width": 1600, "height": 1600, "bytes": 184320, "color_mode": "RGB", "sha256": "3d1f0b2a6c7e4915b8a2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718"}, "after": {"id": "img-0001f", "kind": "FACE", "stamp_id": "XAI-0001", "width": 1600, "height": 1600, "bytes": 184320, "color_mode": "RGB", "sha256": "3d1f0b2a6c7e4915b8a2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718"}}
+PASS | ② 二进制已落影像库（键 asset:新影像编号，字节数 = 行内 bytes） | {"asset:img-0001f-2": 14366, "asset:img-0001f-3": 2006}
+PASS | ② **无需刷新**即显示新图（页内标记未丢 ⇒ 未发生导航/刷新；图已加载；图注＝新影像编号） | {"same_page": "no-reload-1789898522300", "figcaption": "印面影像 img-0001f-2", "img_ok": true, "first_dd": "影像编号 img-0001f-2", "summary": "1200 × 1200 · 14.0 KB · RGB"}
+PASS | ②′ 第二次替换成功且反馈含「旧 → 新」（旧＝第一次的新编号） | 印面图已替换：影像编号 img-0001f-2 → img-0001f-3；旧影像行与二进制保留未删。新影像 320 × 320 · image/webp · 2006 字节
+PASS | ②′ 第一次的影像**行**仍在库且逐字未改 | {"image_ids": ["img-0001f", "img-0001g", "img-0001e", "img-0002f", "img-0003f", "img-0004f", "img-0004e", "img-0005f", "img-0005e", "img-0006f", "img-0007f", "img-0007e", "img-0008f", "img-0001f-2", "img-0001f-3"], "first": "img-0001f-2"}
+PASS | ②′ 第一次的影像**二进制**仍在且字节一致（替换不删旧图） | {"expect": 14366, "got": 14366, "keys": ["asset:img-0001f-2", "asset:img-0001f-3"]}
+PASS | ②′ 影像行数 = 前 + 1（只增不删） | 14 → 15
+PASS | ④ 持久化：全新加载后印面指向 / 影像行 / 二进制三者一致 | {"face_image_id": "img-0001f-3", "meta": {"id": "img-0001f-3", "kind": "FACE", "stamp_id": "XAI-0001", "width": 320, "height": 320, "bytes": 2006, "mime": "image/webp", "color_mode": "RGB", "sha256": "4a23fc1ff033aa46503b45e6e436f2228f97848fdbd561d614c4bfd9f63ae81d"}}
+PASS | ④ 持久化：新图在**重新打开**的页面里仍显示（页内标记已丢 ⇒ 确为全新加载） | {"marker_gone": true, "figcaption": "印面影像 img-0001f-3", "img_ok": true, "img_is_data_url": true}
+PASS | ③ 注入影像库写失败 ⇒ 结构化失败（reason = STORAGE_UNAVAILABLE，未抛异常） | {"ok": false, "reason": "STORAGE_UNAVAILABLE", "message": "影像库写入失败：影像存储操作失败：注入故障：影像库写入失败"}
+PASS | ③ 回滚：影像行数不变 + 印面指向不变 + 影像库键集合不变（无半成品行 / 无孤儿二进制） | {"before": {"face_image_id": "img-0001f-3", "image_count": 15, "blob_keys": ["asset:img-0001f-2", "asset:img-0001f-3"]}, "after": {"face_image_id": "img-0001f-3", "image_count": 15, "blob_keys": ["asset:img-0001f-2", "asset:img-0001f-3"]}}
+PASS | ① 普通用户登录（13800000001 / role = user） | {"phone": "13800000001", "role": "user"}
+PASS | ① 普通用户 DOM：替换按钮命中数 = 0 且文案 / 属性零命中 | {"blocks": 3, "replace": 0, "any_admin_action": 0, "dialog": 0, "text_hit": false, "html_hit": false}
+PASS | ①′ 普通用户**绕过 UI** 直调服务层 ⇒ FORBIDDEN | {"ok": false, "reason": "FORBIDDEN", "message": "仅管理员可以重新上传印面图"}
+PASS | ①′ 普通用户**绕过服务层**直调数据层 ⇒ FORBIDDEN（数据层独立拒绝） | {"ok": false, "reason": "FORBIDDEN", "message": "仅管理员可以重新上传印面图"}
+PASS | ①′ 越权调用后库零变化（印面指向 / 影像行数 / 二进制键集合） | {"before": {"face_image_id": "img-0001f-3", "image_count": 15, "blob_keys": ["asset:img-0001f-2", "asset:img-0001f-3"]}, "after": {"face_image_id": "img-0001f-3", "image_count": 15, "blob_keys": ["asset:img-0001f-2", "asset:img-0001f-3"]}}
+PASS | ⑤ 网络捕获中不得出现 5196 / square-crop | []
+PASS | ⑤ 网络捕获中不得出现任何外部 URL（全部为 127.0.0.1:5163 / data: / blob:） | []
+
+# 网络请求共 59 条；bad=[] external=[]

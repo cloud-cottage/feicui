@@ -1,0 +1,38 @@
+{
+  "jobs": {
+    "href": "http://127.0.0.1:5195/",
+    "rows": 0,
+    "hasDown": true,
+    "hasNotImpl": false,
+    "hasFixture": false,
+    "hasFakeData": false,
+    "textLen": 763
+  },
+  "job-detail": {
+    "href": "http://127.0.0.1:5195/jobs/demo-job-id",
+    "rows": 0,
+    "hasDown": true,
+    "hasNotImpl": false,
+    "hasFixture": false,
+    "hasFakeData": false,
+    "textLen": 626
+  },
+  "job-results": {
+    "href": "http://127.0.0.1:5195/jobs/demo-job-id/results",
+    "rows": 0,
+    "hasDown": true,
+    "hasNotImpl": false,
+    "hasFixture": false,
+    "hasFakeData": false,
+    "textLen": 586
+  },
+  "job-missing": {
+    "href": "http://127.0.0.1:5195/jobs/demo-job-id/missing",
+    "rows": 0,
+    "hasDown": true,
+    "hasNotImpl": false,
+    "hasFixture": false,
+    "hasFakeData": false,
+    "textLen": 571
+  }
+}

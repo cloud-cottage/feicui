@@ -1,0 +1,39 @@
+# 改前读数（D-2 复现）· 玺爱侧栏登录态
+
+- 载体脚本：`xiai/feicui/ops/kong_xiai_k3_domcheck.py`（自建 headless Chrome，独立 profile `/tmp/xiai-kong3-prof`，
+  `--remote-debugging-port=9433 --remote-allow-origins=*`；**未动用户自己的 Chrome，未停 5163**）
+- 运行命令：`python3 feicui/ops/kong_xiai_k3_domcheck.py pre`
+- 时点：本单**动手改代码之前**（`AppSidebar.vue` 仍为 `v-if="logged"` + `logged` 未定义）
+- 结论：登录**确实成功**（顶栏已显示「50 金」与账号头像「守」），但侧栏页脚**仍显示游客文案** ⇒ `changed: false`，
+  D-2 在真机 DOM 上复现。
+
+输出（stdout 原文，未加工）：
+
+```json
+{
+  "mode": "pre",
+  "chrome": "started",
+  "profile": "/tmp/xiai-kong3-prof",
+  "port": 9433,
+  "guest": {
+    "foot": "游客可自由浏览印章与印面。",
+    "foot_html": "<p>游客可自由浏览印章与印面。</p>",
+    "header": "印\n玺爱\n客",
+    "path": "/"
+  },
+  "after_login_path": "/",
+  "logged_in_user": {
+    "userId": "u-16601061656"
+  },
+  "logged": {
+    "foot": "游客可自由浏览印章与印面。",
+    "foot_html": "<p>游客可自由浏览印章与印面。</p>",
+    "header": "印\n玺爱\n50\n金\n守",
+    "path": "/"
+  },
+  "changed": false
+}
+```
+
+改后读数见 `kong_xiai_k3_uiflow_raw.json` 的 `sidebar_guest` / `sidebar_logged` 两键
+（`游客可自由浏览印章与印面。` → `登录后可提交勘误、上传实物照片。`）。

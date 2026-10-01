@@ -1,0 +1,30 @@
+{
+ "note": "越界判据＝`Path(FEICUI_ROOT + img_path).resolve()` 必须仍在 FEICUI_ROOT 之内；绝对路径与逃逸路径一律拒（404），见 51_e6_404.json 的 fixture 三例",
+ "FEICUI_ROOT": "/Users/kevin/bistro/shu/feicui",
+ "cases": [
+  {
+   "img_path": "../../../../etc/passwd",
+   "resolved": "/Users/etc/passwd",
+   "within_root": false,
+   "verdict": "404 IMAGE_UNAVAILABLE"
+  },
+  {
+   "img_path": "/etc/passwd",
+   "resolved": "/etc/passwd",
+   "within_root": false,
+   "verdict": "404 IMAGE_UNAVAILABLE"
+  },
+  {
+   "img_path": "",
+   "resolved": null,
+   "within_root": null,
+   "verdict": "404 IMAGE_UNAVAILABLE(img_path_null)"
+  },
+  {
+   "img_path": "output/__1bii_missing__.webp",
+   "resolved": "/Users/kevin/bistro/shu/feicui/output/__1bii_missing__.webp",
+   "within_root": true,
+   "verdict": "404 IMAGE_UNAVAILABLE(文件不在盘上)"
+  }
+ ]
+}

@@ -1,0 +1,49 @@
+[
+ {
+  "case": "指定 batch_id",
+  "payload": {
+   "batch_id": "fb_whatever"
+  },
+  "code": 400,
+  "body": {
+   "detail": {
+    "error": "BAD_PARAM",
+    "detail": "不支持指定 batch_id：batch_id 由 export.py 按「一本书 = 一个批次」派生（§3.3 §9.6），不臆造批次号"
+   }
+  }
+ },
+ {
+  "case": "dry_run=true",
+  "payload": {
+   "dry_run": true
+  },
+  "code": 400,
+  "body": {
+   "detail": {
+    "error": "DRY_RUN_UNSUPPORTED",
+    "detail": "export.py 无 dry-run 模式（不得假装跑过）"
+   }
+  }
+ },
+ {
+  "case": "book_code 不符",
+  "payload": {
+   "book_code": "NOPE"
+  },
+  "code": 400,
+  "body": {
+   "detail": {
+    "error": "BOOK_CODE_MISMATCH",
+    "detail": "book_code='NOPE' 与本书记录不符"
+   }
+  }
+ },
+ {
+  "case": "job 不存在",
+  "code": 404,
+  "body": {
+   "error": "JOB_NOT_FOUND",
+   "detail": "job 不存在：job-nope"
+  }
+ }
+]

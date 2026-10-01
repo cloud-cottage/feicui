@@ -1,0 +1,76 @@
+# 玺爱 · 本单自测（Kong）
+# 2026-09-20T09:27:32.816Z
+# passed=36 failed=0
+
+PASS  01. 管理员登录（唯一管理员手机号）
+        role=admin
+PASS  02. ② 印文留空 + 朝代/分类/印面图齐备 ⇒ 创建成功（不再返回 MISSING_REQUIRED）
+        {"ok":true,"message":"已新增印章《佚名》（XA000000001）与 1 个印面"}
+PASS  03. ① 第 1 枚新印章编号 = XA000000001（9 位）
+        stampId=XA000000001
+PASS  04. ① 编号匹配 ^XA\d{9}$
+        XA000000001
+PASS  05. ① 编号串长 = 11（XA + 9 位数字）
+        len=11
+PASS  06. ① 第 2 枚递增为 XA000000002 且不与既有冲突
+        stampId=XA000000002 ok=true 已新增印章《测试印》（XA000000002）与 1 个印面
+PASS  07. ② 印文非空时正常落盘（seal_name = 测试印）
+        "测试印"
+PASS  08. ① 解析容错：旧 XAI-000x 不被当作序号（旧规则会得 0009，本单首枚仍为 000000001）
+        XA000000001,XA000000002
+PASS  09. ① 既有 XAI-000x 8 行逐字未变（JSON 逐字比对）
+        legacyBefore_md5=5b7b227365616c47…
+PASS  10. ① 旧编号仍为 8 个、新编号 2 个，且新增动作未改写任何既有行
+        seals=10 legacy=8
+PASS  11. ① 新行实际值（贴全部新行）
+        [{"stamp_id":"XA000000001","id":"XA000000001","sealGroupId":"g-000000001","seal_name":"","dynasty":"清","seal_type":"私印","source":"manual"},{"stamp_id":"XA000000002","id":"XA000000002","sealGroupId":"g-000000002","seal_name":"测试印","dynasty":"明","seal_type":"閒章","source":"manual"}]
+PASS  12. ① 印面 id / 影像 id 模板不变（fc-<序号>-f1 / img-<序号>f，序号取 9 位）
+        {"faceIds":["fc-000000001-f1"],"imageIds":["img-000000001f"]}
+PASS  13. ② 印文为空 ⇒ 落盘就是空串（不写占位词）
+        {"seal_name":"","name":""}
+PASS  14. ② 高清资料清单：标签改「印文：」且空则「佚名」（file.js:52）
+        印文：佚名
+PASS  15. ② 第 3 枚（仅简体印文）创建成功
+        XA000000003 已新增印章《佚名》（XA000000003）与 1 个印面
+PASS  16. ② 第 3 枚编号递增为 XA000000003（不撞既有）
+        XA000000003
+PASS  17. ② 广场页（SSR 渲染）出现新印章且显示名回退为「佚名」
+        has_XA000000001=true has_佚名=true
+PASS  18. ② 广场卡片读数（贴实际 DOM 文本片段）：「佚名」与「長壽合文」都在卡片读数里
+        长寿 | 無名 | XAI-0001 | 骑都尉印 | 無名 | XAI-0002 | 昌 | 無名 | XAI-0003 | 文彭之印 | 文彭 | XAI-0004 | 丁敬身印 | 丁敬 | XAI-0005 | 家在钱塘 | 陳豫鍾 | XAI-0006 | 乾隆御览之宝 | 清內府 | XAI-0007 | 安持 | 陳巨來 | XAI-0008 | 佚名 |  | XA000000001 | 测试印 |  | XA000000002 | 長壽合文 |  | XA000000003
+PASS  19. ② 显示取值顺序保持现有逻辑（简体优先）：仅简体印文的印章卡片显示「長壽合文」
+        has長壽合文=true seal_name=''
+PASS  20. ② 广场页不再出现「待考」
+        has待考=false
+PASS  21. ② 详情页标题（h1）＝「佚名」
+        h1="佚名"
+PASS  22. ② 详情页印面名（face-block__name）＝「佚名」
+        face-block__name="佚名"
+PASS  23. ② 详情页不再出现「待考」
+        has待考=false
+PASS  24. ② 上传表单：印文字段标签＝「印文（选填）」
+        label="印文（选填）"
+PASS  25. ② 上传表单：说明文字只把朝代 / 分类 / 印面图列为必填，且不再出现「印章名称」
+        lede_ok=true
+PASS  26. ② 编辑固定属性弹窗对象名回退「佚名」（FaceFixedAttributesDialog.vue:111）
+        编辑对象：佚名 · fc-000000001-f1（固定属性按印面归属）。 只提交发生改动的项目。
+PASS  27. ② 未把「印面归属待考」一并改掉（另一概念，seals.js:113）
+        印面归属待考
+PASS  28. ③ 缺朝代 ⇒ 拒（MISSING_REQUIRED 含「朝代」）
+        {"ok":false,"reason":"MISSING_REQUIRED","missing":["朝代"],"message":"请补全必填项：朝代"}
+PASS  29. ③ 缺分类 ⇒ 拒（MISSING_REQUIRED 含「分类」）
+        {"ok":false,"reason":"MISSING_REQUIRED","missing":["分类"],"message":"请补全必填项：分类"}
+PASS  30. ③ 缺印面图 ⇒ 拒（MISSING_REQUIRED 含「印面图」）
+        {"ok":false,"reason":"MISSING_REQUIRED","missing":["印面图"],"message":"请补全必填项：印面图"}
+PASS  31. ③ 三次拒绝后集合计数与影像二进制数完全未变（无半成品）
+        {"before":{"seals":11,"faces":16,"images":16},"after":{"seals":11,"faces":16,"images":16}}
+PASS  32. ④ 同一印章同图重复提交（印文留空）⇒ deduped
+        {"ok":true,"deduped":true,"stampId":"XA000000001","message":"该印章与印面图此前已上传，本次未重复新增"}
+PASS  33. ④ 同一印章同图重复提交（印文非空）⇒ deduped
+        {"ok":true,"deduped":true,"stampId":"XA000000002"}
+PASS  34. ④ 两次 dedupe 未新增任何行 / 二进制（防重键 (印文,朝代,分类,sha256) 生效）
+        {"before":{"seals":11,"faces":16,"images":16},"after":{"seals":11,"faces":16,"images":16}}
+PASS  35. ⑤ 侧栏・游客文案
+        <p>游客可自由浏览印章与印面。</p>
+PASS  36. ⑤ 侧栏・登录后文案真实变化（不再显示游客文案）
+        <p>登录后可提交勘误、上传实物照片。</p>

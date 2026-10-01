@@ -1,0 +1,46 @@
+import { fileURLToPath, URL } from 'node:url'
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+
+const CONSOLE_ENTRY = '/console.html'
+
+/**
+ * 双入口（R13 / spec §2.3-6）：营销入口 index.html（`/`）+ 控制台入口 console.html（`/console/**`）。
+ * 把 `/console` 前缀的浏览器直达请求内部改写为控制台入口 HTML，
+ * 让 `/console/overview` 这类 history 路由在 dev / preview 下可直接打开。
+ * 生产部署需在网关做同构改写：`/console/**` -> `console.html`（见 README）。
+ */
+function consoleEntryRewrite() {
+  const rewrite = (req, _res, next) => {
+    const raw = req.url || '/'
+    const path = raw.split('?')[0]
+    if (path === '/console' || path.startsWith('/console/')) {
+      req.url = CONSOLE_ENTRY + raw.slice(path.length)
+    }
+    next()
+  }
+  return {
+    name: 'yinsuo-console-entry-rewrite',
+    configureServer(server) { server.middlewares.use(rewrite) },
+    configurePreviewServer(server) { server.middlewares.use(rewrite) },
+  }
+}
+
+export default defineConfig({
+  plugins: [vue(), consoleEntryRewrite()],
+  resolve: {
+    alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
+  },
+  server: { port: 5164, strictPort: true },
+  preview: { port: 5164, strictPort: true },
+  build: {
+    outDir: 'dist',
+    emptyOutDir: true,
+    rollupOptions: {
+      input: {
+        marketing: fileURLToPath(new URL('./index.html', import.meta.url)),
+        console: fileURLToPath(new URL('./console.html', import.meta.url)),
+      },
+    },
+  },
+})

@@ -1,0 +1,66 @@
+{
+  "pool_pid": 58158,
+  "manager_python": "/Users/kevin/bistro/shu/feicui/server/.venv/bin/python",
+  "db": "/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/db/copy_D_resume.db",
+  "faces_dir": "/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/faces/resume",
+  "workers": [
+    {
+      "index": 0,
+      "pid": 58165,
+      "alive": true,
+      "ready": true,
+      "spawns": 1,
+      "task": null
+    },
+    {
+      "index": 1,
+      "pid": 58166,
+      "alive": true,
+      "ready": true,
+      "spawns": 1,
+      "task": "job-d36d9fbe9e9c4f60a6d7b302cc1064fe#c1"
+    },
+    {
+      "index": 2,
+      "pid": 58167,
+      "alive": true,
+      "ready": true,
+      "spawns": 1,
+      "task": "job-d36d9fbe9e9c4f60a6d7b302cc1064fe#c2"
+    },
+    {
+      "index": 3,
+      "pid": 58168,
+      "alive": true,
+      "ready": true,
+      "spawns": 1,
+      "task": null
+    }
+  ],
+  "doc_preprocess": true,
+  "cpu_threads": 2,
+  "on_conflict": "skip",
+  "job": "job-d36d9fbe9e9c4f60a6d7b302cc1064fe",
+  "job_finished": null,
+  "in_flight_tasks": [
+    "job-d36d9fbe9e9c4f60a6d7b302cc1064fe#c1",
+    "job-d36d9fbe9e9c4f60a6d7b302cc1064fe#c2"
+  ],
+  "stats": {
+    "chunks_committed": 2,
+    "pages_done": 3,
+    "pages_failed": 0,
+    "detected": 47,
+    "inserted": 17,
+    "updated": 0,
+    "skipped": 0,
+    "ocr_empty": 17,
+    "requeued_pages": 0,
+    "imgs_written": 30,
+    "imgs_reused": 0,
+    "worker_deaths": 0
+  },
+  "uptime_s": 11.4,
+  "updated_at": "2026-09-20T12:28:17+08:00",
+  "reason": "tick"
+}

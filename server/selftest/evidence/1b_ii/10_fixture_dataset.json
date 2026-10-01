@@ -1,0 +1,27 @@
+{
+ "note": "fixture 行只插副本库；书名独立；越界/空路径/盘上缺文件四类各一行",
+ "fixture_book": "__1bii_fixture.pdf",
+ "rows": [
+  {
+   "page": 1,
+   "idx": 0,
+   "img_path": "output/../../../../etc/passwd"
+  },
+  {
+   "page": 1,
+   "idx": 1,
+   "img_path": "/etc/passwd"
+  },
+  {
+   "page": 1,
+   "idx": 2,
+   "img_path": ""
+  },
+  {
+   "page": 1,
+   "idx": 3,
+   "img_path": "output/__1bii_missing__.webp"
+  }
+ ],
+ "copy_main": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui_1bii_if1g4zzx/copy_main.db"
+}

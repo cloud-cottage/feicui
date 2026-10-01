@@ -1,0 +1,37 @@
+--- evidence-proxy/fix-1c/vite.config.js.before	2026-09-20 12:11:46
++++ vite.config.js	2026-09-20 12:12:06
+@@ -96,11 +96,34 @@
+     // 故显式钉死 5195（＝本服务端口）。
+     hmr: { clientPort: PORT },
+     proxy: {
++      // 直连 5195 的旧路径兼容键（阶段 1a 起存在，**本轮保留未动**）。
+       '/api': {
+         target: API_TARGET,
+         changeOrigin: false,
+         configure: apiProxyErrorGuard,
+       },
++      // ── 阶段 1c 修复（G-2）：base 感知的 API 键 ─────────────────────────────
++      // feicui 前端 base = '/feicui/'，故页面发出的 API 请求是 `/feicui/api/**`
++      // （见 src/config/env.js 的 API_BASE）。这样**同一份 API 路径在两种访问方式下都通**：
++      //   ① 直连 5195：/feicui/api/jobs → 本键 rewrite → /api/jobs → 5196
++      //   ② 经 5164  ：shu/web 的 '/feicui' 键**不带 rewrite**、原样透传到 5195，
++      //                到达后命中本键 → 同上（故 shu/web 侧**无需**再加第二条代理键，冻结面最小）
++      //
++      // 为什么必须显式 rewrite：Vite 的代理**不会**自动剥掉匹配到的 context，
++      // 且 proxy 中间件早于 baseMiddleware 执行 —— 这正是 G-2 的机理：
++      // 旧配置下 `/feicui/api/jobs` 既不匹配 '/api'（已在 base 之前），
++      // 剥掉 base 后又已过了代理阶段 ⇒ 落到 SPA 兜底，返回 200 text/html。
++      // rewrite 只剥开头的 `/feicui`（/feicui/api/jobs → /api/jobs），查询串原样保留。
++      //
++      // 目标默认 = http://127.0.0.1:5196（spec §6.1；FEICUI_API_TARGET 仅离线自测覆盖）。
++      // 同样挂 apiProxyErrorGuard：5196 未启动时返回 **503 JSON**（backend_unreachable），
++      // 使页面显示「后端未启动」，而不是把 HTML 当接口响应体展示。
++      '/feicui/api': {
++        target: API_TARGET,
++        changeOrigin: false,
++        rewrite: (p) => p.replace(/^\/feicui/, ''),
++        configure: apiProxyErrorGuard,
++      },
+     },
+   },
+   preview: {

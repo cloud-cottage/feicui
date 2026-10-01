@@ -1,0 +1,1 @@
+{"job_id":"job-8ed13d94ebdc4989bf74e0831a5abf79","state":"DONE","total_pages":7,"done_pages":7,"failed_pages":[],"cursor":{"chunk_lo":null,"chunk_hi":3},"counters":{"detected":42,"inserted":42,"updated":0,"skipped":0,"ocr_empty":15},"started_at":"2026-09-20T12:27:50+08:00","updated_at":"2026-09-20T12:28:02+08:00"}

@@ -1,0 +1,24 @@
+{
+  "call-site-0（真源本体）": {
+    "sniffMime(png)": "image/png",
+    "sniffMime(junk)": "image/png",
+    "imageSize(junk)": {
+      "width": 0,
+      "height": 0,
+      "colorMode": "RGB"
+    }
+  },
+  "call-site-1 assetmeta.js:259 `normalizeImagePayload`（创建印章/印面图入库用）": {
+    "normalizeImagePayload(png).mime": "image/png",
+    "normalizeImagePayload(junk).mime": "image/png",
+    "normalizeImagePayload(junk).ok": true,
+    "※ 认不出的字节被落成什么 mime": "image/png"
+  },
+  "call-site-2 db.js:502 `migrateLegacyPhotoRows`（旧行迁移）": {
+    "源码形态": "mime: row.mime || sniffMime(parsed.bytes)",
+    "关键事实 1": "`parsed.mime`（dataURL 头里**真实**的 MIME）被忽略，回落是这一支唯一的 mime 来源",
+    "关键事实 2": "落在 db.js（本单**禁改**清单内）",
+    "认不出的字节会落成 mime": "image/png",
+    "渲染侧兜底（assetmeta.js:146 bytesToDataUrl 默认参数）": "data:image/png;base64,AA"
+  }
+}

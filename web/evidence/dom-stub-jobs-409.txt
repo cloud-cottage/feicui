@@ -1,0 +1,51 @@
+# 场景：自测 stub（/tmp/feicui-stub.py, 127.0.0.1:5271，**非交付物**）
+# vite dev 以 FEICUI_API_TARGET=http://127.0.0.1:5271 启动；取数时点 2026-09-20 11:52:33
+# CDP 探针：{"has409":true,"hasExisting":true,"hasRaw":false}
+
+feicui
+印谱解析任务台 · 端口 5195 · API 5196
+任务页
+后端已连接（
+http://127.0.0.1:5271
+）· 最后探测 2026-09-20 11:52:33
+任务页
+
+新建 job 走
+E1 POST /api/jobs
+；job 列表见下方两栏（后端接口 / 本机记录，来源分开标注）。
+
+新建 job（E1）
+书路径 pdf_path *
+页范围 from（可选）
+页范围 to（可选）
+chunk_size（可选）
+rerun（同书重跑，spec §2.4 幂等）
+建 job
+上次请求体：{"pdf_path":"dup.pdf"}
+409 冲突：同一 pdf_path 已存在活跃 job —— 后端拒绝再起第二个同书 job（spec §3.2 S-5）
+HTTP 409
+
+响应时点 2026-09-20 11:52:31；既有 job_id 的抽取为启发式（spec 未定 409 的 body 形状，见 README §4 G-3）
+
+后端给出的既有 job_id ＝ stub-job-0007 · → 打开该既有 job
+
+原始响应体（原样展示，未改写）
+job 列表（后端）
+刷新
+后端尚未提供该接口
+HTTP 404
+
+spec §3.1 只定义了 E1（POST /api/jobs）等 5 个端点，未定义「列 job」端点；本页不发明契约，列表一栏留空并另列本机记录。
+
+原始响应体（原样展示，未改写）
+本浏览器本地记录（localStorage）
+清空
+
+**不是后端真值**：仅记录本机 E1 建 job 成功时拿到的 {job_id, state, total_pages, created_at}，用于在「后端列表接口尚未提供」时仍有入口。 与上面一栏严格分开，不得混用。
+
+本机暂无记录
+
+尚未在本浏览器成功建过 job。
+
+契约依据：feicui/docs/feicui.spec.md v1.1（md5 4264927baf24bb7f48e12366cd861fe7）— 前端只读引用， 未修改规范文件。
+本工程＝阶段 1a 前端骨架；后端（FastAPI:5196）在另一路。零 CDN / 零外链资源。

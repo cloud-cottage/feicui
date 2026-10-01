@@ -1,0 +1,32 @@
+=== 最终自测（交付态配置：无 FEICUI_API_TARGET 覆盖） 时点 2026-09-20 11:53:05 CST ===
+
+### A) lsof -nP -iTCP:5195 -sTCP:LISTEN  （绑定形态）
+COMMAND   PID  USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME
+node    86160 kevin   18u  IPv4 0x7697e085bdd5c7d2      0t0  TCP 127.0.0.1:5195 (LISTEN)
+
+### B) curl -s -o /dev/null -D - http://127.0.0.1:5195/  （只看响应首行）
+HTTP/1.1 200 OK
+### B') 对照 curl -s -o /dev/null -D - http://localhost:5195/
+HTTP/1.1 200 OK
+
+### C) 后端连通性探测（默认目标 5196，此刻未启动）
+{"reachable":false,"target":"http://127.0.0.1:5196","detail":"ECONNREFUSED"}
+
+### D) /api/jobs 经 Vite proxy 转发（后端未启动 ⇒ 代理层 503）
+HTTP/1.1 503 Service Unavailable
+{"error":"backend_unreachable","target":"http://127.0.0.1:5196","code":"ECONNREFUSED","note":"此响应由 Vite dev 代理产生（后端连接失败），非 feicui API 响应"}
+
+### E) 端口纪律（5164 属他人进程，本单未碰；5173/5174 无监听）
+-- port 5195: 86160 node    86160 kevin   18u  IPv4 0x7697e085bdd5c7d2      0t0  TCP 127.0.0.1:5195 (LISTEN)
+
+-- port 5164: 93523 node    93523 kevin   20u  IPv6 0x15908b2f6a25d471      0t0  TCP [::1]:5164 (LISTEN)
+
+-- port 5173: 
+-- port 5174: 
+-- port 5196: 
+-- port 5555: 93417 node    93417 kevin   17u  IPv6 0x7e9da640fe9fee17      0t0  TCP *:5555 (LISTEN)
+
+
+### F) 本单起的进程溯源
+  PID  PPID STARTED                      COMMAND
+86160 85480 Sun Sep 20 11:52:57 2026     node /Users/kevin/bistro/shu/feicui/web/node_modules/.bin/vite

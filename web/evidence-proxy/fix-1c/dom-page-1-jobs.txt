@@ -1,0 +1,40 @@
+# E1 /feicui/ 任务页
+# location: http://localhost:5164/feicui/
+
+feicui
+印谱解析任务台 · 端口 5195 · API 5196
+任务页
+后端未启动 / 未连接
+目标 http://127.0.0.1:5196 连不上（ ECONNREFUSED ）。本页不展示任何示例或估算数据。
+启动提示：cd /Users/kevin/bistro/shu/feicui && ./venv/bin/uvicorn app:app --host 127.0.0.1 --port 5196
+最后探测时点：2026-09-20 12:12:58
+任务页
+
+新建 job 走
+E1 POST /api/jobs
+；job 列表见下方两栏（后端接口 / 本机记录，来源分开标注）。
+
+新建 job（E1）
+书路径 pdf_path *
+页范围 from（可选）
+页范围 to（可选）
+chunk_size（可选）
+rerun（同书重跑，spec §2.4 幂等）
+建 job
+job 列表（后端）
+刷新
+后端未启动 / 未连接：列表无法获取
+
+判负细节 ECONNREFUSED
+
+本浏览器本地记录（localStorage）
+清空
+
+**不是后端真值**：仅记录本机 E1 建 job 成功时拿到的 {job_id, state, total_pages, created_at}，用于在「后端列表接口尚未提供」时仍有入口。 与上面一栏严格分开，不得混用。
+
+本机暂无记录
+
+尚未在本浏览器成功建过 job。
+
+契约依据：feicui/docs/feicui.spec.md v1.1（md5 4264927baf24bb7f48e12366cd861fe7）— 前端只读引用， 未修改规范文件。
+本工程＝阶段 1a 前端骨架；后端（FastAPI:5196）在另一路。零 CDN / 零外链资源。

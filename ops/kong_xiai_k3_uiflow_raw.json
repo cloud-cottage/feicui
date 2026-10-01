@@ -1,0 +1,95 @@
+{
+  "chrome": "already",
+  "profile": "/tmp/xiai-kong3-prof",
+  "port": 9433,
+  "checks": [
+    {
+      "name": "⑤ 侧栏・游客文案（真实 DOM）",
+      "pass": true,
+      "detail": "游客可自由浏览印章与印面。"
+    },
+    {
+      "name": "⑤ 侧栏・登录后文案真实变化（真实 DOM）",
+      "pass": true,
+      "detail": "登录后可提交勘误、上传实物照片。"
+    },
+    {
+      "name": "⑤ 侧栏文案在登录前后确实不同",
+      "pass": true,
+      "detail": "游客可自由浏览印章与印面。 -> 登录后可提交勘误、上传实物照片。"
+    },
+    {
+      "name": "② 印文字段标签＝「印文（选填）」（真实 DOM）",
+      "pass": true,
+      "detail": "印文（选填）"
+    },
+    {
+      "name": "② 印文字段留空即提交（未填任何值）",
+      "pass": true,
+      "detail": "value=''"
+    },
+    {
+      "name": "② 印文留空 + 朝代/分类/印面图齐备 ⇒ 真上传成功（反馈文案）",
+      "pass": true,
+      "detail": "已新增印章《佚名》（XA000000001）与 1 个印面 查看「XA000000001」"
+    },
+    {
+      "name": "② 广场卡片：标题＝「佚名」、当前印文＝「佚名」、编号＝XA000000001（真实 DOM）",
+      "pass": true,
+      "detail": "{\"title\": \"佚名\", \"dds\": [\"佚名\", \"\", \"XA000000001\"], \"link\": \"/seal/XA000000001\"}"
+    },
+    {
+      "name": "③ 缺朝代 ⇒ 真表单反馈为「请补全必填项：朝代」",
+      "pass": true,
+      "detail": "请补全必填项：朝代"
+    },
+    {
+      "name": "③ 拒绝后印章总数仍为 9（8 枚既有 + 1 枚新建；无半成品）",
+      "pass": true,
+      "detail": "9"
+    },
+    {
+      "name": "② 详情页（真 DOM）h1＝「佚名」、印面名＝「佚名」、编号含 XA000000001",
+      "pass": true,
+      "detail": "{\"h1\": \"佚名\", \"faceName\": \"佚名\", \"stampTag\": \"藏品编号 XA000000001\", \"body\": true}"
+    },
+    {
+      "name": "① 既有 XAI-0001 详情页仍为「長壽」（既有行逐字未改写）",
+      "pass": true,
+      "detail": "{\"h1\": \"長壽\", \"stampTag\": \"藏品编号 XAI-0001\"}"
+    }
+  ],
+  "sidebar_guest": "游客可自由浏览印章与印面。",
+  "after_login_path": "/",
+  "sidebar_logged": "登录后可提交勘误、上传实物照片。",
+  "sidebar_logged_html": "<p>登录后可提交勘误、上传实物照片。</p>",
+  "dialog_open": true,
+  "file_set": "0|hint",
+  "name_field_value": "",
+  "name_label": "印文（选填）",
+  "upload_feedback": "已新增印章《佚名》（XA000000001）与 1 个印面 查看「XA000000001」",
+  "notice_html": "已新增印章《佚名》（XA000000001）与 1 个印面 查看「XA000000001」",
+  "new_card": {
+    "title": "佚名",
+    "dds": [
+      "佚名",
+      "",
+      "XA000000001"
+    ],
+    "link": "/seal/XA000000001"
+  },
+  "missing_dynasty_feedback": "请补全必填项：朝代",
+  "seal_count_after_reject": 9,
+  "detail_new": {
+    "h1": "佚名",
+    "faceName": "佚名",
+    "stampTag": "藏品编号 XA000000001",
+    "body": true
+  },
+  "detail_legacy": {
+    "h1": "長壽",
+    "stampTag": "藏品编号 XAI-0001"
+  },
+  "passed": 11,
+  "failed": 0
+}

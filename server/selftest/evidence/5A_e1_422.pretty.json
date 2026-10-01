@@ -1,0 +1,9 @@
+{
+    "detail": {
+        "error": "FIELD_NOT_DERIVABLE",
+        "detail": "\u65e0\u6cd5\u6d3e\u751f total_pages\uff1a\u65e2\u672a\u7ed9 page_range\uff0c\u4e5f\u8bfb\u4e0d\u51fa PDF \u9875\u6570\uff08PyMuPDF \u4e0d\u53ef\u7528 / \u6587\u4ef6\u635f\u574f\uff09",
+        "missing": [
+            "total_pages"
+        ]
+    }
+}

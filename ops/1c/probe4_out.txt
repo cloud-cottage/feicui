@@ -1,0 +1,7 @@
+=== EVAL RESULT ===
+{"payloadShown":null,"notices":["201 已建 job HTTP 201 响应时点 2026-09-20 13:17:56 job_id ＝ job-de324032aa4c4601afd5cb165e7950a0 · state ＝ QUEUED · total_pages ＝ 20 · created_at ＝ 2026-09-20T13:17:56+08:00 → 打开任务详情（E2 真实进度） 原始响应体（原样展示，未改写）"],"created":"2026-09-20T05:17:59.502Z"}
+=== CONSOLE (2) ===
+{"type": "debug", "args": ["[vite] connecting..."]}
+{"type": "debug", "args": ["[vite] connected."]}
+=== NETWORK FAILED (0) ===
+=== HTTP >=400 (0) ===

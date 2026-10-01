@@ -1,0 +1,27 @@
+{
+ "code": 200,
+ "total": 13,
+ "items": 13,
+ "first_item_keys": [
+  "assets",
+  "batchId",
+  "bbox",
+  "dedupeKey",
+  "dynasty",
+  "ext",
+  "feicui",
+  "material",
+  "missing_required",
+  "reviewStatus",
+  "rightsStatus",
+  "schemaVersion",
+  "sealCode",
+  "sealName",
+  "sealStyle",
+  "sealType",
+  "sizeMm",
+  "sourceBook",
+  "sourcePageNo",
+  "transcription"
+ ]
+}

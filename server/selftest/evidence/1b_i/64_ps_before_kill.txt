@@ -1,0 +1,7 @@
+== SIGKILL 前 ps（精确 PID）==
+  PID  PPID  PGID STARTED                      COMMAND
+58158 56389 56035 Sun Sep 20 12:28:05 2026     /Users/kevin/bistro/shu/feicui/server/.venv/bin/python -m app.pool --workers 4
+58165 58158 56035 Sun Sep 20 12:28:05 2026     /opt/homebrew/Cellar/python@3.11/3.11.16/Frameworks/Python.framework/Versions/3.11/Resources/Python.app
+58166 58158 56035 Sun Sep 20 12:28:05 2026     /opt/homebrew/Cellar/python@3.11/3.11.16/Frameworks/Python.framework/Versions/3.11/Resources/Python.app
+58167 58158 56035 Sun Sep 20 12:28:05 2026     /opt/homebrew/Cellar/python@3.11/3.11.16/Frameworks/Python.framework/Versions/3.11/Resources/Python.app
+58168 58158 56035 Sun Sep 20 12:28:05 2026     /opt/homebrew/Cellar/python@3.11/3.11.16/Frameworks/Python.framework/Versions/3.11/Resources/Python.app

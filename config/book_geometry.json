@@ -1,0 +1,531 @@
+{
+  "schema": "yinsuo.feicui.book_geometry.v1",
+  "books": {
+    "GXHB": {
+      "pdf_name": "古玺汇编 文物出版社 罗福颐  ok.pdf",
+      "pdf_path": "/Users/kevin/Downloads/古玺汇编 文物出版社 罗福颐  ok.pdf",
+      "coord_dpi": 400,
+      "coord_dpi_source": "measured",
+      "pages_pt": {
+        "24": [
+          563.569,
+          841.5
+        ],
+        "25": [
+          566.4035,
+          801.8151
+        ],
+        "26": [
+          563.569,
+          841.5
+        ]
+      },
+      "evidence": {
+        "method": "render_at_candidate_dpi + red_redetect + exact_bbox_match(tol=3px)",
+        "templateUsed": "古玺汇编 文物出版社 罗福颐  ok.pdf",
+        "pages": {
+          "24": {
+            "pageSizePt": [
+              563.569,
+              841.5
+            ],
+            "want": 6,
+            "candidates": {
+              "72": {
+                "detected": 6,
+                "exactMatch": 0
+              },
+              "100": {
+                "detected": 6,
+                "exactMatch": 0
+              },
+              "120": {
+                "detected": 6,
+                "exactMatch": 0
+              },
+              "144": {
+                "detected": 6,
+                "exactMatch": 0
+              },
+              "150": {
+                "detected": 6,
+                "exactMatch": 0
+              },
+              "180": {
+                "detected": 6,
+                "exactMatch": 0
+              },
+              "200": {
+                "detected": 6,
+                "exactMatch": 0
+              },
+              "240": {
+                "detected": 6,
+                "exactMatch": 0
+              },
+              "288": {
+                "detected": 6,
+                "exactMatch": 0
+              },
+              "300": {
+                "detected": 6,
+                "exactMatch": 0
+              },
+              "350": {
+                "detected": 6,
+                "exactMatch": 0
+              },
+              "400": {
+                "detected": 6,
+                "exactMatch": 6
+              },
+              "500": {
+                "detected": 6,
+                "exactMatch": 0
+              },
+              "600": {
+                "detected": 6,
+                "exactMatch": 0
+              }
+            }
+          },
+          "25": {
+            "pageSizePt": [
+              566.4035,
+              801.8151
+            ],
+            "want": 7,
+            "candidates": {
+              "72": {
+                "detected": 6,
+                "exactMatch": 0
+              },
+              "100": {
+                "detected": 7,
+                "exactMatch": 0
+              },
+              "120": {
+                "detected": 7,
+                "exactMatch": 0
+              },
+              "144": {
+                "detected": 7,
+                "exactMatch": 0
+              },
+              "150": {
+                "detected": 7,
+                "exactMatch": 0
+              },
+              "180": {
+                "detected": 7,
+                "exactMatch": 0
+              },
+              "200": {
+                "detected": 7,
+                "exactMatch": 0
+              },
+              "240": {
+                "detected": 7,
+                "exactMatch": 0
+              },
+              "288": {
+                "detected": 7,
+                "exactMatch": 0
+              },
+              "300": {
+                "detected": 7,
+                "exactMatch": 0
+              },
+              "350": {
+                "detected": 7,
+                "exactMatch": 0
+              },
+              "400": {
+                "detected": 7,
+                "exactMatch": 7
+              },
+              "500": {
+                "detected": 7,
+                "exactMatch": 0
+              },
+              "600": {
+                "detected": 7,
+                "exactMatch": 0
+              }
+            }
+          }
+        },
+        "fullMatchPages": {
+          "400": [
+            24,
+            25
+          ]
+        },
+        "testedPages": [
+          24,
+          25
+        ]
+      }
+    },
+    "QHYD": {
+      "pdf_name": "秦汉印典 上海书画 金怀英  1997 ok.pdf",
+      "pdf_path": "/Users/kevin/Downloads/秦汉印典 上海书画 金怀英  1997 ok.pdf",
+      "coord_dpi": 144,
+      "coord_dpi_source": "measured",
+      "pages_pt": {
+        "5": [
+          297.84,
+          421.44
+        ],
+        "6": [
+          297.84,
+          421.44
+        ]
+      },
+      "evidence": {
+        "method": "render_at_candidate_dpi + red_redetect + exact_bbox_match(tol=3px)",
+        "templateUsed": "秦汉印典 上海书画 金怀英  1997 ok.pdf",
+        "pages": {
+          "5": {
+            "pageSizePt": [
+              297.84,
+              421.44
+            ],
+            "want": 6,
+            "candidates": {
+              "72": {
+                "detected": 6,
+                "exactMatch": 0
+              },
+              "100": {
+                "detected": 6,
+                "exactMatch": 0
+              },
+              "120": {
+                "detected": 6,
+                "exactMatch": 0
+              },
+              "144": {
+                "detected": 6,
+                "exactMatch": 6
+              },
+              "150": {
+                "detected": 6,
+                "exactMatch": 0
+              },
+              "180": {
+                "detected": 6,
+                "exactMatch": 0
+              },
+              "200": {
+                "detected": 6,
+                "exactMatch": 0
+              },
+              "240": {
+                "detected": 8,
+                "exactMatch": 0
+              },
+              "288": {
+                "detected": 9,
+                "exactMatch": 0
+              },
+              "300": {
+                "detected": 10,
+                "exactMatch": 0
+              },
+              "350": {
+                "detected": 10,
+                "exactMatch": 0
+              },
+              "400": {
+                "detected": 12,
+                "exactMatch": 0
+              },
+              "500": {
+                "detected": 14,
+                "exactMatch": 0
+              },
+              "600": {
+                "detected": 13,
+                "exactMatch": 0
+              }
+            }
+          },
+          "6": {
+            "pageSizePt": [
+              297.84,
+              421.44
+            ],
+            "want": 6,
+            "candidates": {
+              "72": {
+                "detected": 6,
+                "exactMatch": 0
+              },
+              "100": {
+                "detected": 6,
+                "exactMatch": 0
+              },
+              "120": {
+                "detected": 6,
+                "exactMatch": 0
+              },
+              "144": {
+                "detected": 6,
+                "exactMatch": 6
+              },
+              "150": {
+                "detected": 6,
+                "exactMatch": 0
+              },
+              "180": {
+                "detected": 6,
+                "exactMatch": 0
+              },
+              "200": {
+                "detected": 6,
+                "exactMatch": 0
+              },
+              "240": {
+                "detected": 5,
+                "exactMatch": 0
+              },
+              "288": {
+                "detected": 9,
+                "exactMatch": 0
+              },
+              "300": {
+                "detected": 9,
+                "exactMatch": 0
+              },
+              "350": {
+                "detected": 9,
+                "exactMatch": 0
+              },
+              "400": {
+                "detected": 9,
+                "exactMatch": 0
+              },
+              "500": {
+                "detected": 11,
+                "exactMatch": 0
+              },
+              "600": {
+                "detected": 11,
+                "exactMatch": 0
+              }
+            }
+          }
+        },
+        "fullMatchPages": {
+          "144": [
+            5,
+            6
+          ]
+        },
+        "testedPages": [
+          5,
+          6
+        ]
+      }
+    },
+    "HMF": {
+      "pdf_name": "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf",
+      "pdf_path": "/Users/kevin/Downloads/黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf",
+      "coord_dpi": null,
+      "coord_dpi_source": "undetermined",
+      "pages_pt": {},
+      "evidence": {
+        "method": "render_at_candidate_dpi + red_redetect + exact_bbox_match(tol=3px)",
+        "templateUsed": "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf",
+        "pages": {},
+        "fullMatchPages": {},
+        "testedPages": []
+      }
+    },
+    "TMP": {
+      "pdf_name": "tmp.pdf",
+      "pdf_path": "tmp.pdf",
+      "coord_dpi": 144,
+      "coord_dpi_source": "measured",
+      "pages_pt": {
+        "13": [
+          521.0,
+          734.0
+        ],
+        "14": [
+          521.0,
+          734.0
+        ],
+        "15": [
+          521.0,
+          734.0
+        ],
+        "16": [
+          521.0,
+          734.0
+        ],
+        "17": [
+          521.0,
+          734.0
+        ],
+        "18": [
+          521.0,
+          734.0
+        ],
+        "19": [
+          521.0,
+          734.0
+        ]
+      },
+      "evidence": {
+        "method": "render_at_candidate_dpi + red_redetect + exact_bbox_match(tol=3px)",
+        "templateUsed": "tmp.pdf → alias 黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf",
+        "pages": {
+          "13": {
+            "pageSizePt": [
+              521.0,
+              734.0
+            ],
+            "want": 6,
+            "candidates": {
+              "72": {
+                "detected": 4,
+                "exactMatch": 0
+              },
+              "100": {
+                "detected": 5,
+                "exactMatch": 0
+              },
+              "120": {
+                "detected": 5,
+                "exactMatch": 0
+              },
+              "144": {
+                "detected": 6,
+                "exactMatch": 6
+              },
+              "150": {
+                "detected": 6,
+                "exactMatch": 0
+              },
+              "180": {
+                "detected": 6,
+                "exactMatch": 0
+              },
+              "200": {
+                "detected": 6,
+                "exactMatch": 0
+              },
+              "240": {
+                "detected": 6,
+                "exactMatch": 0
+              },
+              "288": {
+                "detected": 6,
+                "exactMatch": 0
+              },
+              "300": {
+                "detected": 6,
+                "exactMatch": 0
+              },
+              "350": {
+                "detected": 6,
+                "exactMatch": 0
+              },
+              "400": {
+                "detected": 6,
+                "exactMatch": 0
+              },
+              "500": {
+                "detected": 6,
+                "exactMatch": 0
+              },
+              "600": {
+                "detected": 6,
+                "exactMatch": 0
+              }
+            }
+          },
+          "14": {
+            "pageSizePt": [
+              521.0,
+              734.0
+            ],
+            "want": 6,
+            "candidates": {
+              "72": {
+                "detected": 5,
+                "exactMatch": 0
+              },
+              "100": {
+                "detected": 7,
+                "exactMatch": 0
+              },
+              "120": {
+                "detected": 6,
+                "exactMatch": 0
+              },
+              "144": {
+                "detected": 6,
+                "exactMatch": 6
+              },
+              "150": {
+                "detected": 6,
+                "exactMatch": 0
+              },
+              "180": {
+                "detected": 6,
+                "exactMatch": 0
+              },
+              "200": {
+                "detected": 6,
+                "exactMatch": 0
+              },
+              "240": {
+                "detected": 6,
+                "exactMatch": 0
+              },
+              "288": {
+                "detected": 6,
+                "exactMatch": 0
+              },
+              "300": {
+                "detected": 7,
+                "exactMatch": 0
+              },
+              "350": {
+                "detected": 7,
+                "exactMatch": 0
+              },
+              "400": {
+                "detected": 7,
+                "exactMatch": 0
+              },
+              "500": {
+                "detected": 7,
+                "exactMatch": 0
+              },
+              "600": {
+                "detected": 6,
+                "exactMatch": 0
+              }
+            }
+          }
+        },
+        "fullMatchPages": {
+          "144": [
+            13,
+            14
+          ]
+        },
+        "testedPages": [
+          13,
+          14
+        ]
+      }
+    }
+  },
+  "generatedAt": "2026-09-20T09:00:00+08:00",
+  "note": "stamps.x1y1x2y2 是页内**像素**坐标，渲染 DPI 逐书不同（旧版 144dpi / 现版 400dpi）。coord_dpi 由 export.py calibrate 实测（重渲染重检测 + 与库内 bbox 精确比对），用于换算点位 bbox、相对比例 bbox 与 §9.4 dedupe_key 的 1pt 量化。"
+}

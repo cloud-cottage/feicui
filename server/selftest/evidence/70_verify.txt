@@ -1,0 +1,57 @@
+== E1 形状与状态码（§3.1 E1 / §3.2 S-5 / S-6） ==
+  [PASS] POST /api/jobs 第一次 = 201
+  [PASS] E1 201 形状 = 4 字段
+  [PASS] E1 入队语义 ⇒ state=QUEUED
+  [PASS] E1 total_pages = page_range 宽度 7
+  [PASS] E1 job_id 与脚本记录一致
+  [PASS] 入队即落 7 行 job_pages（页级断点游标落盘，§2.3）
+  [PASS] 同书第二次 = 409
+  [PASS] 409 响应体回既有 job_id（不得静默起第二个）
+  [PASS] 库内 job 行数 = 1（未起第二个）
+  [PASS] pdf_path 不存在 ⇒ 400（S-6 参数非法）
+== E2 形状与「库内复算」（§3.2 S-1 / S-2） ==
+  [PASS] E2 形状 = §3.1 E2 逐字段（9 字段）
+  [PASS] E2 cursor = {chunk_lo,chunk_hi}
+  [PASS] E2 counters = 5 项
+  [PASS] 初态 done_pages=0 / failed_pages=[]
+  [PASS] 初态 total_pages = 库内 job_pages 行数
+  同刻库内复算：total=7 done=2 failed=[15] counters=[23, 20, 0, 0, 14]
+  [PASS] done_pages 由库内复算（API=2 / SQL=2）
+  [PASS] failed_pages 由库内复算（API=[15] / SQL=[15]）
+  [PASS] total_pages 由库内复算
+  [PASS] 样本确有 failed_pages（非空才能验 S-2）
+  [PASS] S-2：有 failed_pages 时 state 不得为 DONE
+  [PASS] S-2：库内 state=DONE 被下行报为 FAILED_PARTIAL
+  [PASS] counters 由库内 SUM() 复算（API=[23, 20, 0, 0, 14] / SQL=[23, 20, 0, 0, 14]）
+  [PASS] cursor 形状合法
+  [PASS] 再推一页后 done_pages 跟随复算变化（API=3 / SQL=3）
+  [PASS] done_pages 增量 = 库内 DONE 行增量（非估算 / 非计时器）
+  [PASS] failed_pages 不受其它页推进影响（仍 = 库内 FAILED 集）
+  [PASS] 未知 job_id ⇒ 404
+== E5 形状与计数对账（§3.1 E5 / AC-06 / AC-07） ==
+  独立复算范围：pdf_name='tmp.pdf' pages=[13,19] root=/Users/kevin/bistro/shu/feicui
+  [PASS] E5 形状 = {kind,count,items}
+  [PASS] E5 kind 回显 image
+  [PASS] E5 image count = 独立复算 os.path.exists 缺失数（API=0 / 复算=0）
+  [PASS] items 长度 = count
+  [PASS] E5 item 字段 ⊆ 规范字段集
+  [PASS] E5 kind 回显 text
+  [PASS] E5 text count = 独立复算 SQL（API=30 / 复算=30）
+  [PASS] text items 长度 = count
+  （附）AC-07 的 SQL 全文＝**全表口径（无书名过滤）**＝77，本次 job 区间口径＝30 ⇒ 两者不等是口径差异，见 REPORT_1a.md 规范缺口 G-3
+  [PASS] 插入 2 条假缺失行后 count 跟随复算（API=2 / 复算=2）
+  [PASS] count 增量 = 2（与插入的假行数一致）
+  [PASS] 假缺失行 reason=file_missing
+  [PASS] 响应头 x-feicui-scope 与库内范围一致
+  [PASS] kind 缺失 ⇒ 400（S-6 参数非法）
+== E1 total_pages 派生 / 422（§3.2 S-6） ==
+  [PASS] 无 page_range 建 job = 201
+  [PASS] total_pages = 独立读数 PDF 页数（API=807 / 独立=807）
+  [PASS] 入队落 job_pages 行数 = PDF 页数
+  [PASS] 读不出页数且未给 page_range ⇒ 422
+  [PASS] 422 响应体指明不可派生的字段名 total_pages
+== 1b 端点必须不存在（E3/E4 未按本单验收） ==
+  [PASS] E3 未注册（404）
+  [PASS] E4 未注册（404）
+
+VERIFY OK：全部断言通过

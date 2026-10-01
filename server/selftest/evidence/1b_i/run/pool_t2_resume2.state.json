@@ -1,0 +1,63 @@
+{
+  "pool_pid": 58482,
+  "manager_python": "/Users/kevin/bistro/shu/feicui/server/.venv/bin/python",
+  "db": "/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/db/copy_D_resume.db",
+  "faces_dir": "/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/faces/resume",
+  "workers": [
+    {
+      "index": 0,
+      "pid": 58485,
+      "alive": false,
+      "ready": true,
+      "spawns": 1,
+      "task": null
+    },
+    {
+      "index": 1,
+      "pid": 58486,
+      "alive": false,
+      "ready": true,
+      "spawns": 1,
+      "task": null
+    },
+    {
+      "index": 2,
+      "pid": 58489,
+      "alive": false,
+      "ready": true,
+      "spawns": 1,
+      "task": null
+    },
+    {
+      "index": 3,
+      "pid": 58490,
+      "alive": false,
+      "ready": true,
+      "spawns": 1,
+      "task": null
+    }
+  ],
+  "doc_preprocess": true,
+  "cpu_threads": 2,
+  "on_conflict": "skip",
+  "job": null,
+  "job_finished": "DONE",
+  "in_flight_tasks": [],
+  "stats": {
+    "chunks_committed": 2,
+    "pages_done": 4,
+    "pages_failed": 0,
+    "detected": 50,
+    "inserted": 25,
+    "updated": 0,
+    "skipped": 0,
+    "ocr_empty": 18,
+    "requeued_pages": 0,
+    "imgs_written": 7,
+    "imgs_reused": 18,
+    "worker_deaths": 0
+  },
+  "uptime_s": 16.1,
+  "updated_at": "2026-09-20T12:28:34+08:00",
+  "reason": "stopped"
+}

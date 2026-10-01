@@ -1,0 +1,117 @@
+### 阶段 1c-激活 · 收尾清场取证（Kong，2026-09-20）
+
+## A. 上一轮遗留的测试服务：5371 / 5395 —— 已无残留（本单核验）
+
+```
+ps -p 49149   → NOT FOUND        （上一轮记录的 API(副本库) 测试服务 PID）
+ps -p 49563   → NOT FOUND        （上一轮记录的 vite dev 测试服务 PID）
+lsof -nP -iTCP:5371 -sTCP:LISTEN  → 无输出（FREE）
+lsof -nP -iTCP:5395 -sTCP:LISTEN  → 无输出（FREE）
+```
+⇒ 无需再停；本单**未对 5371/5395 发出任何 kill**。
+
+## B. 本单为「最后一次库内复算」自起的一次性副本 API —— 三重身份 + 精确 PID 停掉
+
+```
+[1] 副本库（WAL 一致快照，sqlite3 backup API）
+    /tmp/feicui_1c_final.db   stamps=89  jobs=5  job_pages=32
+
+[2] 起法（非登记端口，非面板托管）
+    cwd  = /Users/kevin/bistro/xiai/feicui/server
+    cmd  = ./.venv/bin/python -m app.main
+    env  = FEICUI_DB=/tmp/feicui_1c_final.db
+           FEICUI_API_PORT=5371
+           FEICUI_API_HOST=127.0.0.1
+    pid  = 64938     ppid = 85397
+
+[3] 三重身份核对（ps 命令 / cwd / env 三者一致后才动手）
+    ps  -p 64938 -o pid=,ppid=,command=   → 64938 85397 ./.venv/bin/python -m app.main
+    lsof -a -p 64938 -d cwd -Fn | tail -1 → n/Users/kevin/bistro/xiai/feicui/server
+    ps eww -p 64938 | grep FEICUI         → FEICUI_DB=/tmp/feicui_1c_final.db
+                                            FEICUI_API_PORT=5371
+                                            FEICUI_API_HOST=127.0.0.1
+    lsof -nP -iTCP:5371 -sTCP:LISTEN      → python3.1 64938  TCP 127.0.0.1:5371 (LISTEN)
+    curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:5371/api/jobs → 200
+
+[4] 停：按**精确 PID**（未用 pkill -f，未用端口扫描式 kill）
+    kill -TERM 64938
+    ps -p 64938 → alive? NO
+    lsof -nP -iTCP:5371 -sTCP:LISTEN → 5371 FREE
+
+[5] 池 / worker 无残留（自行收尾，非本单强杀）
+    server/.run/pool.state.json:
+      "pool_pid": 66344, "db": "/private/tmp/feicui_1c_final.db",
+      workers[*].alive = false（4/4）, "job_finished": "DONE", "reason": "stopped"
+    全机扫描 `ps -Ao pid,command | grep -E "app\.pool|pool\.state"` → 无匹配
+
+[6] 自建 headless Chrome（DOM 证据用）同样按精确 PID 停掉
+    pid 70056  --headless=new --remote-debugging-port=9711 --remote-allow-origins=*
+    kill -TERM 70056 → alive? NO
+    lsof -nP -iTCP:9711 -sTCP:LISTEN → 9711 FREE
+    ps -Ao pid,command | grep remote-debugging-port=9711 | grep -v grep → NONE
+    临时 profile /tmp/feicui_1c_chrome → 已删
+```
+
+## C. 面板托管端口 —— 本单未触碰（现测）
+
+```
+/api/status → 条目 = 12，running = 12，非running = []
+  shu         running=True port=5164 pid=54316 cwd=/Users/kevin/bistro/xiai/web
+  feicui-api  running=True port=5196 pid=54317 cwd=/Users/kevin/bistro/xiai/feicui/server
+  feicui-web  running=True port=5195 pid=54318 cwd=/Users/kevin/bistro/xiai/feicui/web
+```
+
+## D. 另发现的第三处遗留（**未停**，仅登记）
+
+```
+pid 28295  port 127.0.0.1:5361（LISTEN）
+  cwd  = /Users/kevin/bistro/xiai/feicui/server
+  cmd  = ./.venv/bin/python -m app.main
+  start= Sun Sep 20 13:12:50 2026
+  env  = FEICUI_ROOT=/Users/kevin/bistro/shu/feicui                       ← 旧 shu 路径（已失效）
+         FEICUI_DB=/Users/kevin/bistro/shu/feicui/qa-recheck/p1bii-neng/evidence/run/tmpdb/neng.db
+         FEICUI_FACES_DIR=…/shu/feicui/qa-recheck/p1bii-neng/evidence/run/tmp_faces
+         FEICUI_EXPORT_ROOT=…/shu/feicui/qa-recheck/p1bii-neng/evidence/run/tmp_exports
+         FEICUI_API_PORT=5361  FEICUI_API_HOST=127.0.0.1
+```
+归属 **Neng 的 QA 证据（p1bii-neng）**，不在本单清单（5371/5395）内 ⇒ **只登记、未停**，待授权。
+
+## B2. 复算复跑（用**修复后最终版**脚本）自起的一次性副本 API —— 同样按精确 PID 停掉
+
+起因：首次复算（§B）产出的证据文件里第 ① 行日志文案是**改文案之前**的旧版，且夹了一条
+`/bin/bash: timeout: command not found` / `RC=127`（macOS 无 `timeout`）的无效尝试痕迹。
+为让证据由**最终修订**的脚本产出、且记录干净，**用修复后的 `e2e_run.py`（md5=293edda6…）重跑一次**。
+
+```
+[1] 副本库（重新取正式库 WAL 一致快照）
+    /tmp/feicui_1c_final2.db   stamps=89  jobs=5  job_pages=32
+
+[2] 起法（非登记端口 5371，非面板托管）
+    cwd = /Users/kevin/bistro/xiai/feicui/server
+    cmd = ./.venv/bin/python -m app.main
+    env = FEICUI_DB=/tmp/feicui_1c_final2.db  FEICUI_API_PORT=5371  FEICUI_API_HOST=127.0.0.1
+    pid = 85491   ppid = 85397
+
+[3] 三重身份核对
+    ps -p 85491 -o pid=,ppid=,command=  → 85491 85397 ./.venv/bin/python -m app.main
+    lsof -a -p 85491 -d cwd -Fn        → n/Users/kevin/bistro/xiai/feicui/server
+    ps eww -p 85491 | grep FEICUI      → FEICUI_DB=/tmp/feicui_1c_final2.db / FEICUI_API_PORT=5371 / FEICUI_API_HOST=127.0.0.1
+    lsof -nP -iTCP:5371 -sTCP:LISTEN   → python3.1 85491  TCP 127.0.0.1:5371 (LISTEN)
+    curl -o /dev/null -w %{http_code} http://127.0.0.1:5371/api/jobs → 200
+
+[4] 结果（证据 = ops/1c/1c_final_recompute.txt）
+    job-2d2f0cea4d5c4df0ac5311cc33dbc41c ⇒ DONE 7/7；重复建单 409；复算 inserted=0 skipped=29；
+    端到端判定 = PASS；副本库 stamps 89 → 89
+
+[5] 停：kill -TERM 85491（**未用 pkill -f**）
+    ps -p 85491 → alive? NO
+    5371 FREE / 5395 FREE / 9711 FREE
+    ps -Ao pid,command | grep -E "app\.pool|feicui_1c_final" → NONE（池自行收尾）
+
+[6] 池收尾自证（server/.run/pool.state.json）
+    db=/private/tmp/feicui_1c_final2.db  reason=stopped  job_finished=DONE
+    workers_alive=[False,False,False,False]  stats.inserted=0  stats.skipped=29
+
+[7] 正式库复核（复算前后一致 ⇒ 零写入）
+    stamps=89  jobs=5  job_pages=32
+```

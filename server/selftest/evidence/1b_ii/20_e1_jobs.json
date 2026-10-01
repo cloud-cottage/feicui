@@ -1,0 +1,28 @@
+{
+ "jobs": {
+  "tmp.pdf": "job-879526c0f8164e48a5106deef6f0b752",
+  "古玺汇编 文物出版社 罗福颐  ok.pdf": "job-a5f7d511ba534c87a764bf82963e8af3",
+  "秦汉印典 上海书画 金怀英  1997 ok.pdf": "job-578309831721457c989a77a0156a1d78",
+  "__1bii_fixture.pdf": "job-2f6c054f05c8461fa609e69969c56c61"
+ },
+ "books": [
+  {
+   "pdf_name": "tmp.pdf",
+   "c": 30,
+   "lo": 13,
+   "hi": 19
+  },
+  {
+   "pdf_name": "古玺汇编 文物出版社 罗福颐  ok.pdf",
+   "c": 23,
+   "lo": 24,
+   "hi": 26
+  },
+  {
+   "pdf_name": "秦汉印典 上海书画 金怀英  1997 ok.pdf",
+   "c": 26,
+   "lo": 5,
+   "hi": 8
+  }
+ ]
+}

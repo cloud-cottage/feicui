@@ -1,0 +1,58 @@
+{
+ "probe": "AC-03 追加点位：≥50% 处 SIGKILL",
+ "verified_at": "2026-09-20T13:06:00+08:00",
+ "range": [
+  27,
+  33
+ ],
+ "chunk_size": 1,
+ "workers": 2,
+ "kill_point": {
+  "committed_pages": 4,
+  "total_pages": 7,
+  "committed_pct": 57.1,
+  "contiguous_prefix_pages": 4,
+  "pages_done_at_kill": [
+   27,
+   28,
+   29,
+   30
+  ],
+  "rows_at_kill": 22,
+  "killed_pids": [
+   "worker:9127:rc=0",
+   "worker:9128:rc=0",
+   "pool:9126:rc=0"
+  ],
+  "pool_state": "DONE"
+ },
+ "after_resume": {
+  "state": "DONE",
+  "done_pages": 7,
+  "failed_pages": 0,
+  "rows": 42
+ },
+ "tools": {
+  "export_killrows": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui_ac03_50_9xg7sm_f/killrows.csv: 22 行（tmp.pdf 27-33）",
+  "export_afterrows": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui_ac03_50_9xg7sm_f/afterrows.csv: 42 行（tmp.pdf 27-33）",
+  "subset_kill_vs_final": "断点行数=22 终态行数=42 未原样保留=0\nSUBSET = IDENTICAL(断点前已提交行零改写)",
+  "counts_final": "{\"scope_rows\": 42, \"scope_distinct_keys\": 42, \"scope_dup_groups\": [], \"scope_unique_ok\": true, \"table_rows\": 121, \"table_distinct_keys\": 121, \"table_unique_ok\": true}",
+  "rowsig_final": "{\"pdf_name\": \"tmp.pdf\", \"lo\": 27, \"hi\": 33, \"rows\": 42, \"sha256\": \"75a61a4f344e71fd49f5cf7c54d11cceb5adbecc6b7eaaa24968bfab4fe83c9a\"}",
+  "diffcsv_vs_1bi_serial_arm": "DIFFCSV = IDENTICAL（42 行数据逐字节相同）",
+  "diffcsv_note": "对照文件 = evidence/1b_i/52_serial_rows.csv（1b-i 串行臂，同区间 27-33）"
+ },
+ "rc": {
+  "export_k": 0,
+  "export_a": 0,
+  "subset": 0,
+  "counts": 0,
+  "rowsig": 0,
+  "diffcsv": 0
+ },
+ "verdict": {
+  "kill_at_or_above_50pct": true,
+  "resume_completed": true,
+  "killrows_zero_rewrite": true,
+  "matches_1bi_serial_arm": true
+ }
+}

@@ -1,0 +1,11 @@
+== 主力判据：库内列类型（PRAGMA table_info）==
+stamps/seals/images 无任何 BLOB 列 = True（见 01_prod_fingerprint_before.json）
+  —— 库内本无 BLOB 列 ⇒ 接口层**在物理上不可能**从库读影像字节（AC-12① 同源）。
+
+== 附加防护：server/app/**/*.py 是否出现 BLOB 读写的 SQL 形态 ==
+  判据正则 = (?i)(\bas\s+blob\b|\bzeroblob\s*\(|\bblob\s*\(|\bhex\s*\(\s*blob)
+  (0 命中)
+
+== 结论 ==
+① 库内无 BLOB 列（主力判据，已验）；② 接口层代码无 BLOB 读写的 SQL 形态（附加防护）；
+③ E6 的取图路径是「DB 取**相对路径** → 盘上读文件」（见 50/51/54 号证据），从不读库内字节。

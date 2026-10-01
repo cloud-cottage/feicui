@@ -1,0 +1,83 @@
+### 阶段 1c-激活 · 双起保护 + 两单并发取证（修正：另一本书用绝对路径 ~/Downloads）
+### 2026-09-20 14:46:59 CST
+
+[14:46:59] === ① 建 job A：tmp.pdf [13,19] ===
+[14:46:59] → 201 {"job_id": "job-20e180ea0ffe493087a0770db0bb8264", "state": "QUEUED", "total_pages": 7, "created_at": "2026-09-20T14:46:59+08:00"}
+[14:47:00] === ② 建 job B（另一本书，1.5s 后）：/Users/kevin/Downloads/秦汉印典 上海书画 金怀英  1997 ok.pdf [5,8] ===
+[14:47:00] → 201 {"job_id": "job-f34120a8f1d6482db4fd55b33cd46f2f", "state": "QUEUED", "total_pages": 4, "created_at": "2026-09-20T14:47:00+08:00"}
+[14:47:00] --- pool-launch.log 尾部（看拉起器怎么处理第二单）---
+prod_db      = True
+applied      = 0
+skipped      = 2
+journal_mode = wal
+schema_sha256= d35d052b6aee2a195c6879009c2116b87578a357bbeed829176410ccffd608be
+tables       = export_batches,export_records,images,job_pages,jobs,schema_migrations,seals,sqlite_sequence,stamps
+2026-09-20 14:46:59,352 INFO feicui.pool 池启动：workers=4 db=/Users/kevin/bistro/shu/feicui/yinpu.db faces=/Users/kevin/bistro/shu/feicui/output/faces doc_preprocess=True cpu_threads=2 on_conflict=skip worker_python=/Users/kevin/bistro/shu/feicui/venv/bin/python manager_python=/Users/kevin/bistro/shu/feicui/server/.venv/bin/python
+2026-09-20 14:46:59,352 INFO feicui.pool 🔒 单写者锁：/Users/kevin/bistro/shu/feicui/server/.run/pool.state.lock
+2026-09-20 14:46:59,356 INFO feicui.pool worker#0 已启动 pid=49094（第 1 次）
+2026-09-20 14:46:59,360 INFO feicui.pool worker#1 已启动 pid=49095（第 1 次）
+2026-09-20 14:46:59,363 INFO feicui.pool worker#2 已启动 pid=49096（第 1 次）
+2026-09-20 14:46:59,366 INFO feicui.pool worker#3 已启动 pid=49097（第 1 次）
+[14:47:00] === ③ 人为再起一个池（同库同锁）⇒ 期望 exit 5 ===
+[14:47:00] 重复起的池 rc=5（期望 5）
+--- stderr ---
+⏭ 跳过启动：已有池实例持有该库的写锁（/Users/kevin/bistro/shu/feicui/server/.run/pool.state.lock）。
+  规范 §4.3：WAL 单写者 ⇒ 同一 DB 只允许一个池进程。
+  这是**正常分支**（阶段 1c-激活后由 API 按需拉起，重复拉起即走这里）：
+  本进程立刻退出（exit 5），不占资源、不堆进程；已在跑的池会自己取活。
+
+--- stdout(tail) ---
+skipped      = 2
+journal_mode = wal
+schema_sha256= d35d052b6aee2a195c6879009c2116b87578a357bbeed829176410ccffd608be
+tables       = export_batches,export_records,images,job_pages,jobs,schema_migrations,seals,sqlite_sequence,stamps
+[14:47:00] === ④ E2 采样（两单都要 DONE；人不出手）===
+t+   1.8s A state=QUEUED         done=0/7 failed=[]
+t+   1.8s B state=QUEUED         done=0/4 failed=[]
+t+   4.9s A state=RUNNING        done=0/7 failed=[]
+t+   4.9s B state=QUEUED         done=0/4 failed=[]
+t+   7.9s A state=RUNNING        done=0/7 failed=[]
+t+   7.9s B state=QUEUED         done=0/4 failed=[]
+t+  10.9s A state=RUNNING        done=0/7 failed=[]
+t+  10.9s B state=QUEUED         done=0/4 failed=[]
+t+  13.9s A state=RUNNING        done=0/7 failed=[]
+t+  13.9s B state=QUEUED         done=0/4 failed=[]
+t+  17.0s A state=DONE           done=7/7 failed=[]
+t+  17.0s B state=RUNNING        done=0/4 failed=[]
+t+  20.0s B state=RUNNING        done=0/4 failed=[]
+t+  23.0s B state=RUNNING        done=0/4 failed=[]
+t+  26.0s B state=RUNNING        done=0/4 failed=[]
+t+  29.1s B state=DONE           done=4/4 failed=[]
+[14:47:31] === ⑤ 库内复算交叉核对 + 计数 ===
+A jobs 行 = {"job_id": "job-20e180ea0ffe493087a0770db0bb8264", "pdf_path": "/Users/kevin/bistro/shu/feicui/tmp.pdf", "pdf_name": "tmp.pdf", "book_key": null, "page_from": 13, "page_to": 19, "chunk_size": 8, "total_pages": 7, "state": "DONE", "cursor_chunk_lo": null, "cursor_chunk_hi": 0, "rerun": 0, "error": null, "created_at": "2026-09-20T14:46:59+08:00", "started_at": "2026-09-20T14:47:03+08:00", "finished_at": "2026-09-20T14:47:13+08:00", "updated_at": "2026-09-20T14:47:13+08:00"}
+A 复算   = {"total": 7, "done": 7, "failed": 0, "inserted": 0, "updated": 0, "skipped": 29}
+B jobs 行 = {"job_id": "job-f34120a8f1d6482db4fd55b33cd46f2f", "pdf_path": "/Users/kevin/Downloads/秦汉印典 上海书画 金怀英  1997 ok.pdf", "pdf_name": "秦汉印典 上海书画 金怀英  1997 ok.pdf", "book_key": null, "page_from": 5, "page_to": 8, "chunk_size": 8, "total_pages": 4, "state": "DONE", "cursor_chunk_lo": null, "cursor_chunk_hi": 0, "rerun": 0, "error": null, "created_at": "2026-09-20T14:47:00+08:00", "started_at": "2026-09-20T14:47:14+08:00", "finished_at": "2026-09-20T14:47:26+08:00", "updated_at": "2026-09-20T14:47:26+08:00"}
+B 复算   = {"total": 4, "done": 4, "failed": 0, "inserted": 9, "updated": 0, "skipped": 26}
+stamps 全表 = 89
+活跃 job（应 0）= []
+[14:47:31] --- pool-launch.log 尾部 20 行 ---
+2026-09-20 14:46:59,352 INFO feicui.pool 池启动：workers=4 db=/Users/kevin/bistro/shu/feicui/yinpu.db faces=/Users/kevin/bistro/shu/feicui/output/faces doc_preprocess=True cpu_threads=2 on_conflict=skip worker_python=/Users/kevin/bistro/shu/feicui/venv/bin/python manager_python=/Users/kevin/bistro/shu/feicui/server/.venv/bin/python
+2026-09-20 14:46:59,352 INFO feicui.pool 🔒 单写者锁：/Users/kevin/bistro/shu/feicui/server/.run/pool.state.lock
+2026-09-20 14:46:59,356 INFO feicui.pool worker#0 已启动 pid=49094（第 1 次）
+2026-09-20 14:46:59,360 INFO feicui.pool worker#1 已启动 pid=49095（第 1 次）
+2026-09-20 14:46:59,363 INFO feicui.pool worker#2 已启动 pid=49096（第 1 次）
+2026-09-20 14:46:59,366 INFO feicui.pool worker#3 已启动 pid=49097（第 1 次）
+2026-09-20 14:47:03,442 INFO feicui.pool worker#0 ready pid=49094 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/output/faces
+2026-09-20 14:47:03,443 INFO feicui.pool worker#1 ready pid=49095 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/output/faces
+2026-09-20 14:47:03,443 INFO feicui.pool worker#3 ready pid=49097 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/output/faces
+2026-09-20 14:47:03,443 INFO feicui.pool worker#2 ready pid=49096 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/output/faces
+2026-09-20 14:47:03,445 INFO feicui.pool 认领 job job-20e180ea0ffe493087a0770db0bb8264：pdf=/Users/kevin/bistro/shu/feicui/tmp.pdf book_key=TMP 模板别名=黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf 页区间=[13,19] chunk_size=8 残留 RUNNING 页退回 PENDING=0（断点续跑入口）
+2026-09-20 14:47:03,446 INFO feicui.pool 派 chunk c0（页 [13, 14, 15, 16, 17, 18, 19]）→ worker#0 task=job-20e180ea0ffe493087a0770db0bb8264#c0 [并发在飞=1]
+2026-09-20 14:47:13,580 INFO feicui.pool 提交 chunk c0（页 [13, 14, 15, 16, 17, 18, 19]）：inserted=0 updated=0 skipped=29 failed=[] | 累计 页=7 chunk=1
+2026-09-20 14:47:13,585 INFO feicui.pool job job-20e180ea0ffe493087a0770db0bb8264 收尾 ⇒ DONE（total=7 done=7 failed=0）
+2026-09-20 14:47:14,096 INFO feicui.pool 认领 job job-f34120a8f1d6482db4fd55b33cd46f2f：pdf=/Users/kevin/Downloads/秦汉印典 上海书画 金怀英  1997 ok.pdf book_key=QHYD 模板别名=None 页区间=[5,8] chunk_size=8 残留 RUNNING 页退回 PENDING=0（断点续跑入口）
+2026-09-20 14:47:14,099 INFO feicui.pool 派 chunk c0（页 [5, 6, 7, 8]）→ worker#0 task=job-f34120a8f1d6482db4fd55b33cd46f2f#c0 [并发在飞=1]
+2026-09-20 14:47:26,335 INFO feicui.pool 提交 chunk c0（页 [5, 6, 7, 8]）：inserted=9 updated=0 skipped=26 failed=[] | 累计 页=11 chunk=2
+2026-09-20 14:47:26,345 INFO feicui.pool job job-f34120a8f1d6482db4fd55b33cd46f2f 收尾 ⇒ DONE（total=4 done=4 failed=0）
+2026-09-20 14:47:26,349 INFO feicui.pool 池退出：{"chunks_committed": 2, "pages_done": 11, "pages_failed": 0, "detected": 128, "inserted": 9, "updated": 0, "skipped": 55, "ocr_empty": 14, "requeued_pages": 0, "imgs_written": 35, "imgs_reused": 29, "worker_deaths": 0}
+--- exit 2026-09-20T14:47:28+08:00 rc=0 pid=49093 reason=E1:job-20e180ea0ffe493087a0770db0bb8264
+
+job A = job-20e180ea0ffe493087a0770db0bb8264 序列 = QUEUED -> RUNNING -> DONE
+job B = job-f34120a8f1d6482db4fd55b33cd46f2f 序列 = QUEUED -> RUNNING -> DONE
+重复池 rc = 5（5 = 锁被占，正常分支）
+判定 = PASS

@@ -1,0 +1,2 @@
+  PID STARTED                      COMMAND
+95103 Sun Sep 20 11:56:05 2026     /Users/kevin/bistro/shu/feicui/server/.venv/bin/python -m app.main

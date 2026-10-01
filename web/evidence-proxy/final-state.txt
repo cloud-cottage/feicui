@@ -1,0 +1,33 @@
+# 阶段 1c 最终状态取证  2026-09-20 12:05:31 CST
+
+## 直连 5195
+http://127.0.0.1:5195/                       302
+http://127.0.0.1:5195/feicui/                200
+http://127.0.0.1:5195/feicui/src/main.js     200
+
+## 经 5164 代理
+http://localhost:5164/feicui/                200
+http://localhost:5164/feicui/jobs            200
+http://localhost:5164/feicui/src/main.js     200
+
+## 5164/feicui/ 返回体特征
+src="/feicui/@vite/client"
+<title>feicui ｜ 印谱解析任务台</title>
+id="app"
+src="/feicui/src/main.js"
+
+## 14 条路由
+/                        200
+/pricing                 200
+/docs                    200
+/docs/quickstart         200
+/org                     200
+/demo                    200
+/help                    200
+/console/login           200
+/console/register        200
+/console                 200
+/console/overview        200
+/console/keys            200
+/console/usage           200
+/console/billing         200

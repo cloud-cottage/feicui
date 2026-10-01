@@ -1,0 +1,1 @@
+{"error":"ACTIVE_JOB_EXISTS","detail":"同 pdf_path 已有活跃 job（§3.2 S-5：同一本书同时只允许一个活跃 job）","job_id":"job-1a992fadb6b549be96424891605b25d2","state":"QUEUED","total_pages":7,"created_at":"2026-09-20T11:56:05+08:00"}

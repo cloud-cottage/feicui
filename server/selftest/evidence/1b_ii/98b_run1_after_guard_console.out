@@ -1,0 +1,179 @@
+==============================================================================
+阶段 1b-ii 自测：E3 / E4 / E6 / E7 + 1b-i 回归
+时点 2026-09-20T13:00:45+08:00（Asia/Shanghai）
+临时工作区 /var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui_1bii_qibrhh06（不作证据；证据落 /Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_ii）
+==============================================================================
+
+==================== 0. 前置取证 ====================
+PASS  0.1 正式库 stamps 列数（只读 PRAGMA）：10
+PASS  0.1b stamps 列定义逐字：['id', 'pdf_name', 'page', 'idx', 'text', 'img_path', 'x1', 'y1', 'x2', 'y2']
+PASS  0.2 正式库 stamps 行数（只读）：79
+PASS  0.3 指纹 A raw md5（= ops §2.3 期望）：8a21e57d5bd909fff282214640457c7f
+PASS  0.4 指纹 B canon md5（= ops §2.3 期望）：d7abe995bff62761c27052dfc2bdf7bb
+PASS  0.5 指纹 C free md5（= ops §2.3 期望）：22bdc0a794382b6e6dab7855aaee456f
+  journal_mode=wal（迁移后应 = wal）text 非空=2
+  逐书：[{'pdf_name': 'tmp.pdf', 'c': 30}, {'pdf_name': '古玺汇编 文物出版社 罗福颐  ok.pdf', 'c': 23}, {'pdf_name': '秦汉印典 上海书画 金怀英  1997 ok.pdf', 'c': 26}]
+PASS  0.6 stamps/seals/images 无 BLOB 列（AC-12①）：True
+  正式 exports/ 文件数=197（应含 12 个 fb_* 批次包 + selfcheck_report.json）
+PASS  0.7 正式 exports/ 批次包数（改动前）：12
+PASS  0.8 接口层代码无 BLOB 读写的 SQL 形态（附加防护）：[]
+PASS  0.9 自测端口已动态选定且无监听（main=5321）：True
+PASS  0.10 自测端口已动态选定且无监听（reg=5322）：True
+
+==================== 1. 副本库与确定性数据集 ====================
+  [normalize] copy_main.db: 原 jobs=0（活跃 0）→ 已归零（仅副本库）
+PASS  1.0 copy_main.db 副本库活跃 job 集合为空（前置断言）：0
+  [normalize] copy_reg.db: 原 jobs=0（活跃 0）→ 已归零（仅副本库）
+PASS  1.0 copy_reg.db 副本库活跃 job 集合为空（前置断言）：0
+PASS  1.1 副本库（backup API 一致快照）行数：79
+PASS  1.2 副本库指纹 B 与正式库一致：d7abe995bff62761c27052dfc2bdf7bb
+PASS  1.3 fixture 行已入副本库（4 行 / 独立书名）：4
+  [main] pid=2216 port=5321 db=copy_main.db health=200
+PASS  1.4 主接口层健康探针可达（/api/health=200）：200
+
+==================== 2. 建 job（E1，副本库） ====================
+  E1 tmp.pdf → job-84172445819a4ace8bdc3a2c75b39ef1 total_pages=7 rows=30 pages=13..19
+  E1 古玺汇编 文物出版社 罗福颐  ok.pdf → job-b44a24b20e7f472b8ecec58a2a12ade8 total_pages=3 rows=23 pages=24..26
+  E1 秦汉印典 上海书画 金怀英  1997 ok.pdf → job-88cff9128c2e419699b14ecb2b7909f5 total_pages=4 rows=26 pages=5..8
+  E1 __1bii_fixture.pdf → job-eccda5067c0047e5a1cdbab2751e476e（code=201）
+PASS  2.1 五个 job 全部建成（3 真书 + fixture）：{'tmp.pdf': 'job-84172445819a4ace8bdc3a2c75b39ef1', '古玺汇编 文物出版社 罗福颐  ok.pdf': 'job-b44a24b20e7f472b8ecec58a2a12ade8', '秦汉印典 上海书画 金怀英  1997 ok.pdf': 'job-88cff9128c2e419699b14ecb2b7909f5', '__1bii_fixture.pdf': 'job-eccda5067c0047e5a1cdbab2751e476e'}
+PASS  2.2 同书重复建单 ⇒ 409：409
+PASS  2.3 409 体带回既有 job_id：job-84172445819a4ace8bdc3a2c75b39ef1
+PASS  2.4 每书活跃 job 数 ≤ 1（SQL 独立复算）：[]
+
+==================== 3. ① E3 分页取结果 ====================
+PASS  3.1 [tmp.pdf] 信封 6 字段（逐页）：True
+PASS  3.2 [tmp.pdf] 页内字段一致（page / has_more↔cursor / missing_required）：True
+PASS  3.3 [tmp.pdf] 游标翻页无重叠无遗漏：[(13, 0), (13, 1), (13, 2), (13, 3), (13, 4), (13, 5), (14, 0), (14, 1), (14, 2), (14, 3), (14, 4), (14, 5), (15, 0), (15, 1), (15, 2), (15, 3), (15, 4), (15, 5), (15, 6), (16, 0), (16, 1), (16, 2), (17, 0), (17, 1), (18, 0), (18, 1), (19, 0), (19, 1), (19, 2), (19, 3)]
+PASS  3.4 [tmp.pdf] 条数 == 独立复算：30
+PASS  3.5 [tmp.pdf] 翻页数 == ceil(total/limit)：5
+  [tmp.pdf] 翻 5 页 / 30 条（SQL 复算 30 条）
+PASS  3.1 [古玺汇编 文物出版社 罗福颐  ok.pdf] 信封 6 字段（逐页）：True
+PASS  3.2 [古玺汇编 文物出版社 罗福颐  ok.pdf] 页内字段一致（page / has_more↔cursor / missing_required）：True
+PASS  3.3 [古玺汇编 文物出版社 罗福颐  ok.pdf] 游标翻页无重叠无遗漏：[(24, 0), (24, 1), (24, 2), (24, 3), (24, 4), (24, 5), (25, 0), (25, 1), (25, 2), (25, 3), (25, 4), (25, 5), (25, 6), (26, 0), (26, 1), (26, 2), (26, 3), (26, 4), (26, 5), (26, 6), (26, 7), (26, 8), (26, 9)]
+PASS  3.4 [古玺汇编 文物出版社 罗福颐  ok.pdf] 条数 == 独立复算：23
+PASS  3.5 [古玺汇编 文物出版社 罗福颐  ok.pdf] 翻页数 == ceil(total/limit)：4
+  [古玺汇编 文物出版社 罗福颐  ok.pdf] 翻 4 页 / 23 条（SQL 复算 23 条）
+PASS  3.1 [秦汉印典 上海书画 金怀英  1997 ok.pdf] 信封 6 字段（逐页）：True
+PASS  3.2 [秦汉印典 上海书画 金怀英  1997 ok.pdf] 页内字段一致（page / has_more↔cursor / missing_required）：True
+PASS  3.3 [秦汉印典 上海书画 金怀英  1997 ok.pdf] 游标翻页无重叠无遗漏：[(5, 0), (5, 1), (5, 2), (5, 3), (5, 4), (5, 5), (6, 0), (6, 1), (6, 2), (6, 3), (6, 4), (6, 5), (7, 0), (7, 1), (7, 2), (7, 3), (7, 4), (7, 5), (8, 0), (8, 1), (8, 2), (8, 3), (8, 4), (8, 5), (8, 6), (8, 7)]
+PASS  3.4 [秦汉印典 上海书画 金怀英  1997 ok.pdf] 条数 == 独立复算：26
+PASS  3.5 [秦汉印典 上海书画 金怀英  1997 ok.pdf] 翻页数 == ceil(total/limit)：4
+  [秦汉印典 上海书画 金怀英  1997 ok.pdf] 翻 4 页 / 26 条（SQL 复算 26 条）
+PASS  3.1 [__1bii_fixture.pdf] 信封 6 字段（逐页）：True
+PASS  3.2 [__1bii_fixture.pdf] 页内字段一致（page / has_more↔cursor / missing_required）：True
+PASS  3.3 [__1bii_fixture.pdf] 游标翻页无重叠无遗漏：[(1, 0), (1, 1), (1, 2), (1, 3)]
+PASS  3.4 [__1bii_fixture.pdf] 条数 == 独立复算：4
+PASS  3.5 [__1bii_fixture.pdf] 翻页数 == ceil(total/limit)：1
+  [__1bii_fixture.pdf] 翻 1 页 / 4 条（SQL 复算 4 条）
+PASS  3.6 全部书的 key 集合合并 == 全表集合：83
+PASS  3.7 全部书无重复 key（无重叠）：83
+PASS  3.8 页码分页（?page=）与游标分页结果一致：[(13, 0), (13, 1), (13, 2), (13, 3), (13, 4), (13, 5), (14, 0), (14, 1), (14, 2), (14, 3), (14, 4), (14, 5), (15, 0), (15, 1), (15, 2), (15, 3), (15, 4), (15, 5), (15, 6), (16, 0), (16, 1), (16, 2), (17, 0), (17, 1), (18, 0), (18, 1), (19, 0), (19, 1), (19, 2), (19, 3)]
+PASS  3.9 页码分页：page 参数从 1 起、报回页号递增：5
+PASS  3.10 AC-08 每条记录必填 11 项或缺字段声明（无静默缺字段）：[]
+PASS  3.11 AC-08 覆盖检查条目数 == 全量条数：83
+PASS  3.12 E3 page=0 ⇒ 400：400
+PASS  3.13 E3 page=0 体含 detail（§3.4）：{'detail': {'error': 'BAD_PARAM', 'detail': 'page 必须 >= 1：0'}}
+PASS  3.12 E3 limit=0 ⇒ 400：400
+PASS  3.13 E3 limit=0 体含 detail（§3.4）：{'detail': {'error': 'BAD_PARAM', 'detail': 'limit 必须 >= 1：0'}}
+PASS  3.12 E3 limit=501 ⇒ 400：400
+PASS  3.13 E3 limit=501 体含 detail（§3.4）：{'detail': {'error': 'BAD_PARAM', 'detail': 'limit 上限 500（收到 501）'}}
+PASS  3.12 E3 page 与 cursor 同给 ⇒ 400：400
+PASS  3.13 E3 page 与 cursor 同给 体含 detail（§3.4）：{'detail': {'error': 'BAD_PARAM', 'detail': 'page 与 cursor 互斥：二选一（翻页请一路用 cursor）'}}
+PASS  3.12 E3 cursor 形态非法 ⇒ 400：400
+PASS  3.13 E3 cursor 形态非法 体含 detail（§3.4）：{'detail': {'error': 'BAD_PARAM', 'detail': "cursor 非法：'zzz'（E3 形态 = p<page>_i<idx>）"}}
+PASS  3.12 E3 limit 非整数 ⇒ 400：400
+PASS  3.13 E3 limit 非整数 体含 detail（§3.4）：{'detail': {'error': 'BAD_PARAM', 'detail': "limit 必须为整数：'abc'"}}
+PASS  3.12 E3 未知 job ⇒ 404：404
+PASS  3.13 E3 未知 job 体含 detail（§3.4）：{'detail': {'error': 'JOB_NOT_FOUND', 'detail': 'job 不存在：job-does-not-exist'}}
+
+==================== 4. ② E7 job 列表 ====================
+PASS  4.1 E7 ⇒ 200：200
+PASS  4.2 E7 信封 = E3 同款 6 字段：['has_more', 'items', 'limit', 'next_cursor', 'page', 'total']
+PASS  4.3 E7 items 字段集（§3.1 E7 行 9 项）：['created_at', 'done_pages', 'failed_pages_count', 'job_id', 'pdf_name', 'pdf_path', 'state', 'total_pages', 'updated_at']
+PASS  4.3b E7 每条 job_id 非空（None ⇒ 中止子段）：[]
+PASS  4.4c E7 游标路径在硬上界内收敛（① 与 ② 护栏）：None
+PASS  4.5 E7 游标翻页 no overlap no miss：['job-84172445819a4ace8bdc3a2c75b39ef1', 'job-88cff9128c2e419699b14ecb2b7909f5', 'job-b44a24b20e7f472b8ecec58a2a12ade8', 'job-eccda5067c0047e5a1cdbab2751e476e']
+PASS  4.6 E7 total == 库内 job 数：4
+PASS  4.7 E7 翻页数 == ceil(total/limit)：2
+PASS  4.11 E7 页码路径逐页：报回页号 == 请求页号，且 has_more↔next_cursor 一致：[(1, 1, True), (2, 2, False), (3, 3, False), (4, 4, False)]
+PASS  4.12 E7 页码路径 no overlap no miss（key 集合 == 库内顺序）：page_ids=4 去重后=4 库内=4
+PASS  4.13 E7 页码路径 key 集合 == 游标路径 key 集合（两路等价）：page=['job-84172445819a4ace8bdc3a2c75b39ef1', 'job-88cff9128c2e419699b14ecb2b7909f5', 'job-b44a24b20e7f472b8ecec58a2a12ade8', 'job-eccda5067c0047e5a1cdbab2751e476e'] cursor=['job-84172445819a4ace8bdc3a2c75b39ef1', 'job-88cff9128c2e419699b14ecb2b7909f5', 'job-b44a24b20e7f472b8ecec58a2a12ade8', 'job-eccda5067c0047e5a1cdbab2751e476e']
+PASS  4.14 E7 page 超出末页 ⇒ 空 items + has_more=false（不得再吐第一页）：[(3, 0, False), (4, 0, False)]
+PASS  4.15 E7 page=2 与 page=1 内容不同（原缺陷回归判据：page 曾被静默忽略）：page1=['job-84172445819a4ace8bdc3a2c75b39ef1', 'job-88cff9128c2e419699b14ecb2b7909f5'] page2=['job-b44a24b20e7f472b8ecec58a2a12ade8', 'job-eccda5067c0047e5a1cdbab2751e476e']
+PASS  4.8 E7 state 过滤（QUEUED）计数 == 库内复算：4
+PASS  4.9 E7 state 非法 ⇒ 400：400
+PASS  4.10 E7 cursor 非法 ⇒ 400：400
+PASS  4.16 E7 page=0 ⇒ 400（1-based）：400
+PASS  4.17 E7 page 与 cursor 同给 ⇒ 400（与 E3 同款互斥）：400
+
+==================== 5. ③ E6 取印面图像 ====================
+PASS  5.0 找到一条盘上有影像的记录：{'page': 13, 'idx': 0, 'img_path': 'output/pairs/p13_0/stamp.png'}
+PASS  5.1 E6 正常取图 ⇒ 200：200
+PASS  5.2 Content-Type 属允许三元组（以文件实际类型为准）：image/png
+PASS  5.3 Content-Length 必填且 == 实际字节：27958
+PASS  5.4 返回影像字节（与盘上文件逐字节相同）：518f52f4b46c32c4118dafba1de6f779ec228fe48590347b712a88ae0a409c0c
+PASS  5.5 **不包 JSON 信封**（首字节不是 '{'）：b'\x89PNG\r\n\x1a\n\x00\x00\x00\r'
+PASS  5.6 Cache-Control: no-store（§3.5 纪律⑤）：no-store
+PASS  5.7 x-feicui-img-path == DB 内相对路径：output/pairs/p13_0/stamp.png
+PASS  5.8 E6 job 不存在 ⇒ 404：404
+PASS  5.8 E6 记录不存在（该书页区间内的缺号） ⇒ 404：404
+PASS  5.9 E6 越界/缺失拒绝 img_path='output/../../../../etc/passwd' ⇒ 404：404
+PASS  5.9 E6 越界/缺失拒绝 img_path='/etc/passwd' ⇒ 404：404
+PASS  5.9 E6 越界/缺失拒绝 img_path='' ⇒ 404：404
+PASS  5.9 E6 越界/缺失拒绝 img_path='output/__1bii_missing__.webp' ⇒ 404：404
+PASS  5.10 E6 page 非整数 ⇒ 400：400
+PASS  5.10 E6 page < 1 ⇒ 400：400
+PASS  5.10 E6 page 负数 ⇒ 400：400
+PASS  5.10 E6 idx 非整数 ⇒ 400：400
+PASS  5.10 E6 idx < 0 ⇒ 400：400
+PASS  5.10 E6 page 小数 ⇒ 400：400
+PASS  5.10 E6 URL 编码穿越 %2e%2e ⇒ 400：400
+PASS  5.11 废止的 2 段临时路径 ⇒ 404（后端不两套并存，§3.5 收口规则②）：404
+
+==================== 6. ④ E4 触发导出 ====================
+PASS  6.1 E4 ⇒ 200：200
+PASS  6.2 E4 响应 4 字段：['batch_id', 'counts', 'package_dir', 'selfcheck_ref']
+PASS  6.3 E4 counts 3 字段：['draft', 'formal', 'rejected']
+PASS  6.4 批包目录真实存在（临时导出根内）：/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui_1bii_qibrhh06/exports_tmp_main/fb_20260920_XTMP_05
+PASS  6.5 批包内文件集（manifest/report/两条 JSONL/images）：['draft.jsonl', 'manifest.json', 'report.json', 'seals.jsonl']
+PASS  6.6 E4 counts.formal == report.formal：0
+PASS  6.7 E4 counts.draft == report.draftStaged：30
+PASS  6.8 E4 counts.rejected == report.rejectedRequiredMissing：30
+PASS  6.9 批包内影像被真实复制：30 个
+  E4 回执：batch_id=fb_20260920_XTMP_05 package_dir=/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui_1bii_qibrhh06/exports_tmp_main/fb_20260920_XTMP_05 counts={'formal': 0, 'draft': 30, 'rejected': 30} images=30
+PASS  6.10 E4 指定 batch_id ⇒ 400：400
+PASS  6.10 E4 dry_run=true ⇒ 400：400
+PASS  6.10 E4 book_code 不符 ⇒ 400：400
+PASS  6.11 E4 未知 job ⇒ 404：404
+PASS  6.12 正式 exports/ 既有产物逐文件 md5 **未变**：{'fb_20260920_XGXHB_01/draft.jsonl': '917c92e30bcbdff82998122437375ee3', 'fb_20260920_XGXHB_01/images/p0024_00_FACE.webp': '118700b82ac965054e3b035a5d8ccbcd', 'fb_20260920_XGXHB_01/images/p0024_01_FACE.webp': '59902df8c05b5e95d72ab95a9e3484a6', 'fb_20260920_XGXHB_01/images/p0024_02_FACE.webp': '95c99fdcdb5fd974285a8abe6e69d4d9', 'fb_20260920_XGXHB_01/images/p0024_03_FACE.webp': 'a8d001e7fb400611f9975b7fcfb6f493', 'fb_20260920_XGXHB_01/images/p0024_04_FACE.webp': '611a110bb17b977922bc010efe5d78f2', 'fb_20260920_XGXHB_01/images/p0024_05_FACE.webp': '3ee36a644771be0cc9b4c237ccadb6dc', 'fb_20260920_XGXHB_01/images/p0025_00_FACE.webp': '9fbc5fa010c47fec4c75d1db2a604b52', 'fb_20260920_XGXHB_01/images/p0025_01_FACE.webp': '3bf04a0ef2d4e45075a66d586dcfd97c', 'fb_20260920_XGXHB_01/images/p0025_02_FACE.webp': '8a838e2a36e4709a77027502b8f3c521', 'fb_20260920_XGXHB_01/images/p0025_03_FACE.webp': '2c49de73e67d03013587bb7a869088ec', 'fb_20260920_XGXHB_01/images/p0025_04_FACE.webp': '58c83c04429b19ae01db23b003909b93', 'fb_20260920_XGXHB_01/images/p0025_05_FACE.webp': 'd7fbde55b173e95d5412c116c3de01c3', 'fb_20260920_XGXHB_01/images/p0025_06_FACE.webp': 'fa837f07c6bbda6869b2f65af811dd15', 'fb_20260920_XGXHB_01/images/p0026_00_FACE.webp': '0bc8994ea395a9a028c381407e5f686d', 'fb_20260920_XGXHB_01/images/p0026_01_FACE.webp': 'fc812b8f5cf83d4e4f347cc6647313a7', 'fb_20260920_XGXHB_01/images/p0026_02_FACE.webp': '3f153aec3f5e66764e70ddd67a3970ef', 'fb_20260920_XGXHB_01/images/p0026_03_FACE.webp': '15103c0b25a19a7c6addc186f00c4757', 'fb_20260920_XGXHB_01/images/p0026_04_FACE.webp': 'd241335cbb17291d3eb7e64091692b90', 'fb_20260920_XGXHB_01/images/p0026_05_FACE.webp': 'bc126b4f9f282d192419b7fab4212273', 'fb_20260920_XGXHB_01/images/p0026_06_FACE.webp': '9ec090eeee33594b277865f329525de8', 'fb_20260920_XGXHB_01/images/p0026_07_FACE.webp': '01ced5fbe46c963ab0472024cb617ecb', 'fb_20260920_XGXHB_01/images/p0026_08_FACE.webp': 'b45230a590b263d8721e5a719fa24c3c', 'fb_20260920_XGXHB_01/images/p0026_09_FACE.webp': 'c237eebce3fb43e2cf4c4d49f6dcf0e8', 'fb_20260920_XGXHB_01/manifest.json': '9de1a45d120cfb5724fd6248ddd4cc05', 'fb_20260920_XGXHB_01/report.json': '363c7bc86fbf24fbb750df8882da949e', 'fb_20260920_XGXHB_01/seals.jsonl': 'd41d8cd98f00b204e9800998ecf8427e', 'fb_20260920_XGXHB_02/draft.jsonl': 'c383f2d0ea322a689c9390afe18a52e3', 'fb_20260920_XGXHB_02/images/p0024_00_FACE.webp': '118700b82ac965054e3b035a5d8ccbcd', 'fb_20260920_XGXHB_02/images/p0024_01_FACE.webp': '59902df8c05b5e95d72ab95a9e3484a6', 'fb_20260920_XGXHB_02/images/p0024_02_FACE.webp': '95c99fdcdb5fd974285a8abe6e69d4d9', 'fb_20260920_XGXHB_02/images/p0024_03_FACE.webp': 'a8d001e7fb400611f9975b7fcfb6f493', 'fb_20260920_XGXHB_02/images/p0024_04_FACE.webp': '611a110bb17b977922bc010efe5d78f2', 'fb_20260920_XGXHB_02/images/p0024_05_FACE.webp': '3ee36a644771be0cc9b4c237ccadb6dc', 'fb_20260920_XGXHB_02/images/p0025_00_FACE.webp': '9fbc5fa010c47fec4c75d1db2a604b52', 'fb_20260920_XGXHB_02/images/p0025_01_FACE.webp': '3bf04a0ef2d4e45075a66d586dcfd97c', 'fb_20260920_XGXHB_02/images/p0025_02_FACE.webp': '8a838e2a36e4709a77027502b8f3c521', 'fb_20260920_XGXHB_02/images/p0025_03_FACE.webp': '2c49de73e67d03013587bb7a869088ec', 'fb_20260920_XGXHB_02/images/p0025_04_FACE.webp': '58c83c04429b19ae01db23b003909b93', 'fb_20260920_XGXHB_02/images/p0025_05_FACE.webp': 'd7fbde55b173e95d5412c116c3de01c3', 'fb_20260920_XGXHB_02/images/p0025_06_FACE.webp': 'fa837f07c6bbda6869b2f65af811dd15', 'fb_20260920_XGXHB_02/images/p0026_00_FACE.webp': '0bc8994ea395a9a028c381407e5f686d', 'fb_20260920_XGXHB_02/images/p0026_01_FACE.webp': 'fc812b8f5cf83d4e4f347cc6647313a7', 'fb_20260920_XGXHB_02/images/p0026_02_FACE.webp': '3f153aec3f5e66764e70ddd67a3970ef', 'fb_20260920_XGXHB_02/images/p0026_03_FACE.webp': '15103c0b25a19a7c6addc186f00c4757', 'fb_20260920_XGXHB_02/images/p0026_04_FACE.webp': 'd241335cbb17291d3eb7e64091692b90', 'fb_20260920_XGXHB_02/images/p0026_05_FACE.webp': 'bc126b4f9f282d192419b7fab4212273', 'fb_20260920_XGXHB_02/images/p0026_06_FACE.webp': '9ec090eeee33594b277865f329525de8', 'fb_20260920_XGXHB_02/images/p0026_07_FACE.webp': '01ced5fbe46c963ab0472024cb617ecb', 'fb_20260920_XGXHB_02/images/p0026_08_FACE.webp': 'b45230a590b263d8721e5a719fa24c3c', 'fb_20260920_XGXHB_02/images/p0026_09_FACE.webp': 'c237eebce3fb43e2cf4c4d49f6dcf0e8', 'fb_20260920_XGXHB_02/manifest.json': '3f330e9398597f6a5cfbbdf769a96f63', 'fb_20260920_XGXHB_02/report.json': '8f811760464e254a1f907e7aaaa4ddf2', 'fb_20260920_XGXHB_02/seals.jsonl': 'd41d8cd98f00b204e9800998ecf8427e', 'fb_20260920_XGXHB_03/draft.jsonl': 'a081105b591119e93fc882c1c761345a', 'fb_20260920_XGXHB_03/images/p0024_00_FACE.webp': '118700b82ac965054e3b035a5d8ccbcd', 'fb_20260920_XGXHB_03/images/p0024_01_FACE.webp': '59902df8c05b5e95d72ab95a9e3484a6', 'fb_20260920_XGXHB_03/images/p0024_02_FACE.webp': '95c99fdcdb5fd974285a8abe6e69d4d9', 'fb_20260920_XGXHB_03/images/p0024_03_FACE.webp': 'a8d001e7fb400611f9975b7fcfb6f493', 'fb_20260920_XGXHB_03/images/p0024_04_FACE.webp': '611a110bb17b977922bc010efe5d78f2', 'fb_20260920_XGXHB_03/images/p0024_05_FACE.webp': '3ee36a644771be0cc9b4c237ccadb6dc', 'fb_20260920_XGXHB_03/images/p0025_00_FACE.webp': '9fbc5fa010c47fec4c75d1db2a604b52', 'fb_20260920_XGXHB_03/images/p0025_01_FACE.webp': '3bf04a0ef2d4e45075a66d586dcfd97c', 'fb_20260920_XGXHB_03/images/p0025_02_FACE.webp': '8a838e2a36e4709a77027502b8f3c521', 'fb_20260920_XGXHB_03/images/p0025_03_FACE.webp': '2c49de73e67d03013587bb7a869088ec', 'fb_20260920_XGXHB_03/images/p0025_04_FACE.webp': '58c83c04429b19ae01db23b003909b93', 'fb_20260920_XGXHB_03/images/p0025_05_FACE.webp': 'd7fbde55b173e95d5412c116c3de01c3', 'fb_20260920_XGXHB_03/images/p0025_06_FACE.webp': 'fa837f07c6bbda6869b2f65af811dd15', 'fb_20260920_XGXHB_03/images/p0026_00_FACE.webp': '0bc8994ea395a9a028c381407e5f686d', 'fb_20260920_XGXHB_03/images/p0026_01_FACE.webp': 'fc812b8f5cf83d4e4f347cc6647313a7', 'fb_20260920_XGXHB_03/images/p0026_02_FACE.webp': '3f153aec3f5e66764e70ddd67a3970ef', 'fb_20260920_XGXHB_03/images/p0026_03_FACE.webp': '15103c0b25a19a7c6addc186f00c4757', 'fb_20260920_XGXHB_03/images/p0026_04_FACE.webp': 'd241335cbb17291d3eb7e64091692b90', 'fb_20260920_XGXHB_03/images/p0026_05_FACE.webp': 'bc126b4f9f282d192419b7fab4212273', 'fb_20260920_XGXHB_03/images/p0026_06_FACE.webp': '9ec090eeee33594b277865f329525de8', 'fb_20260920_XGXHB_03/images/p0026_07_FACE.webp': '01ced5fbe46c963ab0472024cb617ecb', 'fb_20260920_XGXHB_03/images/p0026_08_FACE.webp': 'b45230a590b263d8721e5a719fa24c3c', 'fb_20260920_XGXHB_03/images/p0026_09_FACE.webp': 'c237eebce3fb43e2cf4c4d49f6dcf0e8', 'fb_20260920_XGXHB_03/manifest.json': 'cdc5d452898fab044f4413d9adc588e7', 'fb_20260920_XGXHB_03/report.json': '9cc2a8181b61e6285fff34a0084fd860', 'fb_20260920_XGXHB_03/seals.jsonl': 'd41d8cd98f00b204e9800998ecf8427e', 'fb_20260920_XGXHB_04/draft.jsonl': '6f038dbac7c6d9d51b2ca6116894d672', 'fb_20260920_XGXHB_04/images/p0024_00_FACE.webp': '118700b82ac965054e3b035a5d8ccbcd', 'fb_20260920_XGXHB_04/images/p0024_01_FACE.webp': '59902df8c05b5e95d72ab95a9e3484a6', 'fb_20260920_XGXHB_04/images/p0024_02_FACE.webp': '95c99fdcdb5fd974285a8abe6e69d4d9', 'fb_20260920_XGXHB_04/images/p0024_03_FACE.webp': 'a8d001e7fb400611f9975b7fcfb6f493', 'fb_20260920_XGXHB_04/images/p0024_04_FACE.webp': '611a110bb17b977922bc010efe5d78f2', 'fb_20260920_XGXHB_04/images/p0024_05_FACE.webp': '3ee36a644771be0cc9b4c237ccadb6dc', 'fb_20260920_XGXHB_04/images/p0025_00_FACE.webp': '9fbc5fa010c47fec4c75d1db2a604b52', 'fb_20260920_XGXHB_04/images/p0025_01_FACE.webp': '3bf04a0ef2d4e45075a66d586dcfd97c', 'fb_20260920_XGXHB_04/images/p0025_02_FACE.webp': '8a838e2a36e4709a77027502b8f3c521', 'fb_20260920_XGXHB_04/images/p0025_03_FACE.webp': '2c49de73e67d03013587bb7a869088ec', 'fb_20260920_XGXHB_04/images/p0025_04_FACE.webp': '58c83c04429b19ae01db23b003909b93', 'fb_20260920_XGXHB_04/images/p0025_05_FACE.webp': 'd7fbde55b173e95d5412c116c3de01c3', 'fb_20260920_XGXHB_04/images/p0025_06_FACE.webp': 'fa837f07c6bbda6869b2f65af811dd15', 'fb_20260920_XGXHB_04/images/p0026_00_FACE.webp': '0bc8994ea395a9a028c381407e5f686d', 'fb_20260920_XGXHB_04/images/p0026_01_FACE.webp': 'fc812b8f5cf83d4e4f347cc6647313a7', 'fb_20260920_XGXHB_04/images/p0026_02_FACE.webp': '3f153aec3f5e66764e70ddd67a3970ef', 'fb_20260920_XGXHB_04/images/p0026_03_FACE.webp': '15103c0b25a19a7c6addc186f00c4757', 'fb_20260920_XGXHB_04/images/p0026_04_FACE.webp': 'd241335cbb17291d3eb7e64091692b90', 'fb_20260920_XGXHB_04/images/p0026_05_FACE.webp': 'bc126b4f9f282d192419b7fab4212273', 'fb_20260920_XGXHB_04/images/p0026_06_FACE.webp': '9ec090eeee33594b277865f329525de8', 'fb_20260920_XGXHB_04/images/p0026_07_FACE.webp': '01ced5fbe46c963ab0472024cb617ecb', 'fb_20260920_XGXHB_04/images/p0026_08_FACE.webp': 'b45230a590b263d8721e5a719fa24c3c', 'fb_20260920_XGXHB_04/images/p0026_09_FACE.webp': 'c237eebce3fb43e2cf4c4d49f6dcf0e8', 'fb_20260920_XGXHB_04/manifest.json': 'da2105c9ad7206447eada1ca8ab74cf0', 'fb_20260920_XGXHB_04/report.json': '06e386cea0940b4cc10019502ef231c1', 'fb_20260920_XGXHB_04/seals.jsonl': 'd41d8cd98f00b204e9800998ecf8427e', 'fb_20260920_XQHYD_01/draft.jsonl': '3323d986b9a0399f670e24f34a2d6612', 'fb_20260920_XQHYD_01/manifest.json': 'bdc98897b739ae8603391c7c9aff62c6', 'fb_20260920_XQHYD_01/report.json': '1779972e9c4fb892a8481f885b448f26', 'fb_20260920_XQHYD_01/seals.jsonl': 'd41d8cd98f00b204e9800998ecf8427e', 'fb_20260920_XQHYD_02/draft.jsonl': '1c5b1c91d5e42d55db4bd68b1557e8d0', 'fb_20260920_XQHYD_02/manifest.json': '0f0880d814aab38ffad8911f6dcfbd24', 'fb_20260920_XQHYD_02/report.json': '446c2aa5c122c5e69e31062b7611c461', 'fb_20260920_XQHYD_02/seals.jsonl': 'd41d8cd98f00b204e9800998ecf8427e', 'fb_20260920_XQHYD_03/draft.jsonl': '863b88ae798ff93077555f309cd7f05f', 'fb_20260920_XQHYD_03/manifest.json': '8858026d8966353b15c5595780053db8', 'fb_20260920_XQHYD_03/report.json': '38cc9b7ca0c3dca1362b2784ed47ebaa', 'fb_20260920_XQHYD_03/seals.jsonl': 'd41d8cd98f00b204e9800998ecf8427e', 'fb_20260920_XQHYD_04/draft.jsonl': '6d16c53ed944568e04926a4d9b013002', 'fb_20260920_XQHYD_04/images/p0005_00_FACE.webp': '5b7623b66415726b5d8c2832636de7b1', 'fb_20260920_XQHYD_04/images/p0005_01_FACE.webp': '3053bec646b50a81f823fbe3343d8fae', 'fb_20260920_XQHYD_04/images/p0005_02_FACE.webp': 'be9d9f01dca7256e0994055e00d3045a', 'fb_20260920_XQHYD_04/images/p0005_03_FACE.webp': 'a64f43e1fbd95dd9fc232c1eecea3066', 'fb_20260920_XQHYD_04/images/p0005_04_FACE.webp': '5b80ee8d94c01e3f651c2d140ef8104f', 'fb_20260920_XQHYD_04/images/p0005_05_FACE.webp': '911c9bdc95872fc115d97a6e27504902', 'fb_20260920_XQHYD_04/images/p0006_00_FACE.webp': '3809fe8ad212c6a6e2413b8e77f281c4', 'fb_20260920_XQHYD_04/images/p0006_01_FACE.webp': '9d122c288d063761f123443d57f87771', 'fb_20260920_XQHYD_04/images/p0006_02_FACE.webp': '3fb6dc907eeb3ae638c14c34aa12b959', 'fb_20260920_XQHYD_04/images/p0006_03_FACE.webp': 'ef505868d5063fb4a4ec7e516c0b3685', 'fb_20260920_XQHYD_04/images/p0006_04_FACE.webp': '0a98b2d715610b2a80612526c2d7e77f', 'fb_20260920_XQHYD_04/images/p0006_05_FACE.webp': '1b4a97c16e5c6b7d3de0dc00f30f26b8', 'fb_20260920_XQHYD_04/images/p0007_00_FACE.webp': 'edf9cf62b245b8dc101d6e66c55ad218', 'fb_20260920_XQHYD_04/images/p0007_01_FACE.webp': '9c6cf4f86543b2bc2b11dbe0dc33d765', 'fb_20260920_XQHYD_04/images/p0007_02_FACE.webp': 'd8d2b17cf538af62424a1827093fd847', 'fb_20260920_XQHYD_04/images/p0007_03_FACE.webp': '52845a4405014376356666409ca43c90', 'fb_20260920_XQHYD_04/images/p0007_04_FACE.webp': 'ef89e0ddf1c00bfa85635f79740a5823', 'fb_20260920_XQHYD_04/images/p0007_05_FACE.webp': 'bb8cf4243de419d183a09c7038b07b36', 'fb_20260920_XQHYD_04/images/p0008_00_FACE.webp': '0dc580e9a4cf3cb3ae0f1358d71e2fbd', 'fb_20260920_XQHYD_04/images/p0008_01_FACE.webp': '426023ec78740e36c729fcf99fb223ef', 'fb_20260920_XQHYD_04/images/p0008_02_FACE.webp': '081cbf38ba1f6eb02a4d27502943eb15', 'fb_20260920_XQHYD_04/images/p0008_03_FACE.webp': '839f819ecdbc2e5d2890e348051c344b', 'fb_20260920_XQHYD_04/images/p0008_04_FACE.webp': 'd2f00e4f47f44579006fc45e1f6c3cd8', 'fb_20260920_XQHYD_04/images/p0008_05_FACE.webp': 'f44abcabf242ed114166fccdd38a3198', 'fb_20260920_XQHYD_04/images/p0008_06_FACE.webp': 'a347ef1dd9f81bdb0d7a8e9cde07e0ae', 'fb_20260920_XQHYD_04/images/p0008_07_FACE.webp': '4eed30f85e7eca1053d56da801f1727c', 'fb_20260920_XQHYD_04/manifest.json': '73a4dd8a2115eb832c0c2f0008be6908', 'fb_20260920_XQHYD_04/report.json': '1a633ba11a97c33791312feb5644e950', 'fb_20260920_XQHYD_04/seals.jsonl': 'd41d8cd98f00b204e9800998ecf8427e', 'fb_20260920_XTMP_01/draft.jsonl': 'fdaf029bd2ecf356e9a058bddc8bb068', 'fb_20260920_XTMP_01/manifest.json': '35898149a6d93eb2c0f6c995767ef38d', 'fb_20260920_XTMP_01/report.json': 'c5313e02829880c79106d7ee5d96bb7d', 'fb_20260920_XTMP_01/seals.jsonl': 'd41d8cd98f00b204e9800998ecf8427e', 'fb_20260920_XTMP_02/draft.jsonl': '4dadb7a99de528c4681af2bc7a455f15', 'fb_20260920_XTMP_02/manifest.json': '31e0fea98523467ac974b1d612c0a858', 'fb_20260920_XTMP_02/report.json': '74520b1bdb201759b571d5da81ab784a', 'fb_20260920_XTMP_02/seals.jsonl': 'd41d8cd98f00b204e9800998ecf8427e', 'fb_20260920_XTMP_03/draft.jsonl': '0421af4abec232193a739ca7c730300e', 'fb_20260920_XTMP_03/manifest.json': '15dcafeb8fbfadca8662ac4b059dcb40', 'fb_20260920_XTMP_03/report.json': 'a4c09727772bb2de10e1bc54444820a4', 'fb_20260920_XTMP_03/seals.jsonl': 'd41d8cd98f00b204e9800998ecf8427e', 'fb_20260920_XTMP_04/draft.jsonl': '1a6d149cd982c2909a85da92d7d97abb', 'fb_20260920_XTMP_04/images/p0013_00_FACE.png': '9564ef7f6efe1e2d4f5afa3a53bfb3e9', 'fb_20260920_XTMP_04/images/p0013_01_FACE.png': '851c8e09ffbdd5d056c6ed3099acefcd', 'fb_20260920_XTMP_04/images/p0013_02_FACE.png': '08cd1390c07b2eb63b1ace02bc65a29f', 'fb_20260920_XTMP_04/images/p0013_03_FACE.png': 'b67e8500d41c884daa7071660a120688', 'fb_20260920_XTMP_04/images/p0013_04_FACE.png': 'eaf2d3f9f40b5f553cb8ed33dc261288', 'fb_20260920_XTMP_04/images/p0013_05_FACE.png': '4a2262823efeb9ac8717a3f707bd8c05', 'fb_20260920_XTMP_04/images/p0014_00_FACE.png': '56f11a0548a9f6307ec30c1a2da63904', 'fb_20260920_XTMP_04/images/p0014_01_FACE.png': '0ccdc1e0bb1bc643d8c14e410470d267', 'fb_20260920_XTMP_04/images/p0014_02_FACE.png': 'fe4d9dff1c2e0bfb3461596f56c35417', 'fb_20260920_XTMP_04/images/p0014_03_FACE.png': '199719dc7059830eb27a424c074376c2', 'fb_20260920_XTMP_04/images/p0014_04_FACE.png': '160bfdf98ef2fcc7c08ee332c545e13b', 'fb_20260920_XTMP_04/images/p0014_05_FACE.png': 'c6be0a73fc906269e5634712ec0aafab', 'fb_20260920_XTMP_04/images/p0015_00_FACE.png': '3d44d5f43849e08177f76e122a91d018', 'fb_20260920_XTMP_04/images/p0015_01_FACE.png': '9b1d93766da418a0465d46772f41d365', 'fb_20260920_XTMP_04/images/p0015_02_FACE.png': '6b97562bcebff2e91c68f1a35ce12d92', 'fb_20260920_XTMP_04/images/p0015_03_FACE.png': 'aaad890061df61adcffb5ba440ed35f1', 'fb_20260920_XTMP_04/images/p0015_04_FACE.png': '5b325a6bd7c35c6de62d5fccce04a386', 'fb_20260920_XTMP_04/images/p0015_05_FACE.png': '5b3ddbef03f5bb8fdfcd85fad2b2df84', 'fb_20260920_XTMP_04/images/p0015_06_FACE.png': '73ef067e9abbcbbf8d73d8ea3b74f84d', 'fb_20260920_XTMP_04/images/p0016_00_FACE.png': '54502c5b84d673b55ef080834db4383f', 'fb_20260920_XTMP_04/images/p0016_01_FACE.png': '52a3a198312c3373fb4039e2c48a06d4', 'fb_20260920_XTMP_04/images/p0016_02_FACE.png': '839e4ddcb575cd19a7bcbf050e91a36a', 'fb_20260920_XTMP_04/images/p0017_00_FACE.png': '62b37eba13e9a44db1d92c9420e2d40a', 'fb_20260920_XTMP_04/images/p0017_01_FACE.png': 'a77f4c14eb9e42e6cc6b04e1a88ebdd6', 'fb_20260920_XTMP_04/images/p0018_00_FACE.png': 'b4545042fdc622c5894f7a6873cac4de', 'fb_20260920_XTMP_04/images/p0018_01_FACE.png': '42603b89c98954335c1da1238fe6a395', 'fb_20260920_XTMP_04/images/p0019_00_FACE.png': '7fae797f529cb906229e80ca6c8f192b', 'fb_20260920_XTMP_04/images/p0019_01_FACE.png': 'c0c1cbd5c549079c42f0f055467815c6', 'fb_20260920_XTMP_04/images/p0019_02_FACE.png': '5107c2be2abd95977910aaf06020410d', 'fb_20260920_XTMP_04/images/p0019_03_FACE.png': '522beebcfdd1081c6b69b12150b012ad', 'fb_20260920_XTMP_04/manifest.json': '83acd72b6ae7ff802bd2d865f42c6ac8', 'fb_20260920_XTMP_04/report.json': '0a94e41250e0167deabf2627b5215015', 'fb_20260920_XTMP_04/seals.jsonl': 'd41d8cd98f00b204e9800998ecf8427e', 'selfcheck_report.json': '2cf2e03f60290ccd2cd834f32f301b2f'}
+PASS  6.12b 正式 exports/ 的 12 个批次包**名称集合**未变：{'fb_20260920_XGXHB_03', 'fb_20260920_XTMP_01', 'fb_20260920_XGXHB_01', 'fb_20260920_XQHYD_03', 'fb_20260920_XTMP_03', 'fb_20260920_XGXHB_04', 'fb_20260920_XQHYD_02', 'fb_20260920_XGXHB_02', 'fb_20260920_XTMP_04', 'fb_20260920_XQHYD_04', 'fb_20260920_XTMP_02', 'fb_20260920_XQHYD_01'}
+PASS  6.13 正式 exports/ 批次包数仍 12：12
+  正式 exports/：197 个文件 / md5 全等；新增批次只落临时根 /var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui_1bii_qibrhh06/exports_tmp_main
+
+==================== 7. ⑤ 1b-i worker 链路回归 ====================
+  [reg] pid=2232 port=5322 db=copy_reg.db health=200
+PASS  7.1 回归臂接口层就绪：200
+PASS  7.2 回归臂 E1 建 job（tmp.pdf 页 1–2）：201
+  池 --drain 退出码=0，耗时 5.9s（同机有并发任务、非受控基线）
+PASS  7.3 池 --drain 正常退出（rc=0）：0
+PASS  7.4 回归臂 E2 ⇒ 200：200
+PASS  7.5 回归臂 done_pages == total_pages == 2：(2, 2)
+PASS  7.6 回归臂 state == DONE 且 failed_pages 为空：('DONE', [])
+FAIL  7.7 回归臂 counters.detected > 0（真的跑了检测）：detected=0 inserted=0 skipped=0 ocr_empty=0
+PASS  7.8 回归臂 cursor.chunk_hi 推进到 0：0
+PASS  7.9 1b-i 复算工具 rc=0：(0, 0)
+✗ 脚本异常终止：
+Traceback (most recent call last):
+  File "/Users/kevin/bistro/shu/feicui/server/selftest/verify_1b_ii.py", line 1262, in <module>
+    rc = main()
+         ^^^^^^
+  File "/Users/kevin/bistro/shu/feicui/server/selftest/verify_1b_ii.py", line 1145, in main
+    ckT("7.10 1b-i e2check 逐字段 MATCH", "E2CHECK = MATCH" in rc2.stdout, rc2.stdout.strip().splitlines()[-1:])
+  File "/Users/kevin/bistro/shu/feicui/server/selftest/verify_1b_ii.py", line 191, in ckT
+    say(f"PASS  {name}{('：' + detail) if detail else ''}")
+                        ~~~~~^~~~~~~~
+TypeError: can only concatenate str (not "list") to str
+
+[cleanup] 端口 5321 已释放 = True
+[cleanup] 端口 5322 已释放 = True

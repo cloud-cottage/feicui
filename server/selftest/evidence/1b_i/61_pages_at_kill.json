@@ -1,0 +1,99 @@
+{
+ "job_id": "job-d36d9fbe9e9c4f60a6d7b302cc1064fe",
+ "pages": [
+  {
+   "page": 27,
+   "state": "DONE",
+   "detected": 5,
+   "inserted": 5,
+   "updated": 0,
+   "skipped": 0,
+   "ocr_empty": 0,
+   "error": null
+  },
+  {
+   "page": 28,
+   "state": "DONE",
+   "detected": 6,
+   "inserted": 6,
+   "updated": 0,
+   "skipped": 0,
+   "ocr_empty": 3,
+   "error": null
+  },
+  {
+   "page": 29,
+   "state": "RUNNING",
+   "detected": 0,
+   "inserted": 0,
+   "updated": 0,
+   "skipped": 0,
+   "ocr_empty": 0,
+   "error": null
+  },
+  {
+   "page": 30,
+   "state": "RUNNING",
+   "detected": 0,
+   "inserted": 0,
+   "updated": 0,
+   "skipped": 0,
+   "ocr_empty": 0,
+   "error": null
+  },
+  {
+   "page": 31,
+   "state": "RUNNING",
+   "detected": 0,
+   "inserted": 0,
+   "updated": 0,
+   "skipped": 0,
+   "ocr_empty": 0,
+   "error": null
+  },
+  {
+   "page": 32,
+   "state": "RUNNING",
+   "detected": 0,
+   "inserted": 0,
+   "updated": 0,
+   "skipped": 0,
+   "ocr_empty": 0,
+   "error": null
+  },
+  {
+   "page": 33,
+   "state": "DONE",
+   "detected": 6,
+   "inserted": 6,
+   "updated": 0,
+   "skipped": 0,
+   "ocr_empty": 3,
+   "error": null
+  }
+ ],
+ "chunks": [
+  {
+   "chunk_index": 0,
+   "n": 2,
+   "d": 2
+  },
+  {
+   "chunk_index": 1,
+   "n": 2,
+   "d": 0
+  },
+  {
+   "chunk_index": 2,
+   "n": 2,
+   "d": 0
+  },
+  {
+   "chunk_index": 3,
+   "n": 1,
+   "d": 1
+  }
+ ],
+ "chunks_done": 2,
+ "chunks_total": 4
+}

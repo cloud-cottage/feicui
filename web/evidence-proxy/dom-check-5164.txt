@@ -1,0 +1,19 @@
+{
+  "target": "http://localhost:5164/feicui/",
+  "location": "http://localhost:5164/",
+  "title": "feicui ｜ 印谱解析任务台",
+  "app_mount_text_len": 647,
+  "app_html_len": 3407,
+  "h_tags": "任务页 | 新建 job（E1） | job 列表（后端） | 本浏览器本地记录（localStorage）",
+  "links": "/",
+  "has_yinsuo_marker": "YES",
+  "yinsuo_context": "\"ta name=\\\"viewport\\\" content=\\\"width=device-width, initial-scale=1.0\\\" /&gt;\\n    &lt;title&gt;印索｜兆级玺印数字引擎&lt;/title&gt;\\n    &lt;meta name=\\\"description\\\" content=\\\"印索・兆级玺印数字引擎 — 面向博物馆、古籍与\"",
+  "yinsuo_host_element": "PRE.",
+  "notice_text": "f_path * 页范围 from（可选） 页范围 to（可选） chunk_size（可选） rerun（同书重跑，spec §2.4 幂等） 建 job job 列表（后端） 刷新 列表接口报错（原样展示） HTTP 200 200 但响应体既不是数组、也没有 items 数组 原始响应体（原样展示，未改写） 本浏览器本地记录（localStorage） 清空 **不是后端真值**：仅记录本机 E1 建 job 成功时拿到的 {job_id, state, total_pages, created_at}，用于在「后端列表接口尚未提供」时仍有入口。 ",
+  "has_feicui_marker": "YES",
+  "script_srcs": "/feicui/@vite/client , /feicui/src/main.js",
+  "body_text_head": "feicui 印谱解析任务台 · 端口 5195 · API 5196 任务页 后端连通性未知（dev 探测端点不可用，例如 preview / 生产构建）；后端数据一律以接口响应为准。 任务页 新建 job 走 E1 POST /api/jobs ；job 列表见下方两栏（后端接口 / 本机记录，来源分开标注）。 新建 job（E1） 书路径 pdf_path * 页范围 from（可选） 页范围 to（可选） chunk_size（可选） rerun（同书重跑，spec §2.4 幂等） 建 job job 列表（后端） 刷新 列表接口报错（原样展示） HTTP 200 200 但响应体既",
+  "console_errors": "[]"
+}
+
+[cleanup] chrome pid=12491 terminated; profile removed: True

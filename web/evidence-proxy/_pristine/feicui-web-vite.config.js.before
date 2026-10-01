@@ -1,0 +1,103 @@
+import { fileURLToPath, URL } from 'node:url'
+import net from 'node:net'
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+
+// ─────────────────────────────────────────────────────────────────────────────
+// feicui 前端（阶段 1a 骨架）
+// 端口真源：feicui/docs/feicui.spec.md §6.1（前端 5195 / API 5196），
+//          跨项目端口真源 = /Users/kevin/bistro/ctrl/PORTS.md
+//   - strictPort: true ⇒ 5195 被占时**直接报错退出**，不回退 5173/5174（spec §7 AC-13）
+//   - preview 同样锁 5195
+// ─────────────────────────────────────────────────────────────────────────────
+const PORT = 5195
+// 默认目标＝spec §6.1 的 API 端口 5196。
+// FEICUI_API_TARGET 是**仅用于离线自测**的 dev 覆盖（指向一次性 stub），
+// 默认不设置 ⇒ 行为与登记口径一致（http://127.0.0.1:5196）。
+const API_TARGET = process.env.FEICUI_API_TARGET || 'http://127.0.0.1:5196'
+
+// 后端未启动（连接失败）时，让 /api 的失败可与「后端真实 5xx」区分开。
+// 注意：这里的 503 是 **dev 代理层** 产生的信号，**不是** feicui API 的错误码族
+// （spec §3.2 S-6 的 400/404/409/422/500）；API 自身码族未被本前端改动。
+function apiProxyErrorGuard(proxy) {
+  proxy.on('error', (err, _req, res) => {
+    if (!res || typeof res.end !== 'function') return
+    if (!res.headersSent && typeof res.writeHead === 'function') {
+      res.writeHead(503, { 'Content-Type': 'application/json; charset=utf-8' })
+    }
+    res.end(
+      JSON.stringify({
+        error: 'backend_unreachable',
+        target: API_TARGET,
+        code: (err && err.code) || 'UNKNOWN',
+        note: '此响应由 Vite dev 代理产生（后端连接失败），非 feicui API 响应',
+      })
+    )
+  })
+}
+
+// 后端连通性探测（**dev-only，非 API 契约**）：spec §3 无 /api/health，
+// 故由本前端 dev server 自己探一次 TCP 连通性，供页面显示「后端未启动」。
+// 该中间件不进构建产物，生产 / preview 无此路径。
+function backendProbe() {
+  return {
+    name: 'feicui-backend-probe',
+    apply: 'serve',
+    configureServer(server) {
+      const u = new URL(API_TARGET)
+      server.middlewares.use('/__feicui/backend-probe', (_req, res) => {
+        const host = u.hostname
+        const port = Number(u.port || (u.protocol === 'https:' ? 443 : 80))
+        const socket = net.connect({ host, port })
+        let settled = false
+        const finish = (reachable, detail) => {
+          if (settled) return
+          settled = true
+          socket.destroy()
+          res.setHeader('Content-Type', 'application/json; charset=utf-8')
+          res.setHeader('Cache-Control', 'no-store')
+          res.end(
+            JSON.stringify({ reachable, target: API_TARGET, detail: detail || null })
+          )
+        }
+        socket.setTimeout(800)
+        socket.once('connect', () => finish(true, 'tcp-connect-ok'))
+        socket.once('timeout', () => finish(false, 'timeout'))
+        socket.once('error', (e) => finish(false, e.code || 'error'))
+      })
+    },
+  }
+}
+
+export default defineConfig({
+  plugins: [vue(), backendProbe()],
+  resolve: {
+    alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
+  },
+  server: {
+    // 绑定口径（**显式**，非默认）：依据 /Users/kevin/bistro/ctrl/PORTS.md §1 制度 (d)
+    // 「本机非生产链路引用一律写 127.0.0.1，不写 localhost」。
+    // 若只绑 IPv6 `::1`，则阶段 1c 在 shu/web/vite.config.js 里把 /feicui 代理指向
+    // http://127.0.0.1:5195 时会 ECONNREFUSED（jiazu Gramps-Web ↔ ::1:5198 的同类坑，方向相反）。
+    // 故此处**显式**绑 127.0.0.1，保证 127.0.0.1:5195 可达。
+    host: '127.0.0.1',
+    port: PORT,
+    strictPort: true,
+    proxy: {
+      '/api': {
+        target: API_TARGET,
+        changeOrigin: false,
+        configure: apiProxyErrorGuard,
+      },
+    },
+  },
+  preview: {
+    host: '127.0.0.1',
+    port: PORT,
+    strictPort: true,
+  },
+  build: {
+    outDir: 'dist',
+    emptyOutDir: true,
+  },
+})

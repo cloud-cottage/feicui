@@ -1,0 +1,7 @@
+db           = /Users/kevin/bistro/shu/feicui/server/selftest/evidence/selftest.db
+prod_db      = False
+applied      = 0
+skipped      = 2
+journal_mode = wal
+schema_sha256= d35d052b6aee2a195c6879009c2116b87578a357bbeed829176410ccffd608be
+tables       = export_batches,export_records,images,job_pages,jobs,schema_migrations,seals,sqlite_sequence,stamps

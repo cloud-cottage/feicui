@@ -1,0 +1,8 @@
+== SIGKILL 后 kill -0 逐 PID（非零＝确已死）==
+pid=58165 kill -0 -> 1
+pid=58166 kill -0 -> 1
+pid=58167 kill -0 -> 1
+pid=58168 kill -0 -> 1
+pid=58158 kill -0 -> 1
+== ps 复查（应无这些 PID）==
+  PID COMMAND

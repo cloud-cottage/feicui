@@ -1,0 +1,47 @@
+{
+  "pool_pid": 60578,
+  "manager_python": "/Users/kevin/bistro/shu/feicui/server/.venv/bin/python",
+  "db": "/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i_docflag/copy_default.db",
+  "faces_dir": "/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i_docflag/faces/default",
+  "workers": [
+    {
+      "index": 0,
+      "pid": 60579,
+      "alive": false,
+      "ready": true,
+      "spawns": 1,
+      "task": null
+    },
+    {
+      "index": 1,
+      "pid": 60580,
+      "alive": false,
+      "ready": true,
+      "spawns": 1,
+      "task": null
+    }
+  ],
+  "doc_preprocess": true,
+  "cpu_threads": 2,
+  "on_conflict": "skip",
+  "job": null,
+  "job_finished": "DONE",
+  "in_flight_tasks": [],
+  "stats": {
+    "chunks_committed": 1,
+    "pages_done": 2,
+    "pages_failed": 0,
+    "detected": 16,
+    "inserted": 8,
+    "updated": 0,
+    "skipped": 0,
+    "ocr_empty": 0,
+    "requeued_pages": 0,
+    "imgs_written": 8,
+    "imgs_reused": 0,
+    "worker_deaths": 0
+  },
+  "uptime_s": 6.8,
+  "updated_at": "2026-09-20T12:29:36+08:00",
+  "reason": "stopped"
+}

@@ -1,0 +1,2 @@
+warning: The `fitz` API is deprecated and will be removed in future. Use `import pymupdf` instead.
+fitz.open(垃圾字节) -> FAILED FileDataError Failed to open file '/Users/kevin/bistro/shu/feicui/server/selftest/evidence/fake_garbage.bin' as type bin.

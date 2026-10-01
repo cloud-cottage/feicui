@@ -1,0 +1,58 @@
+{
+ "ids_api": [
+  "job-879526c0f8164e48a5106deef6f0b752",
+  "job-2f6c054f05c8461fa609e69969c56c61",
+  "job-578309831721457c989a77a0156a1d78",
+  "job-a5f7d511ba534c87a764bf82963e8af3"
+ ],
+ "want_ids": [
+  "job-879526c0f8164e48a5106deef6f0b752",
+  "job-2f6c054f05c8461fa609e69969c56c61",
+  "job-578309831721457c989a77a0156a1d78",
+  "job-a5f7d511ba534c87a764bf82963e8af3"
+ ],
+ "pages": 2,
+ "page_rows": [
+  {
+   "page": 1,
+   "reported_page": 1,
+   "items": 2,
+   "has_more": true,
+   "next_cursor": "WyIyMDI2LTA5LTIwVDEzOjAyOjE2KzA4OjAwIiwiam9iLTJmNmMwNTRmMDVjODQ2MWZhNjA5ZTY5OTY5YzU2YzYxIl0",
+   "ids": [
+    "job-879526c0f8164e48a5106deef6f0b752",
+    "job-2f6c054f05c8461fa609e69969c56c61"
+   ]
+  },
+  {
+   "page": 2,
+   "reported_page": 2,
+   "items": 2,
+   "has_more": false,
+   "next_cursor": null,
+   "ids": [
+    "job-578309831721457c989a77a0156a1d78",
+    "job-a5f7d511ba534c87a764bf82963e8af3"
+   ]
+  },
+  {
+   "page": 3,
+   "reported_page": 3,
+   "items": 0,
+   "has_more": false,
+   "next_cursor": null,
+   "ids": []
+  },
+  {
+   "page": 4,
+   "reported_page": 4,
+   "items": 0,
+   "has_more": false,
+   "next_cursor": null,
+   "ids": []
+  }
+ ],
+ "cap": 4,
+ "guard": null,
+ "note": "页码路径与游标路径的 key 集合必须逐条相等；末页之后必须空 items + has_more=false"
+}

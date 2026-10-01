@@ -1,0 +1,15 @@
+{
+    "ok": true,
+    "api_version": "1a",
+    "db_path": "/Users/kevin/bistro/shu/feicui/server/selftest/evidence/selftest.db",
+    "db_exists": true,
+    "prod_db": false,
+    "root": "/Users/kevin/bistro/shu/feicui",
+    "time": "2026-09-20T11:56:05+08:00",
+    "tables_present": {
+        "stamps": true,
+        "jobs": true,
+        "job_pages": true
+    },
+    "journal_mode": "wal"
+}

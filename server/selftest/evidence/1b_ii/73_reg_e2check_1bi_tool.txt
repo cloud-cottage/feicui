@@ -1,0 +1,8 @@
+MATCH state: api='DONE' recompute='DONE'
+MATCH total_pages: api=2 recompute=2
+MATCH done_pages: api=2 recompute=2
+MATCH failed_pages: api=[] recompute=[]
+MATCH cursor: api={'chunk_lo': None, 'chunk_hi': 0} recompute={'chunk_lo': None, 'chunk_hi': 0}
+MATCH counters: api={'detected': 13, 'inserted': 1, 'updated': 0, 'skipped': 12, 'ocr_empty': 1} recompute={'detected': 13, 'inserted': 1, 'updated': 0, 'skipped': 12, 'ocr_empty': 1}
+jobs.state(库内原始)=DONE started_at=2026-09-20T13:02:21+08:00 finished_at=2026-09-20T13:02:28+08:00
+E2CHECK = MATCH

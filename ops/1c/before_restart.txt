@@ -1,0 +1,30 @@
+=== BEFORE-RESTART snapshot 2026-09-20 13:08:49 ===
+--- /api/self ---
+{"ok":true,"panel":{"port":5555,"portOpen":true,"pid":93417,"nodeVersion":"v20.20.2","uptimeMs":58328965,"startedAt":"2026-09-19T12:56:41.103Z","pm2":{"name":"bistro-ctrl","id":0,"status":"online","managed":true,"source":"pm2-pidfile"},"code":{"path":"/Users/kevin/bistro/ctrl/index.js","size":51288,"mtime":"2026-09-20T05:08:34.407Z","mtimeText":"2026/9/20 13:08:34"},"pids":{"path":"/Users/kevin/bistro/ctrl/logs/pids.json","count":10,"sids":["shu","jinli-api","jinli","cat","aranya-api","liwu-proxy","liwu-web","liwu-app","jiazu-api","jiazu"],"mtimeText":"2026/9/20 11:26:49"}}}
+--- /api/status (sid state pid port) ---
+jiazu-api running 32445 3100 portOpen=True
+jiazu running 32446 5199 portOpen=True
+shu running 93455 5164 portOpen=True
+jinli-api running 93456 5778 portOpen=True
+jinli running 93457 5777 portOpen=True
+cat running 93458 5701 portOpen=True
+aranya-api running 93459 5181 portOpen=True
+liwu-proxy running 93460 3020 portOpen=True
+liwu-web running 93461 5175 portOpen=True
+liwu-app running 93462 5176 portOpen=True
+--- pm2 ---
+bistro-ctrl 93417 online 1789822600866
+--- lsof listen ports of interest ---
+5555 listeners=1
+3100 listeners=1
+5199 listeners=1
+5164 listeners=1
+5778 listeners=1
+5777 listeners=1
+5701 listeners=1
+5181 listeners=1
+3020 listeners=1
+5175 listeners=1
+5176 listeners=1
+5195 listeners=0
+5196 listeners=0

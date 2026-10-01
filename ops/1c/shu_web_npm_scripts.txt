@@ -1,0 +1,54 @@
+=== npm scripts @ 2026-09-20 13:09:41 ===
+----- npm run check:pricing -----
+
+> yinsuo-web@0.1.0 check:pricing
+> node scripts/check-price-literals.mjs
+
+✓ 价格字面量静态检查通过（spec §4.3 / AC-19）
+  · 行级豁免 src/config/app-config.js（演示环境额度（spec §11 待决 18：30 天 + 2,000 次），非付费套餐包量；不作为任何商品价格消费）
+  共豁免 1 处命中
+exit=0
+----- npm run smoke -----
+✓ A31 顺序①：先扣免费额度、额度内不收费  freeApplied=1 usedToday=3
+✓ A31 免费额度内余额不变  ¥32,290.00
+✓ A31 顺序②：免费额度用尽后**不拒绝**，按 unitPriceCents 扣余额  overageAmount=¥2.00 overageToday=1
+✓ A31 `charged.freeApplied` 语义 = 本次占用免费额度张数（0/1），与 overageCount 互补  额度内 1+0 / 超出 0+1
+✓ A31 超量按 ¥2.00/张 扣减且 Σ流水 = 余额 自洽  ¥32,290.00 → ¥32,288.00
+✓ A15/A30 同源：§3.10 v1.5 五个额度字段与 A30 一致（页面不自行累加/相乘，§8.3-3）
+✓ A30 计费态：今日超出张数与扣费金额由适配层派生  overage=1 charged=¥2.00
+✓ A31 继续可下载（不设每日上限）  overageToday=2 charged=¥4.00
+✓ A31 成功返回单独的短期签名原图链接（展示通道不含原图 URL）  about:placeholder#ia_0000000001/original?sig=2xqvz
+✓ AC-85 资源不存在 → 拒绝（NOT_FOUND）且不抵扣、不扣费、不写流水  usedToday=5（不变）余额 ¥32,286.00（不变） 流水条数 164 → 164
+✓ AC-85 不存在资源的 ORIGINAL_IMAGE 流水零写入（relatedAssetId 无悬挂引用）
+✓ A28 首次受理 + 同邮箱重复提交判重  DEMO-20260920-0001
+✓ A29 FAQ 12 条 / 资料包 6 项（§11 待决 17、15）  faq=12 downloads=6
+✓ A4 logout 清空会话
+✓ A31 未登录 → reject UNAUTHENTICATED（R17b）  未登录：原图下载需先登录（spec §8.2 A31）
+✓ A30 未登录 → reject UNAUTHENTICATED（额度为账号维度数据，Zang 终审）  未登录：原图下载额度为账号维度数据，查询前需先登录（spec §8.2 A30）
+✓ A30/A31 复用同一拒绝码枚举（contract.ORIGINAL_DOWNLOAD_ERROR）
+✓ A30 未登录时**不**返回额度快照（不泄露账号维度数据）
+
+✓ 全部通过（132 项断言）
+exit=0
+----- npm run build -----
+dist/assets/_plugin-vue_export-helper-BwMhMWnQ.js    0.70 kB │ gzip:  0.42 kB
+dist/assets/EntryLink-y5BoPjQd.js                    0.85 kB │ gzip:  0.53 kB
+dist/assets/NotFoundPage-BFVAkECc.js                 1.04 kB │ gzip:  0.63 kB
+dist/assets/SegmentedControl-BSi67S0X.js             1.04 kB │ gzip:  0.62 kB
+dist/assets/labels-BYbfXU6g.js                       1.07 kB │ gzip:  0.67 kB
+dist/assets/StateBlock-CrcITjg8.js                   1.26 kB │ gzip:  0.66 kB
+dist/assets/ComingSoonPage-5svqwVU8.js               2.28 kB │ gzip:  1.25 kB
+dist/assets/ConsoleShell-CxbHrp9j.js                 2.74 kB │ gzip:  1.56 kB
+dist/assets/console-XZcdAYiY.js                      3.90 kB │ gzip:  1.61 kB
+dist/assets/marketing-DeZmO9Yb.js                    5.94 kB │ gzip:  2.84 kB
+dist/assets/LoginPage-Ks0nYDh4.js                    6.26 kB │ gzip:  2.84 kB
+dist/assets/RegisterPage-BuaC6nSe.js                 9.21 kB │ gzip:  3.68 kB
+dist/assets/PricingPage-Broa6PfB.js                 11.39 kB │ gzip:  4.32 kB
+dist/assets/KeysPage-C-Vj7oxK.js                    13.77 kB │ gzip:  5.51 kB
+dist/assets/HomePage-BoRrllYv.js                    14.68 kB │ gzip:  6.42 kB
+dist/assets/OverviewPage-BSjXOtDW.js                16.95 kB │ gzip:  7.03 kB
+dist/assets/BillingPage-CXlqs4r8.js                 25.63 kB │ gzip:  9.48 kB
+dist/assets/UsagePage-BUSICxgx.js                   28.52 kB │ gzip: 10.16 kB
+dist/assets/useAppConfig-PrYpNcr6.js               146.42 kB │ gzip: 55.63 kB
+✓ built in 800ms
+exit=0

@@ -1,0 +1,13 @@
+=== shu/web (5164) ===
+base        = "/"
+server.port = 5164 | strictPort = true
+server.proxy = {"/feicui":{"target":"http://127.0.0.1:5195","changeOrigin":true,"hasRewrite":false}}
+preview.port = 5164 | strictPort = true
+preview.proxy= {"/feicui":{"target":"http://127.0.0.1:5195","changeOrigin":true,"hasRewrite":false}}
+=== feicui/web (5195) ===
+base         = "/feicui/"
+server.host  = 127.0.0.1 | port = 5195 | strictPort = true
+server.hmr   = {"clientPort":5195}
+preview.host = 127.0.0.1 | port = 5195 | strictPort = true
+feicui base applied to preview = (继承 config.base)
+=== VERDICT === PASS

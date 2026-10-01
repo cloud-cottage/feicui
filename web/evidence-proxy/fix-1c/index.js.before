@@ -1,0 +1,21 @@
+import { createRouter, createWebHistory } from 'vue-router'
+import JobsPage from '@/pages/JobsPage.vue'
+import JobDetailPage from '@/pages/JobDetailPage.vue'
+import ResultsPage from '@/pages/ResultsPage.vue'
+import MissingPage from '@/pages/MissingPage.vue'
+
+// 路由对应 spec §3 的页面职责：
+//   /                     任务页（E1）
+//   /jobs/:job_id         任务详情（E2，真实进度 S-1）
+//   /jobs/:job_id/results 结果页（E3，6 字段信封；预留）
+//   /jobs/:job_id/missing 缺失清单（E5）
+export default createRouter({
+  history: createWebHistory(),
+  routes: [
+    { path: '/', name: 'jobs', component: JobsPage },
+    { path: '/jobs/:job_id', name: 'job-detail', component: JobDetailPage },
+    { path: '/jobs/:job_id/results', name: 'job-results', component: ResultsPage },
+    { path: '/jobs/:job_id/missing', name: 'job-missing', component: MissingPage },
+    { path: '/:pathMatch(.*)*', redirect: '/' },
+  ],
+})

@@ -1,0 +1,86 @@
+== 池日志关键行 ==
+--- /Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/run/pool_t1.log ---
+2026-09-20 12:26:56,511 INFO feicui.pool 池启动：workers=4 db=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/db/copy_A_main.db faces=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/faces/t1 doc_preprocess=True cpu_threads=2 on_conflict=skip worker_python=/Users/kevin/bistro/shu/feicui/venv/bin/python manager_python=/Users/kevin/bistro/shu/feicui/server/.venv/bin/python
+2026-09-20 12:27:00,447 INFO feicui.pool worker#1 ready pid=56480 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/faces/t1
+2026-09-20 12:27:00,447 INFO feicui.pool worker#2 ready pid=56481 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/faces/t1
+2026-09-20 12:27:00,447 INFO feicui.pool worker#3 ready pid=56482 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/faces/t1
+2026-09-20 12:27:00,447 INFO feicui.pool worker#0 ready pid=56479 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/faces/t1
+2026-09-20 12:27:00,451 INFO feicui.pool 认领 job job-5ad91189f2454d659796cda0cb7398d3：pdf=/Users/kevin/bistro/shu/feicui/tmp.pdf book_key=TMP 模板别名=黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf 页区间=[20,26] chunk_size=2 残留 RUNNING 页退回 PENDING=0（断点续跑入口）
+2026-09-20 12:27:00,452 INFO feicui.pool 派 chunk c0（页 [20, 21]）→ worker#0 task=job-5ad91189f2454d659796cda0cb7398d3#c0 [并发在飞=1]
+2026-09-20 12:27:00,454 INFO feicui.pool 派 chunk c1（页 [22, 23]）→ worker#1 task=job-5ad91189f2454d659796cda0cb7398d3#c1 [并发在飞=2]
+--- /Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/run/pool_t2_resume.log ---
+2026-09-20 12:28:05,827 INFO feicui.pool 池启动：workers=4 db=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/db/copy_D_resume.db faces=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/faces/resume doc_preprocess=True cpu_threads=2 on_conflict=skip worker_python=/Users/kevin/bistro/shu/feicui/venv/bin/python manager_python=/Users/kevin/bistro/shu/feicui/server/.venv/bin/python
+2026-09-20 12:28:09,551 INFO feicui.pool worker#0 ready pid=58165 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/faces/resume
+2026-09-20 12:28:09,551 INFO feicui.pool worker#1 ready pid=58166 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/faces/resume
+2026-09-20 12:28:09,551 INFO feicui.pool worker#3 ready pid=58168 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/faces/resume
+2026-09-20 12:28:09,551 INFO feicui.pool worker#2 ready pid=58167 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/faces/resume
+2026-09-20 12:28:09,554 INFO feicui.pool 认领 job job-d36d9fbe9e9c4f60a6d7b302cc1064fe：pdf=/Users/kevin/bistro/shu/feicui/tmp.pdf book_key=TMP 模板别名=黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf 页区间=[27,33] chunk_size=2 残留 RUNNING 页退回 PENDING=0（断点续跑入口）
+2026-09-20 12:28:09,555 INFO feicui.pool 派 chunk c0（页 [27, 28]）→ worker#0 task=job-d36d9fbe9e9c4f60a6d7b302cc1064fe#c0 [并发在飞=1]
+2026-09-20 12:28:09,556 INFO feicui.pool 派 chunk c1（页 [29, 30]）→ worker#1 task=job-d36d9fbe9e9c4f60a6d7b302cc1064fe#c1 [并发在飞=2]
+--- /Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/run/pool_t2_resume2.log ---
+2026-09-20 12:28:18,599 INFO feicui.pool 池启动：workers=4 db=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/db/copy_D_resume.db faces=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/faces/resume doc_preprocess=True cpu_threads=2 on_conflict=skip worker_python=/Users/kevin/bistro/shu/feicui/venv/bin/python manager_python=/Users/kevin/bistro/shu/feicui/server/.venv/bin/python
+2026-09-20 12:28:22,105 INFO feicui.pool worker#2 ready pid=58489 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/faces/resume
+2026-09-20 12:28:22,105 INFO feicui.pool worker#3 ready pid=58490 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/faces/resume
+2026-09-20 12:28:22,105 INFO feicui.pool worker#1 ready pid=58486 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/faces/resume
+2026-09-20 12:28:22,105 INFO feicui.pool worker#0 ready pid=58485 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/faces/resume
+2026-09-20 12:28:22,109 INFO feicui.pool 认领 job job-d36d9fbe9e9c4f60a6d7b302cc1064fe：pdf=/Users/kevin/bistro/shu/feicui/tmp.pdf book_key=TMP 模板别名=黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf 页区间=[27,33] chunk_size=2 残留 RUNNING 页退回 PENDING=4（断点续跑入口）
+2026-09-20 12:28:22,110 INFO feicui.pool 派 chunk c1（页 [29, 30]）→ worker#0 task=job-d36d9fbe9e9c4f60a6d7b302cc1064fe#c1 [并发在飞=1]
+2026-09-20 12:28:22,111 INFO feicui.pool 派 chunk c2（页 [31, 32]）→ worker#1 task=job-d36d9fbe9e9c4f60a6d7b302cc1064fe#c2 [并发在飞=2]
+--- /Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/run/pool_t3.log ---
+2026-09-20 12:27:05,379 INFO feicui.pool 池启动：workers=4 db=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/db/copy_A_main.db faces=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/faces/t1 doc_preprocess=True cpu_threads=2 on_conflict=skip worker_python=/Users/kevin/bistro/shu/feicui/venv/bin/python manager_python=/Users/kevin/bistro/shu/feicui/server/.venv/bin/python
+2026-09-20 12:27:08,086 INFO feicui.pool worker#2 ready pid=56923 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/faces/t1
+2026-09-20 12:27:08,086 INFO feicui.pool worker#1 ready pid=56922 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/faces/t1
+2026-09-20 12:27:08,086 INFO feicui.pool worker#0 ready pid=56921 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/faces/t1
+2026-09-20 12:27:08,086 INFO feicui.pool worker#3 ready pid=56924 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/faces/t1
+2026-09-20 12:27:08,089 INFO feicui.pool 认领 job job-26e2dc6b8fff4a6aa7edfa2c16accf9b：pdf=/Users/kevin/bistro/shu/feicui/tmp.pdf book_key=TMP 模板别名=黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf 页区间=[20,26] chunk_size=2 残留 RUNNING 页退回 PENDING=0（断点续跑入口）
+2026-09-20 12:27:08,090 INFO feicui.pool 派 chunk c0（页 [20, 21]）→ worker#0 task=job-26e2dc6b8fff4a6aa7edfa2c16accf9b#c0 [并发在飞=1]
+2026-09-20 12:27:08,092 INFO feicui.pool 派 chunk c1（页 [22, 23]）→ worker#1 task=job-26e2dc6b8fff4a6aa7edfa2c16accf9b#c1 [并发在飞=2]
+--- /Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/run/pool_t4_parallel.log ---
+2026-09-20 12:27:46,792 INFO feicui.pool 池启动：workers=4 db=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/db/copy_C_parallel.db faces=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/faces/w4 doc_preprocess=True cpu_threads=2 on_conflict=skip worker_python=/Users/kevin/bistro/shu/feicui/venv/bin/python manager_python=/Users/kevin/bistro/shu/feicui/server/.venv/bin/python
+2026-09-20 12:27:50,943 INFO feicui.pool worker#3 ready pid=57686 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/faces/w4
+2026-09-20 12:27:50,943 INFO feicui.pool worker#0 ready pid=57683 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/faces/w4
+2026-09-20 12:27:50,944 INFO feicui.pool worker#2 ready pid=57685 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/faces/w4
+2026-09-20 12:27:50,944 INFO feicui.pool worker#1 ready pid=57684 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/faces/w4
+2026-09-20 12:27:50,947 INFO feicui.pool 认领 job job-8ed13d94ebdc4989bf74e0831a5abf79：pdf=/Users/kevin/bistro/shu/feicui/tmp.pdf book_key=TMP 模板别名=黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf 页区间=[27,33] chunk_size=2 残留 RUNNING 页退回 PENDING=0（断点续跑入口）
+2026-09-20 12:27:50,948 INFO feicui.pool 派 chunk c0（页 [27, 28]）→ worker#0 task=job-8ed13d94ebdc4989bf74e0831a5abf79#c0 [并发在飞=1]
+2026-09-20 12:27:50,949 INFO feicui.pool 派 chunk c1（页 [29, 30]）→ worker#1 task=job-8ed13d94ebdc4989bf74e0831a5abf79#c1 [并发在飞=2]
+--- /Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/run/pool_t4_serial.log ---
+2026-09-20 12:27:14,142 INFO feicui.pool 池启动：workers=1 db=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/db/copy_B_serial.db faces=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/faces/w1 doc_preprocess=True cpu_threads=2 on_conflict=skip worker_python=/Users/kevin/bistro/shu/feicui/venv/bin/python manager_python=/Users/kevin/bistro/shu/feicui/server/.venv/bin/python
+2026-09-20 12:27:16,446 INFO feicui.pool worker#0 ready pid=57029 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/faces/w1
+2026-09-20 12:27:16,449 INFO feicui.pool 认领 job job-0d7561050208483da9ed6b84e4294a23：pdf=/Users/kevin/bistro/shu/feicui/tmp.pdf book_key=TMP 模板别名=黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf 页区间=[27,33] chunk_size=2 残留 RUNNING 页退回 PENDING=0（断点续跑入口）
+2026-09-20 12:27:16,449 INFO feicui.pool 派 chunk c0（页 [27, 28]）→ worker#0 task=job-0d7561050208483da9ed6b84e4294a23#c0 [并发在飞=1]
+2026-09-20 12:27:23,046 INFO feicui.pool 提交 chunk c0（页 [27, 28]）：inserted=11 updated=0 skipped=0 failed=[] | 累计 页=2 chunk=1
+2026-09-20 12:27:23,049 INFO feicui.pool 派 chunk c1（页 [29, 30]）→ worker#0 task=job-0d7561050208483da9ed6b84e4294a23#c1 [并发在飞=1]
+2026-09-20 12:27:30,685 INFO feicui.pool 提交 chunk c1（页 [29, 30]）：inserted=11 updated=0 skipped=0 failed=[] | 累计 页=4 chunk=2
+2026-09-20 12:27:30,687 INFO feicui.pool 派 chunk c2（页 [31, 32]）→ worker#0 task=job-0d7561050208483da9ed6b84e4294a23#c2 [并发在飞=1]
+--- /Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/run/pool_t5.log ---
+2026-09-20 12:28:36,413 INFO feicui.pool 池启动：workers=4 db=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/db/copy_E_sep.db faces=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/faces/sep doc_preprocess=True cpu_threads=2 on_conflict=skip worker_python=/Users/kevin/bistro/shu/feicui/venv/bin/python manager_python=/Users/kevin/bistro/shu/feicui/server/.venv/bin/python
+2026-09-20 12:28:40,151 INFO feicui.pool worker#1 ready pid=59201 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/faces/sep
+2026-09-20 12:28:40,152 INFO feicui.pool worker#2 ready pid=59202 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/faces/sep
+2026-09-20 12:28:40,152 INFO feicui.pool worker#0 ready pid=59200 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/faces/sep
+2026-09-20 12:28:40,152 INFO feicui.pool worker#3 ready pid=59203 python=3.11.16 exe=/Users/kevin/bistro/shu/feicui/venv/bin/python cwd=/Users/kevin/bistro/shu/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/faces/sep
+2026-09-20 12:28:40,155 INFO feicui.pool 认领 job job-78d4802597524cf8ad31ac86748bbf0d：pdf=/Users/kevin/bistro/shu/feicui/tmp.pdf book_key=TMP 模板别名=黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf 页区间=[20,70] chunk_size=2 残留 RUNNING 页退回 PENDING=0（断点续跑入口）
+2026-09-20 12:28:40,157 INFO feicui.pool 派 chunk c0（页 [20, 21]）→ worker#0 task=job-78d4802597524cf8ad31ac86748bbf0d#c0 [并发在飞=1]
+2026-09-20 12:28:40,158 INFO feicui.pool 派 chunk c1（页 [22, 23]）→ worker#1 task=job-78d4802597524cf8ad31ac86748bbf0d#c1 [并发在飞=2]
+== worker 日志（每臂 worker0 末尾）==
+--- /Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/run/wlog_t1 ---
+[32mCreating model: ('PP-OCRv6_medium_rec', None, None)[0m
+[32mModel files already exist. Using cached files. To redownload, please delete the directory manually: `/Users/kevin/.paddlex/official_models/PP-OCRv6_medium_
+--- /Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/run/wlog_t2_resume ---
+[32mCreating model: ('PP-OCRv6_medium_rec', None, None)[0m
+[32mModel files already exist. Using cached files. To redownload, please delete the directory manually: `/Users/kevin/.paddlex/official_models/PP-OCRv6_medium_
+--- /Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/run/wlog_t2_resume2 ---
+[32mCreating model: ('PP-OCRv6_medium_rec', None, None)[0m
+[32mModel files already exist. Using cached files. To redownload, please delete the directory manually: `/Users/kevin/.paddlex/official_models/PP-OCRv6_medium_
+--- /Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/run/wlog_t3 ---
+[32mCreating model: ('PP-OCRv6_medium_rec', None, None)[0m
+[32mModel files already exist. Using cached files. To redownload, please delete the directory manually: `/Users/kevin/.paddlex/official_models/PP-OCRv6_medium_
+--- /Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/run/wlog_t4_parallel ---
+[32mCreating model: ('PP-OCRv6_medium_rec', None, None)[0m
+[32mModel files already exist. Using cached files. To redownload, please delete the directory manually: `/Users/kevin/.paddlex/official_models/PP-OCRv6_medium_
+--- /Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/run/wlog_t4_serial ---
+[32mCreating model: ('PP-OCRv6_medium_rec', None, None)[0m
+[32mModel files already exist. Using cached files. To redownload, please delete the directory manually: `/Users/kevin/.paddlex/official_models/PP-OCRv6_medium_
+--- /Users/kevin/bistro/shu/feicui/server/selftest/evidence/1b_i/run/wlog_t5 ---
+[32mCreating model: ('PP-OCRv6_medium_rec', None, None)[0m
+[32mModel files already exist. Using cached files. To redownload, please delete the directory manually: `/Users/kevin/.paddlex/official_models/PP-OCRv6_medium_

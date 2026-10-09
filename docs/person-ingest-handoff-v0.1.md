@@ -74,7 +74,9 @@
 
 ## 5. 批 2 待办清单（建议顺序）
 
-1. 规范：`xiai.spec.md` §3.54 增量（`xiai_person_imports`、person 扩字段、批量采纳通道、集合 17 → 18、新 AC、W 行；走该文件 §1.3 流程）。
+> **进度更新（2026-10-10）**：**第 1 项「规范」已由本线（Jing）先行落地** —— `xiai/docs/xiai.spec.md` **v1.53 → v1.54**：新增 **§3.54.13〜§3.54.18**（person 扩字段 `native_place`/`biography`/`source`/`source_id` ＋ 新集合 `xiai_person_imports`（暂存 / PENDING）＋ 管理员批量采纳通道（`PENDING→ACCEPTED` 幂等落 `xiai_persons`、`REJECTED` 零写入）＋ 与既有「只经采纳路径写入」的**正式增量**声明）＋ **§4.1.16**（`person_import` 实体）＋ **§10.53（`AC-485`〜`AC-492`）** ＋ 集合清单 **17 → 18** ＋ `[data-admin-action]` **10 值 / 9 类** ＋ **`W-77`〜`W-80`**；快照 `xiai/docs/versions/xiai.spec.v1.53.md`（md5 `8f348ef71fd0abde8014e5514de7398c`）。**该提交为本地提交 `99a34bd`、未推送**（该仓另有并行线的未推送提交与未提交改动，**推送时机归该线/Kevin**）。⇒ **接手会话请先读 §3.54.13〜§3.54.18 再动手**；若口径要改，走 `xiai.spec.md` 自有的 §1.3 流程。
+
+1. ~~规范：`xiai.spec.md` §3.54 增量~~ **（已落地，见上）**。
 2. 人工前置：云控制台新建 `xiai_person_imports`（＋既有 `xiai_persons` / `xiai_person_proposals`）。
 3. 实现：云函数 op 接线（`submitPersonImport` / `reviewPersonImport` 形态）＋ 数据层集合读写 ＋ 管理员批量采纳 UI（**复用「我的勘误记录」页形态，不新开路由、不建管理员专区**）。
 4. 导入器：消费 feicui 批次包（`persons.jsonl` / `relations.jsonl`）→ 写 `xiai_person_imports`（`PENDING`）。

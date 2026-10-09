@@ -194,3 +194,17 @@
 | **Kong**（实现） | 批 1：`feicui/web`（页签 / 路由 / 页面 / API 客户端）＋ `feicui/server`（新端点 / 采集器 / 归一化 / 新库 / 批次包）＋ 自检与证据留档 `feicui/ops/**` |
 | **Jing**（规范） | 批 1 规范：`feicui/docs/feicui.spec.md` 新增「印人采集」节（端点 / 存储 / 批次 / UI / AC）；**批 2 规范前置**：`xiai/docs/xiai.spec.md` §3.54 增量（`xiai_person_imports` / 扩字段 / 批量采纳 / 集合计数 / 新 AC / W 行） |
 | **Neng**（质检） | 待 Kong 批 1 落地后派：按 §7 判据逐条复核 + 证据裁决 |
+
+---
+
+## 10. 变更记录
+
+| 时点 | 变更 |
+| --- | --- |
+| 2026-10-10 | **v0.1 建立**（Zang）：实测 API 契约、Kevin 门控四答、批 1 / 批 2 范围与映射表。 |
+| 2026-10-10 | **范围裁定（Kevin）**：**xiai 侧数据写入（批 2）由另一会话接手** ⇒ 本线职责边界收窄为 **feicui 只负责采集 / 归一化 / 落 feicui 本库 / 产出批次包**；**批次包即对外唯一交付缝**；交接件 ＝ **`feicui/docs/person-ingest-handoff-v0.1.md`**（本件 §5 批 2 内容**读作待办清单与口径来源，不再由本线实现**）。已同步：Kong 侧「不得触碰 xiai 任何文件」、Jing 侧「停止写 xiai 规范、改在 feicui 规范冻结交付缝」。 |
+
+### 10.1 实测补记（限流）
+
+- **`person/detail/<id>` 有窗口限流**：超频回包 **HTTP 200** ＋ `{"msg":"操作频繁，请稍候再试!","code":"429","status":"true"}`（`code` 为**字符串**、`status` 仍 `true`、**仅 `data` 缺失可辨失败**）；自愈实测 **约 150 s**。
+- **`person/detail` 与列表行字段等价**：15 人随机抽样逐字段比对，**仅 `seqid` / `createdTime` 不同，其余逐字节相同** ⇒ **详情页新增的只有 `graph/person`（关联图）**；采集主链路 ＝ `list`（1 次）＋ `graph/person`（570 次，实测 0.5 s 间隔 12/12 成功）；`detail` 降为 best-effort（失败进清单、不阻塞、不得计为成功）。

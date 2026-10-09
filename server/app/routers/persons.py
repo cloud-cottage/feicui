@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import logging
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 
 from .. import persons
 from ..config import Settings, get_settings
@@ -27,6 +27,13 @@ router = APIRouter(prefix="/api/persons", tags=["persons"])
 
 PAGE_LIMIT_DEFAULT = 50
 PAGE_LIMIT_MAX = 500
+
+# 本端点**支持的查询参数白名单**。任何**未在此列**的查询参数一律 **400 UNSUPPORTED_PARAM**（**绝不静默忽略**）。
+# 要点：本端点＝**纯 offset 分页**（`page`/`limit`），**不支持 `cursor`**（游标协议属 E3/E7 的 jobs 线）；
+# 旧实现对未白名单参数静默放行（如 `?cursor=abc` 仍 200）—— 属缺陷，已收口。
+ALLOWED_QUERY_PARAMS = frozenset({
+    "page", "limit", "initial", "nationality", "has_dates", "has_relations", "q", "with_facets",
+})
 
 
 def _settings() -> Settings:
@@ -59,6 +66,7 @@ def _bool_param(raw: str | None, name: str) -> bool | None:
 # ── 列表（**须在 `/{grbsm}` 之前声明**，否则 `batches` 会被当作 grbsm 吞掉）──────────
 @router.get("")
 def list_persons(
+    request: Request,
     page: str | None = Query(default=None, description="1-based 页码（默认 1）"),
     limit: str | None = Query(default=None, description=f"页长，默认 {PAGE_LIMIT_DEFAULT}，上限 {PAGE_LIMIT_MAX}"),
     initial: str | None = Query(default=None, description="姓氏首字母过滤（personInitial）"),
@@ -69,7 +77,27 @@ def list_persons(
     with_facets: str | None = Query(default=None, description="是否附分面（默认 true）"),
     st: Settings = Depends(_settings),
 ) -> dict:
-    """`GET /api/persons` —— 分页 + 筛选。信封＝E3/E7 同款 **6 字段**；另附 `_facets`（下划线前缀＝诊断口径）。"""
+    """`GET /api/persons` —— 分页 + 筛选。信封＝ **5 字段** `{items, page, limit, total, has_more}`（**纯 offset 分页**；
+    `next_cursor` 已删、`cursor` 不受支持）；另附 `_facets`（下划线前缀＝诊断口径）与 `_db_path`。
+
+    分页口径（钉死）：
+      * **不变式** `has_more == (page * limit < total)`；不再出现「`has_more=true` ＋ `next_cursor=null`」的自相矛盾形态；
+      * **未白名单查询参数一律 400**（含 `cursor`）—— 白名单见 `ALLOWED_QUERY_PARAMS`，**绝不静默忽略**；
+      * `page` 越界 ⇒ `items=[]` 且 `has_more=False`（**绝不**回吐第一页）。
+    """
+    # ① 未白名单参数一律显式拒绝（**绝不静默忽略**）：`cursor` 等不在白名单 ⇒ 400 结构化 JSON。
+    unsupported = sorted(k for k in request.query_params.keys() if k not in ALLOWED_QUERY_PARAMS)
+    if unsupported:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": "UNSUPPORTED_PARAM",
+                "detail": (f"不支持的查询参数：{unsupported}。本端点只做 offset 分页（page/limit），"
+                           f"**不支持 cursor**；支持的参数：{sorted(ALLOWED_QUERY_PARAMS)}"),
+                "unsupported": unsupported,
+                "supported": sorted(ALLOWED_QUERY_PARAMS),
+            },
+        )
     page_i = _int_param(page, "page", minimum=1) or 1
     limit_i = _int_param(limit, "limit", minimum=1) or PAGE_LIMIT_DEFAULT
     if limit_i > PAGE_LIMIT_MAX:

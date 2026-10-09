@@ -1,0 +1,179 @@
+{
+  "base": "http://127.0.0.1:5196",
+  "checks": {
+    "①.invariant_limit_eq_3": {
+      "pass": true,
+      "detail": {
+        "status": 200,
+        "has_more": true,
+        "page": 1,
+        "limit": 3,
+        "total": 570,
+        "items_len": 3,
+        "envelope_keys": [
+          "_db_path",
+          "_facets",
+          "has_more",
+          "items",
+          "limit",
+          "page",
+          "total"
+        ],
+        "violations": []
+      }
+    },
+    "①.next_cursor_key_removed": {
+      "pass": true,
+      "detail": {
+        "next_cursor_present": false,
+        "envelope_keys": [
+          "_db_path",
+          "_facets",
+          "has_more",
+          "items",
+          "limit",
+          "page",
+          "total"
+        ]
+      }
+    },
+    "①.invariant_limit_eq_500": {
+      "pass": true,
+      "detail": {
+        "status": 200,
+        "has_more": true,
+        "total": 570,
+        "items_len": 500,
+        "violations": []
+      }
+    },
+    "②.cursor_unsupported_400_structured": {
+      "pass": true,
+      "detail": {
+        "status": 400,
+        "error": "UNSUPPORTED_PARAM",
+        "detail": "不支持的查询参数：['cursor']。本端点只做 offset 分页（page/limit），**不支持 cursor**；支持的参数：['has_dates', 'has_relations', 'initial', 'limit', 'nationality', 'page', 'q', 'with_facets']",
+        "is_json": true,
+        "is_html": false,
+        "content_type": "application/json"
+      }
+    },
+    "③.last_page_no_more": {
+      "pass": true,
+      "detail": {
+        "status": 200,
+        "page": 190,
+        "has_more": false,
+        "items_len": 3,
+        "total": 570
+      }
+    },
+    "③.out_of_range_empty": {
+      "pass": true,
+      "detail": {
+        "status": 200,
+        "page": 100000,
+        "items": [],
+        "has_more": false,
+        "total": 570
+      }
+    },
+    "sanity.limit_over_cap_400": {
+      "pass": true,
+      "detail": {
+        "status": 400,
+        "error": "BAD_PARAM"
+      }
+    },
+    "④.regression_old_form_Fails": {
+      "pass": true,
+      "detail": {
+        "old_form_keys": [
+          "has_more",
+          "items",
+          "limit",
+          "next_cursor",
+          "page",
+          "total"
+        ],
+        "old_form_verdict": "FAIL",
+        "old_form_violations": [
+          {
+            "kind": "has_more_true_but_next_cursor_null",
+            "has_more": true,
+            "next_cursor": null
+          },
+          {
+            "kind": "next_cursor_present_but_endpoint_has_no_cursor",
+            "next_cursor": null
+          }
+        ],
+        "note": "旧形态（has_more=true ＋ next_cursor=null）喂同一判据 ⇒ 必须非空（判负）"
+      }
+    },
+    "④.regression_new_form_Passes": {
+      "pass": true,
+      "detail": {
+        "new_form_keys": [
+          "has_more",
+          "items",
+          "limit",
+          "page",
+          "total"
+        ],
+        "new_form_violations": []
+      }
+    }
+  },
+  "raw_responses": {
+    "limit=3": {
+      "status": 200,
+      "content_type": "application/json",
+      "url": "http://127.0.0.1:5196/api/persons?limit=3",
+      "raw_len": 1209,
+      "raw_head": "{\"items\":[{\"source_person_id\":\"907567725\",\"name_full\":\"愛石生\",\"name_full_chs\":null,\"family_name\":\"愛\",\"given_name\":\"石生\",\"birth_year\":null,\"death_year\":null,\"birth_death_text\":\"\",\"nationality\":\"中國\",\"nationality_chs\":\"中国\",\"spell\":\"ai shi sheng\",\"initial\":\"a\",\"flag\":0,\"cbdb_id\":null,\"sealbook_count\":1,\"seal_count\":0},{\"source_person_id\":\"907566657\",\"name_full\":\"愛新覺羅盛昱\",\"name_full_chs\":null,\"family_name\"",
+      "raw_tail": "744-1793\",\"nationality\":\"中國\",\"nationality_chs\":\"中国\",\"spell\":\"ba wei zu\",\"initial\":\"b\",\"flag\":0,\"cbdb_id\":\"72658\",\"sealbook_count\":2,\"seal_count\":0}],\"page\":1,\"limit\":3,\"total\":570,\"has_more\":true,\"_facets\":{\"initials\":[\"a\",\"b\",\"c\",\"d\",\"f\",\"g\",\"h\",\"j\",\"k\",\"l\",\"m\",\"p\",\"q\",\"r\",\"s\",\"t\",\"w\",\"x\",\"y\",\"z\"],\"nationalities\":[\"中國\",\"日本\",\"韓國\"]},\"_db_path\":\"/Users/kevin/bistro/xiai/feicui/var/person_ingest.db\"}"
+    },
+    "limit=3&cursor=abc": {
+      "status": 400,
+      "content_type": "application/json",
+      "url": "http://127.0.0.1:5196/api/persons?limit=3&cursor=abc",
+      "raw_len": 338,
+      "raw_head": "{\"detail\":{\"error\":\"UNSUPPORTED_PARAM\",\"detail\":\"不支持的查询参数：['cursor']。本端点只做 offset 分页（page/limit），**不支持 cursor**；支持的参数：['has_dates', 'has_relations', 'initial', 'limit', 'nationality', 'page', 'q', 'with_facets']\",\"unsupported\":[\"cursor\"],\"supported\":[\"has_dates\",\"has_relations\",\"initial\",\"limit\",\"nationality\",\"page\",\"q\",\"with_facets\"]}}",
+      "raw_tail": ""
+    },
+    "limit=500": {
+      "status": 200,
+      "content_type": "application/json",
+      "url": "http://127.0.0.1:5196/api/persons?limit=500",
+      "raw_len": 153808,
+      "raw_head": "{\"items\":[{\"source_person_id\":\"907567725\",\"name_full\":\"愛石生\",\"name_full_chs\":null,\"family_name\":\"愛\",\"given_name\":\"石生\",\"birth_year\":null,\"death_year\":null,\"birth_death_text\":\"\",\"nationality\":\"中國\",\"nationality_chs\":\"中国\",\"spell\":\"ai shi sheng\",\"initial\":\"a\",\"flag\":0,\"cbdb_id\":null,\"sealbook_count\":1,\"seal_count\":0},{\"source_person_id\":\"907566657\",\"name_full\":\"愛新覺羅盛昱\",\"name_full_chs\":null,\"family_name\"",
+      "raw_tail": "xt\":\"\",\"nationality\":\"中國\",\"nationality_chs\":\"中国\",\"spell\":\"zhang xiao si\",\"initial\":\"z\",\"flag\":0,\"cbdb_id\":null,\"sealbook_count\":1,\"seal_count\":0}],\"page\":1,\"limit\":500,\"total\":570,\"has_more\":true,\"_facets\":{\"initials\":[\"a\",\"b\",\"c\",\"d\",\"f\",\"g\",\"h\",\"j\",\"k\",\"l\",\"m\",\"p\",\"q\",\"r\",\"s\",\"t\",\"w\",\"x\",\"y\",\"z\"],\"nationalities\":[\"中國\",\"日本\",\"韓國\"]},\"_db_path\":\"/Users/kevin/bistro/xiai/feicui/var/person_ingest.db\"}"
+    },
+    "page=190&limit=3": {
+      "status": 200,
+      "content_type": "application/json",
+      "url": "http://127.0.0.1:5196/api/persons?page=190&limit=3",
+      "raw_len": 1178,
+      "raw_head": "{\"items\":[{\"source_person_id\":\"907566313\",\"name_full\":\"宗汝剛\",\"name_full_chs\":null,\"family_name\":\"宗\",\"given_name\":\"汝剛\",\"birth_year\":null,\"death_year\":null,\"birth_death_text\":\"\",\"nationality\":\"中國\",\"nationality_chs\":\"中国\",\"spell\":\"zong ru gang\",\"initial\":\"z\",\"flag\":0,\"cbdb_id\":null,\"sealbook_count\":0,\"seal_count\":0},{\"source_person_id\":\"907564824\",\"name_full\":\"鄒端\",\"name_full_chs\":null,\"family_name\":\"鄒\"",
+      "raw_tail": "1986\",\"nationality\":\"中國\",\"nationality_chs\":\"中国\",\"spell\":\"zou meng chan\",\"initial\":\"z\",\"flag\":0,\"cbdb_id\":null,\"sealbook_count\":1,\"seal_count\":0}],\"page\":190,\"limit\":3,\"total\":570,\"has_more\":false,\"_facets\":{\"initials\":[\"a\",\"b\",\"c\",\"d\",\"f\",\"g\",\"h\",\"j\",\"k\",\"l\",\"m\",\"p\",\"q\",\"r\",\"s\",\"t\",\"w\",\"x\",\"y\",\"z\"],\"nationalities\":[\"中國\",\"日本\",\"韓國\"]},\"_db_path\":\"/Users/kevin/bistro/xiai/feicui/var/person_ingest.db\"}"
+    },
+    "page=100000&limit=3": {
+      "status": 200,
+      "content_type": "application/json",
+      "url": "http://127.0.0.1:5196/api/persons?page=100000&limit=3",
+      "raw_len": 269,
+      "raw_head": "{\"items\":[],\"page\":100000,\"limit\":3,\"total\":570,\"has_more\":false,\"_facets\":{\"initials\":[\"a\",\"b\",\"c\",\"d\",\"f\",\"g\",\"h\",\"j\",\"k\",\"l\",\"m\",\"p\",\"q\",\"r\",\"s\",\"t\",\"w\",\"x\",\"y\",\"z\"],\"nationalities\":[\"中國\",\"日本\",\"韓國\"]},\"_db_path\":\"/Users/kevin/bistro/xiai/feicui/var/person_ingest.db\"}",
+      "raw_tail": ""
+    },
+    "limit=501": {
+      "status": 400,
+      "content_type": "application/json",
+      "url": "http://127.0.0.1:5196/api/persons?limit=501",
+      "raw_len": 56,
+      "raw_head": "{\"detail\":{\"error\":\"BAD_PARAM\",\"detail\":\"limit 上限 500\"}}",
+      "raw_tail": ""
+    }
+  },
+  "ok": true
+}

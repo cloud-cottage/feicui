@@ -920,6 +920,16 @@ def _coverage(persons: list[dict]) -> dict:
 def list_persons(db_path: Path | str, *, page: int = 1, limit: int = 50, initial: str | None = None,
                  nationality: str | None = None, has_dates: bool | None = None,
                  has_relations: bool | None = None, q: str | None = None) -> dict:
+    """列表（**纯 offset 分页**）：口径 ＝ `page`（1-based）/ `limit` / `total`。
+
+    * **分页不变式（钉死）**：`has_more == (page * limit < total)`——**唯一**判据，绝不再出现
+      「`has_more=true` ＋ `next_cursor=null`」这类**两口径混用、自相矛盾**的形态（旧实现之缺陷）。
+    * **本端点不支持 `cursor`**：游标协议属 **E3/E7（jobs）**，本线（persons）只做 offset 分页；
+      路由侧对**任何未白名单查询参数**（含 `cursor`）**一律 400**，绝不静默忽略。
+      ⇒ 既然拿不出「真实可用游标」，就**不再回吐 `next_cursor`**（旧键已删）。
+    * **空页 / 末页**：`page` 越界（`offset >= total`）⇒ `items=[]` 且 `has_more=False`；
+      末页（`page*limit >= total`）⇒ `has_more=False`。**绝不**回吐第一页。
+    """
     where: list[str] = []
     args: list[Any] = []
     if initial:
@@ -960,9 +970,10 @@ def list_persons(db_path: Path | str, *, page: int = 1, limit: int = 50, initial
             args + [limit, offset],
         ).fetchall()
         items = [dict(r) for r in rows]
-        has_more = offset + len(items) < total
-        return {"items": items, "page": page, "limit": limit, "total": total,
-                "has_more": has_more, "next_cursor": None}
+        # 分页不变式（钉死）：has_more 恒等于 page*limit < total（与 offset+len(items)<total 等价，见 docstring）。
+        # 不再输出 next_cursor —— 本端点不支持 cursor（路由侧对 cursor 等未白名单参数一律 400）。
+        has_more = (page * limit) < total
+        return {"items": items, "page": page, "limit": limit, "total": total, "has_more": has_more}
     finally:
         conn.close()
 

@@ -1,5 +1,6 @@
 # 证据⑥ npm run build（工作目录 /Users/kevin/bistro/xiai/feicui/web）
-# 时点 2026-10-10 07:06:05 +0800
+# 时点 2026-10-10 07:06:05 +0800（首次）
+# 本单刷新（2026-10-10，因 web/src/pages/PersonsPage.vue 的 parseJsonList 兼容真数组形态）：
 
 > feicui-web@0.1.0 build
 > vite build
@@ -10,21 +11,17 @@ transforming...
 rendering chunks...
 computing gzip size...
 dist/index.html                   0.65 kB │ gzip:  0.45 kB
-dist/assets/index-D2NaPQFO.css    6.45 kB │ gzip:  1.93 kB
-dist/assets/index-BRVHFo8M.js   161.08 kB │ gzip: 57.10 kB
-✓ built in 577ms
+dist/assets/index-2AGpvNuQ.css    6.45 kB │ gzip:  1.93 kB
+dist/assets/index-BQfqwbaz.js   161.11 kB │ gzip: 57.10 kB
+✓ built in 632ms
 EXIT=0
-# dist 产物：
-dist:
-total 8
-drwxr-xr-x@  4 kevin  staff  128 Oct 10 07:06 .
-drwxr-xr-x@ 13 kevin  staff  416 Sep 20 15:28 ..
-drwxr-xr-x@  4 kevin  staff  128 Oct 10 07:06 assets
--rw-r--r--@  1 kevin  staff  654 Oct 10 07:06 index.html
+# 说明：parseJsonList 由「只吃 JSON 字符串」改为「数组与 JSON 字符串两形态都吃」，
+#       以兼容交付缝 §3.15.10 的真数组形态（回退兼容历史字符串形态）；构建通过。
 
-dist/assets:
-total 336
-drwxr-xr-x@ 4 kevin  staff     128 Oct 10 07:06 .
-drwxr-xr-x@ 4 kevin  staff     128 Oct 10 07:06 ..
--rw-r--r--@ 1 kevin  staff  161081 Oct 10 07:06 index-BRVHFo8M.js
--rw-r--r--@ 1 kevin  staff    6445 Oct 10 07:06 index-D2NaPQFO.css
+# ── 首次（改动前）记录，保留 ──
+# 时点 2026-10-10 07:06:05 +0800
+# dist/index.html                   0.65 kB │ gzip:  0.45 kB
+# dist/assets/index-D2NaPQFO.css    6.45 kB │ gzip:  1.93 kB
+# dist/assets/index-BRVHFo8M.js   161.08 kB │ gzip: 57.10 kB
+# ✓ built in 577ms
+# EXIT=0

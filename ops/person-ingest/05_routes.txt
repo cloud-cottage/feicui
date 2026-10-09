@@ -1,4 +1,7 @@
 # 证据⑤ 路由可达 + 四端点真实回包  2026-10-10_07:44:19+0800  (feicui-api 重启后 pid=53970)
+# ⚠ 本快照早于「字/号/别名改真数组」修复：下方端点3 回包中的 courtesy_names/art_names/alias_names
+#   **仍是旧「JSON 字符串」形态**；修复后 `get_person` 已回真数组（见 08_delivery_seam 与 09 报告），
+#   但**未重启 feicui-api**（本单不 pkill / 不重启服务）⇒ 联机端点回包待运维重启后复跑本证据刷新。
 ## 直连 5195  GET /feicui/persons
 http_code=200
 ## 经 5164 反代 GET /feicui/persons

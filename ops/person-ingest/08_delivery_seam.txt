@@ -1,4 +1,5 @@
-# 交付缝自校（§3.15.10 / AC-21 + AC-22）  OK=True  package=/Users/kevin/bistro/xiai/feicui/exports/person_20261010_01  schema_version=1  created_at=2026-10-10T07:44:20+08:00
+# 交付缝自校（§3.15.10 / AC-21 + AC-22）  OK=True  package=/Users/kevin/bistro/xiai/feicui/exports/person_20261010_01  schema_version=1  created_at=2026-10-10T07:49:44+08:00
+# 时点＝2026-10-10_07:49:44+0800  （只读批次包，不触库、不联网）
 [PASS] AC21.schema_version==1
 [PASS] AC21.has_created_at
 [PASS] AC21.endpoints_has_pageRows1000
@@ -13,6 +14,14 @@
 [PASS] AC22.chs_subfields_present
 [PASS] AC22.dates_int_or_null
 [PASS] AC22.dates_no_special_values
+[PASS] AC22.name_lists_are_arrays
 [PASS] AC22.extraction_rule_based
 [PASS] AC22.no_bom
 [PASS] AC21.failures_not_in_persons
+[PASS] AC22.regression_selftest_detects_old_string_form
+
+# 回归自证（本单新增）：同判据对**旧形态（六字段＝JSON 字符串）**判负
+#   旧形态字段类型 = {'courtesy_names': 'str', 'courtesy_names_chs': 'str', 'art_names': 'str', 'art_names_chs': 'str', 'alias_names': 'str', 'alias_names_chs': 'NoneType'}
+#   旧形态裁定 = FAIL（违规种类 ['not_a_list']）
+#   新形态裁定 = PASS
+#   AC22.name_lists_are_arrays 读数 = {"violations": [], "violation_count": 0, "fields": ["courtesy_names", "courtesy_names_chs", "art_names", "art_names_chs", "alias_names", "alias_names_chs"], "items_total": 7715, "empty_string_forms": 0}

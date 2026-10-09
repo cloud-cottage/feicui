@@ -7,7 +7,7 @@
     },
     "AC21.has_created_at": {
       "pass": true,
-      "detail": "2026-10-10T07:44:20+08:00"
+      "detail": "2026-10-10T07:49:44+08:00"
     },
     "AC21.endpoints_has_pageRows1000": {
       "pass": true,
@@ -474,13 +474,31 @@
         ]
       }
     },
+    "AC22.name_lists_are_arrays": {
+      "pass": true,
+      "detail": {
+        "violations": [],
+        "violation_count": 0,
+        "fields": [
+          "courtesy_names",
+          "courtesy_names_chs",
+          "art_names",
+          "art_names_chs",
+          "alias_names",
+          "alias_names_chs"
+        ],
+        "items_total": 7715,
+        "empty_string_forms": 0
+      }
+    },
     "AC22.extraction_rule_based": {
       "pass": true,
       "detail": {
         "name_extraction_all_rule_based": true,
         "item_extraction": {
-          "rule-based": 3869
-        }
+          "rule-based": 7715
+        },
+        "items_total": 7715
       }
     },
     "AC22.no_bom": {
@@ -493,13 +511,23 @@
     "AC21.failures_not_in_persons": {
       "pass": true,
       "detail": "persons_rows=570"
+    },
+    "AC22.regression_selftest_detects_old_string_form": {
+      "pass": true,
+      "detail": {
+        "old_form_verdict": "FAIL",
+        "old_form_violation_kinds": [
+          "not_a_list"
+        ],
+        "new_form_verdict": "PASS"
+      }
     }
   },
   "ok": true,
   "manifest": {
     "schema_version": 1,
     "batch_id": "person_20261010_01",
-    "created_at": "2026-10-10T07:44:20+08:00",
+    "created_at": "2026-10-10T07:49:44+08:00",
     "form": "F1（manifest + report + jsonl）",
     "source": "复旦印藏（yin.fudan.edu.cn）「印人」",
     "source_base": "https://yin.fudan.edu.cn/service_yinpu",
@@ -589,6 +617,7 @@
       "繁体为正字段": "name_full / biography / native_place / nationality / courtesy_names / art_names / alias_names",
       "简体副字段": "*_chs（源侧同时给出；**未做任何转换改写**）",
       "抽取项": "family_name / given_name / courtesy_names[] / art_names[] / alias_names[] ⇒ 逐项 extraction='rule-based'；非权威分类",
+      "字/号/别名形态": "courtesy_names / courtesy_names_chs / art_names / art_names_chs / alias_names / alias_names_chs ＝ **JSON 数组**（元素形如 {\"value\":…,\"kind\":…,\"extraction\":\"rule-based\",\"from\":\"personBm\"|\"personBmChs\"}），**空 ⇒ []**（不得为 ''）；**非字符串**（交付缝 §3.15.10 / xiai §3.54.3 的 string[] 面）",
       "生卒": "birth_year / death_year：纯数字⇒整数；'?'/空⇒null；**不得出现 0 或 '?' 特值**",
       "溯源": "source_person_id / source / source_id / source_seqid / source_data_source_id 原样保留"
     },
@@ -655,6 +684,98 @@
         "seq"
       ]
     },
-    "content_fingerprint": "d520c07b3d767e71324a560fa333e345dd30ef3bf77d9ab689a33bc819427ca4"
+    "content_fingerprint": "d520c07b3d767e71324a560fa333e345dd30ef3bf77d9ab689a33bc819427ca4",
+    "name_full_chs_note": {
+      "value_always_null": true,
+      "expected": true,
+      "reason": "源侧（复旦印藏 person/list | detail）**无简体姓名字段**；繁体姓名字段 `personGrsxmc` 无对应 `*Chs` 键",
+      "evidence": "实测 raw_json 的 `*Chs` 键恰 4 个：personBmChs / personJjChs / personJgChs / personZzChs（570/570 行），**无**姓名对应 `personGrsxmcChs`",
+      "discipline": "不自行转繁简（沿「不转用户输入」纪律）⇒ 该字段恒 null 为**预期行为**，非缺陷",
+      "field_key_kept": true
+    },
+    "run_provenance": {
+      "acquisition_run": {
+        "status": "completed_before_this_rebuild",
+        "note": "采集 run 已在**本单之前**完成；源站站点级限流 ⇒ 本单不再联网采集",
+        "persons_collected": 570,
+        "fetched_requests_cumulative": 570,
+        "failed_count": 0,
+        "last_shard_summary": {
+          "fetched_requests": 178,
+          "skipped_resume": 392,
+          "persons_ok": 570,
+          "relations_ok": 539,
+          "failed_count": 0,
+          "elapsed_s": 301.615
+        },
+        "evidence": "ops/person-ingest/01_full_ingest.txt"
+      },
+      "this_package_write": {
+        "kind": "idempotent_replay_no_network",
+        "fetched_requests": 0,
+        "skipped_resume": 570,
+        "relations_ok": 0,
+        "failed_count": 0,
+        "note": "本轮为**幂等重放**：只从库内既有读数重建批次包与字/号/别名字段形态，**不联网、不重采**（源站限流）。`fetched_requests=0` / `relations_ok=0` / `elapsed_s≈1.5` **是重放读数，不得据此判「未采集」**；采集 run 读数见 `acquisition_run`。",
+        "db_batch_row_note": "库内 `person_import_batches` 行（fetched=0 / relations_ok=0 / elapsed_s≈1.5）同为重放读数 —— 非「未采集」"
+      }
+    }
+  },
+  "regression_selftest": {
+    "purpose": "证明本判据能对**旧形态（六字段＝JSON 字符串 / '' / '[]' / null）**判负",
+    "old_form_value_types": {
+      "courtesy_names": "str",
+      "courtesy_names_chs": "str",
+      "art_names": "str",
+      "art_names_chs": "str",
+      "alias_names": "str",
+      "alias_names_chs": "NoneType"
+    },
+    "old_form_verdict": "FAIL",
+    "old_form_violations": [
+      {
+        "kind": "not_a_list",
+        "id": "__REGRESSION_OLD_FORM__",
+        "field": "courtesy_names",
+        "got_type": "str",
+        "sample": "[{\"value\": \"容光\", \"kind\": \"字\", \"extraction\": \"rule-based\", \"from\": \"personBm\"}]"
+      },
+      {
+        "kind": "not_a_list",
+        "id": "__REGRESSION_OLD_FORM__",
+        "field": "courtesy_names_chs",
+        "got_type": "str",
+        "sample": ""
+      },
+      {
+        "kind": "not_a_list",
+        "id": "__REGRESSION_OLD_FORM__",
+        "field": "art_names",
+        "got_type": "str",
+        "sample": "[]"
+      },
+      {
+        "kind": "not_a_list",
+        "id": "__REGRESSION_OLD_FORM__",
+        "field": "art_names_chs",
+        "got_type": "str",
+        "sample": "[]"
+      },
+      {
+        "kind": "not_a_list",
+        "id": "__REGRESSION_OLD_FORM__",
+        "field": "alias_names",
+        "got_type": "str",
+        "sample": "[{\"value\": \"郭容光\", \"kind\": \"名\", \"extraction\": \"rule-based\", \"from\": \"personBm\"}]"
+      },
+      {
+        "kind": "not_a_list",
+        "id": "__REGRESSION_OLD_FORM__",
+        "field": "alias_names_chs",
+        "got_type": "NoneType",
+        "sample": "None"
+      }
+    ],
+    "new_form_verdict": "PASS"
   }
 }

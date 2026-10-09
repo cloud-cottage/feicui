@@ -26,10 +26,13 @@ const listState = ref({ kind: 'loading', items: null, page: 1, limit: 50, total:
 // ── 详情区 ────────────────────────────────────────────────────────────────
 const detailState = ref({ kind: 'idle', person: null, detail: '', raw: '' })
 
-function parseJsonList(text) {
-  if (!text) return []
+// 交付缝 §3.15.10：`/api/persons/{grbsm}` 的字/号/别名六字段现回**真数组**；
+// 兼容历史「JSON 字符串」形态（两形态都吃）。
+function parseJsonList(value) {
+  if (!value) return []
+  if (Array.isArray(value)) return value
   try {
-    const v = JSON.parse(text)
+    const v = JSON.parse(value)
     return Array.isArray(v) ? v : []
   } catch {
     return []

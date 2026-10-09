@@ -1,0 +1,17 @@
+# 证据③b 批次包幂等重放（同批次 person_20261010_01 离线重建两次）
+时间＝2026-10-10_07:48:47+0800   （离线、不联网、不入库）
+## DB（persons / person_relations）
+before: {'persons': 570, 'relations': 1650, 'content_fingerprint': 'd520c07b3d767e71324a560fa333e345dd30ef3bf77d9ab689a33bc819427ca4'}
+after : {'persons': 570, 'relations': 1650, 'content_fingerprint': 'd520c07b3d767e71324a560fa333e345dd30ef3bf77d9ab689a33bc819427ca4'}
+db_unchanged = True   （行数 570/1650 不变、内容指纹逐字不变）
+## 批次包四文件 sha256
+  persons.jsonl   62fb2d09cd8a58b11c310914d385b0d72baacaa0bd2f1d5c228ae0dac4c66906  ==  62fb2d09cd8a58b11c310914d385b0d72baacaa0bd2f1d5c228ae0dac4c66906   -> True
+  relations.jsonl d1d98b9abf60dcec9760734957268ce4f02cd05efaa7ad18ed71fa728bcdedeb  ==  d1d98b9abf60dcec9760734957268ce4f02cd05efaa7ad18ed71fa728bcdedeb   -> True
+  manifest.json   2164e8ccd764a333603960cf6d1894bcba964eb13d255b695ae697d85c847cb4 != de27202a248a32b23864a4a2d63e53577cc6d19f61c24d2c0f232e968a49924c（仅 created_at 变动）
+  report.json     0fdc97bd834363d2d212981ceaeaf1e7a39f190a079b02e777baccb4d65d2a7f != 996fdff8c6dd067aa3eada0f765d9b9dece9cc9106a844ffe44164c4c8e839c5（仅 generated_at 变动）
+  ↳ manifest 去 created_at 后结构相同 = True
+  ↳ report   去 generated_at 后结构相同 = True
+## verdict
+persons.jsonl / relations.jsonl 逐字节幂等 = True
+内容指纹不变 = True (d520c07b3d767e71324a560fa333e345dd30ef3bf77d9ab689a33bc819427ca4)
+（manifest/report 仅生成时点键变，属正常；数据载荷逐字相同）

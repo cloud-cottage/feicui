@@ -48,6 +48,33 @@ PERSON_SCHEMA_VERSION = "feicui.person_ingest/1"
 # 交付缝 §3.15.10（AC-21）：批次包 `manifest.json` 的 `schema_version` **钉为整数 1**。
 MANIFEST_SCHEMA_VERSION = 1
 
+# 字 / 号 / 别名六字段（含 `_chs`）——**对外形态一律为 JSON 数组**（交付缝 §3.15.10 ＋ xiai §3.54.3
+# 的 `courtesy_names[]` / `art_names[]` / `alias_names[]`），元素形如
+# `{"value":…,"kind":…,"extraction":"rule-based","from":"personBm"|"personBmChs"}`；**空 ⇒ `[]`**（不得为 `''`）。
+# SQLite 无原生数组类型 ⇒ 库内在 `persons` 表以**规范 JSON 数组文本**存储；**所有读取缝**
+# （批次包 `persons.jsonl` 的 `write_package` ＋ API `get_person`）一律经 `decode_name_list` 解码为**真 `list`**。
+NAME_LIST_FIELDS = ("courtesy_names", "courtesy_names_chs", "art_names", "art_names_chs",
+                    "alias_names", "alias_names_chs")
+
+
+def decode_name_list(value: Any) -> list:
+    """把库内的「规范 JSON 数组文本」解码为**真 `list`**（交付缝 §3.15.10 / AC-22）。
+
+    幂等：已是 `list` 则原样返回；`None` / 空串 / 非数组 JSON / 坏值 ⇒ `[]`（**绝不**回退成字符串）。
+    """
+    if isinstance(value, list):
+        return value
+    if isinstance(value, str):
+        text = value.strip()
+        if not text:
+            return []
+        try:
+            parsed = json.loads(text)
+        except (ValueError, TypeError):
+            return []
+        return parsed if isinstance(parsed, list) else []
+    return []
+
 # ── 复姓白名单（拆解件 §4.5 规则；**只用于抽取**，抽取结果一律标注 rule-based）────────────────
 COMPOUND_SURNAMES = {
     "歐陽", "欧阳", "司馬", "司马", "上官", "諸葛", "诸葛", "東方", "东方", "皇甫", "尉遲", "尉迟",
@@ -714,7 +741,7 @@ def run_sync(
 def write_package(conn: sqlite3.Connection, *, export_root: Path, batch_id: str, source_total: int,
                   fetched: int, skipped: int, failures: list[dict], detail_unconfirmed: list[dict],
                   detail_confirmed: int, detail_skipped_circuit: int = 0, params: dict,
-                  elapsed_s: float, base: str) -> dict:
+                  elapsed_s: float, base: str, provenance: dict | None = None) -> dict:
     """F1 形态：`manifest.json` + `report.json` + `persons.jsonl` + `relations.jsonl`。
 
     批次包＝**对外唯一交付缝**：自描述、稳定、可被外部程序逐行消费。
@@ -728,6 +755,11 @@ def write_package(conn: sqlite3.Connection, *, export_root: Path, batch_id: str,
     relations = [dict(r) for r in conn.execute(
         f"SELECT {', '.join(RELATION_FIELDS)} FROM person_relations ORDER BY source_person_id, kind, ref_id, seq"
     )]
+    # 交付缝 §3.15.10 / xiai §3.54.3：字 / 号 / 别名六字段**一律输出 JSON 数组**（非字符串）。
+    # 库内为规范 JSON 数组文本 ⇒ 此处解码为真 list；空值恒为 `[]`（`decode_name_list` 保证）。
+    for p in persons:
+        for col in NAME_LIST_FIELDS:
+            p[col] = decode_name_list(p.get(col))
 
     # JSONL：**一行一对象、UTF-8、无 BOM、键序＝PERSON_FIELDS/RELATION_FIELDS**（外部逐行解析）
     persons_path = pkg_dir / "persons.jsonl"
@@ -746,6 +778,32 @@ def write_package(conn: sqlite3.Connection, *, export_root: Path, batch_id: str,
     persons_with_relations = conn.execute(
         "SELECT COUNT(DISTINCT source_person_id) FROM person_relations"
     ).fetchone()[0]
+
+    # ── 如实登记（本单新增）：① `name_full_chs` 恒空之因由；② 采集 run 与本次重放计数**分离** ──
+    # ① 源侧**根本没有**简体姓名字段：实测 `raw_json` 的 `*Chs` 键只有
+    #    `personBmChs` / `personJjChs` / `personJgChs` / `personZzChs`（＝字 / 传记 / 籍贯 / 籍贯），
+    #    **无**姓名对应项（`personGrsxmc` 无 `*Chs`）⇒ `name_full_chs` 恒 `null` **属预期、非缺陷**；
+    #    字段键保留、不删（保留 `*_chs` 面口径一致）。
+    name_full_chs_note = {
+        "value_always_null": True,
+        "expected": True,
+        "reason": "源侧（复旦印藏 person/list | detail）**无简体姓名字段**；繁体姓名字段 `personGrsxmc` 无对应 `*Chs` 键",
+        "evidence": ("实测 raw_json 的 `*Chs` 键恰 4 个：personBmChs / personJjChs / personJgChs / personZzChs"
+                     "（570/570 行），**无**姓名对应 `personGrsxmcChs`"),
+        "discipline": "不自行转繁简（沿「不转用户输入」纪律）⇒ 该字段恒 null 为**预期行为**，非缺陷",
+        "field_key_kept": True,
+    }
+    # ② 计数分区：**不得**让「本次重放的 0」冒充「未采集」。
+    run_provenance = provenance or {
+        "acquisition_run": None,
+        "this_package_write": {
+            "kind": "live_ingest_run",
+            "fetched_requests": fetched,
+            "skipped_resume": skipped,
+            "failed_count": len(failures),
+            "elapsed_s": round(elapsed_s, 3),
+        },
+    }
 
     report = {
         "schema_version": PERSON_SCHEMA_VERSION,
@@ -793,6 +851,8 @@ def write_package(conn: sqlite3.Connection, *, export_root: Path, batch_id: str,
         },
         "coverage": _coverage(persons),
         "complexity_note": "繁简：繁体为正字段，简体入 *_chs 副字段，未做任何转换改写",
+        "name_full_chs_note": name_full_chs_note,
+        "run_provenance": run_provenance,
     }
     (pkg_dir / "report.json").write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
 
@@ -822,11 +882,16 @@ def write_package(conn: sqlite3.Connection, *, export_root: Path, batch_id: str,
             "繁体为正字段": "name_full / biography / native_place / nationality / courtesy_names / art_names / alias_names",
             "简体副字段": "*_chs（源侧同时给出；**未做任何转换改写**）",
             "抽取项": "family_name / given_name / courtesy_names[] / art_names[] / alias_names[] ⇒ 逐项 extraction='rule-based'；非权威分类",
+            "字/号/别名形态": ("courtesy_names / courtesy_names_chs / art_names / art_names_chs / alias_names / alias_names_chs "
+                              "＝ **JSON 数组**（元素形如 {\"value\":…,\"kind\":…,\"extraction\":\"rule-based\",\"from\":\"personBm\"|\"personBmChs\"}），"
+                              "**空 ⇒ []**（不得为 ''）；**非字符串**（交付缝 §3.15.10 / xiai §3.54.3 的 string[] 面）"),
             "生卒": "birth_year / death_year：纯数字⇒整数；'?'/空⇒null；**不得出现 0 或 '?' 特值**",
             "溯源": "source_person_id / source / source_id / source_seqid / source_data_source_id 原样保留",
         },
         "counts": report["counts"],
         "content_fingerprint": fp,
+        "name_full_chs_note": name_full_chs_note,
+        "run_provenance": run_provenance,
     }
     (pkg_dir / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
 
@@ -838,7 +903,7 @@ def _coverage(persons: list[dict]) -> dict:
     keys = {
         "name_full": lambda p: bool(p.get("name_full")),
         "family_name": lambda p: bool(p.get("family_name")),
-        "alias_names": lambda p: p.get("alias_names") not in (None, "[]", ""),
+        "alias_names": lambda p: bool(p.get("alias_names")),  # 现为真数组：[] 即空（非缺陷，沿 §3.15.10）
         "birth_year": lambda p: p.get("birth_year") is not None,
         "death_year": lambda p: p.get("death_year") is not None,
         "native_place": lambda p: bool(p.get("native_place")),
@@ -909,6 +974,10 @@ def get_person(db_path: Path | str, grbsm: str) -> dict | None:
         if row is None:
             return None
         person = dict(row)
+        # API 读取缝同样输出**真数组**（与批次包 persons.jsonl 一致；交付缝 §3.15.10）
+        for col in NAME_LIST_FIELDS:
+            if col in person:
+                person[col] = decode_name_list(person[col])
         rels = conn.execute(
             "SELECT kind, ref_id, name, desc, creator_type, image_key, as_book_id, has_image, type, seq "
             "FROM person_relations WHERE source_person_id=? ORDER BY kind, seq",

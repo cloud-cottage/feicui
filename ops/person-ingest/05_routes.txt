@@ -1,0 +1,21 @@
+# 证据⑤ 路由可达 + 四端点真实回包  2026-10-10_07:44:19+0800  (feicui-api 重启后 pid=53970)
+## 直连 5195  GET /feicui/persons
+http_code=200
+## 经 5164 反代 GET /feicui/persons
+http_code=200
+## 入口判定 5195（应为 feicui 自身 index，非主站 SPA 兜底）
+<title>斐萃｜印谱解析任务台</title>
+src="/feicui/src/main.js"
+## 入口判定 5164
+<title>斐萃｜印谱解析任务台</title>
+src="/feicui/src/main.js"
+## 既有任务页未受影响
+/feicui/ -> http_code=200
+## 端点1 GET /api/persons?limit=1&with_facets=false
+{"items":[{"source_person_id":"907567725","name_full":"愛石生","name_full_chs":null,"family_name":"愛","given_name":"石生","birth_year":null,"death_year":null,"birth_death_text":"","nationality":"中國","nationality_chs":"中国","spell":"ai shi sheng","initial":"a","flag":0,"cbdb_id":null,"sealbook_count":1,"seal_count":0}],"page":1,"limit":1,"total":570,"has_more":true,"next_cursor":null,"_db_path":"/Users/kevin/bistro/xiai/feicui/var/person_ingest.db"}
+## 端点2 GET /api/persons/batches
+{"items":[{"batch_id":"person_20261010_01","created_at":"2026-10-10T07:43:44+08:00","updated_at":"2026-10-10T07:43:45+08:00","status":"DONE","source_total":570,"fetched":0,"persons_ok":570,"relations_ok":0,"failed_count":0,"elapsed_s":1.942,"package_dir":"/Users/kevin/bistro/xiai/feicui/exports/person_20261010_01","report_path":"/Users/kevin/bistro/xiai/feicui/exports/person_20261010_01/report.json","content_fingerprint":"d520c07b3d767e71324a560fa333e345dd30ef3bf77d9ab689a33bc819427ca4"}],"total":1,"_db_path":"/Users/kevin/bistro/xiai/feicui/var/person_ingest.db"}
+## 端点3 GET /api/persons/907404573（前 900 字符）
+{"source_person_id":"907404573","source_seqid":"3402","source_data_source_id":"RW3379","name_full":"趙之謙","name_full_chs":null,"family_name":"趙","given_name":"之謙","name_extraction":"rule-based","courtesy_names":"[{\"value\": \"撝叔\", \"kind\": \"字\", \"extraction\": \"rule-based\", \"from\": \"personBm\"}]","courtesy_names_chs":"[{\"value\": \"㧑叔\", \"kind\": \"字\", \"extraction\": \"rule-based\", \"from\": \"personBmChs\"}]","art_names":"[{\"value\": \"冷君\", \"kind\": \"號\", \"extraction\": \"rule-based\", \"from\": \"personBm\"}, {\"value\": \"憨寮\", \"kind\": \"號\", \"extraction\": \"rule-based\", \"from\": \"personBm\"}, {\"value\": \"悲庵\", \"kind\": \"號\", \"extraction\": \"rule-based\", \"from\": \"personBm\"}, {\"value\": \"無悶\", \"kind\": \"號\", \"extraction\": \"rule-based\", \"from\": \"personBm\"}, {\"value\": \"悲盦\", \"kind\": 
+## 端点4 POST /api/persons/sync {resume:true,detail:false}（幂等：跳过 570）
+{"batch_id":"person_20261010_01","source_total":570,"rows_seen":570,"fetched_requests":0,"skipped_resume":570,"persons_ok":570,"relations_ok":0,"detail_confirmed":0,"detail_unconfirmed_count":0,"detail_skipped_circuit":0,"failed_count":0,"failures":[],"detail_unconfirmed":[],"package_dir":"/Users/kevin/bistro/xiai/feicui/exports/person_20261010_01","report_path":"/Users/kevin/bistro/xiai/feicui/exports/person_20261010_01/report.json","content_fingerprint":"d520c07b3d767e71324a560fa333e345dd30ef3bf77d9ab689a33bc819427ca4","elapsed_s":1.509,"counts":{"persons":570,"relations":1650,"batches":1}}

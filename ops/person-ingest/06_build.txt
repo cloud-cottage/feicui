@@ -1,0 +1,30 @@
+# 证据⑥ npm run build（工作目录 /Users/kevin/bistro/xiai/feicui/web）
+# 时点 2026-10-10 07:06:05 +0800
+
+> feicui-web@0.1.0 build
+> vite build
+
+vite v6.4.3 building for production...
+transforming...
+✓ 47 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.65 kB │ gzip:  0.45 kB
+dist/assets/index-D2NaPQFO.css    6.45 kB │ gzip:  1.93 kB
+dist/assets/index-BRVHFo8M.js   161.08 kB │ gzip: 57.10 kB
+✓ built in 577ms
+EXIT=0
+# dist 产物：
+dist:
+total 8
+drwxr-xr-x@  4 kevin  staff  128 Oct 10 07:06 .
+drwxr-xr-x@ 13 kevin  staff  416 Sep 20 15:28 ..
+drwxr-xr-x@  4 kevin  staff  128 Oct 10 07:06 assets
+-rw-r--r--@  1 kevin  staff  654 Oct 10 07:06 index.html
+
+dist/assets:
+total 336
+drwxr-xr-x@ 4 kevin  staff     128 Oct 10 07:06 .
+drwxr-xr-x@ 4 kevin  staff     128 Oct 10 07:06 ..
+-rw-r--r--@ 1 kevin  staff  161081 Oct 10 07:06 index-BRVHFo8M.js
+-rw-r--r--@ 1 kevin  staff    6445 Oct 10 07:06 index-D2NaPQFO.css

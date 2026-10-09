@@ -1,0 +1,75 @@
+源侧限速，退避 5.0s（第 1/5 次重试）：https://yin.fudan.edu.cn/service_yinpu/graph/person/907566127
+源侧限速，退避 10.0s（第 2/5 次重试）：https://yin.fudan.edu.cn/service_yinpu/graph/person/907566127
+源侧限速，退避 20.0s（第 3/5 次重试）：https://yin.fudan.edu.cn/service_yinpu/graph/person/907566127
+源侧限速，退避 40.0s（第 4/5 次重试）：https://yin.fudan.edu.cn/service_yinpu/graph/person/907566127
+源侧限速，退避 60.0s（第 5/5 次重试）：https://yin.fudan.edu.cn/service_yinpu/graph/person/907566127
+源侧限速，退避 5.0s（第 1/5 次重试）：https://yin.fudan.edu.cn/service_yinpu/graph/person/907566036
+源侧限速，退避 10.0s（第 2/5 次重试）：https://yin.fudan.edu.cn/service_yinpu/graph/person/907566036
+源侧限速，退避 20.0s（第 3/5 次重试）：https://yin.fudan.edu.cn/service_yinpu/graph/person/907566036
+源侧限速，退避 40.0s（第 4/5 次重试）：https://yin.fudan.edu.cn/service_yinpu/graph/person/907566036
+源侧限速，退避 60.0s（第 5/5 次重试）：https://yin.fudan.edu.cn/service_yinpu/graph/person/907566036
+源侧限速，退避 5.0s（第 1/5 次重试）：https://yin.fudan.edu.cn/service_yinpu/graph/person/907164649
+源侧限速，退避 10.0s（第 2/5 次重试）：https://yin.fudan.edu.cn/service_yinpu/graph/person/907164649
+源侧限速，退避 20.0s（第 3/5 次重试）：https://yin.fudan.edu.cn/service_yinpu/graph/person/907164649
+[sync] 275/570 ok=273 failed=2 detail_unconfirmed=0
+[sync] 300/570 ok=298 failed=2 detail_unconfirmed=0
+[sync] 325/570 ok=323 failed=2 detail_unconfirmed=0
+源侧限速，退避 5.0s（第 1/5 次重试）：https://yin.fudan.edu.cn/service_yinpu/graph/person/907567799
+源侧限速，退避 10.0s（第 2/5 次重试）：https://yin.fudan.edu.cn/service_yinpu/graph/person/907567799
+源侧限速，退避 20.0s（第 3/5 次重试）：https://yin.fudan.edu.cn/service_yinpu/graph/person/907567799
+源侧限速，退避 40.0s（第 4/5 次重试）：https://yin.fudan.edu.cn/service_yinpu/graph/person/907567799
+源侧限速，退避 60.0s（第 5/5 次重试）：https://yin.fudan.edu.cn/service_yinpu/graph/person/907567799
+源侧限速，退避 5.0s（第 1/5 次重试）：https://yin.fudan.edu.cn/service_yinpu/graph/person/907566757
+源侧限速，退避 10.0s（第 2/5 次重试）：https://yin.fudan.edu.cn/service_yinpu/graph/person/907566757
+源侧限速，退避 20.0s（第 3/5 次重试）：https://yin.fudan.edu.cn/service_yinpu/graph/person/907566757
+源侧限速，退避 40.0s（第 4/5 次重试）：https://yin.fudan.edu.cn/service_yinpu/graph/person/907566757
+源侧限速，退避 60.0s（第 5/5 次重试）：https://yin.fudan.edu.cn/service_yinpu/graph/person/907566757
+源侧限速，退避 5.0s（第 1/5 次重试）：https://yin.fudan.edu.cn/service_yinpu/graph/person/907567250
+源侧限速，退避 10.0s（第 2/5 次重试）：https://yin.fudan.edu.cn/service_yinpu/graph/person/907567250
+源侧限速，退避 20.0s（第 3/5 次重试）：https://yin.fudan.edu.cn/service_yinpu/graph/person/907567250
+[sync] 350/570 ok=346 failed=4 detail_unconfirmed=0
+[sync] 375/570 ok=371 failed=4 detail_unconfirmed=0
+源侧限速，退避 5.0s（第 1/5 次重试）：https://yin.fudan.edu.cn/service_yinpu/graph/person/907270699
+源侧限速，退避 10.0s（第 2/5 次重试）：https://yin.fudan.edu.cn/service_yinpu/graph/person/907270699
+源侧限速，退避 20.0s（第 3/5 次重试）：https://yin.fudan.edu.cn/service_yinpu/graph/person/907270699
+源侧限速，退避 40.0s（第 4/5 次重试）：https://yin.fudan.edu.cn/service_yinpu/graph/person/907270699
+源侧限速，退避 60.0s（第 5/5 次重试）：https://yin.fudan.edu.cn/service_yinpu/graph/person/907270699
+源侧限速，退避 5.0s（第 1/5 次重试）：https://yin.fudan.edu.cn/service_yinpu/graph/person/907567078
+源侧限速，退避 10.0s（第 2/5 次重试）：https://yin.fudan.edu.cn/service_yinpu/graph/person/907567078
+源侧限速，退避 20.0s（第 3/5 次重试）：https://yin.fudan.edu.cn/service_yinpu/graph/person/907567078
+源侧限速，退避 40.0s（第 4/5 次重试）：https://yin.fudan.edu.cn/service_yinpu/graph/person/907567078
+=== SHARD start 2026-10-10_07:38:18 delay=1.5 full-resume ===
+[sync] 400/570 ok=400 failed=0 detail_unconfirmed=0
+[sync] 425/570 ok=425 failed=0 detail_unconfirmed=0
+[sync] 450/570 ok=450 failed=0 detail_unconfirmed=0
+[sync] 475/570 ok=475 failed=0 detail_unconfirmed=0
+[sync] 500/570 ok=500 failed=0 detail_unconfirmed=0
+[sync] 525/570 ok=525 failed=0 detail_unconfirmed=0
+[sync] 550/570 ok=550 failed=0 detail_unconfirmed=0
+[sync] 570/570 ok=570 failed=0 detail_unconfirmed=0
+{
+  "batch_id": "person_20261010_01",
+  "source_total": 570,
+  "rows_seen": 570,
+  "fetched_requests": 178,
+  "skipped_resume": 392,
+  "persons_ok": 570,
+  "relations_ok": 539,
+  "detail_confirmed": 0,
+  "detail_unconfirmed_count": 0,
+  "detail_skipped_circuit": 0,
+  "failed_count": 0,
+  "package_dir": "/Users/kevin/bistro/xiai/feicui/exports/person_20261010_01",
+  "report_path": "/Users/kevin/bistro/xiai/feicui/exports/person_20261010_01/report.json",
+  "content_fingerprint": "d520c07b3d767e71324a560fa333e345dd30ef3bf77d9ab689a33bc819427ca4",
+  "elapsed_s": 301.615,
+  "counts": {
+    "persons": 570,
+    "relations": 1650,
+    "batches": 1
+  }
+}
+FAILURES=[]
+DETAIL_UNCONFIRMED=[]
+=== counts after shard ===
+{"persons": 570, "relations": 1650, "batches": 1}

@@ -1,0 +1,144 @@
+{
+  "claim": "person/detail 主数据与 person/list 行除 seqid / createdTime 外逐字节等价",
+  "source_total": 570,
+  "sample_size": 15,
+  "seed": 20261010,
+  "all_same_except_seqid_createdtime": true,
+  "results": [
+    {
+      "personGrbsm": "907566817",
+      "name": "李千里",
+      "differing_fields": [
+        "createdTime",
+        "seqid"
+      ],
+      "same_except_seqid_createdtime": true
+    },
+    {
+      "personGrbsm": "907567366",
+      "name": "王成璐",
+      "differing_fields": [
+        "createdTime",
+        "seqid"
+      ],
+      "same_except_seqid_createdtime": true
+    },
+    {
+      "personGrbsm": "907142865",
+      "name": "趙宧光",
+      "differing_fields": [
+        "createdTime",
+        "seqid"
+      ],
+      "same_except_seqid_createdtime": true
+    },
+    {
+      "personGrbsm": "907567652",
+      "name": "蘇澗寬",
+      "differing_fields": [
+        "createdTime",
+        "seqid"
+      ],
+      "same_except_seqid_createdtime": true
+    },
+    {
+      "personGrbsm": "907568390",
+      "name": "盧登焯",
+      "differing_fields": [
+        "createdTime",
+        "seqid"
+      ],
+      "same_except_seqid_createdtime": true
+    },
+    {
+      "personGrbsm": "907568445",
+      "name": "胡毅",
+      "differing_fields": [
+        "createdTime",
+        "seqid"
+      ],
+      "same_except_seqid_createdtime": true
+    },
+    {
+      "personGrbsm": "907567799",
+      "name": "陸開鈞",
+      "differing_fields": [
+        "createdTime",
+        "seqid"
+      ],
+      "same_except_seqid_createdtime": true
+    },
+    {
+      "personGrbsm": "907564814",
+      "name": "林向秀",
+      "differing_fields": [
+        "createdTime",
+        "seqid"
+      ],
+      "same_except_seqid_createdtime": true
+    },
+    {
+      "personGrbsm": "907567299",
+      "name": "孫蟠",
+      "differing_fields": [
+        "createdTime",
+        "seqid"
+      ],
+      "same_except_seqid_createdtime": true
+    },
+    {
+      "personGrbsm": "907567318",
+      "name": "吳在",
+      "differing_fields": [
+        "createdTime",
+        "seqid"
+      ],
+      "same_except_seqid_createdtime": true
+    },
+    {
+      "personGrbsm": "907565710",
+      "name": "夏之容",
+      "differing_fields": [
+        "createdTime",
+        "seqid"
+      ],
+      "same_except_seqid_createdtime": true
+    },
+    {
+      "personGrbsm": "907567443",
+      "name": "姜筠",
+      "differing_fields": [
+        "createdTime",
+        "seqid"
+      ],
+      "same_except_seqid_createdtime": true
+    },
+    {
+      "personGrbsm": "907151740",
+      "name": "龔自珍",
+      "differing_fields": [
+        "createdTime",
+        "seqid"
+      ],
+      "same_except_seqid_createdtime": true
+    },
+    {
+      "personGrbsm": "907566313",
+      "name": "宗汝剛",
+      "differing_fields": [
+        "createdTime",
+        "seqid"
+      ],
+      "same_except_seqid_createdtime": true
+    },
+    {
+      "personGrbsm": "907568167",
+      "name": "陳年",
+      "differing_fields": [
+        "createdTime",
+        "seqid"
+      ],
+      "same_except_seqid_createdtime": true
+    }
+  ]
+}

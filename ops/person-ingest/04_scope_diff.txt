@@ -1,0 +1,8 @@
+# 证据④ 范围指纹 after vs before（内容指纹，非库文件 md5）
+before_label = before | after_label = after
+VERDICT = IDENTICAL（yinpu.db 三表内容指纹 + exports/fb_* 逐文件 sha256 全等）
+yinpu_db = /Users/kevin/bistro/xiai/data/yinpu.db exists True
+  stamps: exists=True rows=89 content_sha256=ed4f1e13bf22511834f04fece55f4f985ec6b70d8acc0d4d20e08724cbd39490
+  jobs: exists=True rows=5 content_sha256=244cd4f7fc3c1d323ee3a98127beba56fccca8ce787215c2d9b0a296a4af951e
+  job_pages: exists=True rows=32 content_sha256=02790aa79c847d618f5952d88aef4d3af1b76e07a618494974cf99ca091fe1b2
+exports/fb_* 目录数 = 12  文件总数 = 196

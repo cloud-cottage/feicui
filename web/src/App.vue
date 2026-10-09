@@ -17,6 +17,7 @@ const SPEC_MD5 = '4264927baf24bb7f48e12366cd861fe7'
       </div>
       <nav class="nav">
         <RouterLink to="/">任务页</RouterLink>
+        <RouterLink to="/persons">印人采集</RouterLink>
       </nav>
     </header>
 

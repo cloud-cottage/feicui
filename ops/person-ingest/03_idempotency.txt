@@ -1,0 +1,34 @@
+# 证据③ 幂等（同批次 person_20261010_01 重跑）  2026-10-10_07:43:43+0800
+## before
+counts: {"persons": 570, "relations": 1650, "batches": 1}
+fingerprint: d520c07b3d767e71324a560fa333e345dd30ef3bf77d9ab689a33bc819427ca4
+## rerun (--no-detail --delay 1.5, resume)
+{
+  "batch_id": "person_20261010_01",
+  "source_total": 570,
+  "rows_seen": 570,
+  "fetched_requests": 0,
+  "skipped_resume": 570,
+  "persons_ok": 570,
+  "relations_ok": 0,
+  "detail_confirmed": 0,
+  "detail_unconfirmed_count": 0,
+  "detail_skipped_circuit": 0,
+  "failed_count": 0,
+  "package_dir": "/Users/kevin/bistro/xiai/feicui/exports/person_20261010_01",
+  "report_path": "/Users/kevin/bistro/xiai/feicui/exports/person_20261010_01/report.json",
+  "content_fingerprint": "d520c07b3d767e71324a560fa333e345dd30ef3bf77d9ab689a33bc819427ca4",
+  "elapsed_s": 1.943,
+  "counts": {
+    "persons": 570,
+    "relations": 1650,
+    "batches": 1
+  }
+}
+FAILURES=[]
+DETAIL_UNCONFIRMED=[]
+## after
+counts: {"persons": 570, "relations": 1650, "batches": 1}
+fingerprint: d520c07b3d767e71324a560fa333e345dd30ef3bf77d9ab689a33bc819427ca4
+## verdict
+fingerprint_before == fingerprint_after : YES (d520c07b3d767e71324a560fa333e345dd30ef3bf77d9ab689a33bc819427ca4)

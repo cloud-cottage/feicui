@@ -94,6 +94,14 @@ class Settings:
     person_source_base: str = "https://yin.fudan.edu.cn/service_yinpu"
     person_fetch_delay_s: float = 0.5
     person_fetch_timeout_s: float = 30.0
+    # ---- 印谱采集（item-ingest，批 1）：**独立库**，与 yinpu.db / person_ingest.db 一字不碰 ----
+    # 落点 `feicui/var/item_ingest.db`（`var/` 已在 .gitignore 内）；就绪包落点 `feicui/exports/`
+    # （前缀 `item_import_*`）。`FEICUI_ITEMS_DB` / `FEICUI_ITEMS_EXPORT_ROOT` 等可覆盖（自测用）。
+    items_db_path: Path = REPO_ROOT / "var" / "item_ingest.db"
+    items_export_root: Path = REPO_ROOT / "exports"
+    items_source_base: str = "https://yin.fudan.edu.cn/service_yinpu"
+    items_fetch_delay_s: float = 0.5
+    items_fetch_timeout_s: float = 30.0
 
     @property
     def is_prod_db(self) -> bool:
@@ -185,5 +193,21 @@ def get_settings() -> Settings:
         ),
         person_fetch_timeout_s=float(
             env.get("FEICUI_PERSON_FETCH_TIMEOUT") or file_cfg.get("person_fetch_timeout_s") or 30.0
+        ),
+        # ---- 印谱采集（批 1）：独立库 + 就绪包落点（env 覆盖优先）----
+        items_db_path=Path(
+            env.get("FEICUI_ITEMS_DB") or file_cfg.get("items_db_path") or str(REPO_ROOT / "var" / "item_ingest.db")
+        ).expanduser().resolve(),
+        items_export_root=Path(
+            env.get("FEICUI_ITEMS_EXPORT_ROOT") or file_cfg.get("items_export_root") or str(REPO_ROOT / "exports")
+        ).expanduser().resolve(),
+        items_source_base=str(
+            env.get("FEICUI_ITEMS_SOURCE_BASE") or file_cfg.get("items_source_base") or "https://yin.fudan.edu.cn/service_yinpu"
+        ),
+        items_fetch_delay_s=float(
+            env.get("FEICUI_ITEMS_FETCH_DELAY") or file_cfg.get("items_fetch_delay_s") or 0.5
+        ),
+        items_fetch_timeout_s=float(
+            env.get("FEICUI_ITEMS_FETCH_TIMEOUT") or file_cfg.get("items_fetch_timeout_s") or 30.0
         ),
     )

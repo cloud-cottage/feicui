@@ -4,6 +4,7 @@ import JobDetailPage from '@/pages/JobDetailPage.vue'
 import ResultsPage from '@/pages/ResultsPage.vue'
 import MissingPage from '@/pages/MissingPage.vue'
 import PersonsPage from '@/pages/PersonsPage.vue'
+import ItemsPage from '@/pages/ItemsPage.vue'
 
 // 路由对应 spec §3 的页面职责：
 //   /                     印谱解析（E1）
@@ -23,6 +24,7 @@ export default createRouter({
   routes: [
     { path: '/', name: 'jobs', component: JobsPage },
     { path: '/persons', name: 'persons', component: PersonsPage },
+    { path: '/items', name: 'items', component: ItemsPage },
     { path: '/jobs/:job_id', name: 'job-detail', component: JobDetailPage },
     { path: '/jobs/:job_id/results', name: 'job-results', component: ResultsPage },
     { path: '/jobs/:job_id/missing', name: 'job-missing', component: MissingPage },

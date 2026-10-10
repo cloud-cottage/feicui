@@ -1,0 +1,62 @@
+{
+  "kind": "selftest",
+  "cases": {
+    "ok_baseline": {
+      "pass": true,
+      "broken_on": [],
+      "expect": "pass=True"
+    },
+    "bom": {
+      "pass": false,
+      "broken_on": [
+        "items_no_bom",
+        "creators_no_bom"
+      ],
+      "expect": "pass=False (BOM)"
+    },
+    "missing_idempotency_key": {
+      "pass": false,
+      "broken_on": [
+        "idempotency_all_non_null_and_unique",
+        "creators_all_backref_items"
+      ],
+      "expect": "pass=False (缺幂等键)"
+    },
+    "duplicate_idempotency_key": {
+      "pass": false,
+      "broken_on": [
+        "idempotency_all_non_null_and_unique"
+      ],
+      "expect": "pass=False (重复幂等键)"
+    },
+    "volume_count_zero": {
+      "pass": false,
+      "broken_on": [
+        "numeric_special_free"
+      ],
+      "expect": "pass=False (volume_count=0)"
+    },
+    "date_year_empty": {
+      "pass": false,
+      "broken_on": [
+        "numeric_special_free"
+      ],
+      "expect": "pass=False (date_year='')"
+    },
+    "sidecar_orphan": {
+      "pass": false,
+      "broken_on": [
+        "creators_all_backref_items"
+      ],
+      "expect": "pass=False (sidecar 孤儿)"
+    },
+    "key_face_missing": {
+      "pass": false,
+      "broken_on": [
+        "manifest_key_face_status_pending_xiai"
+      ],
+      "expect": "pass=False (key_face_status≠pending_xiai)"
+    },
+    "_selftest_ok": true
+  }
+}

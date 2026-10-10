@@ -1,0 +1,40 @@
+{
+  "batch_id": "item_20261010_01",
+  "before": {
+    "fingerprint": "8b6bde0c9d1a2927eb03721c473438e754d7e5d5f0e455da17feac0b971e0a2e",
+    "counts": {
+      "items": 1742,
+      "creators": 1440,
+      "batches": 1
+    }
+  },
+  "run1": {
+    "run_kind": "idempotent_replay",
+    "fetched_requests": 0,
+    "skipped_resume": 1742,
+    "items_ok": 1742,
+    "creators_ok": 1440
+  },
+  "run2": {
+    "run_kind": "idempotent_replay",
+    "fetched_requests": 0,
+    "skipped_resume": 1742,
+    "items_ok": 1742,
+    "creators_ok": 1440
+  },
+  "after": {
+    "fingerprint": "8b6bde0c9d1a2927eb03721c473438e754d7e5d5f0e455da17feac0b971e0a2e",
+    "counts": {
+      "items": 1742,
+      "creators": 1440,
+      "batches": 1
+    }
+  },
+  "checks": {
+    "fingerprint_unchanged_across_runs": true,
+    "counts_unchanged_across_runs": true,
+    "run1_is_idempotent_replay": true,
+    "run2_is_idempotent_replay": true
+  },
+  "pass": true
+}

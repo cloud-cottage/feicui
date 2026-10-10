@@ -1,0 +1,99 @@
+{
+  "db": "/Users/kevin/bistro/xiai/feicui/var/item_ingest.db",
+  "batch_filter": null,
+  "tables": [
+    "item_creators",
+    "item_import_batches",
+    "items"
+  ],
+  "counts": {
+    "items": 1742,
+    "creators": 1440,
+    "source_total": 1742,
+    "items_match_source_total": true
+  },
+  "idempotency": {
+    "non_null": 1742,
+    "unique": 1742,
+    "total": 1742,
+    "all_non_null_and_unique": true
+  },
+  "as_book_id_unique": 1742,
+  "volume_count_special": [],
+  "date_year_special": [],
+  "numeric_special_free": true,
+  "anchors": {
+    "2214": {
+      "source_item_id": "2214",
+      "as_book_id": "0307",
+      "title": "龍泓山人印譜",
+      "volume_count": 8,
+      "date_text": "清宣統二年",
+      "date_year": 1910,
+      "donor": null,
+      "has_image": 1,
+      "has_annotation": 0,
+      "category": "印谱"
+    },
+    "3547": {
+      "source_item_id": "3547",
+      "as_book_id": "1817",
+      "title": "楊仲子印存",
+      "volume_count": 1,
+      "date_text": "N.D.",
+      "date_year": null,
+      "donor": null,
+      "has_image": 1,
+      "has_annotation": 0,
+      "category": "印谱"
+    }
+  },
+  "anchor_checks": {
+    "2214_seqid_asbookid": true,
+    "2214_title": true,
+    "2214_volume_8": true,
+    "2214_date_text": true,
+    "2214_date_year_1910": true,
+    "2214_has_image_1": true,
+    "3547_seqid_asbookid": true,
+    "3547_title": true,
+    "3547_donor_missing_detail_off": true
+  },
+  "association_anchor_2214": [
+    "丁敬",
+    "吳隱"
+  ],
+  "association_anchor_checks": {
+    "2214_has_wuyin": true,
+    "2214_has_dingjing": true
+  },
+  "anchors_ok": true,
+  "creators_by_source_face": {
+    "book_graph": 1281,
+    "person_graph": 159
+  },
+  "creators_distinct_items_person_graph": 151,
+  "creators_orphan": [],
+  "coverage": {
+    "has_image_true": 1714,
+    "has_image_false": 28,
+    "has_date_year": 1076,
+    "has_volume_count": 1728,
+    "has_donor": 0,
+    "has_abstract": 753
+  },
+  "batches": [
+    {
+      "batch_id": "item_20261010_01",
+      "status": "DONE",
+      "source_total": 1742,
+      "items_ok": 1742,
+      "creators_ok": 1440,
+      "failed_count": 0,
+      "fetched": 1742,
+      "content_fingerprint": "8b6bde0c9d1a2927eb03721c473438e754d7e5d5f0e455da17feac0b971e0a2e",
+      "last_run_kind": "live_ingest"
+    }
+  ],
+  "pass": true
+}

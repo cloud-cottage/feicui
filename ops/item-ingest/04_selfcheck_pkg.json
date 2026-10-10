@@ -1,0 +1,30 @@
+{
+  "kind": "positive",
+  "package_dir": "exports/item_import_item_20261010_01",
+  "checks": {
+    "files_exist": true,
+    "items_no_bom": true,
+    "creators_no_bom": true,
+    "items_one_object_per_line": true,
+    "creators_one_object_per_line": true,
+    "idempotency_non_null": 1742,
+    "idempotency_unique": 1742,
+    "idempotency_total": 1742,
+    "idempotency_all_non_null_and_unique": true,
+    "as_book_id_unique": 1742,
+    "numeric_special_free": true,
+    "volume_count_special": [],
+    "date_year_special": [],
+    "creators_all_backref_items": true,
+    "creators_orphan_source_item_id": [],
+    "manifest_schema_version_is_1": true,
+    "manifest_key_face_status_pending_xiai": true,
+    "manifest_has_field_dict": true,
+    "manifest_source_total": 1742,
+    "manifest_files_rows_match": true,
+    "manifest_source_endpoints_has_pageRows_3000": true,
+    "pass": true,
+    "rows_items": 1742,
+    "rows_creators": 1440
+  }
+}

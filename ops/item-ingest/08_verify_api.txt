@@ -1,0 +1,14 @@
+[PASS] list_200: HTTP 200 total=1742
+[PASS] no_next_cursor: keys=['_db_path', '_facets', 'has_more', 'items', 'limit', 'page', 'total']
+[PASS] invariant_p1: has_more=True page*limit=50 total=1742
+[PASS] invariant_p2: has_more=True 2*50<1742=True
+[PASS] out_of_range_empty: page=39 items=0 has_more=False
+[PASS] unsupported_cursor_400: HTTP 400 error=UNSUPPORTED_PARAM
+[PASS] filter_has_image: has_image=true→1714 / false→28
+[PASS] filter_has_year: has_year=true→1076
+[PASS] filter_title_kw: q=龍泓 → total=1
+[PASS] get_item_2214: HTTP 200 title=龍泓山人印譜 creators=2
+[PASS] get_item_404: HTTP 404
+[PASS] batches_200: HTTP 200 n=1
+[PASS] package_200: HTTP 200 rows=1742 creators_rows=1440 key_face_status=pending_xiai detail_policy.enabled=False
+[PASS] package_unsupported_400: HTTP 400 error=UNSUPPORTED_PARAM

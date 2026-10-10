@@ -23,6 +23,7 @@ const SPEC_MD5 = '4264927baf24bb7f48e12366cd861fe7'
       <nav class="shell__tabs">
         <RouterLink to="/">印谱解析</RouterLink>
         <RouterLink to="/persons">印人采集</RouterLink>
+        <RouterLink to="/items">印谱采集</RouterLink>
       </nav>
       <RouterView />
     </main>

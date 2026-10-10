@@ -1,0 +1,43 @@
+{
+  "before_label": "before",
+  "after_label": "after",
+  "yinpu_db": {
+    "before_tables": 8,
+    "after_tables": 8,
+    "changed": {},
+    "unchanged": true
+  },
+  "person_ingest_db": {
+    "before_tables": 3,
+    "after_tables": 3,
+    "changed": {},
+    "unchanged": true
+  },
+  "exports_fb": {
+    "dirs": [
+      "fb_20260920_XGXHB_01",
+      "fb_20260920_XGXHB_02",
+      "fb_20260920_XGXHB_03",
+      "fb_20260920_XGXHB_04",
+      "fb_20260920_XQHYD_01",
+      "fb_20260920_XQHYD_02",
+      "fb_20260920_XQHYD_03",
+      "fb_20260920_XQHYD_04",
+      "fb_20260920_XTMP_01",
+      "fb_20260920_XTMP_02",
+      "fb_20260920_XTMP_03",
+      "fb_20260920_XTMP_04"
+    ],
+    "changed": {},
+    "unchanged": true
+  },
+  "exports_person": {
+    "dirs": [
+      "person_20261010_01",
+      "person_import_person_20261010_01"
+    ],
+    "changed": {},
+    "unchanged": true
+  },
+  "pass": true
+}

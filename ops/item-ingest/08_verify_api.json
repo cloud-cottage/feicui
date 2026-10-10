@@ -1,0 +1,62 @@
+{
+  "base": "http://127.0.0.1:5196",
+  "cases": {
+    "list_200": {
+      "ok": true,
+      "detail": "HTTP 200 total=1742"
+    },
+    "no_next_cursor": {
+      "ok": true,
+      "detail": "keys=['_db_path', '_facets', 'has_more', 'items', 'limit', 'page', 'total']"
+    },
+    "invariant_p1": {
+      "ok": true,
+      "detail": "has_more=True page*limit=50 total=1742"
+    },
+    "invariant_p2": {
+      "ok": true,
+      "detail": "has_more=True 2*50<1742=True"
+    },
+    "out_of_range_empty": {
+      "ok": true,
+      "detail": "page=39 items=0 has_more=False"
+    },
+    "unsupported_cursor_400": {
+      "ok": true,
+      "detail": "HTTP 400 error=UNSUPPORTED_PARAM"
+    },
+    "filter_has_image": {
+      "ok": true,
+      "detail": "has_image=true→1714 / false→28"
+    },
+    "filter_has_year": {
+      "ok": true,
+      "detail": "has_year=true→1076"
+    },
+    "filter_title_kw": {
+      "ok": true,
+      "detail": "q=龍泓 → total=1"
+    },
+    "get_item_2214": {
+      "ok": true,
+      "detail": "HTTP 200 title=龍泓山人印譜 creators=2"
+    },
+    "get_item_404": {
+      "ok": true,
+      "detail": "HTTP 404"
+    },
+    "batches_200": {
+      "ok": true,
+      "detail": "HTTP 200 n=1"
+    },
+    "package_200": {
+      "ok": true,
+      "detail": "HTTP 200 rows=1742 creators_rows=1440 key_face_status=pending_xiai detail_policy.enabled=False"
+    },
+    "package_unsupported_400": {
+      "ok": true,
+      "detail": "HTTP 400 error=UNSUPPORTED_PARAM"
+    }
+  },
+  "pass": true
+}

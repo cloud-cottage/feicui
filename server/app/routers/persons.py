@@ -151,8 +151,8 @@ def create_import_package(
 ) -> dict:
     """`POST /api/persons/import-package` —— 生成 **xiai 就绪导入包**（**从 feicui 本库重建，不联网采集**）。
 
-    产物目录 `exports/person_import_<batch_id>/`：主交付 `person_imports.jsonl`（**逐行恰 xiai 现行 18 键**）
-    ＋ sidecar `person_imports_extraction.jsonl`（extraction 标注，不含 `from`）＋ `manifest.json`。
+    产物目录 `exports/person_import_<batch_id>/`：主交付 `person_imports.jsonl`（**逐行恰 xiai 现行 21 键**（含
+    3 个 extraction 键））＋ sidecar `person_imports_extraction.jsonl`（**派生冗余件，兼容保留**）＋ `manifest.json`。
 
     * **不写 xiai 任何文件、不调任何云函数**（提交与审核在玺爱侧）；本端点只产 feicui 自有树内产物；
     * 未白名单查询参数 ⇒ **400**；批次不存在 ⇒ **404**（`BATCH_NOT_FOUND`）；库内无批次 ⇒ **404**（`NO_BATCH`）。

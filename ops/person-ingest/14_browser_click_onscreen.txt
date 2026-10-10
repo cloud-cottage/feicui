@@ -1,0 +1,16 @@
+导入包（xiai 就绪）
+刷新已生成
+
+生成 按 xiai 键面裁剪好 的导入载荷，落到 exports/person_import_<batch_id>/ ： 主交付 person_imports.jsonl （ 逐行恰 xiai 现行 21 键 ：原 18 键 ＋ 3 个 extraction 键， 字/号/别名降为 string[] ，extraction 数组与对应值数组 等长 、元素非空字符串） ＋ sidecar person_imports_extraction.jsonl （ 派生冗余件（兼容保留） ，与主交付同一计算结果导出、 非第二真源 ） ＋ manifest.json 。从 feicui 本库重建， 不联网采集 ； 不写 xiai 任何文件 。 对方规则： 缺键不拒收 （18 键旧包仍可提交）／extraction 值域不封闭 ／违形态 ⇒ INVALID_VALUE ＋零写入。 提交与审核在玺爱侧 ：导入先落 xiai_person_imports （PENDING），管理员批量采纳后方成正式印人； 采纳后不落 person 行 。
+
+源批次号 batch_id（留空＝库内最新批次）
+生成 xiai 就绪导入包
+包目录	/Users/kevin/bistro/xiai/feicui/exports/person_import_person_20261010_01
+行数（应 570）	570 行 · 源批次 person_20261010_01
+校验摘要	键面 diff（vs xiai 21 键）⇒ 多余键 0（须 0）／ 缺失键 0（不判负：对方「缺键不拒收」）／ xiai 允许键 21（21）； 幂等键 source_person_id 非空 / 唯一 / 总行 ＝ 570 / 570 / 570； 三桶均 string[] ⇒ 是； 主交付 extraction 三键（已并入）⇒ 等长 是／ 元素非空字符串 是； sidecar 等长 ⇒ 是； 无 BOM ⇒ 是
+sidecar（派生冗余件）	person_imports_extraction.jsonl（courtesy_names_extraction、art_names_extraction、alias_names_extraction；派生冗余件（兼容保留），与主交付同一计算结果导出、非第二真源；不含 from）
+提交 / 审核	提交与审核在玺爱侧（本包只读消费）；feicui **不写 xiai 任何文件、不调任何云函数**。导入先落 xiai_person_imports（PENDING），管理员批量采纳后方成正式印人；**采纳后不落 person 行**——extraction 只留导入行作溯源。
+原始响应体（POST /api/persons/import-package，原样展示，未改写）
+已生成导入包
+包目录	源批次	行数	多余键	幂等 唯一/总	生成时点
+person_import_person_20261010_01	person_20261010_01	570	0	570 / 570	2026-10-10T14:08:26+08:00

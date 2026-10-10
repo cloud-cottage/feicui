@@ -500,10 +500,12 @@ function relCount(p, kind) {
       </div>
       <p class="page__sub">
         生成 <b>按 xiai 键面裁剪好</b> 的导入载荷，落到 <code>exports/person_import_&lt;batch_id&gt;/</code>：
-        主交付 <code>person_imports.jsonl</code>（<b>逐行恰 xiai 现行 18 键</b>，字/号/别名降为 <code>string[]</code>）
-        ＋ sidecar <code>person_imports_extraction.jsonl</code>（extraction 标注，不含 <code>from</code>）
+        主交付 <code>person_imports.jsonl</code>（<b>逐行恰 xiai 现行 21 键</b>：原 18 键 ＋ 3 个 extraction 键，
+        字/号/别名降为 <code>string[]</code>，extraction 数组与对应值数组<b>等长</b>、元素非空字符串）
+        ＋ sidecar <code>person_imports_extraction.jsonl</code>（<b>派生冗余件（兼容保留）</b>，与主交付同一计算结果导出、<b>非第二真源</b>）
         ＋ <code>manifest.json</code>。从 feicui 本库重建，<b>不联网采集</b>；<b>不写 xiai 任何文件</b>。
-        <b>提交与审核在玺爱侧</b>：导入先落 <code>xiai_person_imports</code>（PENDING），管理员批量采纳后方成正式印人。
+        对方规则：<b>缺键不拒收</b>（18 键旧包仍可提交）／extraction <b>值域不封闭</b>／违形态 ⇒ <code>INVALID_VALUE</code>＋零写入。
+        <b>提交与审核在玺爱侧</b>：导入先落 <code>xiai_person_imports</code>（PENDING），管理员批量采纳后方成正式印人；<b>采纳后不落 person 行</b>。
       </p>
 
       <div class="field-row">
@@ -532,16 +534,18 @@ function relCount(p, kind) {
           <tr><th>包目录</th><td><code>{{ importState.result.package_dir }}</code></td></tr>
           <tr><th>行数（应 570）</th><td><b>{{ importState.result.rows }}</b> 行 · 源批次 <code>{{ importState.result.batch_id }}</code></td></tr>
           <tr><th>校验摘要</th><td>
-            键面 diff ⇒ 多余键 <code>{{ importState.result.key_face.extra_count }}</code>（须 0）／
-            缺失键 <code>{{ importState.result.key_face.missing_keys.length }}</code>（须 0）／
-            xiai 允许键 <code>{{ importState.result.key_face.xiai_allowed_keys_count }}</code>；
+            键面 diff（vs xiai <b>21 键</b>）⇒ 多余键 <code>{{ importState.result.key_face.extra_count }}</code>（须 0）／
+            缺失键 <code>{{ importState.result.key_face.missing_keys.length }}</code>（不判负：对方「缺键不拒收」）／
+            xiai 允许键 <code>{{ importState.result.key_face.xiai_allowed_keys_count }}</code>（21）；
             幂等键 <code>source_person_id</code> 非空 / 唯一 / 总行 ＝
             <code>{{ importState.result.idempotency.non_null }} / {{ importState.result.idempotency.unique }} / {{ importState.result.idempotency.total }}</code>；
             三桶均 <code>string[]</code> ⇒ <code>{{ importState.result.checks.three_buckets_all_string_arrays ? '是' : '否' }}</code>；
+            主交付 extraction 三键（已并入）⇒ 等长 <code>{{ importState.result.checks.main_extraction_lengths_match ? '是' : '否' }}</code>／
+            元素非空字符串 <code>{{ importState.result.checks.main_extraction_all_non_empty_strings ? '是' : '否' }}</code>；
             sidecar 等长 ⇒ <code>{{ importState.result.checks.sidecar_lengths_match ? '是' : '否' }}</code>；
             无 BOM ⇒ <code>{{ importState.result.checks.main_no_bom && importState.result.checks.sidecar_no_bom ? '是' : '否' }}</code>
           </td></tr>
-          <tr><th>sidecar</th><td><code>{{ importState.result.sidecar.file }}</code>（{{ importState.result.sidecar.keys.join('、') }}；<b>不含 from</b>）</td></tr>
+          <tr><th>sidecar（派生冗余件）</th><td><code>{{ importState.result.sidecar.file }}</code>（{{ importState.result.sidecar.keys.join('、') }}；<b>派生冗余件（兼容保留）</b>，与主交付同一计算结果导出、非第二真源；<b>不含 from</b>）</td></tr>
           <tr><th>提交 / 审核</th><td>{{ importState.result.submission }}</td></tr>
         </tbody></table>
         <details class="notice__raw">

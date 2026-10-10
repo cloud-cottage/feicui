@@ -161,3 +161,13 @@
 | **Jing**（规范） | 批 1 规范：`feicui/docs/feicui.spec.md` 新增 **§3.16「印谱（item）采集」** ＋ AC（IT-1〜IT-8 底稿）＋ 待裁 W 行 |
 | **xiai 线**（另会话） | 批 2：item 模型 / 集合名 / 键面 / 导入通道（本线出交接件） |
 | **Neng**（质检） | 待批 1 落地后派 |
+
+---
+
+## 10. 变更记录
+
+| 时点 | 变更 |
+| --- | --- |
+| 2026-10-10 | **v0.1 建立**（Zang）：实测 `book/list` / `book/detail` / `graph/book` 契约 ＋ Kevin 门控四答 ＋ 批 1 / 批 2 划分。 |
+| 2026-10-10 | **采集口径偏离（实测驱动，Zang 裁定）**：**`book/detail` 严限流**（Kong 实跑日志出现 `5/10/20/40/60s` 退避反复），按原口径「逐本 detail」取本体**在 1742 本量级不可行**；而 **`graph/book/<seqid>` 实测健康**（2 s 间隔 3/3 成功）**且同样给 `creatorType` ＋ `personGrbsm`**（`graph/book/2214` ⇒ `{"creatorType":"辑","name":"吳隱","id":"907234486","type":"印人"}`）。⇒ 改为：**① item 本体全部取自 `book/list` 一次全量**；**② item↔person 关联主源改 `graph/book`**（`source_face='book_graph'`）＋ 既有 `person_relations`（`source_face='person_graph'`）合并去重；**③ `book/detail` 降为 best-effort（默认关，`--with-detail` 才开）**，仅补 `creatorRole` / `creatorRelator` / `bookDonor`，慢速分片、失败进清单、**不阻塞主交付**，并在 manifest / report 如实登记缺失三字段与 `detail_unconfirmed` 计数。**这是对 Kevin I-2（列表＋detail、不采 graph）的正式偏离**，理由＝实测限流；已在 feicui 侧规范按 §0.4 登记（新口径 + 理由，旧口径原文保留并标「已被取代」）。 |
+| 2026-10-10 | **`creatorList` 可替代性核实**：`book/detail.creatorList` 含 `creatorType` / `creatorRole` / `creatorRelator` / `creatorName` / **`personGrbsm`**；`graph/book` 缺 `creatorRole` / `creatorRelator`（改由 detail best-effort 补，缺则空），但**关联的四要素（item / creatorType / name / personGrbsm）齐备** ⇒ sidecar 不受影响。 |

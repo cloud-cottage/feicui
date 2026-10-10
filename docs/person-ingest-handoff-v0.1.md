@@ -90,3 +90,30 @@
 | W-P2 | 关联面是否递归到 `seal/detail` / `graph/seal` | **只落直接关联**，递归面另议 |
 | W-P4 | 印章影像（`image_key`）是否下载 | **只存键，不下载** |
 | W-P5 | 批 2 是否直接消费 feicui 批次包，还是经 feicui 端点实时拉取 | **优先批次包**（可复现、可存档） |
+
+---
+
+## 7. 「xiai 就绪导入包」（**2026-10-10 Kevin 三答后新增的第七节，交付缝扩展**）
+
+**Kevin 2026-10-10 三答（逐字口径）**
+1. **按钮语义 ＝ 导出/投递到交换目录**：feicui 页加「生成 xiai 就绪导入包」按钮，产出**按 xiai 键面裁剪好**的导入载荷落到约定目录；**提交与审核仍在玺爱侧**（不破跨工程边界）。
+2. **字 / 号 / 别名载荷形态 ＝ 降为 `string[]`（只传 `value`），但保留 `extraction` 标注、去掉 `from`**；**允许 xiai 侧扩属性，走它自己的规范流程**。
+3. **审核门维持**：导入先落 `xiai_person_imports`（`PENDING`），**管理员在玺爱批量采纳后才成正式印人**（沿 G-2）。
+
+### 7.1 为什么不能直接提交 feicui 批次包（**两处形态不合，实测契约**）
+
+| 问题 | 实测 | 后果 |
+| --- | --- | --- |
+| **键面封闭** | `xiai-user-token` 的 `PERSON_IMPORT_ALLOWED_KEYS` **恰 18 键**：`batch_id` / `source` / `source_person_id` / `name_full` / `family_name` / `given_name` / `courtesy_names` / `art_names` / `alias_names` / `birth_year` / `death_year` / `native_place` / `native_place_chs` / `biography` / `biography_chs` / `nationality` / `cbdb_id` / `source_id`；`persons.jsonl` 一行 **32 键**（多出 `source_seqid` / `name_full_chs` / `nationality_chs` / `nationality_code` / `spell` / `initial` / `flag` / `notes` / `raw_json`） | 直传 ⇒ **`INVALID_FIELD`「载荷含未知字段」＋ 零写入** |
+| **三桶形态** | xiai 侧 `asArray()` 走 `text(item)`，**期望 `string[]`**；feicui 侧是 `[{value,kind,extraction,from}]` | 直传 ⇒ 落成 `"[object Object]"` |
+| 身份 | `submitPersonImport` 的 `imported_by` 由**服务端从令牌派生**（`uid`），feicui 侧无可验证令牌 | 只能由**玺爱侧**提交 |
+
+### 7.2 导入就绪包契约（冻结）
+
+- 产物目录：**`feicui/exports/person_import_<batch_id>/`**（feicui 自有树内、gitignored；**不写 xiai 仓任何文件**）。
+- 文件：
+  1. **`person_imports.jsonl`**（主交付，**严格 xiai 现行 18 键**，可直接提交）：三桶降为 **`string[]`（只 `value`）**；`birth_year`/`death_year` 整数或 `null`；`source` / `source_id` 原样；`source_person_id` 为幂等键。
+  2. **`person_imports_extraction.jsonl`**（sidecar，**待 xiai 扩键面后并入**）：`source_person_id` ＋ `courtesy_names_extraction` / `art_names_extraction` / `alias_names_extraction`（**与对应值等长的数组**，元素 `'rule-based'`）。**不含 `from`**（按 Kevin 裁定删除）。
+  3. **`manifest.json`**：`schema_version`、源批次、生成时点、行数、**键面清单 ＋ 与 xiai 允许键面的 diff（多余键必须为 0）**、幂等键计数、sidecar 说明。
+- **需 xiai 侧扩的键（3 个，走 xiai 自己的规范流程）**：`courtesy_names_extraction` / `art_names_extraction` / `alias_names_extraction`（扩键面之前，主交付 `person_imports.jsonl` 已可正常提交，extraction 元数据暂以 sidecar 存放 ⇒ **不阻塞**）。
+- 交换方式：**xiai 侧按上述目录只读消费**（本地路径约定）；如改为中立交换目录，一句话可改。

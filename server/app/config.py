@@ -36,11 +36,13 @@ DEFAULT_CORS_ORIGINS: tuple[str, ...] = (
 
 
 # ── 拖曳上传落盘（additive 端点 `POST /api/jobs/upload`）：默认常量 ────────────────
-# 单文件上限默认 **512 MiB**：源 PDF 实测 38 MB、历史 372 MB ⇒ 512 MiB 容得下，且不至于让
-# 误操作（拖错文件）写满盘。`FEICUI_UPLOAD_MAX_BYTES` 或 server/config.json 的
-# `upload_max_bytes` 可改（自测调小阈值即可验 413，**不必真传 512 MB**）。
+# 单文件上限默认 **5 GiB（5368709120 B）**（Kevin 2026-10-11 裁定，原值 512 MiB）：实测真实书
+# `~/Downloads/秦印类编 检索版.pdf` ＝ 1.88 GiB / 851 页、`福庵印缀 原版 高清.pdf` ＝ 1.14 GiB / 236 页
+# ⇒ 512 MiB 会把真书拒在门外；本机 `df` 余量 191 GiB 容得下。上限「**有上限 / 有默认值 / 可改**」
+# 三件口径不变（§3.19.2：改数值不需升规范）。`FEICUI_UPLOAD_MAX_BYTES` 或 server/config.json 的
+# `upload_max_bytes` 可改（自测调小阈值即可验 413，**不必真传 5 GiB**）。
 # 分块写盘 1 MiB/块 ⇒ 内存占用恒定（对比 `app/multipart.py`：整包读进内存，372 MB 会打爆）。
-UPLOAD_MAX_BYTES_DEFAULT = 512 * 1024 * 1024
+UPLOAD_MAX_BYTES_DEFAULT = 5 * 1024 * 1024 * 1024
 UPLOAD_CHUNK_BYTES_DEFAULT = 1024 * 1024
 INBOX_DIRNAME = "inbox"
 
@@ -132,7 +134,7 @@ class Settings:
     relations_export_root: Path = REPO_ROOT / "exports"
     # ---- 拖曳上传（additive `POST /api/jobs/upload`）：落点与限流 ----
     # 落点 `feicui/inbox/<yyyymmdd>/<safe-name>.pdf`（`.gitignore` 已排除 `inbox/`：属运行时产物）；
-    # 上限默认 512 MiB（`FEICUI_UPLOAD_MAX_BYTES` / config.json `upload_max_bytes` 可改）；
+    # 上限默认 5 GiB（5368709120 B；`FEICUI_UPLOAD_MAX_BYTES` / config.json `upload_max_bytes` 可改）；
     # 分块写盘 1 MiB（内存恒定）。`FEICUI_INBOX_DIR` 可重定向（自测用）。
     inbox_dir: Path = REPO_ROOT / INBOX_DIRNAME
     upload_max_bytes: int = UPLOAD_MAX_BYTES_DEFAULT

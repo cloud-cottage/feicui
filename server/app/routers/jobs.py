@@ -50,12 +50,40 @@ def _resolve_pdf_path(raw: str, st: Settings) -> Path:
     return p.resolve()
 
 
+# ---- E1 的 PDF 判定（§3.1 表下注 **G-6**）----------------------------------------
+PDF_MAGIC = b"%PDF-"
+#: G-6 口径＝**文件前 1024 字节内**出现 `%PDF-` 即算 PDF（**不是** E8 口的「首字节即须为」）。
+PDF_MAGIC_SCAN_BYTES = 1024
+
+
+def _pdf_has_magic(pdf_abs: Path) -> bool:
+    """**E1** 的既有文件 PDF 判定（§3.1 表下注 **G-6**）：非 PDF **以 `%PDF-` magic 为准**。
+
+    判据＝**文件前 `PDF_MAGIC_SCAN_BYTES`（1024）字节内**出现 `%PDF-`（G-6 逐字：「文件前 1024 字节内
+    出现 `%PDF-`」）——**不**只按扩展名分流（不得把纯文本当 PDF 收下：PyMuPDF 对 `.txt` 宽松、报 1 页）。
+
+    **与 §3.19.4 的 E8 口的关系（防误用）**：E8 收新字节用**首字节即须为 `%PDF-`** 的严判定；此处用 G-6
+    的宽松判定——规范明写「**两者是不同口的不同严格度，不互相代替、本版不统一**」⇒ **不得**照搬 E8 判据。
+    """
+    try:
+        with pdf_abs.open("rb") as fh:
+            head = fh.read(PDF_MAGIC_SCAN_BYTES)
+    except OSError:
+        return False
+    return PDF_MAGIC in head
+
+
 @router.post("", status_code=201, response_model=JobCreateResponse)
 def create_job(payload: JobCreateRequest, st: Settings = Depends(_settings)) -> JobCreateResponse:
     """**E1** `POST /api/jobs` —— 建 job（一本书 = 一个 job，**入队**语义）。
 
     * 同 `pdf_path` 已有活跃 job ⇒ **409 + 既有 job_id**（绝不静默起第二个，§3.2 S-5）；
       并发抢占由库级部分唯一索引 `uq_jobs_active_pdf_path` 兜底，同样落成 409。
+    * **建 job 之前**先校验 `pdf_path`（**真缺陷修复**，向 G-6 契约对齐）：
+      ① 路径不存在 / 不是文件 ⇒ **400** `PDF_NOT_FOUND`；
+      ② 存在但**非 PDF**（前 1024 字节内无 `%PDF-` magic，§3.1 表下注 G-6）⇒ **400** `NOT_A_PDF`；
+      **两者都不得建 job、不得写任何行**（原实现只看 `is_file()` ⇒ 存在但非 PDF 的文件会被当 1 页 PDF
+      收下、建出 job，违反 §3.1 G-6 ＋ §3.4 的 400 枚举）。
     * `total_pages` 派生：给了 `page_range` 就取区间宽；否则读 PDF 页数；
       都拿不到 ⇒ **422**（S-6「必填字段不可派生」）。
     """
@@ -67,6 +95,15 @@ def create_job(payload: JobCreateRequest, st: Settings = Depends(_settings)) -> 
         raise HTTPException(
             status_code=400,
             detail={"error": "PDF_NOT_FOUND", "detail": f"pdf_path 不存在或不是文件：{pdf_abs}"},
+        )
+    # ---- G-6：既有文件的 PDF 判定（**必须在建 job / 入队之前**）--------------------
+    if not _pdf_has_magic(pdf_abs):
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": "NOT_A_PDF",
+                "detail": f"pdf_path 存在但非 PDF（前 {PDF_MAGIC_SCAN_BYTES} 字节内无 %PDF- magic）：{pdf_abs}",
+            },
         )
     pdf_name = repository.pdf_name_of(pdf_abs)
     pdf_total = pdfmeta.pdf_page_count(pdf_abs)

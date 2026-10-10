@@ -1,0 +1,123 @@
+[
+ {
+  "step": "env",
+  "target": "127.0.0.1:5196",
+  "repo": "/Users/kevin/bistro/xiai/feicui",
+  "db": "/Users/kevin/bistro/xiai/data/yinpu.db",
+  "python": "/Users/kevin/bistro/xiai/feicui/venv/bin/python",
+  "time": "2026-10-11 06:51:48"
+ },
+ {
+  "step": "db_baseline",
+  "jobs": 5,
+  "job_pages": 32,
+  "stamps": 89,
+  "stamps_fingerprint_sha256": "915597acf0912febaeb8a6556f4b59450132d19ca5c517ca87f6ac78e89bf732"
+ },
+ {
+  "step": "fixtures",
+  "real_pdf": "/Users/kevin/bistro/xiai/feicui/ops/job-upload/fixtures/e1-fix-real.pdf",
+  "real_pdf_bytes": 842,
+  "real_pdf_head": "%PDF-",
+  "not_pdf": "/Users/kevin/bistro/xiai/feicui/ops/job-upload/fixtures/e1-fix-not-a-pdf.txt",
+  "not_pdf_bytes": 34,
+  "not_pdf_head": "this "
+ },
+ {
+  "step": "01_existing_non_pdf",
+  "status": 400,
+  "error": "NOT_A_PDF",
+  "body": {
+   "detail": {
+    "error": "NOT_A_PDF",
+    "detail": "pdf_path 存在但非 PDF（前 1024 字节内无 %PDF- magic）：/Users/kevin/bistro/xiai/feicui/ops/job-upload/fixtures/e1-fix-not-a-pdf.txt"
+   }
+  },
+  "jobs_same": true,
+  "job_pages_same": true,
+  "stamps_same": true
+ },
+ {
+  "step": "02_missing_path",
+  "status": 400,
+  "error": "PDF_NOT_FOUND",
+  "body": {
+   "detail": {
+    "error": "PDF_NOT_FOUND",
+    "detail": "pdf_path 不存在或不是文件：/Users/kevin/bistro/xiai/feicui/ops/job-upload/fixtures/definitely-missing-e1-fix.pdf"
+   }
+  },
+  "jobs_same": true,
+  "job_pages_same": true,
+  "stamps_same": true
+ },
+ {
+  "step": "03_real_pdf",
+  "status": 201,
+  "body": {
+   "job_id": "job-3c91b5cff4c141bbbcf5e009754aed54",
+   "state": "QUEUED",
+   "total_pages": 1,
+   "created_at": "2026-10-11T06:51:49+08:00"
+  },
+  "job_id": "job-3c91b5cff4c141bbbcf5e009754aed54",
+  "has_4_fields": true,
+  "jobs_plus1": true,
+  "stamps_same": true
+ },
+ {
+  "step": "04_conflict",
+  "status": 409,
+  "body": {
+   "error": "ACTIVE_JOB_EXISTS",
+   "detail": "同 pdf_path 已有活跃 job（§3.2 S-5：同一本书同时只允许一个活跃 job）",
+   "job_id": "job-3c91b5cff4c141bbbcf5e009754aed54",
+   "state": "QUEUED",
+   "total_pages": 1,
+   "created_at": "2026-10-11T06:51:49+08:00"
+  },
+  "error": "ACTIVE_JOB_EXISTS",
+  "job_id": "job-3c91b5cff4c141bbbcf5e009754aed54",
+  "same_job_id": true,
+  "jobs_same_as_after3": true,
+  "stamps_same": true
+ },
+ {
+  "step": "cleanup_backup",
+  "path": "/Users/kevin/.hermes/profiles/zang/cache/scratch/yinpu.backup.20261011_065149.db",
+  "bytes": 647168
+ },
+ {
+  "step": "cleanup_deleted",
+  "job_id": "job-3c91b5cff4c141bbbcf5e009754aed54",
+  "deleted_pages": 1,
+  "deleted_jobs": 1
+ },
+ {
+  "step": "db_final",
+  "jobs": 5,
+  "job_pages": 32,
+  "stamps": 89,
+  "stamps_fingerprint_sha256": "915597acf0912febaeb8a6556f4b59450132d19ca5c517ca87f6ac78e89bf732",
+  "jobs_restored": true,
+  "job_pages_restored": true,
+  "stamps_unchanged": true,
+  "stamps_fingerprint_unchanged": true
+ },
+ {
+  "step": "summary",
+  "all_pass": true,
+  "baseline": {
+   "jobs": 5,
+   "job_pages": 32,
+   "stamps": 89,
+   "stamps_fingerprint_sha256": "915597acf0912febaeb8a6556f4b59450132d19ca5c517ca87f6ac78e89bf732"
+  },
+  "final": {
+   "jobs": 5,
+   "job_pages": 32,
+   "stamps": 89,
+   "stamps_fingerprint_sha256": "915597acf0912febaeb8a6556f4b59450132d19ca5c517ca87f6ac78e89bf732"
+  }
+ }
+]

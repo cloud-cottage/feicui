@@ -1,0 +1,95 @@
+[
+ {
+  "step": "env",
+  "target": "127.0.0.1:5196",
+  "repo": "/Users/kevin/bistro/xiai/feicui",
+  "db_day": "20261011",
+  "new_limit_bytes": 5368709120,
+  "size_700m_bytes": 734003200,
+  "python": "/Users/kevin/bistro/xiai/feicui/venv/bin/python",
+  "time": "2026-10-11 06:52:02"
+ },
+ {
+  "step": "df_avail_before_bytes",
+  "avail": 204772085760
+ },
+ {
+  "step": "inbox_before",
+  "day_dir": "/Users/kevin/bistro/xiai/feicui/inbox/20261011",
+  "count": 9,
+  "files": [
+   "probe-e1-keep-1791672365.pdf",
+   "zang_probe.pdf",
+   "拖曳测试-5164-1791672175560.pdf",
+   "拖曳测试-5164-1791672192507.pdf",
+   "拖曳测试-5164-1791672417.pdf",
+   "拖曳测试-5195-1791672171568.pdf",
+   "拖曳测试-5195-1791672379561.pdf",
+   "拖曳测试-5195-1791672399568.pdf",
+   "拖曳测试-5195-1791672413.pdf"
+  ]
+ },
+ {
+  "step": "01_declared_6gib",
+  "status": 413,
+  "error": "PAYLOAD_TOO_LARGE",
+  "detail": "请求体声明 6442450944 B 超过上限 5368709120 B（**未落盘即拒**）",
+  "limit_bytes": 5368709120,
+  "limit_bytes_is_5gib": true,
+  "declared_bytes": 6442450944,
+  "sent_bytes": 36,
+  "landed": false,
+  "inbox_count_delta": 0
+ },
+ {
+  "step": "03_build_temp",
+  "path": "/Users/kevin/.hermes/profiles/zang/cache/scratch/feicui-700mib-1791672722.pdf",
+  "bytes": 734003200
+ },
+ {
+  "step": "03_upload_700mib",
+  "status": 201,
+  "response": {
+   "pdf_path": "/Users/kevin/bistro/xiai/feicui/inbox/20261011/probe-700mib-1791672723.pdf",
+   "rel_path": "inbox/20261011/probe-700mib-1791672723.pdf",
+   "filename": "probe-700mib-1791672723.pdf",
+   "bytes": 734003200,
+   "sha256": "09275c67aa9e529b02e40e76f8443af5b7dd2de22d21c8b484c0e32cdca600f0",
+   "idempotent": false,
+   "dedup_suffix": false
+  },
+  "sent_bytes": 734003200,
+  "elapsed_s": 0.78,
+  "pdf_path": "/Users/kevin/bistro/xiai/feicui/inbox/20261011/probe-700mib-1791672723.pdf",
+  "on_disk_bytes": 734003200,
+  "bytes_match": true,
+  "sha_src": "09275c67aa9e529b02e40e76f8443af5b7dd2de22d21c8b484c0e32cdca600f0",
+  "sha_on_disk": "09275c67aa9e529b02e40e76f8443af5b7dd2de22d21c8b484c0e32cdca600f0",
+  "sha_response": "09275c67aa9e529b02e40e76f8443af5b7dd2de22d21c8b484c0e32cdca600f0",
+  "sha_match": true,
+  "idempotent": false
+ },
+ {
+  "step": "cleanup",
+  "deleted": [
+   "/Users/kevin/bistro/xiai/feicui/inbox/20261011/probe-700mib-1791672723.pdf",
+   "/Users/kevin/.hermes/profiles/zang/cache/scratch/feicui-700mib-1791672722.pdf"
+  ],
+  "disk_peak_bytes_estimate": 1468006400,
+  "disk_peak_MiB": 1400.0,
+  "reclaimed_bytes": 1468006400,
+  "reclaimed_MiB": 1400.0,
+  "avail_mid_upload_bytes": 204038082560,
+  "avail_after_bytes": 204755439616,
+  "inbox_restored": true,
+  "inbox_after_count": 9
+ },
+ {
+  "step": "summary",
+  "all_pass": true,
+  "limit_bytes_self_report": 5368709120,
+  "declared_413": 413,
+  "real_700mib_201": 201,
+  "sha_match": true
+ }
+]

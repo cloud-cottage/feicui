@@ -6,7 +6,7 @@ import MissingPage from '@/pages/MissingPage.vue'
 import PersonsPage from '@/pages/PersonsPage.vue'
 
 // 路由对应 spec §3 的页面职责：
-//   /                     任务页（E1）
+//   /                     印谱解析（E1）
 //   /persons              印人采集页（批 1：复旦印藏「印人」标签页）
 //   /jobs/:job_id         任务详情（E2，真实进度 S-1）
 //   /jobs/:job_id/results 结果页（E3，6 字段信封；预留）

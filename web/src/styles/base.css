@@ -56,17 +56,30 @@ h2 { margin: 0 0 4px; font-size: 20px; }
 h3 { margin: 0 0 10px; font-size: 15px; }
 p { margin: 6px 0; }
 
-.shell { max-width: 1180px; margin: 0 auto; padding: 18px 20px 60px; }
+.shell { max-width: 1180px; margin: 0 auto; padding: 0 20px 60px; }
+/* 固定页眉（品牌【斐萃】＋ 标题【印谱解析任务台】）。
+   选 sticky 而非 fixed：元素仍留在文档流内、自身占位，滚动时**无需**
+   再给内容区补上边距（fixed 要额外补偿高度，容易漏补/补错），从根上
+   保证内容不被页眉盖住；同时 sticky 相对视口 sticky，等于吸顶。
+   背景必须**不透明**（走 --bg token），否则滚动内容会从页眉下透出。 */
 .shell__head {
+  position: sticky; top: 0; z-index: 20;
   display: flex; align-items: baseline; justify-content: space-between;
-  border-bottom: 1px solid var(--line); padding-bottom: 10px; margin-bottom: 14px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line); padding: 12px 0 10px; margin-bottom: 14px;
   box-shadow: 0 1px 0 var(--accent-soft);
 }
 .brand { display: flex; gap: 10px; align-items: baseline; }
 .brand strong { font-size: 18px; letter-spacing: .5px; color: var(--accent); }
-.nav a { margin-left: 14px; padding-bottom: 2px; }
-.nav a:hover { color: var(--accent-line); }
-.nav a.router-link-active {
+/* 页签条：原 .nav 已从 `<header>` 移出，下移到核心内容区顶部（main 第 1 个子节点，
+   在 <RouterView /> 之前）。选中态沿用 router-link-active。 */
+.shell__tabs {
+  display: flex; align-items: baseline; gap: 18px;
+  margin: 0 0 16px; padding-bottom: 8px; border-bottom: 1px solid var(--line);
+}
+.shell__tabs a { padding-bottom: 2px; }
+.shell__tabs a:hover { color: var(--accent-line); }
+.shell__tabs a.router-link-active {
   color: var(--accent-line); border-bottom: 1px solid var(--accent-line);
 }
 .shell__main { margin-top: 14px; }

@@ -1,5 +1,5 @@
 <script setup>
-// 站点外壳：导航 + 全局后端状态横幅 + 路由出口。
+// 站点外壳：固定页眉（品牌＋标题）＋ 全局后端状态横幅 ＋ 页签条 ＋ 路由出口。
 // 页脚登记本前端所依据的规范版本与 md5，便于对照（只读引用，不改规范）。
 import BackendBanner from '@/components/BackendBanner.vue'
 
@@ -15,15 +15,15 @@ const SPEC_MD5 = '4264927baf24bb7f48e12366cd861fe7'
         <strong>斐萃</strong>
         <span class="muted">印谱解析任务台</span>
       </div>
-      <nav class="nav">
-        <RouterLink to="/">任务页</RouterLink>
-        <RouterLink to="/persons">印人采集</RouterLink>
-      </nav>
     </header>
 
     <BackendBanner />
 
     <main class="shell__main">
+      <nav class="shell__tabs">
+        <RouterLink to="/">印谱解析</RouterLink>
+        <RouterLink to="/persons">印人采集</RouterLink>
+      </nav>
       <RouterView />
     </main>
 

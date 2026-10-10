@@ -252,7 +252,7 @@ watch(
           ·
           <RouterLink :to="`/jobs/${jobId}/missing`">缺失清单（E5）</RouterLink>
           ·
-          <RouterLink to="/">返回任务页</RouterLink>
+          <RouterLink to="/">返回印谱解析</RouterLink>
         </p>
       </div>
     </template>

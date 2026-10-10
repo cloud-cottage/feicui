@@ -1,5 +1,5 @@
 <script setup>
-// 任务页：① 新建 job（E1 POST /api/jobs）② job 列表
+// 印谱解析：① 新建 job（E1 POST /api/jobs）② job 列表
 // 约束：同书重复建 ⇒ 后端 409 + 既有 job_id **原样展示，不得吞**；
 //       列表接口 spec §3 未定义（README §4 G-2）⇒ 「后端尚未提供该接口」+ 另列本机记录。
 import { onMounted, computed, reactive, ref } from 'vue'
@@ -208,7 +208,7 @@ const conflictLinkId = computed(() =>
 <template>
   <section class="page">
     <header class="page__head">
-      <h2>任务页</h2>
+      <h2>印谱解析</h2>
       <p class="page__sub">
         新建 job 走 <code>E1 POST /api/jobs</code>；job 列表见下方两栏（后端接口 / 本机记录，来源分开标注）。
       </p>

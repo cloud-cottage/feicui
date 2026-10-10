@@ -1,0 +1,172 @@
+# 证据⑫ 页眉吸顶 + 页签条下移（「任务页」→「印谱解析」）   2026-10-10T08:29+08:00
+# 仓 /Users/kevin/bistro/xiai/feicui（main，改动前 HEAD 9356348，工作树干净）
+# 验收口径：Kevin 2026-10-10 两条 —— ① 标签页名称「任务页」⇒「印谱解析」；
+#           ② tabbar 位置下移、移动到核心内容处，顶部留出固定页眉 ＋ 标题区域。
+# 用法：`web/`（Vue3 + Vite6，base=/feicui/）。dev 5195 由既有进程热更（**未重启、未占端口、未 pkill**）；
+#       http://localhost:5164/feicui/* 经 5164 反代直达同一 dev。
+
+## 1. 改动清单（只这 4 个源文件 + 本证据文件）
+  web/src/App.vue
+    L2   注释：站点外壳：导航 + … ⇒ 固定页眉（品牌＋标题）＋ 全局后端状态横幅 ＋ 页签条 ＋ 路由出口
+    L13-17  header.shell__head 只留 <div class="brand">（【斐萃】＋【印谱解析任务台】）；<nav> 整块删除
+    L21-26  <main class="shell__main"> 内、<RouterView /> **之前**新增 <nav class="shell__tabs">
+              <RouterLink to="/">印谱解析</RouterLink> / <RouterLink to="/persons">印人采集</RouterLink>
+    L20-23  <BackendBanner /> 位置**不动**（页眉之下、页签条之上，仍属站点外壳的全局状态区；
+             页签条随内容滚走、横幅也应随之滚走，二者同属「页眉以外的页面级信息」，故不入 main）
+  web/src/styles/base.css
+    L59     .shell  padding: 18px 20px 60px ⇒ 0 20px 60px（顶部留白改由页眉自身 padding 承担，
+             页眉在 scrollY=0 即贴顶，读数单值、无「吸顶前后跳 18px」）
+    L60-74  .shell__head 新增 position: sticky; top: 0; z-index: 20; background: var(--bg); padding: 12px 0 10px
+    L77-88  .nav * 三条规则 ⇒ .shell__tabs *（页签条：flex + gap:18px + 底部 1px --line 分割线 + margin-bottom:16px；
+             a:hover/ a.router-link-active 选中态沿用 --accent-line）
+  web/src/router/index.js   L9    注释 `任务页（E1）` ⇒ `印谱解析（E1）`（路由表条目一律未动）
+  web/src/pages/JobsPage.vue     L2 注释、L211 <h2>任务页</h2> ⇒ <h2>印谱解析</h2>
+  web/src/pages/JobDetailPage.vue L255 `返回任务页` ⇒ `返回印谱解析`
+
+### 选 sticky 而非 fixed 的理由
+sticky 元素**仍留在文档流内**、自身占据高度：滚动时内容区天然从页眉下方开始，
+**无需**给内容补 margin/padding（fixed 必须补偿一个与页眉等高、且随字号/换行变化的值，
+漏补一像素就在滚动到底时被盖住）。sticky 的父级 `.shell` 无 overflow，视口即滚动容器，
+故 sticky 等价于吸顶。sticky 下文档总高含页眉自身高度 ⇒ 滚动到底时页脚整体可见（下 §3 实测）。
+背景必须不透明：走 --bg token（rgb(10,26,29)），未新造任何色值字面量 —— 沿本仓「色值走 CSS 变量」纪律。
+
+## 2. DOM / 计算样式读数（真浏览器 CDP，两 origin 各测一遍）
+### 2a. http://localhost:5164/feicui/persons（经 5164 反代）与 http://127.0.0.1:5195/feicui/persons（dev 直连）
+两 origin 读数**逐字节一致**：
+```
+title            = "🐴 斐萃｜印谱解析任务台"
+navTexts         = ["印谱解析", "印人采集"]          ← 要求①：文案列表正确
+tabs.tag/cls     = NAV / "shell__tabs"
+tabs.parent      = "MAIN.shell__main"                ← 要求②：tabbar 已移出 header、落在 main 内
+tabs.closest('main').className = "shell__main"
+main.children    = [ {NAV,  class="shell__tabs", rect.top=169},      ← 第 0 个子节点＝页签条
+                     {SECTION, class="page",      rect.top=219} ]    ← 首个内容块（RouterView 根）
+tabsIndexInMain  = 0                                 ← 页签条在首个内容块**之前**
+tabs.bottom→首个内容块.top 间距 = 16px
+header.tag/cls   = HEADER / "shell__head"
+header.text      = "斐萃 印谱解析任务台"
+header.getComputedStyle().position = "sticky"
+header.getComputedStyle().top      = "0px"
+header.getComputedStyle().zIndex   = "20"
+header.getComputedStyle().backgroundColor = "rgb(10, 26, 29)" = var(--bg)（**不透明**）
+header.rect = { top: 0, height: 52 }
+header 之后的下一个兄弟 = "banner-stack"（BackendBanner 在页眉下方、页签条上方）
+h2 文案 = ["印人采集"]；activeTab = "印人采集"（/persons 高亮正确）
+```
+### 2b. window.scrollTo(0, 800) 之后（same DOM 节点重新读数）
+```
+scrollY            = 800
+header.rect.top    = 0      ← 吸顶成立（要求：应为 0）
+header.rect.bottom = 52     ← 页眉仍占 0~52px
+tabs.rect.top      = -631   ← 页签条随内容滚出视口（即「页面级信息」，不再侵占视口顶部）
+首个内容块.rect.top = -581
+viewportH          = 577
+```
+### 2c. 滚动到底：内容/页脚是否被页眉盖住
+```
+scrollTo(0, document.documentElement.scrollHeight):
+scrollY = 2471 ； docH = 3048 ； viewportH = 577
+header.rect = top 0 / bottom 52      ← 仍吸顶
+footer.shell__foot.rect = top 460 / bottom 517
+footerFullyVisible = true            ← 页脚完整可见、未被页眉覆盖（sticky 自身占位，文档总高含页眉）
+footer.innerText = "契约依据：feicui/docs/feicui.spec.md v1.1（md5 4264927baf24bb7f48e12366cd861fe7）— 前端只读引用， 未修改规范文件。 本工程＝阶段 1a 前端骨架；后端接口在另一路。零 CDN / 零外链资源。"
+```
+
+## 3. 两条路由 / 与 /persons 上屏文字（要求③④）
+### http://localhost:5164/feicui/ 与 http://127.0.0.1:5195/feicui/（读数一致）
+```
+tabs = [ {"印谱解析", href="/feicui/",        active: true,  cls:"router-link-active router-link-exact-active"},
+         {"印人采集", href="/feicui/persons", active: false, cls:""} ]
+h2        = ["印谱解析"]                      ← 要求①第三处（h2）
+main.children = [ {NAV shell__tabs}, {SECTION page} ] ；页签条→内容间距 16px
+body.innerText（头部 320 字）=
+  斐萃 印谱解析任务台 后端已连接（ http://127.0.0.1:5196 ）· 最后探测 2026-10-10 08:28:14
+  印谱解析 印人采集 印谱解析 新建 job 走 E1 POST /api/jobs ；job 列表见下方两栏（后端接口 / 本机记录，来源分开标注）。
+  新建 job（E1） 书路径 pdf_path * 页范围 from（可选） 页范围 to（可选） chunk_size（可选） rerun（同书重跑，spec §2.4 幂等）
+  建 job job 列表（后端） 刷新 来源＝后端 GET /api/jobs（spec §3 未定义该端点，形状未定；此处按 items[] 读取） job_id sta…
+```
+### /persons 上屏文字（头部 700 字，节选）
+```
+斐萃 印谱解析任务台 后端已连接（ http://127.0.0.1:5196 ）· 最后探测 2026-10-10 08:28:06
+印谱解析 印人采集 印人采集 数据源：复旦印藏（ https://yin.fudan.edu.cn ）「印人」。采集由 feicui 服务端 POST /api/persons/sync 执行…
+批次列表 … person_20261010_01 DONE 570 570 1650 0 301.615 idempotent_replay· 请求 0 · 跳过 570 · 1.508s …
+```
+
+## 4. 附带核对：/jobs/:job_id 详情页（非验收项，一并读数）
+```
+url = http://127.0.0.1:5195/feicui/jobs/job-502016dd118a4bc6b7d73b5e0313d1b4
+返回类链接 = ["返回印谱解析"]              ← 要求①第三处
+header.position = sticky ；main 首个子节点 = "shell__tabs"（tabsInMain=true）
+tabs 选中态：两条均为 false（Vue Router 对 to="/" 不做前缀匹配，故 /jobs/** 下本就无高亮 ——
+              **改动前后一致**，非本次回归；回 / 的入口＝详情页内「返回印谱解析」）
+```
+
+## 5. 构建证据
+```
+$ cd /Users/kevin/bistro/xiai/feicui/web && npm run build
+
+> feicui-web@0.1.0 build
+> vite build
+
+vite v6.4.3 building for production...
+transforming...
+✓ 47 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.65 kB │ gzip:  0.46 kB
+dist/assets/index-7BCLPqTP.css    6.63 kB │ gzip:  1.98 kB
+dist/assets/index-DZ4eAfyg.js   162.00 kB │ gzip: 57.36 kB
+✓ built in 630ms
+EXIT=0
+```
+构建产物实证（dist/assets/index-DZ4eAfyg.js）：
+```
+"印谱解析" 出现 4 次（页签链接 / 品牌标题「印谱解析任务台」/ h2 / 返回印谱解析链文案）
+"印人采集" 出现 2 次 ； "返回印谱解析" 1 次
+"任务页" 0 次 ； "返回任务页" 0 次            ← 旧文案在构建产物中已彻底消失
+```
+dist/assets/index-7BCLPqTP.css 实测规则：
+```css
+.shell{max-width:1180px;margin:0 auto;padding:0 20px 60px}
+.shell__head{position:sticky;top:0;z-index:20;display:flex;align-items:baseline;justify-content:space-between;background:var(--bg);border-bottom:1px solid var(--line);padding:12px 0 10px;margin-bottom:14px;box-shadow:0 1px 0 var(--accent-soft)}
+.shell__tabs{display:flex;align-items:baseline;gap:18px;margin:0 0 16px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.shell__tabs a{padding-bottom:2px}
+.shell__tabs a:hover{color:var(--accent-line)}
+.shell__tabs a.router-link-active{color:var(--accent-line);border-bottom:1px solid var(--accent-line)}
+```
+
+## 6. 硬约束遵守 / 未做项
+  * 未改 server/**、未动 yinpu.db / xiai/** / ctrl/**、未改 docs/**；未新增依赖；未占端口；未 pkill；
+    未重启任何服务（5195 dev 靠既有 HMR 热更，实测已生效）。
+  * 路由表条目、/persons 与 / 的数据流与接口调用**零改动**。
+  * 零外链资源不变（页眉/页签只用系统字体栈与既有 token）。
+  * **已知未同步处（有意保留，供裁量）**：
+      - web/README.md L47「| `/` | 任务页 |」与 L117「但任务页需要 job 列表」仍写「任务页」；
+        本次只按交付要求改 3 处 UI 文案＋注释。README 若也要统一口径，另起一句即可（未擅动）。
+      - web/evidence/**、web/evidence-proxy/** 的历史 DOM 快照内含旧文案，属**历史证据**，按纪律不得回改。
+  * 未验证项：无。要求①~④ 与构建均已实测（含 5164 反代 origin 与 5195 dev 直连两路）。
+
+## 7. AC-23 逐子项对照（spec v1.9 §7 `docs/feicui.spec.md` L992）
+> 说明：本单开工时仓内 HEAD＝9356348（spec v1.8），作业期间 Jing 以 be8283c 落 v1.9（§3.15.2 v1.9 注 +
+> 新增 AC-23，AC 计数 22→23）。本单提交 0af8418 叠于其上；**未改 docs/**（只读引用），下列对照按 v1.9 AC-23 原文逐子项核。
+```
+子项① 页签文案恰为【印谱解析】与【印人采集】、不得残留【任务页】、数量=2
+  证据：pages 两 origin navTexts = ["印谱解析","印人采集"]（2 项，逐字一致）；
+        dist/assets/index-DZ4eAfyg.js 实测 "任务页" 0 次 / "返回任务页" 0 次，
+        "印谱解析" 4 次、"印人采集" 2 次、"返回印谱解析" 1 次。  ⇒  PASS
+
+子项② tabbar 位于 main 内、且在 RouterView 之前、不在 header 内
+  证据：App.vue L13-17 header.shell__head 内已无 <nav>；L21-26 <main class="shell__main"> 内首个子节点
+        即 <nav class="shell__tabs">，其**紧跟** <RouterView />（模板顺序：nav → RouterView）。
+        渲染树实测：tabs.parentElement = MAIN.shell__main；tabs.closest('main').className = "shell__main"；
+        main.children = [ {NAV .shell__tabs, top 169},  {SECTION .page（RouterView 根）, top 219} ]；
+        tabsIndexInMain = 0。两 origin（5164/5195）读数一致。  ⇒  PASS
+
+子项③ 滚动后页眉仍贴顶（sticky/fixed）且不遮挡内容（内容首屏可见、未被页眉覆盖）
+  证据：getComputedStyle(header).position = "sticky"、top = "0px"、zIndex = "20"、
+        backgroundColor = rgb(10,26,29) = var(--bg)（不透明）；
+        scrollTo(0,800) 后 header rect.top = 0 / bottom = 52（仍贴顶）；
+        scrollTo(0, scrollHeight) 后 footer rect = top 460 / bottom 517（viewportH 577），
+        footerFullyVisible = true（滚动到底内容仍完整可见）；
+        scrollY=0 时首个内容块 top 219 > 页眉 bottom 52（**内容首屏未被页眉覆盖**）。  ⇒  PASS
+```

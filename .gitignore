@@ -28,6 +28,9 @@ var/
 inbox/
 # 服务端自测的 fixture（每次跑由脚本用 pymupdf 重造，逐字节不稳定 ⇒ 不入库）
 ops/job-upload/fixtures/
+# inbox 清理策略（R41）的运行时报告：每次 plan/run（含 API 启动扫描）落一份带时间戳的 JSON
+# ⇒ 属运行时产物（与 var/ 同档），不入库。
+ops/job-upload/inbox_gc_*.json
 
 # ── 数据 / 导出 / 评测 / 标注产物 ──
 output/

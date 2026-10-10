@@ -46,6 +46,24 @@ UPLOAD_MAX_BYTES_DEFAULT = 5 * 1024 * 1024 * 1024
 UPLOAD_CHUNK_BYTES_DEFAULT = 1024 * 1024
 INBOX_DIRNAME = "inbox"
 
+# ── inbox 清理策略（R41 结案实现）：**单点可改常量** ─────────────────────────────
+# 口径真源＝`docs/inbox-gc-draft-v0.1.md`（Zang 2026-10-11 起草，Kevin 裁定「制定清理策略」）；
+# 全部默认值照 draft，且**每一个都是单点可改常量**（env `FEICUI_INBOX_GC_*` 或 server/config.json 覆盖）。
+# 铁律（**不可配置**）：① 被**活跃 job**（QUEUED/RUNNING/PAUSED）引用的文件**永不删**；
+# ② 系统**没有任何自动删除路径**（API 启动扫描只 dry-run 记录，真删只能由人 `--apply` 触发）。
+#  * R1 保留期：终态 job（DONE/FAILED_PARTIAL）引用的文件自该 job `updated_at` 起保留 N 天；
+#    无 job 引用 ⇒ 按文件 `mtime` 起算。默认 **30 天**（改 7 / 90）。
+#  * R2 容量闸：inbox 总量超 M 时按「**最久未引用**」淘汰到 `ratio * M`（ACTIVE 仍豁免）。
+#    默认 **M ＝ 50 GiB ⇒ 淘汰到 40 GiB（ratio 0.8）**（可关：把 M 设为极大值）。
+#  * R3 两段式：先**移入 `inbox/.trash/<yyyymmdd>/`**（可回滚），在 trash 再留 **T ＝ 7 天** 才硬删。
+#  * 启动扫描：API 启动时**只 dry-run 扫描 + 落报告/告警**（默认开；`FEICUI_INBOX_GC_STARTUP_SCAN=0` 可关）。
+INBOX_GC_RETENTION_DAYS_DEFAULT = 30
+INBOX_GC_CAPACITY_MAX_BYTES_DEFAULT = 50 * 1024 * 1024 * 1024
+INBOX_GC_CAPACITY_TARGET_RATIO_DEFAULT = 0.8
+INBOX_GC_TRASH_RETENTION_DAYS_DEFAULT = 7
+INBOX_GC_STARTUP_SCAN_DEFAULT = True
+INBOX_GC_TRASH_DIRNAME = ".trash"
+
 
 def _load_config_file() -> dict:
     path = Path(os.environ.get("FEICUI_SERVER_CONFIG", str(DEFAULT_CONFIG_FILE)))
@@ -139,6 +157,13 @@ class Settings:
     inbox_dir: Path = REPO_ROOT / INBOX_DIRNAME
     upload_max_bytes: int = UPLOAD_MAX_BYTES_DEFAULT
     upload_chunk_bytes: int = UPLOAD_CHUNK_BYTES_DEFAULT
+    # ---- inbox 清理策略（R41）：保留期 / 容量闸 / trash 宽限 / 启动扫描 / 报告落点 ----
+    inbox_gc_retention_days: int = INBOX_GC_RETENTION_DAYS_DEFAULT
+    inbox_gc_capacity_max_bytes: int = INBOX_GC_CAPACITY_MAX_BYTES_DEFAULT
+    inbox_gc_capacity_target_ratio: float = INBOX_GC_CAPACITY_TARGET_RATIO_DEFAULT
+    inbox_gc_trash_retention_days: int = INBOX_GC_TRASH_RETENTION_DAYS_DEFAULT
+    inbox_gc_startup_scan: bool = INBOX_GC_STARTUP_SCAN_DEFAULT
+    inbox_gc_report_dir: Path = REPO_ROOT / "ops" / "job-upload"
 
     @property
     def is_prod_db(self) -> bool:
@@ -301,4 +326,52 @@ def get_settings() -> Settings:
                 or UPLOAD_CHUNK_BYTES_DEFAULT
             ),
         ),
+        # ---- inbox 清理策略（R41）：默认值照 docs/inbox-gc-draft-v0.1.md；每个都单点可改 ----
+        inbox_gc_retention_days=max(
+            0,
+            int(
+                env.get("FEICUI_INBOX_GC_RETENTION_DAYS")
+                or file_cfg.get("inbox_gc_retention_days")
+                or INBOX_GC_RETENTION_DAYS_DEFAULT
+            ),
+        ),
+        inbox_gc_capacity_max_bytes=max(
+            1,
+            int(
+                env.get("FEICUI_INBOX_GC_CAPACITY_MAX_BYTES")
+                or file_cfg.get("inbox_gc_capacity_max_bytes")
+                or INBOX_GC_CAPACITY_MAX_BYTES_DEFAULT
+            ),
+        ),
+        inbox_gc_capacity_target_ratio=min(
+            1.0,
+            max(
+                0.0,
+                float(
+                    env.get("FEICUI_INBOX_GC_CAPACITY_TARGET_RATIO")
+                    or file_cfg.get("inbox_gc_capacity_target_ratio")
+                    or INBOX_GC_CAPACITY_TARGET_RATIO_DEFAULT
+                ),
+            ),
+        ),
+        inbox_gc_trash_retention_days=max(
+            0,
+            int(
+                env.get("FEICUI_INBOX_GC_TRASH_RETENTION_DAYS")
+                or file_cfg.get("inbox_gc_trash_retention_days")
+                or INBOX_GC_TRASH_RETENTION_DAYS_DEFAULT
+            ),
+        ),
+        inbox_gc_startup_scan=str(
+            env.get(
+                "FEICUI_INBOX_GC_STARTUP_SCAN",
+                file_cfg.get("inbox_gc_startup_scan", "1" if INBOX_GC_STARTUP_SCAN_DEFAULT else "0"),
+            )
+        ).lower()
+        not in {"0", "false", "no", "off"},
+        inbox_gc_report_dir=Path(
+            env.get("FEICUI_INBOX_GC_REPORT_DIR")
+            or file_cfg.get("inbox_gc_report_dir")
+            or str(REPO_ROOT / "ops" / "job-upload")
+        ).expanduser().resolve(),
     )

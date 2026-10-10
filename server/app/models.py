@@ -70,6 +70,16 @@ class ErrorResponse(BaseModel):
     fields: list[dict[str, Any]] = Field(default_factory=list)
 
 
+# ---------- inbox 清理策略（**additive**，R41 实现）----------
+class InboxGcRequest(BaseModel):
+    """`POST /api/jobs/inbox/gc` 请求体（**additive**、规范未定义；语义由本层定并登记）。
+
+    `apply`：**默认 `false` ＝ dry-run**（只列清单、绝不改盘）；只有显式 `{"apply": true}` 才真回收。
+    """
+
+    apply: bool = Field(default=False, description="false=只列清单（默认）；true=真移入 inbox/.trash/")
+
+
 # ---------- E2 ----------
 class E2Cursor(BaseModel):
     chunk_lo: int | None

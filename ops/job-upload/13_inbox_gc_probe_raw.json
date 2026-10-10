@@ -1,0 +1,168 @@
+{
+  "steps": [
+    {
+      "step": "baseline",
+      "three_counts": {
+        "jobs": 5,
+        "job_pages": 32,
+        "stamps": 89
+      },
+      "inbox": {
+        "files": 9,
+        "bytes": 6786
+      }
+    },
+    {
+      "step": "E1 建 job",
+      "http_status": 201,
+      "body": {
+        "job_id": "job-12e92369f5564951bc23b7218d6ad975",
+        "state": "QUEUED",
+        "total_pages": 0,
+        "created_at": "2026-10-11T07:02:34+08:00"
+      },
+      "raw": "{\"job_id\":\"job-12e92369f5564951bc23b7218d6ad975\",\"state\":\"QUEUED\",\"total_pages\":0,\"created_at\":\"2026-10-11T07:02:34+08:00\"}"
+    },
+    {
+      "step": "E2 查该 job（应为 ACTIVE=QUEUED）",
+      "http_status": 200,
+      "state": "QUEUED",
+      "body": {
+        "job_id": "job-12e92369f5564951bc23b7218d6ad975",
+        "state": "QUEUED",
+        "total_pages": 0,
+        "done_pages": 0,
+        "failed_pages": [],
+        "cursor": {
+          "chunk_lo": null,
+          "chunk_hi": null
+        },
+        "counters": {
+          "detected": 0,
+          "inserted": 0,
+          "updated": 0,
+          "skipped": 0,
+          "ocr_empty": 0
+        },
+        "started_at": null,
+        "updated_at": "2026-10-11T07:02:34+08:00"
+      }
+    },
+    {
+      "step": "GET /api/jobs/inbox/summary",
+      "http_status": 200,
+      "usage": {
+        "files": 9,
+        "bytes": 6786
+      },
+      "collect_files": 0,
+      "exempt_files": 9,
+      "zang_probe_exempt": {
+        "rel_path": "20261011/zang_probe.pdf",
+        "abs_path": "/Users/kevin/bistro/xiai/feicui/inbox/20261011/zang_probe.pdf",
+        "bytes": 51,
+        "reason": "active_job",
+        "job_id": "job-12e92369f5564951bc23b7218d6ad975",
+        "state": "QUEUED",
+        "referenced_by": [
+          "job-12e92369f5564951bc23b7218d6ad975"
+        ],
+        "note": "活跃 job（QUEUED/RUNNING/PAUSED）引用 ⇒ 永久豁免"
+      }
+    },
+    {
+      "step": "POST /api/jobs/inbox/gc（空体 / apply:false）",
+      "no_body_status": 200,
+      "no_body_mode": "dry-run",
+      "apply_false_status": 200,
+      "apply_false_mode": "dry-run",
+      "inbox_before": {
+        "files": 9,
+        "bytes": 6786
+      },
+      "inbox_after": {
+        "files": 9,
+        "bytes": 6786
+      },
+      "unchanged": true
+    },
+    {
+      "step": "CLI --retention-days 0 --dry-run",
+      "exit": 0,
+      "collect_files": 8,
+      "collect_reasons": [
+        "retention_expired"
+      ],
+      "zang_probe_exempt": {
+        "rel_path": "20261011/zang_probe.pdf",
+        "abs_path": "/Users/kevin/bistro/xiai/feicui/inbox/20261011/zang_probe.pdf",
+        "bytes": 51,
+        "reason": "active_job",
+        "job_id": "job-12e92369f5564951bc23b7218d6ad975",
+        "state": "QUEUED",
+        "referenced_by": [
+          "job-12e92369f5564951bc23b7218d6ad975"
+        ],
+        "note": "活跃 job（QUEUED/RUNNING/PAUSED）引用 ⇒ 永久豁免"
+      },
+      "zang_probe_in_collect": false
+    },
+    {
+      "step": "错误体对齐",
+      "e1_pdf_not_found": {
+        "status": 400,
+        "body": {
+          "error": "PDF_NOT_FOUND",
+          "detail": {
+            "error": "PDF_NOT_FOUND",
+            "detail": "pdf_path 不存在或不是文件：/nonexistent/xyz.pdf"
+          }
+        },
+        "top_keys": [
+          "detail",
+          "error"
+        ]
+      },
+      "e1_not_a_pdf": {
+        "status": 400,
+        "body": {
+          "error": "NOT_A_PDF",
+          "detail": {
+            "error": "NOT_A_PDF",
+            "detail": "pdf_path 存在但非 PDF（前 1024 字节内无 %PDF- magic）：/Users/kevin/.hermes/profiles/zang/cache/scratch/not_a_pdf.txt"
+          }
+        },
+        "top_keys": [
+          "detail",
+          "error"
+        ]
+      },
+      "e8_bad_content_type": {
+        "status": 400,
+        "body": {
+          "error": "BAD_CONTENT_TYPE",
+          "detail": "Content-Type 必须为 application/pdf 或 application/octet-stream（收到：text/plain）",
+          "allowed": [
+            "application/octet-stream",
+            "application/pdf"
+          ]
+        },
+        "top_keys": [
+          "allowed",
+          "detail",
+          "error"
+        ]
+      }
+    },
+    {
+      "step": "cleanup + final",
+      "deleted_job": "job-12e92369f5564951bc23b7218d6ad975",
+      "three_counts": {
+        "jobs": 5,
+        "job_pages": 32,
+        "stamps": 89
+      },
+      "matches_baseline": true
+    }
+  ]
+}

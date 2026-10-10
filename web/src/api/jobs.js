@@ -37,6 +37,19 @@ export function listMissing(jobId, kind) {
   return request(`/jobs/${encodeURIComponent(jobId)}/missing`, { query: { kind } })
 }
 
+// ── inbox 清理策略（**additive**，R41）────────────────────────────────────────
+// 口径真源 docs/inbox-gc-draft-v0.1.md：**默认 dry-run**、两段式、**永不自动删**。
+// GET /api/jobs/inbox/summary —— 只读 plan（用量 / 将回收 / 豁免清单；不改盘、不改库）
+export function inboxSummary() {
+  return request('/jobs/inbox/summary')
+}
+
+// POST /api/jobs/inbox/gc —— **默认 dry-run**；`apply=true` 才真移入 inbox/.trash/
+// 出参 = 与 CLI 同形的清单（usage / collect / collect_bytes / exempt / hard_delete / …）
+export function inboxGc(apply = false) {
+  return request('/jobs/inbox/gc', { method: 'POST', body: { apply: !!apply } })
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // 形状校验：只报「与 spec 写死的形状不符」，**不**替后端补值
 // ─────────────────────────────────────────────────────────────────────────────

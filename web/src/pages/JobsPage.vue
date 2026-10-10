@@ -4,7 +4,7 @@
 //       列表接口 spec §3 未定义（README §4 G-2）⇒ 「后端尚未提供该接口」+ 另列本机记录。
 import { onMounted, computed, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { createJob, extractExistingJobId, listJobs } from '@/api/jobs'
+import { createJob, extractExistingJobId, inboxGc, inboxSummary, listJobs } from '@/api/jobs'
 import { describeFailure } from '@/api/client'
 import { uploadPdf } from '@/api/upload'
 import { useBackendStatus } from '@/composables/useBackendStatus'
@@ -230,6 +230,117 @@ async function handleFile(file) {
   }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// inbox 用量 / 清理（**additive**，R41）—— 口径：**默认 dry-run**、两段式、**永不自动删**；
+// 执行清理前**二次确认**并明示将删多少 GiB。色值只走 token，不新造图标。
+// ─────────────────────────────────────────────────────────────────────────────
+const inbox = ref({ kind: 'loading', data: null, error: '' })     // kind: loading|ok|error|backend-down
+const inboxAction = ref({ kind: 'idle', message: '' })            // idle|busy|ok|error
+
+function fmtGiB(n) {
+  if (typeof n !== 'number' || !Number.isFinite(n)) return '—'
+  return (n / 1024 ** 3).toFixed(2)
+}
+
+const inboxReclaimable = computed(() => {
+  const d = inbox.value.data
+  if (!d) return { files: 0, bytes: 0 }
+  return { files: d.collect_files || 0, bytes: d.collect_bytes || 0 }
+})
+
+function inboxErrText(res) {
+  const code = res.body && (res.body.error || res.body.detail)
+  return `HTTP ${res.status}${code ? ` · ${code}` : ''}${res.raw ? ` · ${String(res.raw).slice(0, 260)}` : ''}`
+}
+
+async function loadInbox() {
+  inbox.value = { kind: 'loading', data: null, error: '' }
+  try {
+    const res = await inboxSummary()
+    if (res.status === 200 && res.body && res.body.usage) {
+      inbox.value = { kind: 'ok', data: res.body, error: '' }
+    } else {
+      inbox.value = { kind: 'error', data: null, error: inboxErrText(res) }
+    }
+  } catch (e) {
+    const f = describeFailure(e)
+    if (f.kind === 'backend-down') {
+      markBackendDown(f.detail)
+      inbox.value = { kind: 'backend-down', data: null, error: f.detail || '' }
+    } else {
+      inbox.value = { kind: 'error', data: null, error: f.message }
+    }
+  }
+}
+
+// 预览清理：**dry-run**（POST apply:false），只列清单、绝不改盘
+async function previewClean() {
+  inboxAction.value = { kind: 'busy', message: '正在预览（dry-run）…' }
+  try {
+    const res = await inboxGc(false)
+    if (res.status === 200 && res.body && res.body.usage) {
+      inbox.value = { kind: 'ok', data: res.body, error: '' }
+      const d = res.body
+      inboxAction.value = {
+        kind: 'ok',
+        message: `预览完成（dry-run，未改盘）：将回收 ${d.collect_files} 文件 / ${fmtGiB(d.collect_bytes)} GiB；豁免 ${d.exempt_files} 文件`,
+      }
+    } else {
+      inboxAction.value = { kind: 'error', message: `预览失败：${inboxErrText(res)}` }
+    }
+  } catch (e) {
+    const f = describeFailure(e)
+    if (f.kind === 'backend-down') {
+      markBackendDown(f.detail)
+      inboxAction.value = { kind: 'error', message: `后端未启动 / 未连接：预览未能发出（${f.detail || '—'}）` }
+    } else {
+      inboxAction.value = { kind: 'error', message: `预览失败：${f.message}` }
+    }
+  }
+}
+
+// 执行清理：**二次确认**（明示将删多少 GiB）⇒ 才真移入 inbox/.trash/
+async function executeClean() {
+  const d = inbox.value.data
+  const files = d ? d.collect_files || 0 : 0
+  const gib = d ? fmtGiB(d.collect_bytes) : '—'
+  const hardFiles = d ? d.hard_delete_files || 0 : 0
+  const hardGib = d ? fmtGiB(d.hard_delete_bytes) : '0.00'
+  const lines = [
+    '确认执行 inbox 清理？',
+    '',
+    `· 将把 ${files} 个文件（约 ${gib} GiB）移入 inbox/.trash/<yyyymmdd>/（**可回滚**）。`,
+  ]
+  if (hardFiles > 0) lines.push(`· 另有 trash 内 ${hardFiles} 个已过宽限期的文件（约 ${hardGib} GiB）将被**硬删**（不可回滚）。`)
+  lines.push('', '被活跃 job 引用的文件永不回收；系统永不自动删——此操作由你显式触发。')
+  if (!window.confirm(lines.join('\n'))) return
+
+  inboxAction.value = { kind: 'busy', message: '正在执行清理…' }
+  try {
+    const res = await inboxGc(true)
+    if (res.status === 200 && res.body && res.body.usage) {
+      inbox.value = { kind: 'ok', data: res.body, error: '' }
+      const a = res.body
+      inboxAction.value = {
+        kind: 'ok',
+        message: `清理完成：已移入 trash ${a.moved_files} 文件 / ${fmtGiB(a.moved_bytes)} GiB（回滚点 ${a.trash_dir}）` +
+          (a.hard_deleted_files ? `；硬删 ${a.hard_deleted_files} 文件 / ${fmtGiB(a.hard_deleted_bytes)} GiB` : '') +
+          (a.errors && a.errors.length ? `；⚠ ${a.errors.length} 条错误（见报告）` : ''),
+      }
+    } else {
+      inboxAction.value = { kind: 'error', message: `清理失败：${inboxErrText(res)}` }
+    }
+  } catch (e) {
+    const f = describeFailure(e)
+    if (f.kind === 'backend-down') {
+      markBackendDown(f.detail)
+      inboxAction.value = { kind: 'error', message: `后端未启动 / 未连接：清理未能发出（${f.detail || '—'}）` }
+    } else {
+      inboxAction.value = { kind: 'error', message: `清理失败：${f.message}` }
+    }
+  }
+}
+
 async function loadJobs() {
   jobsState.value = { kind: 'loading', items: null, notes: [], status: null, raw: '', detail: '' }
   try {
@@ -297,6 +408,7 @@ async function loadJobs() {
 onMounted(() => {
   loadLocals()
   loadJobs()
+  loadInbox()
 })
 
 const conflictLinkId = computed(() =>
@@ -491,6 +603,142 @@ const conflictLinkId = computed(() =>
         :raw-text="createResult.raw"
         :detail="`响应时点 ${createResult.at}`"
       />
+    </div>
+
+    <!-- ── inbox 用量 / 清理（**additive**，R41）─────────────────────────────
+         口径真源 docs/inbox-gc-draft-v0.1.md：**默认 dry-run**、两段式（先入 .trash 可回滚）、
+         **永不自动删**（真删只能由人显式触发）。色值只走 token，不新造图标。 -->
+    <div class="card">
+      <div class="card__head">
+        <h3>inbox 用量 / 清理（R41）</h3>
+        <button class="ghost" type="button" @click="loadInbox">刷新</button>
+      </div>
+      <p class="muted">
+        【预览清理】＝ dry-run（只列清单，**不改盘**）；【执行清理】前**二次确认**，确认框内**明示将删多少 GiB**。
+        被**活跃 job**（QUEUED/RUNNING/PAUSED）引用的文件**永不回收**；先移入
+        <code>inbox/.trash/&lt;yyyymmdd&gt;/</code>（可回滚），trash 内再满 7 天才硬删。系统**永不自动删**。
+      </p>
+
+      <StateNotice v-if="inbox.kind === 'loading'" kind="loading" title="正在读取 inbox 用量 …" />
+      <StateNotice
+        v-else-if="inbox.kind === 'backend-down'"
+        kind="backend-down"
+        title="后端未启动 / 未连接：inbox 用量无法获取"
+        :detail="inbox.error || '—'"
+      />
+      <StateNotice
+        v-else-if="inbox.kind === 'error'"
+        kind="error"
+        title="inbox 用量读取失败（原样展示）"
+        :detail="inbox.error || '响应形状不符合预期'"
+      />
+
+      <template v-else-if="inbox.kind === 'ok' && inbox.data">
+        <table class="kv">
+          <tbody>
+            <tr>
+              <th>inbox 用量</th>
+              <td>
+                <code>{{ inbox.data.usage.files }}</code> 文件 / {{ fmtBytes(inbox.data.usage.bytes) }}
+                <span class="muted">（{{ fmtGiB(inbox.data.usage.bytes) }} GiB）</span>
+              </td>
+            </tr>
+            <tr>
+              <th>可回收</th>
+              <td>
+                <code>{{ inbox.data.collect_files }}</code> 文件 /
+                {{ fmtBytes(inbox.data.collect_bytes) }}
+                <span class="muted">（{{ fmtGiB(inbox.data.collect_bytes) }} GiB）</span>
+              </td>
+            </tr>
+            <tr>
+              <th>豁免</th>
+              <td>
+                <code>{{ inbox.data.exempt_files }}</code> 文件 /
+                {{ fmtBytes(inbox.data.exempt_bytes) }}
+                <span class="muted">（活跃 job 引用 或 保留期未到）</span>
+              </td>
+            </tr>
+            <tr>
+              <th>常量</th>
+              <td class="muted">
+                保留期 {{ inbox.data.constants.retention_days }} 天 ·
+                容量闸 {{ fmtGiB(inbox.data.constants.capacity_max_bytes) }} GiB →
+                {{ fmtGiB(inbox.data.constants.capacity_target_bytes) }} GiB
+                <template v-if="inbox.data.capacity_gate_triggered">（**已触发**）</template> ·
+                trash 宽限 {{ inbox.data.constants.trash_retention_days }} 天
+              </td>
+            </tr>
+            <tr v-if="inbox.data.hard_delete_files">
+              <th>trash 到期硬删</th>
+              <td>
+                <code>{{ inbox.data.hard_delete_files }}</code> 文件 /
+                {{ fmtGiB(inbox.data.hard_delete_bytes) }} GiB
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="actions">
+          <button class="ghost" type="button" :disabled="inboxAction.kind === 'busy'" @click="previewClean">
+            预览清理
+          </button>
+          <button
+            type="button"
+            :disabled="inboxAction.kind === 'busy' || (!inboxReclaimable.files && !inbox.data.hard_delete_files)"
+            @click="executeClean"
+          >
+            执行清理
+          </button>
+          <button class="ghost" type="button" :disabled="inboxAction.kind === 'busy'" @click="loadInbox">
+            刷新用量
+          </button>
+        </div>
+
+        <!-- 操作结果：成功 / 失败**可见**（不得静默） -->
+        <div
+          v-if="inboxAction.message"
+          class="uploadbox"
+          :class="inboxAction.kind === 'error' ? 'uploadbox--err' : (inboxAction.kind === 'ok' ? 'uploadbox--ok' : '')"
+        >
+          <p>{{ inboxAction.message }}</p>
+        </div>
+
+        <details class="advanced">
+          <summary>清单明细：将回收 {{ inbox.data.collect_files }} · 豁免 {{ inbox.data.exempt_files }}</summary>
+          <p v-if="inbox.data.collect.length" class="muted">将回收（dry-run 视图；apply 后移入 inbox/.trash/）：</p>
+          <table v-if="inbox.data.collect.length" class="table">
+            <thead>
+              <tr><th>rel_path</th><th>体积</th><th>原因</th><th>来源</th><th>末次引用</th></tr>
+            </thead>
+            <tbody>
+              <tr v-for="c in inbox.data.collect" :key="c.rel_path">
+                <td>{{ c.rel_path }}</td>
+                <td>{{ fmtBytes(c.bytes) }}</td>
+                <td><code>{{ c.reason }}</code></td>
+                <td class="muted">{{ c.reference_source || '—' }}</td>
+                <td class="muted">{{ c.last_referenced_at || '—' }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <StateNotice v-else kind="empty" title="无可回收项" />
+
+          <p class="muted">豁免清单（含原因）：</p>
+          <table class="table">
+            <thead>
+              <tr><th>rel_path</th><th>体积</th><th>原因</th><th>job</th></tr>
+            </thead>
+            <tbody>
+              <tr v-for="e in inbox.data.exempt" :key="e.rel_path">
+                <td>{{ e.rel_path }}</td>
+                <td>{{ fmtBytes(e.bytes) }}</td>
+                <td><code>{{ e.reason }}</code></td>
+                <td class="muted">{{ e.job_id ? `${e.job_id}（${e.state}）` : '—' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </details>
+      </template>
     </div>
 
     <!-- ── job 列表：后端 ────────────────────────────────────────── -->

@@ -1,0 +1,115 @@
+{
+  "steps": [
+    {
+      "step": "S1 默认 dry-run（终态超保留期）",
+      "usage": {
+        "files": 5,
+        "bytes": 5000
+      },
+      "collect": {
+        "20261011/done_old.pdf": "retention_expired",
+        "20261011/noref_old.pdf": "retention_expired"
+      },
+      "exempt": {
+        "20261011/active.pdf": "active_job",
+        "20261011/noref_1d.pdf": "retention_not_expired",
+        "20261011/noref_2d.pdf": "retention_not_expired"
+      },
+      "capacity_gate": false,
+      "trash_keep": [
+        "20261011/trashed_fresh.pdf"
+      ],
+      "hard_delete": [
+        "20260901/trashed_old.pdf"
+      ]
+    },
+    {
+      "step": "S1b trash 两段式 T=7 天",
+      "trash_keep": [
+        "20261011/trashed_fresh.pdf"
+      ],
+      "hard_delete": [
+        "20260901/trashed_old.pdf"
+      ],
+      "trash_keep_reason": "trash_retention_not_expired"
+    },
+    {
+      "step": "S2 容量闸 --max-bytes 3500（按最久未引用淘汰到 target 2800）",
+      "usage": {
+        "files": 5,
+        "bytes": 5000
+      },
+      "target_bytes": 2800,
+      "capacity_gate": true,
+      "collect": {
+        "20261011/done_old.pdf": "retention_expired",
+        "20261011/noref_old.pdf": "retention_expired",
+        "20261011/noref_2d.pdf": "capacity_pressure"
+      }
+    },
+    {
+      "step": "S3 --apply（两段式：move ⇒ .trash/<today>/）",
+      "mode": "apply",
+      "moved_files": 3,
+      "trash_dir": "/Users/kevin/.hermes/profiles/zang/cache/scratch/inbox_gc_scenarios/inbox/.trash/20261011",
+      "hard_deleted_files": 1,
+      "src_gone": {
+        "done_old.pdf": true,
+        "noref_old.pdf": true,
+        "noref_2d.pdf": true
+      },
+      "trash_has": {
+        "done_old.pdf": true,
+        "noref_old.pdf": true,
+        "noref_2d.pdf": true
+      },
+      "keep_still_present": {
+        "active.pdf": true,
+        "noref_1d.pdf": true
+      },
+      "three_counts_before": {
+        "jobs": 7,
+        "job_pages": 32,
+        "stamps": 89
+      },
+      "three_counts_after": {
+        "jobs": 7,
+        "job_pages": 32,
+        "stamps": 89
+      },
+      "three_counts_unchanged": true
+    },
+    {
+      "step": "S3b apply 后再 dry-run（新入 trash 未满 T ⇒ 不硬删）",
+      "collect_files": 0,
+      "trash_keep": [
+        "20261011/done_old.pdf",
+        "20261011/noref_2d.pdf",
+        "20261011/noref_old.pdf",
+        "20261011/trashed_fresh.pdf"
+      ],
+      "hard_delete": []
+    },
+    {
+      "step": "S4 POST /api/jobs/inbox/gc {\"apply\":true}（临时实例 :5197）",
+      "status": 200,
+      "mode": "apply",
+      "moved_files": 2,
+      "trash_dir": "/Users/kevin/.hermes/profiles/zang/cache/scratch/inbox_gc_scenarios/endpoint/inbox/.trash/20261011",
+      "src_gone": true,
+      "trash_has": true,
+      "keep_present": true,
+      "three_counts_before": {
+        "jobs": 7,
+        "job_pages": 32,
+        "stamps": 89
+      },
+      "three_counts_after": {
+        "jobs": 7,
+        "job_pages": 32,
+        "stamps": 89
+      },
+      "unchanged": true
+    }
+  ]
+}

@@ -16,7 +16,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from . import db, migrations, poolctl, repository
+from . import db, inbox_gc, migrations, poolctl, repository
 from .config import get_settings
 from .routers import jobs as jobs_router
 from .routers import tools as tools_router
@@ -38,7 +38,14 @@ async def lifespan(_app: FastAPI):
     防「API 重启后 job 被遗忘」：池是不常驻的（跑完即退），重启前在跑的 job 会留在
     `QUEUED`/`RUNNING`，若没人再拉池就会永远停住。此处只**派发**拉起动作（daemon 线程 +
     detached 子进程），**不阻塞** uvicorn 起服务。
+
+    另加 **inbox 启动扫描**（R41）：**只 dry-run 扫描 + 落报告/告警**，**绝不删任何文件**
+    （策略铁律 ②：系统无任何自动删除路径；真删只能由人 `--apply` / `POST /api/jobs/inbox/gc`）。
     """
+    try:
+        inbox_gc.startup_scan(get_settings())
+    except Exception as exc:  # 扫描侧任何异常都不得挡住 API 起服务
+        log.warning("inbox 启动扫描失败（API 照常起服务；**未删任何文件**）：%r", exc)
     try:
         poolctl.catch_up_on_startup(get_settings())
     except Exception as exc:  # 拉起侧任何异常都不得挡住 API 起服务

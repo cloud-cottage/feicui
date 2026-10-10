@@ -14,10 +14,11 @@ import os
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
+from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from urllib.parse import quote
 
-from .. import db, pdfmeta, poolctl, repository, uploader
+from .. import db, inbox_gc, pdfmeta, poolctl, repository, uploader
 from ..config import Settings, get_settings
 from ..models import (
     PAGE_LIMIT_DEFAULT,
@@ -25,6 +26,7 @@ from ..models import (
     E4ExportRequest,
     E4ExportResponse,
     E7JobsResponse,
+    InboxGcRequest,
     JobConflictResponse,
     JobCreateRequest,
     JobCreateResponse,
@@ -48,6 +50,17 @@ def _resolve_pdf_path(raw: str, st: Settings) -> Path:
     if not p.is_absolute():
         p = st.root / p
     return p.resolve()
+
+
+def _e1_error(status_code: int, error: str, detail: dict) -> JSONResponse:
+    """E1 的 400 **结构化错误体**：在既有 `detail`（**原样不变**）之上**补顶层 `error`**，
+    与 **E8**（`POST /api/jobs/upload`）的错误体**同形**（顶层 `error` ＋ 顶层 `detail`）。
+
+    口径（本单收窄）：**只**本单新增的两个 400 分支（`PDF_NOT_FOUND` / `NOT_A_PDF`）加顶层 `error`；
+    **其余既有 400 的历史嵌套形态（`detail` 为 dict，共 53 处）一概不动**——历史形态不追溯，
+    唯一口径由规范端（v1.23）给。
+    """
+    return JSONResponse(status_code=status_code, content={"error": error, "detail": detail})
 
 
 # ---- E1 的 PDF 判定（§3.1 表下注 **G-6**）----------------------------------------
@@ -74,7 +87,7 @@ def _pdf_has_magic(pdf_abs: Path) -> bool:
 
 
 @router.post("", status_code=201, response_model=JobCreateResponse)
-def create_job(payload: JobCreateRequest, st: Settings = Depends(_settings)) -> JobCreateResponse:
+def create_job(payload: JobCreateRequest, st: Settings = Depends(_settings)) -> JobCreateResponse | Response:
     """**E1** `POST /api/jobs` —— 建 job（一本书 = 一个 job，**入队**语义）。
 
     * 同 `pdf_path` 已有活跃 job ⇒ **409 + 既有 job_id**（绝不静默起第二个，§3.2 S-5）；
@@ -92,15 +105,16 @@ def create_job(payload: JobCreateRequest, st: Settings = Depends(_settings)) -> 
 
     pdf_abs = _resolve_pdf_path(payload.pdf_path, st)
     if not pdf_abs.is_file():
-        raise HTTPException(
-            status_code=400,
-            detail={"error": "PDF_NOT_FOUND", "detail": f"pdf_path 不存在或不是文件：{pdf_abs}"},
+        # 400 结构化错误体：在既有 `detail` 之上**补顶层 `error`**（与 E8 同形；detail 内容不变）
+        return _e1_error(
+            400, "PDF_NOT_FOUND", {"error": "PDF_NOT_FOUND", "detail": f"pdf_path 不存在或不是文件：{pdf_abs}"}
         )
     # ---- G-6：既有文件的 PDF 判定（**必须在建 job / 入队之前**）--------------------
     if not _pdf_has_magic(pdf_abs):
-        raise HTTPException(
-            status_code=400,
-            detail={
+        return _e1_error(
+            400,
+            "NOT_A_PDF",
+            {
                 "error": "NOT_A_PDF",
                 "detail": f"pdf_path 存在但非 PDF（前 {PDF_MAGIC_SCAN_BYTES} 字节内无 %PDF- magic）：{pdf_abs}",
             },
@@ -270,6 +284,51 @@ async def upload_pdf(request: Request, st: Settings = Depends(_settings)) -> JSO
         body.dedup_suffix,
     )
     return JSONResponse(status_code=int(res["status_code"]), content=body.model_dump())
+
+
+# ------------------------------------------- inbox 用量 / 清理（**additive**，R41 实现）
+@router.get("/inbox/summary")
+def inbox_summary(st: Settings = Depends(_settings)) -> JSONResponse:
+    """**additive** `GET /api/jobs/inbox/summary` —— inbox **用量 / 将回收 / 豁免清单**（**只读 plan**）。
+
+    返回与 CLI dry-run **同形**的清单：`usage`（文件数 / 体积）、`collect`（将回收项 ＋ 各体积）、
+    `collect_bytes`（可回收总量）、`exempt`（**豁免清单及原因**）、`hard_delete`、`constants`。
+
+    **纯只读**：不改盘、不改库、**不落报告**（GET 不得有副作用）；真回收走 `POST /api/jobs/inbox/gc`。
+    口径真源＝`docs/inbox-gc-draft-v0.1.md`；默认 dry-run、**永不自动删**（两段式 + 人触发）。
+    """
+    try:
+        plan = inbox_gc.build_plan(st)
+    except Exception as exc:  # noqa: BLE001 - 结构化 500，绝不 HTML 错误页
+        log.exception("inbox/summary 扫描失败")
+        return JSONResponse(
+            status_code=500,
+            content={"error": "INBOX_SCAN_FAILED", "detail": f"{type(exc).__name__}（详见服务端日志）"},
+        )
+    return JSONResponse(content=jsonable_encoder(plan))
+
+
+@router.post("/inbox/gc")
+def inbox_gc_run(
+    payload: InboxGcRequest | None = None, st: Settings = Depends(_settings)
+) -> JSONResponse:
+    """**additive** `POST /api/jobs/inbox/gc` —— 执行清理（**默认 `apply:false` ＝ dry-run**）。
+
+    * 请求体 `{"apply": false}`（**默认**）⇒ 只列清单，**绝不改盘**；返回与 CLI dry-run 同形的清单；
+    * `{"apply": true}` ⇒ **真回收**：两段式（move ⇒ `inbox/.trash/<yyyymmdd>/`；trash 内再满 T 天硬删），
+      **只动文件、不动库**（`jobs` / `job_pages` / `stamps` 三数逐字不变）；单个文件失败进 `errors`（200）。
+    * 每次调用落报告 `ops/job-upload/inbox_gc_<ts>.json`；异常 ⇒ **结构化 JSON** 500。
+    """
+    payload = payload or InboxGcRequest()
+    try:
+        report = inbox_gc.run(st, apply=bool(payload.apply))
+    except Exception as exc:  # noqa: BLE001 - 结构化 500，绝不 HTML 错误页
+        log.exception("inbox/gc 执行失败")
+        return JSONResponse(
+            status_code=500,
+            content={"error": "INBOX_GC_FAILED", "detail": f"{type(exc).__name__}（详见服务端日志）"},
+        )
+    return JSONResponse(content=jsonable_encoder(report))
 
 
 @router.get("/{job_id}", response_model=JobProgressResponse)

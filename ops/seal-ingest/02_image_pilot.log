@@ -1,0 +1,5 @@
+pilot refs: 60 (kinds: {'yt': 40, 'ytsw': 15, 'yzbk': 5})
+{"workers": 1, "sleep_s": 1.5, "n": 60, "ok": 49, "fail": 11, "rate_429": 0, "rate_5xx": 11, "other_fail": 0, "success_rate": 0.8167, "wall_s": 108.931, "throughput_img_s": 0.551, "latency_avg": 0.312, "latency_p95": 0.409}
+{"workers": 4, "sleep_s": 0.3, "n": 60, "ok": 49, "fail": 11, "rate_429": 0, "rate_5xx": 11, "other_fail": 0, "success_rate": 0.8167, "wall_s": 9.493, "throughput_img_s": 6.32, "latency_avg": 0.304, "latency_p95": 0.364}
+{"workers": 8, "sleep_s": 0.1, "n": 60, "ok": 49, "fail": 11, "rate_429": 0, "rate_5xx": 11, "other_fail": 0, "success_rate": 0.8167, "wall_s": 3.483, "throughput_img_s": 17.227, "latency_avg": 0.303, "latency_p95": 0.354}
+written /Users/kevin/bistro/xiai/feicui/ops/seal-ingest/02_image_pilot.json

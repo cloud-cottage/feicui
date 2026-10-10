@@ -1,0 +1,49 @@
+{
+  "evidence_id": "20_api_and_browser_selfcheck",
+  "title": "API 自检 + 真浏览器两源自检 + 单路重启（第二段 ⑤⑥）",
+  "produced_by": "Kong（第二段收尾，2026-10-10）",
+  "api_base": "http://127.0.0.1:5196（面板 sid=feicui-api，cwd=.../feicui/server）",
+  "api_selfcheck": {
+    "GET /api/seals?cursor=x": {"http": 400, "expect": "400（未白名单参数 cursor 一律 400）", "ok": true},
+    "GET /api/seals?audit_status=2": {"total": 716, "expect": 716, "ok": true},
+    "GET /api/seals/3922": {"seal_wen": "二金蝶堂", "seal_ys_label": "白文方印", "seal_yzzkz": "趙之謙",
+                             "audit_status": "0", "expect": "二金蝶堂 / 白文方印 / 趙之謙", "ok": true},
+    "GET /api/seals/1000/image/yt": {"http": 200, "content_type": "image/jpeg", "bytes": 13355},
+    "GET /api/seals/1000/image/ytsw": {"http": 200, "content_type": "image/jpeg", "bytes": 5112},
+    "GET /api/seals/3922/image/yt": {"http": 404, "note": "3922 的 yt ref 以 NaN_ 开头 ⇒ source_no_image ⇒ 本地无图 ⇒ 404（符合端点语义）"},
+    "image_endpoint_discrepancy": {
+      "expected_in_task": "200 image/tiff",
+      "actual": "200 image/jpeg",
+      "cause": "routers/seals.py 的 /{seqid}/image/{kind} 从 var/seal_images/ 的 **JPEG 源缓存** 供图（media_type=image/jpeg），供页面 <img> 缩略图；浏览器不能渲染 TIFF。",
+      "write_set": "routers/seals.py 不在本单允许改动集（硬约束）⇒ 未改，如实登记供下一单/Zang 裁定。"
+    }
+  },
+  "browser": {
+    "source_1": {
+      "url": "http://127.0.0.1:5195/feicui/seals",
+      "title": "🐴 斐萃｜印谱解析任务台", "h2": "印章采集",
+      "tabs": ["印谱解析", "印人采集", "印谱采集", "印章采集"],
+      "cards": ["采集区", "就绪包（xiai）", "印章列表", "印章详情"],
+      "button_present_and_clickable": "生成 xiai 就绪包",
+      "package_result_onscreen": "seals 3679 行 · sidecar 8964 行 · 影像 6347 张 · 源 total 3679 · 源批次 seal_20261010_01 · 生成时点 2026-10-10T18:32:40+08:00",
+      "key_face_status_onscreen": "pending_xiai"
+    },
+    "source_2": {
+      "url": "http://localhost:5164/feicui/seals",
+      "title": "🐴 斐萃｜印谱解析任务台", "h2": "印章采集",
+      "tabs": ["印谱解析", "印人采集", "印谱采集", "印章采集"],
+      "cards": ["采集区", "就绪包（xiai）", "印章列表", "印章详情"],
+      "button_present_and_clickable": "生成 xiai 就绪包",
+      "package_result_onscreen": "seals 3679 行 · sidecar 8964 行 · 影像 6347 张 · 源 total 3679 · 源批次 seal_20261010_01 · 生成时点 2026-10-10T18:32:49+08:00",
+      "key_face_status_onscreen": "pending_xiai"
+    },
+    "note": "两源均：四项页签齐 / 页 h2＝印章采集 / 四区齐 / 【生成 xiai 就绪包】可点且上屏行数与 key_face_status。"
+  },
+  "service_restart": {
+    "sid": "feicui-api", "method": "面板 POST /api/stop + POST /api/start（仅该 sid；未 startAll、未 pkill）",
+    "pid_before": 74689, "pid_after": 63108, "state_after": "running", "portOpen": true,
+    "start_then_running_msg": {"sid": "feicui-api", "ok": false, "state": "running", "msg": "已在运行"},
+    "post_restart_reverify": {"cursor": 400, "audit_status=2_total": 716, "seal_3922": "二金蝶堂/白文方印/趙之謙"}
+  },
+  "build": {"cmd": "cd web && npm run build", "exit": 0, "out": "dist/assets/index-B74Wlqs7.js 220.71 kB · index-YdSyThVR.css 7.37 kB · built in 728ms"}
+}

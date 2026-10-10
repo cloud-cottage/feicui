@@ -1,0 +1,36 @@
+{
+  "total_refs": 6765,
+  "done": 6765,
+  "ok": 6347,
+  "skipped_resume": 6762,
+  "no_source": 418,
+  "convert_failed": 0,
+  "no_source_500": 0,
+  "no_source_bad_bytes": 1,
+  "workers": 4,
+  "elapsed_s": 3.942,
+  "rate": 1716.13,
+  "status_counts": {
+    "ok": 6347,
+    "failed": 0,
+    "source_no_image": 418,
+    "total": 6765,
+    "source_no_image_by_reason": {
+      "bad_bytes": 1,
+      "http_500": 415,
+      "nan_ref": 2
+    }
+  },
+  "source_missing": [],
+  "bad_bytes": [
+    {
+      "seqid": "3609",
+      "kind": "yt",
+      "ref": "2_3609_1",
+      "error": "HTTP 200 image/jpeg but undecodable (697B)"
+    }
+  ],
+  "images_root": "/Users/kevin/bistro/xiai/feicui/var/seal_images",
+  "tiff_dir": "/Users/kevin/bistro/xiai/feicui/var/seal_images_tiff"
+}
+FAILURES=[]

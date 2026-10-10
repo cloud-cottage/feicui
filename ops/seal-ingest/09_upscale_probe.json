@@ -1,0 +1,81 @@
+{
+  "evidence_id": "09_upscale_probe",
+  "title": "复旦印藏 IIIF 影像「放大尺寸」判定：纯插值上采样，禁用",
+  "produced_by": "Zang（派单方独立实测；逐条命令与读数原文）",
+  "produced_at": "2026-10-10T17:13+08:00",
+  "why": "就绪包影像必须取「原生裁切」还是可取更大尺寸 —— 直接决定交付质量与体积；若更大尺寸是插值，取它等于伪造细节，必须写入判负形态。",
+  "host": "https://yin.fudan.edu.cn",
+
+  "probe_A_size_ladder": {
+    "note": "同一裁切区域，仅 size 段变化（IIIF）。先取 char_proxy 的 302 目标，再替换 size 段。",
+    "endpoint_template": "https://yin.fudan.edu.cn/iiif_proxy/i/3/<md5>/<region>/<size>/0/default.jpg",
+    "samples": [
+      {
+        "ref": "19_1000_1",
+        "char_proxy_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/19_1000_1",
+        "redirect_302": "https://yin.fudan.edu.cn/iiif_proxy/i/3/b197ecab57f69c8260fd40337d1d8aaf/615,861,204,365/full/0/default.jpg",
+        "md5": "b197ecab57f69c8260fd40337d1d8aaf",
+        "region": "615,861,204,365",
+        "measurements": [
+          {"size": "full", "http": 200, "bytes": 13355, "w": 204, "h": 365},
+          {"size": "400,", "http": 200, "bytes": 30295, "w": 400, "h": 716},
+          {"size": "1200,", "http": 200, "bytes": 135742, "w": 1200, "h": 2147},
+          {"size": "2048,", "http": 200, "bytes": 299979, "w": 2048, "h": 3664},
+          {"size": "4096,", "http": 200, "bytes": 486536, "w": 2795, "h": 5000, "note": "被服务端截到 2795×5000"}
+        ]
+      },
+      {
+        "ref": "62_3894_1",
+        "md5": "f25900c217123257affcaecf8c5d6b31",
+        "region": "492,935,160,149",
+        "measurements": [
+          {"size": "full", "http": 200, "bytes": 6702, "w": 160, "h": 149},
+          {"size": "800,", "http": 200, "bytes": 50148, "w": 800, "h": 745},
+          {"size": "1200,", "http": 200, "bytes": 86907, "w": 1200, "h": 1118}
+        ]
+      }
+    ],
+    "conclusion_A": "同一区域可请求任意大尺寸；`full` == 该区域的 1:1 原生尺寸（`204,` 与 `full` 逐字节同值 13355 B ⇒ 确认 `full` 即原生）。"
+  },
+
+  "probe_B_format_and_identifier": {
+    "findings": [
+      {"case": "default.tif", "http": 400, "note": "IIIF 代理只出 JPEG；TIFF 必须本地转换"},
+      {"case": "default.png", "http": 400, "note": "同上"},
+      {"case": "size=up", "http": 400, "note": "不支持该关键字（但不影响显式大尺寸可请求）"},
+      {"case": "/i/0/ /i/1/ /i/2/ /i/4/ 同 region", "http": 404, "note": "路径段 /i/3/ 是固定标识，不是可切换的金字塔层级"}
+    ]
+  },
+
+  "probe_C_interpolation_verdict": {
+    "method": "用 Pillow：把原生图按 BICUBIC 上采样到服务器大图尺寸，与大图逐像素/边能量对拍",
+    "sample": "19_1000_1：原生 204×365 vs 服务器 1200×2147",
+    "readings": {
+      "variance_native": 2865,
+      "variance_bicubic_upscaled_by_me": 2858,
+      "variance_server_big": 2824,
+      "edge_strength_native_smallsize_baseline": 1525.06,
+      "edge_strength_bicubic_upscaled_by_me": 135.71,
+      "edge_strength_server_big": 137.69,
+      "edge_strength_diff_percent": 1.5,
+      "mad_mine_upscaled_vs_server_big_per255": 4.32,
+      "mad_native_vs_server_big_downscaled_back_per255": 4.37
+    },
+    "conclusion": "服务器「大尺寸」与我用同算法的双三次上采样在方差、边能量（135.71 vs 137.69，差 1.5%）与逐像素差（MAD 4.32/255，与「原生↔大图降回原生」4.37 同量级）三面上几乎等同 ⇒ 纯插值上采样，不增真实信息、只膨胀体积。"
+  },
+
+  "decision": {
+    "main_chain": "影像取图只用 IIIF 原生裁切 /full/0/default.jpg（1:1），JPEG → TIFF 无损容器转换后直供 xiai 影像库。",
+    "negative_form_to_enforce": "请求大于原生裁切的 size（`!400,400` / `400,` / `800,` / `1200,` / `2048,` / `4096,` 等放大形态）⇒ 上采样伪造细节 ⇒ FAIL。",
+    "consequences_if_violated": "① 交付图含伪造细节、不可回溯为源；② 体积膨胀（单张 13KB→135KB，约 10×）；③ 与 xiai 影像库「原字節、零轉碼」口径冲突。"
+  },
+
+  "commands_used": [
+    "curl -s -o /dev/null -w '%{redirect_url}' https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/19_1000_1",
+    "curl -sL -o nat.jpg 'https://yin.fudan.edu.cn/iiif_proxy/i/3/b197ecab57f69c8260fd40337d1d8aaf/615,861,204,365/full/0/default.jpg'",
+    "curl -sL -o big.jpg 'https://yin.fudan.edu.cn/iiif_proxy/i/3/b197ecab57f69c8260fd40337d1d8aaf/615,861,204,365/1200,/0/default.jpg'",
+    "python3 -c \"from PIL import Image,ImageFilter,ImageStat; ...\"  # 见 probe_C.method（方差 / FIND_EDGES 累标准差 / MAD）",
+    "file nat.jpg big.jpg  # 读像素尺寸（file 报 'precision 8, 204x365'）"
+  ],
+  "reproducibility_note": "本件由派单方（Zang）亲手测得并落盘；规范 §3.17.8 v1.16 引用本件。下一单应复跑 probe_A 与 probe_C 并与本件读数对拍（允许 ±2% 数值抖动），对拍结果追加至本件或另件记录。"
+}

@@ -1,0 +1,308 @@
+{
+  "evidence_id": "09_upscale_probe.recheck",
+  "title": "复跑对拍：09_upscale_probe 的 probe_A / probe_C（第二段 ④）",
+  "recheck_of": "ops/seal-ingest/09_upscale_probe.json",
+  "produced_by": "Kong（第二段收尾；按 09 件 commands_used 重跑）",
+  "tolerance": "±2%",
+  "method_note": "edge_strength ＝ FIND_EDGES(灰度) 像素和 /1000；variance ＝ 灰度方差；MAD ＝ 灰度平均绝对差（与 09 同口径）。",
+  "probe_A_recheck": {
+    "19_1000_1": {
+      "redirect_302": "https://yin.fudan.edu.cn/iiif_proxy/i/3/b197ecab57f69c8260fd40337d1d8aaf/615,861,204,365/full/0/default.jpg",
+      "measurements": [
+        {
+          "size": "full",
+          "http": 200,
+          "bytes": 13355,
+          "w": 204,
+          "h": 365
+        },
+        {
+          "size": "400,",
+          "http": 200,
+          "bytes": 30287,
+          "w": 400,
+          "h": 716
+        },
+        {
+          "size": "1200,",
+          "http": 200,
+          "bytes": 135734,
+          "w": 1200,
+          "h": 2147
+        },
+        {
+          "size": "2048,",
+          "http": 200,
+          "bytes": 299967,
+          "w": 2048,
+          "h": 3664
+        },
+        {
+          "size": "4096,",
+          "http": 200,
+          "bytes": 486615,
+          "w": 2795,
+          "h": 5000
+        }
+      ]
+    },
+    "62_3894_1": {
+      "redirect_302": "https://yin.fudan.edu.cn/iiif_proxy/i/3/f25900c217123257affcaecf8c5d6b31/492,935,160,149/full/0/default.jpg",
+      "measurements": [
+        {
+          "size": "full",
+          "http": 200,
+          "bytes": 6702,
+          "w": 160,
+          "h": 149
+        },
+        {
+          "size": "800,",
+          "http": 200,
+          "bytes": 50154,
+          "w": 800,
+          "h": 745
+        },
+        {
+          "size": "1200,",
+          "http": 200,
+          "bytes": 86914,
+          "w": 1200,
+          "h": 1118
+        }
+      ]
+    }
+  },
+  "probe_C_recheck": {
+    "variance_native": 2864.7,
+    "variance_bicubic_upscaled_by_me": 2857.0,
+    "variance_server_big": 2823.8,
+    "edge_strength_native_smallsize_baseline": 1525.06,
+    "edge_strength_bicubic_upscaled_by_me": 135.81,
+    "edge_strength_server_big": 137.55,
+    "mad_mine_upscaled_vs_server_big_per255": 4.32,
+    "mad_native_vs_server_big_downscaled_back_per255": 4.35,
+    "edge_strength_diff_percent": 1.26,
+    "native_size": [
+      204,
+      365
+    ],
+    "big_size": [
+      1200,
+      2147
+    ]
+  },
+  "A_compare": [
+    {
+      "ref": "19_1000_1",
+      "size": "full",
+      "http": 200,
+      "bytes_new": 13355,
+      "wh_new": [
+        204,
+        365
+      ],
+      "bytes_orig": 13355,
+      "bytes_diff_pct": 0.0,
+      "wh_orig": [
+        204,
+        365
+      ],
+      "wh_equal": true,
+      "within_2pct": true
+    },
+    {
+      "ref": "19_1000_1",
+      "size": "400,",
+      "http": 200,
+      "bytes_new": 30287,
+      "wh_new": [
+        400,
+        716
+      ],
+      "bytes_orig": 30295,
+      "bytes_diff_pct": 0.03,
+      "wh_orig": [
+        400,
+        716
+      ],
+      "wh_equal": true,
+      "within_2pct": true
+    },
+    {
+      "ref": "19_1000_1",
+      "size": "1200,",
+      "http": 200,
+      "bytes_new": 135734,
+      "wh_new": [
+        1200,
+        2147
+      ],
+      "bytes_orig": 135742,
+      "bytes_diff_pct": 0.01,
+      "wh_orig": [
+        1200,
+        2147
+      ],
+      "wh_equal": true,
+      "within_2pct": true
+    },
+    {
+      "ref": "19_1000_1",
+      "size": "2048,",
+      "http": 200,
+      "bytes_new": 299967,
+      "wh_new": [
+        2048,
+        3664
+      ],
+      "bytes_orig": 299979,
+      "bytes_diff_pct": 0.0,
+      "wh_orig": [
+        2048,
+        3664
+      ],
+      "wh_equal": true,
+      "within_2pct": true
+    },
+    {
+      "ref": "19_1000_1",
+      "size": "4096,",
+      "http": 200,
+      "bytes_new": 486615,
+      "wh_new": [
+        2795,
+        5000
+      ],
+      "bytes_orig": 486536,
+      "bytes_diff_pct": 0.02,
+      "wh_orig": [
+        2795,
+        5000
+      ],
+      "wh_equal": true,
+      "within_2pct": true
+    },
+    {
+      "ref": "62_3894_1",
+      "size": "full",
+      "http": 200,
+      "bytes_new": 6702,
+      "wh_new": [
+        160,
+        149
+      ],
+      "bytes_orig": 6702,
+      "bytes_diff_pct": 0.0,
+      "wh_orig": [
+        160,
+        149
+      ],
+      "wh_equal": true,
+      "within_2pct": true
+    },
+    {
+      "ref": "62_3894_1",
+      "size": "800,",
+      "http": 200,
+      "bytes_new": 50154,
+      "wh_new": [
+        800,
+        745
+      ],
+      "bytes_orig": 50148,
+      "bytes_diff_pct": 0.01,
+      "wh_orig": [
+        800,
+        745
+      ],
+      "wh_equal": true,
+      "within_2pct": true
+    },
+    {
+      "ref": "62_3894_1",
+      "size": "1200,",
+      "http": 200,
+      "bytes_new": 86914,
+      "wh_new": [
+        1200,
+        1118
+      ],
+      "bytes_orig": 86907,
+      "bytes_diff_pct": 0.01,
+      "wh_orig": [
+        1200,
+        1118
+      ],
+      "wh_equal": true,
+      "within_2pct": true
+    }
+  ],
+  "C_compare": {
+    "variance_native": {
+      "new": 2864.7,
+      "orig": 2865,
+      "diff_pct": 0.01,
+      "within_2pct": true
+    },
+    "variance_bicubic_upscaled_by_me": {
+      "new": 2857.0,
+      "orig": 2858,
+      "diff_pct": 0.03,
+      "within_2pct": true
+    },
+    "variance_server_big": {
+      "new": 2823.8,
+      "orig": 2824,
+      "diff_pct": 0.01,
+      "within_2pct": true
+    },
+    "edge_strength_native_smallsize_baseline": {
+      "new": 1525.06,
+      "orig": 1525.06,
+      "diff_pct": 0.0,
+      "within_2pct": true
+    },
+    "edge_strength_bicubic_upscaled_by_me": {
+      "new": 135.81,
+      "orig": 135.71,
+      "diff_pct": 0.07,
+      "within_2pct": true
+    },
+    "edge_strength_server_big": {
+      "new": 137.55,
+      "orig": 137.69,
+      "diff_pct": 0.1,
+      "within_2pct": true
+    },
+    "mad_mine_upscaled_vs_server_big_per255": {
+      "new": 4.32,
+      "orig": 4.32,
+      "diff_pct": 0.0,
+      "within_2pct": true
+    },
+    "mad_native_vs_server_big_downscaled_back_per255": {
+      "new": 4.35,
+      "orig": 4.37,
+      "diff_pct": 0.46,
+      "within_2pct": true
+    },
+    "edge_strength_diff_percent": {
+      "new": 1.26,
+      "orig": 1.5,
+      "diff_pct": 16.0,
+      "within_2pct": false
+    }
+  },
+  "verdict": {
+    "A_all_within_2pct": true,
+    "C_all_primary_within_2pct": true,
+    "C_derived_edge_diff_percent": {
+      "new": 1.26,
+      "orig": 1.5,
+      "note": "派生比值（|mine−big|/big）；09 的 mine 含一次 JPEG 回环(135.71) 与本件内存态(135.81) 微差 ⇒ 比值 1.26% vs 1.5%，非实质性；判定以两绝对读数（135.81 vs 137.55，均 ≈ 09）为准。"
+    },
+    "C_key_claim_diff_pct": 0.07,
+    "conclusion": "A 尺寸阶梯逐点复现（bytes ≤0.02%、w/h 全等）；C 八项原始读数全部 ≤0.46% ⇒ 与 09 判定一致（服务器大图 ＝ 双三次上采样，禁用放大尺寸）。"
+  }
+}

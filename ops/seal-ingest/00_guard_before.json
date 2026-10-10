@@ -1,0 +1,95 @@
+{
+  "yinpu.db": {
+    "exists": true,
+    "path": "/Users/kevin/bistro/xiai/data/yinpu.db",
+    "tables": {
+      "export_batches": {
+        "rows": 12,
+        "sha256": "d55c1c69742e0b336a5c5486e3b69f27483475a67ff94bf2660cb940c28f15a5"
+      },
+      "export_records": {
+        "rows": 49,
+        "sha256": "ab1f18946a72217de3a85f52c5c0de6d1a346b8ae012f387941f110eb09550a1"
+      },
+      "images": {
+        "rows": 79,
+        "sha256": "db998dd90440f5bf9d14741e2da60b36064a47ca72e2f9f87f0efc961015ef58"
+      },
+      "job_pages": {
+        "rows": 32,
+        "sha256": "04724e7b3bc5b455867b8e5876df7af111ac30622f0b90167fbb8e2043e81917"
+      },
+      "jobs": {
+        "rows": 5,
+        "sha256": "4005c8179bd84b10031ffd10d9a080e92e2474997aeccc25ce017d53fe5fee8a"
+      },
+      "schema_migrations": {
+        "rows": 2,
+        "sha256": "ab93ffb134e6de34267b4c26b84c1e806f000c96c7d6eb57a3b745c14141c95c"
+      },
+      "seals": {
+        "rows": 79,
+        "sha256": "3d6b9e42a01ac4163e16268cb1e07238634a7c18ad1a84f2ccb207a509240ca9"
+      },
+      "stamps": {
+        "rows": 89,
+        "sha256": "77f7ded161634d70d4a318ce27367a60ec75f1da0f8bb2aca03e5caa28d61ab9"
+      }
+    },
+    "n_tables": 8
+  },
+  "var/person_ingest.db": {
+    "exists": true,
+    "path": "/Users/kevin/bistro/xiai/feicui/var/person_ingest.db",
+    "tables": {
+      "person_import_batches": {
+        "rows": 1,
+        "sha256": "a6d9a15e76eb60989ed52b3ad1ae172570fe63093e1db2d2974de78ad14891c9"
+      },
+      "person_relations": {
+        "rows": 1650,
+        "sha256": "410e24d18765507b8d58612db6c30682d6ea721dd3472c154525a7b6e4207241"
+      },
+      "persons": {
+        "rows": 570,
+        "sha256": "8ea1070056633eaa73717e7a8314d36d46cb6058dfdd02ed5e06f740e2561f27"
+      }
+    },
+    "n_tables": 3
+  },
+  "var/item_ingest.db": {
+    "exists": true,
+    "path": "/Users/kevin/bistro/xiai/feicui/var/item_ingest.db",
+    "tables": {
+      "item_creators": {
+        "rows": 1440,
+        "sha256": "2de07cf21279b48ab05372428a32367e7bb69c269be346140c8b08cbf4a80d28"
+      },
+      "item_import_batches": {
+        "rows": 1,
+        "sha256": "763a01fc08932a57f4b8dd98bcc1d6f085a240d68cbedc84fc60370e11e0bc5e"
+      },
+      "items": {
+        "rows": 1742,
+        "sha256": "a32423f3603c742dc2a1290074b64247810a206a0500efbffeef076ba59a96a1"
+      }
+    },
+    "n_tables": 3
+  },
+  "exports/person_*": {
+    "person_20261010_01": {
+      "n_files": 4,
+      "sha256_names_sizes": "b4cc7545c1161f945aa56b9a8e5909a37285d89b919c98f2fd3d0f4b748ca0d3"
+    },
+    "person_import_person_20261010_01": {
+      "n_files": 3,
+      "sha256_names_sizes": "bbb94effb99bc64e3609485eddad8a2a5c1159b960089609c88d0fe1b097f0ce"
+    }
+  },
+  "exports/item_*": {
+    "item_import_item_20261010_01": {
+      "n_files": 4,
+      "sha256_names_sizes": "6c95485835a68a3ef68db48000587c8a3b3a8d15d015c91d4cb8cc13aeea4649"
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "batch_id": "seal_20261010_01",
+  "run_kind": "idempotent_replay",
+  "source_total": 3679,
+  "rows_seen": 3679,
+  "fetched_requests": 0,
+  "fetched_requests_cumulative": 0,
+  "skipped_resume": 3679,
+  "seals_ok": 3679,
+  "links_ok": 8964,
+  "remaining": 0,
+  "failed_count": 0,
+  "detail_requests": 0,
+  "detail_unconfirmed_count": 0,
+  "graph_unconfirmed_count": 0,
+  "package_dir": "/Users/kevin/bistro/xiai/feicui/exports/seal_import_seal_20261010_01",
+  "report_path": "/Users/kevin/bistro/xiai/feicui/exports/seal_import_seal_20261010_01/report.json",
+  "content_fingerprint": "e8155837ff2785cbef1466ab7c419c1b3ed52c213fc6f7de2ecf57dc85e3c447",
+  "elapsed_s": 0.0,
+  "last_run_elapsed_s": 5.717,
+  "counts": {
+    "seals": 3679,
+    "links": 8964,
+    "images": 6765,
+    "batches": 1
+  }
+}
+FAILURES=[]

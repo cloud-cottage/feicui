@@ -1,0 +1,468 @@
+=== shard 1 start 2026-10-10T17:51:02+08:00 term=765 ===
+[images] 800/6765 ok=646 skipped=763 failed=0 no_source=154
+[images] 1000/6765 ok=832 skipped=763 failed=1 no_source=167
+[images] 1200/6765 ok=1013 skipped=763 failed=1 no_source=186
+[images] 1400/6765 ok=1194 skipped=763 failed=1 no_source=205
+[runner] shard 1 end 2026-10-10T17:59:22+08:00 before={"_total": 765, "ok": 628, "source_no_image": 137} after={"_total": 1567, "failed": 1, "ok": 1343, "source_no_image": 223}
+=== shard 2 start 2026-10-10T17:59:47+08:00 term=1566 ===
+[images] 1600/6765 ok=1371 skipped=1564 failed=0 no_source=229
+[images] 1800/6765 ok=1560 skipped=1564 failed=0 no_source=240
+[images] 2000/6765 ok=1756 skipped=1564 failed=0 no_source=244
+[images] 2200/6765 ok=1952 skipped=1564 failed=0 no_source=248
+[images] 2400/6765 ok=2150 skipped=1564 failed=0 no_source=250
+[images] 2600/6765 ok=2349 skipped=1564 failed=1 no_source=250
+[images] 2800/6765 ok=2549 skipped=1564 failed=1 no_source=250
+[images] 3000/6765 ok=2748 skipped=1564 failed=1 no_source=251
+[images] 3200/6765 ok=2948 skipped=1564 failed=1 no_source=251
+[images] 3400/6765 ok=3146 skipped=1564 failed=3 no_source=251
+[images] 3600/6765 ok=3345 skipped=1564 failed=4 no_source=251
+[images] 3800/6765 ok=3545 skipped=1564 failed=4 no_source=251
+[images] 4000/6765 ok=3744 skipped=1564 failed=5 no_source=251
+{
+  "total_refs": 6765,
+  "done": 4064,
+  "ok": 3808,
+  "skipped_resume": 1564,
+  "failed": 5,
+  "no_source": 251,
+  "convert_failed": 0,
+  "no_source_500": 30,
+  "workers": 8,
+  "elapsed_s": 333.581,
+  "rate": 12.18,
+  "status_counts": {
+    "ok": 3808,
+    "failed": 5,
+    "source_no_image": 253,
+    "total": 4066,
+    "source_no_image_by_reason": {
+      "(unset)": 2,
+      "http_500": 251
+    }
+  },
+  "source_missing": [
+    {
+      "seqid": "178",
+      "kind": "yt",
+      "ref": "21_178_1",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "180",
+      "kind": "yt",
+      "ref": "21_180_1",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "177",
+      "kind": "yt",
+      "ref": "21_177_1",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "177",
+      "kind": "ytsw",
+      "ref": "21_177_2",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "179",
+      "kind": "ytsw",
+      "ref": "21_179_2",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "178",
+      "kind": "ytsw",
+      "ref": "21_178_2",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "179",
+      "kind": "yt",
+      "ref": "21_179_1",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "180",
+      "kind": "ytsw",
+      "ref": "21_180_2",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "181",
+      "kind": "ytsw",
+      "ref": "22_181_2",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "181",
+      "kind": "yt",
+      "ref": "22_181_1",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "182",
+      "kind": "yt",
+      "ref": "22_182_1",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "182",
+      "kind": "ytsw",
+      "ref": "22_182_2",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "1826",
+      "kind": "ytsw",
+      "ref": "64_1826_2",
+      "error": "HTTP 502"
+    },
+    {
+      "seqid": "183",
+      "kind": "ytsw",
+      "ref": "23_183_2",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "183",
+      "kind": "yt",
+      "ref": "23_183_1",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "184",
+      "kind": "yt",
+      "ref": "24_184_1",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "184",
+      "kind": "ytsw",
+      "ref": "24_184_2",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "185",
+      "kind": "yt",
+      "ref": "24_185_1",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "185",
+      "kind": "ytsw",
+      "ref": "24_185_2",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "186",
+      "kind": "yt",
+      "ref": "24_186_1",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "186",
+      "kind": "ytsw",
+      "ref": "24_186_2",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "187",
+      "kind": "yt",
+      "ref": "24_187_1",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "187",
+      "kind": "ytsw",
+      "ref": "24_187_2",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "200",
+      "kind": "yt",
+      "ref": "17_200_1",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "200",
+      "kind": "ytsw",
+      "ref": "17_200_2",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "202",
+      "kind": "yt",
+      "ref": "11_202_1",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "202",
+      "kind": "ytsw",
+      "ref": "11_202_2",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "203",
+      "kind": "yt",
+      "ref": "9_203_1",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "203",
+      "kind": "ytsw",
+      "ref": "9_203_2",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "2320",
+      "kind": "yt",
+      "ref": "23_2320_1",
+      "error": "HTTP 502"
+    }
+  ],
+  "images_root": "/Users/kevin/bistro/xiai/feicui/var/seal_images",
+  "tiff_dir": "/Users/kevin/bistro/xiai/feicui/var/seal_images_tiff"
+}
+FAILURES=[{"seqid": "2325", "kind": "yt", "ref": "24_2325_1", "error": "URLError: <urlopen error [Errno 8] nodename nor servname provided, or not known> @ https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/24_2325_1"}, {"seqid": "2652", "kind": "ytsw", "ref": "55_2652_2", "error": "URLError: <urlopen error [Errno 8] nodename nor servname provided, or not known> @ https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/55_2652_2"}, {"seqid": "2498", "kind": "yt", "ref": "52_2498_1", "error": "URLError: <urlopen error _ssl.c:999: The handshake operation timed out> @ https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/52_2498_1"}, {"seqid": "2777", "kind": "yzbk", "ref": "29_2777_3", "error": "URLError: <urlopen error [Errno 8] nodename nor servname provided, or not known> @ https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/29_2777_3"}, {"seqid": "304", "kind": "ytsw", "ref": "37_304_2", "error": "URLError: <urlopen error [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1016)> @ https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/37_304_2"}]
+[runner] shard 2 end 2026-10-10T18:05:21+08:00 before={"_total": 1567, "failed": 1, "ok": 1343, "source_no_image": 223} after={"_total": 4066, "failed": 5, "ok": 3808, "source_no_image": 253}
+=== shard 3 start 2026-10-10T18:05:46+08:00 term=4061 ===
+[images] 4200/6765 ok=3947 skipped=4059 failed=0 no_source=253
+[images] 4400/6765 ok=4147 skipped=4059 failed=0 no_source=253
+[images] 4600/6765 ok=4347 skipped=4059 failed=0 no_source=253
+[images] 4800/6765 ok=4546 skipped=4059 failed=0 no_source=254
+[images] 5000/6765 ok=4731 skipped=4059 failed=0 no_source=269
+[images] 5200/6765 ok=4919 skipped=4059 failed=1 no_source=280
+[images] 5400/6765 ok=5103 skipped=4059 failed=1 no_source=296
+[images] 5600/6765 ok=5293 skipped=4059 failed=1 no_source=306
+[images] 5800/6765 ok=5493 skipped=4059 failed=1 no_source=306
+[images] 6000/6765 ok=5692 skipped=4059 failed=1 no_source=307
+[images] 6200/6765 ok=5888 skipped=4059 failed=1 no_source=311
+[runner] shard 3 end 2026-10-10T18:14:06+08:00 before={"_total": 4066, "failed": 5, "ok": 3808, "source_no_image": 253} after={"_total": 6216, "failed": 1, "ok": 5904, "source_no_image": 311}
+=== shard 4 start 2026-10-10T18:14:31+08:00 term=6215 ===
+[images] 6400/6765 ok=6088 skipped=6213 failed=1 no_source=311
+[images] 6600/6765 ok=6253 skipped=6213 failed=1 no_source=346
+[runner] shard 4 end 2026-10-10T18:22:51+08:00 before={"_total": 6216, "failed": 1, "ok": 5904, "source_no_image": 311} after={"_total": 6649, "failed": 1, "ok": 6253, "source_no_image": 395}
+=== shard 5 start 2026-10-10T18:23:16+08:00 term=6648 ===
+{
+  "total_refs": 6765,
+  "done": 6765,
+  "ok": 6347,
+  "skipped_resume": 6646,
+  "failed": 1,
+  "no_source": 417,
+  "convert_failed": 1,
+  "no_source_500": 22,
+  "workers": 8,
+  "elapsed_s": 126.156,
+  "rate": 53.62,
+  "status_counts": {
+    "ok": 6347,
+    "failed": 1,
+    "source_no_image": 417,
+    "total": 6765,
+    "source_no_image_by_reason": {
+      "http_500": 415,
+      "nan_ref": 2
+    }
+  },
+  "source_missing": [
+    {
+      "seqid": "943",
+      "kind": "ytsw",
+      "ref": "7_943_2",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "942",
+      "kind": "yt",
+      "ref": "6_942_1",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "941",
+      "kind": "ytsw",
+      "ref": "6_941_2",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "943",
+      "kind": "yt",
+      "ref": "7_943_1",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "944",
+      "kind": "yt",
+      "ref": "8_944_1",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "942",
+      "kind": "ytsw",
+      "ref": "6_942_2",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "941",
+      "kind": "yt",
+      "ref": "6_941_1",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "944",
+      "kind": "ytsw",
+      "ref": "8_944_2",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "948",
+      "kind": "yt",
+      "ref": "9_948_1",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "947",
+      "kind": "yt",
+      "ref": "9_947_1",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "946",
+      "kind": "ytsw",
+      "ref": "9_946_2",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "945",
+      "kind": "ytsw",
+      "ref": "8_945_2",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "947",
+      "kind": "ytsw",
+      "ref": "9_947_2",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "946",
+      "kind": "yt",
+      "ref": "9_946_1",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "948",
+      "kind": "ytsw",
+      "ref": "9_948_2",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "945",
+      "kind": "yt",
+      "ref": "8_945_1",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "950",
+      "kind": "yt",
+      "ref": "10_950_1",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "950",
+      "kind": "ytsw",
+      "ref": "10_950_2",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "949",
+      "kind": "yt",
+      "ref": "9_949_1",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "951",
+      "kind": "yt",
+      "ref": "10_951_1",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "951",
+      "kind": "ytsw",
+      "ref": "10_951_2",
+      "error": "HTTP 500"
+    },
+    {
+      "seqid": "949",
+      "kind": "ytsw",
+      "ref": "9_949_2",
+      "error": "HTTP 500"
+    }
+  ],
+  "images_root": "/Users/kevin/bistro/xiai/feicui/var/seal_images",
+  "tiff_dir": "/Users/kevin/bistro/xiai/feicui/var/seal_images_tiff"
+}
+FAILURES=[{"seqid": "3609", "kind": "yt", "ref": "2_3609_1", "error": "tiff_convert: cannot identify image file '/Users/kevin/bistro/xiai/feicui/var/seal_images/yt/3609.jpg'"}]
+[runner] shard 5 end 2026-10-10T18:25:23+08:00 before={"_total": 6649, "failed": 1, "ok": 6253, "source_no_image": 395} after={"_total": 6765, "failed": 1, "ok": 6347, "source_no_image": 417}
+=== shard 6 start 2026-10-10T18:25:48+08:00 term=6764 ===
+{
+  "total_refs": 6765,
+  "done": 6765,
+  "ok": 6347,
+  "skipped_resume": 6762,
+  "failed": 1,
+  "no_source": 417,
+  "convert_failed": 1,
+  "no_source_500": 0,
+  "workers": 8,
+  "elapsed_s": 4.014,
+  "rate": 1685.35,
+  "status_counts": {
+    "ok": 6347,
+    "failed": 1,
+    "source_no_image": 417,
+    "total": 6765,
+    "source_no_image_by_reason": {
+      "http_500": 415,
+      "nan_ref": 2
+    }
+  },
+  "source_missing": [],
+  "images_root": "/Users/kevin/bistro/xiai/feicui/var/seal_images",
+  "tiff_dir": "/Users/kevin/bistro/xiai/feicui/var/seal_images_tiff"
+}
+FAILURES=[{"seqid": "3609", "kind": "yt", "ref": "2_3609_1", "error": "tiff_convert: cannot identify image file '/Users/kevin/bistro/xiai/feicui/var/seal_images/yt/3609.jpg'"}]
+[runner] shard 6 end 2026-10-10T18:25:52+08:00 before={"_total": 6765, "failed": 1, "ok": 6347, "source_no_image": 417} after={"_total": 6765, "failed": 1, "ok": 6347, "source_no_image": 417}
+=== shard 7 start 2026-10-10T18:26:17+08:00 term=6764 ===
+{
+  "total_refs": 6765,
+  "done": 6765,
+  "ok": 6347,
+  "skipped_resume": 6762,
+  "failed": 1,
+  "no_source": 417,
+  "convert_failed": 1,
+  "no_source_500": 0,
+  "workers": 8,
+  "elapsed_s": 3.835,
+  "rate": 1764.02,
+  "status_counts": {
+    "ok": 6347,
+    "failed": 1,
+    "source_no_image": 417,
+    "total": 6765,
+    "source_no_image_by_reason": {
+      "http_500": 415,
+      "nan_ref": 2
+    }
+  },
+  "source_missing": [],
+  "images_root": "/Users/kevin/bistro/xiai/feicui/var/seal_images",
+  "tiff_dir": "/Users/kevin/bistro/xiai/feicui/var/seal_images_tiff"
+}
+FAILURES=[{"seqid": "3609", "kind": "yt", "ref": "2_3609_1", "error": "tiff_convert: cannot identify image file '/Users/kevin/bistro/xiai/feicui/var/seal_images/yt/3609.jpg'"}]
+[runner] shard 7 end 2026-10-10T18:26:21+08:00 before={"_total": 6765, "failed": 1, "ok": 6347, "source_no_image": 417} after={"_total": 6765, "failed": 1, "ok": 6347, "source_no_image": 417}
+[runner] 连续 2 片零进展，停手。
+[runner] DONE 2026-10-10T18:26:21+08:00 {"_total": 6765, "failed": 1, "ok": 6347, "source_no_image": 417}

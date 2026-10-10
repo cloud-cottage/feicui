@@ -10,3 +10,7 @@
 fastapi
 uvicorn
 pydantic
+# 印章采集线（seal-ingest）影像面：JPEG→TIFF 无损容器转换（供 xiai 影像库）。
+# **延迟导入**（`server/app/seals.py::convert_jpeg_to_tiff`）——不装则该步明确报错，不影响采集主链。
+# 安装：`server/.venv/bin/python -m pip install pillow`（本机实测 **12.3.0**）。
+pillow

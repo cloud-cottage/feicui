@@ -1,0 +1,47 @@
+[sync] 200/3679 ok=200 fetched=0 failed=0
+[sync] 400/3679 ok=400 fetched=0 failed=0
+[sync] 600/3679 ok=600 fetched=0 failed=0
+[sync] 800/3679 ok=800 fetched=0 failed=0
+[sync] 1000/3679 ok=1000 fetched=0 failed=0
+[sync] 1200/3679 ok=1200 fetched=0 failed=0
+[sync] 1400/3679 ok=1400 fetched=0 failed=0
+[sync] 1600/3679 ok=1600 fetched=0 failed=0
+[sync] 1800/3679 ok=1800 fetched=0 failed=0
+[sync] 2000/3679 ok=2000 fetched=0 failed=0
+[sync] 2200/3679 ok=2200 fetched=0 failed=0
+[sync] 2400/3679 ok=2400 fetched=0 failed=0
+[sync] 2600/3679 ok=2600 fetched=0 failed=0
+[sync] 2800/3679 ok=2800 fetched=0 failed=0
+[sync] 3000/3679 ok=3000 fetched=0 failed=0
+[sync] 3200/3679 ok=3200 fetched=0 failed=0
+[sync] 3400/3679 ok=3400 fetched=0 failed=0
+[sync] 3600/3679 ok=3600 fetched=0 failed=0
+[sync] 3679/3679 ok=3679 fetched=0 failed=0
+{
+  "batch_id": "seal_20261010_01",
+  "run_kind": "live_ingest",
+  "source_total": 3679,
+  "rows_seen": 3679,
+  "fetched_requests": 0,
+  "fetched_requests_cumulative": 0,
+  "skipped_resume": 0,
+  "seals_ok": 3679,
+  "links_ok": 8964,
+  "remaining": 0,
+  "failed_count": 0,
+  "detail_requests": 0,
+  "detail_unconfirmed_count": 0,
+  "graph_unconfirmed_count": 0,
+  "package_dir": "/Users/kevin/bistro/xiai/feicui/exports/seal_import_seal_20261010_01",
+  "report_path": "/Users/kevin/bistro/xiai/feicui/exports/seal_import_seal_20261010_01/report.json",
+  "content_fingerprint": "e8155837ff2785cbef1466ab7c419c1b3ed52c213fc6f7de2ecf57dc85e3c447",
+  "elapsed_s": 10.213,
+  "last_run_elapsed_s": 10.213,
+  "counts": {
+    "seals": 3679,
+    "links": 8964,
+    "images": 0,
+    "batches": 1
+  }
+}
+FAILURES=[]

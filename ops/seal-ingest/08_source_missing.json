@@ -1,0 +1,698 @@
+{
+  "generated_at": "2026-10-10T18:26:41+08:00",
+  "db": "../var/seal_ingest.db",
+  "target_refs": 6765,
+  "buckets": {
+    "failed": 1,
+    "ok": 6347,
+    "source_no_image": 417
+  },
+  "by_kind": {
+    "yt": {
+      "failed": 1,
+      "ok": 3464,
+      "source_no_image": 214
+    },
+    "ytsw": {
+      "ok": 2424,
+      "source_no_image": 203
+    },
+    "yzbk": {
+      "ok": 459
+    }
+  },
+  "source_missing": {
+    "total": 417,
+    "by_reason": {
+      "http_500": 415,
+      "nan_ref": 2
+    },
+    "by_reason_note": {
+      "http_500": "有界重试后仍 HTTP 500（源侧坏图；站点同图页面 naturalWidth=0）",
+      "nan_ref": "ref 以 NaN_ 开头（源侧无图）"
+    },
+    "by_kind": {
+      "yt": 214,
+      "ytsw": 203
+    },
+    "by_prefix": [
+      {
+        "kind": "yt",
+        "prefix": "2",
+        "reason": "http_500",
+        "count": 5,
+        "sample_seqids": [
+          "1181",
+          "1182",
+          "341",
+          "342",
+          "932"
+        ]
+      },
+      {
+        "kind": "yt",
+        "prefix": "3",
+        "reason": "http_500",
+        "count": 9,
+        "sample_seqids": [
+          "1183",
+          "1184",
+          "1185",
+          "1186",
+          "161"
+        ]
+      },
+      {
+        "kind": "yt",
+        "prefix": "4",
+        "reason": "http_500",
+        "count": 8,
+        "sample_seqids": [
+          "1187",
+          "1188",
+          "349",
+          "350",
+          "351"
+        ]
+      },
+      {
+        "kind": "yt",
+        "prefix": "5",
+        "reason": "http_500",
+        "count": 7,
+        "sample_seqids": [
+          "1189",
+          "1190",
+          "353",
+          "937",
+          "938"
+        ]
+      },
+      {
+        "kind": "yt",
+        "prefix": "6",
+        "reason": "http_500",
+        "count": 8,
+        "sample_seqids": [
+          "1191",
+          "1192",
+          "143",
+          "144",
+          "362"
+        ]
+      },
+      {
+        "kind": "yt",
+        "prefix": "7",
+        "reason": "http_500",
+        "count": 6,
+        "sample_seqids": [
+          "1193",
+          "364",
+          "365",
+          "366",
+          "368"
+        ]
+      },
+      {
+        "kind": "yt",
+        "prefix": "8",
+        "reason": "http_500",
+        "count": 12,
+        "sample_seqids": [
+          "1195",
+          "1196",
+          "1197",
+          "1198",
+          "141"
+        ]
+      },
+      {
+        "kind": "yt",
+        "prefix": "9",
+        "reason": "http_500",
+        "count": 10,
+        "sample_seqids": [
+          "1199",
+          "1201",
+          "148",
+          "203",
+          "371"
+        ]
+      },
+      {
+        "kind": "yt",
+        "prefix": "10",
+        "reason": "http_500",
+        "count": 8,
+        "sample_seqids": [
+          "1203",
+          "1206",
+          "149",
+          "150",
+          "373"
+        ]
+      },
+      {
+        "kind": "yt",
+        "prefix": "11",
+        "reason": "http_500",
+        "count": 11,
+        "sample_seqids": [
+          "1029",
+          "1030",
+          "1208",
+          "1210",
+          "151"
+        ]
+      },
+      {
+        "kind": "yt",
+        "prefix": "12",
+        "reason": "http_500",
+        "count": 11,
+        "sample_seqids": [
+          "1031",
+          "1033",
+          "1034",
+          "1035",
+          "1364"
+        ]
+      },
+      {
+        "kind": "yt",
+        "prefix": "13",
+        "reason": "http_500",
+        "count": 8,
+        "sample_seqids": [
+          "1036",
+          "1037",
+          "1371",
+          "1372",
+          "154"
+        ]
+      },
+      {
+        "kind": "yt",
+        "prefix": "14",
+        "reason": "http_500",
+        "count": 14,
+        "sample_seqids": [
+          "1038",
+          "1039",
+          "1374",
+          "1376",
+          "156"
+        ]
+      },
+      {
+        "kind": "yt",
+        "prefix": "15",
+        "reason": "http_500",
+        "count": 12,
+        "sample_seqids": [
+          "1040",
+          "1041",
+          "1042",
+          "1043",
+          "1377"
+        ]
+      },
+      {
+        "kind": "yt",
+        "prefix": "16",
+        "reason": "http_500",
+        "count": 5,
+        "sample_seqids": [
+          "1044",
+          "1387",
+          "164",
+          "166",
+          "907"
+        ]
+      },
+      {
+        "kind": "yt",
+        "prefix": "17",
+        "reason": "http_500",
+        "count": 14,
+        "sample_seqids": [
+          "1045",
+          "1046",
+          "1047",
+          "1048",
+          "1388"
+        ]
+      },
+      {
+        "kind": "yt",
+        "prefix": "18",
+        "reason": "http_500",
+        "count": 10,
+        "sample_seqids": [
+          "1049",
+          "1050",
+          "1392",
+          "1393",
+          "169"
+        ]
+      },
+      {
+        "kind": "yt",
+        "prefix": "19",
+        "reason": "http_500",
+        "count": 11,
+        "sample_seqids": [
+          "1051",
+          "1052",
+          "1394",
+          "1395",
+          "171"
+        ]
+      },
+      {
+        "kind": "yt",
+        "prefix": "20",
+        "reason": "http_500",
+        "count": 12,
+        "sample_seqids": [
+          "1053",
+          "1054",
+          "1055",
+          "1056",
+          "1396"
+        ]
+      },
+      {
+        "kind": "yt",
+        "prefix": "21",
+        "reason": "http_500",
+        "count": 12,
+        "sample_seqids": [
+          "1057",
+          "1058",
+          "1400",
+          "1401",
+          "177"
+        ]
+      },
+      {
+        "kind": "yt",
+        "prefix": "22",
+        "reason": "http_500",
+        "count": 4,
+        "sample_seqids": [
+          "181",
+          "182",
+          "923",
+          "925"
+        ]
+      },
+      {
+        "kind": "yt",
+        "prefix": "23",
+        "reason": "http_500",
+        "count": 6,
+        "sample_seqids": [
+          "183",
+          "2320",
+          "926",
+          "927",
+          "928"
+        ]
+      },
+      {
+        "kind": "yt",
+        "prefix": "24",
+        "reason": "http_500",
+        "count": 6,
+        "sample_seqids": [
+          "184",
+          "185",
+          "186",
+          "187",
+          "930"
+        ]
+      },
+      {
+        "kind": "yt",
+        "prefix": "38",
+        "reason": "http_500",
+        "count": 2,
+        "sample_seqids": [
+          "540",
+          "542"
+        ]
+      },
+      {
+        "kind": "yt",
+        "prefix": "39",
+        "reason": "http_500",
+        "count": 1,
+        "sample_seqids": [
+          "543"
+        ]
+      },
+      {
+        "kind": "yt",
+        "prefix": "NaN",
+        "reason": "nan_ref",
+        "count": 2,
+        "sample_seqids": [
+          "3921",
+          "3922"
+        ]
+      },
+      {
+        "kind": "ytsw",
+        "prefix": "2",
+        "reason": "http_500",
+        "count": 5,
+        "sample_seqids": [
+          "1181",
+          "1182",
+          "341",
+          "342",
+          "932"
+        ]
+      },
+      {
+        "kind": "ytsw",
+        "prefix": "3",
+        "reason": "http_500",
+        "count": 8,
+        "sample_seqids": [
+          "1183",
+          "1184",
+          "1185",
+          "1186",
+          "346"
+        ]
+      },
+      {
+        "kind": "ytsw",
+        "prefix": "4",
+        "reason": "http_500",
+        "count": 8,
+        "sample_seqids": [
+          "1187",
+          "1188",
+          "349",
+          "350",
+          "351"
+        ]
+      },
+      {
+        "kind": "ytsw",
+        "prefix": "5",
+        "reason": "http_500",
+        "count": 7,
+        "sample_seqids": [
+          "1189",
+          "1190",
+          "353",
+          "937",
+          "938"
+        ]
+      },
+      {
+        "kind": "ytsw",
+        "prefix": "6",
+        "reason": "http_500",
+        "count": 6,
+        "sample_seqids": [
+          "1191",
+          "1192",
+          "362",
+          "363",
+          "941"
+        ]
+      },
+      {
+        "kind": "ytsw",
+        "prefix": "7",
+        "reason": "http_500",
+        "count": 6,
+        "sample_seqids": [
+          "1193",
+          "364",
+          "365",
+          "366",
+          "368"
+        ]
+      },
+      {
+        "kind": "ytsw",
+        "prefix": "8",
+        "reason": "http_500",
+        "count": 10,
+        "sample_seqids": [
+          "1195",
+          "1196",
+          "1197",
+          "1198",
+          "141"
+        ]
+      },
+      {
+        "kind": "ytsw",
+        "prefix": "9",
+        "reason": "http_500",
+        "count": 10,
+        "sample_seqids": [
+          "1199",
+          "1201",
+          "148",
+          "203",
+          "371"
+        ]
+      },
+      {
+        "kind": "ytsw",
+        "prefix": "10",
+        "reason": "http_500",
+        "count": 8,
+        "sample_seqids": [
+          "1203",
+          "1206",
+          "149",
+          "150",
+          "373"
+        ]
+      },
+      {
+        "kind": "ytsw",
+        "prefix": "11",
+        "reason": "http_500",
+        "count": 11,
+        "sample_seqids": [
+          "1029",
+          "1030",
+          "1208",
+          "1210",
+          "151"
+        ]
+      },
+      {
+        "kind": "ytsw",
+        "prefix": "12",
+        "reason": "http_500",
+        "count": 11,
+        "sample_seqids": [
+          "1031",
+          "1033",
+          "1034",
+          "1035",
+          "1364"
+        ]
+      },
+      {
+        "kind": "ytsw",
+        "prefix": "13",
+        "reason": "http_500",
+        "count": 8,
+        "sample_seqids": [
+          "1036",
+          "1037",
+          "1371",
+          "1372",
+          "154"
+        ]
+      },
+      {
+        "kind": "ytsw",
+        "prefix": "14",
+        "reason": "http_500",
+        "count": 12,
+        "sample_seqids": [
+          "1038",
+          "1039",
+          "1374",
+          "1376",
+          "156"
+        ]
+      },
+      {
+        "kind": "ytsw",
+        "prefix": "15",
+        "reason": "http_500",
+        "count": 12,
+        "sample_seqids": [
+          "1040",
+          "1041",
+          "1042",
+          "1043",
+          "1377"
+        ]
+      },
+      {
+        "kind": "ytsw",
+        "prefix": "16",
+        "reason": "http_500",
+        "count": 5,
+        "sample_seqids": [
+          "1044",
+          "1387",
+          "164",
+          "166",
+          "907"
+        ]
+      },
+      {
+        "kind": "ytsw",
+        "prefix": "17",
+        "reason": "http_500",
+        "count": 14,
+        "sample_seqids": [
+          "1045",
+          "1046",
+          "1047",
+          "1048",
+          "1388"
+        ]
+      },
+      {
+        "kind": "ytsw",
+        "prefix": "18",
+        "reason": "http_500",
+        "count": 10,
+        "sample_seqids": [
+          "1049",
+          "1050",
+          "1392",
+          "1393",
+          "169"
+        ]
+      },
+      {
+        "kind": "ytsw",
+        "prefix": "19",
+        "reason": "http_500",
+        "count": 10,
+        "sample_seqids": [
+          "1051",
+          "1052",
+          "1394",
+          "1395",
+          "171"
+        ]
+      },
+      {
+        "kind": "ytsw",
+        "prefix": "20",
+        "reason": "http_500",
+        "count": 12,
+        "sample_seqids": [
+          "1053",
+          "1054",
+          "1055",
+          "1056",
+          "1396"
+        ]
+      },
+      {
+        "kind": "ytsw",
+        "prefix": "21",
+        "reason": "http_500",
+        "count": 12,
+        "sample_seqids": [
+          "1057",
+          "1058",
+          "1400",
+          "1401",
+          "177"
+        ]
+      },
+      {
+        "kind": "ytsw",
+        "prefix": "22",
+        "reason": "http_500",
+        "count": 5,
+        "sample_seqids": [
+          "181",
+          "182",
+          "476",
+          "923",
+          "925"
+        ]
+      },
+      {
+        "kind": "ytsw",
+        "prefix": "23",
+        "reason": "http_500",
+        "count": 5,
+        "sample_seqids": [
+          "183",
+          "926",
+          "927",
+          "928",
+          "929"
+        ]
+      },
+      {
+        "kind": "ytsw",
+        "prefix": "24",
+        "reason": "http_500",
+        "count": 6,
+        "sample_seqids": [
+          "184",
+          "185",
+          "186",
+          "187",
+          "930"
+        ]
+      },
+      {
+        "kind": "ytsw",
+        "prefix": "38",
+        "reason": "http_500",
+        "count": 1,
+        "sample_seqids": [
+          "542"
+        ]
+      },
+      {
+        "kind": "ytsw",
+        "prefix": "64",
+        "reason": "http_500",
+        "count": 1,
+        "sample_seqids": [
+          "1826"
+        ]
+      }
+    ]
+  },
+  "source_missing_rows_count": 417,
+  "failed_rows": [
+    {
+      "seqid": "3609",
+      "kind": "yt",
+      "source_ref": "2_3609_1",
+      "error": "tiff_convert: cannot identify image file '/Users/kevin/bistro/xiai/feicui/var/seal_images/yt/3609.jpg'"
+    }
+  ],
+  "tiff_ready_selfcheck": {
+    "ok_rows": 6347,
+    "not_ready": 0
+  }
+}

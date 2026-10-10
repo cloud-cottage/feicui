@@ -1,0 +1,26 @@
+{
+  "evidence_id": "19_idempotent_replay",
+  "title": "幂等重放（库副本，不动生产库）——指纹与包字节不变",
+  "produced_by": "Kong（第二段收尾）",
+  "method": "sqlite3 '.backup' 生成 var/seal_ingest.replay.db（生产库只读复制）→ 在副本上跑 `app.seals sync --front` 全量重放 → 记读数后删除副本",
+  "production_db_untouched": true,
+  "readings": {
+    "run_kind": "idempotent_replay",
+    "source_total": 3679,
+    "rows_seen": 3679,
+    "fetched_requests": 0,
+    "skipped_resume": 3679,
+    "seals_ok": 3679,
+    "links_ok": 8964,
+    "failed_count": 0,
+    "content_fingerprint_before_replay": "e8155837ff2785cbef1466ab7c419c1b3ed52c213fc6f7de2ecf57dc85e3c447",
+    "content_fingerprint_after_replay": "e8155837ff2785cbef1466ab7c419c1b3ed52c213fc6f7de2ecf57dc85e3c447",
+    "fingerprint_identical": true
+  },
+  "package_byte_identity": {
+    "seals.jsonl": "IDENTICAL (cmp 与生产包逐字节相同)",
+    "seal_links.jsonl": "IDENTICAL (cmp 与生产包逐字节相同)"
+  },
+  "note": "重放零新增（fetched_requests=0，skipped_resume=3679 全跳过）；seals+seal_links 内容指纹与生产库完全一致(e815…)，副本重放出的 seals.jsonl / seal_links.jsonl 与生产包逐字节相同 ⇒ 幂等成立。",
+  "log": "ops/seal-ingest/19_idempotent_replay.log"
+}

@@ -102,6 +102,20 @@ class Settings:
     items_source_base: str = "https://yin.fudan.edu.cn/service_yinpu"
     items_fetch_delay_s: float = 0.5
     items_fetch_timeout_s: float = 30.0
+    # ---- 印章采集（seal-ingest，批 1）：**独立库**，与 yinpu.db / person_ingest.db / item_ingest.db 一字不碰 ----
+    # 落点 `feicui/var/seal_ingest.db`（`var/` 已在 .gitignore 内）；就绪包落点 `feicui/exports/`
+    # （前缀 `seal_import_*`）；影像缓存 `var/seal_images/<kind>/<seqid>.jpg`（JPEG 源）＋
+    # `var/seal_images_tiff/<sha256[:2]>/<sha256>.tiff`（内容寻址 TIFF，供 xiai 影像库）。
+    # `FEICUI_SEALS_DB` / `FEICUI_SEALS_EXPORT_ROOT` / `FEICUI_SEAL_IMAGES_DIR` 等可覆盖（自测用）。
+    seals_db_path: Path = REPO_ROOT / "var" / "seal_ingest.db"
+    seals_export_root: Path = REPO_ROOT / "exports"
+    seals_source_base: str = "https://yin.fudan.edu.cn/service_yinpu"
+    seals_fetch_delay_s: float = 0.5
+    seals_fetch_timeout_s: float = 30.0
+    seal_images_dir: Path = REPO_ROOT / "var" / "seal_images"
+    seal_images_tiff_dir: Path = REPO_ROOT / "var" / "seal_images_tiff"
+    seals_image_delay_s: float = 0.15
+    seals_image_concurrency: int = 1
 
     @property
     def is_prod_db(self) -> bool:
@@ -210,4 +224,33 @@ def get_settings() -> Settings:
         items_fetch_timeout_s=float(
             env.get("FEICUI_ITEMS_FETCH_TIMEOUT") or file_cfg.get("items_fetch_timeout_s") or 30.0
         ),
+        # ---- 印章采集（批 1）：独立库 + 就绪包 + 影像缓存落点（env 覆盖优先）----
+        seals_db_path=Path(
+            env.get("FEICUI_SEALS_DB") or file_cfg.get("seals_db_path") or str(REPO_ROOT / "var" / "seal_ingest.db")
+        ).expanduser().resolve(),
+        seals_export_root=Path(
+            env.get("FEICUI_SEALS_EXPORT_ROOT") or file_cfg.get("seals_export_root") or str(REPO_ROOT / "exports")
+        ).expanduser().resolve(),
+        seals_source_base=str(
+            env.get("FEICUI_SEALS_SOURCE_BASE") or file_cfg.get("seals_source_base") or "https://yin.fudan.edu.cn/service_yinpu"
+        ),
+        seals_fetch_delay_s=float(
+            env.get("FEICUI_SEALS_FETCH_DELAY") or file_cfg.get("seals_fetch_delay_s") or 0.5
+        ),
+        seals_fetch_timeout_s=float(
+            env.get("FEICUI_SEALS_FETCH_TIMEOUT") or file_cfg.get("seals_fetch_timeout_s") or 30.0
+        ),
+        seal_images_dir=Path(
+            env.get("FEICUI_SEAL_IMAGES_DIR") or file_cfg.get("seal_images_dir") or str(REPO_ROOT / "var" / "seal_images")
+        ).expanduser().resolve(),
+        seal_images_tiff_dir=Path(
+            env.get("FEICUI_SEAL_IMAGES_TIFF_DIR") or file_cfg.get("seal_images_tiff_dir")
+            or str(REPO_ROOT / "var" / "seal_images_tiff")
+        ).expanduser().resolve(),
+        seals_image_delay_s=float(
+            env.get("FEICUI_SEALS_IMAGE_DELAY") or file_cfg.get("seals_image_delay_s") or 0.15
+        ),
+        seals_image_concurrency=max(1, int(
+            env.get("FEICUI_SEALS_IMAGE_CONCURRENCY") or file_cfg.get("seals_image_concurrency") or 1
+        )),
     )

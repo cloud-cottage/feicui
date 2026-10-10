@@ -3,7 +3,7 @@
 // 三区：① 采集区（触发同步 / 进度 / 上次结果 / 批次列表）② 列表区（570 条 + 筛选 + 分页）③ 详情区（含关联印谱/印章）。
 // 纪律：界面文案简体；**源数据原样呈现（繁 / 简两版可见）**，本地不改写源数据；后端不可达 ⇒ 沿用既有「未连接」横幅口径，绝不用假数据填充。
 import { computed, onMounted, reactive, ref } from 'vue'
-import { listPersons, getPerson, listBatches, syncPersons } from '@/api/persons'
+import { listPersons, getPerson, listBatches, syncPersons, generateImportPackage, listImportPackages } from '@/api/persons'
 import { describeFailure } from '@/api/client'
 import { useBackendStatus } from '@/composables/useBackendStatus'
 import StateNotice from '@/components/StateNotice.vue'
@@ -25,6 +25,11 @@ const listState = ref({ kind: 'loading', items: null, page: 1, limit: 50, total:
 
 // ── 详情区 ────────────────────────────────────────────────────────────────
 const detailState = ref({ kind: 'idle', person: null, detail: '', raw: '' })
+
+// ── 导入包区（xiai 就绪导入包：从本库重建，**不联网采集**；**不写 xiai 任何文件**）──────
+const importForm = reactive({ batch_id: '' })
+const importState = ref({ kind: 'idle', result: null, detail: '', raw: '', at: '' })
+const importListState = ref({ kind: 'idle', items: null, detail: '', raw: '' })
 
 // 交付缝 §3.15.10：`/api/persons/{grbsm}` 的字/号/别名六字段现回**真数组**；
 // 兼容历史「JSON 字符串」形态（两形态都吃）。
@@ -132,6 +137,43 @@ async function triggerSync() {
   }
 }
 
+async function triggerImportPackage() {
+  importState.value = { kind: 'running', result: null, detail: '', raw: '', at: nowStamp() }
+  const batch_id = importForm.batch_id.trim() || undefined
+  try {
+    const res = await generateImportPackage({ batch_id })
+    if (res.status === 200 && res.body && res.body.package_dir) {
+      importState.value = { kind: 'ok', result: res.body, detail: '', raw: res.raw, at: nowStamp() }
+      await loadImportPackages()
+    } else {
+      importState.value = { kind: 'error', result: null, detail: `HTTP ${res.status}`,
+        raw: res.raw || rawBodyText(res.body), at: nowStamp() }
+    }
+  } catch (e) {
+    const f = describeFailure(e)
+    if (f.kind === 'backend-down') markBackendDown(f.detail)
+    importState.value = { kind: f.kind === 'backend-down' ? 'backend-down' : 'error',
+      result: null, detail: f.message, raw: '', at: nowStamp() }
+  }
+}
+
+async function loadImportPackages() {
+  importListState.value = { ...importListState.value, kind: 'loading', detail: '' }
+  try {
+    const res = await listImportPackages()
+    if (res.status === 200 && res.body && Array.isArray(res.body.items)) {
+      importListState.value = { kind: 'ok', items: res.body.items, detail: '', raw: res.raw }
+    } else {
+      importListState.value = { kind: 'error', items: null, detail: '导入包列表接口返回形状不符合预期', raw: res.raw }
+    }
+  } catch (e) {
+    const f = describeFailure(e)
+    if (f.kind === 'backend-down') markBackendDown(f.detail)
+    importListState.value = { kind: f.kind === 'backend-down' ? 'backend-down' : 'error',
+      items: null, detail: f.message, raw: '' }
+  }
+}
+
 function applyFilters() {
   loadList(1)
 }
@@ -147,6 +189,7 @@ function resetFilters() {
 onMounted(() => {
   loadBatches()
   loadList(1)
+  loadImportPackages()
 })
 
 const totalPages = computed(() => {
@@ -447,6 +490,87 @@ function relCount(p, kind) {
           <summary>原始响应体（GET /api/persons/{grbsm}，原样展示，未改写）</summary>
           <pre>{{ detailState.raw }}</pre>
         </details>
+      </template>
+    </div>
+
+    <!-- ── ④ 导入包区（xiai 就绪导入包：从本库重建，不联网采集）────────── -->
+    <div class="card">
+      <div class="card__head"><h3>导入包（xiai 就绪）</h3>
+        <button class="ghost" type="button" @click="loadImportPackages">刷新已生成</button>
+      </div>
+      <p class="page__sub">
+        生成 <b>按 xiai 键面裁剪好</b> 的导入载荷，落到 <code>exports/person_import_&lt;batch_id&gt;/</code>：
+        主交付 <code>person_imports.jsonl</code>（<b>逐行恰 xiai 现行 18 键</b>，字/号/别名降为 <code>string[]</code>）
+        ＋ sidecar <code>person_imports_extraction.jsonl</code>（extraction 标注，不含 <code>from</code>）
+        ＋ <code>manifest.json</code>。从 feicui 本库重建，<b>不联网采集</b>；<b>不写 xiai 任何文件</b>。
+        <b>提交与审核在玺爱侧</b>：导入先落 <code>xiai_person_imports</code>（PENDING），管理员批量采纳后方成正式印人。
+      </p>
+
+      <div class="field-row">
+        <label class="field field--sm">
+          <span class="field__label">源批次号 batch_id（留空＝库内最新批次）</span>
+          <input v-model="importForm.batch_id" type="text" placeholder="如 person_20261010_01" />
+        </label>
+        <div class="actions">
+          <button type="button" :disabled="importState.kind === 'running'" @click="triggerImportPackage">
+            {{ importState.kind === 'running' ? '生成中…' : '生成 xiai 就绪导入包' }}
+          </button>
+        </div>
+      </div>
+
+      <StateNotice v-if="importState.kind === 'running'" kind="loading"
+        title="正在请求 POST /api/persons/import-package …"
+        :detail="`服务端从本库重建（不联网）；响应时点 ${importState.at}`" />
+      <StateNotice v-else-if="importState.kind === 'backend-down'" kind="backend-down"
+        title="后端未启动 / 未连接：导入包未能生成" :detail="`${importState.detail || '—'}；时点 ${importState.at}`" />
+      <StateNotice v-else-if="importState.kind === 'error'" kind="error"
+        title="生成导入包失败（原样展示，不假数据）" :raw-text="importState.raw"
+        :detail="`${importState.detail || ''}；时点 ${importState.at}`" />
+
+      <template v-else-if="importState.kind === 'ok'">
+        <table class="kv"><tbody>
+          <tr><th>包目录</th><td><code>{{ importState.result.package_dir }}</code></td></tr>
+          <tr><th>行数（应 570）</th><td><b>{{ importState.result.rows }}</b> 行 · 源批次 <code>{{ importState.result.batch_id }}</code></td></tr>
+          <tr><th>校验摘要</th><td>
+            键面 diff ⇒ 多余键 <code>{{ importState.result.key_face.extra_count }}</code>（须 0）／
+            缺失键 <code>{{ importState.result.key_face.missing_keys.length }}</code>（须 0）／
+            xiai 允许键 <code>{{ importState.result.key_face.xiai_allowed_keys_count }}</code>；
+            幂等键 <code>source_person_id</code> 非空 / 唯一 / 总行 ＝
+            <code>{{ importState.result.idempotency.non_null }} / {{ importState.result.idempotency.unique }} / {{ importState.result.idempotency.total }}</code>；
+            三桶均 <code>string[]</code> ⇒ <code>{{ importState.result.checks.three_buckets_all_string_arrays ? '是' : '否' }}</code>；
+            sidecar 等长 ⇒ <code>{{ importState.result.checks.sidecar_lengths_match ? '是' : '否' }}</code>；
+            无 BOM ⇒ <code>{{ importState.result.checks.main_no_bom && importState.result.checks.sidecar_no_bom ? '是' : '否' }}</code>
+          </td></tr>
+          <tr><th>sidecar</th><td><code>{{ importState.result.sidecar.file }}</code>（{{ importState.result.sidecar.keys.join('、') }}；<b>不含 from</b>）</td></tr>
+          <tr><th>提交 / 审核</th><td>{{ importState.result.submission }}</td></tr>
+        </tbody></table>
+        <details class="notice__raw">
+          <summary>原始响应体（POST /api/persons/import-package，原样展示，未改写）</summary>
+          <pre>{{ importState.raw }}</pre>
+        </details>
+      </template>
+
+      <h4>已生成导入包</h4>
+      <StateNotice v-if="importListState.kind === 'loading'" kind="loading" title="正在请求 GET /api/persons/import-packages …" />
+      <StateNotice v-else-if="importListState.kind === 'backend-down'" kind="backend-down"
+        title="后端未启动 / 未连接：导入包列表无法获取" :detail="importListState.detail || '—'" />
+      <StateNotice v-else-if="importListState.kind === 'error'" kind="error"
+        title="导入包列表接口报错（原样展示）" :raw-text="importListState.raw" :detail="importListState.detail" />
+      <template v-else-if="importListState.kind === 'ok'">
+        <table v-if="importListState.items.length" class="table">
+          <thead><tr><th>包目录</th><th>源批次</th><th>行数</th><th>多余键</th><th>幂等 唯一/总</th><th>生成时点</th></tr></thead>
+          <tbody>
+            <tr v-for="it in importListState.items" :key="it.package_dir">
+              <td><code>{{ it.dir_name }}</code></td>
+              <td><code>{{ it.source_batch || '—' }}</code></td>
+              <td>{{ nilDash(it.rows) }}</td>
+              <td>{{ it.key_face_diff ? it.key_face_diff.extra_count : '—' }}</td>
+              <td>{{ it.idempotency ? `${it.idempotency.unique} / ${it.idempotency.total}` : '—' }}</td>
+              <td>{{ it.generated_at || '—' }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <StateNotice v-else kind="empty" title="本机暂无导入包" detail="点上方按钮生成。" />
       </template>
     </div>
   </section>

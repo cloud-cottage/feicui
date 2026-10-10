@@ -1,0 +1,189 @@
+{
+  "generated_at": "2026-10-10T13:05:55+08:00",
+  "contract": "docs/person-ingest-handoff-v0.1.md §7.2（xiai 现行 18 键）",
+  "xiai_allowed_keys": [
+    "batch_id",
+    "source",
+    "source_person_id",
+    "name_full",
+    "family_name",
+    "given_name",
+    "courtesy_names",
+    "art_names",
+    "alias_names",
+    "birth_year",
+    "death_year",
+    "native_place",
+    "native_place_chs",
+    "biography",
+    "biography_chs",
+    "nationality",
+    "cbdb_id",
+    "source_id"
+  ],
+  "xiai_allowed_keys_count": 18,
+  "package_dir": "/Users/kevin/bistro/xiai/feicui/exports/person_import_person_20261010_01",
+  "positive": {
+    "main_path": "/Users/kevin/bistro/xiai/feicui/exports/person_import_person_20261010_01/person_imports.jsonl",
+    "sidecar_path": "/Users/kevin/bistro/xiai/feicui/exports/person_import_person_20261010_01/person_imports_extraction.jsonl",
+    "main_bytes": 920841,
+    "checks": [
+      {
+        "name": "key_face（键面 ⊆ xiai 18 键，无多键）",
+        "ok": true,
+        "extra_keys": [],
+        "missing_keys": [],
+        "allowed_count": 18,
+        "detail": "多余键 0（须 0）／缺失键 0；允许键面 18 键"
+      },
+      {
+        "name": "buckets（三桶均 list[str]，元素非空）",
+        "ok": true,
+        "violations": [],
+        "violations_total": 0,
+        "detail": "违规 0 处（须 0）"
+      },
+      {
+        "name": "sidecar（extraction 等长 · rule-based）",
+        "ok": true,
+        "violations": [],
+        "violations_total": 0,
+        "detail": "违规 0 处（须 0）"
+      },
+      {
+        "name": "rows/id/bom（行数=期望 · 幂等键非空唯一 · 无 BOM · 一行一对象）",
+        "ok": true,
+        "rows": 570,
+        "expected_rows": 570,
+        "id_non_null": 570,
+        "id_unique": 570,
+        "has_bom": false,
+        "parse_errors": [],
+        "parse_errors_total": 0,
+        "detail": "行数 570（期望 570）／幂等键非空 570 唯一 570／BOM=无／坏行 0"
+      }
+    ],
+    "all_pass": true,
+    "verdict": "PASS"
+  },
+  "negative_control": {
+    "main_path": "/Users/kevin/bistro/xiai/feicui/exports/person_20261010_01/persons.jsonl",
+    "sidecar_path": null,
+    "main_bytes": 3115127,
+    "checks": [
+      {
+        "name": "key_face（键面 ⊆ xiai 18 键，无多键）",
+        "ok": false,
+        "extra_keys": [
+          "alias_names_chs",
+          "art_names_chs",
+          "birth_death_text",
+          "courtesy_names_chs",
+          "flag",
+          "initial",
+          "name_extraction",
+          "name_full_chs",
+          "nationality_chs",
+          "nationality_code",
+          "notes",
+          "raw_json",
+          "source_data_source_id",
+          "source_seqid",
+          "spell"
+        ],
+        "missing_keys": [
+          "batch_id"
+        ],
+        "allowed_count": 18,
+        "detail": "多余键 15（须 0）／缺失键 1；允许键面 18 键"
+      },
+      {
+        "name": "buckets（三桶均 list[str]，元素非空）",
+        "ok": false,
+        "violations": [
+          "行 1 courtesy_names[0]：非非空字符串（{'value': '容光', 'kind': '字', 'extraction': 'rule-based', 'from': 'personBm'}）",
+          "行 1 courtesy_names[1]：非非空字符串（{'value': '子青', 'kind': '字', 'extraction': 'rule-based', 'from': 'personBm'}）",
+          "行 1 courtesy_names[2]：非非空字符串（{'value': '鳴之', 'kind': '字', 'extraction': 'rule-based', 'from': 'personBm'}）",
+          "行 1 courtesy_names[3]：非非空字符串（{'value': '飴之', 'kind': '字', 'extraction': 'rule-based', 'from': 'personBm'}）",
+          "行 1 art_names[0]：非非空字符串（{'value': '曉樓', 'kind': '號', 'extraction': 'rule-based', 'from': 'personBm'}）",
+          "行 1 art_names[1]：非非空字符串（{'value': '曉罍', 'kind': '號', 'extraction': 'rule-based', 'from': 'personBm'}）",
+          "行 1 art_names[2]：非非空字符串（{'value': '笑罍', 'kind': '號', 'extraction': 'rule-based', 'from': 'personBm'}）",
+          "行 1 art_names[3]：非非空字符串（{'value': '肖雷', 'kind': '號', 'extraction': 'rule-based', 'from': 'personBm'}）",
+          "行 1 art_names[4]：非非空字符串（{'value': '桑間居士', 'kind': '別署', 'extraction': 'rule-based', 'from': 'personBm'}）",
+          "行 1 art_names[5]：非非空字符串（{'value': '太白山人', 'kind': '別署', 'extraction': 'rule-based', 'from': 'personBm'}）",
+          "行 1 art_names[6]：非非空字符串（{'value': '梅花琴客', 'kind': '別署', 'extraction': 'rule-based', 'from': 'personBm'}）",
+          "行 1 art_names[7]：非非空字符串（{'value': '白雲亭長', 'kind': '別署', 'extraction': 'rule-based', 'from': 'personBm'}）",
+          "行 1 art_names[8]：非非空字符串（{'value': '二樂居士', 'kind': '別署', 'extraction': 'rule-based', 'from': 'personBm'}）",
+          "行 1 art_names[9]：非非空字符串（{'value': '春波漁隱', 'kind': '別署', 'extraction': 'rule-based', 'from': 'personBm'}）",
+          "行 1 alias_names[0]：非非空字符串（{'value': '郭容光', 'kind': '名', 'extraction': 'rule-based', 'from': 'personBm'}）",
+          "行 1 alias_names[1]：非非空字符串（{'value': '隱吾草堂', 'kind': '齋名', 'extraction': 'rule-based', 'from': 'personBm'}）",
+          "行 1 alias_names[2]：非非空字符串（{'value': '鐵如意室', 'kind': '齋名', 'extraction': 'rule-based', 'from': 'personBm'}）",
+          "行 2 courtesy_names[0]：非非空字符串（{'value': '曼青', 'kind': '字', 'extraction': 'rule-based', 'from': 'personBm'}）",
+          "行 2 courtesy_names[1]：非非空字符串（{'value': '曼卿', 'kind': '字', 'extraction': 'rule-based', 'from': 'personBm'}）",
+          "行 2 courtesy_names[2]：非非空字符串（{'value': '蔓菁', 'kind': '字', 'extraction': 'rule-based', 'from': 'personBm'}）"
+        ],
+        "violations_total": 3869,
+        "detail": "违规 3869 处（须 0）"
+      },
+      {
+        "name": "sidecar（extraction 等长 · rule-based）",
+        "ok": false,
+        "detail": "sidecar 缺失（无 person_imports_extraction.jsonl）"
+      },
+      {
+        "name": "rows/id/bom（行数=期望 · 幂等键非空唯一 · 无 BOM · 一行一对象）",
+        "ok": true,
+        "rows": 570,
+        "expected_rows": 570,
+        "id_non_null": 570,
+        "id_unique": 570,
+        "has_bom": false,
+        "parse_errors": [],
+        "parse_errors_total": 0,
+        "detail": "行数 570（期望 570）／幂等键非空 570 唯一 570／BOM=无／坏行 0"
+      }
+    ],
+    "all_pass": false,
+    "verdict": "FAIL"
+  },
+  "negative_control_expected": "FAIL",
+  "negative_control_ok": true,
+  "manifest_checks": {
+    "rows": 570,
+    "key_face_diff_zero": true,
+    "extra_keys": [],
+    "missing_keys": [],
+    "idempotency_non_null": 570,
+    "idempotency_unique": 570,
+    "idempotency_total": 570,
+    "idempotency_all_non_null_and_unique": true,
+    "three_buckets_all_string_arrays": true,
+    "main_no_bom": true,
+    "sidecar_no_bom": true,
+    "sidecar_lengths_match": true,
+    "sidecar_elements_all_rule_based": true
+  },
+  "first_line_main": "{\"batch_id\": \"person_20261010_01\", \"source\": \"林章松《印人小传》\", \"source_person_id\": \"900289963\", \"name_full\": \"郭照\", \"family_name\": \"郭\", \"given_name\": \"照\", \"courtesy_names\": [\"容光\", \"子青\", \"鳴之\", \"飴之\"], \"art_names\": [\"曉樓\", \"曉罍\", \"笑罍\", \"肖雷\", \"桑間居士\", \"太白山人\", \"梅花琴客\", \"白雲亭長\", \"二樂居士\", \"春波漁隱\"], \"alias_names\": [\"郭容光\", \"隱吾草堂\", \"鐵如意室\"], \"birth_year\": 1827, \"death_year\": 1895, \"native_place\": \"浙江秀水（今嘉興）人。\", \"native_place_chs\": \"浙江秀水（今嘉兴）人。\", \"biography\": \"郭照(容光)。1827-1895。浙江秀水(今嘉興)人。字容光，一字子青，號曉樓，一號曉罍、笑罍、肖雷，後更名郭容光，字鳴之，一字飴之，號肖雷，別署桑間居士、太白山人、梅花琴客、白雲亭長、二樂居士、春波漁隱，齋名為隱吾草堂、鐵如意室。工書，擅畫，書似倪瓚，善畫花卉、翎毛，兼擅篆刻。所交皆一時俊彥，特別是江浙一帶藝壇人物，采錄生平，故交之能書善畫者約數十百人，搜訪輯佚，有功藝林。有《藝林悼友錄》、《甲子紀年表》、《焚餘印存》、《隱吾草堂詩集》、《鐵如意室題畫雜綴》存世。\", \"biography_chs\": \"郭照(容光)。1827-1895。浙江秀水(今嘉兴)人。字容光，一字子青，号晓楼，一号晓罍、笑罍、肖雷，后更名郭容光，字鸣之，一字饴之，号肖雷，别署桑间居士、太白山人、梅花琴客、白云亭长、二乐居士、春波渔隐，斋名为隐吾草堂、铁如意室。工书，擅画，书似倪瓒，善画花卉、翎毛，兼擅篆刻。所交皆一时俊彦，特别是江浙一带艺坛人物，采录生平，故交之能书善画者约数十百人，搜访辑佚，有功艺林。有《艺林悼友录》、《甲子纪年表》、《焚余印存》、《隐吾草堂诗集》、《铁如意室题画杂缀》存世。\", \"nationality\": \"中國\", \"cbdb_id\": null, \"source_id\": \"RW2132\"}",
+  "overall": "PASS",
+  "browser_verification": {
+    "tool": "browser_exec",
+    "url": "http://localhost:5164/feicui/persons",
+    "page_title": "🐴 斐萃｜印谱解析任务台",
+    "button_label": "生成 xiai 就绪导入包",
+    "click_result": "CLICKED",
+    "onscreen": {
+      "package_dir": "/Users/kevin/bistro/xiai/feicui/exports/person_import_person_20261010_01",
+      "rows": 570,
+      "source_batch": "person_20261010_01",
+      "extra_keys": 0,
+      "missing_keys": 0,
+      "xiai_allowed_keys": 18,
+      "idempotency_non_null_unique_total": "570 / 570 / 570",
+      "three_buckets_string_array": true,
+      "sidecar_lengths_match": true,
+      "no_bom": true,
+      "submission_note": "提交与审核在玺爱侧"
+    },
+    "raw_text_file": "13_import_package.txt"
+  }
+}

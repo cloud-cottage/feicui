@@ -35,6 +35,26 @@ ALLOWED_QUERY_PARAMS = frozenset({
     "page", "limit", "initial", "nationality", "has_dates", "has_relations", "q", "with_facets",
 })
 
+# 「导入包」端点**支持的查询参数白名单**（沿既有惯例：**未白名单参数一律 400**，绝不静默忽略）。
+#   * `POST /api/persons/import-package`：仅 `batch_id`（可选，缺省＝库内最新批次）；
+#   * `GET  /api/persons/import-packages`：无查询参数。
+IMPORT_PACKAGE_QUERY_PARAMS = frozenset({"batch_id"})
+
+
+def _reject_unsupported_query(request: Request, allowed: frozenset[str]) -> None:
+    """未白名单查询参数 ⇒ **400 结构化 JSON**（沿 `list_persons` 既有惯例，绝不静默忽略）。"""
+    unsupported = sorted(k for k in request.query_params.keys() if k not in allowed)
+    if unsupported:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": "UNSUPPORTED_PARAM",
+                "detail": f"不支持的查询参数：{unsupported}。支持的参数：{sorted(allowed)}",
+                "unsupported": unsupported,
+                "supported": sorted(allowed),
+            },
+        )
+
 
 def _settings() -> Settings:
     return get_settings()
@@ -120,6 +140,42 @@ def list_batches(st: Settings = Depends(_settings)) -> dict:
     persons.ensure_schema(st.person_db_path)
     items = persons.list_batches(st.person_db_path)
     return {"items": items, "total": len(items), "_db_path": str(st.person_db_path)}
+
+
+# ── 导入包（**须在 `/{grbsm}` 之前声明**，否则 `import-packages` 会被当作 grbsm 吞掉）──
+@router.post("/import-package")
+def create_import_package(
+    request: Request,
+    batch_id: str | None = Query(default=None, description="源批次号（缺省＝库内最新批次）"),
+    st: Settings = Depends(_settings),
+) -> dict:
+    """`POST /api/persons/import-package` —— 生成 **xiai 就绪导入包**（**从 feicui 本库重建，不联网采集**）。
+
+    产物目录 `exports/person_import_<batch_id>/`：主交付 `person_imports.jsonl`（**逐行恰 xiai 现行 18 键**）
+    ＋ sidecar `person_imports_extraction.jsonl`（extraction 标注，不含 `from`）＋ `manifest.json`。
+
+    * **不写 xiai 任何文件、不调任何云函数**（提交与审核在玺爱侧）；本端点只产 feicui 自有树内产物；
+    * 未白名单查询参数 ⇒ **400**；批次不存在 ⇒ **404**（`BATCH_NOT_FOUND`）；库内无批次 ⇒ **404**（`NO_BATCH`）。
+    """
+    _reject_unsupported_query(request, IMPORT_PACKAGE_QUERY_PARAMS)
+    try:
+        summary = persons.write_import_package(
+            db_path=st.person_db_path, export_root=st.person_export_root, batch_id=(batch_id or None),
+        )
+    except persons.ImportPackageError as exc:
+        status = 404 if exc.code in {"BATCH_NOT_FOUND", "NO_BATCH"} else 409
+        raise HTTPException(status_code=status, detail={"error": exc.code, "detail": str(exc)})
+    log.info("xiai 就绪导入包已生成：batch_id=%s rows=%s dir=%s",
+             summary["batch_id"], summary["rows"], summary["package_dir"])
+    return summary
+
+
+@router.get("/import-packages")
+def list_import_packages(request: Request, st: Settings = Depends(_settings)) -> dict:
+    """`GET /api/persons/import-packages` —— 列出已生成的导入包与其摘要（读各包 `manifest.json`，缺则如实标错）。"""
+    _reject_unsupported_query(request, frozenset())
+    items = persons.list_import_packages(st.person_export_root)
+    return {"items": items, "total": len(items), "_export_root": str(st.person_export_root)}
 
 
 @router.post("/sync")

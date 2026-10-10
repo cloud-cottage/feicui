@@ -113,6 +113,41 @@ EXTRACTION = "rule-based"  # 逐项标注：抽取（非权威分类）
 RATE_LIMIT_MARKER = '{"msg":"操作频繁，请稍候再试!","code":"429","status":"true"}'  # 陷阱形态原文
 
 
+# ═══════════════════════════════════════════════════════════ xiai 就绪导入包（交接件 §7 交付缝扩展）
+# xiai 侧 `submitPersonImport` 的**封闭允许键**——**跨仓契约，只引用不复制**：
+#   源 ＝ xiai 仓 `cloudfunctions/xiai-user-token/lib/ops.js::PERSON_IMPORT_ALLOWED_KEYS`（**恰 18 键**）。
+# **多一个键** ⇒ xiai 判 `INVALID_FIELD`「载荷含未知字段」＋**零写入**
+#   ⇒ 主交付 `person_imports.jsonl` **必须严格限定在这 18 键**（键序即本元组序）。
+XIAI_PERSON_IMPORT_ALLOWED_KEYS: tuple[str, ...] = (
+    "batch_id", "source", "source_person_id", "name_full", "family_name", "given_name",
+    "courtesy_names", "art_names", "alias_names", "birth_year", "death_year",
+    "native_place", "native_place_chs", "biography", "biography_chs",
+    "nationality", "cbdb_id", "source_id",
+)
+# 三桶（Kevin 2026-10-10 裁定）：主交付**降为 `string[]`（只传 `value`，保持原顺序）**。
+IMPORT_THREE_BUCKETS: tuple[str, ...] = ("courtesy_names", "art_names", "alias_names")
+# sidecar：extraction 标注（值恒 `'rule-based'`；**不含 `from`**）。
+# 这 3 个键**待 xiai 走自己的规范流程扩键面后并入**主交付；扩键前主交付已可正常提交（不阻塞）。
+IMPORT_SIDECAR_EXTRACTION_KEYS: tuple[str, ...] = (
+    "courtesy_names_extraction", "art_names_extraction", "alias_names_extraction",
+)
+IMPORT_PACKAGE_SCHEMA_VERSION = 1
+# 明确**不得**进主交付的 feicui 侧多余键（供自检 diff；多键 ⇒ xiai 零写入）。
+IMPORT_FORBIDDEN_EXTRA_KEYS: tuple[str, ...] = (
+    "source_seqid", "source_data_source_id", "name_full_chs", "name_extraction",
+    "courtesy_names_chs", "art_names_chs", "alias_names_chs", "birth_death_text",
+    "nationality_chs", "nationality_code", "spell", "initial", "flag", "notes", "raw_json",
+)
+
+
+class ImportPackageError(RuntimeError):
+    """生成 xiai 就绪导入包失败（结构化错误 ⇒ 路由层落 400/404/409 JSON，**绝不返 HTML**）。"""
+
+    def __init__(self, code: str, message: str):
+        super().__init__(message)
+        self.code = code
+
+
 # ═══════════════════════════════════════════════════════════════════════════ HTTP（stdlib）
 class FetchError(RuntimeError):
     """单条取数失败（网络 / 非 200 / 信封异常）⇒ 计入失败清单，**不静默跳过**。"""
@@ -1091,6 +1126,281 @@ def _coverage(persons: list[dict]) -> dict:
             f" ({(sum(1 for p in persons if fn(p)) / n):.1%})" for k, fn in keys.items()}
 
 
+# ═══════════════════════════════════════════════════════════ xiai 就绪导入包（§7）
+def _import_bucket_values(items: Any) -> list[str]:
+    """库内三桶（`list[{value,kind,extraction,from}]`）→ `string[]`（**只 `value`、保持原顺序**）。
+
+    只收**非空字符串**元素（坏值 / `None` / 空串跳过）；幂等：真数组 / JSON 数组文本都吃。
+    """
+    out: list[str] = []
+    for item in decode_name_list(items):
+        v = item.get("value") if isinstance(item, dict) else item
+        if v is None:
+            continue
+        s = str(v).strip()
+        if s:
+            out.append(s)
+    return out
+
+
+def build_import_payload(person: dict) -> tuple[dict, dict]:
+    """单条 feicui person 行 →（主交付 18 键行, extraction sidecar 行）。
+
+    * 主交付**逐键严格取自 `XIAI_PERSON_IMPORT_ALLOWED_KEYS`**（键序＝该元组序；**绝不带多键**）；
+    * 三桶降为 `string[]`（只 `value`）；`birth_year` / `death_year` 整数或 `null`；
+    * sidecar 三数组与对应值数组**等长**、元素恒 `'rule-based'`（**不含 `from`**）。
+    """
+    row: dict[str, Any] = {}
+    buckets: dict[str, list[str]] = {}
+    for k in XIAI_PERSON_IMPORT_ALLOWED_KEYS:
+        if k in IMPORT_THREE_BUCKETS:
+            vals = _import_bucket_values(person.get(k))
+            buckets[k] = vals
+            row[k] = vals
+        elif k in ("birth_year", "death_year"):
+            v = person.get(k)
+            if v is None or v == "":
+                row[k] = None
+            else:
+                try:
+                    row[k] = int(v)
+                except (TypeError, ValueError):
+                    row[k] = None
+        else:
+            row[k] = person.get(k)
+    side: dict[str, Any] = {"source_person_id": row.get("source_person_id")}
+    for bucket, side_key in zip(IMPORT_THREE_BUCKETS, IMPORT_SIDECAR_EXTRACTION_KEYS):
+        side[side_key] = [EXTRACTION for _ in buckets[bucket]]
+    return row, side
+
+
+def _no_bom(path: Path) -> bool:
+    """文件是否**无 BOM**（读前 3 字节与 UTF-8 BOM 比对；**不**用 md5）。"""
+    with Path(path).open("rb") as fh:
+        return fh.read(3) != b"\xef\xbb\xbf"
+
+
+def list_import_packages(export_root: Path | str) -> list[dict]:
+    """扫描 `exports/person_import_*/` 逐个读 `manifest.json` 出**摘要**（缺 manifest ⇒ 如实标错）。"""
+    root = Path(export_root)
+    out: list[dict] = []
+    if not root.is_dir():
+        return out
+    for p in sorted(root.glob("person_import_*"), reverse=True):
+        if not p.is_dir():
+            continue
+        summary: dict[str, Any] = {"package_dir": str(p), "dir_name": p.name, "manifest_ok": False}
+        man = p / "manifest.json"
+        if man.is_file():
+            try:
+                m = json.loads(man.read_text(encoding="utf-8"))
+                summary.update({
+                    "manifest_ok": True,
+                    "schema_version": m.get("schema_version"),
+                    "source_batch": m.get("source_batch"),
+                    "generated_at": m.get("generated_at"),
+                    "rows": m.get("rows"),
+                    "key_face_diff": m.get("key_face_diff"),
+                    "idempotency": m.get("idempotency"),
+                    "checks": m.get("checks"),
+                    "sidecar_pending_keys": (m.get("sidecar") or {}).get("pending_xiai_keys"),
+                })
+            except Exception as exc:  # 坏 manifest ⇒ 如实报错，不猜
+                summary["error"] = f"manifest 读取失败：{type(exc).__name__}: {exc}"
+        else:
+            summary["error"] = "缺 manifest.json"
+        out.append(summary)
+    return out
+
+
+def write_import_package(*, db_path: Path, export_root: Path, batch_id: str | None = None) -> dict:
+    """**从 feicui 本库重建** xiai 就绪导入包（**不联网采集**；只加法，不动 E1〜E7 与既有批次包）。
+
+    产物目录 `exports/person_import_<batch_id>/`：
+      * `person_imports.jsonl`（**主交付**，逐行恰 xiai 现行 **18 键**，可直接提交）；
+      * `person_imports_extraction.jsonl`（**sidecar**，extraction 标注；不含 `from`）；
+      * `manifest.json`（键面 diff / 幂等键计数 / sidecar 说明 / 校验读数）。
+
+    `batch_id` 缺省 ⇒ 取库内**最新批次**。错误一律 `ImportPackageError`（结构化）。
+    """
+    ensure_schema(db_path)
+    conn = _connect(db_path)
+    try:
+        if batch_id:
+            if conn.execute("SELECT 1 FROM person_import_batches WHERE batch_id=?",
+                            (batch_id,)).fetchone() is None:
+                raise ImportPackageError("BATCH_NOT_FOUND", f"批次不存在：{batch_id}")
+        else:
+            r = conn.execute(
+                "SELECT batch_id FROM person_import_batches ORDER BY batch_id DESC LIMIT 1").fetchone()
+            if r is None:
+                raise ImportPackageError("NO_BATCH", "本库尚无任何批次 ⇒ 无法生成导入包（先跑 POST /api/persons/sync）")
+            batch_id = r["batch_id"]
+        bid: str = str(batch_id)  # 至此必为非空字符串（已校验 / 已取库内最新）
+        src_batch = get_batch(db_path, bid) or {}
+        rows = conn.execute(
+            f"SELECT {', '.join(PERSON_FIELDS)}, batch_id FROM persons "
+            f"WHERE batch_id=? ORDER BY source_person_id", (bid,)).fetchall()
+        persons_rows: list[dict] = []
+        for r in rows:
+            d = dict(r)
+            for col in NAME_LIST_FIELDS:
+                d[col] = decode_name_list(d.get(col))
+            persons_rows.append(d)
+    finally:
+        conn.close()
+
+    main_rows: list[dict] = []
+    side_rows: list[dict] = []
+    for p in persons_rows:
+        m, s = build_import_payload(p)
+        m["batch_id"] = p.get("batch_id") or batch_id  # 18 键之一：源批次号（必填）
+        main_rows.append(m)
+        side_rows.append(s)
+
+    pkg_dir = Path(export_root) / f"person_import_{batch_id}"
+    pkg_dir.mkdir(parents=True, exist_ok=True)
+    main_path = pkg_dir / "person_imports.jsonl"
+    side_path = pkg_dir / "person_imports_extraction.jsonl"
+    manifest_path = pkg_dir / "manifest.json"
+
+    # 主交付：**一行一对象、UTF-8、无 BOM、键序＝18 键元组序**（外部逐行解析）
+    with main_path.open("w", encoding="utf-8", newline="\n") as fh:
+        for m in main_rows:
+            fh.write(json.dumps({k: m.get(k) for k in XIAI_PERSON_IMPORT_ALLOWED_KEYS},
+                                ensure_ascii=False) + "\n")
+    with side_path.open("w", encoding="utf-8", newline="\n") as fh:
+        for s in side_rows:
+            fh.write(json.dumps({k: s.get(k) for k in ("source_person_id",) + IMPORT_SIDECAR_EXTRACTION_KEYS},
+                                ensure_ascii=False) + "\n")
+
+    # ── 键面 diff（**多余键必须为 0**）：从**实际写入行**并集算，非写死 ──
+    union_keys = sorted({k for m in main_rows for k in m.keys()})
+    extra_keys = sorted(k for k in union_keys if k not in XIAI_PERSON_IMPORT_ALLOWED_KEYS)
+    missing_keys = sorted(k for k in XIAI_PERSON_IMPORT_ALLOWED_KEYS if k not in union_keys)
+    # 幂等键（source_person_id）非空且唯一
+    ids = [m.get("source_person_id") for m in main_rows]
+    id_non_null = sum(1 for x in ids if x not in (None, ""))
+    id_unique = len({x for x in ids if x not in (None, "")})
+    # 三桶均 list[str]
+    buckets_all_str = all(
+        isinstance(m.get(k), list) and all(isinstance(x, str) for x in (m.get(k) or []))
+        for m in main_rows for k in IMPORT_THREE_BUCKETS
+    )
+    # 无 BOM
+    main_no_bom = _no_bom(main_path)
+    side_no_bom = _no_bom(side_path)
+
+    checks = {
+        "rows": len(main_rows),
+        "key_face_diff_zero": (len(extra_keys) == 0 and len(missing_keys) == 0),
+        "extra_keys": extra_keys,
+        "missing_keys": missing_keys,
+        "idempotency_non_null": id_non_null,
+        "idempotency_unique": id_unique,
+        "idempotency_total": len(ids),
+        "idempotency_all_non_null_and_unique": (id_non_null == len(ids) == id_unique),
+        "three_buckets_all_string_arrays": buckets_all_str,
+        "main_no_bom": main_no_bom,
+        "sidecar_no_bom": side_no_bom,
+        "sidecar_lengths_match": all(
+            len(s.get(sk) or []) == len(m.get(b) or [])
+            for m, s in zip(main_rows, side_rows)
+            for b, sk in zip(IMPORT_THREE_BUCKETS, IMPORT_SIDECAR_EXTRACTION_KEYS)
+        ),
+        "sidecar_elements_all_rule_based": all(
+            all(x == EXTRACTION for x in (s.get(sk) or []))
+            for s in side_rows for sk in IMPORT_SIDECAR_EXTRACTION_KEYS
+        ),
+    }
+
+    manifest = {
+        "schema_version": IMPORT_PACKAGE_SCHEMA_VERSION,
+        "form": "xiai-person-import-package（F-import：主交付 18 键 + extraction sidecar + manifest）",
+        "source_batch": batch_id,
+        "source_batch_meta": {
+            "persons_ok": src_batch.get("persons_ok"),
+            "relations_ok": src_batch.get("relations_ok"),
+            "status": src_batch.get("status"),
+            "content_fingerprint": src_batch.get("content_fingerprint"),
+        },
+        "generated_at": _now(),
+        "generated_from": "feicui 本库重建（`var/person_ingest.db::persons WHERE batch_id=?`；**不联网采集**）",
+        "rows": len(main_rows),
+        "idempotency_key": "source_person_id（＝复旦 personGrbsm）",
+        "files": [
+            {"name": "person_imports.jsonl", "rows": len(main_rows),
+             "keys": list(XIAI_PERSON_IMPORT_ALLOWED_KEYS),
+             "format": "JSONL，一行一对象，UTF-8，无 BOM，键序＝xiai 18 键序"},
+            {"name": "person_imports_extraction.jsonl", "rows": len(side_rows),
+             "keys": ["source_person_id"] + list(IMPORT_SIDECAR_EXTRACTION_KEYS),
+             "format": "JSONL，一行一对象，UTF-8，无 BOM"},
+            {"name": "manifest.json", "rows": None, "keys": []},
+        ],
+        "xiai_contract": {
+            "allowed_keys_source": ("xiai 仓 `cloudfunctions/xiai-user-token/lib/ops.js::PERSON_IMPORT_ALLOWED_KEYS`"
+                                    "（跨仓契约，**只引用不复制**）"),
+            "allowed_keys": list(XIAI_PERSON_IMPORT_ALLOWED_KEYS),
+            "allowed_keys_count": len(XIAI_PERSON_IMPORT_ALLOWED_KEYS),
+            "violation": "多一个键 ⇒ xiai 判 INVALID_FIELD「载荷含未知字段」＋零写入",
+        },
+        "key_face_diff": {
+            "main_delivery_keys": list(XIAI_PERSON_IMPORT_ALLOWED_KEYS),
+            "extra_keys": extra_keys,
+            "missing_keys": missing_keys,
+            "extra_count": len(extra_keys),
+            "forbidden_extra_present": [k for k in IMPORT_FORBIDDEN_EXTRA_KEYS if k in union_keys],
+        },
+        "idempotency": {
+            "key": "source_person_id",
+            "non_null": id_non_null,
+            "unique": id_unique,
+            "total": len(ids),
+            "all_non_null_and_unique": checks["idempotency_all_non_null_and_unique"],
+        },
+        "three_buckets": {
+            "keys": list(IMPORT_THREE_BUCKETS),
+            "form": "string[]（只 value，保持原顺序）",
+        },
+        "sidecar": {
+            "file": "person_imports_extraction.jsonl",
+            "keys": list(IMPORT_SIDECAR_EXTRACTION_KEYS),
+            "note": "extraction 标注（值恒 'rule-based'）；与对应值数组**等长**；**不含 from**。",
+            "pending_xiai_keys": list(IMPORT_SIDECAR_EXTRACTION_KEYS),
+            "pending_note": ("待 xiai 走自己的规范流程扩这 3 个 extraction 键后并入主交付；"
+                             "扩键前 `person_imports.jsonl` 已可正常提交（**不阻塞**）。"),
+        },
+        "submission": ("提交与审核在玺爱侧（本包只读消费）；feicui **不写 xiai 任何文件、不调任何云函数**。"
+                       "导入先落 xiai_person_imports（PENDING），管理员批量采纳后方成正式印人。"),
+        "checks": checks,
+    }
+    manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    return {
+        "ok": True,
+        "batch_id": batch_id,
+        "package_dir": str(pkg_dir),
+        "files": {
+            "person_imports": str(main_path),
+            "person_imports_extraction": str(side_path),
+            "manifest": str(manifest_path),
+        },
+        "rows": len(main_rows),
+        "key_face": {
+            "delivery_keys": list(XIAI_PERSON_IMPORT_ALLOWED_KEYS),
+            "extra_keys": extra_keys,
+            "missing_keys": missing_keys,
+            "extra_count": len(extra_keys),
+            "xiai_allowed_keys_count": len(XIAI_PERSON_IMPORT_ALLOWED_KEYS),
+        },
+        "idempotency": manifest["idempotency"],
+        "checks": checks,
+        "sidecar": manifest["sidecar"],
+        "submission": manifest["submission"],
+        "generated_at": manifest["generated_at"],
+    }
+
+
 # ═══════════════════════════════════════════════════════════════════════════ 查询
 def list_persons(db_path: Path | str, *, page: int = 1, limit: int = 50, initial: str | None = None,
                  nationality: str | None = None, has_dates: bool | None = None,
@@ -1196,7 +1506,8 @@ def _cli() -> int:
 
     st = get_settings()
     ap = argparse.ArgumentParser(description="feicui 印人采集线（批 1）")
-    ap.add_argument("cmd", choices=["sync", "counts", "fingerprint", "list-count", "repair-batch"],
+    ap.add_argument("cmd", choices=["sync", "counts", "fingerprint", "list-count", "repair-batch",
+                                    "import-package"],
                     help="子命令")
     ap.add_argument("--db", default=str(st.person_db_path))
     ap.add_argument("--export-root", default=str(st.person_export_root))
@@ -1221,6 +1532,16 @@ def _cli() -> int:
             return 2
         print(json.dumps(repair_batch_counters(args.db, args.batch_id, dry_run=args.dry_run),
                          ensure_ascii=False, indent=2))
+        return 0
+    if args.cmd == "import-package":
+        # 从库内重建 xiai 就绪导入包（**不联网采集**）；产物落 exports/person_import_<batch_id>/
+        try:
+            summary = write_import_package(db_path=Path(args.db), export_root=Path(args.export_root),
+                                           batch_id=args.batch_id)
+        except ImportPackageError as exc:
+            print(json.dumps({"ok": False, "error": exc.code, "detail": str(exc)}, ensure_ascii=False))
+            return 2
+        print(json.dumps(summary, ensure_ascii=False, indent=2))
         return 0
     if args.cmd == "fingerprint":
         ensure_schema(args.db)

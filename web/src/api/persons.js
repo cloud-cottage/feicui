@@ -30,3 +30,15 @@ export function listBatches() {
 export function syncPersons(payload = {}) {
   return request('/persons/sync', { method: 'POST', body: payload })
 }
+
+// ── 生成 xiai 就绪导入包：POST /api/persons/import-package?batch_id=
+// 从 feicui 本库重建（**不联网采集**）；响应＝包目录 / 行数 / 键面 diff / 幂等键计数 / 校验读数。
+// **不写 xiai 任何文件**（提交与审核在玺爱侧）。
+export function generateImportPackage({ batch_id } = {}) {
+  return request('/persons/import-package', { method: 'POST', query: { batch_id } })
+}
+
+// ── 已生成导入包列表：GET /api/persons/import-packages
+export function listImportPackages() {
+  return request('/persons/import-packages')
+}

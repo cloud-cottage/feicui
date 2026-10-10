@@ -140,9 +140,78 @@ def main() -> int:
         "sample_prefix_group": sm["by_prefix"][0],
     }
 
+    # ⑧ source_bytes / source_sha256 逐行自洽（抽样 20；对盘 + 对台账）
+    SRC = REPO / "var" / "seal_images"
+    conn = sqlite3.connect(str(DB))
+    conn.row_factory = sqlite3.Row
+    ledger = {f"{x['seqid']}|{x['kind']}": (x["bytes"], x["sha256"]) for x in conn.execute(
+        "SELECT seqid,kind,bytes,sha256 FROM seal_images WHERE status='ok'")}
+    conn.close()
+    rng2 = random.Random(20261010)
+    sample_src = rng2.sample(rows, 20)
+    src_recalc = []
+    for r2 in sample_src:
+        jpg = SRC / r2["kind"] / f"{r2['seqid']}.jpg"
+        d_disk_sha = sha256_file(jpg) if jpg.is_file() else None
+        d_disk_bytes = jpg.stat().st_size if jpg.is_file() else None
+        led = ledger.get(f"{r2['seqid']}|{r2['kind']}")
+        row_sha, row_bytes = r2.get("source_sha256"), r2.get("source_bytes")
+        src_recalc.append({
+            "seqid": r2["seqid"], "kind": r2["kind"],
+            "row_source_sha256": row_sha, "row_source_bytes": row_bytes,
+            "disk_sha256": d_disk_sha, "disk_bytes": d_disk_bytes,
+            "ledger_sha256": led[1] if led else None, "ledger_bytes": led[0] if led else None,
+            "sha_match": (d_disk_sha == row_sha == (led[1] if led else None)),
+            "bytes_match": (d_disk_bytes == row_bytes == (led[0] if led else None)),
+        })
+    miss_src = [x["seqid"] for x in rows if not x.get("source_sha256") or x.get("source_bytes") is None]
+    check8 = {
+        "n": len(src_recalc),
+        "all_self_consistent": all(x["sha_match"] and x["bytes_match"] for x in src_recalc),
+        "rows_missing_source_fields": len(miss_src),
+        "source_bytes_sha256_present_all": len(miss_src) == 0,
+        "samples": src_recalc,
+    }
+
+    # ⑨ 超档清单计数 ＝ 6 且逐条可核（> xiai STORED_MAX_BYTES）
+    over_flagged = [x for x in rows if x.get("oversize_for_xiai_store") is True]
+    m_ov = m.get("oversize_for_xiai_store") or {}
+    list_rows = m_ov.get("rows", [])
+    ip_ov = (ip.get("oversize_for_xiai_store") or {})
+    per_row = []
+    for o in list_rows:
+        p = PKG / "images" / o["sha256"][:2] / f"{o['sha256']}.tiff"
+        nb = p.stat().st_size if p.is_file() else None
+        mrow = next((x for x in rows if x["seqid"] == o["seqid"] and x["kind"] == o["kind"]), None)
+        per_row.append({
+            "seqid": o["seqid"], "kind": o["kind"],
+            "bytes": o["bytes"], "width": o.get("width"), "height": o.get("height"),
+            "gt_4MiB": o["bytes"] > XIAI_STORED_MAX,
+            "pkg_tiff_bytes": nb, "bytes_match": nb == o["bytes"],
+            "sha256": o["sha256"],
+            "matches_manifest_row": bool(mrow) and mrow["sha256"] == o["sha256"],
+            "marked_true_in_manifest": bool(mrow) and mrow.get("oversize_for_xiai_store") is True,
+        })
+    expected_seqids = {"3353", "3366", "3367", "3464", "3506", "3510"}
+    check9 = {
+        "expected_count": 6,
+        "cited_seqids": sorted(o["seqid"] for o in list_rows),
+        "seqid_set_matches": set(o["seqid"] for o in list_rows) == expected_seqids,
+        "manifest_flagged_true_count": len(over_flagged),
+        "top_bucket_count": m.get("oversize_count"),
+        "image_policy_bucket_count": ip_ov.get("count"),
+        "report_bucket_count": r.get("oversize_count"),
+        "all_counts_equal_6": (len(over_flagged) == len(list_rows) == m.get("oversize_count")
+                               == ip_ov.get("count") == r.get("oversize_count") == 6),
+        "all_verified": all(x["gt_4MiB"] and x["bytes_match"] and x["matches_manifest_row"]
+                            and x["marked_true_in_manifest"] for x in per_row),
+        "rows": per_row,
+    }
+
     out = {"check1_two_way": check1, "check2_sha20": check2, "check3_tiff_magic": check3,
            "check4_size": check4, "check5_width_height": check5,
-           "check6_manifest_image_policy": check6, "check7_report": check7}
+           "check6_manifest_image_policy": check6, "check7_report": check7,
+           "check8_source_bytes_sha256": check8, "check9_oversize": check9}
     (REPO / "ops" / "seal-ingest" / "17_package_selfcheck.json").write_text(
         json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
 
@@ -154,6 +223,12 @@ def main() -> int:
         "c4_min_max": (check4["min_bytes"], check4["max_bytes"]),
         "c5_all_have_wh": check5["all_have_wh"],
         "c6": check6, "c7": check7,
+        "c8_all_self_consistent": check8["all_self_consistent"],
+        "c8_present_all": check8["source_bytes_sha256_present_all"], "c8_n": check8["n"],
+        "c9_counts_equal_6": check9["all_counts_equal_6"],
+        "c9_seqid_set_matches": check9["seqid_set_matches"],
+        "c9_all_verified": check9["all_verified"],
+        "c9_cited_seqids": check9["cited_seqids"],
     }, ensure_ascii=False, indent=2))
     return 0
 

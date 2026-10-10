@@ -2052,6 +2052,7 @@ def write_package(*, db_path: Path, export_root: Path, batch_id: str, base: str,
     # ── 影像（若提供 images_root ⇒ hardlink/copy 入包 + images_manifest）──
     image_counts = image_status_counts(db_path)
     images_manifest = _materialize_images(db_path, pkg_dir, images_root) if images_root else None
+    oversize_bucket = images_manifest["oversize"] if images_manifest else None
 
     checks = {
         "rows": len(seals),
@@ -2143,6 +2144,8 @@ def write_package(*, db_path: Path, export_root: Path, batch_id: str, base: str,
         "source_missing": source_missing_compact,
         "packaged": images_manifest["counts"] if images_manifest else None,
         "packaged_checks": images_manifest["checks"] if images_manifest else None,
+        # —— 超档桶（跨工程待裁项；机器可过滤；去留由 xiai 侧裁定）——
+        "oversize_for_xiai_store": oversize_bucket,
     }
 
     manifest = {
@@ -2172,8 +2175,12 @@ def write_package(*, db_path: Path, export_root: Path, batch_id: str, base: str,
                      "book 链带 bridge_item_id（经 items.as_book_id 桥到印谱 source_item_id）"},
             {"name": "images_manifest.jsonl", "rows": (images_manifest or {}).get("rows"),
              "fields": ["seqid", "kind", "source_ref", "source_url", "sha256", "bytes",
-                        "width", "height", "source_format", "container", "conversion", "upscaled"],
-             "note": "**唯一索引**：内容寻址后文件名不含 seqid/kind ⇒ 靠它把 sha256 对应回哪枚印章"},
+                        "width", "height", "source_format", "container", "conversion", "upscaled",
+                        "source_bytes", "source_sha256", "oversize_for_xiai_store"],
+             "note": ("**唯一索引**：内容寻址后文件名不含 seqid/kind ⇒ 靠它把 sha256 对应回哪枚印章。"
+                      "`sha256`/`bytes` ＝ **TIFF 字节**（内容寻址键，不改）；"
+                      "`source_bytes`/`source_sha256` ＝ **源 JPEG 字节**（溯源，补）；"
+                      "`oversize_for_xiai_store` 逐行标记是否 > xiai STORED_MAX_BYTES")},
             {"name": "images/<sha256[:2]>/<sha256>.tiff", "rows": (images_manifest or {}).get("rows"),
              "fields": [], "note": "内容寻址 TIFF 树（镜像 xiai 影像库形态）；**JPEG 不入包**"},
             {"name": "manifest.json", "rows": None, "fields": []},
@@ -2206,6 +2213,9 @@ def write_package(*, db_path: Path, export_root: Path, batch_id: str, base: str,
         },
         "checks": checks,
         "source_missing": source_missing_compact,
+        # —— 超档（> xiai STORED_MAX_BYTES）顶层桶：count + 逐条清单；机器可过滤 ——
+        "oversize_count": (oversize_bucket or {}).get("count", 0),
+        "oversize_for_xiai_store": oversize_bucket,
         "image_policy": image_policy,
         "detail_policy": detail_policy,
         "link_policy": link_policy,
@@ -2231,6 +2241,9 @@ def write_package(*, db_path: Path, export_root: Path, batch_id: str, base: str,
         "content_fingerprint": fp,
         "failures": failures,
         "source_missing": source_missing,
+        # —— 超档（> xiai STORED_MAX_BYTES）顶层桶：count + 逐条清单；机器可过滤 ——
+        "oversize_count": (oversize_bucket or {}).get("count", 0),
+        "oversize_for_xiai_store": oversize_bucket,
         "image_policy": image_policy,
         "detail_policy": detail_policy,
         "link_policy": link_policy,
@@ -2261,6 +2274,8 @@ def write_package(*, db_path: Path, export_root: Path, batch_id: str, base: str,
         "files": manifest["files"],
         "field_dict": FIELD_DICT,
         "field_dict_links": LINK_FIELD_DICT,
+        "oversize_count": manifest["oversize_count"],
+        "oversize_for_xiai_store": oversize_bucket,
         "image_policy": image_policy,
         "detail_policy": detail_policy,
         "link_policy": link_policy,
@@ -2278,7 +2293,9 @@ def _materialize_images(db_path: Path, pkg_dir: Path, images_root: Path) -> dict
 
     写 `images_manifest.jsonl`（**唯一索引**：内容寻址后文件名不含 seqid/kind）：
     每行 `{seqid, kind, source_ref, source_url, sha256, bytes, width, height,
-    source_format:'image/jpeg', container:'image/tiff', conversion:'jpeg->tiff(lossless container)', upscaled:false}`。
+    source_format:'image/jpeg', container:'image/tiff', conversion:'jpeg->tiff(lossless container)', upscaled:false}`
+    ＋补 `source_bytes`/`source_sha256`（源 JPEG 侧溯源）＋ `oversize_for_xiai_store`（逐行超档标记）。
+    `sha256`/`bytes` 始终 ＝ **TIFF 字节**（内容寻址键，语义/值不动）。
 
     **不删已有 `images/`**（仅补缺 / 覆盖同名）；**JPEG 不入包**（仅作 `var/` 源缓存）。
 
@@ -2298,7 +2315,7 @@ def _materialize_images(db_path: Path, pkg_dir: Path, images_root: Path) -> dict
     conn = _connect(db_path)
     try:
         recs = conn.execute(
-            "SELECT seqid, kind, source_ref, source_url, tiff_path, tiff_sha256, tiff_bytes, "
+            "SELECT seqid, kind, source_ref, source_url, bytes, sha256, tiff_path, tiff_sha256, tiff_bytes, "
             "width, height, upscaled, status FROM seal_images WHERE status='ok' ORDER BY kind, seqid"
         ).fetchall()
     finally:
@@ -2333,7 +2350,9 @@ def _materialize_images(db_path: Path, pkg_dir: Path, images_root: Path) -> dict
                 magic_fail.append({"seqid": r["seqid"], "kind": r["kind"], "sha256": sha})
             nbytes = dst.stat().st_size
             if nbytes > XIAI_STORED_MAX_BYTES:
-                oversize_stored.append({"seqid": r["seqid"], "kind": r["kind"], "sha256": sha, "bytes": nbytes})
+                oversize_stored.append({"seqid": r["seqid"], "kind": r["kind"], "sha256": sha,
+                                        "bytes": nbytes, "width": r["width"], "height": r["height"],
+                                        "source_bytes": r["bytes"], "source_sha256": r["sha256"]})
             if nbytes > XIAI_MAX_INPUT_BYTES:
                 oversize_input.append({"seqid": r["seqid"], "kind": r["kind"], "sha256": sha, "bytes": nbytes})
             row = {
@@ -2342,6 +2361,10 @@ def _materialize_images(db_path: Path, pkg_dir: Path, images_root: Path) -> dict
                 "width": r["width"], "height": r["height"],
                 "source_format": "image/jpeg", "container": "image/tiff",
                 "conversion": CONVERSION_TAG, "upscaled": False,
+                # —— 源 JPEG 侧溯源（补；源 JPEG 字节/其 sha256；跨工程待裁项用）——
+                "source_bytes": r["bytes"], "source_sha256": r["sha256"],
+                # —— 超档桶：> xiai STORED_MAX_BYTES 逐行显式标记（机器可过滤）——
+                "oversize_for_xiai_store": bool(nbytes > XIAI_STORED_MAX_BYTES),
             }
             fh.write(json.dumps(row, ensure_ascii=False) + "\n")
             rows.append(row)
@@ -2362,6 +2385,15 @@ def _materialize_images(db_path: Path, pkg_dir: Path, images_root: Path) -> dict
     for row in rows:
         k = row["kind"]
         counts["by_kind"][k] = counts["by_kind"].get(k, 0) + 1
+    # ── 超档桶（> xiai STORED_MAX_BYTES；**显式登记，去留由 xiai 侧裁定**）──
+    oversize_bucket = {
+        "threshold_bytes": XIAI_STORED_MAX_BYTES,
+        "threshold_source": "xiai STORED_MAX_BYTES（POST /api/image/store 产物侧上限）",
+        "count": len(oversize_stored),
+        "rows": oversize_stored,
+        "policy": ("本包保留原生裁切（/full/1:1 源像素）与 xiai 家法格式（TIFF，RGB 8-bit + Deflate 无损；"
+                   "**不换 JPEG-in-TIFF**）。超档项 **不自行降采样、不自行转码**，去留由 xiai 侧裁定。"),
+    }
     checks = {
         "row_count": len(rows),
         "tree_file_count": len(tree_files),
@@ -2374,10 +2406,11 @@ def _materialize_images(db_path: Path, pkg_dir: Path, images_root: Path) -> dict
         "tiff_magic_fail": magic_fail[:50],
         "max_stored_bytes": XIAI_STORED_MAX_BYTES,
         "max_input_bytes": XIAI_MAX_INPUT_BYTES,
+        "oversize_for_xiai_store_count": len(oversize_stored),
         "oversize_stored": oversize_stored,
         "oversize_input": oversize_input,
     }
-    return {"rows": len(rows), "counts": counts, "checks": checks,
+    return {"rows": len(rows), "counts": counts, "checks": checks, "oversize": oversize_bucket,
             "manifest_path": str(manifest_path)}
 
 

@@ -1,0 +1,2963 @@
+{
+  "package_dir": "../exports/seal_import_seal_20261010_01",
+  "report_path": "../exports/seal_import_seal_20261010_01/report.json",
+  "seals_path": "../exports/seal_import_seal_20261010_01/seals.jsonl",
+  "links_path": "../exports/seal_import_seal_20261010_01/seal_links.jsonl",
+  "manifest_path": "../exports/seal_import_seal_20261010_01/manifest.json",
+  "fingerprint": "e8155837ff2785cbef1466ab7c419c1b3ed52c213fc6f7de2ecf57dc85e3c447",
+  "summary": {
+    "batch_id": "seal_20261010_01",
+    "package_dir": "../exports/seal_import_seal_20261010_01",
+    "rows": 3679,
+    "links_rows": 8964,
+    "images_rows": 6347,
+    "source_total": 3679,
+    "key_face_status": "pending_xiai",
+    "idempotency_key": "source_seal_id（＝复旦 seqid）",
+    "bridge_key": "as_book_id（＝补零 asBookId，桥接 items.as_book_id ↔ items.source_item_id）",
+    "idempotency": {
+      "key": "source_seal_id",
+      "non_null": 3679,
+      "unique": 3679,
+      "total": 3679,
+      "all_non_null_and_unique": true
+    },
+    "coverage": {
+      "seal_wen": "3679/3679 (100.0%)",
+      "seal_wen_chs": "3679/3679 (100.0%)",
+      "seal_ys_xz": "3035/3679 (82.5%)",
+      "seal_ys_label": "3035/3679 (82.5%)",
+      "seal_yz": "2379/3679 (64.7%)",
+      "seal_yzzkz_id": "2652/3679 (72.1%)",
+      "seal_bk": "459/3679 (12.5%)",
+      "seal_bkzkz_id": "254/3679 (6.9%)",
+      "as_book_id": "3679/3679 (100.0%)",
+      "related_book": "3679/3679 (100.0%)",
+      "seal_yt_url": "3679/3679 (100.0%)",
+      "seal_ytsw_url": "2627/3679 (71.4%)",
+      "seal_yzbk_url": "459/3679 (12.5%)"
+    },
+    "audit_status_distribution": {
+      "0": 3,
+      "1": 2929,
+      "2": 716,
+      "9": 31
+    },
+    "seal_ys_lookup": {
+      "table": {
+        "1": "白文方印",
+        "2": "朱文方印",
+        "3": "白文圆印",
+        "4": "朱文圆印",
+        "5": "白文长方印",
+        "6": "朱文长方印",
+        "7": "白文椭圆印",
+        "8": "朱文椭圆印",
+        "9": "朱文异性印",
+        "10": "白文异性印"
+      },
+      "source": "sealYsXz（形製码）",
+      "note": "**源侧原文写作「异性」（非「异形」）——逐字照登，不得代改为「异形」**",
+      "calibration": {
+        "method": "每码 2 枚 × 20 次调用 × 0 冲突 ⇒ 纯函数可派生",
+        "samples_per_code": 2,
+        "calls_per_sample": 20,
+        "conflicts": 0,
+        "conflicts_in_package": 0
+      },
+      "distribution": {
+        "null": 644,
+        "1": 1144,
+        "2": 971,
+        "3": 5,
+        "4": 76,
+        "5": 326,
+        "6": 346,
+        "7": 5,
+        "8": 54,
+        "9": 76,
+        "10": 32
+      }
+    },
+    "links_summary": {
+      "rows": 8964,
+      "by_link_kind": {
+        "book": 3679,
+        "person_yz": 2379,
+        "person_zzkz": 2652,
+        "person_bkzkz": 254
+      },
+      "by_source_face": {
+        "seal_row": 8964
+      },
+      "book_links_bridged_to_item": 3679
+    },
+    "checks": {
+      "rows": 3679,
+      "links_rows": 8964,
+      "idempotency_non_null": 3679,
+      "idempotency_unique": 3679,
+      "idempotency_total": 3679,
+      "idempotency_all_non_null_and_unique": true,
+      "seal_yt_url_unique": 3679,
+      "seal_yt_url_total_non_null": 3679,
+      "seal_ys_lookup_conflicts": [],
+      "seal_ys_lookup_conflict_free": true,
+      "links_orphan_source_seal_id": [],
+      "links_all_backref_seals": true,
+      "seals_no_bom": true,
+      "links_no_bom": true
+    },
+    "files": [
+      {
+        "name": "seals.jsonl",
+        "rows": 3679,
+        "fields": [
+          "source_seal_id",
+          "seal_uri",
+          "category",
+          "seal_wen",
+          "seal_wen_chs",
+          "seal_wen_pinyin",
+          "seal_wen_wzly",
+          "seal_wen_wzly_chs",
+          "seal_wen_yssw",
+          "seal_wen_yssw_chs",
+          "seal_wen_wyz",
+          "seal_wen_zjsw",
+          "seal_wen_zjsw_chs",
+          "seal_ys_xz",
+          "seal_ys_label",
+          "seal_ys_kf",
+          "seal_ys_st",
+          "seal_zyz",
+          "seal_yz",
+          "seal_yz_person_name",
+          "seal_yz_person_name_chs",
+          "seal_yz_name",
+          "seal_yz_ref_id",
+          "seal_yzzkz",
+          "seal_yzzkz_chs",
+          "seal_yzzkz_id",
+          "seal_bk",
+          "seal_bk_chs",
+          "seal_bkzkz",
+          "seal_bkzkz_chs",
+          "seal_bkzkz_id",
+          "as_book_id",
+          "related_book",
+          "seal_yt_url",
+          "seal_ytsw_url",
+          "seal_yzbk_url",
+          "seal_yzqt_url",
+          "seal_threed_url",
+          "seal_title",
+          "seal_title_chs",
+          "seal_org",
+          "seal_org_name",
+          "seal_cz",
+          "seal_cc",
+          "seal_ly",
+          "seal_yn",
+          "seal_yksj_lsjn",
+          "seal_yksj_lsjn_chs",
+          "seal_yksj_gyjn",
+          "audit_status",
+          "misc",
+          "raw_json"
+        ],
+        "format": "JSONL，一行一对象，UTF-8，无 BOM"
+      },
+      {
+        "name": "seal_links.jsonl",
+        "rows": 8964,
+        "fields": [
+          "source_seal_id",
+          "link_kind",
+          "ref_id",
+          "ref_name",
+          "ref_name_chs",
+          "creator_type",
+          "bridge_item_id",
+          "source_face",
+          "seq"
+        ],
+        "format": "JSONL，一行一对象，UTF-8，无 BOM",
+        "note": "sidecar（印章↔印谱↔印人）：主源＝行内字段（source_face='seal_row'）；book 链带 bridge_item_id（经 items.as_book_id 桥到印谱 source_item_id）"
+      },
+      {
+        "name": "images_manifest.jsonl",
+        "rows": 6347,
+        "fields": [
+          "seqid",
+          "kind",
+          "source_ref",
+          "source_url",
+          "sha256",
+          "bytes",
+          "width",
+          "height",
+          "source_format",
+          "container",
+          "conversion",
+          "upscaled",
+          "source_bytes",
+          "source_sha256",
+          "oversize_for_xiai_store"
+        ],
+        "note": "**唯一索引**：内容寻址后文件名不含 seqid/kind ⇒ 靠它把 sha256 对应回哪枚印章。`sha256`/`bytes` ＝ **TIFF 字节**（内容寻址键，不改）；`source_bytes`/`source_sha256` ＝ **源 JPEG 字节**（溯源，补）；`oversize_for_xiai_store` 逐行标记是否 > xiai STORED_MAX_BYTES"
+      },
+      {
+        "name": "images/<sha256[:2]>/<sha256>.tiff",
+        "rows": 6347,
+        "fields": [],
+        "note": "内容寻址 TIFF 树（镜像 xiai 影像库形态）；**JPEG 不入包**"
+      },
+      {
+        "name": "manifest.json",
+        "rows": null,
+        "fields": []
+      }
+    ],
+    "field_dict": [
+      {
+        "name": "source_seal_id",
+        "source": "seqid",
+        "type": "string",
+        "role": "idempotency_key",
+        "note": "内部键（detail/graph 路径参数）；幂等键，原样字符串"
+      },
+      {
+        "name": "seal_uri",
+        "source": "sealUri",
+        "type": "string",
+        "note": "GUID"
+      },
+      {
+        "name": "category",
+        "source": "sealFl",
+        "type": "string",
+        "note": "分类（恒「印章」）"
+      },
+      {
+        "name": "seal_wen",
+        "source": "sealYwSmwz",
+        "type": "string",
+        "note": "印文释文（繁体为正字段）"
+      },
+      {
+        "name": "seal_wen_chs",
+        "source": "sealYwSmwzChs",
+        "type": "string",
+        "note": "印文释文简体副字段"
+      },
+      {
+        "name": "seal_wen_pinyin",
+        "source": "sealYwSwpy",
+        "type": "string|null",
+        "note": "印文拼音"
+      },
+      {
+        "name": "seal_wen_wzly",
+        "source": "sealYwWzly",
+        "type": "string|null",
+        "note": "文字来源（繁）"
+      },
+      {
+        "name": "seal_wen_wzly_chs",
+        "source": "sealYwWzlyChs",
+        "type": "string|null",
+        "note": "文字来源（简）"
+      },
+      {
+        "name": "seal_wen_yssw",
+        "source": "sealYwYssw",
+        "type": "string|null",
+        "note": "印文·（繁）"
+      },
+      {
+        "name": "seal_wen_yssw_chs",
+        "source": "sealYwYsswChs",
+        "type": "string|null",
+        "note": "印文·（简）"
+      },
+      {
+        "name": "seal_wen_wyz",
+        "source": "sealYwWwyz",
+        "type": "string|null",
+        "note": "文字·"
+      },
+      {
+        "name": "seal_wen_zjsw",
+        "source": "sealYwZjsw",
+        "type": "string|null",
+        "note": "篆刻释文（繁）"
+      },
+      {
+        "name": "seal_wen_zjsw_chs",
+        "source": "sealYwZjswChs",
+        "type": "string|null",
+        "note": "篆刻释文（简）"
+      },
+      {
+        "name": "seal_ys_xz",
+        "source": "sealYsXz",
+        "type": "integer|null",
+        "note": "形製码 1..10；**null 合法（实测 644 行）**，不得当采集失败"
+      },
+      {
+        "name": "seal_ys_label",
+        "source": "派生 SEAL_YS_XZ_LOOKUP[sealYsXz]",
+        "type": "string|null",
+        "note": "形製可读值（纯函数派生，见 manifest.seal_ys_lookup）"
+      },
+      {
+        "name": "seal_ys_kf",
+        "source": "sealYsKf",
+        "type": "string|null",
+        "note": "—"
+      },
+      {
+        "name": "seal_ys_st",
+        "source": "sealYsSt",
+        "type": "string|null",
+        "note": "—"
+      },
+      {
+        "name": "seal_zyz",
+        "source": "sealZyz",
+        "type": "string|null",
+        "note": "主印主标志（3679）"
+      },
+      {
+        "name": "seal_yz",
+        "source": "sealYz",
+        "type": "string|null",
+        "note": "印主 person id（2379；与 persons.source_person_id 同域）"
+      },
+      {
+        "name": "seal_yz_person_name",
+        "source": "sealYzPersonName",
+        "type": "string|null",
+        "note": "印主姓名（繁）"
+      },
+      {
+        "name": "seal_yz_person_name_chs",
+        "source": "sealYzPersonNameChs",
+        "type": "string|null",
+        "note": "印主姓名（简）"
+      },
+      {
+        "name": "seal_yz_name",
+        "source": "sealYzName",
+        "type": "string|null",
+        "note": "实测全 null"
+      },
+      {
+        "name": "seal_yz_ref_id",
+        "source": "sealYzRefId",
+        "type": "string|null",
+        "note": "**detail 独有**；detail 默认关 ⇒ 默认 null"
+      },
+      {
+        "name": "seal_yzzkz",
+        "source": "sealYzzkz",
+        "type": "string|null",
+        "note": "篆者名（繁）"
+      },
+      {
+        "name": "seal_yzzkz_chs",
+        "source": "sealYzzkzChs",
+        "type": "string|null",
+        "note": "篆者名（简）"
+      },
+      {
+        "name": "seal_yzzkz_id",
+        "source": "sealYzzkzId",
+        "type": "string|null",
+        "note": "篆者 person id（2652）/ 10 个值"
+      },
+      {
+        "name": "seal_bk",
+        "source": "sealBk",
+        "type": "string|null",
+        "note": "边款（459，繁）"
+      },
+      {
+        "name": "seal_bk_chs",
+        "source": "sealBkChs",
+        "type": "string|null",
+        "note": "边款（简）"
+      },
+      {
+        "name": "seal_bkzkz",
+        "source": "sealBkzkz",
+        "type": "string|null",
+        "note": "边款篆者（繁）"
+      },
+      {
+        "name": "seal_bkzkz_chs",
+        "source": "sealBkzkzChs",
+        "type": "string|null",
+        "note": "边款篆者（简）"
+      },
+      {
+        "name": "seal_bkzkz_id",
+        "source": "sealBkzkzId",
+        "type": "string|null",
+        "note": "边款篆者 person id（254）/ 21 个值"
+      },
+      {
+        "name": "as_book_id",
+        "source": "asBookId",
+        "type": "string",
+        "note": "补零印谱业务号（3679）——桥接 items.as_book_id"
+      },
+      {
+        "name": "related_book",
+        "source": "relatedBook",
+        "type": "string",
+        "note": "所属印谱名（3679，繁）"
+      },
+      {
+        "name": "seal_yt_url",
+        "source": "sealYtUrl",
+        "type": "string",
+        "note": "印面图 ref（3679 全唯一；**2 行以 NaN_ 开头 ⇒ 源侧无图**）"
+      },
+      {
+        "name": "seal_ytsw_url",
+        "source": "sealYtswUrl",
+        "type": "string|null",
+        "note": "印体释文图 ref（2627）"
+      },
+      {
+        "name": "seal_yzbk_url",
+        "source": "sealYzbkUrl",
+        "type": "string|null",
+        "note": "边款图 ref（459）"
+      },
+      {
+        "name": "seal_yzqt_url",
+        "source": "sealYzqtUrl",
+        "type": "string|null",
+        "note": "其它图 ref（实测 3）"
+      },
+      {
+        "name": "seal_threed_url",
+        "source": "sealThreedUrl",
+        "type": "string|null",
+        "note": "实测全 null"
+      },
+      {
+        "name": "seal_title",
+        "source": "sealTitle",
+        "type": "string|null",
+        "note": "实测全 null"
+      },
+      {
+        "name": "seal_title_chs",
+        "source": "sealTitleChs",
+        "type": "string|null",
+        "note": "—"
+      },
+      {
+        "name": "seal_org",
+        "source": "sealOrg",
+        "type": "string|null",
+        "note": "实测全 null"
+      },
+      {
+        "name": "seal_org_name",
+        "source": "sealOrgName",
+        "type": "string|null",
+        "note": "实测全 null"
+      },
+      {
+        "name": "seal_cz",
+        "source": "sealCz",
+        "type": "string|null",
+        "note": "实测全 null"
+      },
+      {
+        "name": "seal_cc",
+        "source": "sealCc",
+        "type": "string|null",
+        "note": "实测全 null"
+      },
+      {
+        "name": "seal_ly",
+        "source": "sealLy",
+        "type": "string|null",
+        "note": "实测全 null"
+      },
+      {
+        "name": "seal_yn",
+        "source": "sealYn",
+        "type": "string|null",
+        "note": "—"
+      },
+      {
+        "name": "seal_yksj_lsjn",
+        "source": "sealYksjLsjn",
+        "type": "string|null",
+        "note": "印刻时间（繁）"
+      },
+      {
+        "name": "seal_yksj_lsjn_chs",
+        "source": "sealYksjLsjnChs",
+        "type": "string|null",
+        "note": "印刻时间（简）"
+      },
+      {
+        "name": "seal_yksj_gyjn",
+        "source": "sealYksjGyjn",
+        "type": "string|null",
+        "note": "印刻公元年"
+      },
+      {
+        "name": "audit_status",
+        "source": "auditStatus",
+        "type": "string",
+        "note": "审核状态（**保留字段**；分布见 manifest.audit_status_distribution）"
+      },
+      {
+        "name": "misc",
+        "source": "createdTime/updateTime/…/audit*",
+        "type": "object",
+        "note": "低频 / 审计元字段子对象（不散落顶层）"
+      },
+      {
+        "name": "raw_json",
+        "source": "列表行 ＋ 详情行 ＋ 关联图",
+        "type": "object",
+        "note": "源原文 {list, detail, graph}（不得丢源）；默认仅 list 非空"
+      }
+    ],
+    "field_dict_links": [
+      {
+        "name": "source_seal_id",
+        "source": "seqid",
+        "type": "string",
+        "note": "回指 seals.jsonl 的幂等键"
+      },
+      {
+        "name": "link_kind",
+        "source": "—",
+        "type": "string",
+        "note": "book（印谱）/ person_yz（印主）/ person_zzkz（篆者）/ person_bkzkz（边款篆者）/ person_graph（graph 独有）"
+      },
+      {
+        "name": "ref_id",
+        "source": "asBookId | sealYz | sealYzzkzId | sealBkzkzId | graph.id",
+        "type": "string",
+        "note": "被关联对象键（印谱 as_book_id / 印人 person id）"
+      },
+      {
+        "name": "ref_name",
+        "source": "relatedBook | sealYzPersonName | sealYzzkz | sealBkzkz | graph.name",
+        "type": "string|null",
+        "note": "被关联对象名（繁）"
+      },
+      {
+        "name": "ref_name_chs",
+        "source": "…Chs",
+        "type": "string|null",
+        "note": "简体副字段（graph 面无 ⇒ null）"
+      },
+      {
+        "name": "creator_type",
+        "source": "graph/seal creatorType",
+        "type": "string|null",
+        "note": "责任类型；**行内字段无此字段 ⇒ 默认 null**（仅 --with-graph 时有值）"
+      },
+      {
+        "name": "bridge_item_id",
+        "source": "items.source_item_id（经 as_book_id 桥接）",
+        "type": "string|null",
+        "note": "book 链：桥到印谱库的 source_item_id；person 链为 null"
+      },
+      {
+        "name": "source_face",
+        "source": "—",
+        "type": "string",
+        "note": "关联来源面：seal_row（主源）| seal_graph（--with-graph）"
+      },
+      {
+        "name": "seq",
+        "source": "graph 子项次序",
+        "type": "integer",
+        "note": "组内序号（行内构建恒 0）"
+      }
+    ],
+    "oversize_count": 6,
+    "oversize_for_xiai_store": {
+      "threshold_bytes": 4194304,
+      "threshold_source": "xiai STORED_MAX_BYTES（POST /api/image/store 产物侧上限）",
+      "count": 6,
+      "rows": [
+        {
+          "seqid": "3353",
+          "kind": "yt",
+          "sha256": "36a0893a174c36788f6e202c58580e7b1871cbc0e4979e2d6c1673b1ccefe7ab",
+          "bytes": 4751398,
+          "width": 1536,
+          "height": 1510,
+          "source_bytes": 284976,
+          "source_sha256": "a7dc840b247372109f255130c2141ef807501041faff43ac9920d143a43c5e13"
+        },
+        {
+          "seqid": "3366",
+          "kind": "yt",
+          "sha256": "aa63f293ac62ffd194a6c0d38bbacd0a7d7ec76095147b1b4395cf86b45fcb1c",
+          "bytes": 4379040,
+          "width": 1522,
+          "height": 1533,
+          "source_bytes": 262202,
+          "source_sha256": "8da372875f55ddcf18872266510e36a26c835196cc9c0d08f6d263267826db9c"
+        },
+        {
+          "seqid": "3367",
+          "kind": "yt",
+          "sha256": "4d7016c591f68d7df612ea8c76a4daf6bb798363fefd15b955e86f927af683fc",
+          "bytes": 4930210,
+          "width": 1635,
+          "height": 1590,
+          "source_bytes": 278551,
+          "source_sha256": "e2dbe5ebd484c72cfb85fad98d60289e5d170ce96e642fdcd6d2a6a630ce7ade"
+        },
+        {
+          "seqid": "3464",
+          "kind": "yt",
+          "sha256": "8027031985a0943bd82a4c33fb4384cf15a09e53c46cd9c6bab6a94404b02817",
+          "bytes": 4822388,
+          "width": 1488,
+          "height": 1576,
+          "source_bytes": 293939,
+          "source_sha256": "d200f2286b139ea49fea29e376ed28b234d9c2946d7c2c0061c72144aaa21c77"
+        },
+        {
+          "seqid": "3506",
+          "kind": "yt",
+          "sha256": "0fb37f6c4104528df94b2d89bf1e0c09e9392de40912a20093723ab0929aa7d0",
+          "bytes": 4639606,
+          "width": 1557,
+          "height": 1498,
+          "source_bytes": 264871,
+          "source_sha256": "ccf1b35a171e174bbb233ba9c7cffe3788c2cd8981efb2151b0edff1f29257c3"
+        },
+        {
+          "seqid": "3510",
+          "kind": "yt",
+          "sha256": "28b8ddaf1be3b4d23b82f200c9baf0835fe3defc7ea235331990f3c7685197e1",
+          "bytes": 4960644,
+          "width": 1586,
+          "height": 1498,
+          "source_bytes": 277175,
+          "source_sha256": "8b67937a76f4f4f6dc50c436d9248bcaae76f60f4c242bbdbd30efb9ad2a73e2"
+        }
+      ],
+      "policy": "本包保留原生裁切（/full/1:1 源像素）与 xiai 家法格式（TIFF，RGB 8-bit + Deflate 无损；**不换 JPEG-in-TIFF**）。超档项 **不自行降采样、不自行转码**，去留由 xiai 侧裁定。"
+    },
+    "image_policy": {
+      "mode": "iiif_char_proxy",
+      "url_template": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/<ref>",
+      "follow_redirect": true,
+      "native_crop_only": true,
+      "native_crop_note": "只用原生裁切（302 终点形如 `/full/0/default.jpg`，1:1 源像素）。**禁用 `!w,h` 放大尺寸**——实测 `1200,` ⇒ 1200×2147 系**纯插值上采样**，边缘强度 我双三次上采样 135.71 vs 服务器大图 137.69、MAD 4.32/255、累方差 2858 vs 2824 ⇒ **不增真实信息**，属失真（见 ops/seal-ingest/09_upscale_probe.json）。",
+      "upscale_probe": {
+        "probe_file": "ops/seal-ingest/09_upscale_probe.json",
+        "native_vs_upsampled": {
+          "edge_strength_my_bicubic": 135.71,
+          "edge_strength_server_large": 137.69,
+          "mad_255": 4.32,
+          "cumulative_variance_upsampled": 2858,
+          "cumulative_variance_native": 2824
+        },
+        "verdict": "禁用放大尺寸（不增真实信息）；只取 /full/ 原生裁切"
+      },
+      "source_cache": "var/seal_images/<kind>/<seqid>.jpg（JPEG 源；**不入包**）",
+      "container": "image/tiff",
+      "conversion": "jpeg->tiff(lossless container)",
+      "conversion_note": "IIIF 仅出 JPEG ⇒ 本包 TIFF 为 **无损容器转换**（解码 RAW JPEG 像素原样装进 TIFF，不重采样、不二次有损编码），**质量受源 JPEG 限制**。",
+      "tiff_cache": "var/seal_images_tiff/<sha256[:2]>/<sha256>.tiff（内容寻址；**可续跑**）",
+      "path_shape": "<sha256[:2]>/<sha256>.tiff",
+      "content_addressed": true,
+      "index_key": "sha256（TIFF 字节的 sha256；`images_manifest.jsonl` 是唯一索引）",
+      "xiai_contract": {
+        "endpoint": "POST /api/image/store",
+        "read": "GET /api/image/original/{sha256}",
+        "accepts": "只收 TIFF 容器（魔数 II*\\0 / MM\\0*；不回落、不冒充）",
+        "stored_max_bytes": 4194304,
+        "max_input_bytes": 1048576
+      },
+      "kinds": {
+        "yt": "印面图（sealYtUrl）",
+        "ytsw": "印体释文图（sealYtswUrl）",
+        "yzbk": "边款图（sealYzbkUrl）"
+      },
+      "status_counts": {
+        "ok": 6347,
+        "failed": 0,
+        "source_no_image": 418,
+        "total": 6765,
+        "source_no_image_by_reason": {
+          "bad_bytes": 1,
+          "http_500": 415,
+          "nan_ref": 2
+        }
+      },
+      "by_kind": {
+        "yt": {
+          "target": 3679,
+          "ok": 3464,
+          "failed": 0,
+          "source_no_image": 215,
+          "source_no_image_by_reason": {
+            "bad_bytes": 1,
+            "http_500": 212,
+            "nan_ref": 2
+          }
+        },
+        "ytsw": {
+          "target": 2627,
+          "ok": 2424,
+          "failed": 0,
+          "source_no_image": 203,
+          "source_no_image_by_reason": {
+            "http_500": 203
+          }
+        },
+        "yzbk": {
+          "target": 459,
+          "ok": 459,
+          "failed": 0,
+          "source_no_image": 0,
+          "source_no_image_by_reason": {}
+        }
+      },
+      "no_image_rule": "`source_no_image` 三条子因：① ref 以 `NaN_` 开头 ⇒ 源侧无图；② 有界重试（3 轮 2/8/30s）后仍 HTTP 500 ⇒ 源侧坏图（站点同图页面 naturalWidth=0）；③ HTTP 200 且 content-type=image/jpeg，但正文非可解码影像（Pillow 无法识别，如 iipsrv 把自身响应头当正文吐出）⇒ 源侧坏字节（`bad_bytes`，持久复现）。**三者均登记为「源侧无图」，非采集失败**；`failed` 只留给可重试的瞬态错误。",
+      "no_source_reasons": {
+        "nan_ref": "ref 以 NaN_ 开头（源侧无图）",
+        "http_500": "有界重试后仍 HTTP 500（源侧坏图；站点同图页面 naturalWidth=0）",
+        "bad_bytes": "HTTP 200 且 content-type=image/jpeg，但正文非可解码影像（源侧坏字节；持久复现）"
+      },
+      "source_missing": {
+        "total": 418,
+        "by_reason": {
+          "bad_bytes": 1,
+          "http_500": 415,
+          "nan_ref": 2
+        },
+        "by_reason_note": {
+          "http_500": "有界重试后仍 HTTP 500（源侧坏图；站点同图页面 naturalWidth=0）",
+          "bad_bytes": "HTTP 200 且 content-type=image/jpeg，但正文非可解码影像（源侧坏字节；持久复现）",
+          "nan_ref": "ref 以 NaN_ 开头（源侧无图）"
+        },
+        "by_kind": {
+          "yt": 215,
+          "ytsw": 203
+        },
+        "by_prefix": [
+          {
+            "kind": "yt",
+            "prefix": "2",
+            "reason": "bad_bytes",
+            "count": 1,
+            "sample_seqids": [
+              "3609"
+            ]
+          },
+          {
+            "kind": "yt",
+            "prefix": "2",
+            "reason": "http_500",
+            "count": 5,
+            "sample_seqids": [
+              "1181",
+              "1182",
+              "341",
+              "342",
+              "932"
+            ]
+          },
+          {
+            "kind": "yt",
+            "prefix": "3",
+            "reason": "http_500",
+            "count": 9,
+            "sample_seqids": [
+              "1183",
+              "1184",
+              "1185",
+              "1186",
+              "161"
+            ]
+          },
+          {
+            "kind": "yt",
+            "prefix": "4",
+            "reason": "http_500",
+            "count": 8,
+            "sample_seqids": [
+              "1187",
+              "1188",
+              "349",
+              "350",
+              "351"
+            ]
+          },
+          {
+            "kind": "yt",
+            "prefix": "5",
+            "reason": "http_500",
+            "count": 7,
+            "sample_seqids": [
+              "1189",
+              "1190",
+              "353",
+              "937",
+              "938"
+            ]
+          },
+          {
+            "kind": "yt",
+            "prefix": "6",
+            "reason": "http_500",
+            "count": 8,
+            "sample_seqids": [
+              "1191",
+              "1192",
+              "143",
+              "144",
+              "362"
+            ]
+          },
+          {
+            "kind": "yt",
+            "prefix": "7",
+            "reason": "http_500",
+            "count": 6,
+            "sample_seqids": [
+              "1193",
+              "364",
+              "365",
+              "366",
+              "368"
+            ]
+          },
+          {
+            "kind": "yt",
+            "prefix": "8",
+            "reason": "http_500",
+            "count": 12,
+            "sample_seqids": [
+              "1195",
+              "1196",
+              "1197",
+              "1198",
+              "141"
+            ]
+          },
+          {
+            "kind": "yt",
+            "prefix": "9",
+            "reason": "http_500",
+            "count": 10,
+            "sample_seqids": [
+              "1199",
+              "1201",
+              "148",
+              "203",
+              "371"
+            ]
+          },
+          {
+            "kind": "yt",
+            "prefix": "10",
+            "reason": "http_500",
+            "count": 8,
+            "sample_seqids": [
+              "1203",
+              "1206",
+              "149",
+              "150",
+              "373"
+            ]
+          },
+          {
+            "kind": "yt",
+            "prefix": "11",
+            "reason": "http_500",
+            "count": 11,
+            "sample_seqids": [
+              "1029",
+              "1030",
+              "1208",
+              "1210",
+              "151"
+            ]
+          },
+          {
+            "kind": "yt",
+            "prefix": "12",
+            "reason": "http_500",
+            "count": 11,
+            "sample_seqids": [
+              "1031",
+              "1033",
+              "1034",
+              "1035",
+              "1364"
+            ]
+          },
+          {
+            "kind": "yt",
+            "prefix": "13",
+            "reason": "http_500",
+            "count": 8,
+            "sample_seqids": [
+              "1036",
+              "1037",
+              "1371",
+              "1372",
+              "154"
+            ]
+          },
+          {
+            "kind": "yt",
+            "prefix": "14",
+            "reason": "http_500",
+            "count": 14,
+            "sample_seqids": [
+              "1038",
+              "1039",
+              "1374",
+              "1376",
+              "156"
+            ]
+          },
+          {
+            "kind": "yt",
+            "prefix": "15",
+            "reason": "http_500",
+            "count": 12,
+            "sample_seqids": [
+              "1040",
+              "1041",
+              "1042",
+              "1043",
+              "1377"
+            ]
+          },
+          {
+            "kind": "yt",
+            "prefix": "16",
+            "reason": "http_500",
+            "count": 5,
+            "sample_seqids": [
+              "1044",
+              "1387",
+              "164",
+              "166",
+              "907"
+            ]
+          },
+          {
+            "kind": "yt",
+            "prefix": "17",
+            "reason": "http_500",
+            "count": 14,
+            "sample_seqids": [
+              "1045",
+              "1046",
+              "1047",
+              "1048",
+              "1388"
+            ]
+          },
+          {
+            "kind": "yt",
+            "prefix": "18",
+            "reason": "http_500",
+            "count": 10,
+            "sample_seqids": [
+              "1049",
+              "1050",
+              "1392",
+              "1393",
+              "169"
+            ]
+          },
+          {
+            "kind": "yt",
+            "prefix": "19",
+            "reason": "http_500",
+            "count": 11,
+            "sample_seqids": [
+              "1051",
+              "1052",
+              "1394",
+              "1395",
+              "171"
+            ]
+          },
+          {
+            "kind": "yt",
+            "prefix": "20",
+            "reason": "http_500",
+            "count": 12,
+            "sample_seqids": [
+              "1053",
+              "1054",
+              "1055",
+              "1056",
+              "1396"
+            ]
+          },
+          {
+            "kind": "yt",
+            "prefix": "21",
+            "reason": "http_500",
+            "count": 12,
+            "sample_seqids": [
+              "1057",
+              "1058",
+              "1400",
+              "1401",
+              "177"
+            ]
+          },
+          {
+            "kind": "yt",
+            "prefix": "22",
+            "reason": "http_500",
+            "count": 4,
+            "sample_seqids": [
+              "181",
+              "182",
+              "923",
+              "925"
+            ]
+          },
+          {
+            "kind": "yt",
+            "prefix": "23",
+            "reason": "http_500",
+            "count": 6,
+            "sample_seqids": [
+              "183",
+              "2320",
+              "926",
+              "927",
+              "928"
+            ]
+          },
+          {
+            "kind": "yt",
+            "prefix": "24",
+            "reason": "http_500",
+            "count": 6,
+            "sample_seqids": [
+              "184",
+              "185",
+              "186",
+              "187",
+              "930"
+            ]
+          },
+          {
+            "kind": "yt",
+            "prefix": "38",
+            "reason": "http_500",
+            "count": 2,
+            "sample_seqids": [
+              "540",
+              "542"
+            ]
+          },
+          {
+            "kind": "yt",
+            "prefix": "39",
+            "reason": "http_500",
+            "count": 1,
+            "sample_seqids": [
+              "543"
+            ]
+          },
+          {
+            "kind": "yt",
+            "prefix": "NaN",
+            "reason": "nan_ref",
+            "count": 2,
+            "sample_seqids": [
+              "3921",
+              "3922"
+            ]
+          },
+          {
+            "kind": "ytsw",
+            "prefix": "2",
+            "reason": "http_500",
+            "count": 5,
+            "sample_seqids": [
+              "1181",
+              "1182",
+              "341",
+              "342",
+              "932"
+            ]
+          },
+          {
+            "kind": "ytsw",
+            "prefix": "3",
+            "reason": "http_500",
+            "count": 8,
+            "sample_seqids": [
+              "1183",
+              "1184",
+              "1185",
+              "1186",
+              "346"
+            ]
+          },
+          {
+            "kind": "ytsw",
+            "prefix": "4",
+            "reason": "http_500",
+            "count": 8,
+            "sample_seqids": [
+              "1187",
+              "1188",
+              "349",
+              "350",
+              "351"
+            ]
+          },
+          {
+            "kind": "ytsw",
+            "prefix": "5",
+            "reason": "http_500",
+            "count": 7,
+            "sample_seqids": [
+              "1189",
+              "1190",
+              "353",
+              "937",
+              "938"
+            ]
+          },
+          {
+            "kind": "ytsw",
+            "prefix": "6",
+            "reason": "http_500",
+            "count": 6,
+            "sample_seqids": [
+              "1191",
+              "1192",
+              "362",
+              "363",
+              "941"
+            ]
+          },
+          {
+            "kind": "ytsw",
+            "prefix": "7",
+            "reason": "http_500",
+            "count": 6,
+            "sample_seqids": [
+              "1193",
+              "364",
+              "365",
+              "366",
+              "368"
+            ]
+          },
+          {
+            "kind": "ytsw",
+            "prefix": "8",
+            "reason": "http_500",
+            "count": 10,
+            "sample_seqids": [
+              "1195",
+              "1196",
+              "1197",
+              "1198",
+              "141"
+            ]
+          },
+          {
+            "kind": "ytsw",
+            "prefix": "9",
+            "reason": "http_500",
+            "count": 10,
+            "sample_seqids": [
+              "1199",
+              "1201",
+              "148",
+              "203",
+              "371"
+            ]
+          },
+          {
+            "kind": "ytsw",
+            "prefix": "10",
+            "reason": "http_500",
+            "count": 8,
+            "sample_seqids": [
+              "1203",
+              "1206",
+              "149",
+              "150",
+              "373"
+            ]
+          },
+          {
+            "kind": "ytsw",
+            "prefix": "11",
+            "reason": "http_500",
+            "count": 11,
+            "sample_seqids": [
+              "1029",
+              "1030",
+              "1208",
+              "1210",
+              "151"
+            ]
+          },
+          {
+            "kind": "ytsw",
+            "prefix": "12",
+            "reason": "http_500",
+            "count": 11,
+            "sample_seqids": [
+              "1031",
+              "1033",
+              "1034",
+              "1035",
+              "1364"
+            ]
+          },
+          {
+            "kind": "ytsw",
+            "prefix": "13",
+            "reason": "http_500",
+            "count": 8,
+            "sample_seqids": [
+              "1036",
+              "1037",
+              "1371",
+              "1372",
+              "154"
+            ]
+          },
+          {
+            "kind": "ytsw",
+            "prefix": "14",
+            "reason": "http_500",
+            "count": 12,
+            "sample_seqids": [
+              "1038",
+              "1039",
+              "1374",
+              "1376",
+              "156"
+            ]
+          },
+          {
+            "kind": "ytsw",
+            "prefix": "15",
+            "reason": "http_500",
+            "count": 12,
+            "sample_seqids": [
+              "1040",
+              "1041",
+              "1042",
+              "1043",
+              "1377"
+            ]
+          },
+          {
+            "kind": "ytsw",
+            "prefix": "16",
+            "reason": "http_500",
+            "count": 5,
+            "sample_seqids": [
+              "1044",
+              "1387",
+              "164",
+              "166",
+              "907"
+            ]
+          },
+          {
+            "kind": "ytsw",
+            "prefix": "17",
+            "reason": "http_500",
+            "count": 14,
+            "sample_seqids": [
+              "1045",
+              "1046",
+              "1047",
+              "1048",
+              "1388"
+            ]
+          },
+          {
+            "kind": "ytsw",
+            "prefix": "18",
+            "reason": "http_500",
+            "count": 10,
+            "sample_seqids": [
+              "1049",
+              "1050",
+              "1392",
+              "1393",
+              "169"
+            ]
+          },
+          {
+            "kind": "ytsw",
+            "prefix": "19",
+            "reason": "http_500",
+            "count": 10,
+            "sample_seqids": [
+              "1051",
+              "1052",
+              "1394",
+              "1395",
+              "171"
+            ]
+          },
+          {
+            "kind": "ytsw",
+            "prefix": "20",
+            "reason": "http_500",
+            "count": 12,
+            "sample_seqids": [
+              "1053",
+              "1054",
+              "1055",
+              "1056",
+              "1396"
+            ]
+          },
+          {
+            "kind": "ytsw",
+            "prefix": "21",
+            "reason": "http_500",
+            "count": 12,
+            "sample_seqids": [
+              "1057",
+              "1058",
+              "1400",
+              "1401",
+              "177"
+            ]
+          },
+          {
+            "kind": "ytsw",
+            "prefix": "22",
+            "reason": "http_500",
+            "count": 5,
+            "sample_seqids": [
+              "181",
+              "182",
+              "476",
+              "923",
+              "925"
+            ]
+          },
+          {
+            "kind": "ytsw",
+            "prefix": "23",
+            "reason": "http_500",
+            "count": 5,
+            "sample_seqids": [
+              "183",
+              "926",
+              "927",
+              "928",
+              "929"
+            ]
+          },
+          {
+            "kind": "ytsw",
+            "prefix": "24",
+            "reason": "http_500",
+            "count": 6,
+            "sample_seqids": [
+              "184",
+              "185",
+              "186",
+              "187",
+              "930"
+            ]
+          },
+          {
+            "kind": "ytsw",
+            "prefix": "38",
+            "reason": "http_500",
+            "count": 1,
+            "sample_seqids": [
+              "542"
+            ]
+          },
+          {
+            "kind": "ytsw",
+            "prefix": "64",
+            "reason": "http_500",
+            "count": 1,
+            "sample_seqids": [
+              "1826"
+            ]
+          }
+        ]
+      },
+      "packaged": {
+        "rows": 6347,
+        "hardlinked": 0,
+        "copied": 0,
+        "missing_cache": 0,
+        "tree_files": 6347,
+        "orphan_files": 0,
+        "rows_without_file": 0,
+        "by_kind": {
+          "yt": 3464,
+          "ytsw": 2424,
+          "yzbk": 459
+        }
+      },
+      "packaged_checks": {
+        "row_count": 6347,
+        "tree_file_count": 6347,
+        "one_to_one": true,
+        "orphan_files": [],
+        "rows_without_file": [],
+        "sha256_equals_tiff_bytes": true,
+        "sha256_mismatch": [],
+        "tiff_magic_all_ok": true,
+        "tiff_magic_fail": [],
+        "max_stored_bytes": 4194304,
+        "max_input_bytes": 1048576,
+        "oversize_for_xiai_store_count": 6,
+        "oversize_stored": [
+          {
+            "seqid": "3353",
+            "kind": "yt",
+            "sha256": "36a0893a174c36788f6e202c58580e7b1871cbc0e4979e2d6c1673b1ccefe7ab",
+            "bytes": 4751398,
+            "width": 1536,
+            "height": 1510,
+            "source_bytes": 284976,
+            "source_sha256": "a7dc840b247372109f255130c2141ef807501041faff43ac9920d143a43c5e13"
+          },
+          {
+            "seqid": "3366",
+            "kind": "yt",
+            "sha256": "aa63f293ac62ffd194a6c0d38bbacd0a7d7ec76095147b1b4395cf86b45fcb1c",
+            "bytes": 4379040,
+            "width": 1522,
+            "height": 1533,
+            "source_bytes": 262202,
+            "source_sha256": "8da372875f55ddcf18872266510e36a26c835196cc9c0d08f6d263267826db9c"
+          },
+          {
+            "seqid": "3367",
+            "kind": "yt",
+            "sha256": "4d7016c591f68d7df612ea8c76a4daf6bb798363fefd15b955e86f927af683fc",
+            "bytes": 4930210,
+            "width": 1635,
+            "height": 1590,
+            "source_bytes": 278551,
+            "source_sha256": "e2dbe5ebd484c72cfb85fad98d60289e5d170ce96e642fdcd6d2a6a630ce7ade"
+          },
+          {
+            "seqid": "3464",
+            "kind": "yt",
+            "sha256": "8027031985a0943bd82a4c33fb4384cf15a09e53c46cd9c6bab6a94404b02817",
+            "bytes": 4822388,
+            "width": 1488,
+            "height": 1576,
+            "source_bytes": 293939,
+            "source_sha256": "d200f2286b139ea49fea29e376ed28b234d9c2946d7c2c0061c72144aaa21c77"
+          },
+          {
+            "seqid": "3506",
+            "kind": "yt",
+            "sha256": "0fb37f6c4104528df94b2d89bf1e0c09e9392de40912a20093723ab0929aa7d0",
+            "bytes": 4639606,
+            "width": 1557,
+            "height": 1498,
+            "source_bytes": 264871,
+            "source_sha256": "ccf1b35a171e174bbb233ba9c7cffe3788c2cd8981efb2151b0edff1f29257c3"
+          },
+          {
+            "seqid": "3510",
+            "kind": "yt",
+            "sha256": "28b8ddaf1be3b4d23b82f200c9baf0835fe3defc7ea235331990f3c7685197e1",
+            "bytes": 4960644,
+            "width": 1586,
+            "height": 1498,
+            "source_bytes": 277175,
+            "source_sha256": "8b67937a76f4f4f6dc50c436d9248bcaae76f60f4c242bbdbd30efb9ad2a73e2"
+          }
+        ],
+        "oversize_input": [
+          {
+            "seqid": "199",
+            "kind": "yt",
+            "sha256": "ee10e76ef3603762f5d5b298b7074afa45c5189b47eb99d679dfed3ca8e0b0b9",
+            "bytes": 1347038
+          },
+          {
+            "seqid": "201",
+            "kind": "yt",
+            "sha256": "a90b23fa5d3b0b8189c9e02b1192b97031c424cb236330ce20164c5d2c10a41d",
+            "bytes": 1234970
+          },
+          {
+            "seqid": "204",
+            "kind": "yt",
+            "sha256": "b8e15b404cd83e3f0f9454ce8d7cdf1f664aef0132ea1ec636254d5b7284f9a2",
+            "bytes": 1328948
+          },
+          {
+            "seqid": "205",
+            "kind": "yt",
+            "sha256": "2eaad61a793f72712653853f22a66f4f11daf4f4cbb392bddb8bfcc5acb38cc9",
+            "bytes": 1432522
+          },
+          {
+            "seqid": "213",
+            "kind": "yt",
+            "sha256": "3bb1d0873c17ac72df0c682e0d6755945307ef3f1f43a1f952ef7955939f507b",
+            "bytes": 2661954
+          },
+          {
+            "seqid": "214",
+            "kind": "yt",
+            "sha256": "38241fdd62f8ae5f7de480f0ec39277802b816dfab686c818aed4d6bc67bd3f3",
+            "bytes": 1779896
+          },
+          {
+            "seqid": "215",
+            "kind": "yt",
+            "sha256": "fcb29171abbd7acd14c8dc0f646ff978d4f8278635d704441be6e9155fe98ac2",
+            "bytes": 1540322
+          },
+          {
+            "seqid": "223",
+            "kind": "yt",
+            "sha256": "35486fb13ef886a8e37dbcc9b5ea83911e8c323f7dde274abf3553fd5dbc631d",
+            "bytes": 2972070
+          },
+          {
+            "seqid": "224",
+            "kind": "yt",
+            "sha256": "1e33801578ec252772994d03c39974d270b88e80818440176abe2dab5a4c1967",
+            "bytes": 2906812
+          },
+          {
+            "seqid": "225",
+            "kind": "yt",
+            "sha256": "224e5efc6db3cc13ece37c612322f01ed3f753ff61c6189f2f4d7055d206a9e3",
+            "bytes": 1174816
+          },
+          {
+            "seqid": "226",
+            "kind": "yt",
+            "sha256": "a0ee22a161a42a67f77880c23f6d12a8e058d863f9a858ad4a70ffddfc9840b4",
+            "bytes": 1672130
+          },
+          {
+            "seqid": "227",
+            "kind": "yt",
+            "sha256": "8eb8da633fde6eb35fb71e93d80aee6f242d19f1b4e0d911711d3a7b9ed5dfd2",
+            "bytes": 1274438
+          },
+          {
+            "seqid": "228",
+            "kind": "yt",
+            "sha256": "72d2eb23d2a36be57ea3abe47d56ccde5c93f1a633d01cf1a81be57670bb761b",
+            "bytes": 1453740
+          },
+          {
+            "seqid": "244",
+            "kind": "yt",
+            "sha256": "31b0a7ece591e68a07a5dbbc2dd1039d7f0ee04c9f3b1e84dcad2b32e4f462bf",
+            "bytes": 1360466
+          },
+          {
+            "seqid": "246",
+            "kind": "yt",
+            "sha256": "9301f3203d6854820fe41401025079384bd3145439f1a7553d4472118779ae98",
+            "bytes": 1843800
+          },
+          {
+            "seqid": "247",
+            "kind": "yt",
+            "sha256": "706f27881db2dea0e2086921d4588ecaf5dce219506d8167e7811ab5248702d5",
+            "bytes": 2181806
+          },
+          {
+            "seqid": "250",
+            "kind": "yt",
+            "sha256": "fb9336c180e3578d7c9f1dba4a146829bc76bd78eb3d6ad1d421124611ec361a",
+            "bytes": 2076346
+          },
+          {
+            "seqid": "251",
+            "kind": "yt",
+            "sha256": "582e79a2bdbe0b4da94be01d16d4a4427586c7cd52fd318c37799de78acd60d2",
+            "bytes": 1517644
+          },
+          {
+            "seqid": "252",
+            "kind": "yt",
+            "sha256": "ca2141f69aadb6eb696d54a45082d6186b0f092088eb3a36e24dbfcdbeb1106c",
+            "bytes": 1520036
+          },
+          {
+            "seqid": "260",
+            "kind": "yt",
+            "sha256": "c792b9e55a4010034b85da3b6235900709ce83356d53a0a1a1e7a439a2305c6c",
+            "bytes": 1592294
+          },
+          {
+            "seqid": "261",
+            "kind": "yt",
+            "sha256": "3b3131d1d9399a5037c67b55c24becb31044d4b11c6855811d8679865f9618bb",
+            "bytes": 1212584
+          },
+          {
+            "seqid": "263",
+            "kind": "yt",
+            "sha256": "b243438f7ee9477e585a80eb2777245017c4929372931496e005a2d1e32d0aed",
+            "bytes": 2335878
+          },
+          {
+            "seqid": "264",
+            "kind": "yt",
+            "sha256": "6aaee30842572720e35000de1b55fcc002ac34d6b1fea2afeaf0bb33656c87f7",
+            "bytes": 2823024
+          },
+          {
+            "seqid": "267",
+            "kind": "yt",
+            "sha256": "5c8522607332ffe1c675ae0e86a6acf3b68709ac6b0f20bc411a0da6d1863a17",
+            "bytes": 1594844
+          },
+          {
+            "seqid": "268",
+            "kind": "yt",
+            "sha256": "b2fffb5f87d950398f1589e3ee3ca0ac8f3bad63c4562acf2c4143e22177e5f9",
+            "bytes": 1109280
+          },
+          {
+            "seqid": "269",
+            "kind": "yt",
+            "sha256": "aae3309fd687d07baab1df5ca30b474c08581a94b0369f563a9eaac17c2fa597",
+            "bytes": 1334420
+          },
+          {
+            "seqid": "270",
+            "kind": "yt",
+            "sha256": "515b71b3bd2e38b85a136579d2088a9625a7a4c895a63103641824113e65c142",
+            "bytes": 1348754
+          },
+          {
+            "seqid": "271",
+            "kind": "yt",
+            "sha256": "0553381b5bbe2796d02fdbed71d418b0a3829d655ef5b5c3299387bba5f7c5c9",
+            "bytes": 1609856
+          },
+          {
+            "seqid": "272",
+            "kind": "yt",
+            "sha256": "b1ad39730ccc793e1a966fb322259f2c6a1f7dd57862b0989bbf1b4395415b47",
+            "bytes": 1729426
+          },
+          {
+            "seqid": "273",
+            "kind": "yt",
+            "sha256": "edec3ba0647577bc848cd73baa7b3705e680d1f7062291f508e7176ea4a70c11",
+            "bytes": 2893108
+          },
+          {
+            "seqid": "275",
+            "kind": "yt",
+            "sha256": "2361f899020c589581e4f9334f282b678d3a474b23eabef9848ffc01dc7f9f72",
+            "bytes": 2865204
+          },
+          {
+            "seqid": "279",
+            "kind": "yt",
+            "sha256": "c29c9488a8302a6ec907d7c1b6bdcedbff9f871d26c479256b5bbe2ee36df1b9",
+            "bytes": 1452750
+          },
+          {
+            "seqid": "280",
+            "kind": "yt",
+            "sha256": "c105644d528028b6c86e8db61a41e0a04293e89f0b99a36ba9c0f8c7943ef753",
+            "bytes": 1402156
+          },
+          {
+            "seqid": "281",
+            "kind": "yt",
+            "sha256": "ebce149199370db5d363ad2afcc9da94fd323546c8fd8288f1f618b4600d8e02",
+            "bytes": 1578448
+          },
+          {
+            "seqid": "282",
+            "kind": "yt",
+            "sha256": "a9c8ac18e39416a9a11413c4d2af676c288a2838138d0db29f2252a3a3655a3f",
+            "bytes": 1509784
+          },
+          {
+            "seqid": "283",
+            "kind": "yt",
+            "sha256": "111fcaa16b2f3ccf5b8b1474f37232d0435b38a1e87b474f761ccf2ba443e36f",
+            "bytes": 1379752
+          },
+          {
+            "seqid": "284",
+            "kind": "yt",
+            "sha256": "9dde0a17af15f0bfdc98dd85e1168996ee15b4adb43b08656212107c519b2299",
+            "bytes": 3702738
+          },
+          {
+            "seqid": "285",
+            "kind": "yt",
+            "sha256": "e2a1ef6e8b09b1412d470b330508a831e1273a03640941a5ebed0a84d743f7d0",
+            "bytes": 3053504
+          },
+          {
+            "seqid": "286",
+            "kind": "yt",
+            "sha256": "c956f90608c9ca974cf36f1e1bcda9a62e94f945e766414ccd40f77892ff2853",
+            "bytes": 1471116
+          },
+          {
+            "seqid": "287",
+            "kind": "yt",
+            "sha256": "3a73a4e3549fe8447534b8455563ffae8efab546c9bb3417ce041550d0f30a52",
+            "bytes": 1755456
+          },
+          {
+            "seqid": "288",
+            "kind": "yt",
+            "sha256": "ef2b1860a55f4be2e1629a44d3d0693d16ff749743caae5aa9a6d97654bd9b13",
+            "bytes": 2080102
+          },
+          {
+            "seqid": "289",
+            "kind": "yt",
+            "sha256": "16189f75afeef68823896c62f21e067dbe6999c3a4cc90e7735ddc0202fc584a",
+            "bytes": 1440430
+          },
+          {
+            "seqid": "290",
+            "kind": "yt",
+            "sha256": "ec0fd4eb337b4dde94a7b2d3a6f8c1dfd40b7ed5611a474ad49bed49ee954fbd",
+            "bytes": 1629192
+          },
+          {
+            "seqid": "292",
+            "kind": "yt",
+            "sha256": "3f90b2ac5e7bdf5a125cf893bf9650677ac735e1796be032d2956f8101175357",
+            "bytes": 1068692
+          },
+          {
+            "seqid": "293",
+            "kind": "yt",
+            "sha256": "8292cf4ced49f45828a2a59c8fee07a2badf4b0815c584e61b87b55887632412",
+            "bytes": 3503158
+          },
+          {
+            "seqid": "3338",
+            "kind": "yt",
+            "sha256": "19b59860cc3834ad7cd5cfce29aa207331f60f58c6de8a8efafa80afab21fca9",
+            "bytes": 1906196
+          },
+          {
+            "seqid": "3339",
+            "kind": "yt",
+            "sha256": "53920a9a1818e3289aa66e7cd5afc08cc8696ec2f4c8e7689cb41fe8d0d81a0c",
+            "bytes": 3883984
+          },
+          {
+            "seqid": "3341",
+            "kind": "yt",
+            "sha256": "f7eb62020126c183aeaf1af4e7b90fad66f4502b7e3f8f0e797f0a92dd3bb293",
+            "bytes": 1314078
+          },
+          {
+            "seqid": "3342",
+            "kind": "yt",
+            "sha256": "8f4ff55dafb74e4adadd09e7f5156690f5c2fb82fed0ec28d7c5458fa418b3d5",
+            "bytes": 1677632
+          },
+          {
+            "seqid": "3343",
+            "kind": "yt",
+            "sha256": "3beb17a3175a6eb83770b23a67afbdf7d3a574ec16309f74ca5f8b9192a0e049",
+            "bytes": 2016656
+          },
+          {
+            "seqid": "3344",
+            "kind": "yt",
+            "sha256": "e4c5dbf8e585d931838e4d0e8fee9b3015e3310ee7ced514546499f7e4be4a9a",
+            "bytes": 3278824
+          },
+          {
+            "seqid": "3345",
+            "kind": "yt",
+            "sha256": "8b1e6e7f1ff8a9cdedec7ee612c65788da416b74b3520dec4ced9bce650bc454",
+            "bytes": 3240506
+          },
+          {
+            "seqid": "3350",
+            "kind": "yt",
+            "sha256": "c491bc3bd98a9dde4cd96f88ea0ec7948ca631f6998de7487608059e79b6b442",
+            "bytes": 1305876
+          },
+          {
+            "seqid": "3351",
+            "kind": "yt",
+            "sha256": "f8313f6cf40ab26c7296c1566eec6fb5f40f6807088c5789fbb35af48773d75b",
+            "bytes": 1495788
+          },
+          {
+            "seqid": "3352",
+            "kind": "yt",
+            "sha256": "2e46112eca2563b983d690da13677d9bfa4cd8ed5a769c54e29b8f6f67380cea",
+            "bytes": 3597196
+          },
+          {
+            "seqid": "3353",
+            "kind": "yt",
+            "sha256": "36a0893a174c36788f6e202c58580e7b1871cbc0e4979e2d6c1673b1ccefe7ab",
+            "bytes": 4751398
+          },
+          {
+            "seqid": "3354",
+            "kind": "yt",
+            "sha256": "41fa97b968327513000a3a47c184ca392548eb7be01150d418a3fb314fd2a277",
+            "bytes": 1594204
+          },
+          {
+            "seqid": "3355",
+            "kind": "yt",
+            "sha256": "a802dfa29b17398571fc6d42771056ed5a7486ae7db746699aa06ac2bd2522bf",
+            "bytes": 1807678
+          },
+          {
+            "seqid": "3356",
+            "kind": "yt",
+            "sha256": "b0913bfee5f7907b4751efe154ab41bb24d32c37eb25f0d0273f87b986284e39",
+            "bytes": 1136584
+          },
+          {
+            "seqid": "3357",
+            "kind": "yt",
+            "sha256": "3a5540ee191e48ec9dbfd2a62e4d8fbf27c3848b5e746c5a21e2090293f9bff8",
+            "bytes": 1213332
+          },
+          {
+            "seqid": "3359",
+            "kind": "yt",
+            "sha256": "e41dfd064bf60cfea27f78190a24b9c033661ebdb3c90f6bcc7c4769464bea06",
+            "bytes": 1086210
+          },
+          {
+            "seqid": "3360",
+            "kind": "yt",
+            "sha256": "a0a1de84be049b95beb37b5aafbcb4d201f141e92702096bf88720199cbfa790",
+            "bytes": 3301984
+          },
+          {
+            "seqid": "3361",
+            "kind": "yt",
+            "sha256": "bb484cbaf2aba2a219b07246d4a0b108ec7312e750104f2535f4bdbeced9200a",
+            "bytes": 3032592
+          },
+          {
+            "seqid": "3362",
+            "kind": "yt",
+            "sha256": "b64099a5d5fb5c31a13bd2f1da60e4f257acf82d8fc8079f594c744fc711dd66",
+            "bytes": 1858262
+          },
+          {
+            "seqid": "3363",
+            "kind": "yt",
+            "sha256": "a10db9180a60f872003ecf7d11abfdf677d5745b2e18ea54e289cc8ce6bf780a",
+            "bytes": 1393270
+          },
+          {
+            "seqid": "3364",
+            "kind": "yt",
+            "sha256": "5ca02a3c4bddcd302c2368cd0d53105d418ddb4f1fa3ab25d2831cd1cac45a67",
+            "bytes": 1496396
+          },
+          {
+            "seqid": "3366",
+            "kind": "yt",
+            "sha256": "aa63f293ac62ffd194a6c0d38bbacd0a7d7ec76095147b1b4395cf86b45fcb1c",
+            "bytes": 4379040
+          },
+          {
+            "seqid": "3367",
+            "kind": "yt",
+            "sha256": "4d7016c591f68d7df612ea8c76a4daf6bb798363fefd15b955e86f927af683fc",
+            "bytes": 4930210
+          },
+          {
+            "seqid": "3368",
+            "kind": "yt",
+            "sha256": "bb3623343ab4b612e16232aa83ddfb272c7411ae705964c57d7501e340f99cdb",
+            "bytes": 1431352
+          },
+          {
+            "seqid": "3369",
+            "kind": "yt",
+            "sha256": "d8a6bf55b5df97579f29980185fd02c9375af1d79ab90e0031b4f4631251b776",
+            "bytes": 1768268
+          },
+          {
+            "seqid": "3373",
+            "kind": "yt",
+            "sha256": "944cb3bc5d02947e4ff7ce8b089ad2584f849646c4988a418a763ed50f8ce044",
+            "bytes": 1291720
+          },
+          {
+            "seqid": "3374",
+            "kind": "yt",
+            "sha256": "07367bffb8721710eb2cf46f76f5c248316f7997c71d70bd80a73d3b59fa54f8",
+            "bytes": 1192002
+          },
+          {
+            "seqid": "3375",
+            "kind": "yt",
+            "sha256": "4a78b78f9305c2249870c214b4a9b65c73926de079fef6050cfa8c5fffd15755",
+            "bytes": 1932294
+          },
+          {
+            "seqid": "3376",
+            "kind": "yt",
+            "sha256": "7e3db2e6ea363f38471ebac0707c6020ed620144a503e8b0d805e02fadfe7fae",
+            "bytes": 3351500
+          },
+          {
+            "seqid": "3377",
+            "kind": "yt",
+            "sha256": "a103c1a453aa6d1ee4933c3a524b45533ee14edc86bc2c28046c64a62b7fd53c",
+            "bytes": 1083702
+          },
+          {
+            "seqid": "3382",
+            "kind": "yt",
+            "sha256": "fdd685012252ecefd4e438771e31dbb15ec3e57ede8e7905f6e518d4ab9fcf52",
+            "bytes": 1356086
+          },
+          {
+            "seqid": "3384",
+            "kind": "yt",
+            "sha256": "49810058eacd3b03bae299d4c6b6e582673356fffa8c8a3c4ca3c7415856f876",
+            "bytes": 1212118
+          },
+          {
+            "seqid": "3385",
+            "kind": "yt",
+            "sha256": "7836cfdf4b929f4c32a5ab1af82fe8696391d10ff46a93c1be52848cdfdb44d7",
+            "bytes": 1122468
+          },
+          {
+            "seqid": "3386",
+            "kind": "yt",
+            "sha256": "232af30c888ee938ad38329bda902edd583f61467a5cde41071b68e0451c75da",
+            "bytes": 2652528
+          },
+          {
+            "seqid": "3387",
+            "kind": "yt",
+            "sha256": "6fcd24795ac29267fb8234e132d1402f15add29ea04cec149b38a3c002d08101",
+            "bytes": 2905888
+          },
+          {
+            "seqid": "3388",
+            "kind": "yt",
+            "sha256": "1cc721e2b9a08ddb4ee79b2ff546b1b151e6cd31eee81ad7d1693d6aab0583e6",
+            "bytes": 2954544
+          },
+          {
+            "seqid": "3389",
+            "kind": "yt",
+            "sha256": "9c6c5c25879ab002e40c97a70c439a63f47f4cc799601c496c75b0ac661131a4",
+            "bytes": 2682636
+          },
+          {
+            "seqid": "3390",
+            "kind": "yt",
+            "sha256": "bf1ae0a41e226e2f6eacd92ce6f2198a8e01ff4f478390937479a8880deb6e02",
+            "bytes": 1318674
+          },
+          {
+            "seqid": "3392",
+            "kind": "yt",
+            "sha256": "ed5f1a6af0e40d1fc9fc7ac07f3c591bc344fdd3e3dd89ce319f8b56b86491ee",
+            "bytes": 2474082
+          },
+          {
+            "seqid": "3393",
+            "kind": "yt",
+            "sha256": "74eb591917fea38569a032f74504bc58e3189a54f1a37c19993eb05373c94b3d",
+            "bytes": 1501900
+          },
+          {
+            "seqid": "3394",
+            "kind": "yt",
+            "sha256": "009e3922bbe8d12e5ba6cbf7d1c81c2f6e11cd00306e7c2137703a5e2a5a7c9e",
+            "bytes": 1567094
+          },
+          {
+            "seqid": "3395",
+            "kind": "yt",
+            "sha256": "8540f06f7e863f74434d4d7157f6a2c9f91cd2066363890ee1b4776cf77188ee",
+            "bytes": 1538014
+          },
+          {
+            "seqid": "3396",
+            "kind": "yt",
+            "sha256": "1534ab84aebcf3eb6b78a8a0b961d3e9f929267f0dd9b88bf30a4445c0e1596e",
+            "bytes": 1834108
+          },
+          {
+            "seqid": "3397",
+            "kind": "yt",
+            "sha256": "452d232ed4b16d1d354170905312d56682418255a65ed5785afe748ac39b8256",
+            "bytes": 2089266
+          },
+          {
+            "seqid": "3434",
+            "kind": "yt",
+            "sha256": "f29379a1feb2bb05cf0354e73a96ffadb80c71ad8447ba5e3a1a9b7b76cb0698",
+            "bytes": 1488472
+          },
+          {
+            "seqid": "3435",
+            "kind": "yt",
+            "sha256": "fa9d94c373dc114c5059774311089ae8182d81eeaf87e8cc293f39daeeab2027",
+            "bytes": 1214610
+          },
+          {
+            "seqid": "3436",
+            "kind": "yt",
+            "sha256": "99fe6bf49fc4b80d9d6e3f250d7362a0fc4a7e385ede4be5362fc685e5206704",
+            "bytes": 1298066
+          },
+          {
+            "seqid": "3438",
+            "kind": "yt",
+            "sha256": "52f37e149e6c9352a2e16209362450e7e2dfe2ddd775554fe996027f9f4f1aae",
+            "bytes": 3343902
+          },
+          {
+            "seqid": "3439",
+            "kind": "yt",
+            "sha256": "b27c3fb0fe151ab1da7bae7844595b85c5a6b71f00639aa64ac8ddea70cf1539",
+            "bytes": 1617692
+          },
+          {
+            "seqid": "3440",
+            "kind": "yt",
+            "sha256": "bb4247eba669ddbc97b94c14f6e1bd2c023c49ed812a6caf468e0781cfbda745",
+            "bytes": 3634124
+          },
+          {
+            "seqid": "3441",
+            "kind": "yt",
+            "sha256": "1e6eebb991af4e8e222f1077f56f20a77c83348a800814ff68e9d124e178c456",
+            "bytes": 1998972
+          },
+          {
+            "seqid": "3442",
+            "kind": "yt",
+            "sha256": "6819c4d374cced493ce6c7070a802406de8a7ab0ffd811e0a75514e62a8c0cc8",
+            "bytes": 1727754
+          },
+          {
+            "seqid": "3444",
+            "kind": "yt",
+            "sha256": "3f4444784dfa01334ae925385f55a34857ac8134e1e61c49efea85d794b8c574",
+            "bytes": 2368118
+          },
+          {
+            "seqid": "3445",
+            "kind": "yt",
+            "sha256": "7dcc161f0fa284789454345180178a02e4f025d263ce9ff19b721d5b77170158",
+            "bytes": 2112616
+          },
+          {
+            "seqid": "3446",
+            "kind": "yt",
+            "sha256": "5de33ab7c1565a6210d1508419bc104c933abbd00a024875bd595715bcc41cc0",
+            "bytes": 3298000
+          },
+          {
+            "seqid": "3447",
+            "kind": "yt",
+            "sha256": "425793e29e2df95088a7b03315dfa55c369f45936bc1a2e51818825a5729f6f6",
+            "bytes": 3570012
+          },
+          {
+            "seqid": "3448",
+            "kind": "yt",
+            "sha256": "6e0e2f0481106573995620986a338d8e82ea5952d33a7ac4f97c5972603b5187",
+            "bytes": 2006850
+          },
+          {
+            "seqid": "3449",
+            "kind": "yt",
+            "sha256": "4e38cf263c63534d12ac6f918bc79f87d1bdb520dfcc3dfc2a2c4beb51773a26",
+            "bytes": 2178654
+          },
+          {
+            "seqid": "3451",
+            "kind": "yt",
+            "sha256": "ed1d66bd96cdeba59ceed8599f97c4d529cddba6011ae49dda57e56d428bb6a3",
+            "bytes": 1743864
+          },
+          {
+            "seqid": "3453",
+            "kind": "yt",
+            "sha256": "0e7a8afd82fbae95e66218cd5f870e6ba3ee6c62b93875d6a06270f38bc649d7",
+            "bytes": 1457570
+          },
+          {
+            "seqid": "3454",
+            "kind": "yt",
+            "sha256": "f5a8abe4017b41f8a0f0a439015fcbbecb3e6c3db9edf7cf800904e41609a028",
+            "bytes": 1376672
+          },
+          {
+            "seqid": "3455",
+            "kind": "yt",
+            "sha256": "a80be6cb936d3f235f6b0afa941e61913a1681628f88d23f4e5e3a65ca9112e1",
+            "bytes": 1278010
+          },
+          {
+            "seqid": "3456",
+            "kind": "yt",
+            "sha256": "076dcd21248e88fbd1fd2ebed6c7afe486fb08393ca5b35e41bbb8f24379f696",
+            "bytes": 1102914
+          },
+          {
+            "seqid": "3457",
+            "kind": "yt",
+            "sha256": "df63ea93ec63fc6ca2d16f7737bd128f5a517d6bf772d71fdb9da470f4af7656",
+            "bytes": 2429850
+          },
+          {
+            "seqid": "3458",
+            "kind": "yt",
+            "sha256": "367c0f06bd163545841c1dd487e593d4c919fbe63c843fbaeea294ebacf9c04f",
+            "bytes": 1365676
+          },
+          {
+            "seqid": "3459",
+            "kind": "yt",
+            "sha256": "18fb05ff260e7644856271fb4e4c38392dad9d752159b6923cdcd43928e1cb31",
+            "bytes": 2507580
+          },
+          {
+            "seqid": "3464",
+            "kind": "yt",
+            "sha256": "8027031985a0943bd82a4c33fb4384cf15a09e53c46cd9c6bab6a94404b02817",
+            "bytes": 4822388
+          },
+          {
+            "seqid": "3466",
+            "kind": "yt",
+            "sha256": "919bdd1f1ad8f0e2573d8e0047d6c8949f8b2a562a9f84c65e004e74d80dc4e3",
+            "bytes": 1176198
+          },
+          {
+            "seqid": "3467",
+            "kind": "yt",
+            "sha256": "548899a324be03aad94bd03170f31e6ea0d3f33818b18424578fa557f29b9cd8",
+            "bytes": 4078654
+          },
+          {
+            "seqid": "3468",
+            "kind": "yt",
+            "sha256": "499a7fa2c598076ac2921708ce50a5f67e92672dc64eeb79664336283ec2bcee",
+            "bytes": 1252900
+          },
+          {
+            "seqid": "3470",
+            "kind": "yt",
+            "sha256": "214ff2362b225762796fcb6d360482f974d4c8960dea4f6cb92283908baf064b",
+            "bytes": 1663198
+          },
+          {
+            "seqid": "3471",
+            "kind": "yt",
+            "sha256": "9d26ac50276ca2d2a0155c91a3d0a936de4fe052a84baa74d89e5d947fd23e98",
+            "bytes": 1589278
+          },
+          {
+            "seqid": "3473",
+            "kind": "yt",
+            "sha256": "748001b6f9c77dbf626afb0740dd5e45e645d642d3369778281b0c0358a7eb02",
+            "bytes": 1159102
+          },
+          {
+            "seqid": "3474",
+            "kind": "yt",
+            "sha256": "52f6a21ba9f32fbd13256f034dca3daba562975b10121d346214c5055c375a77",
+            "bytes": 1583122
+          },
+          {
+            "seqid": "3475",
+            "kind": "yt",
+            "sha256": "ad437c5755ec376d269aca7ccd22e2c87bcd5948699847c4217ffbaa9e668eff",
+            "bytes": 1442174
+          },
+          {
+            "seqid": "3476",
+            "kind": "yt",
+            "sha256": "533f2bc753c7e9a13e06db9be97591e90b2ab511684d773ee1aa81c254b0a633",
+            "bytes": 1482966
+          },
+          {
+            "seqid": "3478",
+            "kind": "yt",
+            "sha256": "f72395a7b05635e314fb6c13cd159e03d76e8bd3e287beffd992c2da1dd99cca",
+            "bytes": 3589906
+          },
+          {
+            "seqid": "3479",
+            "kind": "yt",
+            "sha256": "2901a8a107cf92f763a9476f81a03610c38f5ead41757bd32608b7411d9bf49c",
+            "bytes": 3985090
+          },
+          {
+            "seqid": "3480",
+            "kind": "yt",
+            "sha256": "348c4fcc63940170af369ace689bcc0f6b04d7a2f4bac4ea62915c83f3368379",
+            "bytes": 2082854
+          },
+          {
+            "seqid": "3481",
+            "kind": "yt",
+            "sha256": "a47388b03f5eb0e6c66fbc23b4c587d54a86d0170439df21adfa9b96b5070aaa",
+            "bytes": 1460572
+          },
+          {
+            "seqid": "3482",
+            "kind": "yt",
+            "sha256": "139fed671e1ae20b99b222e2b0808a7796ed82087246dd45ce3c532b432d98e5",
+            "bytes": 1341984
+          },
+          {
+            "seqid": "3485",
+            "kind": "yt",
+            "sha256": "248a5d54c03d07db49b35508429c25d4e9d29ae1b0c9413d260e15bbb8bf4a67",
+            "bytes": 1264446
+          },
+          {
+            "seqid": "3487",
+            "kind": "yt",
+            "sha256": "be0c87923f8232afa7cbfe9f7069001e32cf3890cd2234232ed6af7542426f4d",
+            "bytes": 1407168
+          },
+          {
+            "seqid": "3488",
+            "kind": "yt",
+            "sha256": "6b0301a87277e8258e5f7b4adb7631585470446d8304835ece9711f0021b6fd4",
+            "bytes": 1619412
+          },
+          {
+            "seqid": "3490",
+            "kind": "yt",
+            "sha256": "6dca2586a9f7f680a8f436a0b19d822d100bed45b05772fe4d108026acab8b92",
+            "bytes": 1382572
+          },
+          {
+            "seqid": "3499",
+            "kind": "yt",
+            "sha256": "29c816e11969fdfb3c2090d0b0959b6791f08934284c2df0a14cad41c288d8b4",
+            "bytes": 1858574
+          },
+          {
+            "seqid": "3504",
+            "kind": "yt",
+            "sha256": "d918783a492b7574f783166658971a96db9ed053e187db427dcc8b856751a619",
+            "bytes": 1559340
+          },
+          {
+            "seqid": "3505",
+            "kind": "yt",
+            "sha256": "f49cfa7125b1273549374fffa96d17b916ea916d18a9d1dc03fe863a2f782109",
+            "bytes": 1420736
+          },
+          {
+            "seqid": "3506",
+            "kind": "yt",
+            "sha256": "0fb37f6c4104528df94b2d89bf1e0c09e9392de40912a20093723ab0929aa7d0",
+            "bytes": 4639606
+          },
+          {
+            "seqid": "3510",
+            "kind": "yt",
+            "sha256": "28b8ddaf1be3b4d23b82f200c9baf0835fe3defc7ea235331990f3c7685197e1",
+            "bytes": 4960644
+          },
+          {
+            "seqid": "3512",
+            "kind": "yt",
+            "sha256": "e81d1bdb8064ce452d5ae3b0385acc69198c9e482839625082de81ce264cb5e5",
+            "bytes": 1458472
+          },
+          {
+            "seqid": "3513",
+            "kind": "yt",
+            "sha256": "86c3f31641056c6a902cf8663ac57add2e38ff0cf37c61ecfe00a224cfc4a883",
+            "bytes": 1202338
+          },
+          {
+            "seqid": "3518",
+            "kind": "yt",
+            "sha256": "c90fb51ab6ab0f98466122d734db128ed099b1c98a804b2b9cd5bd29d0bd3272",
+            "bytes": 2529100
+          },
+          {
+            "seqid": "3519",
+            "kind": "yt",
+            "sha256": "be333f36a1c4ac5c313d5376acd01d61b7f52949be525f92cb43ceef0c836e54",
+            "bytes": 2565566
+          },
+          {
+            "seqid": "3520",
+            "kind": "yt",
+            "sha256": "f146b6328bd1cfc501bb289407a12fd8ffa569af885db2b25c5e9bf41ce425e3",
+            "bytes": 1696586
+          },
+          {
+            "seqid": "3521",
+            "kind": "yt",
+            "sha256": "6272c72d9d24166be48359eec2fcc7f1a97a0ebdbc678a7ab4a9148df73931b2",
+            "bytes": 1387830
+          },
+          {
+            "seqid": "3522",
+            "kind": "yt",
+            "sha256": "a1a17917f0d2f47b9a1fa4dea6cef330273e1506bc1996495a10fe25221992d9",
+            "bytes": 1387270
+          },
+          {
+            "seqid": "3523",
+            "kind": "yt",
+            "sha256": "8455e1e0402b53597b0aec96cd8bf09a80b27450538afb301e68f6a69628f653",
+            "bytes": 1458010
+          },
+          {
+            "seqid": "3528",
+            "kind": "yt",
+            "sha256": "8e70d16b6ef3f83fde9c3fd616d8707deb21d3853339d82dbb96eddabc38e51e",
+            "bytes": 2725720
+          },
+          {
+            "seqid": "3529",
+            "kind": "yt",
+            "sha256": "fd9ed1b11889c9b33eda1b11e22f23284e1d3756fe1735905c4ed5bfd1650b5c",
+            "bytes": 3299842
+          },
+          {
+            "seqid": "3530",
+            "kind": "yt",
+            "sha256": "915b93d1ca1e78db13cb2bc0b35114667afefb1b762b47d34b095a202ae9e772",
+            "bytes": 1609850
+          },
+          {
+            "seqid": "3531",
+            "kind": "yt",
+            "sha256": "8357412f1f5e441b2a920804c64a7c21692b0e556dd51cbf848c4a54363fcfc0",
+            "bytes": 1477028
+          },
+          {
+            "seqid": "3533",
+            "kind": "yt",
+            "sha256": "51853d931dda52e5277dc833cc9c80a3ecd414b9a9116b59365efe370fb94170",
+            "bytes": 1470756
+          },
+          {
+            "seqid": "3534",
+            "kind": "yt",
+            "sha256": "93613a35803eebfd5cd4c2bb89ede788b39a37ed46738d155c5cd68dd956d033",
+            "bytes": 1925594
+          },
+          {
+            "seqid": "3535",
+            "kind": "yt",
+            "sha256": "b31ac8458d2aec17cc5c3dab7f728895e0c6a3fa9dd0d58aea23636e0eb5bb52",
+            "bytes": 1402056
+          },
+          {
+            "seqid": "3540",
+            "kind": "yt",
+            "sha256": "7ede113eefd26dc249cd1bd60102edc22cb3079cbb4a468f7148d6ce4bcb587c",
+            "bytes": 3160848
+          },
+          {
+            "seqid": "3541",
+            "kind": "yt",
+            "sha256": "3b85060a57e536965cb9ecc317a7f59ab3ee6344705130eb09014688fe31f589",
+            "bytes": 2980810
+          },
+          {
+            "seqid": "3542",
+            "kind": "yt",
+            "sha256": "c0a97c4beef958000fe0a4837086da430da7884d7d4346c0bec1f1a54d7aa287",
+            "bytes": 1127524
+          },
+          {
+            "seqid": "3543",
+            "kind": "yt",
+            "sha256": "451cc54ea556511001af5903afcc74a306e1ff2da51d178ff759a7402822d840",
+            "bytes": 1603046
+          },
+          {
+            "seqid": "3545",
+            "kind": "yt",
+            "sha256": "1cb63a659a6d90fbb51f0b69b8c6008e3518a95fa4d20186d8f50b4c87e6d385",
+            "bytes": 1835228
+          },
+          {
+            "seqid": "3546",
+            "kind": "yt",
+            "sha256": "41c0d5b9bbffa57bacbf7c03d58eda3c67e0139edb38fb6cfe1840b84450da00",
+            "bytes": 1648736
+          },
+          {
+            "seqid": "3550",
+            "kind": "yt",
+            "sha256": "459173e98adf8d4aeceb812a43a1baa3dd3cfaf4e22c17895690d2ed39920a3a",
+            "bytes": 3880004
+          },
+          {
+            "seqid": "3551",
+            "kind": "yt",
+            "sha256": "a0b30cf62e00f957ed33787f9ed7118688b681d5725e679e4e2d3d7488211b68",
+            "bytes": 4133542
+          },
+          {
+            "seqid": "3552",
+            "kind": "yt",
+            "sha256": "403b67857725524cb3c044e561ec1a157a22d2c49c7c80649ec7f5f0ac118a94",
+            "bytes": 1451506
+          },
+          {
+            "seqid": "3553",
+            "kind": "yt",
+            "sha256": "5a7ef7f13c35e5ea43cdeff070036911930ef75bf7e4f68d011f7a653611db2d",
+            "bytes": 1299384
+          },
+          {
+            "seqid": "3556",
+            "kind": "yt",
+            "sha256": "df4fe5898ad524d1f9ca0a061763c1401d7aaf932795d361d3942318564d4fa5",
+            "bytes": 1936824
+          },
+          {
+            "seqid": "3562",
+            "kind": "yt",
+            "sha256": "4db51758cbddf370e31d992ca402d53547a00c20f882e17dcd3c26f741b9751e",
+            "bytes": 1939718
+          },
+          {
+            "seqid": "213",
+            "kind": "ytsw",
+            "sha256": "9cd17d85ac354968c4f7fe3cc1431a8b91eecf495bbd1b6115867eeb9444f35a",
+            "bytes": 1464032
+          },
+          {
+            "seqid": "215",
+            "kind": "ytsw",
+            "sha256": "0fef07beca3cabf217b10e1f14901055321df9ee42e5371f9f6aef32a41a4b1d",
+            "bytes": 1083750
+          },
+          {
+            "seqid": "224",
+            "kind": "ytsw",
+            "sha256": "0e023234afe5c64e4834d145c4177d94df24d71f8d47d299e3d273d835dbfd74",
+            "bytes": 3022372
+          },
+          {
+            "seqid": "226",
+            "kind": "ytsw",
+            "sha256": "7acf7b7ff91dc405337243f0d9e753a9e71aa64a786101747c5b91a251872eed",
+            "bytes": 1217230
+          },
+          {
+            "seqid": "244",
+            "kind": "ytsw",
+            "sha256": "90d1ab7d7bb09c88cf512d0493df05878ecba265192b5e26a97b240d55e3c94e",
+            "bytes": 1062640
+          },
+          {
+            "seqid": "268",
+            "kind": "ytsw",
+            "sha256": "8fbe412ebf113adb05185596d35331c0c8f13ceb3694f9ad93fed39e3b1468f1",
+            "bytes": 1189252
+          },
+          {
+            "seqid": "269",
+            "kind": "ytsw",
+            "sha256": "370708ca000be0aa8e82cf57b0dcc28f8d030249122217ec038fc9b9add7c45f",
+            "bytes": 1347380
+          },
+          {
+            "seqid": "270",
+            "kind": "ytsw",
+            "sha256": "ed995276b5ee2c95b96756c738c2a86185dbd65e0637fee4df6655d5c9c2fc98",
+            "bytes": 1759086
+          },
+          {
+            "seqid": "275",
+            "kind": "ytsw",
+            "sha256": "c096513545e7c858ffbbb5f78d3c688ad315700d27e76ae081795b78acd59f89",
+            "bytes": 1214696
+          },
+          {
+            "seqid": "284",
+            "kind": "ytsw",
+            "sha256": "00446b262f8799ae388857ac143c4304ea2972636b29cc154f49483ea6291c0c",
+            "bytes": 1107118
+          },
+          {
+            "seqid": "285",
+            "kind": "ytsw",
+            "sha256": "d5550a56894207ceb83bfe43f70dd61643bb9be493210080d4b335c3bce85d43",
+            "bytes": 1063242
+          },
+          {
+            "seqid": "287",
+            "kind": "ytsw",
+            "sha256": "c192148aecaa125af985935be7f645d912de7eb24cb0351dc1ab112645d51056",
+            "bytes": 1500930
+          },
+          {
+            "seqid": "288",
+            "kind": "ytsw",
+            "sha256": "be65d611a7d5cce6c84497cc75342b9dc79e33dbfc0c760d080319ab9f493c71",
+            "bytes": 1308236
+          },
+          {
+            "seqid": "289",
+            "kind": "ytsw",
+            "sha256": "a5b7ac63220c219a44397f57384903572bbfd3c2049587798433600bb7b612e0",
+            "bytes": 1191550
+          },
+          {
+            "seqid": "3342",
+            "kind": "ytsw",
+            "sha256": "ea1fa3f1d092220cd69e2f78a1ef881f85b1331c14d869514db282a885f96520",
+            "bytes": 1102106
+          },
+          {
+            "seqid": "3344",
+            "kind": "ytsw",
+            "sha256": "d48425eda918015f72d2ae048405f71be8cafbe025bc958f56337dd144d4dde6",
+            "bytes": 1229182
+          },
+          {
+            "seqid": "3345",
+            "kind": "ytsw",
+            "sha256": "e4bf40ae93e64f4ed272a16871d0581068da50a55e1e9819913828aa3322751b",
+            "bytes": 1246406
+          },
+          {
+            "seqid": "3352",
+            "kind": "ytsw",
+            "sha256": "91460b749a6680f10c70558b42791b2eb423b9d3195ff325c8c8d8def05f2abf",
+            "bytes": 1167570
+          },
+          {
+            "seqid": "3353",
+            "kind": "ytsw",
+            "sha256": "849cc23ffaf77d729500e12fbd802b710f58aaf96e56a2a241765fa3bd5f81bc",
+            "bytes": 1133838
+          },
+          {
+            "seqid": "3360",
+            "kind": "ytsw",
+            "sha256": "0ce1592541a3abfd3df46e9328e419e349c20b379dda9625bb4f0948313110c0",
+            "bytes": 1102038
+          },
+          {
+            "seqid": "3364",
+            "kind": "ytsw",
+            "sha256": "372a8ea6910a075b0b520d11815bb64880f4ea1e49d6acec0e0984bade753012",
+            "bytes": 1446460
+          },
+          {
+            "seqid": "3366",
+            "kind": "ytsw",
+            "sha256": "d36564ff90572d5f0c08b718392cb9d0ba7d0d29ec99c0fd3e2f59a219968423",
+            "bytes": 1057266
+          },
+          {
+            "seqid": "3367",
+            "kind": "ytsw",
+            "sha256": "8322ec341ada7763162c9cbec401b56cb85d2f1d5ca989b18cfeed52f18fba15",
+            "bytes": 1121468
+          },
+          {
+            "seqid": "3382",
+            "kind": "ytsw",
+            "sha256": "3dd3e8205d58fdbea3266387ddbb3ea6b0ffef6de9bd3f26dff49f9e6f6743b7",
+            "bytes": 1158332
+          },
+          {
+            "seqid": "3383",
+            "kind": "ytsw",
+            "sha256": "9103cf29104ac4a70e255369fc4f2e2ddc4f2aff6426b0e8b7d8c65e164c164c",
+            "bytes": 1793598
+          },
+          {
+            "seqid": "3386",
+            "kind": "ytsw",
+            "sha256": "0c21bd6068a555a0d0126230bd022b92213ff51a3814ade932b814ac3b5916e8",
+            "bytes": 1117724
+          },
+          {
+            "seqid": "3390",
+            "kind": "ytsw",
+            "sha256": "4a03e9219cd0da99451919a1a78631e75c288a1463569ba1d8ea8355f0d8579b",
+            "bytes": 1085736
+          },
+          {
+            "seqid": "3392",
+            "kind": "ytsw",
+            "sha256": "de7786f5973d00cb7a7311866db7dc5571498d2c7f5ed4376d16ed95ca236336",
+            "bytes": 1519268
+          },
+          {
+            "seqid": "3438",
+            "kind": "ytsw",
+            "sha256": "b9a7ab5242a5a3466a68b07ced3a26034e104c8883697f6a642e8e518eb1c6e5",
+            "bytes": 1054978
+          },
+          {
+            "seqid": "3440",
+            "kind": "ytsw",
+            "sha256": "775ca45c6255d5b8f45ae016abe4ba7170310f782d9b269ff736ba0b5db4e7b4",
+            "bytes": 1211948
+          },
+          {
+            "seqid": "3442",
+            "kind": "ytsw",
+            "sha256": "9232d3ae541cd02490c350206001df10a1cb1509506113c1fc33b9c3d2a00aaa",
+            "bytes": 1288664
+          },
+          {
+            "seqid": "3443",
+            "kind": "ytsw",
+            "sha256": "dac274fd72f1d198fadac3c7e4aceef3061cb7057c864864ff1326b4b681a3b2",
+            "bytes": 1453084
+          },
+          {
+            "seqid": "3444",
+            "kind": "ytsw",
+            "sha256": "c4cf4051d3e4ff78d2d92696038a1915e0ace1b4ce5ab210b222fa0a0c41d18b",
+            "bytes": 1200542
+          },
+          {
+            "seqid": "3445",
+            "kind": "ytsw",
+            "sha256": "ad46f3f9c56e0c726124fad6d74d6024a8b62120f3c1a1f2db565348c6b18737",
+            "bytes": 1208790
+          },
+          {
+            "seqid": "3446",
+            "kind": "ytsw",
+            "sha256": "442744a08d0e5515cb89e79d4ce0dd1904ed00f2fbb4a0c368c6e34c76b4f9d8",
+            "bytes": 1055056
+          },
+          {
+            "seqid": "3448",
+            "kind": "ytsw",
+            "sha256": "ac83d0dcf809b048657e6efb21978e9536a49a09c9e294e1e40a77bf1cac5252",
+            "bytes": 1216862
+          },
+          {
+            "seqid": "3449",
+            "kind": "ytsw",
+            "sha256": "c9a57f42f9e575a9c4f30994101c32fa9c5effda398e52e342629302bd900ee6",
+            "bytes": 1664004
+          },
+          {
+            "seqid": "3453",
+            "kind": "ytsw",
+            "sha256": "b7d26fa7e05e479b3d0742dd2e6227500a628a468922eb5366cc0802992abf9a",
+            "bytes": 1165764
+          },
+          {
+            "seqid": "3454",
+            "kind": "ytsw",
+            "sha256": "b45ef939e6781add3300b7eed57aa5f6866119e2597fea268c3dfd236276d06e",
+            "bytes": 1329648
+          },
+          {
+            "seqid": "3457",
+            "kind": "ytsw",
+            "sha256": "1cdaa13c3929e825d3dbb14a65d6fbdd2fce4eaaa751fbfc2f123e12a9c58b97",
+            "bytes": 1515990
+          },
+          {
+            "seqid": "3459",
+            "kind": "ytsw",
+            "sha256": "4c8da0d49444357c869b0842e0d9955ddc68c6c45c5b9cf659d80e95ae34e854",
+            "bytes": 1750248
+          },
+          {
+            "seqid": "3464",
+            "kind": "ytsw",
+            "sha256": "60fba172e56d5240329d466e0250cfe5f8c8f7668cf2949535af9ad5a11dcb1f",
+            "bytes": 1281226
+          },
+          {
+            "seqid": "3467",
+            "kind": "ytsw",
+            "sha256": "9a0ba1e7f4dab5af30eb0a41dd4f957962e80ce0404141a5b3ddac63cacd72a7",
+            "bytes": 1457546
+          },
+          {
+            "seqid": "3468",
+            "kind": "ytsw",
+            "sha256": "7fd85a697747e4f7fc87ae84729c2e30682ee80c7cdf35b3e37ebc5cacb4364f",
+            "bytes": 1208670
+          },
+          {
+            "seqid": "3470",
+            "kind": "ytsw",
+            "sha256": "3d8ef4e343e805fcfe23b90e092a9eaf561ac73d5ea4d79998b4ddb3a47d60e0",
+            "bytes": 1135180
+          },
+          {
+            "seqid": "3471",
+            "kind": "ytsw",
+            "sha256": "b64a9bd6120d874b1b59bde24c4436b10e1fb80195ef6d45bce389f8430eac6f",
+            "bytes": 1524548
+          },
+          {
+            "seqid": "3474",
+            "kind": "ytsw",
+            "sha256": "4789214cdd529fcfcae24cc3e6e767d8ce7e26ba9f7c3cd43c6f4bcae368ba77",
+            "bytes": 1458958
+          },
+          {
+            "seqid": "3475",
+            "kind": "ytsw",
+            "sha256": "337f4b823a188f96c4154ecc51ec56ee6d09b09e3982cdb8f1780ddf2aa3ae78",
+            "bytes": 1180430
+          },
+          {
+            "seqid": "3476",
+            "kind": "ytsw",
+            "sha256": "cad280b07764259ea1966468e5e0e7d5f11a3cd04c8821a9aae13c884d3f3d50",
+            "bytes": 1243394
+          },
+          {
+            "seqid": "3479",
+            "kind": "ytsw",
+            "sha256": "30175655792d2d6c4a00aa7a3e189f8e84ed73bd6b2eed648d773ee315461785",
+            "bytes": 1185804
+          },
+          {
+            "seqid": "3499",
+            "kind": "ytsw",
+            "sha256": "b19733f5890ebd5326181882c6c0d5f93fedd79f9cc17a76389310b8cee9c99c",
+            "bytes": 1175216
+          },
+          {
+            "seqid": "3505",
+            "kind": "ytsw",
+            "sha256": "16296e36a11fea13f4daf2aad6d0a14cbf72aa4e8cf76653bc752830de72bc8e",
+            "bytes": 1399126
+          },
+          {
+            "seqid": "3510",
+            "kind": "ytsw",
+            "sha256": "4363ed457f56012ae418f7c52fc09124cbbfec453bce784967dfd6fccd0433df",
+            "bytes": 1051146
+          },
+          {
+            "seqid": "3518",
+            "kind": "ytsw",
+            "sha256": "c8f9e0005392e3e3ac05a6ebffa2ecccc7ed962a1dc7254cfb564306309409c8",
+            "bytes": 1093096
+          },
+          {
+            "seqid": "3520",
+            "kind": "ytsw",
+            "sha256": "0837cc027f7431de20c03580b4b8ecc22d3b7167d8d9820abf2f22806a6939a3",
+            "bytes": 1169954
+          },
+          {
+            "seqid": "3521",
+            "kind": "ytsw",
+            "sha256": "c0bd927f04a4636b054fc956a68f3a539f08f1b6f30733ee898d650797b8cd99",
+            "bytes": 1453338
+          },
+          {
+            "seqid": "3528",
+            "kind": "ytsw",
+            "sha256": "6f19310f70dfa802fb3f6e944d7ea4c6852f7b211f3deed750f3a46fe29b284e",
+            "bytes": 1089292
+          },
+          {
+            "seqid": "3531",
+            "kind": "ytsw",
+            "sha256": "0009ba05cde81312f6c1e1c53e9acdc82f30dccadb919606f22d1f45c869698f",
+            "bytes": 1228682
+          },
+          {
+            "seqid": "3534",
+            "kind": "ytsw",
+            "sha256": "acb8fb7a787c38ecc16c250023684caa78dc6a438145b3b613a67becb2e9715b",
+            "bytes": 1116770
+          },
+          {
+            "seqid": "3542",
+            "kind": "ytsw",
+            "sha256": "54d110be8457ca613061a5cb81b55f431020b9f21aa1f1958875362352079fc6",
+            "bytes": 1134844
+          },
+          {
+            "seqid": "3552",
+            "kind": "ytsw",
+            "sha256": "5ee7b853c64d9af8c616a61df784cf057998358cad1f160c1a1861ddf47876ab",
+            "bytes": 1232920
+          },
+          {
+            "seqid": "3553",
+            "kind": "ytsw",
+            "sha256": "212e1a4f579f93d28cdbc3406e18ba197ded7c0cd81e4a156e29608004709b1b",
+            "bytes": 1102114
+          },
+          {
+            "seqid": "3678",
+            "kind": "yzbk",
+            "sha256": "288a6a95f3f4f70656efc54724968b03a087ef724e3df48f73b22851dd62b77d",
+            "bytes": 1486300
+          }
+        ]
+      },
+      "oversize_for_xiai_store": {
+        "threshold_bytes": 4194304,
+        "threshold_source": "xiai STORED_MAX_BYTES（POST /api/image/store 产物侧上限）",
+        "count": 6,
+        "rows": [
+          {
+            "seqid": "3353",
+            "kind": "yt",
+            "sha256": "36a0893a174c36788f6e202c58580e7b1871cbc0e4979e2d6c1673b1ccefe7ab",
+            "bytes": 4751398,
+            "width": 1536,
+            "height": 1510,
+            "source_bytes": 284976,
+            "source_sha256": "a7dc840b247372109f255130c2141ef807501041faff43ac9920d143a43c5e13"
+          },
+          {
+            "seqid": "3366",
+            "kind": "yt",
+            "sha256": "aa63f293ac62ffd194a6c0d38bbacd0a7d7ec76095147b1b4395cf86b45fcb1c",
+            "bytes": 4379040,
+            "width": 1522,
+            "height": 1533,
+            "source_bytes": 262202,
+            "source_sha256": "8da372875f55ddcf18872266510e36a26c835196cc9c0d08f6d263267826db9c"
+          },
+          {
+            "seqid": "3367",
+            "kind": "yt",
+            "sha256": "4d7016c591f68d7df612ea8c76a4daf6bb798363fefd15b955e86f927af683fc",
+            "bytes": 4930210,
+            "width": 1635,
+            "height": 1590,
+            "source_bytes": 278551,
+            "source_sha256": "e2dbe5ebd484c72cfb85fad98d60289e5d170ce96e642fdcd6d2a6a630ce7ade"
+          },
+          {
+            "seqid": "3464",
+            "kind": "yt",
+            "sha256": "8027031985a0943bd82a4c33fb4384cf15a09e53c46cd9c6bab6a94404b02817",
+            "bytes": 4822388,
+            "width": 1488,
+            "height": 1576,
+            "source_bytes": 293939,
+            "source_sha256": "d200f2286b139ea49fea29e376ed28b234d9c2946d7c2c0061c72144aaa21c77"
+          },
+          {
+            "seqid": "3506",
+            "kind": "yt",
+            "sha256": "0fb37f6c4104528df94b2d89bf1e0c09e9392de40912a20093723ab0929aa7d0",
+            "bytes": 4639606,
+            "width": 1557,
+            "height": 1498,
+            "source_bytes": 264871,
+            "source_sha256": "ccf1b35a171e174bbb233ba9c7cffe3788c2cd8981efb2151b0edff1f29257c3"
+          },
+          {
+            "seqid": "3510",
+            "kind": "yt",
+            "sha256": "28b8ddaf1be3b4d23b82f200c9baf0835fe3defc7ea235331990f3c7685197e1",
+            "bytes": 4960644,
+            "width": 1586,
+            "height": 1498,
+            "source_bytes": 277175,
+            "source_sha256": "8b67937a76f4f4f6dc50c436d9248bcaae76f60f4c242bbdbd30efb9ad2a73e2"
+          }
+        ],
+        "policy": "本包保留原生裁切（/full/1:1 源像素）与 xiai 家法格式（TIFF，RGB 8-bit + Deflate 无损；**不换 JPEG-in-TIFF**）。超档项 **不自行降采样、不自行转码**，去留由 xiai 侧裁定。"
+      }
+    },
+    "detail_policy": {
+      "enabled": false,
+      "default": "off",
+      "switch": "--with-detail（CLI sync）/ with_detail=true（POST /api/seals/sync 请求体）",
+      "rationale": "形製可读值已由本地码表纯函数派生（seal_ys_label）⇒ 无需逐枚 detail；detail 降 best-effort（默认关），仅补 seal_ys_ref_id / audit_user / 真源标签校对。",
+      "detail_only_fields": [
+        "sealYzRefId",
+        "auditUser",
+        "sealYsXzLabel（真源校对）"
+      ],
+      "detail_unconfirmed": 0,
+      "detail_unconfirmed_list": []
+    },
+    "link_policy": {
+      "primary_face": "seal_row",
+      "graph_face": "seal_graph",
+      "with_graph": false,
+      "chosen": "seal_row（行内字段直接构建）",
+      "rationale": "seal/list 行已含三类 person 链（sealYz/印主、sealYzzkzId/篆者、sealBkzkzId/边款篆者）＋印谱链（asBookId＋relatedBook），覆盖 100%；graph/seal 只多给「印谱 canonical seqid」，可由 asBookId 桥接本地派生 ⇒ 零额外联网即全量构建，且不与影像下载抢同站请求额度。",
+      "link_kind_counts": {
+        "book": 3679,
+        "person_yz": 2379,
+        "person_zzkz": 2652,
+        "person_bkzkz": 254
+      },
+      "by_source_face": {
+        "seal_row": 8964
+      },
+      "book_links_bridged_to_item": 3679,
+      "graph_unconfirmed": 0
+    },
+    "content_fingerprint": "e8155837ff2785cbef1466ab7c419c1b3ed52c213fc6f7de2ecf57dc85e3c447",
+    "generated_at": "2026-10-10T18:37:03+08:00",
+    "submission": "提交与审核在玺爱侧；feicui **不写 xiai 任何文件、不调任何云函数**。本包为 feicui 自有树内产物，键面待人（xiai）挑选。"
+  }
+}

@@ -117,3 +117,9 @@
   3. **`manifest.json`**：`schema_version`、源批次、生成时点、行数、**键面清单 ＋ 与 xiai 允许键面的 diff（多余键必须为 0）**、幂等键计数、sidecar 说明。
 - **需 xiai 侧扩的键（3 个，走 xiai 自己的规范流程）**：`courtesy_names_extraction` / `art_names_extraction` / `alias_names_extraction`（扩键面之前，主交付 `person_imports.jsonl` 已可正常提交，extraction 元数据暂以 sidecar 存放 ⇒ **不阻塞**）。
 - 交换方式：**xiai 侧按上述目录只读消费**（本地路径约定）；如改为中立交换目录，一句话可改。
+
+### 7.3 已向 xiai 会话提供的交接件（**2026-10-10**）
+
+- 文件：**`xiai/docs/person-import-handoff-from-feicui.md`**（由 feicui 线出具、**放在 xiai 仓内但未提交**——是否入库由 xiai 线决定；该文件不干扰其提交）。
+- 内容：产物位置与首行原文 · 逐字 18 键 · 三桶与 extraction sidecar 形态 · **需 xiai 侧做的三件事**（D-1 扩 3 键／D-2 由玺爱侧执行提交／D-3 审核门维持）· 人工前置（集合新建／云函数部署／令牌）· **关联面 1650 条无处可去（三选一待裁）** · 重新生成命令 · 我方已验读数与证据路径 · 与本仓规范的对应关系。
+- 对应关系：本件第 7.1 / 7.2 节 ≡ 该交接件第 2 / 3 / 4 节；**关联面缺口**在该件第 6 节（建议 xiai 侧登记为新 W 行）。

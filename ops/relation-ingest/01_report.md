@@ -186,4 +186,4 @@
 
 ### 10.4 本窄修复提交
 
-- 提交：`{{COMMIT}}`（**只暂存本单点名文件**：`server/app/relations.py`、`ops/relation-ingest/{05_package_selfcheck.py,01_report.md}` ＋ 复跑产物 `05_package_selfcheck.json` / `06_idempotency.json`）；**未 `git add -A`**、**未 push**；`03_guard_before.json` / `04_guard_after.json` 复跑后与既有**逐字节相同**（故未变更）。
+- 提交：`fa62259`（**只暂存本单点名文件**：`server/app/relations.py`、`ops/relation-ingest/{05_package_selfcheck.py,01_report.md}` ＋ 复跑产物 `05_package_selfcheck.json` / `06_idempotency.json`）；**未 `git add -A`**、**未 push**；`03_guard_before.json` / `04_guard_after.json` 复跑后与既有**逐字节相同**（故未变更）。

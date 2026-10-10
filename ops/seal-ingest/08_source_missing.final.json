@@ -1,0 +1,4018 @@
+{
+ "total": 418,
+ "by_reason": {
+  "bad_bytes": 1,
+  "http_500": 415,
+  "nan_ref": 2
+ },
+ "by_reason_note": {
+  "http_500": "有界重试后仍 HTTP 500（源侧坏图；站点同图页面 naturalWidth=0）",
+  "bad_bytes": "HTTP 200 且 content-type=image/jpeg，但正文非可解码影像（源侧坏字节；持久复现）",
+  "nan_ref": "ref 以 NaN_ 开头（源侧无图）"
+ },
+ "by_kind": {
+  "yt": 215,
+  "ytsw": 203
+ },
+ "by_prefix": [
+  {
+   "kind": "yt",
+   "prefix": "2",
+   "reason": "bad_bytes",
+   "count": 1,
+   "sample_seqids": [
+    "3609"
+   ]
+  },
+  {
+   "kind": "yt",
+   "prefix": "2",
+   "reason": "http_500",
+   "count": 5,
+   "sample_seqids": [
+    "1181",
+    "1182",
+    "341",
+    "342",
+    "932"
+   ]
+  },
+  {
+   "kind": "yt",
+   "prefix": "3",
+   "reason": "http_500",
+   "count": 9,
+   "sample_seqids": [
+    "1183",
+    "1184",
+    "1185",
+    "1186",
+    "161"
+   ]
+  },
+  {
+   "kind": "yt",
+   "prefix": "4",
+   "reason": "http_500",
+   "count": 8,
+   "sample_seqids": [
+    "1187",
+    "1188",
+    "349",
+    "350",
+    "351"
+   ]
+  },
+  {
+   "kind": "yt",
+   "prefix": "5",
+   "reason": "http_500",
+   "count": 7,
+   "sample_seqids": [
+    "1189",
+    "1190",
+    "353",
+    "937",
+    "938"
+   ]
+  },
+  {
+   "kind": "yt",
+   "prefix": "6",
+   "reason": "http_500",
+   "count": 8,
+   "sample_seqids": [
+    "1191",
+    "1192",
+    "143",
+    "144",
+    "362"
+   ]
+  },
+  {
+   "kind": "yt",
+   "prefix": "7",
+   "reason": "http_500",
+   "count": 6,
+   "sample_seqids": [
+    "1193",
+    "364",
+    "365",
+    "366",
+    "368"
+   ]
+  },
+  {
+   "kind": "yt",
+   "prefix": "8",
+   "reason": "http_500",
+   "count": 12,
+   "sample_seqids": [
+    "1195",
+    "1196",
+    "1197",
+    "1198",
+    "141"
+   ]
+  },
+  {
+   "kind": "yt",
+   "prefix": "9",
+   "reason": "http_500",
+   "count": 10,
+   "sample_seqids": [
+    "1199",
+    "1201",
+    "148",
+    "203",
+    "371"
+   ]
+  },
+  {
+   "kind": "yt",
+   "prefix": "10",
+   "reason": "http_500",
+   "count": 8,
+   "sample_seqids": [
+    "1203",
+    "1206",
+    "149",
+    "150",
+    "373"
+   ]
+  },
+  {
+   "kind": "yt",
+   "prefix": "11",
+   "reason": "http_500",
+   "count": 11,
+   "sample_seqids": [
+    "1029",
+    "1030",
+    "1208",
+    "1210",
+    "151"
+   ]
+  },
+  {
+   "kind": "yt",
+   "prefix": "12",
+   "reason": "http_500",
+   "count": 11,
+   "sample_seqids": [
+    "1031",
+    "1033",
+    "1034",
+    "1035",
+    "1364"
+   ]
+  },
+  {
+   "kind": "yt",
+   "prefix": "13",
+   "reason": "http_500",
+   "count": 8,
+   "sample_seqids": [
+    "1036",
+    "1037",
+    "1371",
+    "1372",
+    "154"
+   ]
+  },
+  {
+   "kind": "yt",
+   "prefix": "14",
+   "reason": "http_500",
+   "count": 14,
+   "sample_seqids": [
+    "1038",
+    "1039",
+    "1374",
+    "1376",
+    "156"
+   ]
+  },
+  {
+   "kind": "yt",
+   "prefix": "15",
+   "reason": "http_500",
+   "count": 12,
+   "sample_seqids": [
+    "1040",
+    "1041",
+    "1042",
+    "1043",
+    "1377"
+   ]
+  },
+  {
+   "kind": "yt",
+   "prefix": "16",
+   "reason": "http_500",
+   "count": 5,
+   "sample_seqids": [
+    "1044",
+    "1387",
+    "164",
+    "166",
+    "907"
+   ]
+  },
+  {
+   "kind": "yt",
+   "prefix": "17",
+   "reason": "http_500",
+   "count": 14,
+   "sample_seqids": [
+    "1045",
+    "1046",
+    "1047",
+    "1048",
+    "1388"
+   ]
+  },
+  {
+   "kind": "yt",
+   "prefix": "18",
+   "reason": "http_500",
+   "count": 10,
+   "sample_seqids": [
+    "1049",
+    "1050",
+    "1392",
+    "1393",
+    "169"
+   ]
+  },
+  {
+   "kind": "yt",
+   "prefix": "19",
+   "reason": "http_500",
+   "count": 11,
+   "sample_seqids": [
+    "1051",
+    "1052",
+    "1394",
+    "1395",
+    "171"
+   ]
+  },
+  {
+   "kind": "yt",
+   "prefix": "20",
+   "reason": "http_500",
+   "count": 12,
+   "sample_seqids": [
+    "1053",
+    "1054",
+    "1055",
+    "1056",
+    "1396"
+   ]
+  },
+  {
+   "kind": "yt",
+   "prefix": "21",
+   "reason": "http_500",
+   "count": 12,
+   "sample_seqids": [
+    "1057",
+    "1058",
+    "1400",
+    "1401",
+    "177"
+   ]
+  },
+  {
+   "kind": "yt",
+   "prefix": "22",
+   "reason": "http_500",
+   "count": 4,
+   "sample_seqids": [
+    "181",
+    "182",
+    "923",
+    "925"
+   ]
+  },
+  {
+   "kind": "yt",
+   "prefix": "23",
+   "reason": "http_500",
+   "count": 6,
+   "sample_seqids": [
+    "183",
+    "2320",
+    "926",
+    "927",
+    "928"
+   ]
+  },
+  {
+   "kind": "yt",
+   "prefix": "24",
+   "reason": "http_500",
+   "count": 6,
+   "sample_seqids": [
+    "184",
+    "185",
+    "186",
+    "187",
+    "930"
+   ]
+  },
+  {
+   "kind": "yt",
+   "prefix": "38",
+   "reason": "http_500",
+   "count": 2,
+   "sample_seqids": [
+    "540",
+    "542"
+   ]
+  },
+  {
+   "kind": "yt",
+   "prefix": "39",
+   "reason": "http_500",
+   "count": 1,
+   "sample_seqids": [
+    "543"
+   ]
+  },
+  {
+   "kind": "yt",
+   "prefix": "NaN",
+   "reason": "nan_ref",
+   "count": 2,
+   "sample_seqids": [
+    "3921",
+    "3922"
+   ]
+  },
+  {
+   "kind": "ytsw",
+   "prefix": "2",
+   "reason": "http_500",
+   "count": 5,
+   "sample_seqids": [
+    "1181",
+    "1182",
+    "341",
+    "342",
+    "932"
+   ]
+  },
+  {
+   "kind": "ytsw",
+   "prefix": "3",
+   "reason": "http_500",
+   "count": 8,
+   "sample_seqids": [
+    "1183",
+    "1184",
+    "1185",
+    "1186",
+    "346"
+   ]
+  },
+  {
+   "kind": "ytsw",
+   "prefix": "4",
+   "reason": "http_500",
+   "count": 8,
+   "sample_seqids": [
+    "1187",
+    "1188",
+    "349",
+    "350",
+    "351"
+   ]
+  },
+  {
+   "kind": "ytsw",
+   "prefix": "5",
+   "reason": "http_500",
+   "count": 7,
+   "sample_seqids": [
+    "1189",
+    "1190",
+    "353",
+    "937",
+    "938"
+   ]
+  },
+  {
+   "kind": "ytsw",
+   "prefix": "6",
+   "reason": "http_500",
+   "count": 6,
+   "sample_seqids": [
+    "1191",
+    "1192",
+    "362",
+    "363",
+    "941"
+   ]
+  },
+  {
+   "kind": "ytsw",
+   "prefix": "7",
+   "reason": "http_500",
+   "count": 6,
+   "sample_seqids": [
+    "1193",
+    "364",
+    "365",
+    "366",
+    "368"
+   ]
+  },
+  {
+   "kind": "ytsw",
+   "prefix": "8",
+   "reason": "http_500",
+   "count": 10,
+   "sample_seqids": [
+    "1195",
+    "1196",
+    "1197",
+    "1198",
+    "141"
+   ]
+  },
+  {
+   "kind": "ytsw",
+   "prefix": "9",
+   "reason": "http_500",
+   "count": 10,
+   "sample_seqids": [
+    "1199",
+    "1201",
+    "148",
+    "203",
+    "371"
+   ]
+  },
+  {
+   "kind": "ytsw",
+   "prefix": "10",
+   "reason": "http_500",
+   "count": 8,
+   "sample_seqids": [
+    "1203",
+    "1206",
+    "149",
+    "150",
+    "373"
+   ]
+  },
+  {
+   "kind": "ytsw",
+   "prefix": "11",
+   "reason": "http_500",
+   "count": 11,
+   "sample_seqids": [
+    "1029",
+    "1030",
+    "1208",
+    "1210",
+    "151"
+   ]
+  },
+  {
+   "kind": "ytsw",
+   "prefix": "12",
+   "reason": "http_500",
+   "count": 11,
+   "sample_seqids": [
+    "1031",
+    "1033",
+    "1034",
+    "1035",
+    "1364"
+   ]
+  },
+  {
+   "kind": "ytsw",
+   "prefix": "13",
+   "reason": "http_500",
+   "count": 8,
+   "sample_seqids": [
+    "1036",
+    "1037",
+    "1371",
+    "1372",
+    "154"
+   ]
+  },
+  {
+   "kind": "ytsw",
+   "prefix": "14",
+   "reason": "http_500",
+   "count": 12,
+   "sample_seqids": [
+    "1038",
+    "1039",
+    "1374",
+    "1376",
+    "156"
+   ]
+  },
+  {
+   "kind": "ytsw",
+   "prefix": "15",
+   "reason": "http_500",
+   "count": 12,
+   "sample_seqids": [
+    "1040",
+    "1041",
+    "1042",
+    "1043",
+    "1377"
+   ]
+  },
+  {
+   "kind": "ytsw",
+   "prefix": "16",
+   "reason": "http_500",
+   "count": 5,
+   "sample_seqids": [
+    "1044",
+    "1387",
+    "164",
+    "166",
+    "907"
+   ]
+  },
+  {
+   "kind": "ytsw",
+   "prefix": "17",
+   "reason": "http_500",
+   "count": 14,
+   "sample_seqids": [
+    "1045",
+    "1046",
+    "1047",
+    "1048",
+    "1388"
+   ]
+  },
+  {
+   "kind": "ytsw",
+   "prefix": "18",
+   "reason": "http_500",
+   "count": 10,
+   "sample_seqids": [
+    "1049",
+    "1050",
+    "1392",
+    "1393",
+    "169"
+   ]
+  },
+  {
+   "kind": "ytsw",
+   "prefix": "19",
+   "reason": "http_500",
+   "count": 10,
+   "sample_seqids": [
+    "1051",
+    "1052",
+    "1394",
+    "1395",
+    "171"
+   ]
+  },
+  {
+   "kind": "ytsw",
+   "prefix": "20",
+   "reason": "http_500",
+   "count": 12,
+   "sample_seqids": [
+    "1053",
+    "1054",
+    "1055",
+    "1056",
+    "1396"
+   ]
+  },
+  {
+   "kind": "ytsw",
+   "prefix": "21",
+   "reason": "http_500",
+   "count": 12,
+   "sample_seqids": [
+    "1057",
+    "1058",
+    "1400",
+    "1401",
+    "177"
+   ]
+  },
+  {
+   "kind": "ytsw",
+   "prefix": "22",
+   "reason": "http_500",
+   "count": 5,
+   "sample_seqids": [
+    "181",
+    "182",
+    "476",
+    "923",
+    "925"
+   ]
+  },
+  {
+   "kind": "ytsw",
+   "prefix": "23",
+   "reason": "http_500",
+   "count": 5,
+   "sample_seqids": [
+    "183",
+    "926",
+    "927",
+    "928",
+    "929"
+   ]
+  },
+  {
+   "kind": "ytsw",
+   "prefix": "24",
+   "reason": "http_500",
+   "count": 6,
+   "sample_seqids": [
+    "184",
+    "185",
+    "186",
+    "187",
+    "930"
+   ]
+  },
+  {
+   "kind": "ytsw",
+   "prefix": "38",
+   "reason": "http_500",
+   "count": 1,
+   "sample_seqids": [
+    "542"
+   ]
+  },
+  {
+   "kind": "ytsw",
+   "prefix": "64",
+   "reason": "http_500",
+   "count": 1,
+   "sample_seqids": [
+    "1826"
+   ]
+  }
+ ],
+ "rows": [
+  {
+   "seqid": "1203",
+   "kind": "yt",
+   "source_ref": "10_1203_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/10_1203_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1206",
+   "kind": "yt",
+   "source_ref": "10_1206_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/10_1206_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "149",
+   "kind": "yt",
+   "source_ref": "10_149_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/10_149_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "150",
+   "kind": "yt",
+   "source_ref": "10_150_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/10_150_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "373",
+   "kind": "yt",
+   "source_ref": "10_373_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/10_373_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "375",
+   "kind": "yt",
+   "source_ref": "10_375_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/10_375_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "950",
+   "kind": "yt",
+   "source_ref": "10_950_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/10_950_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "951",
+   "kind": "yt",
+   "source_ref": "10_951_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/10_951_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1029",
+   "kind": "yt",
+   "source_ref": "11_1029_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/11_1029_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1030",
+   "kind": "yt",
+   "source_ref": "11_1030_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/11_1030_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1208",
+   "kind": "yt",
+   "source_ref": "11_1208_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/11_1208_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1210",
+   "kind": "yt",
+   "source_ref": "11_1210_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/11_1210_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "151",
+   "kind": "yt",
+   "source_ref": "11_151_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/11_151_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "152",
+   "kind": "yt",
+   "source_ref": "11_152_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/11_152_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "202",
+   "kind": "yt",
+   "source_ref": "11_202_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/11_202_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "376",
+   "kind": "yt",
+   "source_ref": "11_376_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/11_376_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "377",
+   "kind": "yt",
+   "source_ref": "11_377_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/11_377_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "378",
+   "kind": "yt",
+   "source_ref": "11_378_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/11_378_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "379",
+   "kind": "yt",
+   "source_ref": "11_379_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/11_379_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1031",
+   "kind": "yt",
+   "source_ref": "12_1031_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/12_1031_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1033",
+   "kind": "yt",
+   "source_ref": "12_1033_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/12_1033_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1034",
+   "kind": "yt",
+   "source_ref": "12_1034_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/12_1034_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1035",
+   "kind": "yt",
+   "source_ref": "12_1035_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/12_1035_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1364",
+   "kind": "yt",
+   "source_ref": "12_1364_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/12_1364_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1365",
+   "kind": "yt",
+   "source_ref": "12_1365_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/12_1365_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1368",
+   "kind": "yt",
+   "source_ref": "12_1368_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/12_1368_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1370",
+   "kind": "yt",
+   "source_ref": "12_1370_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/12_1370_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "153",
+   "kind": "yt",
+   "source_ref": "12_153_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/12_153_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "639",
+   "kind": "yt",
+   "source_ref": "12_639_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/12_639_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "643",
+   "kind": "yt",
+   "source_ref": "12_643_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/12_643_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1036",
+   "kind": "yt",
+   "source_ref": "13_1036_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/13_1036_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1037",
+   "kind": "yt",
+   "source_ref": "13_1037_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/13_1037_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1371",
+   "kind": "yt",
+   "source_ref": "13_1371_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/13_1371_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1372",
+   "kind": "yt",
+   "source_ref": "13_1372_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/13_1372_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "154",
+   "kind": "yt",
+   "source_ref": "13_154_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/13_154_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "155",
+   "kind": "yt",
+   "source_ref": "13_155_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/13_155_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "899",
+   "kind": "yt",
+   "source_ref": "13_899_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/13_899_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "900",
+   "kind": "yt",
+   "source_ref": "13_900_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/13_900_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1038",
+   "kind": "yt",
+   "source_ref": "14_1038_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/14_1038_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1039",
+   "kind": "yt",
+   "source_ref": "14_1039_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/14_1039_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1374",
+   "kind": "yt",
+   "source_ref": "14_1374_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/14_1374_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1376",
+   "kind": "yt",
+   "source_ref": "14_1376_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/14_1376_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "156",
+   "kind": "yt",
+   "source_ref": "14_156_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/14_156_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "157",
+   "kind": "yt",
+   "source_ref": "14_157_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/14_157_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "158",
+   "kind": "yt",
+   "source_ref": "14_158_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/14_158_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "159",
+   "kind": "yt",
+   "source_ref": "14_159_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/14_159_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "3365",
+   "kind": "yt",
+   "source_ref": "14_3365_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/14_3365_1",
+   "error": "HTTP 502",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "3532",
+   "kind": "yt",
+   "source_ref": "14_3532_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/14_3532_1",
+   "error": "HTTP 502",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "901",
+   "kind": "yt",
+   "source_ref": "14_901_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/14_901_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "902",
+   "kind": "yt",
+   "source_ref": "14_902_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/14_902_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "903",
+   "kind": "yt",
+   "source_ref": "14_903_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/14_903_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "904",
+   "kind": "yt",
+   "source_ref": "14_904_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/14_904_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1040",
+   "kind": "yt",
+   "source_ref": "15_1040_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/15_1040_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1041",
+   "kind": "yt",
+   "source_ref": "15_1041_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/15_1041_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1042",
+   "kind": "yt",
+   "source_ref": "15_1042_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/15_1042_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1043",
+   "kind": "yt",
+   "source_ref": "15_1043_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/15_1043_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1377",
+   "kind": "yt",
+   "source_ref": "15_1377_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/15_1377_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1379",
+   "kind": "yt",
+   "source_ref": "15_1379_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/15_1379_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1380",
+   "kind": "yt",
+   "source_ref": "15_1380_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/15_1380_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1381",
+   "kind": "yt",
+   "source_ref": "15_1381_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/15_1381_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "160",
+   "kind": "yt",
+   "source_ref": "15_160_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/15_160_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "162",
+   "kind": "yt",
+   "source_ref": "15_162_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/15_162_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "905",
+   "kind": "yt",
+   "source_ref": "15_905_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/15_905_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "906",
+   "kind": "yt",
+   "source_ref": "15_906_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/15_906_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1044",
+   "kind": "yt",
+   "source_ref": "16_1044_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/16_1044_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1387",
+   "kind": "yt",
+   "source_ref": "16_1387_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/16_1387_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "164",
+   "kind": "yt",
+   "source_ref": "16_164_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/16_164_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "166",
+   "kind": "yt",
+   "source_ref": "16_166_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/16_166_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "907",
+   "kind": "yt",
+   "source_ref": "16_907_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/16_907_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1045",
+   "kind": "yt",
+   "source_ref": "17_1045_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/17_1045_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1046",
+   "kind": "yt",
+   "source_ref": "17_1046_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/17_1046_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1047",
+   "kind": "yt",
+   "source_ref": "17_1047_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/17_1047_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1048",
+   "kind": "yt",
+   "source_ref": "17_1048_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/17_1048_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1388",
+   "kind": "yt",
+   "source_ref": "17_1388_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/17_1388_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1389",
+   "kind": "yt",
+   "source_ref": "17_1389_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/17_1389_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1390",
+   "kind": "yt",
+   "source_ref": "17_1390_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/17_1390_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1391",
+   "kind": "yt",
+   "source_ref": "17_1391_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/17_1391_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "165",
+   "kind": "yt",
+   "source_ref": "17_165_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/17_165_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "167",
+   "kind": "yt",
+   "source_ref": "17_167_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/17_167_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "168",
+   "kind": "yt",
+   "source_ref": "17_168_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/17_168_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "200",
+   "kind": "yt",
+   "source_ref": "17_200_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/17_200_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "908",
+   "kind": "yt",
+   "source_ref": "17_908_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/17_908_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "912",
+   "kind": "yt",
+   "source_ref": "17_912_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/17_912_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1049",
+   "kind": "yt",
+   "source_ref": "18_1049_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/18_1049_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1050",
+   "kind": "yt",
+   "source_ref": "18_1050_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/18_1050_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1392",
+   "kind": "yt",
+   "source_ref": "18_1392_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/18_1392_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1393",
+   "kind": "yt",
+   "source_ref": "18_1393_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/18_1393_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "169",
+   "kind": "yt",
+   "source_ref": "18_169_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/18_169_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "170",
+   "kind": "yt",
+   "source_ref": "18_170_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/18_170_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "910",
+   "kind": "yt",
+   "source_ref": "18_910_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/18_910_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "911",
+   "kind": "yt",
+   "source_ref": "18_911_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/18_911_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "913",
+   "kind": "yt",
+   "source_ref": "18_913_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/18_913_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "914",
+   "kind": "yt",
+   "source_ref": "18_914_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/18_914_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1051",
+   "kind": "yt",
+   "source_ref": "19_1051_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/19_1051_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1052",
+   "kind": "yt",
+   "source_ref": "19_1052_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/19_1052_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1394",
+   "kind": "yt",
+   "source_ref": "19_1394_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/19_1394_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1395",
+   "kind": "yt",
+   "source_ref": "19_1395_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/19_1395_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "171",
+   "kind": "yt",
+   "source_ref": "19_171_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/19_171_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "172",
+   "kind": "yt",
+   "source_ref": "19_172_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/19_172_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "173",
+   "kind": "yt",
+   "source_ref": "19_173_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/19_173_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "174",
+   "kind": "yt",
+   "source_ref": "19_174_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/19_174_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "3443",
+   "kind": "yt",
+   "source_ref": "19_3443_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/19_3443_1",
+   "error": "HTTP 502",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "915",
+   "kind": "yt",
+   "source_ref": "19_915_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/19_915_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "916",
+   "kind": "yt",
+   "source_ref": "19_916_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/19_916_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1053",
+   "kind": "yt",
+   "source_ref": "20_1053_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/20_1053_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1054",
+   "kind": "yt",
+   "source_ref": "20_1054_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/20_1054_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1055",
+   "kind": "yt",
+   "source_ref": "20_1055_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/20_1055_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1056",
+   "kind": "yt",
+   "source_ref": "20_1056_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/20_1056_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1396",
+   "kind": "yt",
+   "source_ref": "20_1396_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/20_1396_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1397",
+   "kind": "yt",
+   "source_ref": "20_1397_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/20_1397_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1398",
+   "kind": "yt",
+   "source_ref": "20_1398_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/20_1398_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1399",
+   "kind": "yt",
+   "source_ref": "20_1399_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/20_1399_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "175",
+   "kind": "yt",
+   "source_ref": "20_175_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/20_175_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "176",
+   "kind": "yt",
+   "source_ref": "20_176_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/20_176_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "917",
+   "kind": "yt",
+   "source_ref": "20_917_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/20_917_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "918",
+   "kind": "yt",
+   "source_ref": "20_918_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/20_918_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1057",
+   "kind": "yt",
+   "source_ref": "21_1057_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/21_1057_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1058",
+   "kind": "yt",
+   "source_ref": "21_1058_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/21_1058_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1400",
+   "kind": "yt",
+   "source_ref": "21_1400_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/21_1400_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1401",
+   "kind": "yt",
+   "source_ref": "21_1401_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/21_1401_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "177",
+   "kind": "yt",
+   "source_ref": "21_177_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/21_177_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "178",
+   "kind": "yt",
+   "source_ref": "21_178_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/21_178_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "179",
+   "kind": "yt",
+   "source_ref": "21_179_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/21_179_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "180",
+   "kind": "yt",
+   "source_ref": "21_180_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/21_180_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "919",
+   "kind": "yt",
+   "source_ref": "21_919_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/21_919_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "920",
+   "kind": "yt",
+   "source_ref": "21_920_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/21_920_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "921",
+   "kind": "yt",
+   "source_ref": "21_921_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/21_921_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "924",
+   "kind": "yt",
+   "source_ref": "21_924_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/21_924_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "181",
+   "kind": "yt",
+   "source_ref": "22_181_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/22_181_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "182",
+   "kind": "yt",
+   "source_ref": "22_182_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/22_182_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "923",
+   "kind": "yt",
+   "source_ref": "22_923_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/22_923_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "925",
+   "kind": "yt",
+   "source_ref": "22_925_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/22_925_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "183",
+   "kind": "yt",
+   "source_ref": "23_183_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/23_183_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "2320",
+   "kind": "yt",
+   "source_ref": "23_2320_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/23_2320_1",
+   "error": "HTTP 502",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "926",
+   "kind": "yt",
+   "source_ref": "23_926_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/23_926_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "927",
+   "kind": "yt",
+   "source_ref": "23_927_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/23_927_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "928",
+   "kind": "yt",
+   "source_ref": "23_928_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/23_928_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "929",
+   "kind": "yt",
+   "source_ref": "23_929_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/23_929_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "184",
+   "kind": "yt",
+   "source_ref": "24_184_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/24_184_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "185",
+   "kind": "yt",
+   "source_ref": "24_185_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/24_185_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "186",
+   "kind": "yt",
+   "source_ref": "24_186_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/24_186_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "187",
+   "kind": "yt",
+   "source_ref": "24_187_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/24_187_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "930",
+   "kind": "yt",
+   "source_ref": "24_930_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/24_930_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "931",
+   "kind": "yt",
+   "source_ref": "24_931_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/24_931_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1181",
+   "kind": "yt",
+   "source_ref": "2_1181_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/2_1181_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1182",
+   "kind": "yt",
+   "source_ref": "2_1182_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/2_1182_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "341",
+   "kind": "yt",
+   "source_ref": "2_341_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/2_341_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "342",
+   "kind": "yt",
+   "source_ref": "2_342_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/2_342_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "3609",
+   "kind": "yt",
+   "source_ref": "2_3609_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/2_3609_1",
+   "error": "HTTP 200 image/jpeg but undecodable (697B)",
+   "no_source_reason": "bad_bytes"
+  },
+  {
+   "seqid": "932",
+   "kind": "yt",
+   "source_ref": "2_932_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/2_932_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "540",
+   "kind": "yt",
+   "source_ref": "38_540_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/38_540_1",
+   "error": "HTTP 502",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "542",
+   "kind": "yt",
+   "source_ref": "38_542_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/38_542_1",
+   "error": "HTTP 502",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "543",
+   "kind": "yt",
+   "source_ref": "39_543_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/39_543_1",
+   "error": "HTTP 502",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1183",
+   "kind": "yt",
+   "source_ref": "3_1183_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/3_1183_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1184",
+   "kind": "yt",
+   "source_ref": "3_1184_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/3_1184_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1185",
+   "kind": "yt",
+   "source_ref": "3_1185_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/3_1185_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1186",
+   "kind": "yt",
+   "source_ref": "3_1186_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/3_1186_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "161",
+   "kind": "yt",
+   "source_ref": "3_161_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/3_161_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "346",
+   "kind": "yt",
+   "source_ref": "3_346_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/3_346_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "347",
+   "kind": "yt",
+   "source_ref": "3_347_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/3_347_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "933",
+   "kind": "yt",
+   "source_ref": "3_933_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/3_933_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "934",
+   "kind": "yt",
+   "source_ref": "3_934_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/3_934_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1187",
+   "kind": "yt",
+   "source_ref": "4_1187_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/4_1187_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1188",
+   "kind": "yt",
+   "source_ref": "4_1188_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/4_1188_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "349",
+   "kind": "yt",
+   "source_ref": "4_349_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/4_349_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "350",
+   "kind": "yt",
+   "source_ref": "4_350_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/4_350_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "351",
+   "kind": "yt",
+   "source_ref": "4_351_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/4_351_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "352",
+   "kind": "yt",
+   "source_ref": "4_352_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/4_352_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "935",
+   "kind": "yt",
+   "source_ref": "4_935_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/4_935_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "936",
+   "kind": "yt",
+   "source_ref": "4_936_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/4_936_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1189",
+   "kind": "yt",
+   "source_ref": "5_1189_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/5_1189_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1190",
+   "kind": "yt",
+   "source_ref": "5_1190_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/5_1190_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "353",
+   "kind": "yt",
+   "source_ref": "5_353_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/5_353_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "937",
+   "kind": "yt",
+   "source_ref": "5_937_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/5_937_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "938",
+   "kind": "yt",
+   "source_ref": "5_938_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/5_938_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "939",
+   "kind": "yt",
+   "source_ref": "5_939_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/5_939_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "940",
+   "kind": "yt",
+   "source_ref": "5_940_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/5_940_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1191",
+   "kind": "yt",
+   "source_ref": "6_1191_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/6_1191_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1192",
+   "kind": "yt",
+   "source_ref": "6_1192_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/6_1192_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "143",
+   "kind": "yt",
+   "source_ref": "6_143_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/6_143_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "144",
+   "kind": "yt",
+   "source_ref": "6_144_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/6_144_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "362",
+   "kind": "yt",
+   "source_ref": "6_362_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/6_362_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "363",
+   "kind": "yt",
+   "source_ref": "6_363_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/6_363_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "941",
+   "kind": "yt",
+   "source_ref": "6_941_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/6_941_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "942",
+   "kind": "yt",
+   "source_ref": "6_942_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/6_942_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1193",
+   "kind": "yt",
+   "source_ref": "7_1193_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/7_1193_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "364",
+   "kind": "yt",
+   "source_ref": "7_364_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/7_364_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "365",
+   "kind": "yt",
+   "source_ref": "7_365_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/7_365_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "366",
+   "kind": "yt",
+   "source_ref": "7_366_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/7_366_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "368",
+   "kind": "yt",
+   "source_ref": "7_368_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/7_368_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "943",
+   "kind": "yt",
+   "source_ref": "7_943_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/7_943_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1195",
+   "kind": "yt",
+   "source_ref": "8_1195_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/8_1195_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1196",
+   "kind": "yt",
+   "source_ref": "8_1196_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/8_1196_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1197",
+   "kind": "yt",
+   "source_ref": "8_1197_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/8_1197_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1198",
+   "kind": "yt",
+   "source_ref": "8_1198_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/8_1198_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "141",
+   "kind": "yt",
+   "source_ref": "8_141_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/8_141_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "145",
+   "kind": "yt",
+   "source_ref": "8_145_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/8_145_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "146",
+   "kind": "yt",
+   "source_ref": "8_146_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/8_146_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "147",
+   "kind": "yt",
+   "source_ref": "8_147_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/8_147_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "369",
+   "kind": "yt",
+   "source_ref": "8_369_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/8_369_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "370",
+   "kind": "yt",
+   "source_ref": "8_370_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/8_370_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "944",
+   "kind": "yt",
+   "source_ref": "8_944_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/8_944_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "945",
+   "kind": "yt",
+   "source_ref": "8_945_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/8_945_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1199",
+   "kind": "yt",
+   "source_ref": "9_1199_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/9_1199_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1201",
+   "kind": "yt",
+   "source_ref": "9_1201_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/9_1201_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "148",
+   "kind": "yt",
+   "source_ref": "9_148_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/9_148_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "203",
+   "kind": "yt",
+   "source_ref": "9_203_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/9_203_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "371",
+   "kind": "yt",
+   "source_ref": "9_371_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/9_371_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "372",
+   "kind": "yt",
+   "source_ref": "9_372_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/9_372_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "946",
+   "kind": "yt",
+   "source_ref": "9_946_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/9_946_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "947",
+   "kind": "yt",
+   "source_ref": "9_947_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/9_947_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "948",
+   "kind": "yt",
+   "source_ref": "9_948_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/9_948_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "949",
+   "kind": "yt",
+   "source_ref": "9_949_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/9_949_1",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "3921",
+   "kind": "yt",
+   "source_ref": "NaN_3921_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/NaN_3921_1",
+   "error": "源侧无图（ref 以 NaN_ 开头）",
+   "no_source_reason": "nan_ref"
+  },
+  {
+   "seqid": "3922",
+   "kind": "yt",
+   "source_ref": "NaN_3922_1",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/NaN_3922_1",
+   "error": "源侧无图（ref 以 NaN_ 开头）",
+   "no_source_reason": "nan_ref"
+  },
+  {
+   "seqid": "1203",
+   "kind": "ytsw",
+   "source_ref": "10_1203_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/10_1203_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1206",
+   "kind": "ytsw",
+   "source_ref": "10_1206_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/10_1206_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "149",
+   "kind": "ytsw",
+   "source_ref": "10_149_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/10_149_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "150",
+   "kind": "ytsw",
+   "source_ref": "10_150_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/10_150_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "373",
+   "kind": "ytsw",
+   "source_ref": "10_373_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/10_373_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "375",
+   "kind": "ytsw",
+   "source_ref": "10_375_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/10_375_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "950",
+   "kind": "ytsw",
+   "source_ref": "10_950_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/10_950_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "951",
+   "kind": "ytsw",
+   "source_ref": "10_951_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/10_951_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1029",
+   "kind": "ytsw",
+   "source_ref": "11_1029_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/11_1029_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1030",
+   "kind": "ytsw",
+   "source_ref": "11_1030_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/11_1030_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1208",
+   "kind": "ytsw",
+   "source_ref": "11_1208_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/11_1208_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1210",
+   "kind": "ytsw",
+   "source_ref": "11_1210_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/11_1210_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "151",
+   "kind": "ytsw",
+   "source_ref": "11_151_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/11_151_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "152",
+   "kind": "ytsw",
+   "source_ref": "11_152_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/11_152_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "202",
+   "kind": "ytsw",
+   "source_ref": "11_202_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/11_202_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "376",
+   "kind": "ytsw",
+   "source_ref": "11_376_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/11_376_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "377",
+   "kind": "ytsw",
+   "source_ref": "11_377_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/11_377_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "378",
+   "kind": "ytsw",
+   "source_ref": "11_378_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/11_378_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "379",
+   "kind": "ytsw",
+   "source_ref": "11_379_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/11_379_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1031",
+   "kind": "ytsw",
+   "source_ref": "12_1031_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/12_1031_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1033",
+   "kind": "ytsw",
+   "source_ref": "12_1033_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/12_1033_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1034",
+   "kind": "ytsw",
+   "source_ref": "12_1034_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/12_1034_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1035",
+   "kind": "ytsw",
+   "source_ref": "12_1035_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/12_1035_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1364",
+   "kind": "ytsw",
+   "source_ref": "12_1364_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/12_1364_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1365",
+   "kind": "ytsw",
+   "source_ref": "12_1365_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/12_1365_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1368",
+   "kind": "ytsw",
+   "source_ref": "12_1368_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/12_1368_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1370",
+   "kind": "ytsw",
+   "source_ref": "12_1370_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/12_1370_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "153",
+   "kind": "ytsw",
+   "source_ref": "12_153_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/12_153_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "639",
+   "kind": "ytsw",
+   "source_ref": "12_639_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/12_639_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "643",
+   "kind": "ytsw",
+   "source_ref": "12_643_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/12_643_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1036",
+   "kind": "ytsw",
+   "source_ref": "13_1036_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/13_1036_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1037",
+   "kind": "ytsw",
+   "source_ref": "13_1037_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/13_1037_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1371",
+   "kind": "ytsw",
+   "source_ref": "13_1371_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/13_1371_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1372",
+   "kind": "ytsw",
+   "source_ref": "13_1372_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/13_1372_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "154",
+   "kind": "ytsw",
+   "source_ref": "13_154_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/13_154_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "155",
+   "kind": "ytsw",
+   "source_ref": "13_155_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/13_155_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "899",
+   "kind": "ytsw",
+   "source_ref": "13_899_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/13_899_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "900",
+   "kind": "ytsw",
+   "source_ref": "13_900_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/13_900_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1038",
+   "kind": "ytsw",
+   "source_ref": "14_1038_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/14_1038_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1039",
+   "kind": "ytsw",
+   "source_ref": "14_1039_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/14_1039_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1374",
+   "kind": "ytsw",
+   "source_ref": "14_1374_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/14_1374_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1376",
+   "kind": "ytsw",
+   "source_ref": "14_1376_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/14_1376_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "156",
+   "kind": "ytsw",
+   "source_ref": "14_156_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/14_156_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "157",
+   "kind": "ytsw",
+   "source_ref": "14_157_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/14_157_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "158",
+   "kind": "ytsw",
+   "source_ref": "14_158_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/14_158_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "159",
+   "kind": "ytsw",
+   "source_ref": "14_159_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/14_159_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "901",
+   "kind": "ytsw",
+   "source_ref": "14_901_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/14_901_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "902",
+   "kind": "ytsw",
+   "source_ref": "14_902_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/14_902_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "903",
+   "kind": "ytsw",
+   "source_ref": "14_903_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/14_903_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "904",
+   "kind": "ytsw",
+   "source_ref": "14_904_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/14_904_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1040",
+   "kind": "ytsw",
+   "source_ref": "15_1040_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/15_1040_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1041",
+   "kind": "ytsw",
+   "source_ref": "15_1041_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/15_1041_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1042",
+   "kind": "ytsw",
+   "source_ref": "15_1042_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/15_1042_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1043",
+   "kind": "ytsw",
+   "source_ref": "15_1043_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/15_1043_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1377",
+   "kind": "ytsw",
+   "source_ref": "15_1377_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/15_1377_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1379",
+   "kind": "ytsw",
+   "source_ref": "15_1379_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/15_1379_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1380",
+   "kind": "ytsw",
+   "source_ref": "15_1380_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/15_1380_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1381",
+   "kind": "ytsw",
+   "source_ref": "15_1381_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/15_1381_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "160",
+   "kind": "ytsw",
+   "source_ref": "15_160_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/15_160_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "162",
+   "kind": "ytsw",
+   "source_ref": "15_162_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/15_162_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "905",
+   "kind": "ytsw",
+   "source_ref": "15_905_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/15_905_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "906",
+   "kind": "ytsw",
+   "source_ref": "15_906_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/15_906_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1044",
+   "kind": "ytsw",
+   "source_ref": "16_1044_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/16_1044_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1387",
+   "kind": "ytsw",
+   "source_ref": "16_1387_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/16_1387_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "164",
+   "kind": "ytsw",
+   "source_ref": "16_164_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/16_164_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "166",
+   "kind": "ytsw",
+   "source_ref": "16_166_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/16_166_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "907",
+   "kind": "ytsw",
+   "source_ref": "16_907_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/16_907_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1045",
+   "kind": "ytsw",
+   "source_ref": "17_1045_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/17_1045_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1046",
+   "kind": "ytsw",
+   "source_ref": "17_1046_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/17_1046_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1047",
+   "kind": "ytsw",
+   "source_ref": "17_1047_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/17_1047_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1048",
+   "kind": "ytsw",
+   "source_ref": "17_1048_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/17_1048_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1388",
+   "kind": "ytsw",
+   "source_ref": "17_1388_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/17_1388_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1389",
+   "kind": "ytsw",
+   "source_ref": "17_1389_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/17_1389_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1390",
+   "kind": "ytsw",
+   "source_ref": "17_1390_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/17_1390_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1391",
+   "kind": "ytsw",
+   "source_ref": "17_1391_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/17_1391_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "165",
+   "kind": "ytsw",
+   "source_ref": "17_165_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/17_165_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "167",
+   "kind": "ytsw",
+   "source_ref": "17_167_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/17_167_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "168",
+   "kind": "ytsw",
+   "source_ref": "17_168_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/17_168_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "200",
+   "kind": "ytsw",
+   "source_ref": "17_200_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/17_200_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "908",
+   "kind": "ytsw",
+   "source_ref": "17_908_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/17_908_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "912",
+   "kind": "ytsw",
+   "source_ref": "17_912_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/17_912_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1049",
+   "kind": "ytsw",
+   "source_ref": "18_1049_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/18_1049_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1050",
+   "kind": "ytsw",
+   "source_ref": "18_1050_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/18_1050_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1392",
+   "kind": "ytsw",
+   "source_ref": "18_1392_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/18_1392_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1393",
+   "kind": "ytsw",
+   "source_ref": "18_1393_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/18_1393_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "169",
+   "kind": "ytsw",
+   "source_ref": "18_169_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/18_169_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "170",
+   "kind": "ytsw",
+   "source_ref": "18_170_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/18_170_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "910",
+   "kind": "ytsw",
+   "source_ref": "18_910_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/18_910_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "911",
+   "kind": "ytsw",
+   "source_ref": "18_911_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/18_911_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "913",
+   "kind": "ytsw",
+   "source_ref": "18_913_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/18_913_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "914",
+   "kind": "ytsw",
+   "source_ref": "18_914_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/18_914_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1051",
+   "kind": "ytsw",
+   "source_ref": "19_1051_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/19_1051_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1052",
+   "kind": "ytsw",
+   "source_ref": "19_1052_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/19_1052_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1394",
+   "kind": "ytsw",
+   "source_ref": "19_1394_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/19_1394_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1395",
+   "kind": "ytsw",
+   "source_ref": "19_1395_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/19_1395_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "171",
+   "kind": "ytsw",
+   "source_ref": "19_171_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/19_171_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "172",
+   "kind": "ytsw",
+   "source_ref": "19_172_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/19_172_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "173",
+   "kind": "ytsw",
+   "source_ref": "19_173_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/19_173_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "174",
+   "kind": "ytsw",
+   "source_ref": "19_174_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/19_174_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "915",
+   "kind": "ytsw",
+   "source_ref": "19_915_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/19_915_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "916",
+   "kind": "ytsw",
+   "source_ref": "19_916_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/19_916_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1053",
+   "kind": "ytsw",
+   "source_ref": "20_1053_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/20_1053_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1054",
+   "kind": "ytsw",
+   "source_ref": "20_1054_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/20_1054_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1055",
+   "kind": "ytsw",
+   "source_ref": "20_1055_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/20_1055_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1056",
+   "kind": "ytsw",
+   "source_ref": "20_1056_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/20_1056_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1396",
+   "kind": "ytsw",
+   "source_ref": "20_1396_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/20_1396_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1397",
+   "kind": "ytsw",
+   "source_ref": "20_1397_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/20_1397_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1398",
+   "kind": "ytsw",
+   "source_ref": "20_1398_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/20_1398_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1399",
+   "kind": "ytsw",
+   "source_ref": "20_1399_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/20_1399_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "175",
+   "kind": "ytsw",
+   "source_ref": "20_175_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/20_175_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "176",
+   "kind": "ytsw",
+   "source_ref": "20_176_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/20_176_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "917",
+   "kind": "ytsw",
+   "source_ref": "20_917_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/20_917_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "918",
+   "kind": "ytsw",
+   "source_ref": "20_918_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/20_918_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1057",
+   "kind": "ytsw",
+   "source_ref": "21_1057_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/21_1057_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1058",
+   "kind": "ytsw",
+   "source_ref": "21_1058_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/21_1058_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1400",
+   "kind": "ytsw",
+   "source_ref": "21_1400_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/21_1400_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1401",
+   "kind": "ytsw",
+   "source_ref": "21_1401_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/21_1401_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "177",
+   "kind": "ytsw",
+   "source_ref": "21_177_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/21_177_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "178",
+   "kind": "ytsw",
+   "source_ref": "21_178_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/21_178_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "179",
+   "kind": "ytsw",
+   "source_ref": "21_179_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/21_179_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "180",
+   "kind": "ytsw",
+   "source_ref": "21_180_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/21_180_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "919",
+   "kind": "ytsw",
+   "source_ref": "21_919_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/21_919_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "920",
+   "kind": "ytsw",
+   "source_ref": "21_920_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/21_920_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "921",
+   "kind": "ytsw",
+   "source_ref": "21_921_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/21_921_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "924",
+   "kind": "ytsw",
+   "source_ref": "21_924_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/21_924_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "181",
+   "kind": "ytsw",
+   "source_ref": "22_181_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/22_181_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "182",
+   "kind": "ytsw",
+   "source_ref": "22_182_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/22_182_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "476",
+   "kind": "ytsw",
+   "source_ref": "22_476_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/22_476_2",
+   "error": "HTTP 502",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "923",
+   "kind": "ytsw",
+   "source_ref": "22_923_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/22_923_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "925",
+   "kind": "ytsw",
+   "source_ref": "22_925_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/22_925_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "183",
+   "kind": "ytsw",
+   "source_ref": "23_183_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/23_183_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "926",
+   "kind": "ytsw",
+   "source_ref": "23_926_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/23_926_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "927",
+   "kind": "ytsw",
+   "source_ref": "23_927_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/23_927_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "928",
+   "kind": "ytsw",
+   "source_ref": "23_928_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/23_928_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "929",
+   "kind": "ytsw",
+   "source_ref": "23_929_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/23_929_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "184",
+   "kind": "ytsw",
+   "source_ref": "24_184_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/24_184_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "185",
+   "kind": "ytsw",
+   "source_ref": "24_185_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/24_185_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "186",
+   "kind": "ytsw",
+   "source_ref": "24_186_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/24_186_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "187",
+   "kind": "ytsw",
+   "source_ref": "24_187_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/24_187_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "930",
+   "kind": "ytsw",
+   "source_ref": "24_930_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/24_930_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "931",
+   "kind": "ytsw",
+   "source_ref": "24_931_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/24_931_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1181",
+   "kind": "ytsw",
+   "source_ref": "2_1181_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/2_1181_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1182",
+   "kind": "ytsw",
+   "source_ref": "2_1182_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/2_1182_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "341",
+   "kind": "ytsw",
+   "source_ref": "2_341_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/2_341_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "342",
+   "kind": "ytsw",
+   "source_ref": "2_342_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/2_342_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "932",
+   "kind": "ytsw",
+   "source_ref": "2_932_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/2_932_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "542",
+   "kind": "ytsw",
+   "source_ref": "38_542_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/38_542_2",
+   "error": "HTTP 502",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1183",
+   "kind": "ytsw",
+   "source_ref": "3_1183_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/3_1183_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1184",
+   "kind": "ytsw",
+   "source_ref": "3_1184_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/3_1184_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1185",
+   "kind": "ytsw",
+   "source_ref": "3_1185_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/3_1185_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1186",
+   "kind": "ytsw",
+   "source_ref": "3_1186_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/3_1186_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "346",
+   "kind": "ytsw",
+   "source_ref": "3_346_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/3_346_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "347",
+   "kind": "ytsw",
+   "source_ref": "3_347_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/3_347_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "933",
+   "kind": "ytsw",
+   "source_ref": "3_933_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/3_933_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "934",
+   "kind": "ytsw",
+   "source_ref": "3_934_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/3_934_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1187",
+   "kind": "ytsw",
+   "source_ref": "4_1187_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/4_1187_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1188",
+   "kind": "ytsw",
+   "source_ref": "4_1188_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/4_1188_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "349",
+   "kind": "ytsw",
+   "source_ref": "4_349_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/4_349_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "350",
+   "kind": "ytsw",
+   "source_ref": "4_350_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/4_350_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "351",
+   "kind": "ytsw",
+   "source_ref": "4_351_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/4_351_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "352",
+   "kind": "ytsw",
+   "source_ref": "4_352_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/4_352_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "935",
+   "kind": "ytsw",
+   "source_ref": "4_935_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/4_935_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "936",
+   "kind": "ytsw",
+   "source_ref": "4_936_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/4_936_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1189",
+   "kind": "ytsw",
+   "source_ref": "5_1189_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/5_1189_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1190",
+   "kind": "ytsw",
+   "source_ref": "5_1190_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/5_1190_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "353",
+   "kind": "ytsw",
+   "source_ref": "5_353_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/5_353_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "937",
+   "kind": "ytsw",
+   "source_ref": "5_937_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/5_937_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "938",
+   "kind": "ytsw",
+   "source_ref": "5_938_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/5_938_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "939",
+   "kind": "ytsw",
+   "source_ref": "5_939_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/5_939_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "940",
+   "kind": "ytsw",
+   "source_ref": "5_940_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/5_940_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1826",
+   "kind": "ytsw",
+   "source_ref": "64_1826_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/64_1826_2",
+   "error": "HTTP 502",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1191",
+   "kind": "ytsw",
+   "source_ref": "6_1191_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/6_1191_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1192",
+   "kind": "ytsw",
+   "source_ref": "6_1192_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/6_1192_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "362",
+   "kind": "ytsw",
+   "source_ref": "6_362_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/6_362_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "363",
+   "kind": "ytsw",
+   "source_ref": "6_363_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/6_363_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "941",
+   "kind": "ytsw",
+   "source_ref": "6_941_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/6_941_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "942",
+   "kind": "ytsw",
+   "source_ref": "6_942_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/6_942_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1193",
+   "kind": "ytsw",
+   "source_ref": "7_1193_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/7_1193_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "364",
+   "kind": "ytsw",
+   "source_ref": "7_364_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/7_364_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "365",
+   "kind": "ytsw",
+   "source_ref": "7_365_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/7_365_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "366",
+   "kind": "ytsw",
+   "source_ref": "7_366_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/7_366_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "368",
+   "kind": "ytsw",
+   "source_ref": "7_368_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/7_368_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "943",
+   "kind": "ytsw",
+   "source_ref": "7_943_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/7_943_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1195",
+   "kind": "ytsw",
+   "source_ref": "8_1195_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/8_1195_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1196",
+   "kind": "ytsw",
+   "source_ref": "8_1196_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/8_1196_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1197",
+   "kind": "ytsw",
+   "source_ref": "8_1197_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/8_1197_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1198",
+   "kind": "ytsw",
+   "source_ref": "8_1198_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/8_1198_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "141",
+   "kind": "ytsw",
+   "source_ref": "8_141_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/8_141_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "147",
+   "kind": "ytsw",
+   "source_ref": "8_147_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/8_147_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "369",
+   "kind": "ytsw",
+   "source_ref": "8_369_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/8_369_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "370",
+   "kind": "ytsw",
+   "source_ref": "8_370_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/8_370_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "944",
+   "kind": "ytsw",
+   "source_ref": "8_944_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/8_944_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "945",
+   "kind": "ytsw",
+   "source_ref": "8_945_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/8_945_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1199",
+   "kind": "ytsw",
+   "source_ref": "9_1199_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/9_1199_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "1201",
+   "kind": "ytsw",
+   "source_ref": "9_1201_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/9_1201_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "148",
+   "kind": "ytsw",
+   "source_ref": "9_148_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/9_148_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "203",
+   "kind": "ytsw",
+   "source_ref": "9_203_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/9_203_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "371",
+   "kind": "ytsw",
+   "source_ref": "9_371_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/9_371_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "372",
+   "kind": "ytsw",
+   "source_ref": "9_372_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/9_372_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "946",
+   "kind": "ytsw",
+   "source_ref": "9_946_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/9_946_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "947",
+   "kind": "ytsw",
+   "source_ref": "9_947_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/9_947_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "948",
+   "kind": "ytsw",
+   "source_ref": "9_948_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/9_948_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  },
+  {
+   "seqid": "949",
+   "kind": "ytsw",
+   "source_ref": "9_949_2",
+   "source_url": "https://yin.fudan.edu.cn/iiif_proxy/api/char_proxy/9_949_2",
+   "error": "HTTP 500",
+   "no_source_reason": "http_500"
+  }
+ ]
+}

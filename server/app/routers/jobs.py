@@ -13,10 +13,11 @@ import logging
 import os
 from pathlib import Path
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Response
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
+from fastapi.responses import JSONResponse
 from urllib.parse import quote
 
-from .. import db, pdfmeta, poolctl, repository
+from .. import db, pdfmeta, poolctl, repository, uploader
 from ..config import Settings, get_settings
 from ..models import (
     PAGE_LIMIT_DEFAULT,
@@ -28,6 +29,7 @@ from ..models import (
     JobCreateRequest,
     JobCreateResponse,
     JobProgressResponse,
+    JobUploadResponse,
     MissingResponse,
     PagedEnvelope,
 )
@@ -144,6 +146,93 @@ def _conflict(existing: dict) -> Response:
         media_type="application/json",
         content=body.model_dump_json(),
     )
+
+
+# ------------------------------------------------------ 拖曳上传（**additive**，本单新增）
+@router.post("/upload")
+async def upload_pdf(request: Request, st: Settings = Depends(_settings)) -> JSONResponse:
+    """**additive** `POST /api/jobs/upload` —— PDF 拖曳上传**落盘**（**不建 job、零 DB 写**）。
+
+    为什么需要它（浏览器事实）：拖入 / 选中的 `File` **不带本地路径**，而 E1 要吃**服务器侧
+    `pdf_path`** ⇒ 必须先上传落盘，再把落盘路径交给 E1（E1 契约**一字未改**，本端点纯 additive）。
+
+    **入口形态**（**裸字节流**，不走 multipart——`app/multipart.py` 会把整包读进内存，
+    372 MB 会打爆；本端点用 `Request.stream()` 分块写盘、内存恒定）：
+      * `Content-Type` **必须** ∈ {`application/pdf`, `application/octet-stream`}（§3.19.2）——
+        **否则 `400 BAD_CONTENT_TYPE`**；Content-Type 本身**不作 PDF 判据**（真正的门是 `%PDF-` 魔数）；
+      * **无查询参数**（未白名单 ⇒ `400 UNSUPPORTED_PARAM`，同 §3.16.3 Q5 / §3.18.6 型）；
+      * 文件名：`X-Filename`（**URL-encoded UTF-8**）⇒ 回退 `Content-Disposition` 的
+        `filename*` / `filename` ⇒ 再回退 `upload.pdf`；**一律清毒**（只留 basename、
+        去控制字符与 `..`、后缀规范成 `.pdf`、stem ≤ 200 UTF-8 字节）——**清毒后越界 ⇒ `400`**。
+
+    **落点**：`inbox/<yyyymmdd>/<safe-name>.pdf`（落在 `FEICUI_ROOT` 之内）。
+
+    **校验顺序（§3.19.4 冻结）**：① `Content-Type` ⇒ ② 空体 ⇒ ③ 首字节 `%PDF-` ⇒ ④ 累计超限。
+      * 空体 ⇒ `400 EMPTY_BODY`；首字节非 `%PDF-` ⇒ `400 NOT_A_PDF`；
+      * 超过单文件上限（默认 **512 MiB**，`FEICUI_UPLOAD_MAX_BYTES` 可改）⇒
+        **`413 PAYLOAD_TOO_LARGE`**——声明超限 ⇒ 魔数一过即拒（**不落一个字节**）；
+        实收字节超限 ⇒ **每写一块即累加比较、一超即停并删除本轮分片**（不先写满盘）。
+      * 磁盘 / IO 异常 ⇒ `500`（**结构化 JSON**，绝不 HTML 错误页）。
+
+    **幂等**（Kevin 2026-10-10 口径）：同名同内容 ⇒ **不重写**（`idempotent=true`，mtime 不变）；
+    同名异内容 ⇒ **绝不覆盖**（既有 job 的输入可能正靠它）⇒ `<stem>-<sha256[:8]>.pdf`
+    并标 `dedup_suffix=true`。
+
+    **响应**：`201`（新写入）/ `200`（幂等复用）`{pdf_path, rel_path, filename, bytes, sha256,
+    idempotent, dedup_suffix}`；`pdf_path` ＝ **绝对服务器侧路径**、`rel_path` ＝ **相对 `feicui/`**
+    的路径（两者都落在 §3.1 E1 的「绝对或相对 `feicui/`」口径内、**可直接喂给 E1**）。
+    """
+    try:
+        res = await uploader.store_pdf(
+            request,
+            inbox_root=st.inbox_dir,
+            max_bytes=st.upload_max_bytes,
+            chunk_bytes=st.upload_chunk_bytes,
+        )
+    except uploader.UploadRejected as exc:
+        log.warning("job-upload 拒收(%s %s)：%s", exc.status_code, exc.error, exc.detail)
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={"error": exc.error, "detail": exc.detail, **exc.extra},
+        )
+    except OSError as exc:  # 磁盘 / IO 异常 ⇒ 500（§3.4：**结构化 JSON**，且体不得回吐绝对路径）
+        log.error("job-upload 落盘失败：%r", exc)
+        return JSONResponse(
+            status_code=500,
+            content={"error": "INBOX_WRITE_FAILED", "detail": "落盘失败（磁盘 / IO 异常，详见服务端日志）"},
+        )
+    except Exception as exc:  # noqa: BLE001 - 绝不把 HTML / 纯文本错误页抛给前端
+        log.exception("job-upload 未预期异常")
+        return JSONResponse(
+            status_code=500,
+            content={"error": "INTERNAL", "detail": f"{type(exc).__name__}（详见服务端日志）"},
+        )
+
+    final: Path = res["path"]
+    pdf_path = str(final)  # 绝对（§3.19.4 允许「绝对或相对 feicui/」；此处给绝对，rel_path 给相对）
+    try:
+        rel_path = final.relative_to(st.root).as_posix()  # 相对 FEICUI_ROOT（§3.19.4 冻结）
+    except ValueError:  # 落点被 env 重定向到 root 之外（自测）：退回文件名，**不编造**
+        rel_path = final.name
+
+    body = JobUploadResponse(
+        pdf_path=pdf_path,
+        rel_path=rel_path,
+        filename=res["filename"],
+        bytes=int(res["bytes"]),
+        sha256=res["sha256"],
+        idempotent=bool(res["idempotent"]),
+        dedup_suffix=bool(res["dedup_suffix"]),
+    )
+    log.info(
+        "job-upload %s：%s bytes=%s sha256=%s dedup=%s",
+        res["status_code"],
+        pdf_path,
+        body.bytes,
+        body.sha256[:12],
+        body.dedup_suffix,
+    )
+    return JSONResponse(status_code=int(res["status_code"]), content=body.model_dump())
 
 
 @router.get("/{job_id}", response_model=JobProgressResponse)

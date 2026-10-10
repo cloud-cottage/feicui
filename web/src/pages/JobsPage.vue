@@ -6,6 +6,7 @@ import { onMounted, computed, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { createJob, extractExistingJobId, listJobs } from '@/api/jobs'
 import { describeFailure } from '@/api/client'
+import { uploadPdf } from '@/api/upload'
 import { useBackendStatus } from '@/composables/useBackendStatus'
 import {
   clearLocalJobs,
@@ -42,7 +43,7 @@ function toInt(v) {
 // 前端本地校验（**不是**后端 400 的替代品；后端仍会自己校验并可能回 400/422）
 function validate() {
   const errs = []
-  if (!form.pdf_path.trim()) errs.push('pdf_path 必填（书路径）')
+  if (!form.pdf_path.trim()) errs.push('pdf_path 必填：请拖入 PDF 上传，或展开「高级」手输服务器路径')
   const from = toInt(form.page_from)
   const to = toInt(form.page_to)
   if (Number.isNaN(from) || Number.isNaN(to)) errs.push('页范围必须是正整数')
@@ -128,6 +129,104 @@ async function submit() {
     }
   } finally {
     submitting.value = false
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 拖曳上传（**additive** POST /api/jobs/upload）—— 浏览器事实：拖入 / 选中的 File
+// **不带本地路径** ⇒ 必须先上传到服务器拿服务器侧路径，再把该路径填进表单喂 E1。
+// 本段**不动** E1 的调用与 409 处理：提交仍走原 `createJob`。
+// ─────────────────────────────────────────────────────────────────────────────
+const dragged = ref(false)
+const fileInputEl = ref(null)
+const uploadState = ref({ kind: 'idle' }) // idle | uploading | ok | error
+const uploadPercent = ref(0)
+const uploadFile = ref(null) // {name,size}
+const uploadError = ref('')
+const uploaded = ref(null) // 服务器响应（含 pdf_path / sha256 / idempotent / dedup_suffix）
+
+function fmtBytes(n) {
+  if (typeof n !== 'number' || !Number.isFinite(n)) return '—'
+  if (n < 1024) return `${n} B`
+  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`
+  return `${(n / 1024 / 1024).toFixed(1)} MB`
+}
+
+function pickFile() {
+  if (uploadState.value.kind === 'uploading') return
+  if (fileInputEl.value) fileInputEl.value.click()
+}
+
+function onFileInput(e) {
+  const f = e.target.files && e.target.files[0]
+  if (f) handleFile(f)
+  e.target.value = '' // 允许再次选同一个文件
+}
+
+function onDragOver() {
+  dragged.value = true
+}
+
+function onDragLeave() {
+  dragged.value = false
+}
+
+function onDrop(e) {
+  dragged.value = false
+  const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]
+  if (f) handleFile(f)
+}
+
+function clearUpload() {
+  uploaded.value = null
+  uploadFile.value = null
+  uploadState.value = { kind: 'idle' }
+  uploadPercent.value = 0
+  uploadError.value = ''
+  form.pdf_path = ''
+}
+
+async function handleFile(file) {
+  uploadError.value = ''
+  uploaded.value = null
+  uploadPercent.value = 0
+  uploadFile.value = { name: file.name || '（无文件名）', size: file.size }
+  // ① 先看扩展名。**不是**后端判据的替代品：服务器仍按 `%PDF-` 魔数复核，
+  //    可能回 400 NOT_A_PDF（下方「上传被拒」分支会把错误码原样显示）。
+  if (!/\.pdf$/i.test(file.name || '')) {
+    uploadState.value = { kind: 'error' }
+    uploadError.value = `只接受 .pdf 文件（选中的是「${file.name || '无文件名'}」）——未发出上传请求。`
+    return
+  }
+  // ② 上传未落定前先清空表单值：宁可空，也不让上一次的路径被误提交
+  form.pdf_path = ''
+  uploadState.value = { kind: 'uploading' }
+  try {
+    const res = await uploadPdf(file, {
+      onProgress: (loaded, total) => {
+        uploadPercent.value = total ? Math.min(100, Math.round((loaded / total) * 100)) : 0
+      },
+    })
+    if (!res.ok || !res.body || !res.body.pdf_path) {
+      uploadState.value = { kind: 'error' }
+      const code = res.body && (res.body.error || res.body.detail)
+      uploadError.value = `上传被拒：HTTP ${res.status}${code ? ` · ${code}` : ''}${
+        res.raw ? ` · ${res.raw.slice(0, 300)}` : ''
+      }`
+      return
+    }
+    uploaded.value = res.body
+    form.pdf_path = res.body.pdf_path // ← 填进表单；提交仍走原 E1（契约一字未改）
+    uploadState.value = { kind: 'ok' }
+  } catch (e) {
+    const f = describeFailure(e)
+    uploadState.value = { kind: 'error' }
+    if (f.kind === 'backend-down') {
+      markBackendDown(f.detail)
+      uploadError.value = `后端未启动 / 未连接：上传未能发出（${f.detail || '—'}）`
+    } else {
+      uploadError.value = `上传失败：${f.message}`
+    }
   }
 }
 
@@ -218,10 +317,85 @@ const conflictLinkId = computed(() =>
     <div class="card">
       <h3>新建 job（E1）</h3>
       <form class="form" @submit.prevent="submit">
-        <label class="field">
-          <span class="field__label">书路径 pdf_path <em>*</em></span>
-          <input v-model="form.pdf_path" type="text" placeholder="/绝对或相对路径/xxx.pdf" />
-        </label>
+        <div class="field">
+          <span class="field__label">书路径 pdf_path <em>*</em>（拖入 PDF 上传）</span>
+          <div
+            class="dropzone"
+            :class="{ 'dropzone--over': dragged, 'dropzone--busy': uploadState.kind === 'uploading' }"
+            role="button"
+            tabindex="0"
+            title="拖入 .pdf 文件，或点击选择文件"
+            @click="pickFile"
+            @keydown.enter.prevent="pickFile"
+            @keydown.space.prevent="pickFile"
+            @dragover.prevent="onDragOver"
+            @dragenter.prevent="onDragOver"
+            @dragleave.prevent="onDragLeave"
+            @drop.prevent="onDrop"
+          >
+            <p class="dropzone__title">
+              {{ uploadState.kind === 'uploading' ? '上传中…' : '拖入 PDF 文件，或点击此处选择文件' }}
+            </p>
+            <p class="dropzone__hint">
+              上传后自动落盘到 <code>inbox/&lt;yyyymmdd&gt;/&lt;原文件名&gt;.pdf</code>，并把服务器侧路径自动填进表单（无需手输路径）。
+            </p>
+            <input
+              ref="fileInputEl"
+              class="dropzone__file"
+              type="file"
+              accept="application/pdf,.pdf"
+              @change="onFileInput"
+            />
+          </div>
+        </div>
+
+        <!-- 上传进度：372 MB 必须有反馈（fetch 给不了上传进度 ⇒ api/upload.js 用 XHR） -->
+        <div v-if="uploadState.kind === 'uploading'" class="uploadbox">
+          <div class="progress"><div class="progress__bar" :style="{ width: uploadPercent + '%' }"></div></div>
+          <p class="muted">
+            上传中 {{ uploadPercent }}% ·
+            <code>{{ uploadFile && uploadFile.name }}</code>（{{ fmtBytes(uploadFile && uploadFile.size) }}）
+          </p>
+        </div>
+
+        <!-- 上传成功：只读回显服务器侧 pdf_path ＋ 源文件名 / 体积 / 已就绪 -->
+        <div v-else-if="uploadState.kind === 'ok'" class="uploadbox uploadbox--ok">
+          <p>
+            <strong>已就绪</strong>：源文件 <code>{{ uploadFile && uploadFile.name }}</code>
+            （{{ fmtBytes(uploadFile && uploadFile.size) }}）已落盘到服务器。
+          </p>
+          <p>
+            服务器侧落点（只读）<code>{{ uploaded && uploaded.pdf_path }}</code>
+            ｜ 提交 E1 用的 <code>pdf_path</code> ＝ <code>{{ form.pdf_path || '（空）' }}</code>
+            <span class="muted">（若在下方「高级」里手改，以表单值为准）</span>
+          </p>
+          <p class="muted">
+            sha256 <code>{{ uploaded && uploaded.sha256 }}</code> ·
+            {{ uploaded && uploaded.bytes }} B ·
+            {{ uploaded && uploaded.idempotent ? '幂等：同名同内容，未重写' : '新写入' }}
+            <template v-if="uploaded && uploaded.dedup_suffix">· 同名异内容 ⇒ 已落 <code>-&lt;sha8&gt;</code> 后缀（原文件未被覆盖）</template>
+          </p>
+          <button class="ghost" type="button" @click="clearUpload">清除，重新选择</button>
+        </div>
+
+        <!-- 上传失败：**可见**错误文案（不得静默） -->
+        <div v-else-if="uploadState.kind === 'error'" class="uploadbox uploadbox--err">
+          <p><strong>上传未成功</strong>：{{ uploadError }}</p>
+          <p class="muted">
+            本端不是判据：扩展名 / 体积上限 / <code>%PDF-</code> 魔数一律以服务器复核为准
+            （<code>400 EMPTY_BODY</code> / <code>400 NOT_A_PDF</code> / <code>413 PAYLOAD_TOO_LARGE</code>）。
+          </p>
+        </div>
+
+        <!-- 折叠：高级手输服务器路径（**默认收起**，兼容既有流程）。
+             ⚠ 标题按 §3.19.5 / AC-70 **逐字**「高级：手输服务器路径」——不得加后缀。 -->
+        <details class="advanced">
+          <summary>高级：手输服务器路径</summary>
+          <label class="field">
+            <span class="field__label">书路径 pdf_path（绝对或相对 feicui/；供服务器上已有路径直接输入）</span>
+            <input v-model="form.pdf_path" type="text" placeholder="/绝对或相对路径/xxx.pdf" />
+          </label>
+        </details>
         <div class="field-row">
           <label class="field">
             <span class="field__label">页范围 from（可选）</span>
@@ -246,7 +420,7 @@ const conflictLinkId = computed(() =>
         </ul>
 
         <div class="actions">
-          <button type="submit" :disabled="submitting">{{ submitting ? '提交中…' : '建 job' }}</button>
+          <button type="submit" :disabled="submitting || uploadState.kind === 'uploading'">{{ submitting ? '提交中…' : '建 job' }}</button>
           <span v-if="lastPayload" class="muted">
             上次请求体：<code>{{ JSON.stringify(lastPayload) }}</code>
           </span>

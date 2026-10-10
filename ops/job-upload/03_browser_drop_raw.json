@@ -1,0 +1,205 @@
+{
+ "5195_direct": {
+  "href": "http://127.0.0.1:5195/feicui/",
+  "checks": {
+   "structure": {
+    "dropzone_present": true,
+    "dropzone_role": "button",
+    "dropzone_tabindex": "0",
+    "file_input_accept": "application/pdf,.pdf",
+    "file_input_display": "none",
+    "visible_text_inputs_outside_details": 3,
+    "placeholders_outside_details": [
+     "如 1",
+     "如 544",
+     "如 32"
+    ],
+    "details_present": true,
+    "details_open_by_default": false,
+    "details_summary_text": "高级：手输服务器路径",
+    "advanced_input_inside": true
+   },
+   "highlight": {
+    "dragover_highlight": true,
+    "dragleave_clears": true
+   },
+   "drop_dispatched": {
+    "name": "拖曳测试-5195-1791672413.pdf"
+   },
+   "upload_state": "ok",
+   "ok_box_text": "已就绪：源文件 拖曳测试-5195-1791672413.pdf （842 B）已落盘到服务器。 服务器侧落点（只读）/Users/kevin/bistro/xiai/feicui/inbox/20261011/拖曳测试-5195-1791672413.pdf ｜ 提交 E1 用的 pdf_path ＝ /Users/kevin/bistro/xiai/feicui/inbox/20261011/拖曳测试-5195-1791672413.pdf（若在下方「高级」里手改，以表单值为准） sha256 945e97c075c1a450c9ccfe725c358b81085c6155c101e26e2b0fa37b14024cf4 · 842 B · 新写入 清除，重新选择",
+   "err_text": null,
+   "form_pdf_path": "/Users/kevin/bistro/xiai/feicui/inbox/20261011/拖曳测试-5195-1791672413.pdf",
+   "details_open_after": false,
+   "net": [
+    {
+     "url": "/feicui/api/jobs/upload",
+     "status": 201,
+     "body": "{\"pdf_path\":\"/Users/kevin/bistro/xiai/feicui/inbox/20261011/拖曳测试-5195-1791672413.pdf\",\"rel_path\":\"inbox/20261011/拖曳测试-5195-1791672413.pdf\",\"filename\":\"拖曳测试-5195-1791672413.pdf\",\"bytes\":842,\"sha256\":\"945e97c075c1a450c9ccfe725c358b81085c6155c101e26e2b0fa37b14024cf4\",\"idempotent\":false,\"dedup_suffix\":f"
+    }
+   ],
+   "upload_request": [
+    {
+     "url": "/feicui/api/jobs/upload",
+     "status": 201,
+     "body": "{\"pdf_path\":\"/Users/kevin/bistro/xiai/feicui/inbox/20261011/拖曳测试-5195-1791672413.pdf\",\"rel_path\":\"inbox/20261011/拖曳测试-5195-1791672413.pdf\",\"filename\":\"拖曳测试-5195-1791672413.pdf\",\"bytes\":842,\"sha256\":\"945e97c075c1a450c9ccfe725c358b81085c6155c101e26e2b0fa37b14024cf4\",\"idempotent\":false,\"dedup_suffix\":f"
+    }
+   ],
+   "set_from": true,
+   "set_to": true,
+   "submit_disabled_before_click": false,
+   "e1_notice_text": "201 已建 job HTTP 201 响应时点 2026-10-11 06:46:54 job_id ＝ job-b087ca00fcde43f9974e32a581507e1b · state ＝ QUEUED · total_pages ＝ 1 · created_at ＝ 2026-10-11T06:46:54+08:00 → 打开任务详情（E2 真实进度） 原始响应体（原样展示，未改写）",
+   "e1_request": [
+    {
+     "url": "/feicui/api/jobs",
+     "status": 201,
+     "body": "{\"job_id\":\"job-b087ca00fcde43f9974e32a581507e1b\",\"state\":\"QUEUED\",\"total_pages\":1,\"created_at\":\"2026-10-11T06:46:54+08:00\"}"
+    }
+   ],
+   "local_jobs_row": {
+    "job_id": "job-b087ca00fcde43f9974e32a581507e1b",
+    "pdf_path": "/Users/kevin/bistro/xiai/feicui/inbox/20261011/拖曳测试-5195-1791672413.pdf"
+   },
+   "fake_pdf_error_text": "上传未成功：上传被拒：HTTP 400 · NOT_A_PDF · {\"error\":\"NOT_A_PDF\",\"detail\":\"首字节不是 %PDF-：上传内容不是 PDF\",\"magic\":\"this is \"} 本端不是判据：扩展名 / 体积上限 / %PDF- 魔数一律以服务器复核为准 （400 EMPTY_BODY / 400 NOT_A_PDF / 413 PAYLOAD_TOO_LARGE）。",
+   "txt_error_text": "上传未成功：只接受 .pdf 文件（选中的是「notes.txt」）——未发出上传请求。 本端不是判据：扩展名 / 体积上限 / %PDF- 魔数一律以服务器复核为准 （400 EMPTY_BODY / 400 NOT_A_PDF / 413 PAYLOAD_TOO_LARGE）。",
+   "txt_requests_sent": 0,
+   "ac71_progress": {
+    "file": {
+     "name": "进度测试-100MB-1791672428120.pdf",
+     "size": 104858442,
+     "mb": 100,
+     "magic": "%PDF-"
+    },
+    "xhr_progress_events": 2,
+    "xhr_distinct_pct": [
+     38,
+     100
+    ],
+    "xhr_pct_sequence_head": [
+     38,
+     100
+    ],
+    "xhr_monotonic_nondecreasing": true,
+    "ui_snapshot_count": 2,
+    "ui_pct_readings": [
+     0
+    ],
+    "ui_distinct_pct": [
+     0
+    ],
+    "ui_bar_widths_seen": [
+     "0%"
+    ],
+    "final_box_text": "已就绪：源文件 进度测试-100MB-1791672428120.pdf （100.0 MB）已落盘到服务器。 服务器侧落点（只读）/Users/kevin/bistro/xiai/feicui/inbox/202610",
+    "elapsed_s": 0.27,
+    "upload_requests": [
+     {
+      "url": "undefined",
+      "status": 201,
+      "body": "{\"pdf_path\":\"/Users/kevin/bistro/xiai/feicui/inbox/20261011/进度测试-100MB-1791672428120.pdf\",\"rel_path\":\"inbox/20261011/进度测试-100MB-1791672428120.pdf\",\"filename\":\"进度测试-100MB-1791672428120.pdf\",\"bytes\":104858442,\"sha256\":\"960b43f56b568853b0d7901a006878a8e308b827b440402b0be9f39b740550fd\",\"idempotent\":fals"
+     }
+    ]
+   }
+  },
+  "net": [
+   {
+    "url": "/feicui/api/jobs/upload",
+    "status": 201,
+    "body": "{\"pdf_path\":\"/Users/kevin/bistro/xiai/feicui/inbox/20261011/拖曳测试-5195-1791672413.pdf\",\"rel_path\":\"inbox/20261011/拖曳测试-5195-1791672413.pdf\",\"filename\":\"拖曳测试-5195-1791672413.pdf\",\"bytes\":842,\"sha256\":\"945e97c075c1a450c9ccfe725c358b81085c6155c101e26e2b0fa37b14024cf4\",\"idempotent\":false,\"dedup_suffix\":f"
+   },
+   {
+    "url": "/feicui/api/jobs",
+    "status": 201,
+    "body": "{\"job_id\":\"job-b087ca00fcde43f9974e32a581507e1b\",\"state\":\"QUEUED\",\"total_pages\":1,\"created_at\":\"2026-10-11T06:46:54+08:00\"}"
+   },
+   {
+    "url": "/feicui/api/jobs/upload",
+    "status": 400,
+    "body": "{\"error\":\"NOT_A_PDF\",\"detail\":\"首字节不是 %PDF-：上传内容不是 PDF\",\"magic\":\"this is \"}"
+   }
+  ]
+ },
+ "5164_proxy": {
+  "href": "http://localhost:5164/feicui/",
+  "checks": {
+   "structure": {
+    "dropzone_present": true,
+    "dropzone_role": "button",
+    "dropzone_tabindex": "0",
+    "file_input_accept": "application/pdf,.pdf",
+    "file_input_display": "none",
+    "visible_text_inputs_outside_details": 3,
+    "placeholders_outside_details": [
+     "如 1",
+     "如 544",
+     "如 32"
+    ],
+    "details_present": true,
+    "details_open_by_default": false,
+    "details_summary_text": "高级：手输服务器路径",
+    "advanced_input_inside": true
+   },
+   "highlight": {
+    "dragover_highlight": true,
+    "dragleave_clears": true
+   },
+   "drop_dispatched": {
+    "name": "拖曳测试-5164-1791672417.pdf"
+   },
+   "upload_state": "ok",
+   "ok_box_text": "已就绪：源文件 拖曳测试-5164-1791672417.pdf （842 B）已落盘到服务器。 服务器侧落点（只读）/Users/kevin/bistro/xiai/feicui/inbox/20261011/拖曳测试-5164-1791672417.pdf ｜ 提交 E1 用的 pdf_path ＝ /Users/kevin/bistro/xiai/feicui/inbox/20261011/拖曳测试-5164-1791672417.pdf（若在下方「高级」里手改，以表单值为准） sha256 945e97c075c1a450c9ccfe725c358b81085c6155c101e26e2b0fa37b14024cf4 · 842 B · 新写入 清除，重新选择",
+   "err_text": null,
+   "form_pdf_path": "/Users/kevin/bistro/xiai/feicui/inbox/20261011/拖曳测试-5164-1791672417.pdf",
+   "details_open_after": false,
+   "net": [
+    {
+     "url": "/feicui/api/jobs/upload",
+     "status": 201,
+     "body": "{\"pdf_path\":\"/Users/kevin/bistro/xiai/feicui/inbox/20261011/拖曳测试-5164-1791672417.pdf\",\"rel_path\":\"inbox/20261011/拖曳测试-5164-1791672417.pdf\",\"filename\":\"拖曳测试-5164-1791672417.pdf\",\"bytes\":842,\"sha256\":\"945e97c075c1a450c9ccfe725c358b81085c6155c101e26e2b0fa37b14024cf4\",\"idempotent\":false,\"dedup_suffix\":f"
+    }
+   ],
+   "upload_request": [
+    {
+     "url": "/feicui/api/jobs/upload",
+     "status": 201,
+     "body": "{\"pdf_path\":\"/Users/kevin/bistro/xiai/feicui/inbox/20261011/拖曳测试-5164-1791672417.pdf\",\"rel_path\":\"inbox/20261011/拖曳测试-5164-1791672417.pdf\",\"filename\":\"拖曳测试-5164-1791672417.pdf\",\"bytes\":842,\"sha256\":\"945e97c075c1a450c9ccfe725c358b81085c6155c101e26e2b0fa37b14024cf4\",\"idempotent\":false,\"dedup_suffix\":f"
+    }
+   ],
+   "set_from": true,
+   "set_to": true,
+   "submit_disabled_before_click": false,
+   "e1_notice_text": "201 已建 job HTTP 201 响应时点 2026-10-11 06:46:58 job_id ＝ job-0366b502833a41d9a26ae8f25f725460 · state ＝ QUEUED · total_pages ＝ 1 · created_at ＝ 2026-10-11T06:46:58+08:00 → 打开任务详情（E2 真实进度） 原始响应体（原样展示，未改写）",
+   "e1_request": [
+    {
+     "url": "/feicui/api/jobs",
+     "status": 201,
+     "body": "{\"job_id\":\"job-0366b502833a41d9a26ae8f25f725460\",\"state\":\"QUEUED\",\"total_pages\":1,\"created_at\":\"2026-10-11T06:46:58+08:00\"}"
+    }
+   ],
+   "local_jobs_row": {
+    "job_id": "job-0366b502833a41d9a26ae8f25f725460",
+    "pdf_path": "/Users/kevin/bistro/xiai/feicui/inbox/20261011/拖曳测试-5164-1791672417.pdf"
+   },
+   "fake_pdf_error_text": "上传未成功：上传被拒：HTTP 400 · NOT_A_PDF · {\"error\":\"NOT_A_PDF\",\"detail\":\"首字节不是 %PDF-：上传内容不是 PDF\",\"magic\":\"this is \"} 本端不是判据：扩展名 / 体积上限 / %PDF- 魔数一律以服务器复核为准 （400 EMPTY_BODY / 400 NOT_A_PDF / 413 PAYLOAD_TOO_LARGE）。",
+   "txt_error_text": "上传未成功：只接受 .pdf 文件（选中的是「notes.txt」）——未发出上传请求。 本端不是判据：扩展名 / 体积上限 / %PDF- 魔数一律以服务器复核为准 （400 EMPTY_BODY / 400 NOT_A_PDF / 413 PAYLOAD_TOO_LARGE）。",
+   "txt_requests_sent": 0
+  },
+  "net": [
+   {
+    "url": "/feicui/api/jobs/upload",
+    "status": 201,
+    "body": "{\"pdf_path\":\"/Users/kevin/bistro/xiai/feicui/inbox/20261011/拖曳测试-5164-1791672417.pdf\",\"rel_path\":\"inbox/20261011/拖曳测试-5164-1791672417.pdf\",\"filename\":\"拖曳测试-5164-1791672417.pdf\",\"bytes\":842,\"sha256\":\"945e97c075c1a450c9ccfe725c358b81085c6155c101e26e2b0fa37b14024cf4\",\"idempotent\":false,\"dedup_suffix\":f"
+   },
+   {
+    "url": "/feicui/api/jobs",
+    "status": 201,
+    "body": "{\"job_id\":\"job-0366b502833a41d9a26ae8f25f725460\",\"state\":\"QUEUED\",\"total_pages\":1,\"created_at\":\"2026-10-11T06:46:58+08:00\"}"
+   },
+   {
+    "url": "/feicui/api/jobs/upload",
+    "status": 400,
+    "body": "{\"error\":\"NOT_A_PDF\",\"detail\":\"首字节不是 %PDF-：上传内容不是 PDF\",\"magic\":\"this is \"}"
+   }
+  ]
+ }
+}

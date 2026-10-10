@@ -173,3 +173,25 @@ table.kv th { color: var(--fg-dim); font-weight: 500; width: 260px; }
 .stampimg { max-width: 140px; max-height: 140px; display: block; margin-top: 6px; border: 1px solid var(--line); }
 .pager { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 10px; }
 .card--gap { border-color: var(--warn-line); }
+
+/* ── 拖曳上传（additive：E1 的 pdf_path 由拖放区填入）─────────────────────────
+   色值**一律走既有 token**（不新造颜色字面量）；图标一律用字符 / DOM，不自绘 SVG。 */
+.dropzone {
+  border: 1px dashed var(--line-strong); border-radius: 8px; background: var(--bg-soft);
+  padding: 14px 16px; text-align: center; cursor: pointer;
+}
+.dropzone:hover { border-color: var(--accent-line); }
+.dropzone:focus-visible { outline: 1px solid var(--accent-line); border-color: var(--accent-line); }
+.dropzone--over { border-color: var(--accent-line); background: var(--accent-soft); }
+.dropzone--busy { opacity: .7; cursor: progress; }
+.dropzone__title { margin: 0 0 4px; }
+.dropzone__hint { margin: 0; color: var(--fg-dim); font-size: 12.5px; }
+.dropzone__file { display: none; }
+.uploadbox { border: 1px solid var(--line); border-radius: 8px; background: var(--bg-soft); padding: 8px 12px; margin-top: 8px; }
+.uploadbox p { margin: 4px 0; }
+.uploadbox--ok { border-color: var(--accent-line); background: var(--bg-card-gem); }
+.uploadbox--err { border-color: var(--danger-line); background: var(--danger-bg); }
+.advanced { border: 1px solid var(--line); border-radius: 8px; background: var(--bg-soft); padding: 8px 12px; }
+.advanced > summary { cursor: pointer; color: var(--fg-dim); }
+.advanced > summary:hover { color: var(--accent-line); }
+.advanced .field { margin-top: 8px; }

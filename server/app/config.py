@@ -35,6 +35,16 @@ DEFAULT_CORS_ORIGINS: tuple[str, ...] = (
 )
 
 
+# ── 拖曳上传落盘（additive 端点 `POST /api/jobs/upload`）：默认常量 ────────────────
+# 单文件上限默认 **512 MiB**：源 PDF 实测 38 MB、历史 372 MB ⇒ 512 MiB 容得下，且不至于让
+# 误操作（拖错文件）写满盘。`FEICUI_UPLOAD_MAX_BYTES` 或 server/config.json 的
+# `upload_max_bytes` 可改（自测调小阈值即可验 413，**不必真传 512 MB**）。
+# 分块写盘 1 MiB/块 ⇒ 内存占用恒定（对比 `app/multipart.py`：整包读进内存，372 MB 会打爆）。
+UPLOAD_MAX_BYTES_DEFAULT = 512 * 1024 * 1024
+UPLOAD_CHUNK_BYTES_DEFAULT = 1024 * 1024
+INBOX_DIRNAME = "inbox"
+
+
 def _load_config_file() -> dict:
     path = Path(os.environ.get("FEICUI_SERVER_CONFIG", str(DEFAULT_CONFIG_FILE)))
     if not path.is_file():
@@ -120,6 +130,13 @@ class Settings:
     # 就绪包落点 `feicui/exports/relation_import_<batch_id>/`（前缀 `relation_import_*`）；
     # 只读三库（person/item/seal ingest）＋三线既有就绪包。`FEICUI_RELATIONS_EXPORT_ROOT` 可覆盖（自测用）。
     relations_export_root: Path = REPO_ROOT / "exports"
+    # ---- 拖曳上传（additive `POST /api/jobs/upload`）：落点与限流 ----
+    # 落点 `feicui/inbox/<yyyymmdd>/<safe-name>.pdf`（`.gitignore` 已排除 `inbox/`：属运行时产物）；
+    # 上限默认 512 MiB（`FEICUI_UPLOAD_MAX_BYTES` / config.json `upload_max_bytes` 可改）；
+    # 分块写盘 1 MiB（内存恒定）。`FEICUI_INBOX_DIR` 可重定向（自测用）。
+    inbox_dir: Path = REPO_ROOT / INBOX_DIRNAME
+    upload_max_bytes: int = UPLOAD_MAX_BYTES_DEFAULT
+    upload_chunk_bytes: int = UPLOAD_CHUNK_BYTES_DEFAULT
 
     @property
     def is_prod_db(self) -> bool:
@@ -262,4 +279,24 @@ def get_settings() -> Settings:
             env.get("FEICUI_RELATIONS_EXPORT_ROOT") or file_cfg.get("relations_export_root")
             or str(REPO_ROOT / "exports")
         ).expanduser().resolve(),
+        # ---- 拖曳上传（additive `POST /api/jobs/upload`）：落点 ＋ 上限 ＋ 分块（env 覆盖优先）----
+        inbox_dir=Path(
+            env.get("FEICUI_INBOX_DIR") or file_cfg.get("inbox_dir") or str(REPO_ROOT / INBOX_DIRNAME)
+        ).expanduser().resolve(),
+        upload_max_bytes=max(
+            1,
+            int(
+                env.get("FEICUI_UPLOAD_MAX_BYTES")
+                or file_cfg.get("upload_max_bytes")
+                or UPLOAD_MAX_BYTES_DEFAULT
+            ),
+        ),
+        upload_chunk_bytes=max(
+            4096,
+            int(
+                env.get("FEICUI_UPLOAD_CHUNK_BYTES")
+                or file_cfg.get("upload_chunk_bytes")
+                or UPLOAD_CHUNK_BYTES_DEFAULT
+            ),
+        ),
     )

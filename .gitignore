@@ -23,6 +23,11 @@ server/.run/
 nohup.out
 tmp.pdf
 var/
+# 拖曳上传落点（`POST /api/jobs/upload` ⇒ `<yyyymmdd>/<原文件名>.pdf`）：用户源 PDF
+# （实测 38 MB、历史 372 MB）属**运行时数据**，与 var/ 同档 ⇒ 不入库。
+inbox/
+# 服务端自测的 fixture（每次跑由脚本用 pymupdf 重造，逐字节不稳定 ⇒ 不入库）
+ops/job-upload/fixtures/
 
 # ── 数据 / 导出 / 评测 / 标注产物 ──
 output/

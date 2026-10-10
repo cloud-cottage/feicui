@@ -40,6 +40,27 @@ class JobConflictResponse(BaseModel):
     created_at: str
 
 
+# ---------- E1-upload（**additive**：拖曳上传落盘；不建 job、零 DB 写）----------
+class JobUploadResponse(BaseModel):
+    """`POST /api/jobs/upload` 响应（**additive**、规范未定义；字段由本层定并登记）。
+
+    * `pdf_path` ＝ **绝对服务器侧路径**（`/…/feicui/inbox/<yyyymmdd>/<原文件名>.pdf`）
+      —— 落在 §3.1 E1 的「PDF 路径（绝对或相对 `feicui/`）」口径内，**可直接交给 E1**；
+    * `rel_path` ＝ **相对 `feicui/`（FEICUI_ROOT）** 的路径（`inbox/<yyyymmdd>/<原文件名>.pdf`，§3.19.4 冻结）；
+    * `filename` ＝ **清毒后**的落盘文件名（落后缀时含 `-<sha256[:8]>`）；
+    * `idempotent` ＝ 同名同内容、**未重写**（目标文件 mtime 不变）；
+    * `dedup_suffix` ＝ 同名异内容、**未覆盖**，已落成 `<stem>-<sha256[:8]>.pdf`。
+    """
+
+    pdf_path: str
+    rel_path: str
+    filename: str
+    bytes: int
+    sha256: str
+    idempotent: bool
+    dedup_suffix: bool
+
+
 class ErrorResponse(BaseModel):
     """400 / 422 兜底形状（S-6 的错误码族，不新增码）。"""
 

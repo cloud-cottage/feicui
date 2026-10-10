@@ -32,7 +32,14 @@ ENUM = {"person_to_item", "item_to_person", "person_to_seal", "seal_to_item", "s
 
 
 def ro(p: Path) -> sqlite3.Connection:
-    c = sqlite3.connect(f"file:{p}?mode=ro", uri=True)
+    # WAL 库在 `-shm` 受限时 `mode=ro` 可能**瞬时**报「unable to open database file」⇒ 退回 immutable=1
+    # （与 `03_guard.py` / `app.relations._ro_connect` 同一惯例；首跑不再因瞬时竞争失败）。
+    try:
+        c = sqlite3.connect(f"file:{p}?mode=ro", uri=True)
+        c.execute("SELECT 1").fetchone()
+    except sqlite3.OperationalError:
+        c = sqlite3.connect(f"file:{p}?mode=ro&immutable=1", uri=True)
+    c.row_factory = sqlite3.Row
     c.execute("PRAGMA query_only=ON")
     return c
 
@@ -101,6 +108,8 @@ def main() -> int:
 
     # ⑤ 幽灵 / 未收录清单
     ghost_rows = [r for r in rows if r.get("ghost")]
+    pr_false_rows = sum(1 for r in rows if r.get("person_resolved") is False)
+    rp_false = report.get("person_resolved_false", {})
     c5 = {
         "ghost_rows_in_jsonl": len(ghost_rows),
         "ghost_unique_source_ref": sorted({r["source_ref"] for r in ghost_rows}),
@@ -108,7 +117,11 @@ def main() -> int:
         "report_ghost_unique_as_book_id": report["ghost"]["unique_as_book_id"],
         "unresolved_person_ids": report["unresolved_person_ids"],
         "unresolved_count": len(report["unresolved_person_ids"]),
-        "person_resolved_false_rows": sum(1 for r in rows if r.get("person_resolved") is False),
+        "person_resolved_false_rows": pr_false_rows,
+        "report_person_resolved_false_rows": rp_false.get("rows"),
+        "person_resolved_false_consistent": (rp_false.get("rows") == pr_false_rows
+                                             and rp_false.get("person_ids") == report["unresolved_person_ids"]
+                                             and len(rp_false.get("person_ids") or []) == 14),
         "ghost_listed": len(ghost_rows) >= 1 and report["ghost"]["count"] == len(ghost_rows),
         "unresolved_listed_14": len(report["unresolved_person_ids"]) == 14,
     }
@@ -158,6 +171,8 @@ def main() -> int:
         "c3_all_unique": c3["all_unique"], "c3_unique": c3["unique_triples"],
         "c4_formula_ok": c4["formula_ok"], "c4_union": c4["recomputed_union"],
         "c5_ghost_rows": c5["ghost_rows_in_jsonl"], "c5_unresolved": c5["unresolved_count"],
+        "c5_pr_false_rows": c5["person_resolved_false_rows"],
+        "c5_pr_false_consistent": c5["person_resolved_false_consistent"],
         "c6_PASS": c6["PASS"], "c6_key_face": c6["key_face_status"],
         "c7_PASS": c7["PASS"], "c7_p2i_bad": c7["person_to_item_unresolved_non_ghost"],
         "c8_control_ok": c8["control_ok"], "c8_legacy_PASS": c8["legacy_PASS_should_be_false"],

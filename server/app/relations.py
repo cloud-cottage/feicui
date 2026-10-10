@@ -43,6 +43,11 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+# yinpu.db 真源常量：复用 `app.config.PROD_DB_PATH`（＝ `REPO_ROOT.parent/"data"/"yinpu.db"`，
+# 与 `ops/relation-ingest/03_guard.py::YINPU` 同口径同值 ⇒ `/Users/kevin/bistro/xiai/data/yinpu.db`）。
+# **不得另立第二套解析**：guard 指针口径由此常量唯一给定。
+from .config import PROD_DB_PATH
+
 RELATION_SCHEMA_VERSION = "feicui.relation_ingest/1"
 MANIFEST_SCHEMA_VERSION = 1
 
@@ -170,6 +175,19 @@ def _join_roles(vals: list[str]) -> str | None:
     if not distinct:
         return None
     return "|".join(distinct)
+
+
+def _join_ordered(vals: list[Any]) -> str | None:
+    """**保持给定次序**去重后以 `|` 连接；全空 ⇒ None。
+
+    与 `_join_roles` 的唯一差别：**不重排**（`_join_roles` 会对值再排序）。供 `role` / `role_note`
+    **成对取列**时保证两列同索引严格对应（role_note 必须跟随 role 的次序，不能各自排序）。
+    """
+    seen: list[str] = []
+    for v in vals:
+        if v not in (None, "") and v not in seen:
+            seen.append(v)
+    return "|".join(seen) if seen else None
 
 
 # ═══════════════════════════════════════════════════════════════════════════ 读三库（只读）
@@ -351,16 +369,13 @@ def build_edges(person_db: Path, item_db: Path, seal_db: Path, batch_id: str) ->
         if key not in merged:
             merged[key] = e
             merged[key]["evidence"] = set(e["evidence"])
-            merged[key]["_roles"] = {e["role"]} if e["role"] is not None else set()
-            merged[key]["_role_notes"] = {e["role_note"]} if e["role_note"] is not None else set()
+            # **成对**保留 (role, role_note)：两列必须同索引对应，故只在同一元组内收集（见 _join_ordered）。
+            merged[key]["_role_pairs"] = {(e["role"], e["role_note"])}
             order.append(key)
         else:
             m = merged[key]
             m["evidence"] |= set(e["evidence"])
-            if e["role"] is not None:
-                m["_roles"].add(e["role"])
-            if e["role_note"] is not None:
-                m["_role_notes"].add(e["role_note"])
+            m["_role_pairs"].add((e["role"], e["role_note"]))
             # R-c / 标记取并（任一为真即真；None 视作未标记）
             if e.get("ghost"):
                 m["ghost"] = True
@@ -371,9 +386,11 @@ def build_edges(person_db: Path, item_db: Path, seal_db: Path, batch_id: str) ->
     for key in order:
         m = merged[key]
         m["evidence"] = _ev_sort(m["evidence"])
-        m["role"] = _join_roles(sorted(m["_roles"]))
-        m["role_note"] = _join_roles(sorted(m["_role_notes"]))
-        m.pop("_roles", None); m.pop("_role_notes", None)
+        # 成对排序（先 role 后 note）⇒ 取列时 role / role_note 同索引严格对应（修复「各自独立排序」错位）。
+        pairs = sorted(m["_role_pairs"], key=lambda p: (p[0] or "", p[1] or ""))
+        m["role"] = _join_ordered([r for r, _ in pairs])
+        m["role_note"] = _join_ordered([n for _, n in pairs])
+        m.pop("_role_pairs", None)
         out.append(m)
 
     # 稳定排序（predicate 枚举序 → subject_id → object_id → role → seq）
@@ -474,6 +491,15 @@ def _build_stats(idx, raw, edges, A, B, raw_counts, dedup_counts) -> dict[str, A
                         | {e["subject_id"] for e in edges
                            if e["person_resolved"] is False and e["subject_type"] == "person"})
 
+    # ── R-c 未收录（person_resolved:false）显式计数（去重后逐行重算；与包内行逐条一致）──
+    pr_false_edges = [e for e in edges if e.get("person_resolved") is False]
+    person_resolved_false = {
+        "rows": len(pr_false_edges),                       # 去重后带 person_resolved:false 的行数
+        "by_predicate": {p: sum(1 for e in pr_false_edges if e["predicate"] == p) for p in PREDICATES},
+        "unique_person_ids": len(unresolved),              # 未收录印人 id（唯一）
+        "person_ids": unresolved,
+    }
+
     # ref_id 未命中 person 库：按面分列（§3.17.8 a-v1.19 ①）
     miss_by_face: dict[str, Any] = {}
     for face in SEAL_LINK_FACE_ORDER:
@@ -526,6 +552,7 @@ def _build_stats(idx, raw, edges, A, B, raw_counts, dedup_counts) -> dict[str, A
         "ghost": {"count": len(ghosts), "unique_as_book_id": sorted({r["source_ref"] for r in ghosts if r["source_ref"]}),
                   "rows": ghost_rows},
         "unresolved_person_ids": unresolved,
+        "person_resolved_false": person_resolved_false,
         "ref_id_unresolved_person": {"by_face": miss_by_face, "total": len(miss_total), "ids": miss_total},
         "evidence_dual_source": {"count": len(double), "by_evidence": ev_counts},
         "coverage": coverage,
@@ -659,8 +686,11 @@ def write_package_from_db(person_db, item_db, seal_db, export_root, batch_id: st
     }
 
     # ── 门禁指纹（只读；三库 + 三线既有包）──
+    # yinpu.db 真源：复用 `app.config.PROD_DB_PATH`（＝ `REPO_ROOT.parent/"data"/"yinpu.db"`，
+    # 与 `ops/relation-ingest/03_guard.py::YINPU` 同口径同值）。**不再用 `person_db.parent.parent`**
+    # （那＝仓根 ⇒ 会落到不存在的 `feicui/data/yinpu.db`，exists:false）。
     guard = {
-        "yinpu.db": db_fingerprint(Path(person_db).parent.parent / "data" / "yinpu.db"),
+        "yinpu.db": db_fingerprint(PROD_DB_PATH),
         "var/person_ingest.db": db_fingerprint(person_db),
         "var/item_ingest.db": db_fingerprint(item_db),
         "var/seal_ingest.db": db_fingerprint(seal_db),
@@ -699,6 +729,8 @@ def write_package_from_db(person_db, item_db, seal_db, export_root, batch_id: st
             "ghost_count": stats["ghost"]["count"],
             "ghost_unique_as_book_id": stats["ghost"]["unique_as_book_id"],
             "unresolved_person_count": len(stats["unresolved_person_ids"]),
+            "person_resolved_false_rows": stats["person_resolved_false"]["rows"],
+            "person_resolved_false_by_predicate": stats["person_resolved_false"]["by_predicate"],
             "ref_id_unresolved_person_total": stats["ref_id_unresolved_person"]["total"],
         },
         "join_reconciliation": stats["join_reconciliation"],
@@ -723,6 +755,7 @@ def write_package_from_db(person_db, item_db, seal_db, export_root, batch_id: st
         "join_reconciliation": stats["join_reconciliation"],
         "ghost": stats["ghost"],
         "unresolved_person_ids": stats["unresolved_person_ids"],
+        "person_resolved_false": stats["person_resolved_false"],
         "ref_id_unresolved_person": stats["ref_id_unresolved_person"],
         "evidence_dual_source": stats["evidence_dual_source"],
         "coverage": stats["coverage"],

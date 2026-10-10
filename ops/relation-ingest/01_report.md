@@ -94,11 +94,11 @@
 
 | 文件 | 大小 | 行数 | 说明 |
 | --- | ---: | ---: | --- |
-| `relations.jsonl` | 3,653,848 B | **9976** | 统一关系边（16 键稳定序、UTF-8、无 BOM） |
-| `manifest.json` | 10,668 B | — | `schema_version=1` / `key_face_status:"pending_xiai"` / 字段字典 / 各 predicate 计数 / 幂等唯一计数 / 覆盖统计 / R-a〜R-f / 九行对账 |
-| `report.json` | 9,847 B | — | 各 predicate 计数 / 去重前后 / 九行对账 / 幽灵·未收录清单 / 门禁指纹 |
+| `relations.jsonl` | 3,690,342 B | **9976** | 统一关系边（16 键稳定序、UTF-8、无 BOM） |
+| `manifest.json` | 10,935 B | — | `schema_version=1` / `key_face_status:"pending_xiai"` / 字段字典 / 各 predicate 计数 / 幂等唯一计数 / 覆盖统计 / R-a〜R-f / 九行对账 |
+| `report.json` | 11,780 B | — | 各 predicate 计数 / 去重前后 / 九行对账 / 幽灵·未收录清单 / 门禁指纹（**窄修后读数，见 §10**） |
 
-`relations.jsonl` sha256 ＝ `12d103a63f96a61667a45652ca8fc8d01fa8ee9617f1367073721ff4eadffc10`（CLI 与端点**逐字节一致**）。
+`relations.jsonl` sha256 ＝ `642d3a4b3c6ad31592882e059dc920b0b2d2c217fad6ed1e97ffd2082c6146fc`（CLI 与端点**逐字节一致**；窄修前 ＝ `12d103a6…`，见 §10）。
 
 ## 6. 门禁指纹（before / after；内容指纹，**禁用库文件 md5**）
 
@@ -148,3 +148,42 @@
 - **只暂存本单点名文件**（`server/app/{relations.py,routers/relations.py,main.py,config.py}` ＋ `ops/relation-ingest/**`）；**未 `git add -A`**、**未暂存** `docs/relation-ingest-draft-v0.1.md`（Zang 的拆解件，仍留 untracked 由期归属方处理）、**未 push**。
 - **零联网**：`relations.py` / `routers/relations.py` **无任何 HTTP/网络导入**（仅 `sqlite3`/`json` 等）；端点只读三库。
 - **未完成/待裁**：无阻塞项。跨工程待 xiai 裁定者（键面 / 集合名 / 导入通道 / 合成 hash）已登记于包 `manifest.r_defaults` 与 §3.18.4，**本侧按默认值交付、拿到键面二次出包不重采**。
+
+## 10. 窄修复（Neng 独立质检 OBS 四条归零 · Kong / 2026-10-10）
+
+> 触发：Neng 独立质检对 `615a5d8` 交付件提**三条真缺陷 ＋ 一条健壮性**，本单窄修 —— **不重构、不动口径、不改行数、不重采（零联网）**。
+> 基线 HEAD ＝ `dc2b8f2`；改动仅 `server/app/relations.py` ＋ `ops/relation-ingest/05_package_selfcheck.py`（＋复跑读数）。
+
+| # | 缺陷（根因） | 修法 | 复跑读数 |
+| --- | --- | --- | --- |
+| a【真缺陷】 | `report.json.guard_fingerprints.yinpu.db` 路径错：`person_db.parent.parent`（＝仓根）⇒ `feicui/data/yinpu.db`，`exists:false` | 改用 `app.config.PROD_DB_PATH`（＝ `REPO_ROOT.parent/"data"/"yinpu.db"`，与 `03_guard.py::YINPU` 同口径同值；**复用既有唯一常量、不另立第二套**） | 路径 `/Users/kevin/bistro/xiai/data/yinpu.db`、**`exists:true`**、8 表指纹齐全 |
+| b【真缺陷】 | `seal_to_person` 合并行 `role` / `role_note` **各自独立排序** ⇒ 两列位置错位 | 合并时**成对**收集 `(role, role_note)`、按 (role, note) **成对排序**、`_join_ordered` 按序取列（**保留原 `role`/`role_note` 键面**，未改 `roles:[…]` 形态） | 136 行 role_note 归位；行数 9976 / 三元组唯一 **9976/9976 不变** |
+| c【真缺陷】 | `report.json` 未落 `person_resolved:false` 计数 | 新增 `report.person_resolved_false`（`rows` / `by_predicate` / `unique_person_ids` / `person_ids`）＋ `manifest.ghost_unresolved.person_resolved_false_rows`·`_by_predicate` | `rows＝449`（全在 `seal_to_person`）、唯一 id **14**（与 `unresolved_person_ids` 逐条相同） |
+| d【健壮性】 | `05_package_selfcheck.py` 首跑撞 WAL `mode=ro` 瞬时失败 | `ro()` 加 `immutable=1` 回退（同 `03_guard.py` / `_ro_connect` 惯例）＋ 回读 `report.person_resolved_false` 与包内行**交叉核对** | 首跑自检全 PASS（见 §10.3） |
+
+### 10.1 `role` / `role_note` 最终形态与兼容影响
+
+- **最终形态**：**16 键键面不变**（`role` / `role_note` 仍为 `|` 连接字符串，**未**引入 `roles:[{role,note}]` 新键）；仅把「两列各自排序」改为「同一索引成对排序」。
+- **兼容影响**：`05_package_selfcheck.py` 键面判据、§3.18.2 键面、xiai 侧解析**零改动**；单角色行与多角色行的 `role` 列**逐字节不变**，仅多角色行的 `role_note` 随 role 次序归位。
+
+### 10.2 `relations.jsonl` 前后对照（HEAD 码重出 vs 修后）
+
+| 项 | 修前（HEAD 码重出） | 修后 |
+| --- | --- | --- |
+| sha256 | `12d103a63f96a61667a45652ca8fc8d01fa8ee9617f1367073721ff4eadffc10` | `642d3a4b3c6ad31592882e059dc920b0b2d2c217fad6ed1e97ffd2082c6146fc` |
+| 字节 | 3,690,342 | 3,690,342（**不变**） |
+| 行数 | **9976** | **9976**（**不变**） |
+| 逐行相异 | — | **136 行**，全部 `seal_to_person`，**仅 `role_note` 次序**（`role` 列不变） |
+
+**136 相异行构成**：`person_bkzkz|person_zzkz` **78 行**（`篆者|边款篆者` → `边款篆者|篆者`）＋ `person_bkzkz|person_yz|person_zzkz` **57 行**（`印主|篆者|边款篆者` → `边款篆者|印主|篆者`）＋ `person_bkzkz|person_yz` **1 行**；涉印章 136 个、印人 3 个。其余 1960−136＝**1824 个多角色行**本就对齐（值不变）。
+
+### 10.3 复跑读数（脚本可复跑）
+
+- `05_package_selfcheck.py`：`c1_form_PASS` ✓ / `no_bom` ✓ / `one_object_per_line` ✓ / `c2_all_equal` ✓（1349·1379·301·3679·3268）/ `c3_all_unique` ✓（9976）/ `c4_formula_ok` ✓（∪1381）/ `c5_pr_false_rows=449` 且 **`c5_pr_false_consistent=true`** / `c6_PASS` ✓（`pending_xiai`）/ `c7_PASS` ✓ / `c8_control_ok` ✓（旧形态 FAIL 对照判负）。
+- `06_idempotency.py`：重建 rc `[0,0]`；`jsonl_byte_stable=true`（`642d3a4b…` **两次全同**）；`dbs_unchanged=true`、`packages_unchanged=true`。
+- `03_guard.py before/after`：**四库 × 三包逐字节未变（before＝after）**；`yinpu.db` 8 表（stamps 89 / jobs 5 / job_pages 32 / seals 79 / images 79 / export_batches 12 / export_records 49 / schema_migrations 2）。
+- 端点（改码后**单路重启**，PID 80097 → **92929**）：`GET /api/relations/summary` **200**；`POST /api/relations/package?batch_id=relation_20261010_01` **200**（rows 9976）—— 活端点读到的 `report.json` 即新口径（guard `exists:true` / `person_resolved_false` 449）。
+
+### 10.4 本窄修复提交
+
+- 提交：`{{COMMIT}}`（**只暂存本单点名文件**：`server/app/relations.py`、`ops/relation-ingest/{05_package_selfcheck.py,01_report.md}` ＋ 复跑产物 `05_package_selfcheck.json` / `06_idempotency.json`）；**未 `git add -A`**、**未 push**；`03_guard_before.json` / `04_guard_after.json` 复跑后与既有**逐字节相同**（故未变更）。

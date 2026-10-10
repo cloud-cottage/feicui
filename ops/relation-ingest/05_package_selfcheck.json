@@ -90,6 +90,8 @@
     ],
     "unresolved_count": 14,
     "person_resolved_false_rows": 449,
+    "report_person_resolved_false_rows": 449,
+    "person_resolved_false_consistent": true,
     "ghost_listed": true,
     "unresolved_listed_14": true
   },

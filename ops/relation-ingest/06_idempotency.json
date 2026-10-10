@@ -4,14 +4,14 @@
     0,
     0
   ],
-  "jsonl_sha256_run0": "12d103a63f96a61667a45652ca8fc8d01fa8ee9617f1367073721ff4eadffc10",
-  "jsonl_sha256_run1": "12d103a63f96a61667a45652ca8fc8d01fa8ee9617f1367073721ff4eadffc10",
+  "jsonl_sha256_run0": "642d3a4b3c6ad31592882e059dc920b0b2d2c217fad6ed1e97ffd2082c6146fc",
+  "jsonl_sha256_run1": "642d3a4b3c6ad31592882e059dc920b0b2d2c217fad6ed1e97ffd2082c6146fc",
   "jsonl_bytes": 3690342,
   "jsonl_byte_stable": true,
-  "manifest_created_at_run0": "2026-10-10T21:45:20+08:00",
-  "manifest_created_at_run1": "2026-10-10T21:45:56+08:00",
-  "report_generated_at_run0": "2026-10-10T21:45:20+08:00",
-  "report_generated_at_run1": "2026-10-10T21:45:56+08:00",
+  "manifest_created_at_run0": "2026-10-10T21:54:37+08:00",
+  "manifest_created_at_run1": "2026-10-10T21:54:43+08:00",
+  "report_generated_at_run0": "2026-10-10T21:54:37+08:00",
+  "report_generated_at_run1": "2026-10-10T21:54:43+08:00",
   "timestamps_may_change": true,
   "verdict_jsonl_only_timestamps_change": true,
   "guard": {
@@ -32,9 +32,9 @@
     },
     "packages_unchanged": true,
     "package_detail": {
-      "item_import_item_20261010_01": {
-        "before": "d7ba7723bb3856613c24d4b4be0f39426fc2ed6b24a2a7c968cc43fe5dcc61c9",
-        "after": "d7ba7723bb3856613c24d4b4be0f39426fc2ed6b24a2a7c968cc43fe5dcc61c9",
+      "seal_import_seal_20261010_01": {
+        "before": "46013d67d2f2ecd0ab5a9ca44967d3e5c3fab8cc469ed3ea4eeaaa13a5242ea3",
+        "after": "46013d67d2f2ecd0ab5a9ca44967d3e5c3fab8cc469ed3ea4eeaaa13a5242ea3",
         "same": true
       },
       "person_import_person_20261010_01": {
@@ -42,14 +42,14 @@
         "after": "756b5bd4b769cd877ea27409e8da0d63bd184bd4b7ab54734e6ebe05fcf94bb5",
         "same": true
       },
-      "seal_import_seal_20261010_01": {
-        "before": "46013d67d2f2ecd0ab5a9ca44967d3e5c3fab8cc469ed3ea4eeaaa13a5242ea3",
-        "after": "46013d67d2f2ecd0ab5a9ca44967d3e5c3fab8cc469ed3ea4eeaaa13a5242ea3",
-        "same": true
-      },
       "person_20261010_01": {
         "before": "8c8c0a1f05e4c342f0ebf2ef97099bdf25eec7dad672417d71092b1cbb5f55dd",
         "after": "8c8c0a1f05e4c342f0ebf2ef97099bdf25eec7dad672417d71092b1cbb5f55dd",
+        "same": true
+      },
+      "item_import_item_20261010_01": {
+        "before": "d7ba7723bb3856613c24d4b4be0f39426fc2ed6b24a2a7c968cc43fe5dcc61c9",
+        "after": "d7ba7723bb3856613c24d4b4be0f39426fc2ed6b24a2a7c968cc43fe5dcc61c9",
         "same": true
       }
     }

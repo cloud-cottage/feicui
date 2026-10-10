@@ -27,6 +27,15 @@
   * **失败不静默**：逐条失败写进批次包 `report.json` 的失败清单（**不写进 `persons.jsonl`**）。
 
 **繁简口径**（拆解件 §4.5）：**繁体为正字段、简体入 `*_chs` 副字段**，**不做任何转换改写**。
+
+**批次行计数口径（`person_import_batches`，Zang 2026-10-10 裁决）**——**「0」不得在「有数据」的场景冒充「未采集」**：
+  * `persons_ok` / `relations_ok` ＝**库内对该批次的实测计数**（`COUNT(*) … WHERE batch_id=?`），
+    **不是**单次 run 的循环计数器；任何 run 结束都按库内真值回填（**不得写死**）。
+  * `fetched` / `elapsed_s` ＝**采集 run（真实取数 run）的读数**：跨 run **累计**（`+=`）且**幂等重放不改写**
+    （重放 `fetched_this_run==0` 且全部 `skipped` ⇒ 视为 `idempotent_replay`，只对 `last_run_*` 计入，不动累计采集计数）。
+  * `last_run_kind` / `last_run_fetched` / `last_run_skipped` / `last_run_elapsed_s` / `last_run_at` ＝
+    **最近一次 run**（可能是幂等重放）的读数；重放的 `0` 只准出现在这里，**绝不**冒充 `fetched`/`relations_ok`。
+  * 判定：`run_kind = idempotent_replay` ⇔ 本轮**无任何网络取数**（`fetched==0`）且**全部行命中 resume 跳过**；否则 `live_ingest`。
 """
 from __future__ import annotations
 
@@ -380,7 +389,9 @@ SCHEMA_SQL = [
         created_at TEXT, updated_at TEXT, status TEXT,
         source_total INTEGER, fetched INTEGER, persons_ok INTEGER, relations_ok INTEGER,
         failed_count INTEGER, elapsed_s REAL, package_dir TEXT, report_path TEXT,
-        content_fingerprint TEXT, params_json TEXT, notes TEXT
+        content_fingerprint TEXT, params_json TEXT, notes TEXT,
+        last_run_kind TEXT, last_run_fetched INTEGER, last_run_skipped INTEGER,
+        last_run_elapsed_s REAL, last_run_at TEXT
     )""",
     """CREATE TABLE IF NOT EXISTS persons (
         source_person_id TEXT PRIMARY KEY,
@@ -441,9 +452,28 @@ def ensure_schema(db_path: Path | str) -> None:
         conn.execute("PRAGMA journal_mode=WAL")
         for sql in SCHEMA_SQL:
             conn.execute(sql)
+        _migrate_batch_columns(conn)
         conn.commit()
     finally:
         conn.close()
+
+
+# 增量列（老库补列；`CREATE TABLE IF NOT EXISTS` 对已存在的表不生效，须 ALTER）
+BATCH_EXTRA_COLUMNS: list[tuple[str, str]] = [
+    ("last_run_kind", "TEXT"),
+    ("last_run_fetched", "INTEGER"),
+    ("last_run_skipped", "INTEGER"),
+    ("last_run_elapsed_s", "REAL"),
+    ("last_run_at", "TEXT"),
+]
+
+
+def _migrate_batch_columns(conn: sqlite3.Connection) -> None:
+    """把 `person_import_batches` 的增量列补齐（幂等；只 ADD COLUMN，不改既有列/数据）。"""
+    have = {r[1] for r in conn.execute("PRAGMA table_info(person_import_batches)")}
+    for name, decl in BATCH_EXTRA_COLUMNS:
+        if name not in have:
+            conn.execute(f"ALTER TABLE person_import_batches ADD COLUMN {name} {decl}")
 
 
 def _now() -> str:
@@ -550,14 +580,46 @@ def next_batch_id(export_root: Path, when: datetime | None = None) -> str:
     return f"{prefix}{nn:02d}"
 
 
+def get_batch(db_path: Path | str, batch_id: str) -> dict | None:
+    """读取单批次行（不存在 ⇒ None）。"""
+    conn = _connect(db_path)
+    try:
+        row = conn.execute(
+            "SELECT * FROM person_import_batches WHERE batch_id=?", (batch_id,)
+        ).fetchone()
+        return dict(row) if row is not None else None
+    finally:
+        conn.close()
+
+
+def batch_db_counts(db_path: Path | str, batch_id: str) -> dict:
+    """**库内对该批次的实测计数**（`persons_ok` / `relations_ok` 的唯一来源；不得写死）。"""
+    conn = _connect(db_path)
+    try:
+        return {
+            "persons": conn.execute(
+                "SELECT COUNT(*) FROM persons WHERE batch_id=?", (batch_id,)).fetchone()[0],
+            "relations": conn.execute(
+                "SELECT COUNT(*) FROM person_relations WHERE batch_id=?", (batch_id,)).fetchone()[0],
+        }
+    finally:
+        conn.close()
+
+
 def create_batch(db_path: Path | str, batch_id: str, params: dict, source_total: int | None = None) -> None:
+    """开批次。**幂等**：同 `batch_id` 重跑时**保留** `created_at` 与既有采集计数
+    （`fetched`/`elapsed_s`/`persons_ok`/`relations_ok`/`last_run_*`）——**绝不**因重跑把计数归零；
+    只刷新 `updated_at`/`status`/`source_total`/`params_json`。"""
     conn = _connect(db_path)
     try:
         conn.execute(
-            "INSERT OR REPLACE INTO person_import_batches "
+            "INSERT INTO person_import_batches "
             "(batch_id, created_at, updated_at, status, source_total, fetched, persons_ok, "
             " relations_ok, failed_count, elapsed_s, package_dir, report_path, content_fingerprint, params_json, notes) "
-            "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) "
+            "ON CONFLICT(batch_id) DO UPDATE SET "
+            "  updated_at=excluded.updated_at, status='RUNNING', "
+            "  source_total=excluded.source_total, params_json=excluded.params_json",
             (batch_id, _now(), _now(), "RUNNING", source_total, 0, 0, 0, 0, 0.0,
              None, None, None, json.dumps(params, ensure_ascii=False), None),
         )
@@ -566,10 +628,18 @@ def create_batch(db_path: Path | str, batch_id: str, params: dict, source_total:
         conn.close()
 
 
+# `finish_batch` 可写字段（顺序无关；`updated_at` 恒由本函数盖写）
+BATCH_FINISH_FIELDS = [
+    "status", "source_total", "fetched", "persons_ok", "relations_ok", "failed_count", "elapsed_s",
+    "package_dir", "report_path", "content_fingerprint",
+    "last_run_kind", "last_run_fetched", "last_run_skipped", "last_run_elapsed_s", "last_run_at",
+    "notes",
+]
+
+
 def finish_batch(db_path: Path | str, batch_id: str, **kw: Any) -> None:
-    fields = ["updated_at", "status", "source_total", "fetched", "persons_ok", "relations_ok",
-              "failed_count", "elapsed_s", "package_dir", "report_path", "content_fingerprint", "notes"]
-    values = [_now()] + [kw.get(f) for f in fields[1:]]
+    fields = ["updated_at"] + BATCH_FINISH_FIELDS
+    values = [_now()] + [kw.get(f) for f in BATCH_FINISH_FIELDS]
     conn = _connect(db_path)
     try:
         conn.execute(
@@ -586,12 +656,94 @@ def list_batches(db_path: Path | str) -> list[dict]:
     try:
         rows = conn.execute(
             "SELECT batch_id, created_at, updated_at, status, source_total, fetched, persons_ok, "
-            "relations_ok, failed_count, elapsed_s, package_dir, report_path, content_fingerprint "
+            "relations_ok, failed_count, elapsed_s, package_dir, report_path, content_fingerprint, "
+            "last_run_kind, last_run_fetched, last_run_skipped, last_run_elapsed_s, last_run_at, notes "
             "FROM person_import_batches ORDER BY batch_id DESC"
         ).fetchall()
         return [dict(r) for r in rows]
     finally:
         conn.close()
+
+
+def repair_batch_counters(db_path: Path | str, batch_id: str, *, dry_run: bool = False) -> dict:
+    """**一次性修复**受损批次行：把被幂等重放覆盖掉的采集计数恢复为真值。
+
+    受损判据（本单成因，**幂等**）：批次行计数与库内**实测**不符
+    （典型：库内确有 1650 关联，行内 `relations_ok` 却被重放覆盖成 0）⇒ 判为受损并修复；
+    计数已等于库内真值时**原样返回**（不误伤、可反复调用）。
+
+    真值来源（**不写死、不联网重采**）：
+      * `persons_ok` / `relations_ok` ← 库内 `COUNT(*) … WHERE batch_id=?`（实测）；
+      * `fetched` / `elapsed_s` ← 该批次包 `report.json` 的 `run_provenance.acquisition_run`
+        （**采集期当场记录**的读数）：`fetched_requests_cumulative` / `last_shard_summary.elapsed_s`；
+        证据缺失 ⇒ 保留原值（**不编值**）；
+      * 原（被覆盖的）读数搬入 `last_run_*`（`kind=idempotent_replay`）。
+    """
+    ensure_schema(db_path)
+    row = get_batch(db_path, batch_id)
+    if row is None:
+        return {"ok": False, "error": "BATCH_NOT_FOUND", "batch_id": batch_id}
+    counts = batch_db_counts(db_path, batch_id)
+    stored_persons = int(row.get("persons_ok") or 0)
+    stored_relations = int(row.get("relations_ok") or 0)
+    damaged = (stored_persons != counts["persons"]) or (stored_relations != counts["relations"])
+    if not damaged:
+        return {"ok": True, "repaired": False, "reason": "COUNTERS_ALREADY_TRUE",
+                "batch_id": batch_id, "counts": counts, "row": row}
+    if dry_run:
+        return {"ok": True, "repaired": False, "dry_run": True, "batch_id": batch_id,
+                "counts": counts, "before": row}
+
+    acq_fetched: Any = None
+    acq_elapsed: Any = None
+    evidence_path: str | None = None
+    rp = row.get("report_path")
+    if rp and Path(rp).is_file():
+        evidence_path = str(rp)
+        try:
+            rep = json.loads(Path(rp).read_text(encoding="utf-8"))
+            acq = (rep.get("run_provenance") or {}).get("acquisition_run") or {}
+            acq_fetched = acq.get("fetched_requests_cumulative")
+            acq_elapsed = (acq.get("last_shard_summary") or {}).get("elapsed_s")
+        except Exception as exc:  # 证据读不动 ⇒ 不编值
+            log.warning("修复 %s：读取批次包采集证据失败 %s：%s", batch_id, rp, exc)
+
+    new_fetched = acq_fetched if acq_fetched is not None else row.get("fetched")
+    new_elapsed = acq_elapsed if acq_elapsed is not None else row.get("elapsed_s")
+    old_notes = {}
+    try:
+        old_notes = json.loads(row.get("notes") or "{}")
+    except Exception:
+        old_notes = {}
+    new_notes = {
+        "skipped_resume": old_notes.get("skipped_resume"),
+        "detail_unconfirmed": old_notes.get("detail_unconfirmed"),
+        "run_kind": "idempotent_replay",
+        "repair": {
+            "at": _now(),
+            "reason": "批次行计数被幂等重放覆盖（relations_ok 显示 0 冒充「无关联」）",
+            "restored": {"persons_ok": counts["persons"], "relations_ok": counts["relations"],
+                         "fetched": new_fetched, "elapsed_s": new_elapsed},
+            "fetched_elapsed_evidence": evidence_path,
+            "note": "采集计数＝库内实测；fetched/elapsed 取自批次包 run_provenance.acquisition_run（采集期记录）；"
+                    "原被覆盖的重放读数已移至 last_run_*",
+        },
+    }
+    finish_batch(
+        db_path, batch_id, status=row.get("status"),
+        source_total=row.get("source_total"),
+        fetched=new_fetched, persons_ok=counts["persons"], relations_ok=counts["relations"],
+        failed_count=row.get("failed_count"), elapsed_s=new_elapsed,
+        package_dir=row.get("package_dir"), report_path=row.get("report_path"),
+        content_fingerprint=row.get("content_fingerprint"),
+        last_run_kind="idempotent_replay",
+        last_run_fetched=row.get("fetched"), last_run_skipped=old_notes.get("skipped_resume"),
+        last_run_elapsed_s=row.get("elapsed_s"), last_run_at=row.get("updated_at"),
+        notes=json.dumps(new_notes, ensure_ascii=False),
+    )
+    after = get_batch(db_path, batch_id)
+    return {"ok": True, "repaired": True, "batch_id": batch_id,
+            "counts": counts, "before": row, "after": after}
 
 
 # ═══════════════════════════════════════════════════════════════════════════ 采集主流程
@@ -624,6 +776,8 @@ def run_sync(
         batch_id = next_batch_id(export_root)
     params = {"resume": resume, "delay": delay, "limit": limit, "page_rows": page_rows,
               "detail_best_effort": fetch_detail_best_effort}
+    # 采集计数在重跑时须**保留**（create_batch 幂等、不归零）⇒ 先取既有一行留底。
+    prev_row = get_batch(db_path, batch_id) or {}
     create_batch(db_path, batch_id, params, source_total=total)
 
     failures: list[dict] = []
@@ -708,22 +862,42 @@ def run_sync(
     finally:
         conn.close()
 
+    run_elapsed = round(time.time() - t0, 3)
+    # ── 批次行计数（Zang 2026-10-10 裁决）：库内真值 + 采集 run 累计；幂等重放**不得**归零采集计数 ──
+    # * persons_ok / relations_ok ← 库内对该批次的**实测计数**（不得写死）；
+    # * fetched / elapsed_s ← **采集 run 累计**（`prev + 本轮`）；本轮为幂等重放（无网络取数且全部跳过）时**原样保留**；
+    # * last_run_* ← 最近一次 run 的读数（重放的 0 只准落在这里）。
+    is_replay = (len(rows) > 0 and skipped == len(rows) and fetched == 0)
+    run_kind = "idempotent_replay" if is_replay else "live_ingest"
+    prev_fetched = int(prev_row.get("fetched") or 0)
+    prev_elapsed = float(prev_row.get("elapsed_s") or 0.0)
+    acq_fetched = prev_fetched if is_replay else prev_fetched + fetched
+    acq_elapsed = prev_elapsed if is_replay else prev_elapsed + run_elapsed
+    counts = batch_db_counts(db_path, batch_id)
+
     finish_batch(
-        db_path, batch_id, status="DONE", source_total=total, fetched=fetched,
-        persons_ok=persons_ok, relations_ok=relations_ok, failed_count=len(failures),
-        elapsed_s=round(time.time() - t0, 3), package_dir=str(pkg["package_dir"]),
-        report_path=str(pkg["report_path"]), content_fingerprint=fingerprint,
-        notes=json.dumps({"skipped_resume": skipped, "detail_unconfirmed": len(detail_unconfirmed)},
+        db_path, batch_id, status="DONE", source_total=total,
+        fetched=acq_fetched, persons_ok=counts["persons"], relations_ok=counts["relations"],
+        failed_count=len(failures), elapsed_s=round(acq_elapsed, 3),
+        package_dir=str(pkg["package_dir"]), report_path=str(pkg["report_path"]),
+        content_fingerprint=fingerprint,
+        last_run_kind=run_kind, last_run_fetched=fetched, last_run_skipped=skipped,
+        last_run_elapsed_s=run_elapsed, last_run_at=_now(),
+        notes=json.dumps({"skipped_resume": skipped, "detail_unconfirmed": len(detail_unconfirmed),
+                          "run_kind": run_kind,
+                          "counters_source": "db_counts(batch_id) + acquisition_run_cumulative"},
                          ensure_ascii=False),
     )
     return {
         "batch_id": batch_id,
+        "run_kind": run_kind,
         "source_total": total,
         "rows_seen": len(rows),
-        "fetched_requests": fetched,
+        "fetched_requests": fetched,                 # 本轮（单次 run）网络请求数
+        "fetched_requests_cumulative": acq_fetched,  # 采集 run 累计（重放不改写）
         "skipped_resume": skipped,
-        "persons_ok": persons_ok,
-        "relations_ok": relations_ok,
+        "persons_ok": counts["persons"],             # 库内真值（不得写死）
+        "relations_ok": counts["relations"],         # 库内真值（不得写死）
         "detail_confirmed": detail_confirmed,
         "detail_unconfirmed_count": len(detail_unconfirmed),
         "detail_skipped_circuit": detail_skipped_circuit,
@@ -733,7 +907,8 @@ def run_sync(
         "package_dir": str(pkg["package_dir"]),
         "report_path": str(pkg["report_path"]),
         "content_fingerprint": fingerprint,
-        "elapsed_s": round(time.time() - t0, 3),
+        "elapsed_s": round(acq_elapsed, 3),          # 采集 run 累计墙钟
+        "last_run_elapsed_s": run_elapsed,           # 本轮墙钟
         "counts": db_counts(db_path),
     }
 
@@ -1021,7 +1196,8 @@ def _cli() -> int:
 
     st = get_settings()
     ap = argparse.ArgumentParser(description="feicui 印人采集线（批 1）")
-    ap.add_argument("cmd", choices=["sync", "counts", "fingerprint", "list-count"], help="子命令")
+    ap.add_argument("cmd", choices=["sync", "counts", "fingerprint", "list-count", "repair-batch"],
+                    help="子命令")
     ap.add_argument("--db", default=str(st.person_db_path))
     ap.add_argument("--export-root", default=str(st.person_export_root))
     ap.add_argument("--base", default=st.person_source_base)
@@ -1030,11 +1206,21 @@ def _cli() -> int:
     ap.add_argument("--no-detail", action="store_true", help="关闭 best-effort detail（纯列表行 + graph）")
     ap.add_argument("--delay", type=float, default=st.person_fetch_delay_s)
     ap.add_argument("--limit", type=int, default=None)
+    ap.add_argument("--dry-run", action="store_true", help="repair-batch：只算不改")
     args = ap.parse_args()
 
     if args.cmd == "counts":
         ensure_schema(args.db)
         print(json.dumps(db_counts(args.db), ensure_ascii=False))
+        return 0
+    if args.cmd == "repair-batch":
+        ensure_schema(args.db)
+        if not args.batch_id:
+            print(json.dumps({"ok": False, "error": "MISSING_BATCH_ID",
+                              "detail": "repair-batch 需 --batch-id"}, ensure_ascii=False))
+            return 2
+        print(json.dumps(repair_batch_counters(args.db, args.batch_id, dry_run=args.dry_run),
+                         ensure_ascii=False, indent=2))
         return 0
     if args.cmd == "fingerprint":
         ensure_schema(args.db)

@@ -240,11 +240,20 @@ function relCount(p, kind) {
       <StateNotice v-else-if="batchesState.kind === 'error'" kind="error"
         title="批次接口报错（原样展示）" :raw-text="batchesState.raw" :detail="batchesState.detail" />
       <template v-else-if="batchesState.kind === 'ok'">
+        <p class="muted">
+          计数口径：<b>persons／关联／耗时(s)</b> ＝ <b>采集 run</b> 的真实读数（persons／关联 取自库内实测计数，非单次重放读数）；
+          <b>最近 run</b> 列另显最近一次运行（幂等重放时「请求＝0、跳过＝全部」属正常，不代表未采集）。
+        </p>
         <table v-if="batchesState.items.length" class="table">
           <thead>
             <tr>
-              <th>batch_id</th><th>状态</th><th>源 total</th><th>persons</th><th>关联</th>
-              <th>失败</th><th>耗时(s)</th><th>内容指纹</th><th>时点</th>
+              <th>batch_id</th><th>状态</th><th>源 total</th>
+              <th>persons<br><span class="muted">（采集·库内）</span></th>
+              <th>关联<br><span class="muted">（采集·库内）</span></th>
+              <th>失败</th>
+              <th>耗时(s)<br><span class="muted">（采集 run）</span></th>
+              <th>最近 run<br><span class="muted">（含幂等重放）</span></th>
+              <th>内容指纹</th><th>时点</th>
             </tr>
           </thead>
           <tbody>
@@ -256,6 +265,10 @@ function relCount(p, kind) {
               <td>{{ nilDash(b.relations_ok) }}</td>
               <td>{{ nilDash(b.failed_count) }}</td>
               <td>{{ nilDash(b.elapsed_s) }}</td>
+              <td>
+                <code>{{ b.last_run_kind || '—' }}</code>
+                <span class="muted">· 请求 {{ nilDash(b.last_run_fetched) }} · 跳过 {{ nilDash(b.last_run_skipped) }} · {{ nilDash(b.last_run_elapsed_s) }}s</span>
+              </td>
               <td><code>{{ (b.content_fingerprint || '').slice(0, 12) }}…</code></td>
               <td>{{ b.updated_at || b.created_at }}</td>
             </tr>

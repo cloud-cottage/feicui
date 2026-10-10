@@ -4,7 +4,7 @@
 - **本单性质**：**窄修**。只修 Neng 独立质检报的两条 OBS（**不重构、不改口径、不动 E1〜E8 语义、不碰 `docs/**`**）。
 - **口径真源**：`feicui/docs/feicui.spec.md` **v1.23 §3.20**（含 §3.20.4 / §3.20.5 冻结命名、AC-72〜AC-77）。
   **规范是权威 ⇒ 本单未改规范一个字**；新字段命名与 CLI 两形已在本报告 §5 写明，**交 Jing 同步**。
-- **提交哈希**：`<待填>`（本报告随该提交入库的说明见 §6；哈希由紧随其后的一次小提交登记，同 15 报告先例）
+- **提交哈希**：`537fbb0a4af8f6b5cbec4a2229ecaec5cb45f99e`（本报告随该提交入库）
 
 ---
 
@@ -186,4 +186,4 @@ cd /Users/kevin/bistro/xiai/feicui
 ./server/.venv/bin/python ops/job-upload/14_inbox_gc_scenarios.py       # 既有场景回归（exit 0）
 ```
 
-**提交哈希**：`<待填>`（登记见紧随其后的一次小提交）
+**提交哈希**：`537fbb0a4af8f6b5cbec4a2229ecaec5cb45f99e`

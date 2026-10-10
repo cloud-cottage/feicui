@@ -1,5 +1,5 @@
 ═══ xiai 就绪导入包 · 机械自检（D-1 三态对照）═══
-生成时点：2026-10-10T14:08:35+08:00
+生成时点：2026-10-10T14:09:33+08:00
 契约：docs/person-ingest-handoff-v0.1.md §7.2（xiai D-1：键面 18 → 21）
 包目录：/Users/kevin/bistro/xiai/feicui/exports/person_import_person_20261010_01
 主交付：/Users/kevin/bistro/xiai/feicui/exports/person_import_person_20261010_01/person_imports.jsonl
@@ -54,26 +54,5 @@ xiai 允许键（21）：batch_id, source, source_person_id, name_full, family_n
 
 ── 主交付首行原文（person_imports.jsonl 第 1 行）──
 {"batch_id": "person_20261010_01", "source": "林章松《印人小传》", "source_person_id": "900289963", "name_full": "郭照", "family_name": "郭", "given_name": "照", "courtesy_names": ["容光", "子青", "鳴之", "飴之"], "courtesy_names_extraction": ["rule-based", "rule-based", "rule-based", "rule-based"], "art_names": ["曉樓", "曉罍", "笑罍", "肖雷", "桑間居士", "太白山人", "梅花琴客", "白雲亭長", "二樂居士", "春波漁隱"], "art_names_extraction": ["rule-based", "rule-based", "rule-based", "rule-based", "rule-based", "rule-based", "rule-based", "rule-based", "rule-based", "rule-based"], "alias_names": ["郭容光", "隱吾草堂", "鐵如意室"], "alias_names_extraction": ["rule-based", "rule-based", "rule-based"], "birth_year": 1827, "death_year": 1895, "native_place": "浙江秀水（今嘉興）人。", "native_place_chs": "浙江秀水（今嘉兴）人。", "biography": "郭照(容光)。1827-1895。浙江秀水(今嘉興)人。字容光，一字子青，號曉樓，一號曉罍、笑罍、肖雷，後更名郭容光，字鳴之，一字飴之，號肖雷，別署桑間居士、太白山人、梅花琴客、白雲亭長、二樂居士、春波漁隱，齋名為隱吾草堂、鐵如意室。工書，擅畫，書似倪瓚，善畫花卉、翎毛，兼擅篆刻。所交皆一時俊彥，特別是江浙一帶藝壇人物，采錄生平，故交之能書善畫者約數十百人，搜訪輯佚，有功藝林。有《藝林悼友錄》、《甲子紀年表》、《焚餘印存》、《隱吾草堂詩集》、《鐵如意室題畫雜綴》存世。", "biography_chs": "郭照(容光)。1827-1895。浙江秀水(今嘉兴)人。字容光，一字子青，号晓楼，一号晓罍、笑罍、肖雷，后更名郭容光，字鸣之，一字饴之，号肖雷，别署桑间居士、太白山人、梅花琴客、白云亭长、二乐居士、春波渔隐，斋名为隐吾草堂、铁如意室。工书，擅画，书似倪瓒，善画花卉、翎毛，兼擅篆刻。所交皆一时俊彦，特别是江浙一带艺坛人物，采录生平，故交之能书善画者约数十百人，搜访辑佚，有功艺林。有《艺林悼友录》、《甲子纪年表》、《焚余印存》、《隐吾草堂诗集》、《铁如意室题画杂缀》存世。", "nationality": "中國", "cbdb_id": null, "source_id": "RW2132"}
-
-
-── 浏览器真点验（真点一次【生成 xiai 就绪导入包】；上屏文字逐字照登）──
-页面：http://localhost:5164/feicui/persons（真浏览器）；入口：按钮【生成 xiai 就绪导入包】
-上屏文字（导入包卡片）：
-导入包（xiai 就绪）
-刷新已生成
-
-生成 按 xiai 键面裁剪好 的导入载荷，落到 exports/person_import_<batch_id>/ ： 主交付 person_imports.jsonl （ 逐行恰 xiai 现行 21 键 ：原 18 键 ＋ 3 个 extraction 键， 字/号/别名降为 string[] ，extraction 数组与对应值数组 等长 、元素非空字符串） ＋ sidecar person_imports_extraction.jsonl （ 派生冗余件（兼容保留） ，与主交付同一计算结果导出、 非第二真源 ） ＋ manifest.json 。从 feicui 本库重建， 不联网采集 ； 不写 xiai 任何文件 。 对方规则： 缺键不拒收 （18 键旧包仍可提交）／extraction 值域不封闭 ／违形态 ⇒ INVALID_VALUE ＋零写入。 提交与审核在玺爱侧 ：导入先落 xiai_person_imports （PENDING），管理员批量采纳后方成正式印人； 采纳后不落 person 行 。
-
-源批次号 batch_id（留空＝库内最新批次）
-生成 xiai 就绪导入包
-包目录	/Users/kevin/bistro/xiai/feicui/exports/person_import_person_20261010_01
-行数（应 570）	570 行 · 源批次 person_20261010_01
-校验摘要	键面 diff（vs xiai 21 键）⇒ 多余键 0（须 0）／ 缺失键 0（不判负：对方「缺键不拒收」）／ xiai 允许键 21（21）； 幂等键 source_person_id 非空 / 唯一 / 总行 ＝ 570 / 570 / 570； 三桶均 string[] ⇒ 是； 主交付 extraction 三键（已并入）⇒ 等长 是／ 元素非空字符串 是； sidecar 等长 ⇒ 是； 无 BOM ⇒ 是
-sidecar（派生冗余件）	person_imports_extraction.jsonl（courtesy_names_extraction、art_names_extraction、alias_names_extraction；派生冗余件（兼容保留），与主交付同一计算结果导出、非第二真源；不含 from）
-提交 / 审核	提交与审核在玺爱侧（本包只读消费）；feicui **不写 xiai 任何文件、不调任何云函数**。导入先落 xiai_person_imports（PENDING），管理员批量采纳后方成正式印人；**采纳后不落 person 行**——extraction 只留导入行作溯源。
-原始响应体（POST /api/persons/import-package，原样展示，未改写）
-已生成导入包
-包目录	源批次	行数	多余键	幂等 唯一/总	生成时点
-person_import_person_20261010_01	person_20261010_01	570	0	570 / 570	2026-10-10T14:08:26+08:00
 
 ══ 总裁决：PASS（(a)PASS=True · (b)PASS=True · (c)FAIL=True）══

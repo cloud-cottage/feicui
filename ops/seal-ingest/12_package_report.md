@@ -162,7 +162,10 @@ cd server && ../server/.venv/bin/python -m app.seals package --batch-id seal_202
 `?? web/src/pages/SealsPage.vue`、`?? ops/seal-ingest/`。
 `var/**`、`exports/**`、`web/dist/**` 已被 `.gitignore` 忽略（只在盘）。**未 push。**
 
-（提交读数见 §7 末——命令与 commit hash 见下：）
+- **提交读数**：`git add -- <点名写集>`（未 `git add -A`）⇒ `git diff --cached --name-status` 与写集**逐条一致**
+  （36 项：9 个代码/前端文件 ＋ 27 个 `ops/seal-ingest/` 证据文件）。`commit` ＝ **`cdd4eee44781173efb2754d6f212b775cc706b0d`**
+  （父 `d73565a`）；提交后 `git status --porcelain` **空**（无残留未暂存；`docs/**`、`var/**`、`exports/**`、`web/dist/**` 均未入）。
+  **未 push。**
 
 ## 8. 遗留 / 待裁定
 

@@ -293,8 +293,9 @@ cd /Users/kevin/bistro/xiai/feicui
 - 前端**本单未动**；`npm run build` 读数（上一轮）⇒ **EXIT=0**；产物 `dist/assets/index-DrO3OyGX.js` 命中
   `dropzone`×6、`/jobs/upload`×1、「高级：手输服务器路径」×1；CSS `index-DOgS__22.css` 命中 `dropzone`×8。
 - **本单提交（只暂存自己点名的文件；未 `git add -A`；未 push）**：
-  - `server/app/routers/jobs.py`（E1 的 G-6 修复）＋ `server/app/config.py`（5 GiB）＋ 本报告 ＋ 4 个新证据文件。
-  - **首次提交哈希由紧随的补记提交登记**（同仓既有做法）；**未**暂存 `docs/**`（Jing v1.22 并行线）。
+  - `server/app/routers/jobs.py`（E1 的 G-6 修复）＋ `server/app/config.py`（5 GiB）＋ 本报告 ＋ 4 个新证据文件（9 个文件）。
+  - **提交哈希：`610868f`**（`610868ff22d64f0eb391b17bd601ef79c00fac6d`，main）。
+  - **未**暂存 `docs/**`（Jing v1.21→v1.22 并行线）、`xiai/**`、`ctrl/**`、`web/**`。
 
 ## 12. 未完成项 / 继续命令
 

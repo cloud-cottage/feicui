@@ -143,6 +143,8 @@
 
 ## 9. 提交哈希与未完成项
 
-- 提交见末尾（`git rev-parse HEAD`）。
+- **实现提交**：`615a5d8`（feat(feicui): 关联面（三表联立）—— 统一关系边 + 两 additive 端点 + 就绪包）。
+  实现前 HEAD ＝ `83aa96a`（Jing 的 spec v1.20 提交，位于本次派单预期的 `3df0dae` 之上）。
+- **只暂存本单点名文件**（`server/app/{relations.py,routers/relations.py,main.py,config.py}` ＋ `ops/relation-ingest/**`）；**未 `git add -A`**、**未暂存** `docs/relation-ingest-draft-v0.1.md`（Zang 的拆解件，仍留 untracked 由期归属方处理）、**未 push**。
 - **零联网**：`relations.py` / `routers/relations.py` **无任何 HTTP/网络导入**（仅 `sqlite3`/`json` 等）；端点只读三库。
 - **未完成/待裁**：无阻塞项。跨工程待 xiai 裁定者（键面 / 集合名 / 导入通道 / 合成 hash）已登记于包 `manifest.r_defaults` 与 §3.18.4，**本侧按默认值交付、拿到键面二次出包不重采**。

@@ -1,5 +1,5 @@
 ═══ xiai 就绪导入包 · 机械自检 ═══
-生成时点：2026-10-10T13:05:55+08:00
+生成时点：2026-10-10T13:06:46+08:00
 契约：docs/person-ingest-handoff-v0.1.md §7.2（xiai 现行 18 键）
 包目录：/Users/kevin/bistro/xiai/feicui/exports/person_import_person_20261010_01
 主交付：/Users/kevin/bistro/xiai/feicui/exports/person_import_person_20261010_01/person_imports.jsonl
@@ -40,38 +40,3 @@ xiai 允许键（18）：batch_id, source, source_person_id, name_full, family_n
   ⇒ 旧形态裁决：FAIL（期望 FAIL；对照成立=True）
 
 ══ 总裁决：PASS ══
-
-═══ 浏览器真点验（browser_exec）═══
-URL：http://localhost:5164/feicui/persons（经 shu/web 5164 的 /feicui 反代）
-页面标题：🐴 斐萃｜印谱解析任务台
-动作：点「生成 xiai 就绪导入包」按钮（真点，非注入）。
-按钮可用性：页内按钮枚举含「生成 xiai 就绪导入包」（点击返回 CLICKED）。
-页面卡片小节：采集区 / 批次列表 / 印人列表 / 印人详情 / 导入包（xiai 就绪） / 已生成导入包。
-
-上屏文字（导入包（xiai 就绪）卡片，原样）：
-------------------------------------------------------------------
-导入包（xiai 就绪）  刷新已生成
-
-生成 按 xiai 键面裁剪好 的导入载荷，落到 exports/person_import_<batch_id>/： 主交付
-person_imports.jsonl（逐行恰 xiai 现行 18 键，字/号/别名降为 string[]）＋ sidecar
-person_imports_extraction.jsonl（extraction 标注，不含 from）＋ manifest.json。从 feicui 本库重建，
-不联网采集；不写 xiai 任何文件。提交与审核在玺爱侧：导入先落 xiai_person_imports（PENDING），
-管理员批量采纳后方成正式印人。
-
-源批次号 batch_id（留空＝库内最新批次）
-按钮：生成 xiai 就绪导入包
-
-  包目录        /Users/kevin/bistro/xiai/feicui/exports/person_import_person_20261010_01
-  行数（应 570）  570 行 · 源批次 person_20261010_01
-  校验摘要       键面 diff ⇒ 多余键 0（须 0）／ 缺失键 0（须 0）／ xiai 允许键 18；
-                幂等键 source_person_id 非空 / 唯一 / 总行 ＝ 570 / 570 / 570；
-                三桶均 string[] ⇒ 是； sidecar 等长 ⇒ 是； 无 BOM ⇒ 是
-  sidecar       person_imports_extraction.jsonl（courtesy_names_extraction、art_names_extraction、
-                alias_names_extraction；不含 from）
-  提交 / 审核    提交与审核在玺爱侧（本包只读消费）；feicui 不写 xiai 任何文件、不调任何云函数。
-                导入先落 xiai_person_imports（PENDING），管理员批量采纳后方成正式印人。
-
-已生成导入包
-  包目录                                源批次              行数  多余键  幂等 唯一/总  生成时点
-  person_import_person_20261010_01     person_20261010_01  570   0       570 / 570     2026-10-10T13:06:06+08:00
-------------------------------------------------------------------

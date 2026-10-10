@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-10T13:05:55+08:00",
+  "generated_at": "2026-10-10T13:06:46+08:00",
   "contract": "docs/person-ingest-handoff-v0.1.md §7.2（xiai 现行 18 键）",
   "xiai_allowed_keys": [
     "batch_id",
@@ -164,26 +164,5 @@
     "sidecar_elements_all_rule_based": true
   },
   "first_line_main": "{\"batch_id\": \"person_20261010_01\", \"source\": \"林章松《印人小传》\", \"source_person_id\": \"900289963\", \"name_full\": \"郭照\", \"family_name\": \"郭\", \"given_name\": \"照\", \"courtesy_names\": [\"容光\", \"子青\", \"鳴之\", \"飴之\"], \"art_names\": [\"曉樓\", \"曉罍\", \"笑罍\", \"肖雷\", \"桑間居士\", \"太白山人\", \"梅花琴客\", \"白雲亭長\", \"二樂居士\", \"春波漁隱\"], \"alias_names\": [\"郭容光\", \"隱吾草堂\", \"鐵如意室\"], \"birth_year\": 1827, \"death_year\": 1895, \"native_place\": \"浙江秀水（今嘉興）人。\", \"native_place_chs\": \"浙江秀水（今嘉兴）人。\", \"biography\": \"郭照(容光)。1827-1895。浙江秀水(今嘉興)人。字容光，一字子青，號曉樓，一號曉罍、笑罍、肖雷，後更名郭容光，字鳴之，一字飴之，號肖雷，別署桑間居士、太白山人、梅花琴客、白雲亭長、二樂居士、春波漁隱，齋名為隱吾草堂、鐵如意室。工書，擅畫，書似倪瓚，善畫花卉、翎毛，兼擅篆刻。所交皆一時俊彥，特別是江浙一帶藝壇人物，采錄生平，故交之能書善畫者約數十百人，搜訪輯佚，有功藝林。有《藝林悼友錄》、《甲子紀年表》、《焚餘印存》、《隱吾草堂詩集》、《鐵如意室題畫雜綴》存世。\", \"biography_chs\": \"郭照(容光)。1827-1895。浙江秀水(今嘉兴)人。字容光，一字子青，号晓楼，一号晓罍、笑罍、肖雷，后更名郭容光，字鸣之，一字饴之，号肖雷，别署桑间居士、太白山人、梅花琴客、白云亭长、二乐居士、春波渔隐，斋名为隐吾草堂、铁如意室。工书，擅画，书似倪瓒，善画花卉、翎毛，兼擅篆刻。所交皆一时俊彦，特别是江浙一带艺坛人物，采录生平，故交之能书善画者约数十百人，搜访辑佚，有功艺林。有《艺林悼友录》、《甲子纪年表》、《焚余印存》、《隐吾草堂诗集》、《铁如意室题画杂缀》存世。\", \"nationality\": \"中國\", \"cbdb_id\": null, \"source_id\": \"RW2132\"}",
-  "overall": "PASS",
-  "browser_verification": {
-    "tool": "browser_exec",
-    "url": "http://localhost:5164/feicui/persons",
-    "page_title": "🐴 斐萃｜印谱解析任务台",
-    "button_label": "生成 xiai 就绪导入包",
-    "click_result": "CLICKED",
-    "onscreen": {
-      "package_dir": "/Users/kevin/bistro/xiai/feicui/exports/person_import_person_20261010_01",
-      "rows": 570,
-      "source_batch": "person_20261010_01",
-      "extra_keys": 0,
-      "missing_keys": 0,
-      "xiai_allowed_keys": 18,
-      "idempotency_non_null_unique_total": "570 / 570 / 570",
-      "three_buckets_string_array": true,
-      "sidecar_lengths_match": true,
-      "no_bom": true,
-      "submission_note": "提交与审核在玺爱侧"
-    },
-    "raw_text_file": "13_import_package.txt"
-  }
+  "overall": "PASS"
 }

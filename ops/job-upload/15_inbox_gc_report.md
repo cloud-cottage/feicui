@@ -129,6 +129,7 @@
 
 ## 6. 收尾读数
 
+- **提交哈希**：本单（实现＋证据＋本报告）入库提交 ＝ **`6d4eb9b`**（`6d4eb9b107a6f26e3d3daf1cd1e9b07787cb78d6`，未 push）。
 - **场景脚本退出码**：`python3 ops/job-upload/14_inbox_gc_scenarios.py` ⇒ **EXIT=0**（S1 / S1b / S2 / S3 / S3b / S4 全过，断言全绿）。
 - **临时端口与进程**：
   - `lsof -nP -iTCP:5197 -sTCP:LISTEN` ⇒ **空**（`rc=1`，临时实例已终止；**未用 `pkill`/`killall`**，脚本内 `proc.terminate()`＋`wait(timeout=10)`）。

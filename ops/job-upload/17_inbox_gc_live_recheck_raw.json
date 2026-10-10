@@ -1,0 +1,102 @@
+{
+  "steps": [
+    {
+      "step": "① 重启前（活进程 / 源文件）",
+      "pid": 67718,
+      "lstart": "Sun Oct 11 07:06:44 2026",
+      "src_mtime": "2026-10-11 07:14:57",
+      "src_bytes": 30864,
+      "health": 200
+    },
+    {
+      "step": "① 重启前 · 端点读数（旧码 ⇒ 应无缺口字段）",
+      "summary_status": 200,
+      "summary_usage": {
+        "files": 9,
+        "bytes": 6786
+      },
+      "summary_capacity_gate_triggered": false,
+      "summary_new_keys_present": {
+        "capacity_target_bytes": false,
+        "collectable_bytes": false,
+        "capacity_gap_bytes": false,
+        "note": false
+      },
+      "gc_status": 200,
+      "gc_mode": "dry-run",
+      "gc_new_keys_present": {
+        "capacity_target_bytes": false,
+        "collectable_bytes": false,
+        "capacity_gap_bytes": false,
+        "note": false
+      }
+    },
+    {
+      "step": "② 面板重启 POST /api/restart {sid:feicui-api}",
+      "panel_status": 200,
+      "panel_body": {
+        "sid": "feicui-api",
+        "ok": true,
+        "state": "running",
+        "pid": 79505,
+        "msg": "已启动"
+      },
+      "panel_raw": "{\"sid\":\"feicui-api\",\"ok\":true,\"state\":\"running\",\"pid\":79505,\"msg\":\"已启动\"}"
+    },
+    {
+      "step": "② health 轮询",
+      "healthy": true,
+      "poll_seconds": 0.1,
+      "tries": 1
+    },
+    {
+      "step": "③ 重启后（活进程启动时刻 ≥ 源文件 mtime）",
+      "pid_before": 67718,
+      "pid_after": 79505,
+      "pid_changed": true,
+      "lstart_after": "Sun Oct 11 07:15:46 2026",
+      "src_mtime": "2026-10-11 07:14:57",
+      "proc_start_epoch": 1791674146.0,
+      "src_mtime_epoch": 1791674097.592586,
+      "proc_start_minus_src_mtime_s": 48.4
+    },
+    {
+      "step": "③ 重启后 · 端点读数（新码 ⇒ 应含缺口三数 ＋ note）",
+      "summary_status": 200,
+      "summary_usage": {
+        "files": 9,
+        "bytes": 6786
+      },
+      "summary_capacity_gate_triggered": false,
+      "summary_capacity_target_bytes": 42949672960,
+      "summary_collectable_bytes": 6786,
+      "summary_capacity_gap_bytes": 0,
+      "summary_note": null,
+      "gc_status": 200,
+      "gc_mode": "dry-run",
+      "gc_capacity_target_bytes": 42949672960,
+      "gc_collectable_bytes": 6786,
+      "gc_capacity_gap_bytes": 0,
+      "gc_note": null,
+      "inbox_before": {
+        "files": 9,
+        "bytes": 6786
+      },
+      "inbox_after": {
+        "files": 9,
+        "bytes": 6786
+      },
+      "inbox_unchanged": true
+    }
+  ],
+  "verdicts": {
+    "① 重启前旧码缺新字段（对照基线成立）": "PASS",
+    "② 重启后 /api/health 200": "PASS",
+    "③ 活进程启动时刻 ≥ server/app/inbox_gc.py mtime": "PASS",
+    "③ 重启换 PID（新进程，非旧进程复用）": "PASS",
+    "③ GET /api/jobs/inbox/summary 200 且含缺口三数": "PASS",
+    "③ POST /api/jobs/inbox/gc 200 且含缺口三数（mode=dry-run）": "PASS",
+    "③ 端点默认 dry-run 不改盘（inbox 前后一致）": "PASS",
+    "全部（上面无 FAIL ⇒ 新码已载且端点可达）": "PASS"
+  }
+}

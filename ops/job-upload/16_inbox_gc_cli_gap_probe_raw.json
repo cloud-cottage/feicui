@@ -1,0 +1,225 @@
+{
+  "steps": [
+    {
+      "step": "0 基线身份（HEAD 副本 = 修前；工作副本 = 修后）",
+      "head_sha": "8be7f7199c63a4af2ed69db107599be1b2618824",
+      "prefix_has_gc_choices": false,
+      "prefix_has_gap_field": false,
+      "post_has_gc_choices": true,
+      "post_has_gap_field": true,
+      "prefix_len": 22807,
+      "post_len": 26393
+    },
+    {
+      "step": "1 OBS-1 修前读数（HEAD 版模块真跑）",
+      "with_gc": {
+        "rc": 2,
+        "stderr_tail": [
+          "python -m app.inbox_gc: error: unrecognized arguments: gc"
+        ]
+      },
+      "without_gc": {
+        "rc": 0,
+        "json_ok": true
+      }
+    },
+    {
+      "step": "2 OBS-2 修前读数（容量闸触发态，HEAD 版）",
+      "capacity_gate_triggered": true,
+      "collect": [
+        {
+          "rel": "20261011/noref_old.pdf",
+          "reason": "retention_expired",
+          "bytes": 1000
+        },
+        {
+          "rel": "20261011/noref_2d.pdf",
+          "reason": "capacity_pressure",
+          "bytes": 1000
+        }
+      ],
+      "keys_present": {
+        "capacity_target_bytes": false,
+        "collectable_bytes": false,
+        "capacity_gap_bytes": false,
+        "note": false
+      },
+      "top_keys": [
+        "capacity_gate_triggered",
+        "collect",
+        "collect_bytes",
+        "collect_files",
+        "constants",
+        "db_path",
+        "exempt",
+        "exempt_bytes",
+        "exempt_files",
+        "generated_at",
+        "hard_delete",
+        "hard_delete_bytes",
+        "hard_delete_files",
+        "inbox_dir",
+        "mode",
+        "trash_keep",
+        "trash_usage",
+        "usage"
+      ]
+    },
+    {
+      "step": "3 OBS-1 修后读数（规范形 `gc` vs 省写形）",
+      "with_gc_rc": 0,
+      "without_gc_rc": 0,
+      "keys_identical": true,
+      "differing_keys": [
+        "generated_at"
+      ],
+      "value_diff_of_differing_keys": {
+        "generated_at": [
+          "2026-10-11T07:16:02.867173+08:00",
+          "2026-10-11T07:16:02.904909+08:00"
+        ]
+      }
+    },
+    {
+      "step": "3b 反向哨兵：`python -m app.inbox_gc foo`",
+      "rc": 2,
+      "stderr_tail": [
+        "python -m app.inbox_gc: error: argument [gc]: invalid choice: 'foo' (choose from 'gc')"
+      ]
+    },
+    {
+      "step": "4 OBS-2 修后 · 容量闸缺口场景（active=5000 / 两个 1000；M=6000 ⇒ 目标 4800 ⇒ 期望缺口 200）",
+      "capacity_gate_triggered": true,
+      "capacity_max_bytes": 6000,
+      "capacity_target_ratio": 0.8,
+      "capacity_target_bytes": 4800,
+      "capacity_target_bytes_in_constants": 4800,
+      "collectable_bytes": 2000,
+      "capacity_gap_bytes": 200,
+      "usage": {
+        "files": 3,
+        "bytes": 7000
+      },
+      "collect": [
+        {
+          "rel": "20261011/noref_old.pdf",
+          "reason": "retention_expired",
+          "bytes": 1000
+        },
+        {
+          "rel": "20261011/noref_2d.pdf",
+          "reason": "capacity_pressure",
+          "bytes": 1000
+        }
+      ],
+      "exempt": [
+        {
+          "rel": "20261011/active.pdf",
+          "reason": "active_job",
+          "bytes": 5000,
+          "job_id": "obs-active",
+          "state": "QUEUED"
+        }
+      ],
+      "note": "可回收不足：可回收 2000 B 已全数列入淘汰，仍高于目标 4800 B ⇒ 仍缺 200 B；ACTIVE 豁免项 5000 B 不参与回收（不越权删）"
+    },
+    {
+      "step": "4b 不越权删 ACTIVE（铁律 ①）",
+      "active_in_collect": false,
+      "active_exempt_item": {
+        "rel_path": "20261011/active.pdf",
+        "abs_path": "/Users/kevin/.hermes/profiles/zang/cache/scratch/inbox_gc_obs_20261011/cli/inbox/20261011/active.pdf",
+        "bytes": 5000,
+        "reason": "active_job",
+        "job_id": "obs-active",
+        "state": "QUEUED",
+        "referenced_by": [
+          "obs-active"
+        ],
+        "note": "活跃 job（QUEUED/RUNNING/PAUSED）引用 ⇒ 永久豁免"
+      }
+    },
+    {
+      "step": "5 OBS-2 修后 · apply 输出（与 plan 同源）",
+      "rc": 0,
+      "mode": "apply",
+      "capacity_target_bytes": 4800,
+      "collectable_bytes": 2000,
+      "capacity_gap_bytes": 200,
+      "note": "可回收不足：可回收 2000 B 已全数列入淘汰，仍高于目标 4800 B ⇒ 仍缺 200 B；ACTIVE 豁免项 5000 B 不参与回收（不越权删）",
+      "moved_files": 2,
+      "moved": [
+        "/Users/kevin/.hermes/profiles/zang/cache/scratch/inbox_gc_obs_20261011/cli/inbox/20261011/noref_old.pdf",
+        "/Users/kevin/.hermes/profiles/zang/cache/scratch/inbox_gc_obs_20261011/cli/inbox/20261011/noref_2d.pdf"
+      ],
+      "trash_dir": "/Users/kevin/.hermes/profiles/zang/cache/scratch/inbox_gc_obs_20261011/cli/inbox/.trash/20261011",
+      "src_gone": {
+        "noref_old.pdf": true,
+        "noref_2d.pdf": true,
+        "active.pdf": false
+      },
+      "active_sha256_before": "3529b45a590b160efc6117a0ee5b467ab377ed0b1f35764aae8c4f61235d878b",
+      "active_sha256_after": "3529b45a590b160efc6117a0ee5b467ab377ed0b1f35764aae8c4f61235d878b",
+      "active_unchanged": true,
+      "three_counts_before": {
+        "jobs": 6,
+        "job_pages": 32,
+        "stamps": 89
+      },
+      "three_counts_after": {
+        "jobs": 6,
+        "job_pages": 32,
+        "stamps": 89
+      },
+      "three_counts_unchanged": true
+    },
+    {
+      "step": "6 端点同源 · 临时实例 :5198（GET summary / POST gc dry-run / POST gc apply）",
+      "summary_status": 200,
+      "summary_capacity_gate_triggered": true,
+      "summary_capacity_target_bytes": 4800,
+      "summary_collectable_bytes": 2000,
+      "summary_capacity_gap_bytes": 200,
+      "summary_note": "可回收不足：可回收 2000 B 已全数列入淘汰，仍高于目标 4800 B ⇒ 仍缺 200 B；ACTIVE 豁免项 5000 B 不参与回收（不越权删）",
+      "gc_dryrun_status": 200,
+      "gc_dryrun_mode": "dry-run",
+      "gc_dryrun_capacity_gap_bytes": 200,
+      "gc_apply_status": 200,
+      "gc_apply_mode": "apply",
+      "gc_apply_capacity_target_bytes": 4800,
+      "gc_apply_collectable_bytes": 2000,
+      "gc_apply_capacity_gap_bytes": 200,
+      "gc_apply_note": "可回收不足：可回收 2000 B 已全数列入淘汰，仍高于目标 4800 B ⇒ 仍缺 200 B；ACTIVE 豁免项 5000 B 不参与回收（不越权删）",
+      "gc_apply_moved_files": 2,
+      "ep_active_unchanged": true,
+      "ep_three_counts_before": {
+        "jobs": 6,
+        "job_pages": 32,
+        "stamps": 89
+      },
+      "ep_three_counts_after": {
+        "jobs": 6,
+        "job_pages": 32,
+        "stamps": 89
+      },
+      "ep_three_counts_unchanged": true
+    }
+  ],
+  "verdicts": {
+    "OBS-1 修前（`gc` 形）＝ FAIL（exit 2）": "PASS",
+    "OBS-1 修前（省写形）＝ 可用（exit 0）": "PASS",
+    "OBS-2 修前（缺口字段缺失）＝ FAIL": "PASS",
+    "OBS-1 修后（规范形 `gc` exit 0）": "PASS",
+    "OBS-1 修后（省写形 exit 0）": "PASS",
+    "OBS-1 修后（两形输出逐字段一致，仅 generated_at 变）": "PASS",
+    "OBS-1 修后（非法子命令仍 exit 2，argparse 未被放松）": "PASS",
+    "OBS-2 修后（缺口 200 B ＋ note 可读）": "PASS",
+    "OBS-2 修后（ACTIVE 项不进 collect、仍在豁免清单）": "PASS",
+    "OBS-2 修后（apply 输出含三个数 ＋ note）": "PASS",
+    "OBS-2 修后（缺口态 ACTIVE 文件未被删、sha256 不变）": "PASS",
+    "红线（三数 jobs/job_pages/stamps 前后不变）": "PASS",
+    "OBS-2 修后（端点 summary/gc 与 CLI 同源：缺口 200 B ＋ note 可读）": "PASS",
+    "端点缺口语义（ACTIVE 文件未被删、三数不变）": "PASS",
+    "全部（上面无 FAIL ⇒ 两条 OBS 收口成立）": "PASS"
+  }
+}

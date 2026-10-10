@@ -292,7 +292,9 @@ def inbox_summary(st: Settings = Depends(_settings)) -> JSONResponse:
     """**additive** `GET /api/jobs/inbox/summary` —— inbox **用量 / 将回收 / 豁免清单**（**只读 plan**）。
 
     返回与 CLI dry-run **同形**的清单：`usage`（文件数 / 体积）、`collect`（将回收项 ＋ 各体积）、
-    `collect_bytes`（可回收总量）、`exempt`（**豁免清单及原因**）、`hard_delete`、`constants`。
+    `collect_bytes`（可回收总量）、`exempt`（**豁免清单及原因**）、`hard_delete`、`constants`，
+    以及**容量闸三个直接可读的数**（AC-75）：`capacity_target_bytes` / `collectable_bytes` /
+    `capacity_gap_bytes`（**缺口**；`> 0` 时另有 `note` 说明「可回收不足、`ACTIVE` 豁免项不参与」）。
 
     **纯只读**：不改盘、不改库、**不落报告**（GET 不得有副作用）；真回收走 `POST /api/jobs/inbox/gc`。
     口径真源＝`docs/inbox-gc-draft-v0.1.md`；默认 dry-run、**永不自动删**（两段式 + 人触发）。

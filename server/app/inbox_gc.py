@@ -23,14 +23,27 @@
 本模块**只读写磁盘上的 inbox 文件**；对 `jobs` 表**只读**（解析引用），**零 DB 写**——任何 apply 前后
 `jobs` / `job_pages` / `stamps` 三数**逐字不变**。
 
-用法：
+用法（**两种形态等价**，子命令 `gc` **可选**——规范 §3.20.5 冻结命名形 ＋ 缺省省写形都成立）：
 
-    python -m app.inbox_gc --dry-run      # 只列清单（**默认**）
-    python -m app.inbox_gc --apply        # 真移入 .trash/（+ 硬删 trash 过期项）
+    python -m app.inbox_gc gc --dry-run   # 规范冻结命名（子命令 `gc`）；**默认 dry-run**
+    python -m app.inbox_gc --dry-run      # 等价省写形（缺省动作即 `gc`）
+    python -m app.inbox_gc gc --apply     # 真移入 .trash/（+ 硬删 trash 过期项）
+    python -m app.inbox_gc --apply        # 同上（省写形）
 
     from . import inbox_gc
     inbox_gc.run(get_settings())                 # 默认 dry-run，落报告
     inbox_gc.startup_scan(get_settings())        # API 启动扫描（**只 dry-run**）
+
+## 容量闸缺口（AC-75：可回收 < 需回收 时**如实给缺口、不越权删**）
+
+plan / apply 输出（CLI 与端点**同源**）恒给三个可直接读的数：
+
+* `capacity_target_bytes` —— 容量闸目标值（`M × ratio`，默认 40 GiB）；
+* `collectable_bytes` —— 容量闸下**最多**可回收量（闸允许淘汰「保留期未到」者 ⇒ 只余 `ACTIVE` 引用项不可回收）；
+* `capacity_gap_bytes` —— **缺口**：把可回收项**全数淘汰**后**仍高于目标值**的量（`> 0` ⇒ 可回收不足）。
+
+缺口 `> 0` 时另给一条人读 `note`（形如「可回收不足，仍缺 N B（`ACTIVE` 豁免项不参与）」）。
+**不得为凑回收量去删 `ACTIVE` 引用项**（铁律 ① 不可绕）。
 """
 from __future__ import annotations
 
@@ -301,6 +314,23 @@ def build_plan(
             exempt.remove(e)
             projected -= e["bytes"]
 
+    # ---- 容量闸「缺口」显式读数（AC-75：可回收 < 需回收 时**如实给缺口、不越权删**）----
+    # `collectable_bytes` ＝ 容量闸下**最多**可回收量：闸允许淘汰「保留期未到」者（`capacity_pressure`），
+    # 故不可回收的只剩「`ACTIVE` 引用项」（铁律 ① 永久豁免）⇒ 可回收量 ＝ 总量 − ACTIVE 项体积。
+    collect_bytes = sum(c["bytes"] for c in collect)
+    active_bytes = sum(e["bytes"] for e in exempt if e["reason"] == REASON_ACTIVE)
+    collectable_bytes = collect_bytes + sum(
+        e["bytes"] for e in exempt if e["reason"] == REASON_RETENTION
+    )
+    # 把可回收项**全数**淘汰后仍高于目标值 ⇒ 缺口 > 0（此时**不越权删 ACTIVE 项**，只如实报缺）。
+    capacity_gap_bytes = max(0, (total_bytes - collectable_bytes) - capacity_target_bytes)
+    capacity_note: str | None = None
+    if capacity_gap_bytes > 0:
+        capacity_note = (
+            f"可回收不足：可回收 {collectable_bytes} B 已全数列入淘汰，仍高于目标 {capacity_target_bytes} B "
+            f"⇒ 仍缺 {capacity_gap_bytes} B；ACTIVE 豁免项 {active_bytes} B 不参与回收（不越权删）"
+        )
+
     # ---- R3 第二段：trash 内宽限期到 ⇒ 硬删；未到 ⇒ 暂留 ----
     hard_delete: list[dict[str, Any]] = []
     trash_keep: list[dict[str, Any]] = []
@@ -328,7 +358,6 @@ def build_plan(
                 }
             )
 
-    collect_bytes = sum(c["bytes"] for c in collect)
     return {
         "mode": "dry-run",
         "generated_at": now.isoformat(),
@@ -345,6 +374,12 @@ def build_plan(
         "usage": {"files": len(files), "bytes": total_bytes},
         "trash_usage": {"files": len(trash_files), "bytes": sum(t["bytes"] for t in trash_files)},
         "capacity_gate_triggered": capacity_hit,
+        # 容量闸三个直接可读的数（AC-75）：目标 / 最多可回收 / 缺口（＋缺口说明 note）。
+        # 与 `constants.capacity_target_bytes` 同值，此处**平铺**是为了「不必下钻即可读缺口」。
+        "capacity_target_bytes": capacity_target_bytes,
+        "collectable_bytes": collectable_bytes,
+        "capacity_gap_bytes": capacity_gap_bytes,
+        "note": capacity_note,
         "collect": sorted(collect, key=lambda c: (c.get("last_referenced_at") or "", c["rel_path"])),
         "collect_files": len(collect),
         "collect_bytes": collect_bytes,
@@ -490,19 +525,33 @@ def startup_scan(st: Settings) -> dict[str, Any] | None:
     usage = report["usage"]
     log.info(
         "inbox 启动扫描（**只 dry-run，未删任何文件**）：文件 %d / %.2f MiB；"
-        "将回收 %d（%.2f MiB）；豁免 %d；容量闸=%s；报告 %s",
+        "将回收 %d（%.2f MiB）；豁免 %d；容量闸=%s；容量闸目标=%s B / 最多可回收=%s B / **缺口=%s B**；报告 %s",
         usage["files"],
         usage["bytes"] / 1048576,
         report["collect_files"],
         report["collect_bytes"] / 1048576,
         report["exempt_files"],
         report["capacity_gate_triggered"],
+        report["capacity_target_bytes"],
+        report["collectable_bytes"],
+        report["capacity_gap_bytes"],
         report.get("report_path") or "（未落盘）",
     )
+    if report["capacity_gap_bytes"] > 0:
+        # **缺口语义**：可回收已全数列入计划仍够不着目标 ⇒ 如实告警，**绝不**为此删 ACTIVE 引用项。
+        log.warning(
+            "inbox 容量闸缺口：可回收 %s B（已全数列入计划）后仍高于目标 %s B，**仍缺 %s B**——"
+            "ACTIVE 豁免项不参与回收（不越权删）。说明：%s",
+            report["collectable_bytes"],
+            report["capacity_target_bytes"],
+            report["capacity_gap_bytes"],
+            report.get("note") or "",
+        )
     if report["collect_files"]:
         log.warning(
             "inbox 启动告警：有 %d 个文件已过保留期/触容量闸（合计 %.2f MiB）待回收——"
-            "**系统不会自动删**，请人工用 CLI `python -m app.inbox_gc --apply` 或 "
+            "**系统不会自动删**，请人工用 CLI `python -m app.inbox_gc gc --apply`（或等价省写 "
+            "`python -m app.inbox_gc --apply`）或 "
             "`POST /api/jobs/inbox/gc {\"apply\":true}` 触发",
             report["collect_files"],
             report["collect_bytes"] / 1048576,
@@ -532,6 +581,12 @@ def _print_human(report: dict[str, Any]) -> None:
           f"  | trash {report['trash_usage']['files']} 文件 / {_fmt_bytes(report['trash_usage']['bytes'])}")
     print(f"  将回收     : {report['collect_files']} 文件 / {_fmt_bytes(report['collect_bytes'])}"
           f"  | 容量闸触发={report['capacity_gate_triggered']}")
+    # 容量闸三个直接可读的数（AC-75）：目标 / 最多可回收 / **缺口**（＋缺口说明）
+    print(f"  容量闸     : 目标 {_fmt_bytes(report['capacity_target_bytes'])}"
+          f"  | 最多可回收 {_fmt_bytes(report['collectable_bytes'])}"
+          f"  | 缺口 {_fmt_bytes(report['capacity_gap_bytes'])}")
+    if report.get("note"):
+        print(f"  缺口说明   : {report['note']}")
     for it in report["collect"]:
         print(f"      - [{it['reason']}] {it['rel_path']}  {_fmt_bytes(it['bytes'])}"
               f"  来源={it.get('reference_source', '—')}  末次引用={it.get('last_referenced_at', '—')}")
@@ -555,7 +610,27 @@ def _print_human(report: dict[str, Any]) -> None:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         prog="python -m app.inbox_gc",
-        description="inbox 清理策略（R41）：扫描 + 出清单（**默认 dry-run**）/ 两段式回收。",
+        description=(
+            "inbox 清理策略（R41）：扫描 + 出清单（**默认 dry-run**）/ 两段式回收。\n"
+            "子命令 `gc` **可选**：`python -m app.inbox_gc gc [--dry-run|--apply]`（规范 §3.20.5 冻结命名）\n"
+            "与 `python -m app.inbox_gc [--dry-run|--apply]`（等价省写形）**都成立、输出逐字段一致**。"
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog=(
+            "容量闸读数：plan / apply 输出恒给 capacity_target_bytes / collectable_bytes /\n"
+            "capacity_gap_bytes；缺口 > 0 时另给一条人读 note（可回收不足，只报缺、不删 ACTIVE 项）。"
+        ),
+    )
+    # 规范 §3.20.5 冻结命名为 `python -m app.inbox_gc gc [--dry-run｜--apply]`，而历史实现是
+    # `python -m app.inbox_gc [--dry-run｜--apply]`（实测带 `gc` ⇒ `unrecognized arguments: gc`、exit 2）。
+    # 修法：让 **`gc` 作为可选的子命令别名**（缺省即 gc）⇒ **两种形态都成立**；规范命名是权威、不改规范。
+    parser.add_argument(
+        "command",
+        nargs="?",
+        default="gc",
+        choices=["gc"],
+        metavar="[gc]",
+        help="子命令（**可选**；当前仅 `gc`，缺省即 `gc`）",
     )
     group = parser.add_mutually_exclusive_group()
     group.add_argument("--dry-run", action="store_true", help="只列清单（**默认**，绝不改盘）")

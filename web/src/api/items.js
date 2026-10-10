@@ -1,6 +1,6 @@
 // 印谱采集 API 契约调用层（feicui 侧，批 1）。
 // 端点（拆解件 §4）：
-//   POST /api/items/sync      触发采集（列表 1 次取全 → 逐本 detail → 归一化 → 落独立库 → 就绪包）
+//   POST /api/items/sync      触发采集（本体取 book/list 一次全量 → 逐本 graph/book 取关联 → detail 降 best-effort → 归一化 → 落独立库 → 就绪包）
 //   GET  /api/items           列表（分页 / 筛选：有无影像 / 有无年份 / 题名关键字）
 //   GET  /api/items/{seqid}   单本（详情 + 关联责任者）
 //   GET  /api/items/batches   批次列表

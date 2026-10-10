@@ -1,0 +1,145 @@
+{
+  "stage": "before",
+  "dbs": {
+    "yinpu.db": {
+      "exists": true,
+      "path": "/Users/kevin/bistro/xiai/data/yinpu.db",
+      "tables": {
+        "export_batches": {
+          "rows": 12,
+          "n_cols": 18,
+          "sha256": "80a6fbd47426f27a3ea58a7b721738e167dec653149d2df44f7e78dfd04704b7"
+        },
+        "export_records": {
+          "rows": 49,
+          "n_cols": 10,
+          "sha256": "cd9a4cd7d8b9b26eaa329be3afb5c5be1d5969d02df79d85ff2bbfcd74e0e9b5"
+        },
+        "images": {
+          "rows": 79,
+          "n_cols": 24,
+          "sha256": "db3fc3a98803a4c8d4e51123f7ebb1669cca20df734f4e8385f84a6716d6d19d"
+        },
+        "job_pages": {
+          "rows": 32,
+          "n_cols": 15,
+          "sha256": "360bb4f25ddd2101bbee1434f10600f951166edc135575f92d2731e030841219"
+        },
+        "jobs": {
+          "rows": 5,
+          "n_cols": 17,
+          "sha256": "89816a80fd59bf2d9bc085c39cf91ffdb69e5f3b0e456bafb6c56a915fc3d2ae"
+        },
+        "schema_migrations": {
+          "rows": 2,
+          "n_cols": 3,
+          "sha256": "4494665af7f67e80ea32eadd6596015f06780a8365c5aedfd241b0d5c4c7664f"
+        },
+        "seals": {
+          "rows": 79,
+          "n_cols": 59,
+          "sha256": "1b4632b14f14984ab7f6550bbea9ebb3c63dfaa9ba30098626ddcf575fb0328d"
+        },
+        "stamps": {
+          "rows": 89,
+          "n_cols": 10,
+          "sha256": "ed4f1e13bf22511834f04fece55f4f985ec6b70d8acc0d4d20e08724cbd39490"
+        }
+      },
+      "n_tables": 8
+    },
+    "var/person_ingest.db": {
+      "exists": true,
+      "path": "/Users/kevin/bistro/xiai/feicui/var/person_ingest.db",
+      "tables": {
+        "person_import_batches": {
+          "rows": 1,
+          "n_cols": 20,
+          "sha256": "d33b32d4d4c1b2c698f0d29ddc3b62e8cb000eeda5251b5e20685fd91127d9e5"
+        },
+        "person_relations": {
+          "rows": 1650,
+          "n_cols": 13,
+          "sha256": "3cf452938134432c73f020fca8d24711c091567f9884b9e8f97f323eab1b2d57"
+        },
+        "persons": {
+          "rows": 570,
+          "n_cols": 34,
+          "sha256": "a40cf9c0bb61f6d290d494ec46dd802e8db9891b7f3f8e3aabdb10ddd7cd35c1"
+        }
+      },
+      "n_tables": 3
+    },
+    "var/item_ingest.db": {
+      "exists": true,
+      "path": "/Users/kevin/bistro/xiai/feicui/var/item_ingest.db",
+      "tables": {
+        "item_creators": {
+          "rows": 1440,
+          "n_cols": 10,
+          "sha256": "c9ede901b827dd7d6976ec72438bfba4b4e247e29f776d95f17a2de104349d95"
+        },
+        "item_import_batches": {
+          "rows": 1,
+          "n_cols": 20,
+          "sha256": "bca9adc23b73a05442bdc9d5d675dc753f1bdc1c841cc39fa328a2d47c98a856"
+        },
+        "items": {
+          "rows": 1742,
+          "n_cols": 25,
+          "sha256": "dad6a30f69b9213b25f7beba809169326cb95bbc3659a28ba9e8411d11695371"
+        }
+      },
+      "n_tables": 3
+    },
+    "var/seal_ingest.db": {
+      "exists": true,
+      "path": "/Users/kevin/bistro/xiai/feicui/var/seal_ingest.db",
+      "tables": {
+        "seal_images": {
+          "rows": 6765,
+          "n_cols": 17,
+          "sha256": "f3a17f0a29d51bbcb74a5410ff40a612995f6b127114e0eddf9fb1ef63c80546"
+        },
+        "seal_import_batches": {
+          "rows": 1,
+          "n_cols": 23,
+          "sha256": "625f1e8259041b250f163114f2e64f638591e0cd830bef777b8a197fc5745414"
+        },
+        "seal_links": {
+          "rows": 8964,
+          "n_cols": 11,
+          "sha256": "592f7ecc9b609980d0617b13b2162b4ffa9319841aecb1b64197700537895b5a"
+        },
+        "seals": {
+          "rows": 3679,
+          "n_cols": 54,
+          "sha256": "298e8d4454a8604a70936d003d1577e382369b0c42a7a0e31908e65872bce835"
+        }
+      },
+      "n_tables": 4
+    }
+  },
+  "export_packages": {
+    "person_20261010_01": {
+      "path": "/Users/kevin/bistro/xiai/feicui/exports/person_20261010_01",
+      "n_files": 4,
+      "sha256_names_sizes": "8c8c0a1f05e4c342f0ebf2ef97099bdf25eec7dad672417d71092b1cbb5f55dd"
+    },
+    "person_import_person_20261010_01": {
+      "path": "/Users/kevin/bistro/xiai/feicui/exports/person_import_person_20261010_01",
+      "n_files": 3,
+      "sha256_names_sizes": "756b5bd4b769cd877ea27409e8da0d63bd184bd4b7ab54734e6ebe05fcf94bb5"
+    },
+    "item_import_item_20261010_01": {
+      "path": "/Users/kevin/bistro/xiai/feicui/exports/item_import_item_20261010_01",
+      "n_files": 4,
+      "sha256_names_sizes": "d7ba7723bb3856613c24d4b4be0f39426fc2ed6b24a2a7c968cc43fe5dcc61c9"
+    },
+    "seal_import_seal_20261010_01": {
+      "path": "/Users/kevin/bistro/xiai/feicui/exports/seal_import_seal_20261010_01",
+      "n_files": 6352,
+      "sha256_names_sizes": "46013d67d2f2ecd0ab5a9ca44967d3e5c3fab8cc469ed3ea4eeaaa13a5242ea3"
+    }
+  }
+}

@@ -23,6 +23,7 @@ from .routers import tools as tools_router
 from .routers import persons as persons_router
 from .routers import items as items_router
 from .routers import seals as seals_router
+from .routers import relations as relations_router
 
 log = logging.getLogger("feicui.api")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
@@ -75,6 +76,8 @@ def create_app() -> FastAPI:
     app.include_router(items_router.router)
     # 印章采集线（批 1）——additive 端点，不动 E1〜E7 与 persons/items
     app.include_router(seals_router.router)
+    # 关联面（三表联立）——additive 端点，不动 E1〜E7 与 persons/items/seals（规范 §3.18.6）
+    app.include_router(relations_router.router)
 
     # ---- 领域异常 → §3.4 错误体（**必须含 `detail`**；不得以 200 承载失败）----
     # `repository.JobNotFound` 由仓库层直抛（E3 / E4 / E6 都可能命中），在此统一落 404，

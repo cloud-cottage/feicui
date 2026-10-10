@@ -1,0 +1,116 @@
+{
+  "check1_form": {
+    "n": 9976,
+    "keys_exact": true,
+    "keys_mismatch_idx": [],
+    "evidence_is_list_of_str": true,
+    "evidence_bad_idx": [],
+    "evidence_non_empty": true,
+    "predicate_all_in_enum": true,
+    "predicate_extra": [],
+    "seq_all_int": true,
+    "PASS": true,
+    "no_bom": true,
+    "one_object_per_line": true
+  },
+  "check2_counts": {
+    "jsonl_counts": {
+      "person_to_item": 1349,
+      "item_to_person": 1379,
+      "person_to_seal": 301,
+      "seal_to_item": 3679,
+      "seal_to_person": 3268
+    },
+    "manifest_counts": {
+      "person_to_item": 1349,
+      "item_to_person": 1379,
+      "person_to_seal": 301,
+      "seal_to_item": 3679,
+      "seal_to_person": 3268
+    },
+    "report_counts": {
+      "person_to_item": 1349,
+      "item_to_person": 1379,
+      "person_to_seal": 301,
+      "seal_to_item": 3679,
+      "seal_to_person": 3268
+    },
+    "manifest_jsonl_rows_field": 9976,
+    "all_equal": true
+  },
+  "check3_idempotency": {
+    "rows": 9976,
+    "unique_triples": 9976,
+    "all_unique": true,
+    "manifest_idempotency": {
+      "key": "(predicate, subject_id, object_id)",
+      "non_null": 9976,
+      "unique": 9976,
+      "total": 9976,
+      "all_unique": true
+    }
+  },
+  "check4_dedup_arithmetic": {
+    "A": 1281,
+    "B": 1349,
+    "intersection": 1249,
+    "union_reported": 1381,
+    "recomputed_union": 1381,
+    "formula_ok": true,
+    "only_item": 32,
+    "only_person": 100,
+    "check_only": true,
+    "dedup_before": 12054,
+    "dedup_after": 9976
+  },
+  "check5_ghost_unresolved": {
+    "ghost_rows_in_jsonl": 2,
+    "ghost_unique_source_ref": [
+      "test"
+    ],
+    "report_ghost_count": 2,
+    "report_ghost_unique_as_book_id": [
+      "test"
+    ],
+    "unresolved_person_ids": [
+      "907057883",
+      "907195552",
+      "907196266",
+      "907289639",
+      "907302845",
+      "907352770",
+      "907355275",
+      "907442887",
+      "907564849",
+      "907565309",
+      "907565542",
+      "907565815",
+      "907566509",
+      "907567697"
+    ],
+    "unresolved_count": 14,
+    "person_resolved_false_rows": 449,
+    "ghost_listed": true,
+    "unresolved_listed_14": true
+  },
+  "check6_manifest": {
+    "key_face_status": "pending_xiai",
+    "missing_required": [],
+    "schema_version": 1,
+    "has_pending": true,
+    "PASS": true
+  },
+  "check7_connA3": {
+    "person_to_item_unresolved_non_ghost": 0,
+    "seal_subject_not_in_seals": 0,
+    "sample_seal_bad": [],
+    "item_object_unresolved_non_ghost": 0,
+    "PASS": true
+  },
+  "check8_legacy_fail_control": {
+    "legacy_evidence_type": "str",
+    "legacy_evidence_is_list_of_str": false,
+    "legacy_PASS_should_be_false": false,
+    "control_ok": true
+  }
+}

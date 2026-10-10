@@ -1,0 +1,113 @@
+{
+  "nine_lines": [
+    {
+      "#": 1,
+      "join": "person_relations(印谱).as_book_id → items.as_book_id",
+      "unique": 932,
+      "hit": 931,
+      "miss": 1,
+      "miss_values": [
+        "test"
+      ]
+    },
+    {
+      "#": 2,
+      "join": "person_relations(印谱).ref_id → items.source_item_id",
+      "unique": 932,
+      "hit": 931,
+      "miss": 1,
+      "miss_values": [
+        "103"
+      ]
+    },
+    {
+      "#": 3,
+      "join": "person_relations(印章).ref_id → seals.source_seal_id",
+      "unique": 261,
+      "hit": 261,
+      "miss": 0,
+      "miss_values": []
+    },
+    {
+      "#": 4,
+      "join": "person_relations(印章).image_key → seal_images.source_ref",
+      "unique": 261,
+      "hit": 261,
+      "miss": 0,
+      "miss_values": []
+    },
+    {
+      "#": 5,
+      "join": "seal_links(book).ref_id → items.as_book_id",
+      "unique": 19,
+      "hit": 19,
+      "miss": 0,
+      "miss_values": []
+    },
+    {
+      "#": 6,
+      "join": "seal_links(book).bridge_item_id → items.source_item_id",
+      "unique": 19,
+      "hit": 19,
+      "miss": 0,
+      "miss_values": []
+    },
+    {
+      "#": 7,
+      "join": "item_creators.person_grbsm → persons.source_person_id",
+      "unique": 535,
+      "hit": 535,
+      "miss": 0,
+      "miss_values": []
+    },
+    {
+      "#": 8,
+      "join": "seal_links(person_*).ref_id → persons.source_person_id",
+      "unique": 41,
+      "hit": 27,
+      "miss": 14,
+      "miss_values": [
+        "907057883",
+        "907195552",
+        "907196266",
+        "907289639",
+        "907302845",
+        "907352770",
+        "907355275",
+        "907442887",
+        "907564849",
+        "907565309",
+        "907565542",
+        "907565815",
+        "907566509",
+        "907567697"
+      ]
+    },
+    {
+      "#": 9,
+      "join": "去重面：item_creators(book_graph) vs person_relations(印谱)",
+      "A_rows": 1281,
+      "A_set": 1281,
+      "B_rows": 1349,
+      "B_set": 1349,
+      "intersection": 1249,
+      "only_item": 32,
+      "only_person": 100,
+      "union": 1381,
+      "formula": "|A∪B| = |A|+|B|−|A∩B| = 1281+1349−1249 = 1381"
+    }
+  ],
+  "source_scale": {
+    "persons_total": 570,
+    "persons_in_person_relations": 539,
+    "persons_in_item_creators": 535,
+    "persons_in_seal_links_resolved": 27,
+    "seal_person_unique_refs": 261,
+    "person_relations_seal_creator_types": [
+      "印主"
+    ],
+    "seal_refs_with_multi_person": 40,
+    "ghost_rows_as_book_id_test": 2
+  },
+  "note": "独立重算（raw sqlite、只读）；未 import app.relations。"
+}

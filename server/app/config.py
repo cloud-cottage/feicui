@@ -116,6 +116,10 @@ class Settings:
     seal_images_tiff_dir: Path = REPO_ROOT / "var" / "seal_images_tiff"
     seals_image_delay_s: float = 0.15
     seals_image_concurrency: int = 1
+    # ---- 关联面（relation-ingest，三表联立）：**纯本库联立、零联网**；**不新建 DB** ----
+    # 就绪包落点 `feicui/exports/relation_import_<batch_id>/`（前缀 `relation_import_*`）；
+    # 只读三库（person/item/seal ingest）＋三线既有就绪包。`FEICUI_RELATIONS_EXPORT_ROOT` 可覆盖（自测用）。
+    relations_export_root: Path = REPO_ROOT / "exports"
 
     @property
     def is_prod_db(self) -> bool:
@@ -253,4 +257,9 @@ def get_settings() -> Settings:
         seals_image_concurrency=max(1, int(
             env.get("FEICUI_SEALS_IMAGE_CONCURRENCY") or file_cfg.get("seals_image_concurrency") or 1
         )),
+        # ---- 关联面（三表联立）：就绪包落点（env 覆盖优先；**不新建 DB**）----
+        relations_export_root=Path(
+            env.get("FEICUI_RELATIONS_EXPORT_ROOT") or file_cfg.get("relations_export_root")
+            or str(REPO_ROOT / "exports")
+        ).expanduser().resolve(),
     )

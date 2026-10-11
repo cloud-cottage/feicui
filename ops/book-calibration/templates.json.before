@@ -1,0 +1,99 @@
+{
+  "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf": {
+    "hsv_low": [
+      0,
+      120,
+      70
+    ],
+    "hsv_high": [
+      10,
+      255,
+      255
+    ],
+    "min_area": 800,
+    "text_offset": [
+      -120,
+      0,
+      110,
+      140
+    ],
+    "density_min": 0.002,
+    "density_max": 0.08,
+    "page_range": [
+      13,
+      19
+    ],
+    "edge_enabled": true,
+    "pad_ratio": 0.02,
+    "style_red_ratio_threshold": 0.5,
+    "style_inference_method": "red_ratio_v1"
+  },
+  "秦汉印典 上海书画 金怀英  1997 ok.pdf": {
+    "hsv_low": [
+      0,
+      120,
+      70
+    ],
+    "hsv_high": [
+      10,
+      255,
+      255
+    ],
+    "min_area": 800,
+    "text_offset": [
+      -120,
+      0,
+      110,
+      140
+    ],
+    "density_min": 0.002,
+    "density_max": 0.08,
+    "page_range": [
+      5,
+      6
+    ],
+    "edge_enabled": true,
+    "pad_ratio": 0.15,
+    "default_dynasty": "秦汉",
+    "default_dynasty_source": "book_title_annotation(unreviewed)：书名即「秦汉印典」，按书名标注，待人工章节核对",
+    "default_seal_type": "UNKNOWN",
+    "default_seal_type_source": "no_chapter_map(待人工章节映射；UNKNOWN 触发 review_status=DRAFT)",
+    "annotation_status": "UNREVIEWED_PENDING_HUMAN_REVIEW",
+    "style_red_ratio_threshold": 0.5,
+    "style_inference_method": "red_ratio_v1"
+  },
+  "古玺汇编 文物出版社 罗福颐  ok.pdf": {
+    "hsv_low": [
+      0,
+      120,
+      70
+    ],
+    "hsv_high": [
+      10,
+      255,
+      255
+    ],
+    "min_area": 800,
+    "text_offset": [
+      -120,
+      0,
+      110,
+      140
+    ],
+    "density_min": 0.002,
+    "density_max": 0.08,
+    "page_range": [
+      24,
+      26
+    ],
+    "edge_enabled": true,
+    "pad_ratio": 0.15,
+    "default_dynasty": "战国",
+    "default_dynasty_source": "book_title_annotation(unreviewed)：书名即「古玺汇编」（古玺＝战国），按书名标注，待人工章节核对",
+    "default_seal_type": "UNKNOWN",
+    "default_seal_type_source": "no_chapter_map(待人工章节映射；UNKNOWN 触发 review_status=DRAFT)",
+    "annotation_status": "UNREVIEWED_PENDING_HUMAN_REVIEW",
+    "style_red_ratio_threshold": 0.5,
+    "style_inference_method": "red_ratio_v1"
+  }
+}

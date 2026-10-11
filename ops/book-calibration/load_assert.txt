@@ -1,0 +1,9 @@
+REQUIRED_TEMPLATE_KEYS (pool/books.py) = ('hsv_low', 'hsv_high', 'min_area', 'text_offset', 'density_min', 'density_max')
+load_templates() -> top-level key count = 4
+top-level keys: ['黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf', '秦汉印典 上海书画 金怀英  1997 ok.pdf', '古玺汇编 文物出版社 罗福颐  ok.pdf', '秦印类编 检索版.pdf']
+eight-key set: ['hsv_low', 'hsv_high', 'min_area', 'text_offset', 'density_min', 'density_max', 'page_range', 'edge_enabled']
+ASSERT OK: entry present; all 8 keys present -> {'hsv_low': [0, 120, 70], 'hsv_high': [10, 255, 255], 'min_area': 800, 'text_offset': [-120, 0, 110, 140], 'density_min': 0.002, 'density_max': 0.08, 'page_range': [29, 794], 'edge_enabled': True}
+ALL KEYS of new entry: ['hsv_low', 'hsv_high', 'min_area', 'text_offset', 'density_min', 'density_max', 'page_range', 'edge_enabled', 'pad_ratio', 'default_dynasty', 'default_dynasty_source', 'default_seal_type', 'default_seal_type_source', 'annotation_status', 'style_red_ratio_threshold', 'style_inference_method']
+extra-key presence: {'pad_ratio': True, 'style_red_ratio_threshold': True, 'style_inference_method': True, 'default_dynasty': True, 'default_dynasty_source': True, 'default_seal_type': True, 'default_seal_type_source': True, 'annotation_status': True}
+page_range = [29, 794]
+PASS

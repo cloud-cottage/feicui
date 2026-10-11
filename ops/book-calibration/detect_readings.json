@@ -1,0 +1,54 @@
+[
+  {
+    "page_1based": 29,
+    "pdf_index_0based": 28,
+    "in_page_range": true,
+    "img_h": 4079,
+    "img_w": 2834,
+    "render_dpi": 400.0,
+    "detected_stamps": 12,
+    "detected_edges": 0,
+    "render_s": 0.132,
+    "detect_s": 0.027,
+    "total_s": 0.159
+  },
+  {
+    "page_1based": 794,
+    "pdf_index_0based": 793,
+    "in_page_range": true,
+    "img_h": 4079,
+    "img_w": 2834,
+    "render_dpi": 400.0,
+    "detected_stamps": 4,
+    "detected_edges": 0,
+    "render_s": 0.136,
+    "detect_s": 0.024,
+    "total_s": 0.161
+  },
+  {
+    "page_1based": 28,
+    "pdf_index_0based": 27,
+    "in_page_range": false,
+    "img_h": 4079,
+    "img_w": 2834,
+    "render_dpi": 400.0,
+    "detected_stamps": 0,
+    "detected_edges": 0,
+    "render_s": 0.13,
+    "detect_s": 0.013,
+    "total_s": 0.143
+  },
+  {
+    "page_1based": 795,
+    "pdf_index_0based": 794,
+    "in_page_range": false,
+    "img_h": 4079,
+    "img_w": 2834,
+    "render_dpi": 400.0,
+    "detected_stamps": 0,
+    "detected_edges": 0,
+    "render_s": 0.14,
+    "detect_s": 0.014,
+    "total_s": 0.154
+  }
+]

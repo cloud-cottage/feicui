@@ -1,0 +1,44 @@
+diff --git a/config/templates.json b/config/templates.json
+index a75629e..9f85ef0 100644
+--- a/config/templates.json
++++ b/config/templates.json
+@@ -95,5 +95,39 @@
+     "annotation_status": "UNREVIEWED_PENDING_HUMAN_REVIEW",
+     "style_red_ratio_threshold": 0.5,
+     "style_inference_method": "red_ratio_v1"
++  },
++  "秦印类编 检索版.pdf": {
++    "hsv_low": [
++      0,
++      120,
++      70
++    ],
++    "hsv_high": [
++      10,
++      255,
++      255
++    ],
++    "min_area": 800,
++    "text_offset": [
++      -120,
++      0,
++      110,
++      140
++    ],
++    "density_min": 0.002,
++    "density_max": 0.08,
++    "page_range": [
++      29,
++      794
++    ],
++    "edge_enabled": true,
++    "pad_ratio": 0.15,
++    "default_dynasty": "秦",
++    "default_dynasty_source": "book_title_annotation(unreviewed)：书名即「秦印类编」，按书名标注，待人工章节核对",
++    "default_seal_type": "UNKNOWN",
++    "default_seal_type_source": "no_chapter_map(待人工章节映射；UNKNOWN 触发 review_status=DRAFT)",
++    "annotation_status": "UNREVIEWED_PENDING_HUMAN_REVIEW",
++    "style_red_ratio_threshold": 0.5,
++    "style_inference_method": "red_ratio_v1"
+   }
+ }

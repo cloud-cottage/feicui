@@ -1,0 +1,6 @@
+stamps rows = 89
+jobs rows = 5
+job_pages rows = 32
+stamps content fingerprint (md5 of ordered rows) = 7c03e17258d670636f07a8aa829c55a8
+orphan job_pages (job_id not in jobs) = 32
+BASELINE claimed: stamps 89 / jobs 5 / job_pages 32

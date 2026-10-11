@@ -1,0 +1,12 @@
+render_dpi=400.0 base_dpi=144.0 AREA_SCALE=7.7160
+template.min_area=800 -> min_area_eff(int)=6172
+page_range(1-based inclusive)=[29, 794] -> span=766 pages
+PDF total pages (len(doc)) = 851
+
+page   29 (idx   28) in_range=True  2834x4079px  detected= 12 stamps / 0 edges  render=0.132s detect=0.027s total=0.159s
+page  794 (idx  793) in_range=True  2834x4079px  detected=  4 stamps / 0 edges  render=0.136s detect=0.024s total=0.161s
+page   28 (idx   27) in_range=False 2834x4079px  detected=  0 stamps / 0 edges  render=0.130s detect=0.013s total=0.143s
+page  795 (idx  794) in_range=False 2834x4079px  detected=  0 stamps / 0 edges  render=0.140s detect=0.014s total=0.154s
+
+JSON written -> ops/book-calibration/detect_readings.json
+repo-local yinpu.db created by this run? False

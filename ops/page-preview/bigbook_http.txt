@@ -1,0 +1,71 @@
+### 大书 job ��秦印类编 检索版.pdf，851 页 / 1.88 GiB）
+-- E2 建后立刻 --
+{'state': 'RUNNING', 'total_pages': 1, 'done_pages': 0}
+-- E9 page1 dpi110（HTTP 逐字段读数）--
+http=200 size_download=1458001 time_total=0.490547
+content-length: 1458001
+etag: "ce4fc282ea4792d0065fdf2f2bc8e5d7baa7d51d1f6bc7c294362f6c681711e9"
+cache-control: private, max-age=600
+x-feicui-render-dpi: 110
+x-feicui-render-size: 783x1125
+x-feicui-pdf-page-count: 851
+x-feicui-pdf-name: %E7%A7%A6%E5%8D%B0%E7%B1%BB%E7%BC%96 %E6%A3%80%E7%B4%A2%E7%89%88.pdf
+content-type: image/png
+-- E9 page1 dpi150 / dpi72 --
+dpi=150 http=200 size=2799216 time=0.513822
+dpi=72 http=200 size=582644 time=0.326619
+-- E10 page1 --
+http=200 time=0.320069
+{
+ "job_id": "job-19aa71198ba24d55ac738fa144fb6f3d",
+ "page": 1,
+ "pdf_name": "秦印类编 检索版.pdf",
+ "pdf_page_count": 851,
+ "job_page_range": {
+  "from": 1,
+  "to": 1
+ },
+ "render": {
+  "dpi": 110,
+  "width": 783,
+  "height": 1125,
+  "scale": 1.527778
+ },
+ "template_source": "builtin_default(square.py:BUILTIN_TEMPLATE_PARAMS)",
+ "params_used": {
+  "hsv_low": [
+   0,
+   120,
+   70
+  ],
+  "hsv_high": [
+   10,
+   255,
+   255
+  ],
+  "min_area_eff": 466.821,
+  "min_area_source": "builtin_default(square.py:BUILTIN_TEMPLATE_PARAMS)·min_area=800.0×((dpi/72)×72/BASE_DPI)²=0.583526",
+  "pad_ratio": 0.15,
+  "edge_enabled": true,
+  "scale": 1.527778
+ },
+ "counts": {
+  "stamp": 8,
+  "edge": 2
+ },
+ "db": {
+  "stamp_rows": 0
+ },
+ "notes": [
+  "本书未标定：框由内建默认参数检出，可能不准（内建兜底常量位于 square.py:BUILTIN_TEMPLATE_PARAMS）"
+ ]
+}
+-- E10 page2（**job 页区间之外**：区间不是硬边界）--
+http=200
+page 2 range {'from': 1, 'to': 1} counts {'stamp': 2, 'edge': 0} db {'stamp_rows': 0} render {'dpi': 110, 'width': 780, 'height': 1122, 'scale': 1.527778}
+-- E10 page3 --
+http=200
+-- E9 page900（>851 页）--
+{"error":"PAGE_OUT_OF_PDF","detail":"page=900 超出 PDF 实际页数 851"}  http=404
+-- E2（取完图之后的进度）--
+{'state': 'RUNNING', 'total_pages': 1, 'done_pages': 0, 'failed_pages': [1]}

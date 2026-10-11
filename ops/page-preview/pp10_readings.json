@@ -1,0 +1,48 @@
+{
+ "check": "PP-10：结果页三列（pdf_name / img_path / bbox）取值键路径修正后**不再显示「—」**",
+ "job_id": "job-502016dd118a4bc6b7d73b5e0313d1b4",
+ "page_urls": [
+  "http://127.0.0.1:5195/feicui/jobs/job-502016dd118a4bc6b7d73b5e0313d1b4/results",
+  "http://localhost:5164/feicui/jobs/job-502016dd118a4bc6b7d73b5e0313d1b4/results"
+ ],
+ "measured_via": "真浏览器 DOM：定位含 pdf_name+img_path 的 <table>，逐 td 取 textContent；并用 getComputedStyle 无关，直接读数",
+ "columns": ["pdf_name", "pagesourcePageNo", "idxfeicui.stampIdx", "text", "img_path", "bbox (x1,y1,x2,y2)", "裁图（E6）"],
+ "ports": {
+  "5195": {
+   "rowCount": 20,
+   "total": 31,
+   "has_more": true,
+   "next_cursor": "p15_i6",
+   "dash_count_per_column": [0, 0, 0, 0, 0, 0, 0],
+   "first3_rows": [
+    {"pdf_name": "tmp.pdf", "page": "13", "idx": "0", "text": "（空）", "img_path": "output/pairs/p13_0/stamp.png", "bbox": "102,134,164,196"},
+    {"pdf_name": "tmp.pdf", "page": "13", "idx": "1", "text": "（空）", "img_path": "output/pairs/p13_1/stamp.png", "bbox": "136,398,207,470"},
+    {"pdf_name": "tmp.pdf", "page": "13", "idx": "2", "text": "（空）", "img_path": "output/pairs/p13_2/stamp.png", "bbox": "238,138,284,173"}
+   ]
+  },
+  "5164": {
+   "rowCount": 20,
+   "total": 31,
+   "has_more": true,
+   "next_cursor": "p15_i6",
+   "dash_count_per_column": [0, 0, 0, 0, 0, 0, 0],
+   "first3_rows": [
+    {"pdf_name": "tmp.pdf", "page": "13", "idx": "0", "text": "（空）", "img_path": "output/pairs/p13_0/stamp.png", "bbox": "102,134,164,196"},
+    {"pdf_name": "tmp.pdf", "page": "13", "idx": "1", "text": "（空）", "img_path": "output/pairs/p13_1/stamp.png", "bbox": "136,398,207,470"},
+    {"pdf_name": "tmp.pdf", "page": "13", "idx": "2", "text": "（空）", "img_path": "output/pairs/p13_2/stamp.png", "bbox": "238,138,284,173"}
+   ]
+  }
+ },
+ "key_assertions": {
+  "pdf_name_not_dash": true,
+  "pdf_name_value": "tmp.pdf",
+  "img_path_not_dash": true,
+  "img_path_value": "output/pairs/p13_0/stamp.png",
+  "bbox_not_dash": true,
+  "bbox_x1": 102,
+  "bbox_value": "102,134,164,196",
+  "all_columns_zero_dashes": true,
+  "two_ports_byte_identical_screenshot_sha256": "ef4dfba6a694323ed8e49b6d92606eb2bc7cac3a299511be2ce5a1d0dfdfdc58"
+ },
+ "before_after_diff_file": "ops/page-preview/results_keypath_diff.txt"
+}

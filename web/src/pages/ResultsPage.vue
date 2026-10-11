@@ -257,13 +257,18 @@ function prevPage() {
           </thead>
           <tbody>
             <tr v-for="(it, i) in items" :key="i">
-              <td>{{ it.pdf_name || '—' }}</td>
+              <!-- 取值键路径（spec §3.12 / 形状真源 export.py::build_record）：本书名在 `feicui.pdfName`，
+                   顶层并无 `pdf_name`（旧实现读顶层 ⇒ 整列显示 `—`，本单只改键路径，列名不动）。 -->
+              <td>{{ (it.feicui && it.feicui.pdfName) || '—' }}</td>
               <td>{{ itemAnchor(it).page === null ? '—' : itemAnchor(it).page }}</td>
               <td>{{ itemAnchor(it).idx === null ? '—' : itemAnchor(it).idx }}</td>
               <td>{{ it.text === null || it.text === undefined || it.text === '' ? '（空）' : it.text }}</td>
-              <td><code>{{ it.img_path || '—' }}</code></td>
+              <!-- 源影像路径在 `assets[0].sourceImgPath`（顶层无 `img_path`；`assets[].imgPath` 是导出件路径，本轮不用）。
+                   `assets[]` 为空 ⇒ 如实 `—`，不造值。 -->
+              <td><code>{{ (it.assets && it.assets[0] && it.assets[0].sourceImgPath) || '—' }}</code></td>
+              <!-- 坐标在顶层 `bbox` 对象（`bbox.x1..y2`）；bbox 缺失 ⇒ 如实 `—`，不造值。 -->
               <td>
-                <code v-if="!isNil(it.x1)">{{ it.x1 }},{{ it.y1 }},{{ it.x2 }},{{ it.y2 }}</code>
+                <code v-if="it.bbox && !isNil(it.bbox.x1)">{{ it.bbox.x1 }},{{ it.bbox.y1 }},{{ it.bbox.x2 }},{{ it.bbox.y2 }}</code>
                 <span v-else>—</span>
               </td>
               <td>

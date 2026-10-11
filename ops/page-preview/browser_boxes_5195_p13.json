@@ -1,0 +1,19 @@
+{
+ "origin": "http://127.0.0.1:5195",
+ "job_id": "job-6e7471ff9c464695b9463cdad5122246",
+ "page": 13,
+ "dpi": 110,
+ "measured_via": "CDP: 文档预览卡内 .pv-box 的 getBoundingClientRect() ⇒ 按 img.naturalWidth/imgRect.width 换算回图像像素空间",
+ "render": {"width": 796, "height": 1122},
+ "imgRect": {"w": 1104, "h": 1556.140625},
+ "css_border_color": {"stamp": "rgb(255, 115, 133) = --danger", "edge": "rgb(47, 214, 160) = --accent"},
+ "boxes": [
+  {"cls": "pv-box pv-box--stamp", "imgSpace": {"x1": 143.99, "y1": 193, "x2": 260.98, "y2": 309.99}},
+  {"cls": "pv-box pv-box--stamp", "imgSpace": {"x1": 194, "y1": 592.99, "x2": 329.99, "y2": 732.98}},
+  {"cls": "pv-box pv-box--stamp", "imgSpace": {"x1": 355, "y1": 202, "x2": 443, "y2": 285.99}},
+  {"cls": "pv-box pv-box--stamp", "imgSpace": {"x1": 465.99, "y1": 591, "x2": 600.99, "y2": 729.99}},
+  {"cls": "pv-box pv-box--stamp", "imgSpace": {"x1": 550.99, "y1": 199.99, "x2": 629.99, "y2": 279.99}},
+  {"cls": "pv-box pv-box--edge", "imgSpace": {"x1": 441.99, "y1": 765, "x2": 625.99, "y2": 936.99}},
+  {"cls": "pv-box pv-box--edge", "imgSpace": {"x1": 152, "y1": 766, "x2": 348.99, "y2": 940.99}}
+ ]
+}

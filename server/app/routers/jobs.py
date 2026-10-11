@@ -9,6 +9,8 @@
 """
 from __future__ import annotations
 
+import base64
+import hashlib
 import logging
 import os
 from pathlib import Path
@@ -18,7 +20,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from urllib.parse import quote
 
-from .. import db, inbox_gc, pdfmeta, poolctl, repository, uploader
+from .. import db, inbox_gc, pdfmeta, poolctl, preview, repository, uploader
 from ..config import Settings, get_settings
 from ..models import (
     PAGE_LIMIT_DEFAULT,
@@ -678,3 +680,232 @@ def list_jobs(
     except repository.BadCursor as exc:
         raise HTTPException(status_code=400, detail={"error": ERROR_BAD_PARAM, "detail": str(exc)})
     return E7JobsResponse(**res)
+
+
+# =========================================================================== 文档预览：E9 / E10
+# 口径真源：`docs/page-preview-draft-v0.1.md` §2.1（**建议编号 E9 / E10**，编号终裁归 Jing；
+# 路径与字段按该件逐字）。两个端点都是 job 体系的**读面**，都**只读**。
+#
+# 红线（§2.5，本层逐条守）：
+#   ① **零 DB 写**：不 INSERT/UPDATE/DELETE、不建 job；`stamps` 只读 `COUNT(*)` 作对照；
+#   ② **不落盘**：PNG 字节由 worker 经 base64 从 stdout 回传，本层只在内存里解码后原样吐出；
+#   ③ **不复制检测算法**：本模块零检测代码；接口层**零** `cv2` / `numpy` / `pymupdf` import
+#      （渲染与检测只在 `feicui/venv/bin/python` 的一次性子进程里跑，见 `app/preview.py`）；
+#   ④ 子进程一次性（无守护 / 无池 / 无新端口），**每页 20 s 超时**；
+#   ⑤ 不动 E1〜E8、不动 inbox GC、不动 5164 代理。
+#
+# 错误面（§2.1：一律结构化 JSON，**顶层 `error` ＋ `detail`**）：
+#   `400 BAD_PARAM`（page 非正整数 / dpi 非白名单）· `404 JOB_NOT_FOUND` · `404 PDF_MISSING`
+#   · `404 PAGE_OUT_OF_PDF`（**只按 PDF 实际页数判**，job 的 page_range 不是硬边界）·
+#   `500 RUNNER_*`（§3.14 五码）· `500 RENDER_FAILED`。
+
+
+def _preview_error(status_code: int, error: str, detail: str) -> JSONResponse:
+    """预览线的结构化错误体：**顶层 `error` ＋ 顶层 `detail`**（§2.1 / §2.5，v1.23 形态）。
+
+    与 E8（`POST /api/jobs/upload`）同形；**不**用 `HTTPException` 的 `{"detail":{...}}` 嵌套形态
+    （那会把 `error` 埋进 `detail` 里，与「顶层 error ＋ detail」的明文口径不符）。
+    """
+    return JSONResponse(status_code=status_code, content={"error": error, "detail": detail})
+
+
+def _preview_runner_failure(out: dict) -> JSONResponse:
+    """把 **worker 侧**的结构化失败（`{"ok": false, "error": ...}`）映射成 §2.1 的错误面。
+
+    worker 只回 `BAD_REQUEST` / `PDF_MISSING` / `PAGE_OUT_OF_PDF` / `RENDER_FAILED` / `INTERNAL`
+    这几个码 ⇒ 一一落到 400 / 404 / 404 / 500；未知码一律 500 `RUNNER_BAD_OUTPUT` 并**如实**带上原码。
+    """
+    code = str(out.get("error") or "")
+    detail = str(out.get("detail") or "")
+    if code == "BAD_REQUEST":
+        return _preview_error(400, "BAD_PARAM", detail)
+    if code in {"PDF_MISSING", "PAGE_OUT_OF_PDF"}:
+        return _preview_error(404, code, detail)
+    if code == "RENDER_FAILED":
+        return _preview_error(500, "RENDER_FAILED", detail)
+    return _preview_error(500, "RUNNER_BAD_OUTPUT", f"worker 回报未知错误码 {code!r}：{detail}")
+
+
+def _preview_params(page_raw: str, dpi_raw: str | None) -> tuple[dict | None, JSONResponse | None]:
+    """解析并校验两个路径/查询参数（`page` 1-based 正整数；`dpi` ∈ 白名单 {72,110,150}，默认 110）。
+
+    两者都**不合法 ⇒ 400 BAD_PARAM**（§2.1），且**不起子进程**。
+    """
+    try:
+        page_i = int(str(page_raw).strip())
+    except (TypeError, ValueError):
+        return None, _preview_error(400, "BAD_PARAM", f"page 必须为正整数（1-based）：{page_raw!r}")
+    if page_i < 1:
+        return None, _preview_error(400, "BAD_PARAM", f"page 必须为正整数（1-based）：{page_i}")
+    if dpi_raw is None or str(dpi_raw).strip() == "":
+        dpi_i = preview.DPI_DEFAULT
+    else:
+        try:
+            dpi_i = int(str(dpi_raw).strip())
+        except (TypeError, ValueError):
+            return None, _preview_error(400, "BAD_PARAM", f"dpi 必须为整数：{dpi_raw!r}")
+        if dpi_i not in preview.DPI_WHITELIST:
+            return None, _preview_error(
+                400, "BAD_PARAM", f"dpi 不在白名单 {list(preview.DPI_WHITELIST)} 内：{dpi_i}"
+            )
+    return {"page": page_i, "dpi": dpi_i}, None
+
+
+def _preview_job(st: Settings, job_id: str) -> tuple[dict | None, JSONResponse | None]:
+    """取 job 行（只读）并验 `jobs.pdf_path` 真在盘上。
+
+    * job 不存在 ⇒ **404 `JOB_NOT_FOUND`**；
+    * `pdf_path` 不在盘上（老 job 指向已不存在的 `shu/feicui/tmp.pdf`）⇒ **404 `PDF_MISSING`**，
+      **绝不用别的书顶替**（口径件 §1「判负 / 边界事实」）。
+    """
+    try:
+        with db.ro(st.db_path) as conn:
+            job = repository.get_job_row(conn, job_id)
+    except repository.JobNotFound:
+        return None, _preview_error(404, "JOB_NOT_FOUND", f"job 不存在：{job_id}")
+    pdf_abs = _resolve_pdf_path(str(job["pdf_path"]), st)
+    if not pdf_abs.is_file():
+        return None, _preview_error(
+            404, "PDF_MISSING", f"jobs.pdf_path 不在盘上：{job['pdf_path']}（不得用别的书顶替）"
+        )
+    job = dict(job)
+    job["_pdf_abs"] = pdf_abs
+    return job, None
+
+
+def _preview_job_page_range(job: dict, page: int) -> tuple[dict, list[str]]:
+    """`job_page_range`（§2.1 字段）；`jobs` 行未给区间时**如实兜底**并留人读提示。"""
+    lo, hi = job.get("page_from"), job.get("page_to")
+    notes: list[str] = []
+    if lo is None:
+        lo = 1
+        notes.append("jobs 行未给 page_from ⇒ job_page_range.from 兜底 1")
+    if hi is None:
+        hi = page
+        notes.append("jobs 行未给 page_to ⇒ job_page_range.to 兜底为当前 page")
+    return {"from": int(lo), "to": int(hi)}, notes
+
+
+@router.get("/{job_id}/pages/{page}/preview.png")
+def page_preview_png(
+    job_id: str,
+    page: str,
+    dpi: str | None = Query(default=None, description="渲染 dpi，白名单 {72,110,150}，默认 110"),
+    st: Settings = Depends(_settings),
+) -> Response:
+    """**E9** `GET /api/jobs/{job_id}/pages/{page}/preview.png` —— **整页 PDF 渲染（PNG 二进制）**。
+
+    * `{page}` **1-based**（↔ `stamps.page` / `job_pages.page`）；查询参数白名单**只有 `dpi`**；
+    * `200` = PNG 字节：`Content-Type: image/png`、`Content-Length` 必填、`ETag` ＝ **PNG 字节的 sha256**、
+      `Cache-Control: private, max-age=600`（§2.6：v0.1 **不做服务端缓存**，靠浏览器缓存）；
+    * 诊断头（**值必须 latin-1 可编码** ⇒ 含中文书名走 §3.13 的百分号编码）：
+      `x-feicui-render-dpi` / `x-feicui-render-size=WxH` / `x-feicui-pdf-page-count` / `x-feicui-pdf-name`；
+    * 失败面见本段开头的错误面（**顶层 error ＋ detail**）；
+    * **只读 + 不落盘**：子进程一次性渲染，PNG 经 base64 走 stdout 回传，本层不写任何文件。
+    """
+    params, err = _preview_params(page, dpi)
+    if err is not None:
+        return err
+    job, err = _preview_job(st, job_id)
+    if err is not None:
+        return err
+
+    try:
+        out = preview.run_preview(
+            st,
+            pdf_path=job["_pdf_abs"],
+            page=params["page"],
+            dpi=params["dpi"],
+            png=True,
+            detect=False,
+        )
+    except preview.RunnerError as exc:                       # §3.14 五码，一律 500
+        log.error("E9 预览渲染失败：job=%s page=%s %s", job_id, params["page"], exc)
+        return _preview_error(500, exc.code, exc.detail)
+    if not out.get("ok"):
+        return _preview_runner_failure(out)
+
+    data = base64.b64decode(out["png_base64"])
+    sha = hashlib.sha256(data).hexdigest()                   # **对真正吐出的字节**自证 ETag
+    if sha != str(out.get("png_sha256") or ""):
+        return _preview_error(
+            500, "RUNNER_BAD_OUTPUT", "worker 回报的 png_sha256 与实际 PNG 字节不一致"
+        )
+    if not data.startswith(b"\x89PNG\r\n\x1a\n"):
+        return _preview_error(500, "RENDER_FAILED", "worker 回传的字节不是 PNG（magic 不符）")
+
+    render = out["render"]
+    headers = {
+        "Content-Length": str(len(data)),
+        # ETag：PNG 字节 sha256（HTTP 形态带引号；值＝hex 摘要本身）
+        "ETag": f'"{sha}"',
+        "Cache-Control": "private, max-age=600",
+        "x-feicui-render-dpi": str(render["dpi"]),
+        "x-feicui-render-size": f"{render['width']}x{render['height']}",
+        "x-feicui-pdf-page-count": str(out["pdf_page_count"]),
+        # §3.13：头值必须 latin-1 可编码 ⇒ 中文书名（如「秦汉印典 …」）必须百分号编码，
+        # 前端用 `decodeURIComponent` 还原。原样回吐 DB 值曾让整条 500。
+        "x-feicui-pdf-name": _header_safe(str(out["pdf_name"])),
+    }
+    return Response(content=data, media_type="image/png", headers=headers)
+
+
+@router.get("/{job_id}/pages/{page}/boxes")
+def page_boxes(
+    job_id: str,
+    page: str,
+    dpi: str | None = Query(default=None, description="渲染 dpi，白名单 {72,110,150}，默认 110"),
+    st: Settings = Depends(_settings),
+) -> JSONResponse:
+    """**E10** `GET /api/jobs/{job_id}/pages/{page}/boxes` —— **该页检测框（JSON）**，**现场检测**。
+
+    字段逐字按口径件 §2.1（`job_id` / `page` / `pdf_name` / `pdf_page_count` / `job_page_range` /
+    `render` / `template_source` / `params_used` / `boxes` / `counts` / `db` / `notes`）：
+
+    * `boxes[]` 的 `kind ∈ {stamp, edge}`（**红＝印章 / 绿＝边款**；释文蓝框本轮**不做**）；
+      坐标与 `render.width/height` **同一像素空间**（＝ E9 那张 PNG 的像素空间）⇒ 覆盖层可百分比对齐；
+    * `template_source` **三态**：`book_template:<pdf_name>` / `builtin_default(<源码位置>)` / `none`；
+      未标定书⇒ `notes` 里带「本书未标定：框由内建默认参数检出，可能不准」**人读提示**；
+    * `params_used.min_area_eff` 是 **worker 侧真实生效值**（按本次渲染 dpi 用 `visualize_page` 公式换算），
+      `min_area_source` 与 `template_source` 同口径派生，**绝不引用不存在的来源键**；
+    * `db.stamp_rows` 是**只读对照**（该 `(pdf_name,page)` 在 `stamps` 的行数）—— **框本身不来自 DB**：
+      解析中的页 / 未解析页在库里没有框，而预览要在整本书上都能翻。
+    """
+    params, err = _preview_params(page, dpi)
+    if err is not None:
+        return err
+    job, err = _preview_job(st, job_id)
+    if err is not None:
+        return err
+
+    try:
+        out = preview.run_preview(
+            st,
+            pdf_path=job["_pdf_abs"],
+            page=params["page"],
+            dpi=params["dpi"],
+            png=False,
+            detect=True,
+        )
+    except preview.RunnerError as exc:
+        log.error("E10 预览检测失败：job=%s page=%s %s", job_id, params["page"], exc)
+        return _preview_error(500, exc.code, exc.detail)
+    if not out.get("ok"):
+        return _preview_runner_failure(out)
+
+    job_page_range, range_notes = _preview_job_page_range(job, params["page"])
+    body = {
+        "job_id": job["job_id"],
+        "page": params["page"],
+        "pdf_name": job["pdf_name"],
+        "pdf_page_count": int(out["pdf_page_count"]),
+        "job_page_range": job_page_range,
+        "render": out["render"],
+        "template_source": out["template_source"],
+        "params_used": out["params_used"],
+        "boxes": out["boxes"],
+        "counts": out["counts"],
+        "db": {"stamp_rows": preview.stamp_rows(st.db_path, str(job["pdf_name"]), params["page"])},
+        "notes": list(out.get("notes") or []) + range_notes,
+    }
+    return JSONResponse(content=body)

@@ -1,0 +1,14 @@
+{
+ "stamps": {
+  "rows": 89,
+  "sha256": "760ad4656ca11e0730b4f8022594505d72569a69c87fca91d4caea9a20f17822"
+ },
+ "jobs": {
+  "rows": 5,
+  "sha256": "21f8b197ab83af8755f4c2f8ba52be73a2c227b9222b4e995025d08dd851d86f"
+ },
+ "job_pages": {
+  "rows": 32,
+  "sha256": "6f1ac3f7327cae1f78b9809d90fbcbc57b566c31c0a3e0b6314686106e9ff8a7"
+ }
+}

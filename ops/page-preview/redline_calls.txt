@@ -1,0 +1,20 @@
+### 预览调用批次（同一批在指纹 before/after 之间跑）
+E9 p13 dpi72 -> HTTP 200 size=241098
+E9 p13 dpi110 -> HTTP 200 size=497857
+E9 p13 dpi150 -> HTTP 200 size=842120
+E9 p14 dpi72 -> HTTP 200 size=182873
+E9 p14 dpi110 -> HTTP 200 size=372048
+E9 p14 dpi150 -> HTTP 200 size=625160
+E9 p15 dpi72 -> HTTP 200 size=276320
+E9 p15 dpi110 -> HTTP 200 size=572119
+E9 p15 dpi150 -> HTTP 200 size=970463
+E9 p1 dpi72 -> HTTP 200 size=776117
+E9 p1 dpi110 -> HTTP 200 size=1827893
+E9 p1 dpi150 -> HTTP 200 size=3401258
+E10 p13 -> HTTP 200
+E10 p14 -> HTTP 200
+E10 p15 -> HTTP 200
+E10 p1 -> HTTP 200
+E10 p2 -> HTTP 200
+E10 404 -> 404
+E9 400 -> 400

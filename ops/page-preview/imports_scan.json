@@ -1,0 +1,26 @@
+{
+ "hits": [
+  {
+   "file": "server/app/square_runner.py",
+   "line": 37,
+   "import": "cv2"
+  },
+  {
+   "file": "server/app/square_runner.py",
+   "line": 39,
+   "import": "numpy"
+  },
+  {
+   "file": "server/app/preview_runner.py",
+   "line": 65,
+   "import": "cv2"
+  },
+  {
+   "file": "server/app/preview_runner.py",
+   "line": 67,
+   "import": "numpy"
+  }
+ ],
+ "count": 4,
+ "scanned_dir": "server/app"
+}

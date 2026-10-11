@@ -1,0 +1,115 @@
+{
+ "png": "ops/page-preview/e9_p13_dpi110.png",
+ "png_size": [
+  796,
+  1122
+ ],
+ "boxes_source": "ops/page-preview/browser_boxes_5195_p13.json",
+ "page_red_baseline": 0.01732,
+ "stamp_boxes_min_coverage": 0.1847,
+ "stamp_boxes_max_centroid_offset_norm": 0.049,
+ "verdict_stamp_boxes_on_red": true,
+ "outside_boxes": {
+  "page_total_red_px": 15465,
+  "red_in_any_stamp_box_px": 15465,
+  "red_outside_all_stamp_boxes_px": 0,
+  "red_outside_fraction_of_page_red": 0.0,
+  "outside_red_fraction_of_page_area": 0.0,
+  "largest_outside_blob": null,
+  "largest_outside_blob_centroid_inside_a_box": false,
+  "verdict_no_large_missed_stamp": true
+ },
+ "rows": [
+  {
+   "kind": "stamp",
+   "imgSpace": [
+    144,
+    193,
+    261,
+    310
+   ],
+   "red_coverage_in_box": 0.2405,
+   "red_coverage_page_baseline": 0.0173,
+   "ratio_in_box_over_baseline": 13.9,
+   "red_centroid_offset_norm": 0.049
+  },
+  {
+   "kind": "stamp",
+   "imgSpace": [
+    194,
+    593,
+    330,
+    733
+   ],
+   "red_coverage_in_box": 0.1946,
+   "red_coverage_page_baseline": 0.0173,
+   "ratio_in_box_over_baseline": 11.2,
+   "red_centroid_offset_norm": 0.0413
+  },
+  {
+   "kind": "stamp",
+   "imgSpace": [
+    355,
+    202,
+    443,
+    286
+   ],
+   "red_coverage_in_box": 0.2811,
+   "red_coverage_page_baseline": 0.0173,
+   "ratio_in_box_over_baseline": 16.2,
+   "red_centroid_offset_norm": 0.0291
+  },
+  {
+   "kind": "stamp",
+   "imgSpace": [
+    466,
+    591,
+    601,
+    730
+   ],
+   "red_coverage_in_box": 0.2783,
+   "red_coverage_page_baseline": 0.0173,
+   "ratio_in_box_over_baseline": 16.1,
+   "red_centroid_offset_norm": 0.0027
+  },
+  {
+   "kind": "stamp",
+   "imgSpace": [
+    551,
+    200,
+    630,
+    280
+   ],
+   "red_coverage_in_box": 0.1847,
+   "red_coverage_page_baseline": 0.0173,
+   "ratio_in_box_over_baseline": 10.7,
+   "red_centroid_offset_norm": 0.0445
+  },
+  {
+   "kind": "edge",
+   "imgSpace": [
+    442,
+    765,
+    626,
+    937
+   ],
+   "red_coverage_in_box": 0.0,
+   "red_coverage_page_baseline": 0.0173,
+   "ratio_in_box_over_baseline": 0.0,
+   "dark_pixel_ratio_in_box": 0.3331
+  },
+  {
+   "kind": "edge",
+   "imgSpace": [
+    152,
+    766,
+    349,
+    941
+   ],
+   "red_coverage_in_box": 0.0,
+   "red_coverage_page_baseline": 0.0173,
+   "ratio_in_box_over_baseline": 0.0,
+   "dark_pixel_ratio_in_box": 0.3155
+  }
+ ]
+}

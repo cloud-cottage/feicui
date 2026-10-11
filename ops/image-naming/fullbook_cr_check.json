@@ -1,0 +1,64 @@
+{
+  "pdf_name": "秦印类编 检索版.pdf",
+  "total_stamps": 7183,
+  "total_pages": 765,
+  "duplicate_conflicts": 0,
+  "duplicate_pages": [],
+  "col_counts": {
+    "1": 2608,
+    "2": 2458,
+    "3": 2085,
+    "4": 32
+  },
+  "row_counts": {
+    "1": 2172,
+    "2": 1908,
+    "3": 1446,
+    "4": 827,
+    "5": 397,
+    "6": 189,
+    "7": 98,
+    "8": 60,
+    "9": 37,
+    "10": 25,
+    "11": 15,
+    "12": 5,
+    "13": 2,
+    "14": 1,
+    "15": 1
+  },
+  "max_column_size": 15,
+  "max_column_where": {
+    "page": 791,
+    "col": 3,
+    "size": 15
+  },
+  "pages_by_ncols": {
+    "1": 16,
+    "2": 99,
+    "3": 642,
+    "4": 8
+  },
+  "pages_by_max_r": {
+    "1": 4,
+    "2": 45,
+    "3": 171,
+    "4": 248,
+    "5": 150,
+    "6": 71,
+    "7": 27,
+    "8": 21,
+    "9": 8,
+    "10": 8,
+    "11": 8,
+    "12": 2,
+    "13": 1,
+    "15": 1
+  },
+  "column_gap_threshold": {
+    "factor": 0.6,
+    "min_px": 8.0,
+    "formula": "median(stamp_width) * factor, floored at min_px"
+  },
+  "db_idx_not_x1_sorted_pages": 206
+}

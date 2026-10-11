@@ -1,0 +1,346 @@
+{
+  "dir_key": "秦印类编 检索版",
+  "out_dir": "output/books/秦印类编 检索版",
+  "sample_pages": [
+    299,
+    400
+  ],
+  "file_count": 16,
+  "elapsed_s": 0.447,
+  "total_bytes": 1984556,
+  "color_correction_applied": false,
+  "note": "本样例未校正（颜色校正为另一单工况，本单不施加）",
+  "encoder_byte_determinism": {
+    "probe_file": "P299-C1-R1.tiff",
+    "encodings_tried": 20,
+    "distinct_sha256": 7,
+    "differing_bytes": 1,
+    "where": "末 strip 字节尾 / IFD 之间的字对齐填充字节",
+    "last_strip_end": 195931,
+    "ifd_offset": 195932,
+    "pad_bytes": 1,
+    "conclusion": "Pillow tiff_deflate 对同一像素数组**逐字节非确定**（对齐填充字节未初始化）⇒ 验收候选 NB-7「同 (page,C,R) 二次产出字节稳定」须按**解码像素**或**规范化后**比对，不能直接比整文件 sha256。"
+  },
+  "files": [
+    {
+      "name": "P299-C1-R1.tiff",
+      "page": 299,
+      "col": 1,
+      "row": 1,
+      "db_idx": 0,
+      "bbox": [
+        1253,
+        1415,
+        1600,
+        1749
+      ],
+      "bbox_w": 347,
+      "bbox_h": 334,
+      "tiff_w": 347,
+      "tiff_h": 334,
+      "tiff_mode": "RGB",
+      "bytes": 196112,
+      "sha256": "6cced8e9534b8b87cfbf401891e003a42f370fb2377b8c86f9a8951e957cf577"
+    },
+    {
+      "name": "P299-C1-R2.tiff",
+      "page": 299,
+      "col": 1,
+      "row": 2,
+      "db_idx": 1,
+      "bbox": [
+        1280,
+        2285,
+        1576,
+        2567
+      ],
+      "bbox_w": 296,
+      "bbox_h": 282,
+      "tiff_w": 296,
+      "tiff_h": 282,
+      "tiff_mode": "RGB",
+      "bytes": 159934,
+      "sha256": "2f51fa91cc0560f9e09fb0f088c4b4a3f4cbcd6d17d80298283e13f705d151d9"
+    },
+    {
+      "name": "P299-C2-R1.tiff",
+      "page": 299,
+      "col": 2,
+      "row": 1,
+      "db_idx": 2,
+      "bbox": [
+        2020,
+        614,
+        2276,
+        861
+      ],
+      "bbox_w": 256,
+      "bbox_h": 247,
+      "tiff_w": 256,
+      "tiff_h": 247,
+      "tiff_mode": "RGB",
+      "bytes": 129674,
+      "sha256": "0b559a992bc1bbdcbd6560751c73f68be51b85eb429518deb2ca1f4b87e5c01c"
+    },
+    {
+      "name": "P299-C2-R3.tiff",
+      "page": 299,
+      "col": 2,
+      "row": 3,
+      "db_idx": 3,
+      "bbox": [
+        2030,
+        3053,
+        2269,
+        3279
+      ],
+      "bbox_w": 239,
+      "bbox_h": 226,
+      "tiff_w": 239,
+      "tiff_h": 226,
+      "tiff_mode": "RGB",
+      "bytes": 126858,
+      "sha256": "e6825b9f73732ef36d70148884a331100ef766e0b3a849eb63265adb594f43f3"
+    },
+    {
+      "name": "P299-C2-R4.tiff",
+      "page": 299,
+      "col": 2,
+      "row": 4,
+      "db_idx": 4,
+      "bbox": [
+        2032,
+        3234,
+        2267,
+        3446
+      ],
+      "bbox_w": 235,
+      "bbox_h": 212,
+      "tiff_w": 235,
+      "tiff_h": 212,
+      "tiff_mode": "RGB",
+      "bytes": 120500,
+      "sha256": "c6b891becc53fe8b211fb1d44bf4cbcb09680b498612f60a35deb86b36f7d1b1"
+    },
+    {
+      "name": "P299-C2-R2.tiff",
+      "page": 299,
+      "col": 2,
+      "row": 2,
+      "db_idx": 5,
+      "bbox": [
+        2035,
+        2307,
+        2264,
+        2545
+      ],
+      "bbox_w": 229,
+      "bbox_h": 238,
+      "tiff_w": 229,
+      "tiff_h": 238,
+      "tiff_mode": "RGB",
+      "bytes": 116568,
+      "sha256": "a9b9dcf117cfea3557ecc57fc2f3fdbf9c390377f74e07e2a8f8ca76d33286fe"
+    },
+    {
+      "name": "P400-C1-R2.tiff",
+      "page": 400,
+      "col": 1,
+      "row": 2,
+      "db_idx": 0,
+      "bbox": [
+        516,
+        1470,
+        790,
+        1736
+      ],
+      "bbox_w": 274,
+      "bbox_h": 266,
+      "tiff_w": 274,
+      "tiff_h": 266,
+      "tiff_mode": "RGB",
+      "bytes": 160320,
+      "sha256": "311d942c6bc4785415af9ba6eaac0c64f46c5aeb54b181aa9583bb02430fd448"
+    },
+    {
+      "name": "P400-C1-R1.tiff",
+      "page": 400,
+      "col": 1,
+      "row": 1,
+      "db_idx": 1,
+      "bbox": [
+        536,
+        567,
+        766,
+        815
+      ],
+      "bbox_w": 230,
+      "bbox_h": 248,
+      "tiff_w": 230,
+      "tiff_h": 248,
+      "tiff_mode": "RGB",
+      "bytes": 138634,
+      "sha256": "81c24210b0da454fd87ee44658410e54e59e0f80cbae6a78c1e189748e9d1558"
+    },
+    {
+      "name": "P400-C1-R3.tiff",
+      "page": 400,
+      "col": 1,
+      "row": 3,
+      "db_idx": 2,
+      "bbox": [
+        541,
+        2349,
+        768,
+        2528
+      ],
+      "bbox_w": 227,
+      "bbox_h": 179,
+      "tiff_w": 227,
+      "tiff_h": 179,
+      "tiff_mode": "RGB",
+      "bytes": 91710,
+      "sha256": "164fa24d922b79be4739e62c9fa372c771daed7be6ea63f0fbeff2897d15754e"
+    },
+    {
+      "name": "P400-C1-R4.tiff",
+      "page": 400,
+      "col": 1,
+      "row": 4,
+      "db_idx": 3,
+      "bbox": [
+        582,
+        3159,
+        730,
+        3388
+      ],
+      "bbox_w": 148,
+      "bbox_h": 229,
+      "tiff_w": 148,
+      "tiff_h": 229,
+      "tiff_mode": "RGB",
+      "bytes": 75810,
+      "sha256": "a7f106883c750ee9d8a652a8b95fc3ecc6bc18ff0680e3607c010a098aa9c99d"
+    },
+    {
+      "name": "P400-C2-R4.tiff",
+      "page": 400,
+      "col": 2,
+      "row": 4,
+      "db_idx": 4,
+      "bbox": [
+        1258,
+        3135,
+        1518,
+        3406
+      ],
+      "bbox_w": 260,
+      "bbox_h": 271,
+      "tiff_w": 260,
+      "tiff_h": 271,
+      "tiff_mode": "RGB",
+      "bytes": 146798,
+      "sha256": "f5d1371d2ddfa7be0f91060426f534620bf57d0934cae87d9f7bbd0b893cab7d"
+    },
+    {
+      "name": "P400-C2-R3.tiff",
+      "page": 400,
+      "col": 2,
+      "row": 3,
+      "db_idx": 5,
+      "bbox": [
+        1273,
+        1416,
+        1493,
+        1783
+      ],
+      "bbox_w": 220,
+      "bbox_h": 367,
+      "tiff_w": 220,
+      "tiff_h": 367,
+      "tiff_mode": "RGB",
+      "bytes": 167810,
+      "sha256": "3100d7658f51bb0d6aaafe59e991146c2473b0c2795fccd06adbd084daba71d0"
+    },
+    {
+      "name": "P400-C2-R2.tiff",
+      "page": 400,
+      "col": 2,
+      "row": 2,
+      "db_idx": 6,
+      "bbox": [
+        1293,
+        743,
+        1471,
+        900
+      ],
+      "bbox_w": 178,
+      "bbox_h": 157,
+      "tiff_w": 178,
+      "tiff_h": 157,
+      "tiff_mode": "RGB",
+      "bytes": 71800,
+      "sha256": "3ee8080d2ba01a4c18824f6420dfc8debe3388dc447164ef5622c0ae1f82f65f"
+    },
+    {
+      "name": "P400-C2-R1.tiff",
+      "page": 400,
+      "col": 2,
+      "row": 1,
+      "db_idx": 7,
+      "bbox": [
+        1293,
+        609,
+        1471,
+        775
+      ],
+      "bbox_w": 178,
+      "bbox_h": 166,
+      "tiff_w": 178,
+      "tiff_h": 166,
+      "tiff_mode": "RGB",
+      "bytes": 76656,
+      "sha256": "261fbc5f7e3288ef29e08110cf363dd42b6c99b97953e6b2229b3390ce8d8f78"
+    },
+    {
+      "name": "P400-C3-R2.tiff",
+      "page": 400,
+      "col": 3,
+      "row": 2,
+      "db_idx": 8,
+      "bbox": [
+        1999,
+        752,
+        2208,
+        919
+      ],
+      "bbox_w": 209,
+      "bbox_h": 167,
+      "tiff_w": 209,
+      "tiff_h": 167,
+      "tiff_mode": "RGB",
+      "bytes": 86828,
+      "sha256": "281ba15a92d36521f2f863421584a3d8fd92cbe462d7b376f53fe10375d0adcf"
+    },
+    {
+      "name": "P400-C3-R1.tiff",
+      "page": 400,
+      "col": 3,
+      "row": 1,
+      "db_idx": 9,
+      "bbox": [
+        2001,
+        569,
+        2212,
+        795
+      ],
+      "bbox_w": 211,
+      "bbox_h": 226,
+      "tiff_w": 211,
+      "tiff_h": 226,
+      "tiff_mode": "RGB",
+      "bytes": 118544,
+      "sha256": "b219bfd7ed5b17d119e2ccb17620878e09271db7e70e4159aa2856294d971133"
+    }
+  ]
+}

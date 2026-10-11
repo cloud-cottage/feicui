@@ -1,0 +1,173 @@
+{
+  "db_idx_definition": "detect_stamp_regions 后按 bbox[0]（x1）升序 ⇒ idx 即「左→右探测序」",
+  "cr_definition": "列级聚类得 C，列内 y 秩次得 R",
+  "pages_total": 765,
+  "pages_where_idx_order_neq_cr_order": 742,
+  "equal_pages": 23,
+  "sample_table": {
+    "299": [
+      {
+        "db_idx": 0,
+        "bbox_center": [
+          1426.5,
+          1582.0
+        ],
+        "C": 1,
+        "R": 1,
+        "name": "P299-C1-R1.tiff"
+      },
+      {
+        "db_idx": 1,
+        "bbox_center": [
+          1428.0,
+          2426.0
+        ],
+        "C": 1,
+        "R": 2,
+        "name": "P299-C1-R2.tiff"
+      },
+      {
+        "db_idx": 2,
+        "bbox_center": [
+          2148.0,
+          737.5
+        ],
+        "C": 2,
+        "R": 1,
+        "name": "P299-C2-R1.tiff"
+      },
+      {
+        "db_idx": 3,
+        "bbox_center": [
+          2149.5,
+          3166.0
+        ],
+        "C": 2,
+        "R": 3,
+        "name": "P299-C2-R3.tiff"
+      },
+      {
+        "db_idx": 4,
+        "bbox_center": [
+          2149.5,
+          3340.0
+        ],
+        "C": 2,
+        "R": 4,
+        "name": "P299-C2-R4.tiff"
+      },
+      {
+        "db_idx": 5,
+        "bbox_center": [
+          2149.5,
+          2426.0
+        ],
+        "C": 2,
+        "R": 2,
+        "name": "P299-C2-R2.tiff"
+      }
+    ],
+    "400": [
+      {
+        "db_idx": 0,
+        "bbox_center": [
+          653.0,
+          1603.0
+        ],
+        "C": 1,
+        "R": 2,
+        "name": "P400-C1-R2.tiff"
+      },
+      {
+        "db_idx": 1,
+        "bbox_center": [
+          651.0,
+          691.0
+        ],
+        "C": 1,
+        "R": 1,
+        "name": "P400-C1-R1.tiff"
+      },
+      {
+        "db_idx": 2,
+        "bbox_center": [
+          654.5,
+          2438.5
+        ],
+        "C": 1,
+        "R": 3,
+        "name": "P400-C1-R3.tiff"
+      },
+      {
+        "db_idx": 3,
+        "bbox_center": [
+          656.0,
+          3273.5
+        ],
+        "C": 1,
+        "R": 4,
+        "name": "P400-C1-R4.tiff"
+      },
+      {
+        "db_idx": 4,
+        "bbox_center": [
+          1388.0,
+          3270.5
+        ],
+        "C": 2,
+        "R": 4,
+        "name": "P400-C2-R4.tiff"
+      },
+      {
+        "db_idx": 5,
+        "bbox_center": [
+          1383.0,
+          1599.5
+        ],
+        "C": 2,
+        "R": 3,
+        "name": "P400-C2-R3.tiff"
+      },
+      {
+        "db_idx": 6,
+        "bbox_center": [
+          1382.0,
+          821.5
+        ],
+        "C": 2,
+        "R": 2,
+        "name": "P400-C2-R2.tiff"
+      },
+      {
+        "db_idx": 7,
+        "bbox_center": [
+          1382.0,
+          692.0
+        ],
+        "C": 2,
+        "R": 1,
+        "name": "P400-C2-R1.tiff"
+      },
+      {
+        "db_idx": 8,
+        "bbox_center": [
+          2103.5,
+          835.5
+        ],
+        "C": 3,
+        "R": 2,
+        "name": "P400-C3-R2.tiff"
+      },
+      {
+        "db_idx": 9,
+        "bbox_center": [
+          2106.5,
+          682.0
+        ],
+        "C": 3,
+        "R": 1,
+        "name": "P400-C3-R1.tiff"
+      }
+    ]
+  }
+}

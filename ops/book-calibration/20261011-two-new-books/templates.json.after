@@ -1,0 +1,201 @@
+{
+  "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf": {
+    "hsv_low": [
+      0,
+      120,
+      70
+    ],
+    "hsv_high": [
+      10,
+      255,
+      255
+    ],
+    "min_area": 800,
+    "text_offset": [
+      -120,
+      0,
+      110,
+      140
+    ],
+    "density_min": 0.002,
+    "density_max": 0.08,
+    "page_range": [
+      13,
+      19
+    ],
+    "edge_enabled": true,
+    "pad_ratio": 0.02,
+    "style_red_ratio_threshold": 0.5,
+    "style_inference_method": "red_ratio_v1"
+  },
+  "秦汉印典 上海书画 金怀英  1997 ok.pdf": {
+    "hsv_low": [
+      0,
+      120,
+      70
+    ],
+    "hsv_high": [
+      10,
+      255,
+      255
+    ],
+    "min_area": 800,
+    "text_offset": [
+      -120,
+      0,
+      110,
+      140
+    ],
+    "density_min": 0.002,
+    "density_max": 0.08,
+    "page_range": [
+      5,
+      6
+    ],
+    "edge_enabled": true,
+    "pad_ratio": 0.15,
+    "default_dynasty": "秦汉",
+    "default_dynasty_source": "book_title_annotation(unreviewed)：书名即「秦汉印典」，按书名标注，待人工章节核对",
+    "default_seal_type": "UNKNOWN",
+    "default_seal_type_source": "no_chapter_map(待人工章节映射；UNKNOWN 触发 review_status=DRAFT)",
+    "annotation_status": "UNREVIEWED_PENDING_HUMAN_REVIEW",
+    "style_red_ratio_threshold": 0.5,
+    "style_inference_method": "red_ratio_v1"
+  },
+  "古玺汇编 文物出版社 罗福颐  ok.pdf": {
+    "hsv_low": [
+      0,
+      120,
+      70
+    ],
+    "hsv_high": [
+      10,
+      255,
+      255
+    ],
+    "min_area": 800,
+    "text_offset": [
+      -120,
+      0,
+      110,
+      140
+    ],
+    "density_min": 0.002,
+    "density_max": 0.08,
+    "page_range": [
+      24,
+      26
+    ],
+    "edge_enabled": true,
+    "pad_ratio": 0.15,
+    "default_dynasty": "战国",
+    "default_dynasty_source": "book_title_annotation(unreviewed)：书名即「古玺汇编」（古玺＝战国），按书名标注，待人工章节核对",
+    "default_seal_type": "UNKNOWN",
+    "default_seal_type_source": "no_chapter_map(待人工章节映射；UNKNOWN 触发 review_status=DRAFT)",
+    "annotation_status": "UNREVIEWED_PENDING_HUMAN_REVIEW",
+    "style_red_ratio_threshold": 0.5,
+    "style_inference_method": "red_ratio_v1"
+  },
+  "秦印类编 检索版.pdf": {
+    "hsv_low": [
+      0,
+      120,
+      70
+    ],
+    "hsv_high": [
+      10,
+      255,
+      255
+    ],
+    "min_area": 800,
+    "text_offset": [
+      -120,
+      0,
+      110,
+      140
+    ],
+    "density_min": 0.002,
+    "density_max": 0.08,
+    "page_range": [
+      29,
+      794
+    ],
+    "edge_enabled": true,
+    "pad_ratio": 0.15,
+    "default_dynasty": "秦",
+    "default_dynasty_source": "book_title_annotation(unreviewed)：书名即「秦印类编」，按书名标注，待人工章节核对",
+    "default_seal_type": "UNKNOWN",
+    "default_seal_type_source": "no_chapter_map(待人工章节映射；UNKNOWN 触发 review_status=DRAFT)",
+    "annotation_status": "UNREVIEWED_PENDING_HUMAN_REVIEW",
+    "style_red_ratio_threshold": 0.5,
+    "style_inference_method": "red_ratio_v1"
+  },
+  "吴颐人篆刻作品展示.pdf": {
+    "hsv_low": [
+      0,
+      120,
+      70
+    ],
+    "hsv_high": [
+      10,
+      255,
+      255
+    ],
+    "min_area": 800,
+    "text_offset": [
+      -120,
+      0,
+      110,
+      140
+    ],
+    "density_min": 0.002,
+    "density_max": 0.08,
+    "page_range": [
+      1,
+      32
+    ],
+    "edge_enabled": true,
+    "pad_ratio": 0.15,
+    "default_dynasty": "近现代",
+    "default_dynasty_source": "book_title_annotation(unreviewed)：书名即「吴颐人篆刻作品展示」，作者吴颐人（b.1942）属近现代，按书名/作者标注，待人工章节核对",
+    "default_seal_type": "UNKNOWN",
+    "default_seal_type_source": "no_chapter_map(待人工章节映射；UNKNOWN 触发 review_status=DRAFT)",
+    "annotation_status": "UNREVIEWED_PENDING_HUMAN_REVIEW",
+    "style_red_ratio_threshold": 0.5,
+    "style_inference_method": "red_ratio_v1"
+  },
+  "福庵印缀 原版 高清.pdf": {
+    "hsv_low": [
+      0,
+      120,
+      70
+    ],
+    "hsv_high": [
+      10,
+      255,
+      255
+    ],
+    "min_area": 800,
+    "text_offset": [
+      -120,
+      0,
+      110,
+      140
+    ],
+    "density_min": 0.002,
+    "density_max": 0.08,
+    "page_range": [
+      1,
+      236
+    ],
+    "edge_enabled": true,
+    "pad_ratio": 0.15,
+    "default_dynasty": "近现代",
+    "default_dynasty_source": "book_title_annotation(unreviewed)：书名即「福庵印缀」，作者王福庵（1879–1960）属近现代，按书名/作者标注，待人工章节核对",
+    "default_seal_type": "UNKNOWN",
+    "default_seal_type_source": "no_chapter_map(待人工章节映射；UNKNOWN 触发 review_status=DRAFT)",
+    "annotation_status": "UNREVIEWED_PENDING_HUMAN_REVIEW",
+    "style_red_ratio_threshold": 0.5,
+    "style_inference_method": "red_ratio_v1"
+  }
+}

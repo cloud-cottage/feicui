@@ -1,0 +1,59 @@
+{
+  "schema": "yinsuo.feicui.book_dir_keys.v1",
+  "status": "ADDITIVE_PENDING_JING_REGISTRATION",
+  "note": "影像命名「书籍目录键」表（加法文件）。名字形与落点口径真源＝docs/image-naming-draft-v0.1.md（§6 Kevin 四答 ＋ §6.1 落地清单）：落点 output/books/<目录键>/，目录键**尽可能 ISBN；无 ISBN 落中文书名**，身份未确认者回落 PDF 名并逐条标记（dir_key_source=pdf_name_unconfirmed）。本文件**只增不改**：既有 book_codes.json（书简码，平台签发面）与本表**职责不同**，后者是本地落盘目录名，不得相互覆盖。**待 Jing 按规范流程入册**（本单不接 worker、不做全量回填、不改库）。键＝PDF 文件名（逐字，含扩展名，与 config/templates.json 同源）。",
+  "normalization": {
+    "fallback_rule": "未登记的书 ⇒ 目录键回落 PDF 名：去扩展名、去首尾空白、内部连续空白压一格（server/app/naming.py:normalize_book_name）",
+    "dir_key_source_values": {
+      "ISBN": "目录键＝ISBN（无连字符纯数字串）",
+      "chinese_title": "目录键＝中文书名（去扩展名规范化 / 去书目来源缀）",
+      "pdf_name_unconfirmed": "书本身份未确认 ⇒ 目录键回落 PDF 名（含扩展名）并标记，待确认后改"
+    }
+  },
+  "books": {
+    "秦汉印典 上海书画 金怀英  1997 ok.pdf": {
+      "dir_key": "7806350950",
+      "dir_key_source": "ISBN",
+      "isbn": "7806350950",
+      "pdf_name": "秦汉印典 上海书画 金怀英  1997 ok.pdf",
+      "note": "ISBN 由 Kevin 2026-10-11 给定（docs/image-naming-draft-v0.1.md §6 第 2 问裁定）。"
+    },
+    "古玺汇编 文物出版社 罗福颐  ok.pdf": {
+      "dir_key": "7501007985",
+      "dir_key_source": "ISBN",
+      "isbn": "7501007985",
+      "pdf_name": "古玺汇编 文物出版社 罗福颐  ok.pdf",
+      "note": "ISBN 由 Kevin 2026-10-11 给定（docs/image-naming-draft-v0.1.md §6 第 2 问裁定）。"
+    },
+    "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf": {
+      "dir_key": "黄牧甫印谱",
+      "dir_key_source": "chinese_title",
+      "pdf_name": "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf",
+      "note": "中文书名＝「黄牧甫印谱」（书目来源缀 `_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk)` 为人肉可读性去除；口径件 §6 逐字枚举该书中文书名为「黄牧甫印谱」）。**单点可改**：若 Jing 裁「机械去扩展名规范化」，改为 `黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk)`（＝ normalize_book_name 的机械结果）。"
+    },
+    "秦印类编 检索版.pdf": {
+      "dir_key": "秦印类编 检索版",
+      "dir_key_source": "chinese_title",
+      "pdf_name": "秦印类编 检索版.pdf",
+      "note": "中文书名＝「秦印类编 检索版」（＝去扩展名规范化；与 normalize_book_name 的机械结果逐字一致）。本单**样例产出**即落 output/books/秦印类编 检索版/。"
+    },
+    "tmp.pdf": {
+      "dir_key": "tmp.pdf",
+      "dir_key_source": "pdf_name_unconfirmed",
+      "pdf_name": "tmp.pdf",
+      "note": "上传通道落盘的临时名，书本身份**未经人工确认**（config/book_codes.json 记为高置信推定＝黄牧甫印谱上传件，但未采信）⇒ 目录键回落 PDF 名并标记。人工确认后改 dir_key / dir_key_source（口径件 §6.2 R-h）。"
+    },
+    "吴颐人篆刻作品展示.pdf": {
+      "dir_key": "吴颐人篆刻作品展示",
+      "dir_key_source": "chinese_title",
+      "pdf_name": "吴颐人篆刻作品展示.pdf",
+      "note": "无 ISBN 可用 ⇒ 落中文书名。中文书名＝「吴颐人篆刻作品展示」（＝去扩展名规范化 normalize_book_name 的机械结果，逐字一致）。键＝PDF 文件名（逐字，与 config/templates.json 同源）。"
+    },
+    "福庵印缀 原版 高清.pdf": {
+      "dir_key": "福庵印缀 原版 高清",
+      "dir_key_source": "chinese_title",
+      "pdf_name": "福庵印缀 原版 高清.pdf",
+      "note": "无 ISBN 可用 ⇒ 落中文书名。中文书名＝「福庵印缀 原版 高清」（＝去扩展名规范化 normalize_book_name 的机械结果，逐字一致；其中「原版 高清」为扫描品质缀）。**单点可改**：若裁「去扫描品质缀」，改为 `福庵印缀`（一句话可改，与黄牧甫印谱去书目来源缀同理；不影响其余键）。"
+    }
+  }
+}

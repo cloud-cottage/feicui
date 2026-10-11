@@ -1,0 +1,621 @@
+{
+  "generated_at": "2026-10-11T11:04:48+0800",
+  "render_dpi": 400.0,
+  "base_dpi": 144.0,
+  "area_scale": 7.716,
+  "min_area_template": 800,
+  "min_area_eff_int": 6172,
+  "template_used": {
+    "hsv_low": [
+      0,
+      120,
+      70
+    ],
+    "hsv_high": [
+      10,
+      255,
+      255
+    ],
+    "min_area": 800,
+    "text_offset": [
+      -120,
+      0,
+      110,
+      140
+    ],
+    "density_min": 0.002,
+    "density_max": 0.08,
+    "edge_enabled": true,
+    "pad_ratio": 0.15
+  },
+  "books": [
+    {
+      "pdf_rel": "inbox/20261011/吴颐人篆刻作品展示.pdf",
+      "pdf_total_pages": 32,
+      "samples": [
+        {
+          "page_1based": 1,
+          "in_range": true,
+          "out_size": "2205x4095px",
+          "stamps": 0,
+          "edges": 0,
+          "stamp_areas": [],
+          "render_s": 0.032,
+          "detect_s": 0.016,
+          "edge_s": 0.0
+        },
+        {
+          "page_1based": 2,
+          "in_range": true,
+          "out_size": "2205x4095px",
+          "stamps": 0,
+          "edges": 0,
+          "stamp_areas": [],
+          "render_s": 0.027,
+          "detect_s": 0.013,
+          "edge_s": 0.0
+        },
+        {
+          "page_1based": 3,
+          "in_range": true,
+          "out_size": "2205x4095px",
+          "stamps": 1,
+          "edges": 2,
+          "stamp_areas": [
+            106413.5
+          ],
+          "render_s": 0.024,
+          "detect_s": 0.011,
+          "edge_s": 0.01
+        },
+        {
+          "page_1based": 4,
+          "in_range": true,
+          "out_size": "2205x4095px",
+          "stamps": 0,
+          "edges": 0,
+          "stamp_areas": [],
+          "render_s": 0.022,
+          "detect_s": 0.014,
+          "edge_s": 0.0
+        },
+        {
+          "page_1based": 5,
+          "in_range": true,
+          "out_size": "2205x4095px",
+          "stamps": 1,
+          "edges": 0,
+          "stamp_areas": [
+            63317.5
+          ],
+          "render_s": 0.023,
+          "detect_s": 0.014,
+          "edge_s": 0.009
+        },
+        {
+          "page_1based": 6,
+          "in_range": true,
+          "out_size": "2205x4095px",
+          "stamps": 0,
+          "edges": 0,
+          "stamp_areas": [],
+          "render_s": 0.022,
+          "detect_s": 0.014,
+          "edge_s": 0.0
+        },
+        {
+          "page_1based": 7,
+          "in_range": true,
+          "out_size": "2205x4095px",
+          "stamps": 0,
+          "edges": 0,
+          "stamp_areas": [],
+          "render_s": 0.023,
+          "detect_s": 0.015,
+          "edge_s": 0.0
+        },
+        {
+          "page_1based": 8,
+          "in_range": true,
+          "out_size": "2205x4095px",
+          "stamps": 4,
+          "edges": 0,
+          "stamp_areas": [
+            16542.5,
+            43777.5,
+            9295.5,
+            12696.5
+          ],
+          "render_s": 0.024,
+          "detect_s": 0.015,
+          "edge_s": 0.009
+        },
+        {
+          "page_1based": 9,
+          "in_range": true,
+          "out_size": "2205x4095px",
+          "stamps": 0,
+          "edges": 0,
+          "stamp_areas": [],
+          "render_s": 0.024,
+          "detect_s": 0.014,
+          "edge_s": 0.0
+        },
+        {
+          "page_1based": 10,
+          "in_range": true,
+          "out_size": "2205x4095px",
+          "stamps": 1,
+          "edges": 0,
+          "stamp_areas": [
+            6381.0
+          ],
+          "render_s": 0.022,
+          "detect_s": 0.013,
+          "edge_s": 0.008
+        },
+        {
+          "page_1based": 11,
+          "in_range": true,
+          "out_size": "2205x4095px",
+          "stamps": 0,
+          "edges": 0,
+          "stamp_areas": [],
+          "render_s": 0.021,
+          "detect_s": 0.013,
+          "edge_s": 0.0
+        },
+        {
+          "page_1based": 12,
+          "in_range": true,
+          "out_size": "2205x4095px",
+          "stamps": 0,
+          "edges": 0,
+          "stamp_areas": [],
+          "render_s": 0.022,
+          "detect_s": 0.013,
+          "edge_s": 0.0
+        },
+        {
+          "page_1based": 13,
+          "in_range": true,
+          "out_size": "2205x4095px",
+          "stamps": 1,
+          "edges": 0,
+          "stamp_areas": [
+            7708.5
+          ],
+          "render_s": 0.022,
+          "detect_s": 0.014,
+          "edge_s": 0.008
+        },
+        {
+          "page_1based": 14,
+          "in_range": true,
+          "out_size": "2205x4095px",
+          "stamps": 0,
+          "edges": 0,
+          "stamp_areas": [],
+          "render_s": 0.021,
+          "detect_s": 0.013,
+          "edge_s": 0.0
+        },
+        {
+          "page_1based": 15,
+          "in_range": true,
+          "out_size": "2205x4095px",
+          "stamps": 0,
+          "edges": 0,
+          "stamp_areas": [],
+          "render_s": 0.022,
+          "detect_s": 0.013,
+          "edge_s": 0.0
+        },
+        {
+          "page_1based": 16,
+          "in_range": true,
+          "out_size": "2205x4095px",
+          "stamps": 0,
+          "edges": 0,
+          "stamp_areas": [],
+          "render_s": 0.03,
+          "detect_s": 0.015,
+          "edge_s": 0.0
+        },
+        {
+          "page_1based": 17,
+          "in_range": true,
+          "out_size": "2205x4095px",
+          "stamps": 4,
+          "edges": 0,
+          "stamp_areas": [
+            7793.0,
+            9311.5,
+            7268.0,
+            10277.0
+          ],
+          "render_s": 0.024,
+          "detect_s": 0.013,
+          "edge_s": 0.009
+        },
+        {
+          "page_1based": 18,
+          "in_range": true,
+          "out_size": "2205x4095px",
+          "stamps": 0,
+          "edges": 0,
+          "stamp_areas": [],
+          "render_s": 0.021,
+          "detect_s": 0.014,
+          "edge_s": 0.0
+        },
+        {
+          "page_1based": 19,
+          "in_range": true,
+          "out_size": "2205x4095px",
+          "stamps": 1,
+          "edges": 1,
+          "stamp_areas": [
+            163383.5
+          ],
+          "render_s": 0.023,
+          "detect_s": 0.015,
+          "edge_s": 0.012
+        },
+        {
+          "page_1based": 20,
+          "in_range": true,
+          "out_size": "2205x4095px",
+          "stamps": 0,
+          "edges": 0,
+          "stamp_areas": [],
+          "render_s": 0.024,
+          "detect_s": 0.013,
+          "edge_s": 0.0
+        },
+        {
+          "page_1based": 21,
+          "in_range": true,
+          "out_size": "2205x4095px",
+          "stamps": 0,
+          "edges": 0,
+          "stamp_areas": [],
+          "render_s": 0.021,
+          "detect_s": 0.013,
+          "edge_s": 0.0
+        },
+        {
+          "page_1based": 22,
+          "in_range": true,
+          "out_size": "2205x4095px",
+          "stamps": 0,
+          "edges": 0,
+          "stamp_areas": [],
+          "render_s": 0.022,
+          "detect_s": 0.014,
+          "edge_s": 0.0
+        },
+        {
+          "page_1based": 23,
+          "in_range": true,
+          "out_size": "2205x4095px",
+          "stamps": 1,
+          "edges": 0,
+          "stamp_areas": [
+            10116.5
+          ],
+          "render_s": 0.023,
+          "detect_s": 0.014,
+          "edge_s": 0.008
+        },
+        {
+          "page_1based": 24,
+          "in_range": true,
+          "out_size": "2205x4095px",
+          "stamps": 1,
+          "edges": 0,
+          "stamp_areas": [
+            84759.0
+          ],
+          "render_s": 0.022,
+          "detect_s": 0.013,
+          "edge_s": 0.008
+        },
+        {
+          "page_1based": 25,
+          "in_range": true,
+          "out_size": "2205x4095px",
+          "stamps": 0,
+          "edges": 0,
+          "stamp_areas": [],
+          "render_s": 0.022,
+          "detect_s": 0.015,
+          "edge_s": 0.0
+        },
+        {
+          "page_1based": 26,
+          "in_range": true,
+          "out_size": "2205x4095px",
+          "stamps": 0,
+          "edges": 0,
+          "stamp_areas": [],
+          "render_s": 0.022,
+          "detect_s": 0.014,
+          "edge_s": 0.0
+        },
+        {
+          "page_1based": 27,
+          "in_range": true,
+          "out_size": "2205x4095px",
+          "stamps": 1,
+          "edges": 0,
+          "stamp_areas": [
+            52527.5
+          ],
+          "render_s": 0.022,
+          "detect_s": 0.014,
+          "edge_s": 0.008
+        },
+        {
+          "page_1based": 28,
+          "in_range": true,
+          "out_size": "2205x4095px",
+          "stamps": 1,
+          "edges": 0,
+          "stamp_areas": [
+            128355.5
+          ],
+          "render_s": 0.023,
+          "detect_s": 0.013,
+          "edge_s": 0.009
+        },
+        {
+          "page_1based": 29,
+          "in_range": true,
+          "out_size": "2205x4095px",
+          "stamps": 4,
+          "edges": 0,
+          "stamp_areas": [
+            10832.0,
+            12716.0,
+            13448.5,
+            13141.5
+          ],
+          "render_s": 0.023,
+          "detect_s": 0.015,
+          "edge_s": 0.01
+        },
+        {
+          "page_1based": 30,
+          "in_range": true,
+          "out_size": "2205x4095px",
+          "stamps": 0,
+          "edges": 0,
+          "stamp_areas": [],
+          "render_s": 0.025,
+          "detect_s": 0.015,
+          "edge_s": 0.0
+        },
+        {
+          "page_1based": 31,
+          "in_range": true,
+          "out_size": "2205x4095px",
+          "stamps": 0,
+          "edges": 0,
+          "stamp_areas": [],
+          "render_s": 0.027,
+          "detect_s": 0.014,
+          "edge_s": 0.0
+        },
+        {
+          "page_1based": 32,
+          "in_range": true,
+          "out_size": "2205x4095px",
+          "stamps": 1,
+          "edges": 0,
+          "stamp_areas": [
+            86550.0
+          ],
+          "render_s": 0.023,
+          "detect_s": 0.014,
+          "edge_s": 0.008
+        }
+      ],
+      "pdf_name": "吴颐人篆刻作品展示.pdf"
+    },
+    {
+      "pdf_rel": "inbox/20261011/福庵印缀 原版 高清.pdf",
+      "pdf_total_pages": 236,
+      "samples": [
+        {
+          "page_1based": 1,
+          "in_range": true,
+          "out_size": "2331x4410px",
+          "stamps": 0,
+          "edges": 0,
+          "stamp_areas": [],
+          "render_s": 0.02,
+          "detect_s": 0.02,
+          "edge_s": 0.0
+        },
+        {
+          "page_1based": 2,
+          "in_range": true,
+          "out_size": "2331x4410px",
+          "stamps": 0,
+          "edges": 0,
+          "stamp_areas": [],
+          "render_s": 0.013,
+          "detect_s": 0.015,
+          "edge_s": 0.0
+        },
+        {
+          "page_1based": 3,
+          "in_range": true,
+          "out_size": "2331x4410px",
+          "stamps": 0,
+          "edges": 0,
+          "stamp_areas": [],
+          "render_s": 0.316,
+          "detect_s": 0.015,
+          "edge_s": 0.0
+        },
+        {
+          "page_1based": 30,
+          "in_range": true,
+          "out_size": "2331x4410px",
+          "stamps": 6,
+          "edges": 0,
+          "stamp_areas": [
+            79589.0,
+            267473.5,
+            19762.0,
+            190061.5,
+            57844.0,
+            119605.0
+          ],
+          "render_s": 0.688,
+          "detect_s": 0.018,
+          "edge_s": 0.013
+        },
+        {
+          "page_1based": 60,
+          "in_range": true,
+          "out_size": "2331x4410px",
+          "stamps": 5,
+          "edges": 0,
+          "stamp_areas": [
+            102743.5,
+            8418.0,
+            55777.0,
+            99628.5,
+            275576.0
+          ],
+          "render_s": 0.595,
+          "detect_s": 0.017,
+          "edge_s": 0.013
+        },
+        {
+          "page_1based": 90,
+          "in_range": true,
+          "out_size": "2331x4410px",
+          "stamps": 4,
+          "edges": 0,
+          "stamp_areas": [
+            127468.0,
+            8239.5,
+            7649.0,
+            129336.0
+          ],
+          "render_s": 0.615,
+          "detect_s": 0.018,
+          "edge_s": 0.013
+        },
+        {
+          "page_1based": 118,
+          "in_range": true,
+          "out_size": "2331x4410px",
+          "stamps": 6,
+          "edges": 0,
+          "stamp_areas": [
+            6924.0,
+            7164.5,
+            8806.5,
+            17192.0,
+            196048.0,
+            22112.5
+          ],
+          "render_s": 0.59,
+          "detect_s": 0.017,
+          "edge_s": 0.013
+        },
+        {
+          "page_1based": 150,
+          "in_range": true,
+          "out_size": "2331x4410px",
+          "stamps": 3,
+          "edges": 2,
+          "stamp_areas": [
+            39637.5,
+            8911.5,
+            73783.0
+          ],
+          "render_s": 0.603,
+          "detect_s": 0.018,
+          "edge_s": 0.015
+        },
+        {
+          "page_1based": 180,
+          "in_range": true,
+          "out_size": "2331x4410px",
+          "stamps": 7,
+          "edges": 0,
+          "stamp_areas": [
+            13636.0,
+            71932.0,
+            39402.5,
+            62743.5,
+            32947.5,
+            36924.5,
+            10364.5
+          ],
+          "render_s": 0.546,
+          "detect_s": 0.017,
+          "edge_s": 0.012
+        },
+        {
+          "page_1based": 200,
+          "in_range": true,
+          "out_size": "2331x4410px",
+          "stamps": 5,
+          "edges": 0,
+          "stamp_areas": [
+            159378.5,
+            201032.5,
+            169975.0,
+            105798.5,
+            72051.5
+          ],
+          "render_s": 0.598,
+          "detect_s": 0.021,
+          "edge_s": 0.014
+        },
+        {
+          "page_1based": 234,
+          "in_range": true,
+          "out_size": "2331x4410px",
+          "stamps": 0,
+          "edges": 0,
+          "stamp_areas": [],
+          "render_s": 0.307,
+          "detect_s": 0.015,
+          "edge_s": 0.0
+        },
+        {
+          "page_1based": 235,
+          "in_range": true,
+          "out_size": "2331x4410px",
+          "stamps": 0,
+          "edges": 0,
+          "stamp_areas": [],
+          "render_s": 0.009,
+          "detect_s": 0.016,
+          "edge_s": 0.0
+        },
+        {
+          "page_1based": 236,
+          "in_range": true,
+          "out_size": "2331x4410px",
+          "stamps": 0,
+          "edges": 0,
+          "stamp_areas": [],
+          "render_s": 0.009,
+          "detect_s": 0.016,
+          "edge_s": 0.0
+        }
+      ],
+      "pdf_name": "福庵印缀 原版 高清.pdf"
+    }
+  ],
+  "repo_local_yinpu_db_created_by_run": false
+}

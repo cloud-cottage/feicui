@@ -1,0 +1,49 @@
+--- 吴颐人篆刻作品展示.pdf ---
+  page    1   2205x4095px  stamps=  0  edges= 0  render=0.032s detect=0.016s
+  page    2   2205x4095px  stamps=  0  edges= 0  render=0.027s detect=0.013s
+  page    3   2205x4095px  stamps=  1  edges= 2  render=0.024s detect=0.011s
+  page    4   2205x4095px  stamps=  0  edges= 0  render=0.022s detect=0.014s
+  page    5   2205x4095px  stamps=  1  edges= 0  render=0.023s detect=0.014s
+  page    6   2205x4095px  stamps=  0  edges= 0  render=0.022s detect=0.014s
+  page    7   2205x4095px  stamps=  0  edges= 0  render=0.023s detect=0.015s
+  page    8   2205x4095px  stamps=  4  edges= 0  render=0.024s detect=0.015s
+  page    9   2205x4095px  stamps=  0  edges= 0  render=0.024s detect=0.014s
+  page   10   2205x4095px  stamps=  1  edges= 0  render=0.022s detect=0.013s
+  page   11   2205x4095px  stamps=  0  edges= 0  render=0.021s detect=0.013s
+  page   12   2205x4095px  stamps=  0  edges= 0  render=0.022s detect=0.013s
+  page   13   2205x4095px  stamps=  1  edges= 0  render=0.022s detect=0.014s
+  page   14   2205x4095px  stamps=  0  edges= 0  render=0.021s detect=0.013s
+  page   15   2205x4095px  stamps=  0  edges= 0  render=0.022s detect=0.013s
+  page   16   2205x4095px  stamps=  0  edges= 0  render=0.03s detect=0.015s
+  page   17   2205x4095px  stamps=  4  edges= 0  render=0.024s detect=0.013s
+  page   18   2205x4095px  stamps=  0  edges= 0  render=0.021s detect=0.014s
+  page   19   2205x4095px  stamps=  1  edges= 1  render=0.023s detect=0.015s
+  page   20   2205x4095px  stamps=  0  edges= 0  render=0.024s detect=0.013s
+  page   21   2205x4095px  stamps=  0  edges= 0  render=0.021s detect=0.013s
+  page   22   2205x4095px  stamps=  0  edges= 0  render=0.022s detect=0.014s
+  page   23   2205x4095px  stamps=  1  edges= 0  render=0.023s detect=0.014s
+  page   24   2205x4095px  stamps=  1  edges= 0  render=0.022s detect=0.013s
+  page   25   2205x4095px  stamps=  0  edges= 0  render=0.022s detect=0.015s
+  page   26   2205x4095px  stamps=  0  edges= 0  render=0.022s detect=0.014s
+  page   27   2205x4095px  stamps=  1  edges= 0  render=0.022s detect=0.014s
+  page   28   2205x4095px  stamps=  1  edges= 0  render=0.023s detect=0.013s
+  page   29   2205x4095px  stamps=  4  edges= 0  render=0.023s detect=0.015s
+  page   30   2205x4095px  stamps=  0  edges= 0  render=0.025s detect=0.015s
+  page   31   2205x4095px  stamps=  0  edges= 0  render=0.027s detect=0.014s
+  page   32   2205x4095px  stamps=  1  edges= 0  render=0.023s detect=0.014s
+--- 福庵印缀 原版 高清.pdf ---
+  page    1   2331x4410px  stamps=  0  edges= 0  render=0.02s detect=0.02s
+  page    2   2331x4410px  stamps=  0  edges= 0  render=0.013s detect=0.015s
+  page    3   2331x4410px  stamps=  0  edges= 0  render=0.316s detect=0.015s
+  page   30   2331x4410px  stamps=  6  edges= 0  render=0.688s detect=0.018s
+  page   60   2331x4410px  stamps=  5  edges= 0  render=0.595s detect=0.017s
+  page   90   2331x4410px  stamps=  4  edges= 0  render=0.615s detect=0.018s
+  page  118   2331x4410px  stamps=  6  edges= 0  render=0.59s detect=0.017s
+  page  150   2331x4410px  stamps=  3  edges= 2  render=0.603s detect=0.018s
+  page  180   2331x4410px  stamps=  7  edges= 0  render=0.546s detect=0.017s
+  page  200   2331x4410px  stamps=  5  edges= 0  render=0.598s detect=0.021s
+  page  234   2331x4410px  stamps=  0  edges= 0  render=0.307s detect=0.015s
+  page  235   2331x4410px  stamps=  0  edges= 0  render=0.009s detect=0.016s
+  page  236   2331x4410px  stamps=  0  edges= 0  render=0.009s detect=0.016s
+
+JSON written -> ops/book-calibration/20261011-two-new-books/detect_readings.json

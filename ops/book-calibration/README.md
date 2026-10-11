@@ -77,3 +77,16 @@
 - `load_assert.txt` —— `load_templates()` 8 键断言输出
 - `detect_readings.txt` / `.json` —— 四页只读检测读数
 - `prod_db_fingerprint.txt` —— 生产库只读守卫
+
+---
+
+## 7. 追加（2026-10-11）：两本新书标定 ＋ 全量 job
+
+本目录下新开子目录 **`20261011-two-new-books/`**（**只增不改本 README 前文**）——
+对 **`吴颐人篆刻作品展示.pdf`（32 页）** 与 **`福庵印缀 原版 高清.pdf`（236 页）** 做同款标定 ＋ 建集：
+
+- **标定**：两本各 16 键、**8 必需键齐全**、与既有 4 本**逐键对齐**；`books.template_usable()` 均 `True`。
+  `templates.json` 顶层 **4 → 6**（md5 `09daa84788bc929ca0904c88283977c6` → `0fa50f000161f6ac1bb5a58215db5d8b`）。
+- **`book_dir_keys.json`** 加法登记两本（无 ISBN ⇒ `chinese_title`；`4 → 6` 项，md5 `e76d7ec3ca6ed5ff10a490191eb7be24` → `e549ab4dec586ba154146fdf414c2fcd`）。
+- **两 job（E1 建单，均全量）**：`吴颐人` ＝ `job-e919e55e979f4386908918a6f8136e85`（**1–32**）；`福庵` ＝ `job-e1723d3d7b7e4f03aa578b3d84f32518`（**1–236**）。池即时读数：福庵 `RUNNING`、`template_unusable` 计数 ＝ **0**。
+- **详见** `20261011-two-new-books/README.md`（标定参数 / 抽样页读数 / job id 与范围 / md5 before-after / 红线核对）。

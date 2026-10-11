@@ -1,0 +1,23 @@
+diff --git a/config/book_dir_keys.json b/config/book_dir_keys.json
+index 21eed13..86f53c4 100644
+--- a/config/book_dir_keys.json
++++ b/config/book_dir_keys.json
+@@ -42,6 +42,18 @@
+       "dir_key_source": "pdf_name_unconfirmed",
+       "pdf_name": "tmp.pdf",
+       "note": "上传通道落盘的临时名，书本身份**未经人工确认**（config/book_codes.json 记为高置信推定＝黄牧甫印谱上传件，但未采信）⇒ 目录键回落 PDF 名并标记。人工确认后改 dir_key / dir_key_source（口径件 §6.2 R-h）。"
++    },
++    "吴颐人篆刻作品展示.pdf": {
++      "dir_key": "吴颐人篆刻作品展示",
++      "dir_key_source": "chinese_title",
++      "pdf_name": "吴颐人篆刻作品展示.pdf",
++      "note": "无 ISBN 可用 ⇒ 落中文书名。中文书名＝「吴颐人篆刻作品展示」（＝去扩展名规范化 normalize_book_name 的机械结果，逐字一致）。键＝PDF 文件名（逐字，与 config/templates.json 同源）。"
++    },
++    "福庵印缀 原版 高清.pdf": {
++      "dir_key": "福庵印缀 原版 高清",
++      "dir_key_source": "chinese_title",
++      "pdf_name": "福庵印缀 原版 高清.pdf",
++      "note": "无 ISBN 可用 ⇒ 落中文书名。中文书名＝「福庵印缀 原版 高清」（＝去扩展名规范化 normalize_book_name 的机械结果，逐字一致；其中「原版 高清」为扫描品质缀）。**单点可改**：若裁「去扫描品质缀」，改为 `福庵印缀`（一句话可改，与黄牧甫印谱去书目来源缀同理；不影响其余键）。"
+     }
+   }
+ }

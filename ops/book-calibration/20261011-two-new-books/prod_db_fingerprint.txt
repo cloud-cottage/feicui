@@ -1,0 +1,28 @@
+生产库（只读 URI 打开）= /Users/kevin/bistro/xiai/data/yinpu.db
+
+【基线（本单开跑前，Kong 只读实测）】
+  stamps = 7472 / jobs = 10 / job_pages = 902
+  （注：同窗口父级/池对既有 job 亦有正常落写，基线取本单开始时点读数）
+
+【本单新建 2 个 job（E1，201）⇒ jobs 行 +2、job_pages 行 +268】
+  job-e919e55e979f4386908918a6f8136e85  吴颐人篆刻作品展示.pdf  pages 1–32 (total 32)  job_pages=32
+  job-e1723d3d7b7e4f03aa578b3d84f32518  福庵印缀 原版 高清.pdf  pages 1–236 (total 236)  job_pages=236
+
+【现读数（记录时点；池正在跑 ⇒ stamps 数随解析增长，属正常 job 产出）】
+  stamps = 7505 / jobs = 12 / job_pages = 1170
+
+【红线核对】
+  · 既有 10 个 job 行**逐字段未改**（下表：job_id/state/pdf_name/page 区间/total/rerun）
+      job-502016dd118a4bc6b7d73b5e0313d1b4  DONE  tmp.pdf  13–19  total=7 rerun=0
+      job-ccb79b59bd804520ba2cf5ab7df45e29  DONE  tmp.pdf  13–19  total=7 rerun=0
+      job-20e180ea0ffe493087a0770db0bb8264  DONE  tmp.pdf  13–19  total=7 rerun=0
+      job-f34120a8f1d6482db4fd55b33cd46f2f  DONE  秦汉印典 上海书画 金怀英  1997 ok.pdf  5–8  total=4 rerun=0
+      job-6e7471ff9c464695b9463cdad5122246  DONE  tmp.pdf  13–19  total=7 rerun=0
+      job-90344a7802954afdaad447d875f2e15b  DONE  秦印类编 检索版.pdf  29–794  total=766 rerun=0
+      job-13539d819b324480ad7f4324670dbc55  DONE  秦印类编 检索版.pdf  29–39  total=11 rerun=0
+      job-e9656892ddb64395b7812aef93f227ae  FAILED_PARTIAL  福庵印缀 原版 高清.pdf  25–35  total=11 rerun=0
+      job-2c3a36fe29c04af1ad1b80c5672c8ad4  FAILED_PARTIAL  吴颐人篆刻作品展示.pdf  1–32  total=32 rerun=0
+      job-64bd6bebd36240a7b338c02c813302da  DONE  黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf  1–50  total=50 rerun=0
+  · 未手改 DB、未直插 jobs 行：新增行一律经 E1（见 jobs_created.json）
+  · config/templates.json 与 config/book_dir_keys.json **只许加法**（见 load_assert.txt）
+  · 未删任何文件；未碰印章线

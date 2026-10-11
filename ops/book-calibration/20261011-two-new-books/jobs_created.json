@@ -1,0 +1,31 @@
+{
+  "channel": "E1 POST /api/jobs（仓内既有建 job 端点；http://127.0.0.1:5196）",
+  "why_not_e8": "E8 只落盘（inbox），不建 job；两本 PDF 已在 inbox/20261011/，故直接走 E1 建 job（两个旧 job 亦走此通道）。",
+  "why_new_not_rerun": "既有 FAILED_PARTIAL job 为终态，池 claim_job 只认 QUEUED/RUNNING/PAUSED；对既有 job 改范围需改 jobs 既有行 ⇒ 违红线②。故新建 job（派单允许的后备路径）。",
+  "created": {
+    "job-e919e55e979f4386908918a6f8136e85": {
+      "pdf_name": "吴颐人篆刻作品展示.pdf",
+      "pdf_path": "/Users/kevin/bistro/xiai/feicui/inbox/20261011/吴颐人篆刻作品展示.pdf",
+      "page_from": 1,
+      "page_to": 32,
+      "total_pages": 32,
+      "state_at_record": "QUEUED",
+      "rerun": 0,
+      "created_at": "2026-10-11T11:03:43+08:00",
+      "error": "",
+      "job_pages_rows": 32
+    },
+    "job-e1723d3d7b7e4f03aa578b3d84f32518": {
+      "pdf_name": "福庵印缀 原版 高清.pdf",
+      "pdf_path": "/Users/kevin/bistro/xiai/feicui/inbox/20261011/福庵印缀 原版 高清.pdf",
+      "page_from": 1,
+      "page_to": 236,
+      "total_pages": 236,
+      "state_at_record": "RUNNING",
+      "rerun": 0,
+      "created_at": "2026-10-11T11:03:43+08:00",
+      "error": "",
+      "job_pages_rows": 236
+    }
+  }
+}

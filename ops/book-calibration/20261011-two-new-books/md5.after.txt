@@ -1,0 +1,2 @@
+MD5 (config/templates.json) = 0fa50f000161f6ac1bb5a58215db5d8b
+MD5 (config/book_dir_keys.json) = e549ab4dec586ba154146fdf414c2fcd

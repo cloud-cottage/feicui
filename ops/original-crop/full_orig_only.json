@@ -1,0 +1,687 @@
+{
+  "generated_at": "2026-10-11T11:53:58+0800",
+  "repo": "/Users/kevin/bistro/xiai/feicui",
+  "db_path": "/Users/kevin/bistro/xiai/data/yinpu.db",
+  "out_root": "/Users/kevin/bistro/xiai/feicui/output/books",
+  "scope": "all",
+  "books": [
+    "tmp.pdf",
+    "古玺汇编 文物出版社 罗福颐  ok.pdf",
+    "吴颐人篆刻作品展示.pdf",
+    "福庵印缀 原版 高清.pdf",
+    "秦印类编 检索版.pdf",
+    "秦汉印典 上海书画 金怀英  1997 ok.pdf",
+    "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf"
+  ],
+  "page_filter": null,
+  "correction_algorithm": "dual-layer-v3",
+  "correction_params": {
+    "V3_LIGHTNESS_V_MIN": 0.7,
+    "V3_FG_CHROMA_STRENGTH": 1.0,
+    "V3_PAPER_MODE": "threshold",
+    "V3_CLEAN": false,
+    "INK_RATIO_MIN": 0.02,
+    "TARGET_HEX": "#C95021"
+  },
+  "tiff_container": "RGB 8-bit + tiff_deflate (Deflate, 无损)",
+  "webp_quality": 95,
+  "write_webp": false,
+  "write_original": true,
+  "orig_only": true,
+  "original_crop": {
+    "enabled": true,
+    "orig_only": true,
+    "suffix": "-O",
+    "naming": "P<page>-C<col>-R<row>-O.tiff（大写 O、短横、不补零；后缀在扩展名之前）",
+    "definition": "400 dpi 渲染后按库内 bbox 原样裁出，**不做任何颜色处理**",
+    "container": "RGB 8-bit + tiff_deflate（与校正件同容器）",
+    "落点": "output/books/<目录键>/（与校正件同目录）",
+    "落库": "不新增列；O 路径由命名规则派生（校正件名换 `-O`）",
+    "idempotency": "按解码像素判（不得按文件 sha256）"
+  },
+  "layout": "original-only",
+  "render_dpi": 400,
+  "naming": "P<page>-C<col>-R<row> (大写/短横/不补零)",
+  "per_book": {
+    "tmp.pdf": {
+      "pdf_name": "tmp.pdf",
+      "pdf_path": "/Users/kevin/bistro/xiai/feicui/tmp.pdf",
+      "dir_key": "tmp.pdf",
+      "out_dir": "output/books/tmp.pdf",
+      "pages": 7,
+      "stamps": 31,
+      "written_tiff": 0,
+      "written_webp": 0,
+      "failed": 0,
+      "skipped_tiff_existing": 0,
+      "written_original": 17,
+      "skipped_original_existing": 14,
+      "tiff_bytes": 0,
+      "webp_bytes": 0,
+      "max_tiff": null,
+      "max_webp": null,
+      "original_bytes": 369070,
+      "max_original": {
+        "name": "P14-C4-R1-O.tiff",
+        "bytes": 121946,
+        "rel": "output/books/tmp.pdf/P14-C4-R1-O.tiff"
+      },
+      "original_files_touched": 31,
+      "webp_written_this_run": 0,
+      "elapsed_s": 2.258,
+      "mode": "orig-only"
+    },
+    "古玺汇编 文物出版社 罗福颐  ok.pdf": {
+      "pdf_name": "古玺汇编 文物出版社 罗福颐  ok.pdf",
+      "pdf_path": "/Users/kevin/Downloads/古玺汇编 文物出版社 罗福颐  ok.pdf",
+      "dir_key": "7501007985",
+      "out_dir": "output/books/7501007985",
+      "pages": 3,
+      "stamps": 23,
+      "written_tiff": 0,
+      "written_webp": 0,
+      "failed": 0,
+      "skipped_tiff_existing": 0,
+      "written_original": 7,
+      "skipped_original_existing": 16,
+      "tiff_bytes": 0,
+      "webp_bytes": 0,
+      "max_tiff": null,
+      "max_webp": null,
+      "original_bytes": 9636726,
+      "max_original": {
+        "name": "P24-C2-R1-O.tiff",
+        "bytes": 720178,
+        "rel": "output/books/7501007985/P24-C2-R1-O.tiff"
+      },
+      "original_files_touched": 23,
+      "webp_written_this_run": 0,
+      "elapsed_s": 0.601,
+      "mode": "orig-only"
+    },
+    "吴颐人篆刻作品展示.pdf": {
+      "pdf_name": "吴颐人篆刻作品展示.pdf",
+      "pdf_path": "/Users/kevin/Downloads/吴颐人篆刻作品展示.pdf",
+      "dir_key": "吴颐人篆刻作品展示",
+      "out_dir": "output/books/吴颐人篆刻作品展示",
+      "pages": 13,
+      "stamps": 22,
+      "written_tiff": 0,
+      "written_webp": 0,
+      "failed": 0,
+      "skipped_tiff_existing": 0,
+      "written_original": 6,
+      "skipped_original_existing": 16,
+      "tiff_bytes": 0,
+      "webp_bytes": 0,
+      "max_tiff": null,
+      "max_webp": null,
+      "original_bytes": 1040962,
+      "max_original": {
+        "name": "P19-C1-R1-O.tiff",
+        "bytes": 148902,
+        "rel": "output/books/吴颐人篆刻作品展示/P19-C1-R1-O.tiff"
+      },
+      "original_files_touched": 22,
+      "webp_written_this_run": 0,
+      "elapsed_s": 0.341,
+      "mode": "orig-only"
+    },
+    "福庵印缀 原版 高清.pdf": {
+      "pdf_name": "福庵印缀 原版 高清.pdf",
+      "pdf_path": "/Users/kevin/Downloads/福庵印缀 原版 高清.pdf",
+      "dir_key": "福庵印缀 原版 高清",
+      "out_dir": "output/books/福庵印缀 原版 高清",
+      "pages": 211,
+      "stamps": 1214,
+      "written_tiff": 0,
+      "written_webp": 0,
+      "failed": 0,
+      "skipped_tiff_existing": 0,
+      "written_original": 1165,
+      "skipped_original_existing": 49,
+      "tiff_bytes": 0,
+      "webp_bytes": 0,
+      "max_tiff": null,
+      "max_webp": null,
+      "original_bytes": 180185686,
+      "max_original": {
+        "name": "P64-C1-R2-O.tiff",
+        "bytes": 932818,
+        "rel": "output/books/福庵印缀 原版 高清/P64-C1-R2-O.tiff"
+      },
+      "original_files_touched": 1214,
+      "webp_written_this_run": 0,
+      "elapsed_s": 118.574,
+      "mode": "orig-only"
+    },
+    "秦印类编 检索版.pdf": {
+      "pdf_name": "秦印类编 检索版.pdf",
+      "pdf_path": "/Users/kevin/Downloads/秦印类编 检索版.pdf",
+      "dir_key": "秦印类编 检索版",
+      "out_dir": "output/books/秦印类编 检索版",
+      "pages": 765,
+      "stamps": 7183,
+      "written_tiff": 0,
+      "written_webp": 0,
+      "failed": 0,
+      "skipped_tiff_existing": 0,
+      "written_original": 7121,
+      "skipped_original_existing": 62,
+      "tiff_bytes": 0,
+      "webp_bytes": 0,
+      "max_tiff": null,
+      "max_webp": null,
+      "original_bytes": 700908370,
+      "max_original": {
+        "name": "P82-C1-R2-O.tiff",
+        "bytes": 690930,
+        "rel": "output/books/秦印类编 检索版/P82-C1-R2-O.tiff"
+      },
+      "original_files_touched": 7183,
+      "webp_written_this_run": 0,
+      "elapsed_s": 134.518,
+      "mode": "orig-only"
+    },
+    "秦汉印典 上海书画 金怀英  1997 ok.pdf": {
+      "pdf_name": "秦汉印典 上海书画 金怀英  1997 ok.pdf",
+      "pdf_path": "/Users/kevin/Downloads/秦汉印典 上海书画 金怀英  1997 ok.pdf",
+      "dir_key": "7806350950",
+      "out_dir": "output/books/7806350950",
+      "pages": 4,
+      "stamps": 35,
+      "written_tiff": 0,
+      "written_webp": 0,
+      "failed": 0,
+      "skipped_tiff_existing": 0,
+      "written_original": 15,
+      "skipped_original_existing": 20,
+      "tiff_bytes": 0,
+      "webp_bytes": 0,
+      "max_tiff": null,
+      "max_webp": null,
+      "original_bytes": 1638228,
+      "max_original": {
+        "name": "P5-C3-R5-O.tiff",
+        "bytes": 123600,
+        "rel": "output/books/7806350950/P5-C3-R5-O.tiff"
+      },
+      "original_files_touched": 35,
+      "webp_written_this_run": 0,
+      "elapsed_s": 0.251,
+      "mode": "orig-only"
+    },
+    "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf": {
+      "pdf_name": "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf",
+      "pdf_path": "/Users/kevin/Downloads/黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf",
+      "dir_key": "黄牧甫印谱",
+      "out_dir": "output/books/黄牧甫印谱",
+      "pages": 38,
+      "stamps": 200,
+      "written_tiff": 0,
+      "written_webp": 0,
+      "failed": 0,
+      "skipped_tiff_existing": 0,
+      "written_original": 164,
+      "skipped_original_existing": 36,
+      "tiff_bytes": 0,
+      "webp_bytes": 0,
+      "max_tiff": null,
+      "max_webp": null,
+      "original_bytes": 37083844,
+      "max_original": {
+        "name": "P40-C1-R1-O.tiff",
+        "bytes": 1691450,
+        "rel": "output/books/黄牧甫印谱/P40-C1-R1-O.tiff"
+      },
+      "original_files_touched": 200,
+      "webp_written_this_run": 0,
+      "elapsed_s": 14.507,
+      "mode": "orig-only"
+    }
+  },
+  "failures": [],
+  "correction_sample": [],
+  "fp10_before": "3713cc3cf11b6d3bfe0867bf9f25a84911b2e8119e6ffe4e615f71430b526d41",
+  "fp10_rows_before": 8708,
+  "elapsed_s_total": 271.075,
+  "fp10_after": "3713cc3cf11b6d3bfe0867bf9f25a84911b2e8119e6ffe4e615f71430b526d41",
+  "fp10_rows_after": 8708,
+  "fp10_identical": true,
+  "checks": {
+    "scope_books": [
+      "tmp.pdf",
+      "古玺汇编 文物出版社 罗福颐  ok.pdf",
+      "吴颐人篆刻作品展示.pdf",
+      "福庵印缀 原版 高清.pdf",
+      "秦印类编 检索版.pdf",
+      "秦汉印典 上海书画 金怀英  1997 ok.pdf",
+      "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf"
+    ],
+    "rows_in_scope": 8708,
+    "layout_spec": "TIFF-only（本地不再保存 webp；Kevin 2026-10-11 口径变更） ＋ 原始切片 O（`-O` 后缀，2026-10-11 新增）",
+    "null_new_columns": {
+      "count": 0,
+      "detail": []
+    },
+    "name_regex_tiff": {
+      "checked": 8708,
+      "mismatch_count": 0,
+      "detail": []
+    },
+    "page_cr_unique": {
+      "conflicts": 0,
+      "detail": []
+    },
+    "two_way_reconcile_tiff": {
+      "db_expected_tiff": 8708,
+      "disk_tiff": 8708,
+      "missing_tiff": {
+        "count": 0,
+        "detail": []
+      },
+      "orphan_tiff": {
+        "count": 0,
+        "detail": []
+      },
+      "unexpected_P_files": {
+        "count": 0,
+        "detail": []
+      }
+    },
+    "original_crop": {
+      "expect_original": true,
+      "name_regex_orig": {
+        "checked": 8708,
+        "mismatch_count": 0
+      },
+      "two_way_reconcile_orig": {
+        "db_expected_orig": 8708,
+        "disk_orig": 8708,
+        "missing_orig": {
+          "count": 0,
+          "detail": []
+        },
+        "orphan_orig": {
+          "count": 0,
+          "detail": []
+        }
+      }
+    },
+    "legacy_webp_present": {
+      "count": 0,
+      "note": "本轮口径变更前已产出的 webp（新命名目录下）——**只列不删**，删除与 stamps.img_path／E6 取图端点一起处置，另有专单。",
+      "listed_cap": 200,
+      "detail": []
+    }
+  },
+  "sizes": {
+    "tiff_files": 8708,
+    "webp_files": 0,
+    "original_files": 8708,
+    "tiff_bytes": 395303130,
+    "webp_bytes": 0,
+    "original_bytes": 930862886,
+    "tiff_total_mib": 376.99,
+    "webp_total_mib": 0.0,
+    "original_total_mib": 887.74,
+    "original_mean_bytes": 106897.4,
+    "tiff_mean_bytes": 45395.4,
+    "tiff_plus_original_total_mib": 1264.73,
+    "max_tiff": {
+      "bytes": 713522,
+      "path": "output/books/黄牧甫印谱/P40-C1-R1.tiff",
+      "name": "P40-C1-R1.tiff"
+    },
+    "max_webp": {
+      "bytes": -1,
+      "path": null
+    },
+    "max_original": {
+      "bytes": 1691450,
+      "path": "output/books/黄牧甫印谱/P40-C1-R1-O.tiff",
+      "name": "P40-C1-R1-O.tiff"
+    },
+    "limit_4mib": 4194304,
+    "max_tiff_within_4mib": true,
+    "max_webp_within_4mib": true,
+    "max_original_within_4mib": true,
+    "webp_note": "webp 为本轮口径变更**之前**已产出的遗留件（只列不删）；新口径 TIFF-only ⇒ 本次/复跑**不再产 webp**（webp_written=0）。",
+    "original_note": "原始切片 O ＝ 400 dpi 渲染后按库内 bbox 原样的裁片（**无颜色处理**）；单张最大字节对照 xiai 影像库 `store` 上限 4 MiB。"
+  },
+  "o4_container_check": {
+    "criterion": "mode=RGB && Photometric=2 && Compression=8（Deflate） && Predictor=2；非 JPEG-in-TIFF",
+    "checked": 30,
+    "bad_count": 0,
+    "all_ok": true,
+    "sample": [
+      {
+        "name": "P13-C1-R1-O.tiff",
+        "rel": "output/books/tmp.pdf/P13-C1-R1-O.tiff",
+        "mode": "RGB",
+        "size": [
+          123,
+          122
+        ],
+        "compression": 8,
+        "photometric": 2,
+        "predictor": 2,
+        "samples_per_pixel": 3,
+        "bits_per_sample": [
+          8,
+          8,
+          8
+        ],
+        "ok": true
+      },
+      {
+        "name": "P13-C2-R1-O.tiff",
+        "rel": "output/books/tmp.pdf/P13-C2-R1-O.tiff",
+        "mode": "RGB",
+        "size": [
+          142,
+          145
+        ],
+        "compression": 8,
+        "photometric": 2,
+        "predictor": 2,
+        "samples_per_pixel": 3,
+        "bits_per_sample": [
+          8,
+          8,
+          8
+        ],
+        "ok": true
+      },
+      {
+        "name": "P13-C3-R1-O.tiff",
+        "rel": "output/books/tmp.pdf/P13-C3-R1-O.tiff",
+        "mode": "RGB",
+        "size": [
+          92,
+          70
+        ],
+        "compression": 8,
+        "photometric": 2,
+        "predictor": 2,
+        "samples_per_pixel": 3,
+        "bits_per_sample": [
+          8,
+          8,
+          8
+        ],
+        "ok": true
+      },
+      {
+        "name": "P13-C4-R1-O.tiff",
+        "rel": "output/books/tmp.pdf/P13-C4-R1-O.tiff",
+        "mode": "RGB",
+        "size": [
+          83,
+          84
+        ],
+        "compression": 8,
+        "photometric": 2,
+        "predictor": 2,
+        "samples_per_pixel": 3,
+        "bits_per_sample": [
+          8,
+          8,
+          8
+        ],
+        "ok": true
+      },
+      {
+        "name": "P13-C4-R2-O.tiff",
+        "rel": "output/books/tmp.pdf/P13-C4-R2-O.tiff",
+        "mode": "RGB",
+        "size": [
+          125,
+          126
+        ],
+        "compression": 8,
+        "photometric": 2,
+        "predictor": 2,
+        "samples_per_pixel": 3,
+        "bits_per_sample": [
+          8,
+          8,
+          8
+        ],
+        "ok": true
+      },
+      {
+        "name": "P13-C4-R3-O.tiff",
+        "rel": "output/books/tmp.pdf/P13-C4-R3-O.tiff",
+        "mode": "RGB",
+        "size": [
+          142,
+          145
+        ],
+        "compression": 8,
+        "photometric": 2,
+        "predictor": 2,
+        "samples_per_pixel": 3,
+        "bits_per_sample": [
+          8,
+          8,
+          8
+        ],
+        "ok": true
+      },
+      {
+        "name": "P14-C1-R1-O.tiff",
+        "rel": "output/books/tmp.pdf/P14-C1-R1-O.tiff",
+        "mode": "RGB",
+        "size": [
+          76,
+          111
+        ],
+        "compression": 8,
+        "photometric": 2,
+        "predictor": 2,
+        "samples_per_pixel": 3,
+        "bits_per_sample": [
+          8,
+          8,
+          8
+        ],
+        "ok": true
+      },
+      {
+        "name": "P14-C1-R2-O.tiff",
+        "rel": "output/books/tmp.pdf/P14-C1-R2-O.tiff",
+        "mode": "RGB",
+        "size": [
+          99,
+          105
+        ],
+        "compression": 8,
+        "photometric": 2,
+        "predictor": 2,
+        "samples_per_pixel": 3,
+        "bits_per_sample": [
+          8,
+          8,
+          8
+        ],
+        "ok": true
+      },
+      {
+        "name": "P14-C2-R1-O.tiff",
+        "rel": "output/books/tmp.pdf/P14-C2-R1-O.tiff",
+        "mode": "RGB",
+        "size": [
+          73,
+          73
+        ],
+        "compression": 8,
+        "photometric": 2,
+        "predictor": 2,
+        "samples_per_pixel": 3,
+        "bits_per_sample": [
+          8,
+          8,
+          8
+        ],
+        "ok": true
+      },
+      {
+        "name": "P14-C2-R2-O.tiff",
+        "rel": "output/books/tmp.pdf/P14-C2-R2-O.tiff",
+        "mode": "RGB",
+        "size": [
+          101,
+          106
+        ],
+        "compression": 8,
+        "photometric": 2,
+        "predictor": 2,
+        "samples_per_pixel": 3,
+        "bits_per_sample": [
+          8,
+          8,
+          8
+        ],
+        "ok": true
+      }
+    ],
+    "bad": []
+  },
+  "totals": {
+    "stamps_in_scope": 8708,
+    "written_tiff": 8708,
+    "written_original": 8708,
+    "tiff_written_this_run": 0,
+    "tiff_skipped_existing": 0,
+    "original_written_this_run": 8495,
+    "original_skipped_existing": 213,
+    "webp_written_this_run": 0,
+    "webp_present_legacy": 0,
+    "failures": 0,
+    "tiff_bytes": 395303130,
+    "webp_bytes": 0,
+    "original_bytes": 930862886
+  },
+  "idempotency": {
+    "tmp.pdf": {
+      "method": "decode-and-compare-pixels (NOT file sha256)",
+      "checked": 6,
+      "pixel_mismatch_count": 0,
+      "pixel_mismatch": [],
+      "reencode_decoded_pixels_stable": true,
+      "byte_identical_on_resave": 6,
+      "note": "同参数二次产出 ⇒ 解码像素逐字节相同；文件 sha256 可不同（Pillow tiff_deflate 大图末 strip 对齐填充字节未初始化）。",
+      "original": {
+        "method": "decode-and-compare-pixels vs 400dpi render（原始切片 O）",
+        "checked": 6,
+        "pixel_mismatch_count": 0,
+        "pixel_mismatch": [],
+        "reencode_decoded_pixels_stable": true,
+        "byte_identical_on_resave": 6
+      }
+    },
+    "古玺汇编 文物出版社 罗福颐  ok.pdf": {
+      "method": "decode-and-compare-pixels (NOT file sha256)",
+      "checked": 3,
+      "pixel_mismatch_count": 0,
+      "pixel_mismatch": [],
+      "reencode_decoded_pixels_stable": true,
+      "byte_identical_on_resave": 3,
+      "note": "同参数二次产出 ⇒ 解码像素逐字节相同；文件 sha256 可不同（Pillow tiff_deflate 大图末 strip 对齐填充字节未初始化）。",
+      "original": {
+        "method": "decode-and-compare-pixels vs 400dpi render（原始切片 O）",
+        "checked": 3,
+        "pixel_mismatch_count": 0,
+        "pixel_mismatch": [],
+        "reencode_decoded_pixels_stable": true,
+        "byte_identical_on_resave": 0
+      }
+    },
+    "吴颐人篆刻作品展示.pdf": {
+      "method": "decode-and-compare-pixels (NOT file sha256)",
+      "checked": 6,
+      "pixel_mismatch_count": 0,
+      "pixel_mismatch": [],
+      "reencode_decoded_pixels_stable": true,
+      "byte_identical_on_resave": 6,
+      "note": "同参数二次产出 ⇒ 解码像素逐字节相同；文件 sha256 可不同（Pillow tiff_deflate 大图末 strip 对齐填充字节未初始化）。",
+      "original": {
+        "method": "decode-and-compare-pixels vs 400dpi render（原始切片 O）",
+        "checked": 6,
+        "pixel_mismatch_count": 0,
+        "pixel_mismatch": [],
+        "reencode_decoded_pixels_stable": true,
+        "byte_identical_on_resave": 5
+      }
+    },
+    "福庵印缀 原版 高清.pdf": {
+      "method": "decode-and-compare-pixels (NOT file sha256)",
+      "checked": 6,
+      "pixel_mismatch_count": 0,
+      "pixel_mismatch": [],
+      "reencode_decoded_pixels_stable": true,
+      "byte_identical_on_resave": 3,
+      "note": "同参数二次产出 ⇒ 解码像素逐字节相同；文件 sha256 可不同（Pillow tiff_deflate 大图末 strip 对齐填充字节未初始化）。",
+      "original": {
+        "method": "decode-and-compare-pixels vs 400dpi render（原始切片 O）",
+        "checked": 6,
+        "pixel_mismatch_count": 0,
+        "pixel_mismatch": [],
+        "reencode_decoded_pixels_stable": true,
+        "byte_identical_on_resave": 3
+      }
+    },
+    "秦印类编 检索版.pdf": {
+      "method": "decode-and-compare-pixels (NOT file sha256)",
+      "checked": 6,
+      "pixel_mismatch_count": 0,
+      "pixel_mismatch": [],
+      "reencode_decoded_pixels_stable": true,
+      "byte_identical_on_resave": 4,
+      "note": "同参数二次产出 ⇒ 解码像素逐字节相同；文件 sha256 可不同（Pillow tiff_deflate 大图末 strip 对齐填充字节未初始化）。",
+      "original": {
+        "method": "decode-and-compare-pixels vs 400dpi render（原始切片 O）",
+        "checked": 6,
+        "pixel_mismatch_count": 0,
+        "pixel_mismatch": [],
+        "reencode_decoded_pixels_stable": true,
+        "byte_identical_on_resave": 4
+      }
+    },
+    "秦汉印典 上海书画 金怀英  1997 ok.pdf": {
+      "method": "decode-and-compare-pixels (NOT file sha256)",
+      "checked": 4,
+      "pixel_mismatch_count": 0,
+      "pixel_mismatch": [],
+      "reencode_decoded_pixels_stable": true,
+      "byte_identical_on_resave": 4,
+      "note": "同参数二次产出 ⇒ 解码像素逐字节相同；文件 sha256 可不同（Pillow tiff_deflate 大图末 strip 对齐填充字节未初始化）。",
+      "original": {
+        "method": "decode-and-compare-pixels vs 400dpi render（原始切片 O）",
+        "checked": 4,
+        "pixel_mismatch_count": 0,
+        "pixel_mismatch": [],
+        "reencode_decoded_pixels_stable": true,
+        "byte_identical_on_resave": 3
+      }
+    },
+    "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf": {
+      "method": "decode-and-compare-pixels (NOT file sha256)",
+      "checked": 6,
+      "pixel_mismatch_count": 0,
+      "pixel_mismatch": [],
+      "reencode_decoded_pixels_stable": true,
+      "byte_identical_on_resave": 5,
+      "note": "同参数二次产出 ⇒ 解码像素逐字节相同；文件 sha256 可不同（Pillow tiff_deflate 大图末 strip 对齐填充字节未初始化）。",
+      "original": {
+        "method": "decode-and-compare-pixels vs 400dpi render（原始切片 O）",
+        "checked": 6,
+        "pixel_mismatch_count": 0,
+        "pixel_mismatch": [],
+        "reencode_decoded_pixels_stable": true,
+        "byte_identical_on_resave": 4
+      }
+    }
+  }
+}

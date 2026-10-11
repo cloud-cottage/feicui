@@ -1,0 +1,392 @@
+{
+  "meta": {
+    "agent": "Neng (独立质检)",
+    "ts": "2026-10-11T10:47+08:00",
+    "repo": "/Users/kevin/bistro/xiai/feicui",
+    "db": "/Users/kevin/bistro/xiai/data/yinpu.db",
+    "git_head": "58c879f",
+    "branch": "main",
+    "source_sha256": {
+      "server/worker/feicui_worker.py": "6b0748ac5ddedeb0d4c6c822375ce56ab939e198bca95321ed22688b97897226",
+      "server/app/retire_webp.py": "c74c4a061bc9e8efdbce9e50ad0bd979a1f90bad2b216605ecc0b5a0cc1b991e",
+      "server/app/naming.py": "2418a95c772e3a1bdf01d6614f159563ea877bb18159d7ba78e352020295bc3b",
+      "server/app/repository.py": "6b711b35f451b4de4e44b3a43a1a624b608c86b800b7ee4ec4b04bbb76fb88ba",
+      "server/app/colorcal.py": "3c33707ebca6ba4d41ab1f7d58f712470061e770ca3daa751794f32f3a1fe265",
+      "ops/webp-retire/gate_test.py": "c74f54e0057bf2bc6a242815f4b177410b136e20b2ae394fce39513e99248a31"
+    },
+    "webp_deleted_manifest": {
+      "path": "/Users/kevin/.hermes/profiles/zang/cache/scratch/webp_deleted_manifest.txt",
+      "lines": 15247,
+      "sha256": "44d40aab74d19109870045efc1860c3975e4f385a76b07ec0f7e0ba3574b37e2",
+      "bytes_raw": 252962670,
+      "bytes_raw_MiB": 241.24,
+      "bytes_block4k": 284192768,
+      "bytes_block4k_MiB": 271.03
+    }
+  },
+  "item1_worker_single_page": {
+    "page": 13,
+    "detected": 6,
+    "old_worker_f9be1d4": {
+      "files_total": 18,
+      "tiff": 6,
+      "webp": 12,
+      "faces_webp": 6,
+      "webp_examples": [
+        "books_out/tmp.pdf/P13-C1-R1.webp",
+        "books_out/tmp.pdf/P13-C2-R1.webp",
+        "books_out/tmp.pdf/P13-C3-R1.webp"
+      ],
+      "timing_ms": 1158.5
+    },
+    "new_worker_HEAD": {
+      "files_total": 6,
+      "tiff": 6,
+      "webp": 0,
+      "faces_files": 0,
+      "timing_ms": 944.3
+    },
+    "delta_ms": -214.1,
+    "delta_pct": -18.49,
+    "naming_regex_all_match": true,
+    "padded_zero": true,
+    "page_cr_unique": true,
+    "returns_have_new_fields": true,
+    "new_webp_written": 0,
+    "faces_webp_rebuilt": 0,
+    "verdict": "PASS — 新 worker 单页只产 6 件 TIFF、新写 webp=0、faces webp=0；旧 worker(f9be1d4) 同页产 6 TIFF＋12 webp(6 faces+6 named)；新 worker 快 -214ms"
+  },
+  "item2_e6": {
+    "origins_ok": [
+      "127.0.0.1:5196(direct API)",
+      "127.0.0.1:5195(frontend dev)",
+      "localhost:5164/feicui(entry)"
+    ],
+    "all_200_png_347B_magic_89504e470d0a1a0a": true,
+    "x_feicui_img_path": "output/books/tmp.pdf/P13-C1-R1.tiff (来源=img_path_tiff)",
+    "pixel_lossless_tiff_to_png": {
+      "size": "123x122",
+      "pixels_equal": true
+    },
+    "browser": {
+      "5164": {
+        "img_src": "/feicui/api/jobs/<jid>/stamps/13/0/image",
+        "naturalWidth": 123,
+        "naturalHeight": 122,
+        "complete": true
+      },
+      "5195": {
+        "naturalWidth": 123,
+        "naturalHeight": 122,
+        "complete": true
+      }
+    },
+    "127_0_0_1_5164_refused": true,
+    "e6_404_reason_codes_unchanged": {
+      "JOB_NOT_FOUND": "404",
+      "STAMP_NOT_FOUND": "404",
+      "IMAGE_UNAVAILABLE": "404",
+      "BAD_PARAM": "400"
+    },
+    "verdict": "PASS — 三 origin 均 200/image/png；404 三类原因码未改"
+  },
+  "item3_reconcile": {
+    "stamps_total_rows": 7472,
+    "rows_with_img_path_tiff": 7272,
+    "AC97": {
+      "checked": 7272,
+      "regex_mismatch": 0,
+      "padded": 0,
+      "examples": []
+    },
+    "AC99": {
+      "P_mismatch": 0,
+      "examples": [],
+      "filename_CR_vs_db_CR_mismatch": 0,
+      "cr_ex": []
+    },
+    "AC98": {
+      "pages": 779,
+      "pages_with_dup_CR": 0,
+      "pages_count_ne_distinct": 0
+    },
+    "AC100": {
+      "db_rows": 7272,
+      "disk_tiff_4books": 7272,
+      "missing": 0,
+      "orphan": 0,
+      "orphan_examples": []
+    },
+    "books_dirs_tiff_counts": {
+      "秦印类编 检索版": 7183,
+      "7501007985": 23,
+      "tmp.pdf": 31,
+      "7806350950": 35,
+      "黄牧甫印谱": 200
+    },
+    "C3": {
+      "scoped_img_path_missing": 7239,
+      "scoped": 7272,
+      "scoped_rows_lost_imagery": 0,
+      "all_rows_lost_imagery": 200,
+      "all_rows_with_img_path_tiff_null": 200
+    },
+    "AC101": {
+      "dir_key_sources": {
+        "秦汉印典 上海书画 金怀英  1997 ok.pdf": "ISBN",
+        "古玺汇编 文物出版社 罗福颐  ok.pdf": "ISBN",
+        "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf": "chinese_title",
+        "秦印类编 检索版.pdf": "chinese_title",
+        "tmp.pdf": "pdf_name_unconfirmed"
+      },
+      "allowed": true,
+      "n_books": 5,
+      "underscore_dir_present": false
+    },
+    "seals": {
+      "seal_images_files": 6348,
+      "seal_images_tiff_files": 6347,
+      "in_manifest": false
+    },
+    "retained": {
+      "selftest_evidence_webp": 475,
+      "samples": [
+        "output/秦汉印典 上海书画 金怀英  1997 ok/田用海厦.webp",
+        "output/秦汉印典 上海书画 金怀英  1997 ok/p8_7.webp",
+        "output/秦汉印典 上海书画 金怀英  1997 ok/右馬廐將右馬廐.webp"
+      ]
+    }
+  },
+  "item3_notes": {
+    "scoped_7272_img_path_tiff_on_disk": "7272/7272",
+    "scoped_img_path_missing": "7239/7272 (webp 已删，预期)",
+    "no_row_lost_imagery_scoped": 0,
+    "all_rows_lost_imagery(7472-7272=200)": "黄牧甫印谱 live-job 200 行 (img_path_tiff NULL) —— 见 item_bonus",
+    "seals_untouched": {
+      "var/seal_images_files": 6348,
+      "jpeg": true,
+      "var/seal_images_tiff_files": 6347,
+      "tiff_deflate": true,
+      "in_manifest": false,
+      "mtimes": "Oct 10（早于 Oct 11 10:37 删除）"
+    },
+    "retained": {
+      "selftest_evidence_webp": 475,
+      "samples": 3
+    },
+    "manifest_raw_MiB": 241.24,
+    "manifest_block4k_MiB": 271.03
+  },
+  "item4_retire_dryrun": {
+    "historical_before_deletion": {
+      "files": 14514,
+      "rows": 7272,
+      "MB": 213.51,
+      "by_tree": {
+        "books": {
+          "files": 7272,
+          "rows": 7272,
+          "bytes": 109488384
+        },
+        "faces": {
+          "files": 7193,
+          "rows": 7193,
+          "bytes": 112485616
+        },
+        "other": {
+          "files": 49,
+          "rows": 49,
+          "bytes": 1907244
+        }
+      },
+      "exempt": 0,
+      "census_on_disk": 14698,
+      "census_unreferenced": 184
+    },
+    "now_after_manual_deletion": {
+      "files": 3,
+      "rows": 3,
+      "MB": 0.05,
+      "by_tree": {
+        "other": {
+          "files": 3,
+          "rows": 3,
+          "bytes": 55850
+        }
+      },
+      "exempt": 0,
+      "census_on_disk": 3,
+      "census_unreferenced": 0,
+      "delete_list": [
+        {
+          "id": 66,
+          "pdf_name": "秦汉印典 上海书画 金怀英  1997 ok.pdf",
+          "page": 7,
+          "idx": 0,
+          "which": "img_path",
+          "rel": "output/秦汉印典 上海书画 金怀英  1997 ok/田用海厦.webp",
+          "abs": "/Users/kevin/bistro/xiai/feicui/output/秦汉印典 上海书画 金怀英  1997 ok/田用海厦.webp",
+          "bytes": 23762
+        },
+        {
+          "id": 72,
+          "pdf_name": "秦汉印典 上海书画 金怀英  1997 ok.pdf",
+          "page": 8,
+          "idx": 0,
+          "which": "img_path",
+          "rel": "output/秦汉印典 上海书画 金怀英  1997 ok/右馬廐將右馬廐.webp",
+          "abs": "/Users/kevin/bistro/xiai/feicui/output/秦汉印典 上海书画 金怀英  1997 ok/右馬廐將右馬廐.webp",
+          "bytes": 23192
+        },
+        {
+          "id": 79,
+          "pdf_name": "秦汉印典 上海书画 金怀英  1997 ok.pdf",
+          "page": 8,
+          "idx": 7,
+          "which": "img_path",
+          "rel": "output/秦汉印典 上海书画 金怀英  1997 ok/p8_7.webp",
+          "abs": "/Users/kevin/bistro/xiai/feicui/output/秦汉印典 上海书画 金怀英  1997 ok/p8_7.webp",
+          "bytes": 8896
+        }
+      ],
+      "stamps_rows": 7472
+    },
+    "verdict": "★ 与期望「0 待删/0 豁免」不符 —— 现实测 3 待删/0 豁免（=3 件手写样本；它们由库行 66/72/79 派生，过安全闸 ⇒ 脚本会删它们）。见 findings"
+  },
+  "item5_ac": {
+    "AC103": {
+      "page": 13,
+      "n": 6,
+      "decoded_pixels_all_equal": true,
+      "file_sha256_all_equal": false,
+      "per_item": [
+        {
+          "name": "P13-C1-R1.tiff",
+          "pixels_equal": true,
+          "sha256_equal": true,
+          "pixels_equal_prod": false
+        },
+        {
+          "name": "P13-C2-R1.tiff",
+          "pixels_equal": true,
+          "sha256_equal": false,
+          "pixels_equal_prod": false
+        },
+        {
+          "name": "P13-C3-R1.tiff",
+          "pixels_equal": true,
+          "sha256_equal": true,
+          "pixels_equal_prod": false
+        },
+        {
+          "name": "P13-C4-R3.tiff",
+          "pixels_equal": true,
+          "sha256_equal": true,
+          "pixels_equal_prod": false
+        },
+        {
+          "name": "P13-C4-R2.tiff",
+          "pixels_equal": true,
+          "sha256_equal": true,
+          "pixels_equal_prod": false
+        },
+        {
+          "name": "P13-C4-R1.tiff",
+          "pixels_equal": true,
+          "sha256_equal": true,
+          "pixels_equal_prod": false
+        }
+      ],
+      "note": "判据=解码像素（AC-103 口径）；file sha256 只作观察项"
+    },
+    "AC104": {
+      "page": 13,
+      "stamps": 6,
+      "iou_min": 1.0,
+      "iou_all_ge_098": true,
+      "iou_list": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "other_unchanged_all_1": true,
+      "other_list": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "bg_pure_white_frac_min": 1.0,
+      "delta_e_after_list": [
+        11.576287037286058,
+        12.071774954229932,
+        11.789254366998986,
+        11.437593095756561,
+        11.457891198251783,
+        12.360635989321677
+      ]
+    },
+    "AC102": {
+      "columns": [
+        "id",
+        "pdf_name",
+        "page",
+        "idx",
+        "text",
+        "img_path",
+        "x1",
+        "y1",
+        "x2",
+        "y2",
+        "col",
+        "row",
+        "img_path_tiff"
+      ],
+      "base10_intact": true,
+      "added_only": true
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "sev": "HIGH",
+      "title": "池写库路径丢 col/row/img_path_tiff ⇒ 新 job 的 E6 取图不可达",
+      "evidence": "repository.py:458/_upsert_stamp INSERT 只写 10 旧列、commit_chunk(repository.py:532-545) 构造的 row 只含 10 旧字段；黄牧甫印谱 job(job-64bd6beb…) 产 200 件 TIFF(output/books/黄牧甫印谱/) 但 200 行 img_path_tiff 全 NULL ⇒ E6 (13,0) 返 404 IMAGE_UNAVAILABLE。与提交讯息「col/row/img_path_tiff 照旧返回给池侧写库」不符（worker 返回、池侧未落库）。"
+    },
+    {
+      "id": "F2",
+      "sev": "MEDIUM",
+      "title": "retire_webp 对 3 件手写样本无豁免口径",
+      "evidence": "dry-run 报 3 待删（田用海厦/右馬廐將右馬廐/p8_7），与「保留 3 件样本」的口径冲突；脚本无「手写名样本」豁免分支。"
+    },
+    {
+      "id": "F3",
+      "sev": "INFO",
+      "title": "旧证据 verify_worker_naming.py 与本轮口径矛盾",
+      "evidence": "ops/worker-naming/verify_worker_naming.py 断言「三套并存（旧 webp+新 tiff+新 webp）」并对比 faces webp sha256/mtime —— 是 TIFF+webp 双份旧口径；与本轮『只出 TIFF』矛盾。且其 `git show HEAD:` 取「改造前」现在取到的是新版本(HEAD=58c879f)，跑它会误判。"
+    },
+    {
+      "id": "F4",
+      "sev": "INFO",
+      "title": "AC-102 红线条款与本轮 deleting webp 冲突",
+      "evidence": "spec v1.29 AC-102 要求 output/faces/** 既有 7354 件 webp 逐字节不动、文件数不减；本轮据 Kevin 新裁定已全删（output 下 webp 仅剩 3 件样本）。AC-102 需随动收窄。"
+    },
+    {
+      "id": "F5",
+      "sev": "INFO",
+      "title": "口径澄清（非缺陷）：271 MB vs 241 MiB",
+      "evidence": "删除清单 15247 行原始字节和 = 252,962,670 B = 241.24 MiB；4K 块对齐和 = 284,192,768 B = 271.03 MiB ⇒ 「271 MB」= du 口径（已分配），两者都对。"
+    },
+    {
+      "id": "F6",
+      "sev": "INFO",
+      "title": "口径澄清（非缺陷）：worker 重裁 ≠ 回填像素",
+      "evidence": "AC-103 复核发现 worker 现跑产出与 output/books 回填件的解码像素不同；成因 = 回填按『库内 bbox』裁(backfill_book_images.py:14) 而 worker 重跑检测(detect_stamp_regions) ⇒ bbox 可能微差。非幂等缺陷（同输入两次 worker 跑像素逐字节相同）。"
+    }
+  ]
+}

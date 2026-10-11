@@ -1,0 +1,54 @@
+{
+  "kind": "corrected_tiff_deletion",
+  "actor": "Zang",
+  "date": "2026-10-11",
+  "authority": "Kevin 2026-10-11 指令「旧 8708 件校正件：删」（口径件 docs/image-original-crop-draft-v0.1.md §6「校正件输出暂停」的后续处置）",
+  "precondition_verified": {
+    "fallback_chain_live": true,
+    "how": "可逆探针：将目标行校正件 `output/books/秦印类编 检索版/P29-C1-R3.tiff` 改名（不删）后打 E6 ⇒ 200/image/png/287720 B，x-feicui-img-path 指向 `…/P29-C1-R3-O.tiff`；随后复原。",
+    "api_pid_started": "2026-10-11 12:01:25",
+    "repository_py_mtime": "2026-10-11 12:01:20",
+    "note": "活进程启动时刻 ≥ 源码 mtime ⇒ 确认跑的是含回落链的新码（repository.py::_original_rel_from_tiff + 三跳候选链）"
+  },
+  "deleted": {
+    "count": 8708,
+    "bytes": 395294849,
+    "mib": 376.99,
+    "missing": 0,
+    "elapsed_s": 1.0,
+    "per_book_dir": {
+      "秦印类编 检索版": 7183,
+      "福庵印缀 原版 高清": 1214,
+      "黄牧甫印谱": 200,
+      "秦汉印典 上海书画 金怀英  1997 ok.pdf": 35,
+      "tmp.pdf": 31,
+      "古玺汇编 文物出版社 罗福颐  ok.pdf": 23,
+      "吴颐人篆刻作品展示": 22
+    }
+  },
+  "manifest": {
+    "path_scratch": "~/.hermes/profiles/zang/cache/scratch/corrected_delete_manifest.tsv",
+    "lines": 8708,
+    "columns": "size_bytes<TAB>sha256<TAB>repo_relative_path",
+    "manifest_sha256": "753a79c059709687a09a52e405823fa658a6c2cd2345d43da6bed3c601b59c98",
+    "aggregate_content_sha256": "79c4c55b9043a2117896fda09e70bf2f616d0011355b074808cdddbb0dd4f7f1"
+  },
+  "post_checks": {
+    "disk_tiff_total": 8708,
+    "disk_non_original_tiff": 0,
+    "disk_original_tiff": 8708,
+    "db_stamps_rows": 8708,
+    "db_jobs_rows": 12,
+    "e6_sample_5_books": "全部 200 OK / image/png / PNG magic，x-feicui-img-path 均指向 -O.tiff（福庵 P6-C1-R1-O、吴颐人 P10-C1-R1-O、黄牧甫 P13-C1-R1-O、秦印类编 P45-C1-R2-O、tmp P13-C1-R1-O）",
+    "e5_sample_3_books": "{\"kind\":\"image\",\"count\":0} 三本均 0（不误报影像缺失）",
+    "disk_before_mib": 1264.73,
+    "disk_after_mib": 911
+  },
+  "regenerability": "校正件 = 对同名 `-O.tiff` 跑 V3 双色分层的确定性输出（像素可重现）；且 Kevin 已裁定旧校正算法作废、待新算法重出 ⇒ 本次删除不构成不可恢复的数据丢失。",
+  "not_touched": [
+    "stamps 任何列值（img_path_tiff 仍为校正件的约定路径，停产后由 E6/E5 三跳回落解析）",
+    "8708 件 -O.tiff（原始切片，唯一在产面，已封版）",
+    "印章线 var/seal_images（JPEG）/ var/seal_images_tiff（TIFF）",
+    "output/faces/**（已空）"
+  ]
+}

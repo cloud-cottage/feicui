@@ -17,6 +17,7 @@
 """
 from __future__ import annotations
 
+import sqlite3
 import sys
 
 from . import db
@@ -92,6 +93,16 @@ MIGRATIONS: list[tuple[str, str, list[str]]] = [
             "CREATE UNIQUE INDEX IF NOT EXISTS uq_stamps_pdf_page_idx ON stamps(pdf_name, page, idx)",
         ],
     ),
+    (
+        "1a-0003-stamps-naming-columns",
+        "stamps 加法新增列 col / row / img_path_tiff（影像命名 P-C-R 回填落库；规范 §3.22/§3.23）"
+        "——只加列，不改既有列、不改任何行（旧 webp 线并存）",
+        [
+            "ALTER TABLE stamps ADD COLUMN col INTEGER",
+            "ALTER TABLE stamps ADD COLUMN row INTEGER",
+            "ALTER TABLE stamps ADD COLUMN img_path_tiff TEXT",
+        ],
+    ),
 ]
 
 
@@ -132,7 +143,14 @@ def run(skip_wal: bool = False) -> int:
                 skipped += 1
                 continue
             for sql in statements:
-                conn.execute(sql)
+                try:
+                    conn.execute(sql)
+                except sqlite3.OperationalError as exc:
+                    # 幂等兜底：`ALTER TABLE … ADD COLUMN` 无 `IF NOT EXISTS`，
+                    # 若列已存在（如首次事务中途尽力写入过）则视为已应用、不重复加。
+                    if "duplicate column name" in str(exc).lower():
+                        continue
+                    raise
             conn.execute(
                 "INSERT INTO schema_migrations(version, applied_at, note) VALUES (?,?,?)",
                 (version, db.now_iso(), note),

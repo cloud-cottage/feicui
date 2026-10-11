@@ -1,0 +1,842 @@
+[
+  {
+    "variant": "conservative",
+    "why": "zang_confirmed",
+    "reason": "R2",
+    "id": 6675,
+    "book": "秦印类编 检索版.pdf",
+    "page": 749,
+    "idx": 18,
+    "metric": 0.19737,
+    "partner_id": 6677,
+    "partner_idx": 20,
+    "drop_box": [
+      1973.0,
+      3087.0,
+      2352.0,
+      3453.0
+    ],
+    "keep_box": [
+      2015.0,
+      3241.0,
+      2177.0,
+      3410.0
+    ],
+    "drop_red_ratio": 0.2474,
+    "keep_red_ratio": 0.3882,
+    "drop_size": [
+      379,
+      366
+    ],
+    "keep_size": [
+      162,
+      169
+    ],
+    "panel": "risk/conservative/conservative_id6675_p749_R2.png"
+  },
+  {
+    "variant": "conservative",
+    "why": "zang_confirmed",
+    "reason": "R2",
+    "id": 6676,
+    "book": "秦印类编 检索版.pdf",
+    "page": 749,
+    "idx": 19,
+    "metric": 0.201751,
+    "partner_id": 6677,
+    "partner_idx": 20,
+    "drop_box": [
+      1984.0,
+      3073.0,
+      2362.0,
+      3432.0
+    ],
+    "keep_box": [
+      2015.0,
+      3241.0,
+      2177.0,
+      3410.0
+    ],
+    "drop_red_ratio": 0.2529,
+    "keep_red_ratio": 0.3882,
+    "drop_size": [
+      378,
+      359
+    ],
+    "keep_size": [
+      162,
+      169
+    ],
+    "panel": "risk/conservative/conservative_id6676_p749_R2.png"
+  },
+  {
+    "variant": "conservative",
+    "why": "zang_confirmed",
+    "reason": "R1",
+    "id": 5063,
+    "book": "秦印类编 检索版.pdf",
+    "page": 572,
+    "idx": 11,
+    "metric": 0.814468,
+    "partner_id": 5060,
+    "partner_idx": 8,
+    "drop_box": [
+      2016.0,
+      1375.0,
+      2233.0,
+      1583.0
+    ],
+    "keep_box": [
+      2008.0,
+      1361.0,
+      2237.0,
+      1565.0
+    ],
+    "drop_red_ratio": 0.2707,
+    "keep_red_ratio": 0.2616,
+    "drop_size": [
+      217,
+      208
+    ],
+    "keep_size": [
+      229,
+      204
+    ],
+    "panel": "risk/conservative/conservative_id5063_p572_R1.png"
+  },
+  {
+    "variant": "conservative",
+    "why": "zang_confirmed",
+    "reason": "R2",
+    "id": 123,
+    "book": "秦印类编 检索版.pdf",
+    "page": 51,
+    "idx": 5,
+    "metric": 0.182259,
+    "partner_id": 129,
+    "partner_idx": 11,
+    "drop_box": [
+      1722.0,
+      632.0,
+      2234.0,
+      1153.0
+    ],
+    "keep_box": [
+      1953.0,
+      874.0,
+      2172.0,
+      1096.0
+    ],
+    "drop_red_ratio": 0.2739,
+    "keep_red_ratio": 0.4567,
+    "drop_size": [
+      512,
+      521
+    ],
+    "keep_size": [
+      219,
+      222
+    ],
+    "panel": "risk/conservative/conservative_id123_p51_R2.png"
+  },
+  {
+    "variant": "conservative",
+    "why": "R1_top_iou",
+    "reason": "R1",
+    "id": 7629,
+    "book": "福庵印缀 原版 高清.pdf",
+    "page": 29,
+    "idx": 4,
+    "metric": 0.840576,
+    "partner_id": 7628,
+    "partner_idx": 3,
+    "drop_box": [
+      1203.0,
+      3256.0,
+      1579.0,
+      3634.0
+    ],
+    "keep_box": [
+      1177.0,
+      3229.0,
+      1569.0,
+      3629.0
+    ],
+    "drop_red_ratio": 0.1495,
+    "keep_red_ratio": 0.1355,
+    "drop_size": [
+      376,
+      378
+    ],
+    "keep_size": [
+      392,
+      400
+    ],
+    "panel": "risk/conservative/conservative_id7629_p29_R1.png"
+  },
+  {
+    "variant": "conservative",
+    "why": "R1_top_iou",
+    "reason": "R1",
+    "id": 7468,
+    "book": "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf",
+    "page": 32,
+    "idx": 2,
+    "metric": 0.839298,
+    "partner_id": 7467,
+    "partner_idx": 1,
+    "drop_box": [
+      525.0,
+      680.0,
+      1053.0,
+      1159.0
+    ],
+    "keep_box": [
+      523.0,
+      709.0,
+      1043.0,
+      1205.0
+    ],
+    "drop_red_ratio": 0.1833,
+    "keep_red_ratio": 0.1851,
+    "drop_size": [
+      528,
+      479
+    ],
+    "keep_size": [
+      520,
+      496
+    ],
+    "panel": "risk/conservative/conservative_id7468_p32_R1.png"
+  },
+  {
+    "variant": "conservative",
+    "why": "R2_min_ratio",
+    "reason": "R2",
+    "id": 7701,
+    "book": "福庵印缀 原版 高清.pdf",
+    "page": 74,
+    "idx": 0,
+    "metric": 0.045136,
+    "partner_id": 7703,
+    "partner_idx": 2,
+    "drop_box": [
+      632.0,
+      1255.0,
+      1240.0,
+      1815.0
+    ],
+    "keep_box": [
+      714.0,
+      1330.0,
+      827.0,
+      1466.0
+    ],
+    "drop_red_ratio": 0.1012,
+    "keep_red_ratio": 0.2036,
+    "drop_size": [
+      608,
+      560
+    ],
+    "keep_size": [
+      113,
+      136
+    ],
+    "panel": "risk/conservative/conservative_id7701_p74_R2.png"
+  },
+  {
+    "variant": "conservative",
+    "why": "R2_min_ratio",
+    "reason": "R2",
+    "id": 7990,
+    "book": "福庵印缀 原版 高清.pdf",
+    "page": 110,
+    "idx": 0,
+    "metric": 0.049858,
+    "partner_id": 7992,
+    "partner_idx": 2,
+    "drop_box": [
+      571.0,
+      3074.0,
+      1308.0,
+      3812.0
+    ],
+    "keep_box": [
+      1031.0,
+      3414.0,
+      1213.0,
+      3563.0
+    ],
+    "drop_red_ratio": 0.118,
+    "keep_red_ratio": 0.1707,
+    "drop_size": [
+      737,
+      738
+    ],
+    "keep_size": [
+      182,
+      149
+    ],
+    "panel": "risk/conservative/conservative_id7990_p110_R2.png"
+  },
+  {
+    "variant": "conservative",
+    "why": "R2_borderline_max_ratio",
+    "reason": "R2",
+    "id": 5391,
+    "book": "秦印类编 检索版.pdf",
+    "page": 615,
+    "idx": 0,
+    "metric": 0.598041,
+    "partner_id": 5394,
+    "partner_idx": 3,
+    "drop_box": [
+      1315.0,
+      3137.0,
+      1575.0,
+      3402.0
+    ],
+    "keep_box": [
+      1344.0,
+      3166.0,
+      1545.0,
+      3371.0
+    ],
+    "drop_red_ratio": 0.2598,
+    "keep_red_ratio": 0.4326,
+    "drop_size": [
+      260,
+      265
+    ],
+    "keep_size": [
+      201,
+      205
+    ],
+    "panel": "risk/conservative/conservative_id5391_p615_R2.png"
+  },
+  {
+    "variant": "conservative",
+    "why": "R2_borderline_max_ratio",
+    "reason": "R2",
+    "id": 6367,
+    "book": "秦印类编 检索版.pdf",
+    "page": 725,
+    "idx": 14,
+    "metric": 0.598196,
+    "partner_id": 6371,
+    "partner_idx": 18,
+    "drop_box": [
+      1992.0,
+      2293.0,
+      2341.0,
+      2563.0
+    ],
+    "keep_box": [
+      2031.0,
+      2323.0,
+      2302.0,
+      2531.0
+    ],
+    "drop_red_ratio": 0.2592,
+    "keep_red_ratio": 0.4332,
+    "drop_size": [
+      349,
+      270
+    ],
+    "keep_size": [
+      271,
+      208
+    ],
+    "panel": "risk/conservative/conservative_id6367_p725_R2.png"
+  },
+  {
+    "variant": "conservative",
+    "why": "R2_borderline_max_ratio",
+    "reason": "R2",
+    "id": 5639,
+    "book": "秦印类编 检索版.pdf",
+    "page": 645,
+    "idx": 0,
+    "metric": 0.598734,
+    "partner_id": 5642,
+    "partner_idx": 3,
+    "drop_box": [
+      558.0,
+      567.0,
+      839.0,
+      911.0
+    ],
+    "keep_box": [
+      593.0,
+      600.0,
+      805.0,
+      873.0
+    ],
+    "drop_red_ratio": 0.2882,
+    "keep_red_ratio": 0.4762,
+    "drop_size": [
+      281,
+      344
+    ],
+    "keep_size": [
+      212,
+      273
+    ],
+    "panel": "risk/conservative/conservative_id5639_p645_R2.png"
+  },
+  {
+    "variant": "conservative",
+    "why": "aggressive_only",
+    "reason": "R2",
+    "id": 8113,
+    "book": "福庵印缀 原版 高清.pdf",
+    "page": 129,
+    "idx": 0,
+    "metric": 0.565436,
+    "partner_id": 8116,
+    "partner_idx": 3,
+    "drop_box": [
+      362.0,
+      2261.0,
+      834.0,
+      2733.0
+    ],
+    "keep_box": [
+      436.0,
+      2394.0,
+      826.0,
+      2717.0
+    ],
+    "drop_red_ratio": 0.1257,
+    "keep_red_ratio": 0.1674,
+    "drop_size": [
+      472,
+      472
+    ],
+    "keep_size": [
+      390,
+      323
+    ],
+    "panel": "risk/conservative/conservative_id8113_p129_R2.png"
+  },
+  {
+    "variant": "aggressive",
+    "why": "zang_confirmed",
+    "reason": "R2",
+    "id": 6675,
+    "book": "秦印类编 检索版.pdf",
+    "page": 749,
+    "idx": 18,
+    "metric": 0.19737,
+    "partner_id": 6677,
+    "partner_idx": 20,
+    "drop_box": [
+      1973.0,
+      3087.0,
+      2352.0,
+      3453.0
+    ],
+    "keep_box": [
+      2015.0,
+      3241.0,
+      2177.0,
+      3410.0
+    ],
+    "drop_red_ratio": 0.2474,
+    "keep_red_ratio": 0.3882,
+    "drop_size": [
+      379,
+      366
+    ],
+    "keep_size": [
+      162,
+      169
+    ],
+    "panel": "risk/aggressive/aggressive_id6675_p749_R2.png"
+  },
+  {
+    "variant": "aggressive",
+    "why": "zang_confirmed",
+    "reason": "R2",
+    "id": 6676,
+    "book": "秦印类编 检索版.pdf",
+    "page": 749,
+    "idx": 19,
+    "metric": 0.201751,
+    "partner_id": 6677,
+    "partner_idx": 20,
+    "drop_box": [
+      1984.0,
+      3073.0,
+      2362.0,
+      3432.0
+    ],
+    "keep_box": [
+      2015.0,
+      3241.0,
+      2177.0,
+      3410.0
+    ],
+    "drop_red_ratio": 0.2529,
+    "keep_red_ratio": 0.3882,
+    "drop_size": [
+      378,
+      359
+    ],
+    "keep_size": [
+      162,
+      169
+    ],
+    "panel": "risk/aggressive/aggressive_id6676_p749_R2.png"
+  },
+  {
+    "variant": "aggressive",
+    "why": "zang_confirmed",
+    "reason": "R1",
+    "id": 5063,
+    "book": "秦印类编 检索版.pdf",
+    "page": 572,
+    "idx": 11,
+    "metric": 0.814468,
+    "partner_id": 5060,
+    "partner_idx": 8,
+    "drop_box": [
+      2016.0,
+      1375.0,
+      2233.0,
+      1583.0
+    ],
+    "keep_box": [
+      2008.0,
+      1361.0,
+      2237.0,
+      1565.0
+    ],
+    "drop_red_ratio": 0.2707,
+    "keep_red_ratio": 0.2616,
+    "drop_size": [
+      217,
+      208
+    ],
+    "keep_size": [
+      229,
+      204
+    ],
+    "panel": "risk/aggressive/aggressive_id5063_p572_R1.png"
+  },
+  {
+    "variant": "aggressive",
+    "why": "zang_confirmed",
+    "reason": "R2",
+    "id": 123,
+    "book": "秦印类编 检索版.pdf",
+    "page": 51,
+    "idx": 5,
+    "metric": 0.182259,
+    "partner_id": 129,
+    "partner_idx": 11,
+    "drop_box": [
+      1722.0,
+      632.0,
+      2234.0,
+      1153.0
+    ],
+    "keep_box": [
+      1953.0,
+      874.0,
+      2172.0,
+      1096.0
+    ],
+    "drop_red_ratio": 0.2739,
+    "keep_red_ratio": 0.4567,
+    "drop_size": [
+      512,
+      521
+    ],
+    "keep_size": [
+      219,
+      222
+    ],
+    "panel": "risk/aggressive/aggressive_id123_p51_R2.png"
+  },
+  {
+    "variant": "aggressive",
+    "why": "R1_top_iou",
+    "reason": "R1",
+    "id": 7629,
+    "book": "福庵印缀 原版 高清.pdf",
+    "page": 29,
+    "idx": 4,
+    "metric": 0.840576,
+    "partner_id": 7628,
+    "partner_idx": 3,
+    "drop_box": [
+      1203.0,
+      3256.0,
+      1579.0,
+      3634.0
+    ],
+    "keep_box": [
+      1177.0,
+      3229.0,
+      1569.0,
+      3629.0
+    ],
+    "drop_red_ratio": 0.1495,
+    "keep_red_ratio": 0.1355,
+    "drop_size": [
+      376,
+      378
+    ],
+    "keep_size": [
+      392,
+      400
+    ],
+    "panel": "risk/aggressive/aggressive_id7629_p29_R1.png"
+  },
+  {
+    "variant": "aggressive",
+    "why": "R1_top_iou",
+    "reason": "R1",
+    "id": 7468,
+    "book": "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf",
+    "page": 32,
+    "idx": 2,
+    "metric": 0.839298,
+    "partner_id": 7467,
+    "partner_idx": 1,
+    "drop_box": [
+      525.0,
+      680.0,
+      1053.0,
+      1159.0
+    ],
+    "keep_box": [
+      523.0,
+      709.0,
+      1043.0,
+      1205.0
+    ],
+    "drop_red_ratio": 0.1833,
+    "keep_red_ratio": 0.1851,
+    "drop_size": [
+      528,
+      479
+    ],
+    "keep_size": [
+      520,
+      496
+    ],
+    "panel": "risk/aggressive/aggressive_id7468_p32_R1.png"
+  },
+  {
+    "variant": "aggressive",
+    "why": "R2_min_ratio",
+    "reason": "R2",
+    "id": 7701,
+    "book": "福庵印缀 原版 高清.pdf",
+    "page": 74,
+    "idx": 0,
+    "metric": 0.045136,
+    "partner_id": 7703,
+    "partner_idx": 2,
+    "drop_box": [
+      632.0,
+      1255.0,
+      1240.0,
+      1815.0
+    ],
+    "keep_box": [
+      714.0,
+      1330.0,
+      827.0,
+      1466.0
+    ],
+    "drop_red_ratio": 0.1012,
+    "keep_red_ratio": 0.2036,
+    "drop_size": [
+      608,
+      560
+    ],
+    "keep_size": [
+      113,
+      136
+    ],
+    "panel": "risk/aggressive/aggressive_id7701_p74_R2.png"
+  },
+  {
+    "variant": "aggressive",
+    "why": "R2_min_ratio",
+    "reason": "R2",
+    "id": 7990,
+    "book": "福庵印缀 原版 高清.pdf",
+    "page": 110,
+    "idx": 0,
+    "metric": 0.049858,
+    "partner_id": 7992,
+    "partner_idx": 2,
+    "drop_box": [
+      571.0,
+      3074.0,
+      1308.0,
+      3812.0
+    ],
+    "keep_box": [
+      1031.0,
+      3414.0,
+      1213.0,
+      3563.0
+    ],
+    "drop_red_ratio": 0.118,
+    "keep_red_ratio": 0.1707,
+    "drop_size": [
+      737,
+      738
+    ],
+    "keep_size": [
+      182,
+      149
+    ],
+    "panel": "risk/aggressive/aggressive_id7990_p110_R2.png"
+  },
+  {
+    "variant": "aggressive",
+    "why": "R2_borderline_max_ratio",
+    "reason": "R2",
+    "id": 6833,
+    "book": "秦印类编 检索版.pdf",
+    "page": 768,
+    "idx": 0,
+    "metric": 0.49719,
+    "partner_id": 6835,
+    "partner_idx": 2,
+    "drop_box": [
+      548.0,
+      1438.0,
+      805.0,
+      1690.0
+    ],
+    "keep_box": [
+      596.0,
+      1475.0,
+      771.0,
+      1659.0
+    ],
+    "drop_red_ratio": 0.2311,
+    "keep_red_ratio": 0.3696,
+    "drop_size": [
+      257,
+      252
+    ],
+    "keep_size": [
+      175,
+      184
+    ],
+    "panel": "risk/aggressive/aggressive_id6833_p768_R2.png"
+  },
+  {
+    "variant": "aggressive",
+    "why": "R2_borderline_max_ratio",
+    "reason": "R2",
+    "id": 6438,
+    "book": "秦印类编 检索版.pdf",
+    "page": 731,
+    "idx": 2,
+    "metric": 0.499216,
+    "partner_id": 6440,
+    "partner_idx": 4,
+    "drop_box": [
+      559.0,
+      2280.0,
+      848.0,
+      2620.0
+    ],
+    "keep_box": [
+      599.0,
+      2323.0,
+      796.0,
+      2572.0
+    ],
+    "drop_red_ratio": 0.2014,
+    "keep_red_ratio": 0.3302,
+    "drop_size": [
+      289,
+      340
+    ],
+    "keep_size": [
+      197,
+      249
+    ],
+    "panel": "risk/aggressive/aggressive_id6438_p731_R2.png"
+  },
+  {
+    "variant": "aggressive",
+    "why": "R2_borderline_max_ratio",
+    "reason": "R2",
+    "id": 2403,
+    "book": "秦印类编 检索版.pdf",
+    "page": 270,
+    "idx": 6,
+    "metric": 0.49959,
+    "partner_id": 2404,
+    "partner_idx": 7,
+    "drop_box": [
+      1308.0,
+      1435.0,
+      1525.0,
+      1778.0
+    ],
+    "keep_box": [
+      1332.0,
+      1549.0,
+      1517.0,
+      1750.0
+    ],
+    "drop_red_ratio": 0.2575,
+    "keep_red_ratio": 0.3488,
+    "drop_size": [
+      217,
+      343
+    ],
+    "keep_size": [
+      185,
+      201
+    ],
+    "panel": "risk/aggressive/aggressive_id2403_p270_R2.png"
+  },
+  {
+    "variant": "aggressive",
+    "why": "aggressive_only",
+    "reason": "R1",
+    "id": 7588,
+    "book": "福庵印缀 原版 高清.pdf",
+    "page": 39,
+    "idx": 2,
+    "metric": 0.416002,
+    "partner_id": 7591,
+    "partner_idx": 5,
+    "drop_box": [
+      1067.0,
+      3134.0,
+      1685.0,
+      3533.0
+    ],
+    "keep_box": [
+      1170.0,
+      3247.0,
+      1691.0,
+      3736.0
+    ],
+    "drop_red_ratio": 0.1208,
+    "keep_red_ratio": 0.1339,
+    "drop_size": [
+      618,
+      399
+    ],
+    "keep_size": [
+      521,
+      489
+    ],
+    "panel": "risk/aggressive/aggressive_id7588_p39_R1.png"
+  }
+]

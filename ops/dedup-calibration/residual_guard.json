@@ -1,0 +1,7237 @@
+{
+  "caliber": "残墨守卫（备选口径）：residual = (frame_red − Σ children_red)/frame_red；residual <= thr ⇒ 纯假框丢。对照派单收窄口径『仅 ≥2 子框才丢』。",
+  "params": {
+    "t2": 0.6,
+    "tol_px": 8.0
+  },
+  "n_candidates": 395,
+  "sweep": [
+    {
+      "residual_thr": 0.05,
+      "guard_drops": 56,
+      "ge2_drops": 125,
+      "both": 47,
+      "guard_only": 9,
+      "ge2_only": 78,
+      "agreement": 0.351
+    },
+    {
+      "residual_thr": 0.1,
+      "guard_drops": 70,
+      "ge2_drops": 125,
+      "both": 54,
+      "guard_only": 16,
+      "ge2_only": 71,
+      "agreement": 0.383
+    },
+    {
+      "residual_thr": 0.15,
+      "guard_drops": 84,
+      "ge2_drops": 125,
+      "both": 64,
+      "guard_only": 20,
+      "ge2_only": 61,
+      "agreement": 0.441
+    },
+    {
+      "residual_thr": 0.2,
+      "guard_drops": 92,
+      "ge2_drops": 125,
+      "both": 66,
+      "guard_only": 26,
+      "ge2_only": 59,
+      "agreement": 0.437
+    },
+    {
+      "residual_thr": 0.25,
+      "guard_drops": 103,
+      "ge2_drops": 125,
+      "both": 71,
+      "guard_only": 32,
+      "ge2_only": 54,
+      "agreement": 0.452
+    },
+    {
+      "residual_thr": 0.3,
+      "guard_drops": 119,
+      "ge2_drops": 125,
+      "both": 80,
+      "guard_only": 39,
+      "ge2_only": 45,
+      "agreement": 0.488
+    },
+    {
+      "residual_thr": 0.35,
+      "guard_drops": 140,
+      "ge2_drops": 125,
+      "both": 86,
+      "guard_only": 54,
+      "ge2_only": 39,
+      "agreement": 0.48
+    },
+    {
+      "residual_thr": 0.4,
+      "guard_drops": 167,
+      "ge2_drops": 125,
+      "both": 96,
+      "guard_only": 71,
+      "ge2_only": 29,
+      "agreement": 0.49
+    },
+    {
+      "residual_thr": 0.5,
+      "guard_drops": 241,
+      "ge2_drops": 125,
+      "both": 111,
+      "guard_only": 130,
+      "ge2_only": 14,
+      "agreement": 0.435
+    }
+  ],
+  "by_n_children": {
+    "1": {
+      "candidates": 270,
+      "residual_min": 0.0001,
+      "residual_median": 0.5275,
+      "residual_max": 0.9282,
+      "pure_le_0.15": 20,
+      "pure_pct": 7.4
+    },
+    "2": {
+      "candidates": 78,
+      "residual_min": 0.0,
+      "residual_median": 0.2392,
+      "residual_max": 0.6958,
+      "pure_le_0.15": 36,
+      "pure_pct": 46.2
+    },
+    "3": {
+      "candidates": 28,
+      "residual_min": 0.0382,
+      "residual_median": 0.2713,
+      "residual_max": 0.4437,
+      "pure_le_0.15": 10,
+      "pure_pct": 35.7
+    },
+    "4": {
+      "candidates": 19,
+      "residual_min": 0.0,
+      "residual_median": 0.0,
+      "residual_max": 0.3239,
+      "pure_le_0.15": 18,
+      "pure_pct": 94.7
+    }
+  },
+  "candidates": [
+    {
+      "book": "吴颐人篆刻作品展示.pdf",
+      "page": 8,
+      "id": 8705,
+      "idx": 0,
+      "big_size": [
+        522,
+        556
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 95158,
+      "children_red_area": 19529,
+      "residual_ratio": 0.7948,
+      "n_sig": 6,
+      "red_ratio": 0.3279,
+      "largest_cc_coverage": 0.1253
+    },
+    {
+      "book": "吴颐人篆刻作品展示.pdf",
+      "page": 29,
+      "id": 8699,
+      "idx": 1,
+      "big_size": [
+        330,
+        313
+      ],
+      "n_children": 1,
+      "children_idx": "3",
+      "frame_red_area": 39102,
+      "children_red_area": 15668,
+      "residual_ratio": 0.5993,
+      "n_sig": 4,
+      "red_ratio": 0.3786,
+      "largest_cc_coverage": 0.1266
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 19,
+      "id": 7484,
+      "idx": 5,
+      "big_size": [
+        396,
+        405
+      ],
+      "n_children": 1,
+      "children_idx": "8",
+      "frame_red_area": 33738,
+      "children_red_area": 6945,
+      "residual_ratio": 0.7941,
+      "n_sig": 3,
+      "red_ratio": 0.2104,
+      "largest_cc_coverage": 0.1581
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 19,
+      "id": 7490,
+      "idx": 11,
+      "big_size": [
+        395,
+        386
+      ],
+      "n_children": 1,
+      "children_idx": "12",
+      "frame_red_area": 26254,
+      "children_red_area": 9012,
+      "residual_ratio": 0.6567,
+      "n_sig": 3,
+      "red_ratio": 0.1722,
+      "largest_cc_coverage": 0.0997
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 25,
+      "id": 7599,
+      "idx": 0,
+      "big_size": [
+        513,
+        494
+      ],
+      "n_children": 1,
+      "children_idx": "1",
+      "frame_red_area": 36490,
+      "children_red_area": 20597,
+      "residual_ratio": 0.4355,
+      "n_sig": 3,
+      "red_ratio": 0.144,
+      "largest_cc_coverage": 0.0882
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 25,
+      "id": 7604,
+      "idx": 5,
+      "big_size": [
+        375,
+        364
+      ],
+      "n_children": 1,
+      "children_idx": "7",
+      "frame_red_area": 30941,
+      "children_red_area": 5139,
+      "residual_ratio": 0.8339,
+      "n_sig": 6,
+      "red_ratio": 0.2267,
+      "largest_cc_coverage": 0.0815
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 26,
+      "id": 7607,
+      "idx": 0,
+      "big_size": [
+        465,
+        488
+      ],
+      "n_children": 1,
+      "children_idx": "3",
+      "frame_red_area": 29086,
+      "children_red_area": 8326,
+      "residual_ratio": 0.7137,
+      "n_sig": 2,
+      "red_ratio": 0.1282,
+      "largest_cc_coverage": 0.0927
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 27,
+      "id": 7616,
+      "idx": 3,
+      "big_size": [
+        391,
+        391
+      ],
+      "n_children": 1,
+      "children_idx": "4",
+      "frame_red_area": 23354,
+      "children_red_area": 3756,
+      "residual_ratio": 0.8392,
+      "n_sig": 3,
+      "red_ratio": 0.1528,
+      "largest_cc_coverage": 0.098
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 28,
+      "id": 7621,
+      "idx": 3,
+      "big_size": [
+        478,
+        520
+      ],
+      "n_children": 2,
+      "children_idx": "5,6",
+      "frame_red_area": 28394,
+      "children_red_area": 8638,
+      "residual_ratio": 0.6958,
+      "n_sig": 6,
+      "red_ratio": 0.1142,
+      "largest_cc_coverage": 0.0564
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 33,
+      "id": 7554,
+      "idx": 3,
+      "big_size": [
+        482,
+        489
+      ],
+      "n_children": 1,
+      "children_idx": "5",
+      "frame_red_area": 40891,
+      "children_red_area": 7213,
+      "residual_ratio": 0.8236,
+      "n_sig": 2,
+      "red_ratio": 0.1735,
+      "largest_cc_coverage": 0.148
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 34,
+      "id": 7560,
+      "idx": 3,
+      "big_size": [
+        625,
+        638
+      ],
+      "n_children": 1,
+      "children_idx": "6",
+      "frame_red_area": 47871,
+      "children_red_area": 6439,
+      "residual_ratio": 0.8655,
+      "n_sig": 8,
+      "red_ratio": 0.1201,
+      "largest_cc_coverage": 0.0514
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 41,
+      "id": 7508,
+      "idx": 2,
+      "big_size": [
+        299,
+        461
+      ],
+      "n_children": 1,
+      "children_idx": "3",
+      "frame_red_area": 20755,
+      "children_red_area": 5933,
+      "residual_ratio": 0.7141,
+      "n_sig": 3,
+      "red_ratio": 0.1506,
+      "largest_cc_coverage": 0.0841
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 47,
+      "id": 7537,
+      "idx": 0,
+      "big_size": [
+        270,
+        245
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 9670,
+      "children_red_area": 4299,
+      "residual_ratio": 0.5554,
+      "n_sig": 2,
+      "red_ratio": 0.1462,
+      "largest_cc_coverage": 0.0598
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 50,
+      "id": 7653,
+      "idx": 1,
+      "big_size": [
+        465,
+        482
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 31995,
+      "children_red_area": 15914,
+      "residual_ratio": 0.5026,
+      "n_sig": 3,
+      "red_ratio": 0.1428,
+      "largest_cc_coverage": 0.0721
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 50,
+      "id": 7656,
+      "idx": 4,
+      "big_size": [
+        539,
+        384
+      ],
+      "n_children": 1,
+      "children_idx": "7",
+      "frame_red_area": 25938,
+      "children_red_area": 7207,
+      "residual_ratio": 0.7221,
+      "n_sig": 3,
+      "red_ratio": 0.1253,
+      "largest_cc_coverage": 0.0685
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 58,
+      "id": 7793,
+      "idx": 1,
+      "big_size": [
+        841,
+        838
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 138017,
+      "children_red_area": 31757,
+      "residual_ratio": 0.7699,
+      "n_sig": 7,
+      "red_ratio": 0.1958,
+      "largest_cc_coverage": 0.1438
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 60,
+      "id": 7800,
+      "idx": 0,
+      "big_size": [
+        763,
+        760
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 57009,
+      "children_red_area": 13270,
+      "residual_ratio": 0.7672,
+      "n_sig": 7,
+      "red_ratio": 0.0983,
+      "largest_cc_coverage": 0.052
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 61,
+      "id": 7807,
+      "idx": 2,
+      "big_size": [
+        523,
+        772
+      ],
+      "n_children": 1,
+      "children_idx": "3",
+      "frame_red_area": 65617,
+      "children_red_area": 21177,
+      "residual_ratio": 0.6773,
+      "n_sig": 13,
+      "red_ratio": 0.1625,
+      "largest_cc_coverage": 0.0318
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 65,
+      "id": 7741,
+      "idx": 0,
+      "big_size": [
+        1237,
+        906
+      ],
+      "n_children": 4,
+      "children_idx": "1,4,8,12",
+      "frame_red_area": 153329,
+      "children_red_area": 103667,
+      "residual_ratio": 0.3239,
+      "n_sig": 10,
+      "red_ratio": 0.1368,
+      "largest_cc_coverage": 0.0464
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 65,
+      "id": 7743,
+      "idx": 2,
+      "big_size": [
+        1035,
+        780
+      ],
+      "n_children": 1,
+      "children_idx": "4",
+      "frame_red_area": 125290,
+      "children_red_area": 10028,
+      "residual_ratio": 0.92,
+      "n_sig": 8,
+      "red_ratio": 0.1552,
+      "largest_cc_coverage": 0.0789
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 65,
+      "id": 7747,
+      "idx": 6,
+      "big_size": [
+        249,
+        184
+      ],
+      "n_children": 1,
+      "children_idx": "7",
+      "frame_red_area": 13357,
+      "children_red_area": 5506,
+      "residual_ratio": 0.5878,
+      "n_sig": 3,
+      "red_ratio": 0.2915,
+      "largest_cc_coverage": 0.0913
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 65,
+      "id": 7749,
+      "idx": 8,
+      "big_size": [
+        621,
+        599
+      ],
+      "n_children": 1,
+      "children_idx": "12",
+      "frame_red_area": 68921,
+      "children_red_area": 16334,
+      "residual_ratio": 0.763,
+      "n_sig": 8,
+      "red_ratio": 0.1853,
+      "largest_cc_coverage": 0.0804
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 69,
+      "id": 7763,
+      "idx": 4,
+      "big_size": [
+        525,
+        468
+      ],
+      "n_children": 1,
+      "children_idx": "6",
+      "frame_red_area": 32007,
+      "children_red_area": 9923,
+      "residual_ratio": 0.69,
+      "n_sig": 4,
+      "red_ratio": 0.1303,
+      "largest_cc_coverage": 0.0579
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 73,
+      "id": 7695,
+      "idx": 1,
+      "big_size": [
+        324,
+        332
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 17965,
+      "children_red_area": 6162,
+      "residual_ratio": 0.657,
+      "n_sig": 3,
+      "red_ratio": 0.167,
+      "largest_cc_coverage": 0.0865
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 73,
+      "id": 7698,
+      "idx": 4,
+      "big_size": [
+        512,
+        517
+      ],
+      "n_children": 1,
+      "children_idx": "6",
+      "frame_red_area": 31731,
+      "children_red_area": 3909,
+      "residual_ratio": 0.8768,
+      "n_sig": 4,
+      "red_ratio": 0.1199,
+      "largest_cc_coverage": 0.0863
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 74,
+      "id": 7701,
+      "idx": 0,
+      "big_size": [
+        608,
+        560
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 35029,
+      "children_red_area": 3176,
+      "residual_ratio": 0.9093,
+      "n_sig": 5,
+      "red_ratio": 0.1029,
+      "largest_cc_coverage": 0.0601
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 77,
+      "id": 7717,
+      "idx": 0,
+      "big_size": [
+        600,
+        602
+      ],
+      "n_children": 2,
+      "children_idx": "3,4",
+      "frame_red_area": 48895,
+      "children_red_area": 16932,
+      "residual_ratio": 0.6537,
+      "n_sig": 4,
+      "red_ratio": 0.1354,
+      "largest_cc_coverage": 0.0897
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 89,
+      "id": 7865,
+      "idx": 0,
+      "big_size": [
+        418,
+        429
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 25415,
+      "children_red_area": 7035,
+      "residual_ratio": 0.7232,
+      "n_sig": 3,
+      "red_ratio": 0.1417,
+      "largest_cc_coverage": 0.1063
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 90,
+      "id": 7873,
+      "idx": 2,
+      "big_size": [
+        435,
+        439
+      ],
+      "n_children": 1,
+      "children_idx": "3",
+      "frame_red_area": 33412,
+      "children_red_area": 10137,
+      "residual_ratio": 0.6966,
+      "n_sig": 4,
+      "red_ratio": 0.175,
+      "largest_cc_coverage": 0.049
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 93,
+      "id": 7885,
+      "idx": 1,
+      "big_size": [
+        495,
+        491
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 38840,
+      "children_red_area": 10946,
+      "residual_ratio": 0.7182,
+      "n_sig": 6,
+      "red_ratio": 0.1598,
+      "largest_cc_coverage": 0.0795
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 99,
+      "id": 7916,
+      "idx": 4,
+      "big_size": [
+        478,
+        481
+      ],
+      "n_children": 1,
+      "children_idx": "6",
+      "frame_red_area": 29094,
+      "children_red_area": 6410,
+      "residual_ratio": 0.7797,
+      "n_sig": 2,
+      "red_ratio": 0.1265,
+      "largest_cc_coverage": 0.09
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 100,
+      "id": 7923,
+      "idx": 4,
+      "big_size": [
+        411,
+        335
+      ],
+      "n_children": 1,
+      "children_idx": "6",
+      "frame_red_area": 18673,
+      "children_red_area": 4761,
+      "residual_ratio": 0.745,
+      "n_sig": 3,
+      "red_ratio": 0.1356,
+      "largest_cc_coverage": 0.0716
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 102,
+      "id": 7938,
+      "idx": 1,
+      "big_size": [
+        422,
+        390
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 22962,
+      "children_red_area": 3045,
+      "residual_ratio": 0.8674,
+      "n_sig": 3,
+      "red_ratio": 0.1395,
+      "largest_cc_coverage": 0.0817
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 103,
+      "id": 7946,
+      "idx": 1,
+      "big_size": [
+        408,
+        417
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 25045,
+      "children_red_area": 5108,
+      "residual_ratio": 0.796,
+      "n_sig": 3,
+      "red_ratio": 0.1472,
+      "largest_cc_coverage": 0.1096
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 109,
+      "id": 7981,
+      "idx": 1,
+      "big_size": [
+        461,
+        457
+      ],
+      "n_children": 1,
+      "children_idx": "3",
+      "frame_red_area": 26684,
+      "children_red_area": 13457,
+      "residual_ratio": 0.4957,
+      "n_sig": 2,
+      "red_ratio": 0.1267,
+      "largest_cc_coverage": 0.087
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 109,
+      "id": 7986,
+      "idx": 6,
+      "big_size": [
+        193,
+        239
+      ],
+      "n_children": 1,
+      "children_idx": "8",
+      "frame_red_area": 8692,
+      "children_red_area": 2878,
+      "residual_ratio": 0.6689,
+      "n_sig": 3,
+      "red_ratio": 0.1884,
+      "largest_cc_coverage": 0.0692
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 110,
+      "id": 7990,
+      "idx": 0,
+      "big_size": [
+        737,
+        738
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 65006,
+      "children_red_area": 4670,
+      "residual_ratio": 0.9282,
+      "n_sig": 6,
+      "red_ratio": 0.1195,
+      "largest_cc_coverage": 0.0803
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 112,
+      "id": 8002,
+      "idx": 1,
+      "big_size": [
+        348,
+        532
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 27490,
+      "children_red_area": 4721,
+      "residual_ratio": 0.8283,
+      "n_sig": 3,
+      "red_ratio": 0.1485,
+      "largest_cc_coverage": 0.0779
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 112,
+      "id": 8004,
+      "idx": 3,
+      "big_size": [
+        489,
+        489
+      ],
+      "n_children": 1,
+      "children_idx": "5",
+      "frame_red_area": 25432,
+      "children_red_area": 7483,
+      "residual_ratio": 0.7058,
+      "n_sig": 3,
+      "red_ratio": 0.1064,
+      "largest_cc_coverage": 0.0555
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 112,
+      "id": 8005,
+      "idx": 4,
+      "big_size": [
+        453,
+        430
+      ],
+      "n_children": 1,
+      "children_idx": "5",
+      "frame_red_area": 24617,
+      "children_red_area": 7483,
+      "residual_ratio": 0.696,
+      "n_sig": 3,
+      "red_ratio": 0.1264,
+      "largest_cc_coverage": 0.0681
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 116,
+      "id": 8031,
+      "idx": 6,
+      "big_size": [
+        376,
+        392
+      ],
+      "n_children": 1,
+      "children_idx": "9",
+      "frame_red_area": 21691,
+      "children_red_area": 6817,
+      "residual_ratio": 0.6857,
+      "n_sig": 2,
+      "red_ratio": 0.1472,
+      "largest_cc_coverage": 0.0706
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 118,
+      "id": 8043,
+      "idx": 1,
+      "big_size": [
+        525,
+        621
+      ],
+      "n_children": 1,
+      "children_idx": "3",
+      "frame_red_area": 58520,
+      "children_red_area": 8219,
+      "residual_ratio": 0.8596,
+      "n_sig": 9,
+      "red_ratio": 0.1795,
+      "largest_cc_coverage": 0.0375
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 119,
+      "id": 8050,
+      "idx": 2,
+      "big_size": [
+        400,
+        656
+      ],
+      "n_children": 1,
+      "children_idx": "3",
+      "frame_red_area": 39545,
+      "children_red_area": 12445,
+      "residual_ratio": 0.6853,
+      "n_sig": 2,
+      "red_ratio": 0.1507,
+      "largest_cc_coverage": 0.1245
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 122,
+      "id": 8062,
+      "idx": 0,
+      "big_size": [
+        616,
+        602
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 44384,
+      "children_red_area": 19316,
+      "residual_ratio": 0.5648,
+      "n_sig": 4,
+      "red_ratio": 0.1197,
+      "largest_cc_coverage": 0.0652
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 123,
+      "id": 8071,
+      "idx": 0,
+      "big_size": [
+        715,
+        706
+      ],
+      "n_children": 1,
+      "children_idx": "1",
+      "frame_red_area": 68955,
+      "children_red_area": 41572,
+      "residual_ratio": 0.3971,
+      "n_sig": 8,
+      "red_ratio": 0.1366,
+      "largest_cc_coverage": 0.0609
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 123,
+      "id": 8074,
+      "idx": 3,
+      "big_size": [
+        487,
+        517
+      ],
+      "n_children": 1,
+      "children_idx": "4",
+      "frame_red_area": 36050,
+      "children_red_area": 3550,
+      "residual_ratio": 0.9015,
+      "n_sig": 5,
+      "red_ratio": 0.1432,
+      "largest_cc_coverage": 0.0757
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 123,
+      "id": 8076,
+      "idx": 5,
+      "big_size": [
+        517,
+        416
+      ],
+      "n_children": 1,
+      "children_idx": "7",
+      "frame_red_area": 36617,
+      "children_red_area": 7593,
+      "residual_ratio": 0.7926,
+      "n_sig": 5,
+      "red_ratio": 0.1703,
+      "largest_cc_coverage": 0.0536
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 124,
+      "id": 8082,
+      "idx": 3,
+      "big_size": [
+        447,
+        714
+      ],
+      "n_children": 1,
+      "children_idx": "4",
+      "frame_red_area": 48362,
+      "children_red_area": 9378,
+      "residual_ratio": 0.8061,
+      "n_sig": 5,
+      "red_ratio": 0.1515,
+      "largest_cc_coverage": 0.0934
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 126,
+      "id": 8096,
+      "idx": 0,
+      "big_size": [
+        365,
+        344
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 15812,
+      "children_red_area": 7672,
+      "residual_ratio": 0.5148,
+      "n_sig": 2,
+      "red_ratio": 0.1259,
+      "largest_cc_coverage": 0.0772
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 129,
+      "id": 8113,
+      "idx": 0,
+      "big_size": [
+        472,
+        472
+      ],
+      "n_children": 1,
+      "children_idx": "3",
+      "frame_red_area": 28608,
+      "children_red_area": 21522,
+      "residual_ratio": 0.2477,
+      "n_sig": 2,
+      "red_ratio": 0.1284,
+      "largest_cc_coverage": 0.0611
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 130,
+      "id": 8122,
+      "idx": 1,
+      "big_size": [
+        486,
+        561
+      ],
+      "n_children": 1,
+      "children_idx": "4",
+      "frame_red_area": 38303,
+      "children_red_area": 6242,
+      "residual_ratio": 0.837,
+      "n_sig": 3,
+      "red_ratio": 0.1405,
+      "largest_cc_coverage": 0.0967
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 134,
+      "id": 8150,
+      "idx": 2,
+      "big_size": [
+        550,
+        560
+      ],
+      "n_children": 1,
+      "children_idx": "4",
+      "frame_red_area": 61904,
+      "children_red_area": 18245,
+      "residual_ratio": 0.7053,
+      "n_sig": 12,
+      "red_ratio": 0.201,
+      "largest_cc_coverage": 0.0379
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 135,
+      "id": 8157,
+      "idx": 0,
+      "big_size": [
+        377,
+        246
+      ],
+      "n_children": 1,
+      "children_idx": "3",
+      "frame_red_area": 13718,
+      "children_red_area": 7943,
+      "residual_ratio": 0.421,
+      "n_sig": 2,
+      "red_ratio": 0.1479,
+      "largest_cc_coverage": 0.0647
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 135,
+      "id": 8161,
+      "idx": 4,
+      "big_size": [
+        581,
+        393
+      ],
+      "n_children": 1,
+      "children_idx": "6",
+      "frame_red_area": 38127,
+      "children_red_area": 12117,
+      "residual_ratio": 0.6822,
+      "n_sig": 3,
+      "red_ratio": 0.167,
+      "largest_cc_coverage": 0.1007
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 136,
+      "id": 8168,
+      "idx": 1,
+      "big_size": [
+        517,
+        851
+      ],
+      "n_children": 1,
+      "children_idx": "3",
+      "frame_red_area": 58440,
+      "children_red_area": 14817,
+      "residual_ratio": 0.7465,
+      "n_sig": 3,
+      "red_ratio": 0.1328,
+      "largest_cc_coverage": 0.095
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 138,
+      "id": 8183,
+      "idx": 4,
+      "big_size": [
+        525,
+        529
+      ],
+      "n_children": 1,
+      "children_idx": "6",
+      "frame_red_area": 41706,
+      "children_red_area": 17761,
+      "residual_ratio": 0.5741,
+      "n_sig": 4,
+      "red_ratio": 0.1502,
+      "largest_cc_coverage": 0.0869
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 144,
+      "id": 8215,
+      "idx": 0,
+      "big_size": [
+        602,
+        601
+      ],
+      "n_children": 1,
+      "children_idx": "1",
+      "frame_red_area": 42419,
+      "children_red_area": 18000,
+      "residual_ratio": 0.5757,
+      "n_sig": 2,
+      "red_ratio": 0.1172,
+      "largest_cc_coverage": 0.0794
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 147,
+      "id": 8236,
+      "idx": 1,
+      "big_size": [
+        403,
+        645
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 26092,
+      "children_red_area": 3356,
+      "residual_ratio": 0.8714,
+      "n_sig": 3,
+      "red_ratio": 0.1004,
+      "largest_cc_coverage": 0.072
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 149,
+      "id": 8245,
+      "idx": 2,
+      "big_size": [
+        591,
+        593
+      ],
+      "n_children": 1,
+      "children_idx": "5",
+      "frame_red_area": 40141,
+      "children_red_area": 5766,
+      "residual_ratio": 0.8564,
+      "n_sig": 4,
+      "red_ratio": 0.1145,
+      "largest_cc_coverage": 0.0722
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 151,
+      "id": 8252,
+      "idx": 0,
+      "big_size": [
+        480,
+        480
+      ],
+      "n_children": 1,
+      "children_idx": "3",
+      "frame_red_area": 30101,
+      "children_red_area": 9997,
+      "residual_ratio": 0.6679,
+      "n_sig": 3,
+      "red_ratio": 0.1306,
+      "largest_cc_coverage": 0.0873
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 152,
+      "id": 8260,
+      "idx": 2,
+      "big_size": [
+        342,
+        489
+      ],
+      "n_children": 1,
+      "children_idx": "3",
+      "frame_red_area": 24820,
+      "children_red_area": 5893,
+      "residual_ratio": 0.7626,
+      "n_sig": 4,
+      "red_ratio": 0.1484,
+      "largest_cc_coverage": 0.061
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 155,
+      "id": 8319,
+      "idx": 3,
+      "big_size": [
+        488,
+        473
+      ],
+      "n_children": 1,
+      "children_idx": "5",
+      "frame_red_area": 30632,
+      "children_red_area": 10376,
+      "residual_ratio": 0.6613,
+      "n_sig": 4,
+      "red_ratio": 0.1327,
+      "largest_cc_coverage": 0.0737
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 157,
+      "id": 8332,
+      "idx": 5,
+      "big_size": [
+        219,
+        365
+      ],
+      "n_children": 1,
+      "children_idx": "6",
+      "frame_red_area": 16968,
+      "children_red_area": 3962,
+      "residual_ratio": 0.7665,
+      "n_sig": 3,
+      "red_ratio": 0.2123,
+      "largest_cc_coverage": 0.0959
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 159,
+      "id": 8338,
+      "idx": 0,
+      "big_size": [
+        360,
+        402
+      ],
+      "n_children": 1,
+      "children_idx": "3",
+      "frame_red_area": 22156,
+      "children_red_area": 6960,
+      "residual_ratio": 0.6859,
+      "n_sig": 2,
+      "red_ratio": 0.1531,
+      "largest_cc_coverage": 0.1019
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 160,
+      "id": 8348,
+      "idx": 3,
+      "big_size": [
+        315,
+        390
+      ],
+      "n_children": 1,
+      "children_idx": "5",
+      "frame_red_area": 15992,
+      "children_red_area": 10974,
+      "residual_ratio": 0.3138,
+      "n_sig": 3,
+      "red_ratio": 0.1302,
+      "largest_cc_coverage": 0.0408
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 161,
+      "id": 8356,
+      "idx": 4,
+      "big_size": [
+        208,
+        308
+      ],
+      "n_children": 1,
+      "children_idx": "5",
+      "frame_red_area": 10342,
+      "children_red_area": 7770,
+      "residual_ratio": 0.2487,
+      "n_sig": 2,
+      "red_ratio": 0.1614,
+      "largest_cc_coverage": 0.0723
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 165,
+      "id": 8381,
+      "idx": 2,
+      "big_size": [
+        634,
+        651
+      ],
+      "n_children": 1,
+      "children_idx": "4",
+      "frame_red_area": 39704,
+      "children_red_area": 12983,
+      "residual_ratio": 0.673,
+      "n_sig": 5,
+      "red_ratio": 0.0962,
+      "largest_cc_coverage": 0.0325
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 165,
+      "id": 8382,
+      "idx": 3,
+      "big_size": [
+        504,
+        664
+      ],
+      "n_children": 1,
+      "children_idx": "5",
+      "frame_red_area": 43647,
+      "children_red_area": 3691,
+      "residual_ratio": 0.9154,
+      "n_sig": 10,
+      "red_ratio": 0.1304,
+      "largest_cc_coverage": 0.0256
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 189,
+      "id": 8506,
+      "idx": 0,
+      "big_size": [
+        509,
+        435
+      ],
+      "n_children": 1,
+      "children_idx": "1",
+      "frame_red_area": 34313,
+      "children_red_area": 10151,
+      "residual_ratio": 0.7042,
+      "n_sig": 5,
+      "red_ratio": 0.155,
+      "largest_cc_coverage": 0.0472
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 194,
+      "id": 8539,
+      "idx": 1,
+      "big_size": [
+        327,
+        438
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 14611,
+      "children_red_area": 10079,
+      "residual_ratio": 0.3102,
+      "n_sig": 2,
+      "red_ratio": 0.102,
+      "largest_cc_coverage": 0.0539
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 201,
+      "id": 8447,
+      "idx": 1,
+      "big_size": [
+        399,
+        452
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 32355,
+      "children_red_area": 13144,
+      "residual_ratio": 0.5938,
+      "n_sig": 5,
+      "red_ratio": 0.1794,
+      "largest_cc_coverage": 0.0676
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 205,
+      "id": 8472,
+      "idx": 1,
+      "big_size": [
+        1189,
+        1207
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 212052,
+      "children_red_area": 54256,
+      "residual_ratio": 0.7441,
+      "n_sig": 5,
+      "red_ratio": 0.1478,
+      "largest_cc_coverage": 0.0678
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 215,
+      "id": 8612,
+      "idx": 0,
+      "big_size": [
+        548,
+        583
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 44056,
+      "children_red_area": 13842,
+      "residual_ratio": 0.6858,
+      "n_sig": 5,
+      "red_ratio": 0.1379,
+      "largest_cc_coverage": 0.0755
+    },
+    {
+      "book": "福庵印缀 原版 高清.pdf",
+      "page": 216,
+      "id": 8617,
+      "idx": 0,
+      "big_size": [
+        472,
+        486
+      ],
+      "n_children": 2,
+      "children_idx": "2,3",
+      "frame_red_area": 30535,
+      "children_red_area": 23015,
+      "residual_ratio": 0.2463,
+      "n_sig": 4,
+      "red_ratio": 0.1331,
+      "largest_cc_coverage": 0.0536
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 29,
+      "id": 309,
+      "idx": 4,
+      "big_size": [
+        413,
+        442
+      ],
+      "n_children": 3,
+      "children_idx": "5,6,11",
+      "frame_red_area": 58291,
+      "children_red_area": 55161,
+      "residual_ratio": 0.0537,
+      "n_sig": 7,
+      "red_ratio": 0.3193,
+      "largest_cc_coverage": 0.0683
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 33,
+      "id": 353,
+      "idx": 2,
+      "big_size": [
+        426,
+        460
+      ],
+      "n_children": 2,
+      "children_idx": "3,4",
+      "frame_red_area": 52368,
+      "children_red_area": 30557,
+      "residual_ratio": 0.4165,
+      "n_sig": 5,
+      "red_ratio": 0.2672,
+      "largest_cc_coverage": 0.0982
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 33,
+      "id": 356,
+      "idx": 5,
+      "big_size": [
+        454,
+        443
+      ],
+      "n_children": 1,
+      "children_idx": "9",
+      "frame_red_area": 68987,
+      "children_red_area": 20846,
+      "residual_ratio": 0.6978,
+      "n_sig": 2,
+      "red_ratio": 0.343,
+      "largest_cc_coverage": 0.2568
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 33,
+      "id": 357,
+      "idx": 6,
+      "big_size": [
+        425,
+        438
+      ],
+      "n_children": 1,
+      "children_idx": "8",
+      "frame_red_area": 69555,
+      "children_red_area": 22481,
+      "residual_ratio": 0.6768,
+      "n_sig": 2,
+      "red_ratio": 0.3737,
+      "largest_cc_coverage": 0.2702
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 34,
+      "id": 367,
+      "idx": 5,
+      "big_size": [
+        505,
+        396
+      ],
+      "n_children": 2,
+      "children_idx": "9,10",
+      "frame_red_area": 72167,
+      "children_red_area": 53129,
+      "residual_ratio": 0.2638,
+      "n_sig": 6,
+      "red_ratio": 0.3609,
+      "largest_cc_coverage": 0.1011
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 37,
+      "id": 145,
+      "idx": 4,
+      "big_size": [
+        416,
+        504
+      ],
+      "n_children": 1,
+      "children_idx": "6",
+      "frame_red_area": 63281,
+      "children_red_area": 26609,
+      "residual_ratio": 0.5795,
+      "n_sig": 5,
+      "red_ratio": 0.3018,
+      "largest_cc_coverage": 0.0898
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 40,
+      "id": 159,
+      "idx": 0,
+      "big_size": [
+        426,
+        522
+      ],
+      "n_children": 4,
+      "children_idx": "5,7,10,11",
+      "frame_red_area": 73575,
+      "children_red_area": 96616,
+      "residual_ratio": 0.0,
+      "n_sig": 6,
+      "red_ratio": 0.3309,
+      "largest_cc_coverage": 0.0809
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 40,
+      "id": 160,
+      "idx": 1,
+      "big_size": [
+        402,
+        262
+      ],
+      "n_children": 1,
+      "children_idx": "3",
+      "frame_red_area": 43273,
+      "children_red_area": 23168,
+      "residual_ratio": 0.4646,
+      "n_sig": 5,
+      "red_ratio": 0.4109,
+      "largest_cc_coverage": 0.1915
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 40,
+      "id": 161,
+      "idx": 2,
+      "big_size": [
+        384,
+        507
+      ],
+      "n_children": 2,
+      "children_idx": "3,4",
+      "frame_red_area": 75514,
+      "children_red_area": 46526,
+      "residual_ratio": 0.3839,
+      "n_sig": 5,
+      "red_ratio": 0.3879,
+      "largest_cc_coverage": 0.114
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 43,
+      "id": 197,
+      "idx": 0,
+      "big_size": [
+        453,
+        490
+      ],
+      "n_children": 1,
+      "children_idx": "5",
+      "frame_red_area": 81780,
+      "children_red_area": 28904,
+      "residual_ratio": 0.6466,
+      "n_sig": 2,
+      "red_ratio": 0.3684,
+      "largest_cc_coverage": 0.2813
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 43,
+      "id": 203,
+      "idx": 6,
+      "big_size": [
+        368,
+        460
+      ],
+      "n_children": 1,
+      "children_idx": "7",
+      "frame_red_area": 70387,
+      "children_red_area": 20936,
+      "residual_ratio": 0.7026,
+      "n_sig": 5,
+      "red_ratio": 0.4158,
+      "largest_cc_coverage": 0.153
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 45,
+      "id": 90,
+      "idx": 0,
+      "big_size": [
+        474,
+        530
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 75693,
+      "children_red_area": 25113,
+      "residual_ratio": 0.6682,
+      "n_sig": 6,
+      "red_ratio": 0.3013,
+      "largest_cc_coverage": 0.1826
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 51,
+      "id": 118,
+      "idx": 0,
+      "big_size": [
+        496,
+        512
+      ],
+      "n_children": 1,
+      "children_idx": "1",
+      "frame_red_area": 87282,
+      "children_red_area": 27298,
+      "residual_ratio": 0.6872,
+      "n_sig": 2,
+      "red_ratio": 0.3437,
+      "largest_cc_coverage": 0.2611
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 51,
+      "id": 123,
+      "idx": 5,
+      "big_size": [
+        512,
+        521
+      ],
+      "n_children": 4,
+      "children_idx": "6,7,10,11",
+      "frame_red_area": 78007,
+      "children_red_area": 93858,
+      "residual_ratio": 0.0,
+      "n_sig": 5,
+      "red_ratio": 0.2924,
+      "largest_cc_coverage": 0.0708
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 52,
+      "id": 137,
+      "idx": 5,
+      "big_size": [
+        498,
+        506
+      ],
+      "n_children": 1,
+      "children_idx": "6",
+      "frame_red_area": 77111,
+      "children_red_area": 35385,
+      "residual_ratio": 0.5411,
+      "n_sig": 2,
+      "red_ratio": 0.306,
+      "largest_cc_coverage": 0.2229
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 52,
+      "id": 139,
+      "idx": 7,
+      "big_size": [
+        298,
+        462
+      ],
+      "n_children": 1,
+      "children_idx": "8",
+      "frame_red_area": 45814,
+      "children_red_area": 20332,
+      "residual_ratio": 0.5562,
+      "n_sig": 3,
+      "red_ratio": 0.3328,
+      "largest_cc_coverage": 0.2074
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 54,
+      "id": 224,
+      "idx": 1,
+      "big_size": [
+        468,
+        470
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 61135,
+      "children_red_area": 14752,
+      "residual_ratio": 0.7587,
+      "n_sig": 2,
+      "red_ratio": 0.2779,
+      "largest_cc_coverage": 0.1918
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 55,
+      "id": 229,
+      "idx": 0,
+      "big_size": [
+        394,
+        417
+      ],
+      "n_children": 4,
+      "children_idx": "1,2,3,4",
+      "frame_red_area": 45691,
+      "children_red_area": 45463,
+      "residual_ratio": 0.005,
+      "n_sig": 5,
+      "red_ratio": 0.2781,
+      "largest_cc_coverage": 0.0847
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 56,
+      "id": 239,
+      "idx": 0,
+      "big_size": [
+        439,
+        444
+      ],
+      "n_children": 4,
+      "children_idx": "4,5,9,10",
+      "frame_red_area": 49999,
+      "children_red_area": 56867,
+      "residual_ratio": 0.0,
+      "n_sig": 5,
+      "red_ratio": 0.2565,
+      "largest_cc_coverage": 0.0745
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 56,
+      "id": 250,
+      "idx": 11,
+      "big_size": [
+        488,
+        456
+      ],
+      "n_children": 4,
+      "children_idx": "14,15,19,20",
+      "frame_red_area": 60048,
+      "children_red_area": 70617,
+      "residual_ratio": 0.0,
+      "n_sig": 5,
+      "red_ratio": 0.2698,
+      "largest_cc_coverage": 0.0577
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 56,
+      "id": 251,
+      "idx": 12,
+      "big_size": [
+        394,
+        413
+      ],
+      "n_children": 3,
+      "children_idx": "16,17,18",
+      "frame_red_area": 43768,
+      "children_red_area": 31185,
+      "residual_ratio": 0.2875,
+      "n_sig": 5,
+      "red_ratio": 0.269,
+      "largest_cc_coverage": 0.0834
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 58,
+      "id": 273,
+      "idx": 3,
+      "big_size": [
+        512,
+        525
+      ],
+      "n_children": 4,
+      "children_idx": "4,5,7,8",
+      "frame_red_area": 52676,
+      "children_red_area": 52553,
+      "residual_ratio": 0.0023,
+      "n_sig": 6,
+      "red_ratio": 0.196,
+      "largest_cc_coverage": 0.0551
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 59,
+      "id": 288,
+      "idx": 9,
+      "big_size": [
+        443,
+        455
+      ],
+      "n_children": 1,
+      "children_idx": "10",
+      "frame_red_area": 61828,
+      "children_red_area": 22995,
+      "residual_ratio": 0.6281,
+      "n_sig": 2,
+      "red_ratio": 0.3067,
+      "largest_cc_coverage": 0.2162
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 61,
+      "id": 435,
+      "idx": 0,
+      "big_size": [
+        452,
+        520
+      ],
+      "n_children": 4,
+      "children_idx": "4,5,9,10",
+      "frame_red_area": 62266,
+      "children_red_area": 76110,
+      "residual_ratio": 0.0,
+      "n_sig": 6,
+      "red_ratio": 0.2649,
+      "largest_cc_coverage": 0.0632
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 63,
+      "id": 461,
+      "idx": 0,
+      "big_size": [
+        308,
+        384
+      ],
+      "n_children": 2,
+      "children_idx": "1,2",
+      "frame_red_area": 41653,
+      "children_red_area": 21820,
+      "residual_ratio": 0.4761,
+      "n_sig": 3,
+      "red_ratio": 0.3522,
+      "largest_cc_coverage": 0.2072
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 63,
+      "id": 467,
+      "idx": 6,
+      "big_size": [
+        430,
+        445
+      ],
+      "n_children": 4,
+      "children_idx": "7,8,9,10",
+      "frame_red_area": 54631,
+      "children_red_area": 64222,
+      "residual_ratio": 0.0,
+      "n_sig": 5,
+      "red_ratio": 0.2855,
+      "largest_cc_coverage": 0.0614
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 65,
+      "id": 483,
+      "idx": 0,
+      "big_size": [
+        477,
+        490
+      ],
+      "n_children": 3,
+      "children_idx": "2,5,6",
+      "frame_red_area": 73351,
+      "children_red_area": 63821,
+      "residual_ratio": 0.1299,
+      "n_sig": 5,
+      "red_ratio": 0.3138,
+      "largest_cc_coverage": 0.1167
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 65,
+      "id": 484,
+      "idx": 1,
+      "big_size": [
+        468,
+        469
+      ],
+      "n_children": 3,
+      "children_idx": "3,7,8",
+      "frame_red_area": 77764,
+      "children_red_area": 71538,
+      "residual_ratio": 0.0801,
+      "n_sig": 5,
+      "red_ratio": 0.3543,
+      "largest_cc_coverage": 0.1143
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 65,
+      "id": 494,
+      "idx": 11,
+      "big_size": [
+        278,
+        444
+      ],
+      "n_children": 1,
+      "children_idx": "13",
+      "frame_red_area": 36905,
+      "children_red_area": 23218,
+      "residual_ratio": 0.3709,
+      "n_sig": 3,
+      "red_ratio": 0.299,
+      "largest_cc_coverage": 0.1166
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 67,
+      "id": 505,
+      "idx": 1,
+      "big_size": [
+        308,
+        496
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 22095,
+      "children_red_area": 12637,
+      "residual_ratio": 0.4281,
+      "n_sig": 4,
+      "red_ratio": 0.1446,
+      "largest_cc_coverage": 0.0546
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 73,
+      "id": 409,
+      "idx": 0,
+      "big_size": [
+        323,
+        490
+      ],
+      "n_children": 2,
+      "children_idx": "2,3",
+      "frame_red_area": 39193,
+      "children_red_area": 35080,
+      "residual_ratio": 0.1049,
+      "n_sig": 3,
+      "red_ratio": 0.2476,
+      "largest_cc_coverage": 0.0922
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 78,
+      "id": 523,
+      "idx": 0,
+      "big_size": [
+        457,
+        452
+      ],
+      "n_children": 3,
+      "children_idx": "3,4,5",
+      "frame_red_area": 54562,
+      "children_red_area": 41955,
+      "residual_ratio": 0.2311,
+      "n_sig": 5,
+      "red_ratio": 0.2641,
+      "largest_cc_coverage": 0.1033
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 79,
+      "id": 537,
+      "idx": 5,
+      "big_size": [
+        392,
+        366
+      ],
+      "n_children": 1,
+      "children_idx": "6",
+      "frame_red_area": 38681,
+      "children_red_area": 14154,
+      "residual_ratio": 0.6341,
+      "n_sig": 2,
+      "red_ratio": 0.2696,
+      "largest_cc_coverage": 0.1781
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 80,
+      "id": 542,
+      "idx": 3,
+      "big_size": [
+        517,
+        522
+      ],
+      "n_children": 4,
+      "children_idx": "6,7,9,10",
+      "frame_red_area": 81076,
+      "children_red_area": 90154,
+      "residual_ratio": 0.0,
+      "n_sig": 5,
+      "red_ratio": 0.3004,
+      "largest_cc_coverage": 0.081
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 80,
+      "id": 543,
+      "idx": 4,
+      "big_size": [
+        357,
+        353
+      ],
+      "n_children": 1,
+      "children_idx": "8",
+      "frame_red_area": 41797,
+      "children_red_area": 14411,
+      "residual_ratio": 0.6552,
+      "n_sig": 2,
+      "red_ratio": 0.3317,
+      "largest_cc_coverage": 0.223
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 81,
+      "id": 554,
+      "idx": 4,
+      "big_size": [
+        404,
+        453
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 55390,
+      "children_red_area": 14882,
+      "residual_ratio": 0.7313,
+      "n_sig": 3,
+      "red_ratio": 0.3027,
+      "largest_cc_coverage": 0.1326
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 82,
+      "id": 563,
+      "idx": 4,
+      "big_size": [
+        444,
+        463
+      ],
+      "n_children": 1,
+      "children_idx": "5",
+      "frame_red_area": 62971,
+      "children_red_area": 16286,
+      "residual_ratio": 0.7414,
+      "n_sig": 2,
+      "red_ratio": 0.3063,
+      "largest_cc_coverage": 0.2312
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 85,
+      "id": 589,
+      "idx": 2,
+      "big_size": [
+        390,
+        477
+      ],
+      "n_children": 1,
+      "children_idx": "3",
+      "frame_red_area": 55068,
+      "children_red_area": 14367,
+      "residual_ratio": 0.7391,
+      "n_sig": 2,
+      "red_ratio": 0.296,
+      "largest_cc_coverage": 0.2388
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 85,
+      "id": 591,
+      "idx": 4,
+      "big_size": [
+        378,
+        477
+      ],
+      "n_children": 2,
+      "children_idx": "7,8",
+      "frame_red_area": 56388,
+      "children_red_area": 29357,
+      "residual_ratio": 0.4794,
+      "n_sig": 5,
+      "red_ratio": 0.3127,
+      "largest_cc_coverage": 0.1766
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 88,
+      "id": 607,
+      "idx": 0,
+      "big_size": [
+        425,
+        429
+      ],
+      "n_children": 3,
+      "children_idx": "3,4,5",
+      "frame_red_area": 57448,
+      "children_red_area": 52336,
+      "residual_ratio": 0.089,
+      "n_sig": 5,
+      "red_ratio": 0.3151,
+      "largest_cc_coverage": 0.1254
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 88,
+      "id": 613,
+      "idx": 6,
+      "big_size": [
+        460,
+        455
+      ],
+      "n_children": 1,
+      "children_idx": "11",
+      "frame_red_area": 65733,
+      "children_red_area": 24132,
+      "residual_ratio": 0.6329,
+      "n_sig": 4,
+      "red_ratio": 0.3141,
+      "largest_cc_coverage": 0.1863
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 89,
+      "id": 623,
+      "idx": 0,
+      "big_size": [
+        472,
+        491
+      ],
+      "n_children": 2,
+      "children_idx": "5,10",
+      "frame_red_area": 72881,
+      "children_red_area": 45665,
+      "residual_ratio": 0.3734,
+      "n_sig": 4,
+      "red_ratio": 0.3145,
+      "largest_cc_coverage": 0.1643
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 89,
+      "id": 634,
+      "idx": 11,
+      "big_size": [
+        480,
+        477
+      ],
+      "n_children": 4,
+      "children_idx": "12,13,15,16",
+      "frame_red_area": 66573,
+      "children_red_area": 82079,
+      "residual_ratio": 0.0,
+      "n_sig": 6,
+      "red_ratio": 0.2908,
+      "largest_cc_coverage": 0.074
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 92,
+      "id": 661,
+      "idx": 1,
+      "big_size": [
+        460,
+        439
+      ],
+      "n_children": 1,
+      "children_idx": "5",
+      "frame_red_area": 59132,
+      "children_red_area": 16638,
+      "residual_ratio": 0.7186,
+      "n_sig": 4,
+      "red_ratio": 0.2928,
+      "largest_cc_coverage": 0.2024
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 92,
+      "id": 662,
+      "idx": 2,
+      "big_size": [
+        434,
+        392
+      ],
+      "n_children": 1,
+      "children_idx": "3",
+      "frame_red_area": 63613,
+      "children_red_area": 18228,
+      "residual_ratio": 0.7135,
+      "n_sig": 5,
+      "red_ratio": 0.3739,
+      "largest_cc_coverage": 0.1682
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 94,
+      "id": 765,
+      "idx": 0,
+      "big_size": [
+        482,
+        497
+      ],
+      "n_children": 3,
+      "children_idx": "1,5,6",
+      "frame_red_area": 53495,
+      "children_red_area": 51454,
+      "residual_ratio": 0.0382,
+      "n_sig": 6,
+      "red_ratio": 0.2233,
+      "largest_cc_coverage": 0.0466
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 95,
+      "id": 775,
+      "idx": 0,
+      "big_size": [
+        429,
+        481
+      ],
+      "n_children": 1,
+      "children_idx": "4",
+      "frame_red_area": 63667,
+      "children_red_area": 19914,
+      "residual_ratio": 0.6872,
+      "n_sig": 2,
+      "red_ratio": 0.3085,
+      "largest_cc_coverage": 0.2208
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 95,
+      "id": 781,
+      "idx": 6,
+      "big_size": [
+        489,
+        497
+      ],
+      "n_children": 4,
+      "children_idx": "8,9,14,15",
+      "frame_red_area": 62748,
+      "children_red_area": 78110,
+      "residual_ratio": 0.0,
+      "n_sig": 6,
+      "red_ratio": 0.2582,
+      "largest_cc_coverage": 0.0578
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 96,
+      "id": 792,
+      "idx": 0,
+      "big_size": [
+        504,
+        517
+      ],
+      "n_children": 3,
+      "children_idx": "3,6,7",
+      "frame_red_area": 87346,
+      "children_red_area": 78374,
+      "residual_ratio": 0.1027,
+      "n_sig": 4,
+      "red_ratio": 0.3352,
+      "largest_cc_coverage": 0.1229
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 96,
+      "id": 793,
+      "idx": 1,
+      "big_size": [
+        522,
+        531
+      ],
+      "n_children": 2,
+      "children_idx": "4,8",
+      "frame_red_area": 66626,
+      "children_red_area": 52808,
+      "residual_ratio": 0.2074,
+      "n_sig": 5,
+      "red_ratio": 0.2404,
+      "largest_cc_coverage": 0.0676
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 96,
+      "id": 794,
+      "idx": 2,
+      "big_size": [
+        499,
+        517
+      ],
+      "n_children": 3,
+      "children_idx": "5,9,10",
+      "frame_red_area": 79171,
+      "children_red_area": 70318,
+      "residual_ratio": 0.1118,
+      "n_sig": 4,
+      "red_ratio": 0.3069,
+      "largest_cc_coverage": 0.1145
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 97,
+      "id": 807,
+      "idx": 2,
+      "big_size": [
+        491,
+        530
+      ],
+      "n_children": 3,
+      "children_idx": "5,7,8",
+      "frame_red_area": 72729,
+      "children_red_area": 65211,
+      "residual_ratio": 0.1034,
+      "n_sig": 4,
+      "red_ratio": 0.2795,
+      "largest_cc_coverage": 0.1023
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 98,
+      "id": 818,
+      "idx": 4,
+      "big_size": [
+        456,
+        378
+      ],
+      "n_children": 2,
+      "children_idx": "5,6",
+      "frame_red_area": 41722,
+      "children_red_area": 26334,
+      "residual_ratio": 0.3688,
+      "n_sig": 7,
+      "red_ratio": 0.2421,
+      "largest_cc_coverage": 0.0489
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 99,
+      "id": 822,
+      "idx": 0,
+      "big_size": [
+        487,
+        495
+      ],
+      "n_children": 2,
+      "children_idx": "2,6",
+      "frame_red_area": 86946,
+      "children_red_area": 56274,
+      "residual_ratio": 0.3528,
+      "n_sig": 4,
+      "red_ratio": 0.3607,
+      "largest_cc_coverage": 0.1431
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 99,
+      "id": 823,
+      "idx": 1,
+      "big_size": [
+        486,
+        486
+      ],
+      "n_children": 4,
+      "children_idx": "4,5,8,9",
+      "frame_red_area": 74090,
+      "children_red_area": 91199,
+      "residual_ratio": 0.0,
+      "n_sig": 6,
+      "red_ratio": 0.3137,
+      "largest_cc_coverage": 0.0691
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 103,
+      "id": 698,
+      "idx": 7,
+      "big_size": [
+        473,
+        470
+      ],
+      "n_children": 4,
+      "children_idx": "9,10,12,13",
+      "frame_red_area": 66732,
+      "children_red_area": 82954,
+      "residual_ratio": 0.0,
+      "n_sig": 9,
+      "red_ratio": 0.3002,
+      "largest_cc_coverage": 0.0654
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 103,
+      "id": 699,
+      "idx": 8,
+      "big_size": [
+        411,
+        392
+      ],
+      "n_children": 1,
+      "children_idx": "11",
+      "frame_red_area": 70800,
+      "children_red_area": 20217,
+      "residual_ratio": 0.7144,
+      "n_sig": 8,
+      "red_ratio": 0.4394,
+      "largest_cc_coverage": 0.2575
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 104,
+      "id": 705,
+      "idx": 0,
+      "big_size": [
+        495,
+        499
+      ],
+      "n_children": 1,
+      "children_idx": "3",
+      "frame_red_area": 67364,
+      "children_red_area": 19384,
+      "residual_ratio": 0.7122,
+      "n_sig": 5,
+      "red_ratio": 0.2727,
+      "largest_cc_coverage": 0.1594
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 104,
+      "id": 712,
+      "idx": 7,
+      "big_size": [
+        477,
+        474
+      ],
+      "n_children": 3,
+      "children_idx": "8,9,12",
+      "frame_red_area": 74220,
+      "children_red_area": 63889,
+      "residual_ratio": 0.1392,
+      "n_sig": 4,
+      "red_ratio": 0.3283,
+      "largest_cc_coverage": 0.1435
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 107,
+      "id": 744,
+      "idx": 3,
+      "big_size": [
+        283,
+        420
+      ],
+      "n_children": 1,
+      "children_idx": "4",
+      "frame_red_area": 38868,
+      "children_red_area": 24555,
+      "residual_ratio": 0.3682,
+      "n_sig": 2,
+      "red_ratio": 0.327,
+      "largest_cc_coverage": 0.2082
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 114,
+      "id": 896,
+      "idx": 5,
+      "big_size": [
+        205,
+        220
+      ],
+      "n_children": 1,
+      "children_idx": "7",
+      "frame_red_area": 15327,
+      "children_red_area": 7998,
+      "residual_ratio": 0.4782,
+      "n_sig": 2,
+      "red_ratio": 0.3398,
+      "largest_cc_coverage": 0.1924
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 123,
+      "id": 967,
+      "idx": 1,
+      "big_size": [
+        421,
+        313
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 50513,
+      "children_red_area": 27332,
+      "residual_ratio": 0.4589,
+      "n_sig": 3,
+      "red_ratio": 0.3833,
+      "largest_cc_coverage": 0.1827
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 123,
+      "id": 974,
+      "idx": 8,
+      "big_size": [
+        239,
+        313
+      ],
+      "n_children": 1,
+      "children_idx": "9",
+      "frame_red_area": 25582,
+      "children_red_area": 13811,
+      "residual_ratio": 0.4601,
+      "n_sig": 2,
+      "red_ratio": 0.342,
+      "largest_cc_coverage": 0.1866
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 134,
+      "id": 1077,
+      "idx": 9,
+      "big_size": [
+        312,
+        309
+      ],
+      "n_children": 1,
+      "children_idx": "12",
+      "frame_red_area": 20749,
+      "children_red_area": 12070,
+      "residual_ratio": 0.4183,
+      "n_sig": 2,
+      "red_ratio": 0.2152,
+      "largest_cc_coverage": 0.1051
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 136,
+      "id": 1099,
+      "idx": 10,
+      "big_size": [
+        253,
+        386
+      ],
+      "n_children": 2,
+      "children_idx": "11,12",
+      "frame_red_area": 26425,
+      "children_red_area": 28560,
+      "residual_ratio": 0.0,
+      "n_sig": 3,
+      "red_ratio": 0.2706,
+      "largest_cc_coverage": 0.0934
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 138,
+      "id": 1121,
+      "idx": 5,
+      "big_size": [
+        369,
+        373
+      ],
+      "n_children": 2,
+      "children_idx": "7,9",
+      "frame_red_area": 38493,
+      "children_red_area": 21990,
+      "residual_ratio": 0.4287,
+      "n_sig": 5,
+      "red_ratio": 0.2797,
+      "largest_cc_coverage": 0.0875
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 139,
+      "id": 1132,
+      "idx": 4,
+      "big_size": [
+        212,
+        307
+      ],
+      "n_children": 1,
+      "children_idx": "5",
+      "frame_red_area": 20599,
+      "children_red_area": 11874,
+      "residual_ratio": 0.4236,
+      "n_sig": 2,
+      "red_ratio": 0.3165,
+      "largest_cc_coverage": 0.1532
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 139,
+      "id": 1135,
+      "idx": 7,
+      "big_size": [
+        236,
+        393
+      ],
+      "n_children": 1,
+      "children_idx": "8",
+      "frame_red_area": 28803,
+      "children_red_area": 17030,
+      "residual_ratio": 0.4087,
+      "n_sig": 2,
+      "red_ratio": 0.3106,
+      "largest_cc_coverage": 0.1868
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 141,
+      "id": 1220,
+      "idx": 6,
+      "big_size": [
+        300,
+        469
+      ],
+      "n_children": 2,
+      "children_idx": "7,8",
+      "frame_red_area": 40875,
+      "children_red_area": 40602,
+      "residual_ratio": 0.0067,
+      "n_sig": 3,
+      "red_ratio": 0.2905,
+      "largest_cc_coverage": 0.1022
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 141,
+      "id": 1227,
+      "idx": 13,
+      "big_size": [
+        282,
+        468
+      ],
+      "n_children": 2,
+      "children_idx": "14,15",
+      "frame_red_area": 33860,
+      "children_red_area": 33012,
+      "residual_ratio": 0.025,
+      "n_sig": 3,
+      "red_ratio": 0.2566,
+      "largest_cc_coverage": 0.0937
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 148,
+      "id": 1283,
+      "idx": 1,
+      "big_size": [
+        264,
+        417
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 34300,
+      "children_red_area": 18434,
+      "residual_ratio": 0.4626,
+      "n_sig": 2,
+      "red_ratio": 0.3116,
+      "largest_cc_coverage": 0.1908
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 150,
+      "id": 1154,
+      "idx": 3,
+      "big_size": [
+        214,
+        331
+      ],
+      "n_children": 1,
+      "children_idx": "6",
+      "frame_red_area": 27051,
+      "children_red_area": 16429,
+      "residual_ratio": 0.3927,
+      "n_sig": 2,
+      "red_ratio": 0.3819,
+      "largest_cc_coverage": 0.1849
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 154,
+      "id": 1190,
+      "idx": 1,
+      "big_size": [
+        260,
+        254
+      ],
+      "n_children": 1,
+      "children_idx": "3",
+      "frame_red_area": 18570,
+      "children_red_area": 15140,
+      "residual_ratio": 0.1847,
+      "n_sig": 2,
+      "red_ratio": 0.2812,
+      "largest_cc_coverage": 0.1692
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 155,
+      "id": 1198,
+      "idx": 4,
+      "big_size": [
+        257,
+        378
+      ],
+      "n_children": 2,
+      "children_idx": "6,7",
+      "frame_red_area": 30277,
+      "children_red_area": 33190,
+      "residual_ratio": 0.0,
+      "n_sig": 3,
+      "red_ratio": 0.3117,
+      "largest_cc_coverage": 0.118
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 159,
+      "id": 1314,
+      "idx": 0,
+      "big_size": [
+        304,
+        281
+      ],
+      "n_children": 1,
+      "children_idx": "3",
+      "frame_red_area": 26402,
+      "children_red_area": 16398,
+      "residual_ratio": 0.3789,
+      "n_sig": 2,
+      "red_ratio": 0.3091,
+      "largest_cc_coverage": 0.1735
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 160,
+      "id": 1327,
+      "idx": 0,
+      "big_size": [
+        266,
+        401
+      ],
+      "n_children": 1,
+      "children_idx": "3",
+      "frame_red_area": 35856,
+      "children_red_area": 20543,
+      "residual_ratio": 0.4271,
+      "n_sig": 3,
+      "red_ratio": 0.3362,
+      "largest_cc_coverage": 0.1525
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 162,
+      "id": 1344,
+      "idx": 0,
+      "big_size": [
+        291,
+        359
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 34828,
+      "children_red_area": 23556,
+      "residual_ratio": 0.3236,
+      "n_sig": 3,
+      "red_ratio": 0.3334,
+      "largest_cc_coverage": 0.1433
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 163,
+      "id": 1356,
+      "idx": 0,
+      "big_size": [
+        350,
+        274
+      ],
+      "n_children": 1,
+      "children_idx": "1",
+      "frame_red_area": 24130,
+      "children_red_area": 21877,
+      "residual_ratio": 0.0934,
+      "n_sig": 2,
+      "red_ratio": 0.2516,
+      "largest_cc_coverage": 0.1458
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 164,
+      "id": 1371,
+      "idx": 0,
+      "big_size": [
+        304,
+        462
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 39921,
+      "children_red_area": 20119,
+      "residual_ratio": 0.496,
+      "n_sig": 7,
+      "red_ratio": 0.2842,
+      "largest_cc_coverage": 0.098
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 164,
+      "id": 1372,
+      "idx": 1,
+      "big_size": [
+        253,
+        376
+      ],
+      "n_children": 2,
+      "children_idx": "5,6",
+      "frame_red_area": 26451,
+      "children_red_area": 20125,
+      "residual_ratio": 0.2392,
+      "n_sig": 3,
+      "red_ratio": 0.2781,
+      "largest_cc_coverage": 0.0973
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 165,
+      "id": 1383,
+      "idx": 1,
+      "big_size": [
+        185,
+        165
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 10073,
+      "children_red_area": 5342,
+      "residual_ratio": 0.4697,
+      "n_sig": 2,
+      "red_ratio": 0.33,
+      "largest_cc_coverage": 0.1554
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 165,
+      "id": 1388,
+      "idx": 6,
+      "big_size": [
+        192,
+        159
+      ],
+      "n_children": 1,
+      "children_idx": "5",
+      "frame_red_area": 9840,
+      "children_red_area": 5293,
+      "residual_ratio": 0.4621,
+      "n_sig": 2,
+      "red_ratio": 0.3223,
+      "largest_cc_coverage": 0.17
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 167,
+      "id": 1402,
+      "idx": 4,
+      "big_size": [
+        409,
+        290
+      ],
+      "n_children": 1,
+      "children_idx": "8",
+      "frame_red_area": 43870,
+      "children_red_area": 25069,
+      "residual_ratio": 0.4286,
+      "n_sig": 3,
+      "red_ratio": 0.3699,
+      "largest_cc_coverage": 0.1971
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 177,
+      "id": 1562,
+      "idx": 0,
+      "big_size": [
+        341,
+        260
+      ],
+      "n_children": 2,
+      "children_idx": "2,4",
+      "frame_red_area": 24248,
+      "children_red_area": 24770,
+      "residual_ratio": 0.0,
+      "n_sig": 3,
+      "red_ratio": 0.2735,
+      "largest_cc_coverage": 0.0934
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 179,
+      "id": 1585,
+      "idx": 3,
+      "big_size": [
+        202,
+        322
+      ],
+      "n_children": 1,
+      "children_idx": "4",
+      "frame_red_area": 21107,
+      "children_red_area": 12306,
+      "residual_ratio": 0.417,
+      "n_sig": 2,
+      "red_ratio": 0.3245,
+      "largest_cc_coverage": 0.1338
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 197,
+      "id": 1695,
+      "idx": 1,
+      "big_size": [
+        256,
+        349
+      ],
+      "n_children": 1,
+      "children_idx": "3",
+      "frame_red_area": 24468,
+      "children_red_area": 13188,
+      "residual_ratio": 0.461,
+      "n_sig": 4,
+      "red_ratio": 0.2739,
+      "largest_cc_coverage": 0.1063
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 202,
+      "id": 1753,
+      "idx": 8,
+      "big_size": [
+        218,
+        322
+      ],
+      "n_children": 1,
+      "children_idx": "9",
+      "frame_red_area": 27389,
+      "children_red_area": 17554,
+      "residual_ratio": 0.3591,
+      "n_sig": 4,
+      "red_ratio": 0.3902,
+      "largest_cc_coverage": 0.1582
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 203,
+      "id": 1759,
+      "idx": 0,
+      "big_size": [
+        261,
+        409
+      ],
+      "n_children": 1,
+      "children_idx": "3",
+      "frame_red_area": 31384,
+      "children_red_area": 20557,
+      "residual_ratio": 0.345,
+      "n_sig": 2,
+      "red_ratio": 0.294,
+      "largest_cc_coverage": 0.1522
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 206,
+      "id": 1794,
+      "idx": 8,
+      "big_size": [
+        202,
+        334
+      ],
+      "n_children": 1,
+      "children_idx": "10",
+      "frame_red_area": 20183,
+      "children_red_area": 11416,
+      "residual_ratio": 0.4344,
+      "n_sig": 3,
+      "red_ratio": 0.2991,
+      "largest_cc_coverage": 0.1171
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 208,
+      "id": 1816,
+      "idx": 5,
+      "big_size": [
+        323,
+        324
+      ],
+      "n_children": 1,
+      "children_idx": "7",
+      "frame_red_area": 30214,
+      "children_red_area": 26095,
+      "residual_ratio": 0.1363,
+      "n_sig": 4,
+      "red_ratio": 0.2887,
+      "largest_cc_coverage": 0.1333
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 209,
+      "id": 1826,
+      "idx": 6,
+      "big_size": [
+        236,
+        317
+      ],
+      "n_children": 1,
+      "children_idx": "8",
+      "frame_red_area": 24860,
+      "children_red_area": 12732,
+      "residual_ratio": 0.4879,
+      "n_sig": 3,
+      "red_ratio": 0.3323,
+      "largest_cc_coverage": 0.172
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 221,
+      "id": 1924,
+      "idx": 5,
+      "big_size": [
+        298,
+        282
+      ],
+      "n_children": 1,
+      "children_idx": "6",
+      "frame_red_area": 26708,
+      "children_red_area": 16690,
+      "residual_ratio": 0.3751,
+      "n_sig": 3,
+      "red_ratio": 0.3178,
+      "largest_cc_coverage": 0.1233
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 222,
+      "id": 1927,
+      "idx": 0,
+      "big_size": [
+        315,
+        291
+      ],
+      "n_children": 1,
+      "children_idx": "1",
+      "frame_red_area": 29447,
+      "children_red_area": 20680,
+      "residual_ratio": 0.2977,
+      "n_sig": 3,
+      "red_ratio": 0.3212,
+      "largest_cc_coverage": 0.1546
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 228,
+      "id": 1985,
+      "idx": 0,
+      "big_size": [
+        353,
+        279
+      ],
+      "n_children": 1,
+      "children_idx": "4",
+      "frame_red_area": 34355,
+      "children_red_area": 18693,
+      "residual_ratio": 0.4559,
+      "n_sig": 2,
+      "red_ratio": 0.3488,
+      "largest_cc_coverage": 0.21
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 228,
+      "id": 1999,
+      "idx": 14,
+      "big_size": [
+        168,
+        247
+      ],
+      "n_children": 1,
+      "children_idx": "15",
+      "frame_red_area": 12340,
+      "children_red_area": 5741,
+      "residual_ratio": 0.5348,
+      "n_sig": 2,
+      "red_ratio": 0.2974,
+      "largest_cc_coverage": 0.1922
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 232,
+      "id": 2116,
+      "idx": 10,
+      "big_size": [
+        451,
+        446
+      ],
+      "n_children": 2,
+      "children_idx": "11,13",
+      "frame_red_area": 51515,
+      "children_red_area": 29135,
+      "residual_ratio": 0.4344,
+      "n_sig": 8,
+      "red_ratio": 0.2561,
+      "largest_cc_coverage": 0.0589
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 236,
+      "id": 2152,
+      "idx": 4,
+      "big_size": [
+        174,
+        272
+      ],
+      "n_children": 1,
+      "children_idx": "5",
+      "frame_red_area": 13668,
+      "children_red_area": 7368,
+      "residual_ratio": 0.4609,
+      "n_sig": 2,
+      "red_ratio": 0.2888,
+      "largest_cc_coverage": 0.1907
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 240,
+      "id": 2033,
+      "idx": 2,
+      "big_size": [
+        289,
+        289
+      ],
+      "n_children": 1,
+      "children_idx": "6",
+      "frame_red_area": 21090,
+      "children_red_area": 9572,
+      "residual_ratio": 0.5461,
+      "n_sig": 2,
+      "red_ratio": 0.2525,
+      "largest_cc_coverage": 0.1733
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 246,
+      "id": 2170,
+      "idx": 3,
+      "big_size": [
+        256,
+        266
+      ],
+      "n_children": 1,
+      "children_idx": "5",
+      "frame_red_area": 15090,
+      "children_red_area": 14270,
+      "residual_ratio": 0.0543,
+      "n_sig": 2,
+      "red_ratio": 0.2216,
+      "largest_cc_coverage": 0.0977
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 247,
+      "id": 2177,
+      "idx": 1,
+      "big_size": [
+        222,
+        286
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 15553,
+      "children_red_area": 7157,
+      "residual_ratio": 0.5398,
+      "n_sig": 2,
+      "red_ratio": 0.245,
+      "largest_cc_coverage": 0.1398
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 248,
+      "id": 2191,
+      "idx": 7,
+      "big_size": [
+        249,
+        247
+      ],
+      "n_children": 1,
+      "children_idx": "8",
+      "frame_red_area": 18937,
+      "children_red_area": 12590,
+      "residual_ratio": 0.3352,
+      "n_sig": 2,
+      "red_ratio": 0.3079,
+      "largest_cc_coverage": 0.1684
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 252,
+      "id": 2225,
+      "idx": 0,
+      "big_size": [
+        301,
+        359
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 31011,
+      "children_red_area": 16919,
+      "residual_ratio": 0.4544,
+      "n_sig": 2,
+      "red_ratio": 0.287,
+      "largest_cc_coverage": 0.1418
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 257,
+      "id": 2286,
+      "idx": 9,
+      "big_size": [
+        255,
+        370
+      ],
+      "n_children": 1,
+      "children_idx": "12",
+      "frame_red_area": 30797,
+      "children_red_area": 18106,
+      "residual_ratio": 0.4121,
+      "n_sig": 3,
+      "red_ratio": 0.3264,
+      "largest_cc_coverage": 0.1891
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 265,
+      "id": 2361,
+      "idx": 9,
+      "big_size": [
+        243,
+        246
+      ],
+      "n_children": 1,
+      "children_idx": "12",
+      "frame_red_area": 16891,
+      "children_red_area": 8318,
+      "residual_ratio": 0.5075,
+      "n_sig": 2,
+      "red_ratio": 0.2826,
+      "largest_cc_coverage": 0.1467
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 266,
+      "id": 2369,
+      "idx": 4,
+      "big_size": [
+        272,
+        393
+      ],
+      "n_children": 1,
+      "children_idx": "5",
+      "frame_red_area": 33693,
+      "children_red_area": 14181,
+      "residual_ratio": 0.5791,
+      "n_sig": 3,
+      "red_ratio": 0.3152,
+      "largest_cc_coverage": 0.2116
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 270,
+      "id": 2403,
+      "idx": 6,
+      "big_size": [
+        217,
+        343
+      ],
+      "n_children": 1,
+      "children_idx": "7",
+      "frame_red_area": 20660,
+      "children_red_area": 13996,
+      "residual_ratio": 0.3226,
+      "n_sig": 2,
+      "red_ratio": 0.2776,
+      "largest_cc_coverage": 0.1373
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 272,
+      "id": 2416,
+      "idx": 0,
+      "big_size": [
+        305,
+        304
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 25756,
+      "children_red_area": 16825,
+      "residual_ratio": 0.3468,
+      "n_sig": 3,
+      "red_ratio": 0.2778,
+      "largest_cc_coverage": 0.1377
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 275,
+      "id": 2447,
+      "idx": 1,
+      "big_size": [
+        248,
+        331
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 28197,
+      "children_red_area": 17221,
+      "residual_ratio": 0.3893,
+      "n_sig": 2,
+      "red_ratio": 0.3435,
+      "largest_cc_coverage": 0.1896
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 277,
+      "id": 2547,
+      "idx": 7,
+      "big_size": [
+        274,
+        457
+      ],
+      "n_children": 1,
+      "children_idx": "8",
+      "frame_red_area": 45968,
+      "children_red_area": 24360,
+      "residual_ratio": 0.4701,
+      "n_sig": 2,
+      "red_ratio": 0.3671,
+      "largest_cc_coverage": 0.1929
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 294,
+      "id": 2635,
+      "idx": 9,
+      "big_size": [
+        269,
+        269
+      ],
+      "n_children": 1,
+      "children_idx": "11",
+      "frame_red_area": 19051,
+      "children_red_area": 12249,
+      "residual_ratio": 0.357,
+      "n_sig": 3,
+      "red_ratio": 0.2633,
+      "largest_cc_coverage": 0.1202
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 298,
+      "id": 2671,
+      "idx": 2,
+      "big_size": [
+        252,
+        236
+      ],
+      "n_children": 1,
+      "children_idx": "3",
+      "frame_red_area": 20543,
+      "children_red_area": 11206,
+      "residual_ratio": 0.4545,
+      "n_sig": 3,
+      "red_ratio": 0.3454,
+      "largest_cc_coverage": 0.18
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 302,
+      "id": 2775,
+      "idx": 4,
+      "big_size": [
+        275,
+        457
+      ],
+      "n_children": 2,
+      "children_idx": "6,7",
+      "frame_red_area": 37159,
+      "children_red_area": 35372,
+      "residual_ratio": 0.0481,
+      "n_sig": 4,
+      "red_ratio": 0.2957,
+      "largest_cc_coverage": 0.1075
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 302,
+      "id": 2776,
+      "idx": 5,
+      "big_size": [
+        228,
+        360
+      ],
+      "n_children": 1,
+      "children_idx": "9",
+      "frame_red_area": 27096,
+      "children_red_area": 12509,
+      "residual_ratio": 0.5383,
+      "n_sig": 2,
+      "red_ratio": 0.3301,
+      "largest_cc_coverage": 0.2167
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 309,
+      "id": 2843,
+      "idx": 5,
+      "big_size": [
+        214,
+        340
+      ],
+      "n_children": 1,
+      "children_idx": "6",
+      "frame_red_area": 23081,
+      "children_red_area": 14272,
+      "residual_ratio": 0.3817,
+      "n_sig": 2,
+      "red_ratio": 0.3172,
+      "largest_cc_coverage": 0.1396
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 311,
+      "id": 2859,
+      "idx": 0,
+      "big_size": [
+        236,
+        373
+      ],
+      "n_children": 2,
+      "children_idx": "1,5",
+      "frame_red_area": 29723,
+      "children_red_area": 25481,
+      "residual_ratio": 0.1427,
+      "n_sig": 3,
+      "red_ratio": 0.3377,
+      "largest_cc_coverage": 0.1875
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 315,
+      "id": 2894,
+      "idx": 1,
+      "big_size": [
+        248,
+        410
+      ],
+      "n_children": 2,
+      "children_idx": "2,3",
+      "frame_red_area": 29432,
+      "children_red_area": 30566,
+      "residual_ratio": 0.0,
+      "n_sig": 3,
+      "red_ratio": 0.2895,
+      "largest_cc_coverage": 0.125
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 323,
+      "id": 2739,
+      "idx": 1,
+      "big_size": [
+        211,
+        332
+      ],
+      "n_children": 1,
+      "children_idx": "4",
+      "frame_red_area": 23613,
+      "children_red_area": 13454,
+      "residual_ratio": 0.4302,
+      "n_sig": 2,
+      "red_ratio": 0.3371,
+      "largest_cc_coverage": 0.1799
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 334,
+      "id": 2984,
+      "idx": 8,
+      "big_size": [
+        203,
+        295
+      ],
+      "n_children": 1,
+      "children_idx": "10",
+      "frame_red_area": 21443,
+      "children_red_area": 13323,
+      "residual_ratio": 0.3787,
+      "n_sig": 2,
+      "red_ratio": 0.3581,
+      "largest_cc_coverage": 0.1706
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 335,
+      "id": 2988,
+      "idx": 0,
+      "big_size": [
+        286,
+        472
+      ],
+      "n_children": 2,
+      "children_idx": "3,4",
+      "frame_red_area": 37707,
+      "children_red_area": 42121,
+      "residual_ratio": 0.0,
+      "n_sig": 3,
+      "red_ratio": 0.2793,
+      "largest_cc_coverage": 0.0923
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 336,
+      "id": 3005,
+      "idx": 2,
+      "big_size": [
+        253,
+        364
+      ],
+      "n_children": 2,
+      "children_idx": "5,6",
+      "frame_red_area": 29270,
+      "children_red_area": 32121,
+      "residual_ratio": 0.0,
+      "n_sig": 3,
+      "red_ratio": 0.3178,
+      "largest_cc_coverage": 0.1177
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 337,
+      "id": 3014,
+      "idx": 3,
+      "big_size": [
+        244,
+        394
+      ],
+      "n_children": 1,
+      "children_idx": "4",
+      "frame_red_area": 31572,
+      "children_red_area": 18355,
+      "residual_ratio": 0.4186,
+      "n_sig": 3,
+      "red_ratio": 0.3284,
+      "largest_cc_coverage": 0.1459
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 343,
+      "id": 3144,
+      "idx": 0,
+      "big_size": [
+        245,
+        379
+      ],
+      "n_children": 1,
+      "children_idx": "4",
+      "frame_red_area": 32647,
+      "children_red_area": 17356,
+      "residual_ratio": 0.4684,
+      "n_sig": 3,
+      "red_ratio": 0.3516,
+      "largest_cc_coverage": 0.1925
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 343,
+      "id": 3151,
+      "idx": 7,
+      "big_size": [
+        243,
+        390
+      ],
+      "n_children": 1,
+      "children_idx": "9",
+      "frame_red_area": 23629,
+      "children_red_area": 14001,
+      "residual_ratio": 0.4075,
+      "n_sig": 2,
+      "red_ratio": 0.2493,
+      "largest_cc_coverage": 0.1383
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 344,
+      "id": 3159,
+      "idx": 0,
+      "big_size": [
+        254,
+        273
+      ],
+      "n_children": 1,
+      "children_idx": "1",
+      "frame_red_area": 20650,
+      "children_red_area": 14695,
+      "residual_ratio": 0.2884,
+      "n_sig": 2,
+      "red_ratio": 0.2978,
+      "largest_cc_coverage": 0.1469
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 351,
+      "id": 3065,
+      "idx": 0,
+      "big_size": [
+        273,
+        283
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 21761,
+      "children_red_area": 15858,
+      "residual_ratio": 0.2713,
+      "n_sig": 2,
+      "red_ratio": 0.2817,
+      "largest_cc_coverage": 0.174
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 351,
+      "id": 3073,
+      "idx": 8,
+      "big_size": [
+        263,
+        426
+      ],
+      "n_children": 1,
+      "children_idx": "10",
+      "frame_red_area": 40602,
+      "children_red_area": 29234,
+      "residual_ratio": 0.28,
+      "n_sig": 2,
+      "red_ratio": 0.3624,
+      "largest_cc_coverage": 0.19
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 355,
+      "id": 3111,
+      "idx": 7,
+      "big_size": [
+        253,
+        360
+      ],
+      "n_children": 2,
+      "children_idx": "8,9",
+      "frame_red_area": 29972,
+      "children_red_area": 34208,
+      "residual_ratio": 0.0,
+      "n_sig": 3,
+      "red_ratio": 0.3291,
+      "largest_cc_coverage": 0.125
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 357,
+      "id": 3288,
+      "idx": 8,
+      "big_size": [
+        378,
+        463
+      ],
+      "n_children": 3,
+      "children_idx": "10,11,14",
+      "frame_red_area": 46535,
+      "children_red_area": 29315,
+      "residual_ratio": 0.37,
+      "n_sig": 6,
+      "red_ratio": 0.2659,
+      "largest_cc_coverage": 0.0918
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 357,
+      "id": 3289,
+      "idx": 9,
+      "big_size": [
+        347,
+        429
+      ],
+      "n_children": 3,
+      "children_idx": "12,13,15",
+      "frame_red_area": 46420,
+      "children_red_area": 33824,
+      "residual_ratio": 0.2713,
+      "n_sig": 7,
+      "red_ratio": 0.3118,
+      "largest_cc_coverage": 0.0609
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 363,
+      "id": 3336,
+      "idx": 1,
+      "big_size": [
+        306,
+        367
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 28010,
+      "children_red_area": 15067,
+      "residual_ratio": 0.4621,
+      "n_sig": 4,
+      "red_ratio": 0.2494,
+      "largest_cc_coverage": 0.0886
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 366,
+      "id": 3223,
+      "idx": 7,
+      "big_size": [
+        193,
+        295
+      ],
+      "n_children": 1,
+      "children_idx": "9",
+      "frame_red_area": 19212,
+      "children_red_area": 12581,
+      "residual_ratio": 0.3451,
+      "n_sig": 2,
+      "red_ratio": 0.3374,
+      "largest_cc_coverage": 0.1573
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 366,
+      "id": 3226,
+      "idx": 10,
+      "big_size": [
+        270,
+        271
+      ],
+      "n_children": 1,
+      "children_idx": "11",
+      "frame_red_area": 22516,
+      "children_red_area": 8969,
+      "residual_ratio": 0.6017,
+      "n_sig": 2,
+      "red_ratio": 0.3077,
+      "largest_cc_coverage": 0.2181
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 369,
+      "id": 3246,
+      "idx": 0,
+      "big_size": [
+        309,
+        338
+      ],
+      "n_children": 1,
+      "children_idx": "1",
+      "frame_red_area": 30035,
+      "children_red_area": 24787,
+      "residual_ratio": 0.1747,
+      "n_sig": 3,
+      "red_ratio": 0.2876,
+      "largest_cc_coverage": 0.1265
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 374,
+      "id": 3365,
+      "idx": 6,
+      "big_size": [
+        436,
+        375
+      ],
+      "n_children": 1,
+      "children_idx": "7",
+      "frame_red_area": 43602,
+      "children_red_area": 40120,
+      "residual_ratio": 0.0799,
+      "n_sig": 2,
+      "red_ratio": 0.2667,
+      "largest_cc_coverage": 0.1588
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 384,
+      "id": 3439,
+      "idx": 1,
+      "big_size": [
+        327,
+        296
+      ],
+      "n_children": 1,
+      "children_idx": "3",
+      "frame_red_area": 27959,
+      "children_red_area": 18352,
+      "residual_ratio": 0.3436,
+      "n_sig": 3,
+      "red_ratio": 0.2889,
+      "largest_cc_coverage": 0.1282
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 385,
+      "id": 3455,
+      "idx": 7,
+      "big_size": [
+        347,
+        289
+      ],
+      "n_children": 1,
+      "children_idx": "8",
+      "frame_red_area": 30073,
+      "children_red_area": 19632,
+      "residual_ratio": 0.3472,
+      "n_sig": 3,
+      "red_ratio": 0.2999,
+      "largest_cc_coverage": 0.1257
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 389,
+      "id": 3547,
+      "idx": 1,
+      "big_size": [
+        265,
+        409
+      ],
+      "n_children": 2,
+      "children_idx": "2,5",
+      "frame_red_area": 36787,
+      "children_red_area": 35348,
+      "residual_ratio": 0.0391,
+      "n_sig": 5,
+      "red_ratio": 0.3394,
+      "largest_cc_coverage": 0.1376
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 396,
+      "id": 3618,
+      "idx": 3,
+      "big_size": [
+        377,
+        375
+      ],
+      "n_children": 1,
+      "children_idx": "6",
+      "frame_red_area": 36854,
+      "children_red_area": 16841,
+      "residual_ratio": 0.543,
+      "n_sig": 2,
+      "red_ratio": 0.2607,
+      "largest_cc_coverage": 0.1903
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 399,
+      "id": 3500,
+      "idx": 4,
+      "big_size": [
+        273,
+        455
+      ],
+      "n_children": 1,
+      "children_idx": "5",
+      "frame_red_area": 42211,
+      "children_red_area": 21459,
+      "residual_ratio": 0.4916,
+      "n_sig": 2,
+      "red_ratio": 0.3398,
+      "largest_cc_coverage": 0.1956
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 403,
+      "id": 3531,
+      "idx": 0,
+      "big_size": [
+        269,
+        280
+      ],
+      "n_children": 1,
+      "children_idx": "3",
+      "frame_red_area": 24654,
+      "children_red_area": 13256,
+      "residual_ratio": 0.4623,
+      "n_sig": 2,
+      "red_ratio": 0.3273,
+      "largest_cc_coverage": 0.2357
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 407,
+      "id": 3645,
+      "idx": 1,
+      "big_size": [
+        270,
+        260
+      ],
+      "n_children": 1,
+      "children_idx": "3",
+      "frame_red_area": 21197,
+      "children_red_area": 18743,
+      "residual_ratio": 0.1158,
+      "n_sig": 2,
+      "red_ratio": 0.302,
+      "largest_cc_coverage": 0.1518
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 411,
+      "id": 3691,
+      "idx": 8,
+      "big_size": [
+        208,
+        324
+      ],
+      "n_children": 1,
+      "children_idx": "10",
+      "frame_red_area": 18898,
+      "children_red_area": 10474,
+      "residual_ratio": 0.4458,
+      "n_sig": 2,
+      "red_ratio": 0.2804,
+      "largest_cc_coverage": 0.1211
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 415,
+      "id": 3724,
+      "idx": 3,
+      "big_size": [
+        299,
+        306
+      ],
+      "n_children": 1,
+      "children_idx": "4",
+      "frame_red_area": 31359,
+      "children_red_area": 9961,
+      "residual_ratio": 0.6824,
+      "n_sig": 2,
+      "red_ratio": 0.3427,
+      "largest_cc_coverage": 0.2488
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 416,
+      "id": 3729,
+      "idx": 0,
+      "big_size": [
+        288,
+        286
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 22590,
+      "children_red_area": 14142,
+      "residual_ratio": 0.374,
+      "n_sig": 4,
+      "red_ratio": 0.2743,
+      "largest_cc_coverage": 0.0859
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 426,
+      "id": 3888,
+      "idx": 2,
+      "big_size": [
+        246,
+        347
+      ],
+      "n_children": 2,
+      "children_idx": "4,5",
+      "frame_red_area": 26017,
+      "children_red_area": 26691,
+      "residual_ratio": 0.0,
+      "n_sig": 3,
+      "red_ratio": 0.3048,
+      "largest_cc_coverage": 0.1208
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 434,
+      "id": 4031,
+      "idx": 0,
+      "big_size": [
+        348,
+        313
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 38161,
+      "children_red_area": 27005,
+      "residual_ratio": 0.2923,
+      "n_sig": 3,
+      "red_ratio": 0.3503,
+      "largest_cc_coverage": 0.158
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 434,
+      "id": 4037,
+      "idx": 6,
+      "big_size": [
+        231,
+        370
+      ],
+      "n_children": 1,
+      "children_idx": "8",
+      "frame_red_area": 26013,
+      "children_red_area": 15571,
+      "residual_ratio": 0.4014,
+      "n_sig": 2,
+      "red_ratio": 0.3044,
+      "largest_cc_coverage": 0.1503
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 435,
+      "id": 4040,
+      "idx": 0,
+      "big_size": [
+        335,
+        246
+      ],
+      "n_children": 1,
+      "children_idx": "5",
+      "frame_red_area": 24477,
+      "children_red_area": 13746,
+      "residual_ratio": 0.4384,
+      "n_sig": 2,
+      "red_ratio": 0.297,
+      "largest_cc_coverage": 0.1892
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 439,
+      "id": 3781,
+      "idx": 1,
+      "big_size": [
+        252,
+        264
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 16273,
+      "children_red_area": 16208,
+      "residual_ratio": 0.004,
+      "n_sig": 2,
+      "red_ratio": 0.2446,
+      "largest_cc_coverage": 0.1092
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 452,
+      "id": 3982,
+      "idx": 3,
+      "big_size": [
+        347,
+        256
+      ],
+      "n_children": 1,
+      "children_idx": "5",
+      "frame_red_area": 29501,
+      "children_red_area": 14914,
+      "residual_ratio": 0.4945,
+      "n_sig": 2,
+      "red_ratio": 0.3321,
+      "largest_cc_coverage": 0.2234
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 465,
+      "id": 4163,
+      "idx": 7,
+      "big_size": [
+        246,
+        365
+      ],
+      "n_children": 1,
+      "children_idx": "8",
+      "frame_red_area": 30536,
+      "children_red_area": 16224,
+      "residual_ratio": 0.4687,
+      "n_sig": 3,
+      "red_ratio": 0.3401,
+      "largest_cc_coverage": 0.1707
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 469,
+      "id": 4251,
+      "idx": 0,
+      "big_size": [
+        270,
+        409
+      ],
+      "n_children": 2,
+      "children_idx": "2,3",
+      "frame_red_area": 32599,
+      "children_red_area": 31877,
+      "residual_ratio": 0.0221,
+      "n_sig": 3,
+      "red_ratio": 0.2952,
+      "largest_cc_coverage": 0.1311
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 472,
+      "id": 4273,
+      "idx": 0,
+      "big_size": [
+        429,
+        434
+      ],
+      "n_children": 1,
+      "children_idx": "3",
+      "frame_red_area": 49071,
+      "children_red_area": 39848,
+      "residual_ratio": 0.188,
+      "n_sig": 5,
+      "red_ratio": 0.2636,
+      "largest_cc_coverage": 0.11
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 472,
+      "id": 4274,
+      "idx": 1,
+      "big_size": [
+        383,
+        409
+      ],
+      "n_children": 1,
+      "children_idx": "4",
+      "frame_red_area": 43176,
+      "children_red_area": 32933,
+      "residual_ratio": 0.2372,
+      "n_sig": 5,
+      "red_ratio": 0.2756,
+      "largest_cc_coverage": 0.1281
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 473,
+      "id": 4289,
+      "idx": 1,
+      "big_size": [
+        221,
+        349
+      ],
+      "n_children": 1,
+      "children_idx": "0",
+      "frame_red_area": 24723,
+      "children_red_area": 14146,
+      "residual_ratio": 0.4278,
+      "n_sig": 2,
+      "red_ratio": 0.3205,
+      "largest_cc_coverage": 0.1661
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 476,
+      "id": 4316,
+      "idx": 8,
+      "big_size": [
+        223,
+        360
+      ],
+      "n_children": 1,
+      "children_idx": "9",
+      "frame_red_area": 26441,
+      "children_red_area": 14527,
+      "residual_ratio": 0.4506,
+      "n_sig": 3,
+      "red_ratio": 0.3294,
+      "largest_cc_coverage": 0.1697
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 479,
+      "id": 4213,
+      "idx": 6,
+      "big_size": [
+        278,
+        377
+      ],
+      "n_children": 1,
+      "children_idx": "7",
+      "frame_red_area": 35260,
+      "children_red_area": 21720,
+      "residual_ratio": 0.384,
+      "n_sig": 2,
+      "red_ratio": 0.3364,
+      "largest_cc_coverage": 0.1649
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 491,
+      "id": 4379,
+      "idx": 7,
+      "big_size": [
+        260,
+        375
+      ],
+      "n_children": 1,
+      "children_idx": "8",
+      "frame_red_area": 33795,
+      "children_red_area": 17898,
+      "residual_ratio": 0.4704,
+      "n_sig": 3,
+      "red_ratio": 0.3466,
+      "largest_cc_coverage": 0.1746
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 492,
+      "id": 4390,
+      "idx": 7,
+      "big_size": [
+        245,
+        392
+      ],
+      "n_children": 2,
+      "children_idx": "8,9",
+      "frame_red_area": 27574,
+      "children_red_area": 23330,
+      "residual_ratio": 0.1539,
+      "n_sig": 4,
+      "red_ratio": 0.2871,
+      "largest_cc_coverage": 0.1025
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 494,
+      "id": 4546,
+      "idx": 5,
+      "big_size": [
+        312,
+        443
+      ],
+      "n_children": 2,
+      "children_idx": "6,7",
+      "frame_red_area": 45445,
+      "children_red_area": 51332,
+      "residual_ratio": 0.0,
+      "n_sig": 4,
+      "red_ratio": 0.3288,
+      "largest_cc_coverage": 0.1179
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 496,
+      "id": 4560,
+      "idx": 6,
+      "big_size": [
+        280,
+        438
+      ],
+      "n_children": 2,
+      "children_idx": "9,10",
+      "frame_red_area": 41444,
+      "children_red_area": 46371,
+      "residual_ratio": 0.0,
+      "n_sig": 3,
+      "red_ratio": 0.3379,
+      "largest_cc_coverage": 0.1482
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 506,
+      "id": 4443,
+      "idx": 8,
+      "big_size": [
+        176,
+        290
+      ],
+      "n_children": 1,
+      "children_idx": "9",
+      "frame_red_area": 14189,
+      "children_red_area": 8487,
+      "residual_ratio": 0.4019,
+      "n_sig": 2,
+      "red_ratio": 0.278,
+      "largest_cc_coverage": 0.1562
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 508,
+      "id": 4459,
+      "idx": 6,
+      "big_size": [
+        162,
+        246
+      ],
+      "n_children": 1,
+      "children_idx": "7",
+      "frame_red_area": 12914,
+      "children_red_area": 6102,
+      "residual_ratio": 0.5275,
+      "n_sig": 2,
+      "red_ratio": 0.324,
+      "largest_cc_coverage": 0.1902
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 509,
+      "id": 4461,
+      "idx": 0,
+      "big_size": [
+        257,
+        245
+      ],
+      "n_children": 1,
+      "children_idx": "5",
+      "frame_red_area": 16712,
+      "children_red_area": 11301,
+      "residual_ratio": 0.3238,
+      "n_sig": 2,
+      "red_ratio": 0.2654,
+      "largest_cc_coverage": 0.1238
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 511,
+      "id": 4486,
+      "idx": 6,
+      "big_size": [
+        245,
+        261
+      ],
+      "n_children": 1,
+      "children_idx": "7",
+      "frame_red_area": 26118,
+      "children_red_area": 10304,
+      "residual_ratio": 0.6055,
+      "n_sig": 3,
+      "red_ratio": 0.4084,
+      "largest_cc_coverage": 0.2034
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 513,
+      "id": 4503,
+      "idx": 2,
+      "big_size": [
+        204,
+        330
+      ],
+      "n_children": 1,
+      "children_idx": "3",
+      "frame_red_area": 20009,
+      "children_red_area": 11395,
+      "residual_ratio": 0.4305,
+      "n_sig": 2,
+      "red_ratio": 0.2972,
+      "largest_cc_coverage": 0.1202
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 514,
+      "id": 4512,
+      "idx": 1,
+      "big_size": [
+        179,
+        253
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 16431,
+      "children_red_area": 9393,
+      "residual_ratio": 0.4283,
+      "n_sig": 2,
+      "red_ratio": 0.3628,
+      "largest_cc_coverage": 0.1635
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 517,
+      "id": 4607,
+      "idx": 4,
+      "big_size": [
+        211,
+        315
+      ],
+      "n_children": 1,
+      "children_idx": "3",
+      "frame_red_area": 24003,
+      "children_red_area": 11968,
+      "residual_ratio": 0.5014,
+      "n_sig": 2,
+      "red_ratio": 0.3611,
+      "largest_cc_coverage": 0.2095
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 521,
+      "id": 4641,
+      "idx": 0,
+      "big_size": [
+        426,
+        444
+      ],
+      "n_children": 1,
+      "children_idx": "1",
+      "frame_red_area": 52894,
+      "children_red_area": 21001,
+      "residual_ratio": 0.603,
+      "n_sig": 5,
+      "red_ratio": 0.2796,
+      "largest_cc_coverage": 0.0924
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 526,
+      "id": 4689,
+      "idx": 3,
+      "big_size": [
+        272,
+        269
+      ],
+      "n_children": 1,
+      "children_idx": "4",
+      "frame_red_area": 21151,
+      "children_red_area": 16532,
+      "residual_ratio": 0.2184,
+      "n_sig": 2,
+      "red_ratio": 0.2891,
+      "largest_cc_coverage": 0.1423
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 536,
+      "id": 4891,
+      "idx": 6,
+      "big_size": [
+        255,
+        375
+      ],
+      "n_children": 2,
+      "children_idx": "7,8",
+      "frame_red_area": 29522,
+      "children_red_area": 32564,
+      "residual_ratio": 0.0,
+      "n_sig": 3,
+      "red_ratio": 0.3087,
+      "largest_cc_coverage": 0.1132
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 544,
+      "id": 4758,
+      "idx": 8,
+      "big_size": [
+        282,
+        255
+      ],
+      "n_children": 2,
+      "children_idx": "10,13",
+      "frame_red_area": 22891,
+      "children_red_area": 14191,
+      "residual_ratio": 0.3801,
+      "n_sig": 3,
+      "red_ratio": 0.3183,
+      "largest_cc_coverage": 0.1524
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 560,
+      "id": 4956,
+      "idx": 3,
+      "big_size": [
+        453,
+        305
+      ],
+      "n_children": 2,
+      "children_idx": "4,8",
+      "frame_red_area": 47378,
+      "children_red_area": 37098,
+      "residual_ratio": 0.217,
+      "n_sig": 5,
+      "red_ratio": 0.3429,
+      "largest_cc_coverage": 0.0765
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 561,
+      "id": 4966,
+      "idx": 4,
+      "big_size": [
+        286,
+        278
+      ],
+      "n_children": 1,
+      "children_idx": "5",
+      "frame_red_area": 20425,
+      "children_red_area": 9148,
+      "residual_ratio": 0.5521,
+      "n_sig": 2,
+      "red_ratio": 0.2569,
+      "largest_cc_coverage": 0.1687
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 570,
+      "id": 5049,
+      "idx": 14,
+      "big_size": [
+        269,
+        271
+      ],
+      "n_children": 1,
+      "children_idx": "15",
+      "frame_red_area": 22821,
+      "children_red_area": 11871,
+      "residual_ratio": 0.4798,
+      "n_sig": 3,
+      "red_ratio": 0.313,
+      "largest_cc_coverage": 0.1586
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 576,
+      "id": 5084,
+      "idx": 0,
+      "big_size": [
+        289,
+        456
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 58076,
+      "children_red_area": 30700,
+      "residual_ratio": 0.4714,
+      "n_sig": 4,
+      "red_ratio": 0.4407,
+      "largest_cc_coverage": 0.221
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 576,
+      "id": 5087,
+      "idx": 3,
+      "big_size": [
+        238,
+        374
+      ],
+      "n_children": 2,
+      "children_idx": "6,7",
+      "frame_red_area": 28257,
+      "children_red_area": 30080,
+      "residual_ratio": 0.0,
+      "n_sig": 3,
+      "red_ratio": 0.3175,
+      "largest_cc_coverage": 0.1431
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 576,
+      "id": 5093,
+      "idx": 9,
+      "big_size": [
+        296,
+        377
+      ],
+      "n_children": 2,
+      "children_idx": "11,12",
+      "frame_red_area": 37309,
+      "children_red_area": 49913,
+      "residual_ratio": 0.0,
+      "n_sig": 5,
+      "red_ratio": 0.3343,
+      "largest_cc_coverage": 0.1266
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 585,
+      "id": 5152,
+      "idx": 2,
+      "big_size": [
+        200,
+        301
+      ],
+      "n_children": 1,
+      "children_idx": "4",
+      "frame_red_area": 23376,
+      "children_red_area": 7319,
+      "residual_ratio": 0.6869,
+      "n_sig": 3,
+      "red_ratio": 0.3883,
+      "largest_cc_coverage": 0.2025
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 585,
+      "id": 5157,
+      "idx": 7,
+      "big_size": [
+        255,
+        273
+      ],
+      "n_children": 1,
+      "children_idx": "9",
+      "frame_red_area": 17828,
+      "children_red_area": 6303,
+      "residual_ratio": 0.6465,
+      "n_sig": 3,
+      "red_ratio": 0.2561,
+      "largest_cc_coverage": 0.1263
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 585,
+      "id": 5160,
+      "idx": 10,
+      "big_size": [
+        307,
+        304
+      ],
+      "n_children": 1,
+      "children_idx": "11",
+      "frame_red_area": 27401,
+      "children_red_area": 6688,
+      "residual_ratio": 0.7559,
+      "n_sig": 2,
+      "red_ratio": 0.2936,
+      "largest_cc_coverage": 0.2384
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 589,
+      "id": 5257,
+      "idx": 6,
+      "big_size": [
+        249,
+        191
+      ],
+      "n_children": 1,
+      "children_idx": "7",
+      "frame_red_area": 18595,
+      "children_red_area": 8737,
+      "residual_ratio": 0.5301,
+      "n_sig": 2,
+      "red_ratio": 0.391,
+      "largest_cc_coverage": 0.1748
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 593,
+      "id": 5292,
+      "idx": 7,
+      "big_size": [
+        254,
+        264
+      ],
+      "n_children": 1,
+      "children_idx": "10",
+      "frame_red_area": 18541,
+      "children_red_area": 11978,
+      "residual_ratio": 0.354,
+      "n_sig": 3,
+      "red_ratio": 0.2765,
+      "largest_cc_coverage": 0.1171
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 597,
+      "id": 5316,
+      "idx": 0,
+      "big_size": [
+        271,
+        262
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 25911,
+      "children_red_area": 6527,
+      "residual_ratio": 0.7481,
+      "n_sig": 2,
+      "red_ratio": 0.3649,
+      "largest_cc_coverage": 0.2948
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 603,
+      "id": 5367,
+      "idx": 0,
+      "big_size": [
+        339,
+        531
+      ],
+      "n_children": 1,
+      "children_idx": "1",
+      "frame_red_area": 60186,
+      "children_red_area": 33704,
+      "residual_ratio": 0.44,
+      "n_sig": 4,
+      "red_ratio": 0.3343,
+      "largest_cc_coverage": 0.1442
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 610,
+      "id": 5218,
+      "idx": 0,
+      "big_size": [
+        385,
+        374
+      ],
+      "n_children": 4,
+      "children_idx": "1,2,9,10",
+      "frame_red_area": 43352,
+      "children_red_area": 46635,
+      "residual_ratio": 0.0,
+      "n_sig": 6,
+      "red_ratio": 0.3011,
+      "largest_cc_coverage": 0.0592
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 610,
+      "id": 5232,
+      "idx": 14,
+      "big_size": [
+        394,
+        373
+      ],
+      "n_children": 1,
+      "children_idx": "18",
+      "frame_red_area": 34869,
+      "children_red_area": 10547,
+      "residual_ratio": 0.6975,
+      "n_sig": 6,
+      "red_ratio": 0.2373,
+      "largest_cc_coverage": 0.0723
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 615,
+      "id": 5391,
+      "idx": 0,
+      "big_size": [
+        260,
+        265
+      ],
+      "n_children": 1,
+      "children_idx": "3",
+      "frame_red_area": 19492,
+      "children_red_area": 19415,
+      "residual_ratio": 0.004,
+      "n_sig": 2,
+      "red_ratio": 0.2829,
+      "largest_cc_coverage": 0.1613
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 616,
+      "id": 5402,
+      "idx": 2,
+      "big_size": [
+        218,
+        318
+      ],
+      "n_children": 1,
+      "children_idx": "3",
+      "frame_red_area": 21168,
+      "children_red_area": 12566,
+      "residual_ratio": 0.4064,
+      "n_sig": 2,
+      "red_ratio": 0.3053,
+      "largest_cc_coverage": 0.1486
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 621,
+      "id": 5509,
+      "idx": 3,
+      "big_size": [
+        499,
+        323
+      ],
+      "n_children": 2,
+      "children_idx": "4,7",
+      "frame_red_area": 46679,
+      "children_red_area": 34280,
+      "residual_ratio": 0.2656,
+      "n_sig": 3,
+      "red_ratio": 0.2896,
+      "largest_cc_coverage": 0.1407
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 628,
+      "id": 5572,
+      "idx": 4,
+      "big_size": [
+        353,
+        583
+      ],
+      "n_children": 1,
+      "children_idx": "6",
+      "frame_red_area": 61068,
+      "children_red_area": 16712,
+      "residual_ratio": 0.7263,
+      "n_sig": 6,
+      "red_ratio": 0.2967,
+      "largest_cc_coverage": 0.1136
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 632,
+      "id": 5469,
+      "idx": 4,
+      "big_size": [
+        243,
+        356
+      ],
+      "n_children": 1,
+      "children_idx": "6",
+      "frame_red_area": 23469,
+      "children_red_area": 17137,
+      "residual_ratio": 0.2698,
+      "n_sig": 3,
+      "red_ratio": 0.2713,
+      "largest_cc_coverage": 0.1041
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 632,
+      "id": 5476,
+      "idx": 11,
+      "big_size": [
+        166,
+        270
+      ],
+      "n_children": 1,
+      "children_idx": "12",
+      "frame_red_area": 17503,
+      "children_red_area": 9562,
+      "residual_ratio": 0.4537,
+      "n_sig": 2,
+      "red_ratio": 0.3905,
+      "largest_cc_coverage": 0.1847
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 645,
+      "id": 5639,
+      "idx": 0,
+      "big_size": [
+        281,
+        344
+      ],
+      "n_children": 1,
+      "children_idx": "3",
+      "frame_red_area": 30348,
+      "children_red_area": 30018,
+      "residual_ratio": 0.0109,
+      "n_sig": 2,
+      "red_ratio": 0.314,
+      "largest_cc_coverage": 0.1927
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 646,
+      "id": 5650,
+      "idx": 0,
+      "big_size": [
+        240,
+        273
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 19483,
+      "children_red_area": 17881,
+      "residual_ratio": 0.0822,
+      "n_sig": 3,
+      "red_ratio": 0.2974,
+      "largest_cc_coverage": 0.1014
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 663,
+      "id": 5862,
+      "idx": 0,
+      "big_size": [
+        297,
+        292
+      ],
+      "n_children": 1,
+      "children_idx": "3",
+      "frame_red_area": 24847,
+      "children_red_area": 20675,
+      "residual_ratio": 0.1679,
+      "n_sig": 2,
+      "red_ratio": 0.2865,
+      "largest_cc_coverage": 0.1368
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 676,
+      "id": 5833,
+      "idx": 1,
+      "big_size": [
+        230,
+        315
+      ],
+      "n_children": 1,
+      "children_idx": "3",
+      "frame_red_area": 24962,
+      "children_red_area": 18926,
+      "residual_ratio": 0.2418,
+      "n_sig": 3,
+      "red_ratio": 0.3445,
+      "largest_cc_coverage": 0.166
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 676,
+      "id": 5839,
+      "idx": 7,
+      "big_size": [
+        243,
+        262
+      ],
+      "n_children": 1,
+      "children_idx": "9",
+      "frame_red_area": 20398,
+      "children_red_area": 12978,
+      "residual_ratio": 0.3638,
+      "n_sig": 4,
+      "red_ratio": 0.3204,
+      "largest_cc_coverage": 0.1224
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 699,
+      "id": 6073,
+      "idx": 0,
+      "big_size": [
+        238,
+        243
+      ],
+      "n_children": 1,
+      "children_idx": "1",
+      "frame_red_area": 17142,
+      "children_red_area": 12531,
+      "residual_ratio": 0.269,
+      "n_sig": 2,
+      "red_ratio": 0.2964,
+      "largest_cc_coverage": 0.1723
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 710,
+      "id": 6160,
+      "idx": 7,
+      "big_size": [
+        214,
+        322
+      ],
+      "n_children": 1,
+      "children_idx": "11",
+      "frame_red_area": 23127,
+      "children_red_area": 13461,
+      "residual_ratio": 0.418,
+      "n_sig": 2,
+      "red_ratio": 0.3356,
+      "largest_cc_coverage": 0.148
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 722,
+      "id": 6244,
+      "idx": 0,
+      "big_size": [
+        401,
+        278
+      ],
+      "n_children": 2,
+      "children_idx": "3,6",
+      "frame_red_area": 28651,
+      "children_red_area": 25418,
+      "residual_ratio": 0.1128,
+      "n_sig": 3,
+      "red_ratio": 0.257,
+      "largest_cc_coverage": 0.1073
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 722,
+      "id": 6255,
+      "idx": 11,
+      "big_size": [
+        367,
+        403
+      ],
+      "n_children": 1,
+      "children_idx": "13",
+      "frame_red_area": 36408,
+      "children_red_area": 23215,
+      "residual_ratio": 0.3624,
+      "n_sig": 3,
+      "red_ratio": 0.2462,
+      "largest_cc_coverage": 0.0789
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 723,
+      "id": 6260,
+      "idx": 0,
+      "big_size": [
+        390,
+        263
+      ],
+      "n_children": 1,
+      "children_idx": "3",
+      "frame_red_area": 24546,
+      "children_red_area": 12168,
+      "residual_ratio": 0.5043,
+      "n_sig": 4,
+      "red_ratio": 0.2393,
+      "largest_cc_coverage": 0.0724
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 724,
+      "id": 6269,
+      "idx": 0,
+      "big_size": [
+        357,
+        265
+      ],
+      "n_children": 1,
+      "children_idx": "1",
+      "frame_red_area": 25739,
+      "children_red_area": 13268,
+      "residual_ratio": 0.4845,
+      "n_sig": 2,
+      "red_ratio": 0.2721,
+      "largest_cc_coverage": 0.158
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 725,
+      "id": 6358,
+      "idx": 5,
+      "big_size": [
+        364,
+        274
+      ],
+      "n_children": 2,
+      "children_idx": "10,11",
+      "frame_red_area": 26327,
+      "children_red_area": 26684,
+      "residual_ratio": 0.0,
+      "n_sig": 3,
+      "red_ratio": 0.264,
+      "largest_cc_coverage": 0.0887
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 725,
+      "id": 6360,
+      "idx": 7,
+      "big_size": [
+        357,
+        278
+      ],
+      "n_children": 1,
+      "children_idx": "8",
+      "frame_red_area": 31158,
+      "children_red_area": 16019,
+      "residual_ratio": 0.4859,
+      "n_sig": 2,
+      "red_ratio": 0.3139,
+      "largest_cc_coverage": 0.1499
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 725,
+      "id": 6366,
+      "idx": 13,
+      "big_size": [
+        352,
+        271
+      ],
+      "n_children": 1,
+      "children_idx": "16",
+      "frame_red_area": 24866,
+      "children_red_area": 24749,
+      "residual_ratio": 0.0047,
+      "n_sig": 2,
+      "red_ratio": 0.2607,
+      "largest_cc_coverage": 0.1189
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 725,
+      "id": 6367,
+      "idx": 14,
+      "big_size": [
+        349,
+        270
+      ],
+      "n_children": 1,
+      "children_idx": "18",
+      "frame_red_area": 26297,
+      "children_red_area": 26295,
+      "residual_ratio": 0.0001,
+      "n_sig": 2,
+      "red_ratio": 0.2791,
+      "largest_cc_coverage": 0.1471
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 725,
+      "id": 6368,
+      "idx": 15,
+      "big_size": [
+        347,
+        275
+      ],
+      "n_children": 1,
+      "children_idx": "17",
+      "frame_red_area": 23049,
+      "children_red_area": 22611,
+      "residual_ratio": 0.019,
+      "n_sig": 2,
+      "red_ratio": 0.2415,
+      "largest_cc_coverage": 0.1242
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 726,
+      "id": 6376,
+      "idx": 4,
+      "big_size": [
+        309,
+        451
+      ],
+      "n_children": 1,
+      "children_idx": "5",
+      "frame_red_area": 26012,
+      "children_red_area": 17940,
+      "residual_ratio": 0.3103,
+      "n_sig": 4,
+      "red_ratio": 0.1867,
+      "largest_cc_coverage": 0.0752
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 728,
+      "id": 6396,
+      "idx": 1,
+      "big_size": [
+        378,
+        269
+      ],
+      "n_children": 2,
+      "children_idx": "2,5",
+      "frame_red_area": 30003,
+      "children_red_area": 31523,
+      "residual_ratio": 0.0,
+      "n_sig": 3,
+      "red_ratio": 0.2951,
+      "largest_cc_coverage": 0.122
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 728,
+      "id": 6402,
+      "idx": 7,
+      "big_size": [
+        394,
+        272
+      ],
+      "n_children": 2,
+      "children_idx": "12,13",
+      "frame_red_area": 26167,
+      "children_red_area": 24265,
+      "residual_ratio": 0.0727,
+      "n_sig": 3,
+      "red_ratio": 0.2442,
+      "largest_cc_coverage": 0.083
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 728,
+      "id": 6405,
+      "idx": 10,
+      "big_size": [
+        375,
+        257
+      ],
+      "n_children": 2,
+      "children_idx": "11,14",
+      "frame_red_area": 27754,
+      "children_red_area": 24352,
+      "residual_ratio": 0.1226,
+      "n_sig": 4,
+      "red_ratio": 0.288,
+      "largest_cc_coverage": 0.1004
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 729,
+      "id": 6411,
+      "idx": 0,
+      "big_size": [
+        391,
+        275
+      ],
+      "n_children": 2,
+      "children_idx": "3,5",
+      "frame_red_area": 27727,
+      "children_red_area": 28032,
+      "residual_ratio": 0.0,
+      "n_sig": 3,
+      "red_ratio": 0.2579,
+      "largest_cc_coverage": 0.0951
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 729,
+      "id": 6420,
+      "idx": 9,
+      "big_size": [
+        384,
+        278
+      ],
+      "n_children": 1,
+      "children_idx": "12",
+      "frame_red_area": 28534,
+      "children_red_area": 12777,
+      "residual_ratio": 0.5522,
+      "n_sig": 3,
+      "red_ratio": 0.2673,
+      "largest_cc_coverage": 0.1649
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 730,
+      "id": 6430,
+      "idx": 5,
+      "big_size": [
+        325,
+        488
+      ],
+      "n_children": 1,
+      "children_idx": "6",
+      "frame_red_area": 32494,
+      "children_red_area": 8344,
+      "residual_ratio": 0.7432,
+      "n_sig": 5,
+      "red_ratio": 0.2049,
+      "largest_cc_coverage": 0.0708
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 731,
+      "id": 6438,
+      "idx": 2,
+      "big_size": [
+        289,
+        340
+      ],
+      "n_children": 1,
+      "children_idx": "4",
+      "frame_red_area": 21838,
+      "children_red_area": 17801,
+      "residual_ratio": 0.1849,
+      "n_sig": 3,
+      "red_ratio": 0.2222,
+      "largest_cc_coverage": 0.0953
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 733,
+      "id": 6280,
+      "idx": 9,
+      "big_size": [
+        391,
+        245
+      ],
+      "n_children": 2,
+      "children_idx": "12,15",
+      "frame_red_area": 29111,
+      "children_red_area": 29861,
+      "residual_ratio": 0.0,
+      "n_sig": 3,
+      "red_ratio": 0.3039,
+      "largest_cc_coverage": 0.1037
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 736,
+      "id": 6302,
+      "idx": 1,
+      "big_size": [
+        297,
+        333
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 22380,
+      "children_red_area": 18990,
+      "residual_ratio": 0.1515,
+      "n_sig": 3,
+      "red_ratio": 0.2263,
+      "largest_cc_coverage": 0.1249
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 736,
+      "id": 6309,
+      "idx": 8,
+      "big_size": [
+        254,
+        361
+      ],
+      "n_children": 1,
+      "children_idx": "9",
+      "frame_red_area": 22297,
+      "children_red_area": 19296,
+      "residual_ratio": 0.1346,
+      "n_sig": 2,
+      "red_ratio": 0.2432,
+      "largest_cc_coverage": 0.1131
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 737,
+      "id": 6313,
+      "idx": 2,
+      "big_size": [
+        179,
+        297
+      ],
+      "n_children": 1,
+      "children_idx": "3",
+      "frame_red_area": 19346,
+      "children_red_area": 12871,
+      "residual_ratio": 0.3347,
+      "n_sig": 2,
+      "red_ratio": 0.3639,
+      "largest_cc_coverage": 0.1718
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 737,
+      "id": 6318,
+      "idx": 7,
+      "big_size": [
+        456,
+        331
+      ],
+      "n_children": 1,
+      "children_idx": "9",
+      "frame_red_area": 41337,
+      "children_red_area": 16164,
+      "residual_ratio": 0.609,
+      "n_sig": 3,
+      "red_ratio": 0.2739,
+      "largest_cc_coverage": 0.104
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 738,
+      "id": 6330,
+      "idx": 8,
+      "big_size": [
+        409,
+        434
+      ],
+      "n_children": 3,
+      "children_idx": "9,10,14",
+      "frame_red_area": 40349,
+      "children_red_area": 28684,
+      "residual_ratio": 0.2891,
+      "n_sig": 7,
+      "red_ratio": 0.2273,
+      "largest_cc_coverage": 0.0494
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 739,
+      "id": 6343,
+      "idx": 6,
+      "big_size": [
+        221,
+        326
+      ],
+      "n_children": 1,
+      "children_idx": "7",
+      "frame_red_area": 17832,
+      "children_red_area": 16109,
+      "residual_ratio": 0.0966,
+      "n_sig": 2,
+      "red_ratio": 0.2475,
+      "largest_cc_coverage": 0.1497
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 742,
+      "id": 6479,
+      "idx": 3,
+      "big_size": [
+        377,
+        257
+      ],
+      "n_children": 2,
+      "children_idx": "6,8",
+      "frame_red_area": 28100,
+      "children_red_area": 29137,
+      "residual_ratio": 0.0,
+      "n_sig": 3,
+      "red_ratio": 0.29,
+      "largest_cc_coverage": 0.1174
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 742,
+      "id": 6487,
+      "idx": 11,
+      "big_size": [
+        349,
+        245
+      ],
+      "n_children": 2,
+      "children_idx": "12,14",
+      "frame_red_area": 19484,
+      "children_red_area": 17322,
+      "residual_ratio": 0.111,
+      "n_sig": 3,
+      "red_ratio": 0.2279,
+      "largest_cc_coverage": 0.0844
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 744,
+      "id": 6503,
+      "idx": 0,
+      "big_size": [
+        430,
+        299
+      ],
+      "n_children": 1,
+      "children_idx": "4",
+      "frame_red_area": 27449,
+      "children_red_area": 12405,
+      "residual_ratio": 0.5481,
+      "n_sig": 3,
+      "red_ratio": 0.2135,
+      "largest_cc_coverage": 0.1113
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 744,
+      "id": 6510,
+      "idx": 7,
+      "big_size": [
+        296,
+        419
+      ],
+      "n_children": 1,
+      "children_idx": "9",
+      "frame_red_area": 34016,
+      "children_red_area": 7458,
+      "residual_ratio": 0.7808,
+      "n_sig": 5,
+      "red_ratio": 0.2743,
+      "largest_cc_coverage": 0.0843
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 744,
+      "id": 6511,
+      "idx": 8,
+      "big_size": [
+        298,
+        457
+      ],
+      "n_children": 1,
+      "children_idx": "12",
+      "frame_red_area": 49998,
+      "children_red_area": 14430,
+      "residual_ratio": 0.7114,
+      "n_sig": 3,
+      "red_ratio": 0.3671,
+      "largest_cc_coverage": 0.2038
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 744,
+      "id": 6514,
+      "idx": 11,
+      "big_size": [
+        292,
+        299
+      ],
+      "n_children": 1,
+      "children_idx": "12",
+      "frame_red_area": 36953,
+      "children_red_area": 14430,
+      "residual_ratio": 0.6095,
+      "n_sig": 4,
+      "red_ratio": 0.4232,
+      "largest_cc_coverage": 0.1259
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 746,
+      "id": 6541,
+      "idx": 9,
+      "big_size": [
+        474,
+        470
+      ],
+      "n_children": 3,
+      "children_idx": "10,14,15",
+      "frame_red_area": 67918,
+      "children_red_area": 63744,
+      "residual_ratio": 0.0615,
+      "n_sig": 4,
+      "red_ratio": 0.3049,
+      "largest_cc_coverage": 0.1051
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 747,
+      "id": 6552,
+      "idx": 4,
+      "big_size": [
+        275,
+        410
+      ],
+      "n_children": 2,
+      "children_idx": "5,6",
+      "frame_red_area": 29696,
+      "children_red_area": 27064,
+      "residual_ratio": 0.0886,
+      "n_sig": 3,
+      "red_ratio": 0.2634,
+      "largest_cc_coverage": 0.087
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 748,
+      "id": 6560,
+      "idx": 0,
+      "big_size": [
+        392,
+        410
+      ],
+      "n_children": 2,
+      "children_idx": "3,4",
+      "frame_red_area": 35065,
+      "children_red_area": 17068,
+      "residual_ratio": 0.5132,
+      "n_sig": 6,
+      "red_ratio": 0.2182,
+      "largest_cc_coverage": 0.0534
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 749,
+      "id": 6657,
+      "idx": 0,
+      "big_size": [
+        384,
+        387
+      ],
+      "n_children": 3,
+      "children_idx": "4,8,9",
+      "frame_red_area": 32712,
+      "children_red_area": 21539,
+      "residual_ratio": 0.3416,
+      "n_sig": 6,
+      "red_ratio": 0.2201,
+      "largest_cc_coverage": 0.0662
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 749,
+      "id": 6667,
+      "idx": 10,
+      "big_size": [
+        382,
+        383
+      ],
+      "n_children": 2,
+      "children_idx": "12,15",
+      "frame_red_area": 37535,
+      "children_red_area": 22499,
+      "residual_ratio": 0.4006,
+      "n_sig": 4,
+      "red_ratio": 0.2566,
+      "largest_cc_coverage": 0.1253
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 749,
+      "id": 6675,
+      "idx": 18,
+      "big_size": [
+        379,
+        366
+      ],
+      "n_children": 1,
+      "children_idx": "20",
+      "frame_red_area": 37091,
+      "children_red_area": 11502,
+      "residual_ratio": 0.6899,
+      "n_sig": 4,
+      "red_ratio": 0.2674,
+      "largest_cc_coverage": 0.1066
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 749,
+      "id": 6676,
+      "idx": 19,
+      "big_size": [
+        378,
+        359
+      ],
+      "n_children": 1,
+      "children_idx": "20",
+      "frame_red_area": 37091,
+      "children_red_area": 11502,
+      "residual_ratio": 0.6899,
+      "n_sig": 4,
+      "red_ratio": 0.2733,
+      "largest_cc_coverage": 0.109
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 750,
+      "id": 6679,
+      "idx": 0,
+      "big_size": [
+        400,
+        316
+      ],
+      "n_children": 2,
+      "children_idx": "4,7",
+      "frame_red_area": 37822,
+      "children_red_area": 27440,
+      "residual_ratio": 0.2745,
+      "n_sig": 6,
+      "red_ratio": 0.2992,
+      "largest_cc_coverage": 0.069
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 750,
+      "id": 6680,
+      "idx": 1,
+      "big_size": [
+        379,
+        395
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 42898,
+      "children_red_area": 13115,
+      "residual_ratio": 0.6943,
+      "n_sig": 3,
+      "red_ratio": 0.2866,
+      "largest_cc_coverage": 0.1941
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 750,
+      "id": 6690,
+      "idx": 11,
+      "big_size": [
+        335,
+        375
+      ],
+      "n_children": 1,
+      "children_idx": "12",
+      "frame_red_area": 32290,
+      "children_red_area": 9329,
+      "residual_ratio": 0.7111,
+      "n_sig": 7,
+      "red_ratio": 0.257,
+      "largest_cc_coverage": 0.0733
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 751,
+      "id": 6698,
+      "idx": 3,
+      "big_size": [
+        413,
+        386
+      ],
+      "n_children": 3,
+      "children_idx": "6,8,9",
+      "frame_red_area": 42254,
+      "children_red_area": 29023,
+      "residual_ratio": 0.3131,
+      "n_sig": 8,
+      "red_ratio": 0.2651,
+      "largest_cc_coverage": 0.0487
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 751,
+      "id": 6699,
+      "idx": 4,
+      "big_size": [
+        402,
+        413
+      ],
+      "n_children": 2,
+      "children_idx": "5,7",
+      "frame_red_area": 40397,
+      "children_red_area": 20176,
+      "residual_ratio": 0.5006,
+      "n_sig": 6,
+      "red_ratio": 0.2433,
+      "largest_cc_coverage": 0.0832
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 751,
+      "id": 6708,
+      "idx": 13,
+      "big_size": [
+        385,
+        395
+      ],
+      "n_children": 1,
+      "children_idx": "18",
+      "frame_red_area": 33943,
+      "children_red_area": 6569,
+      "residual_ratio": 0.8065,
+      "n_sig": 7,
+      "red_ratio": 0.2232,
+      "largest_cc_coverage": 0.0538
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 752,
+      "id": 6714,
+      "idx": 0,
+      "big_size": [
+        393,
+        275
+      ],
+      "n_children": 2,
+      "children_idx": "4,7",
+      "frame_red_area": 30435,
+      "children_red_area": 33287,
+      "residual_ratio": 0.0,
+      "n_sig": 3,
+      "red_ratio": 0.2816,
+      "largest_cc_coverage": 0.0979
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 752,
+      "id": 6731,
+      "idx": 17,
+      "big_size": [
+        417,
+        410
+      ],
+      "n_children": 1,
+      "children_idx": "18",
+      "frame_red_area": 34876,
+      "children_red_area": 34247,
+      "residual_ratio": 0.018,
+      "n_sig": 3,
+      "red_ratio": 0.204,
+      "largest_cc_coverage": 0.0785
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 753,
+      "id": 6742,
+      "idx": 5,
+      "big_size": [
+        361,
+        249
+      ],
+      "n_children": 1,
+      "children_idx": "8",
+      "frame_red_area": 21096,
+      "children_red_area": 20779,
+      "residual_ratio": 0.015,
+      "n_sig": 2,
+      "red_ratio": 0.2347,
+      "largest_cc_coverage": 0.1307
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 753,
+      "id": 6746,
+      "idx": 9,
+      "big_size": [
+        396,
+        270
+      ],
+      "n_children": 2,
+      "children_idx": "12,14",
+      "frame_red_area": 29700,
+      "children_red_area": 31447,
+      "residual_ratio": 0.0,
+      "n_sig": 3,
+      "red_ratio": 0.2778,
+      "largest_cc_coverage": 0.0971
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 754,
+      "id": 6759,
+      "idx": 7,
+      "big_size": [
+        361,
+        254
+      ],
+      "n_children": 1,
+      "children_idx": "10",
+      "frame_red_area": 25876,
+      "children_red_area": 25592,
+      "residual_ratio": 0.011,
+      "n_sig": 2,
+      "red_ratio": 0.2822,
+      "largest_cc_coverage": 0.17
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 755,
+      "id": 6764,
+      "idx": 0,
+      "big_size": [
+        331,
+        422
+      ],
+      "n_children": 1,
+      "children_idx": "1",
+      "frame_red_area": 33966,
+      "children_red_area": 9824,
+      "residual_ratio": 0.7108,
+      "n_sig": 6,
+      "red_ratio": 0.2432,
+      "largest_cc_coverage": 0.0651
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 755,
+      "id": 6775,
+      "idx": 11,
+      "big_size": [
+        308,
+        498
+      ],
+      "n_children": 1,
+      "children_idx": "12",
+      "frame_red_area": 44948,
+      "children_red_area": 24712,
+      "residual_ratio": 0.4502,
+      "n_sig": 3,
+      "red_ratio": 0.293,
+      "largest_cc_coverage": 0.1534
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 756,
+      "id": 6784,
+      "idx": 7,
+      "big_size": [
+        391,
+        438
+      ],
+      "n_children": 2,
+      "children_idx": "10,11",
+      "frame_red_area": 44076,
+      "children_red_area": 24380,
+      "residual_ratio": 0.4469,
+      "n_sig": 3,
+      "red_ratio": 0.2574,
+      "largest_cc_coverage": 0.1231
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 758,
+      "id": 6581,
+      "idx": 3,
+      "big_size": [
+        257,
+        350
+      ],
+      "n_children": 1,
+      "children_idx": "4",
+      "frame_red_area": 24204,
+      "children_red_area": 22639,
+      "residual_ratio": 0.0647,
+      "n_sig": 2,
+      "red_ratio": 0.2691,
+      "largest_cc_coverage": 0.1527
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 761,
+      "id": 6607,
+      "idx": 3,
+      "big_size": [
+        247,
+        305
+      ],
+      "n_children": 1,
+      "children_idx": "4",
+      "frame_red_area": 27023,
+      "children_red_area": 15020,
+      "residual_ratio": 0.4442,
+      "n_sig": 3,
+      "red_ratio": 0.3587,
+      "largest_cc_coverage": 0.1697
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 763,
+      "id": 6627,
+      "idx": 6,
+      "big_size": [
+        382,
+        243
+      ],
+      "n_children": 1,
+      "children_idx": "10",
+      "frame_red_area": 22148,
+      "children_red_area": 12322,
+      "residual_ratio": 0.4437,
+      "n_sig": 3,
+      "red_ratio": 0.2386,
+      "largest_cc_coverage": 0.0807
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 763,
+      "id": 6632,
+      "idx": 11,
+      "big_size": [
+        374,
+        262
+      ],
+      "n_children": 1,
+      "children_idx": "13",
+      "frame_red_area": 19099,
+      "children_red_area": 18121,
+      "residual_ratio": 0.0512,
+      "n_sig": 3,
+      "red_ratio": 0.1949,
+      "largest_cc_coverage": 0.0692
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 764,
+      "id": 6637,
+      "idx": 0,
+      "big_size": [
+        386,
+        385
+      ],
+      "n_children": 2,
+      "children_idx": "1,2",
+      "frame_red_area": 43049,
+      "children_red_area": 26602,
+      "residual_ratio": 0.3821,
+      "n_sig": 5,
+      "red_ratio": 0.2897,
+      "largest_cc_coverage": 0.1052
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 764,
+      "id": 6644,
+      "idx": 7,
+      "big_size": [
+        247,
+        402
+      ],
+      "n_children": 1,
+      "children_idx": "11",
+      "frame_red_area": 27079,
+      "children_red_area": 11260,
+      "residual_ratio": 0.5842,
+      "n_sig": 2,
+      "red_ratio": 0.2727,
+      "largest_cc_coverage": 0.1483
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 764,
+      "id": 6649,
+      "idx": 12,
+      "big_size": [
+        497,
+        356
+      ],
+      "n_children": 2,
+      "children_idx": "14,18",
+      "frame_red_area": 53230,
+      "children_red_area": 57230,
+      "residual_ratio": 0.0,
+      "n_sig": 4,
+      "red_ratio": 0.3009,
+      "largest_cc_coverage": 0.1113
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 764,
+      "id": 6652,
+      "idx": 15,
+      "big_size": [
+        367,
+        262
+      ],
+      "n_children": 1,
+      "children_idx": "17",
+      "frame_red_area": 20171,
+      "children_red_area": 18034,
+      "residual_ratio": 0.1059,
+      "n_sig": 2,
+      "red_ratio": 0.2098,
+      "largest_cc_coverage": 0.0929
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 765,
+      "id": 6789,
+      "idx": 0,
+      "big_size": [
+        416,
+        405
+      ],
+      "n_children": 1,
+      "children_idx": "4",
+      "frame_red_area": 38976,
+      "children_red_area": 8252,
+      "residual_ratio": 0.7883,
+      "n_sig": 4,
+      "red_ratio": 0.2313,
+      "largest_cc_coverage": 0.1083
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 765,
+      "id": 6795,
+      "idx": 6,
+      "big_size": [
+        430,
+        419
+      ],
+      "n_children": 2,
+      "children_idx": "10,11",
+      "frame_red_area": 50079,
+      "children_red_area": 23400,
+      "residual_ratio": 0.5327,
+      "n_sig": 5,
+      "red_ratio": 0.278,
+      "largest_cc_coverage": 0.1362
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 765,
+      "id": 6801,
+      "idx": 12,
+      "big_size": [
+        394,
+        410
+      ],
+      "n_children": 2,
+      "children_idx": "14,15",
+      "frame_red_area": 34642,
+      "children_red_area": 19778,
+      "residual_ratio": 0.4291,
+      "n_sig": 5,
+      "red_ratio": 0.2144,
+      "largest_cc_coverage": 0.0535
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 766,
+      "id": 6810,
+      "idx": 4,
+      "big_size": [
+        390,
+        417
+      ],
+      "n_children": 3,
+      "children_idx": "8,9,10",
+      "frame_red_area": 40229,
+      "children_red_area": 29895,
+      "residual_ratio": 0.2569,
+      "n_sig": 6,
+      "red_ratio": 0.2474,
+      "largest_cc_coverage": 0.0499
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 766,
+      "id": 6813,
+      "idx": 7,
+      "big_size": [
+        348,
+        350
+      ],
+      "n_children": 1,
+      "children_idx": "6",
+      "frame_red_area": 34023,
+      "children_red_area": 13958,
+      "residual_ratio": 0.5897,
+      "n_sig": 5,
+      "red_ratio": 0.2793,
+      "largest_cc_coverage": 0.1348
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 767,
+      "id": 6820,
+      "idx": 0,
+      "big_size": [
+        411,
+        412
+      ],
+      "n_children": 2,
+      "children_idx": "3,7",
+      "frame_red_area": 37246,
+      "children_red_area": 14943,
+      "residual_ratio": 0.5988,
+      "n_sig": 6,
+      "red_ratio": 0.22,
+      "largest_cc_coverage": 0.0784
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 767,
+      "id": 6824,
+      "idx": 4,
+      "big_size": [
+        288,
+        427
+      ],
+      "n_children": 1,
+      "children_idx": "5",
+      "frame_red_area": 31796,
+      "children_red_area": 18941,
+      "residual_ratio": 0.4043,
+      "n_sig": 4,
+      "red_ratio": 0.2586,
+      "largest_cc_coverage": 0.1209
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 767,
+      "id": 6830,
+      "idx": 10,
+      "big_size": [
+        324,
+        391
+      ],
+      "n_children": 2,
+      "children_idx": "8,9",
+      "frame_red_area": 33400,
+      "children_red_area": 17076,
+      "residual_ratio": 0.4887,
+      "n_sig": 3,
+      "red_ratio": 0.2636,
+      "largest_cc_coverage": 0.1532
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 768,
+      "id": 6833,
+      "idx": 0,
+      "big_size": [
+        257,
+        252
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 16249,
+      "children_red_area": 12884,
+      "residual_ratio": 0.2071,
+      "n_sig": 2,
+      "red_ratio": 0.2509,
+      "largest_cc_coverage": 0.1275
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 769,
+      "id": 6844,
+      "idx": 3,
+      "big_size": [
+        408,
+        287
+      ],
+      "n_children": 2,
+      "children_idx": "4,7",
+      "frame_red_area": 29373,
+      "children_red_area": 27504,
+      "residual_ratio": 0.0636,
+      "n_sig": 3,
+      "red_ratio": 0.2508,
+      "largest_cc_coverage": 0.0857
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 770,
+      "id": 6853,
+      "idx": 1,
+      "big_size": [
+        307,
+        488
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 41538,
+      "children_red_area": 25277,
+      "residual_ratio": 0.3915,
+      "n_sig": 3,
+      "red_ratio": 0.2773,
+      "largest_cc_coverage": 0.1395
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 772,
+      "id": 6873,
+      "idx": 0,
+      "big_size": [
+        391,
+        404
+      ],
+      "n_children": 3,
+      "children_idx": "1,5,6",
+      "frame_red_area": 34135,
+      "children_red_area": 21386,
+      "residual_ratio": 0.3735,
+      "n_sig": 6,
+      "red_ratio": 0.2161,
+      "largest_cc_coverage": 0.0463
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 773,
+      "id": 6885,
+      "idx": 0,
+      "big_size": [
+        401,
+        402
+      ],
+      "n_children": 2,
+      "children_idx": "1,6",
+      "frame_red_area": 36652,
+      "children_red_area": 19993,
+      "residual_ratio": 0.4545,
+      "n_sig": 5,
+      "red_ratio": 0.2274,
+      "largest_cc_coverage": 0.0489
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 773,
+      "id": 6895,
+      "idx": 10,
+      "big_size": [
+        404,
+        411
+      ],
+      "n_children": 2,
+      "children_idx": "13,15",
+      "frame_red_area": 46075,
+      "children_red_area": 27293,
+      "residual_ratio": 0.4076,
+      "n_sig": 6,
+      "red_ratio": 0.2775,
+      "largest_cc_coverage": 0.075
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 773,
+      "id": 6902,
+      "idx": 17,
+      "big_size": [
+        435,
+        436
+      ],
+      "n_children": 1,
+      "children_idx": "23",
+      "frame_red_area": 55245,
+      "children_red_area": 14083,
+      "residual_ratio": 0.7451,
+      "n_sig": 2,
+      "red_ratio": 0.2913,
+      "largest_cc_coverage": 0.2324
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 773,
+      "id": 6903,
+      "idx": 18,
+      "big_size": [
+        425,
+        428
+      ],
+      "n_children": 2,
+      "children_idx": "19,26",
+      "frame_red_area": 36578,
+      "children_red_area": 17615,
+      "residual_ratio": 0.5184,
+      "n_sig": 5,
+      "red_ratio": 0.2011,
+      "largest_cc_coverage": 0.0523
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 774,
+      "id": 6915,
+      "idx": 2,
+      "big_size": [
+        405,
+        395
+      ],
+      "n_children": 3,
+      "children_idx": "3,6,7",
+      "frame_red_area": 35962,
+      "children_red_area": 24983,
+      "residual_ratio": 0.3053,
+      "n_sig": 5,
+      "red_ratio": 0.2248,
+      "largest_cc_coverage": 0.0691
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 774,
+      "id": 6922,
+      "idx": 9,
+      "big_size": [
+        402,
+        387
+      ],
+      "n_children": 2,
+      "children_idx": "10,11",
+      "frame_red_area": 38089,
+      "children_red_area": 17522,
+      "residual_ratio": 0.54,
+      "n_sig": 7,
+      "red_ratio": 0.2448,
+      "largest_cc_coverage": 0.0544
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 776,
+      "id": 6938,
+      "idx": 0,
+      "big_size": [
+        399,
+        401
+      ],
+      "n_children": 2,
+      "children_idx": "6,11",
+      "frame_red_area": 36571,
+      "children_red_area": 16619,
+      "residual_ratio": 0.5456,
+      "n_sig": 6,
+      "red_ratio": 0.2286,
+      "largest_cc_coverage": 0.0725
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 776,
+      "id": 6951,
+      "idx": 13,
+      "big_size": [
+        395,
+        400
+      ],
+      "n_children": 1,
+      "children_idx": "22",
+      "frame_red_area": 30506,
+      "children_red_area": 6920,
+      "residual_ratio": 0.7732,
+      "n_sig": 6,
+      "red_ratio": 0.1931,
+      "largest_cc_coverage": 0.0598
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 776,
+      "id": 6952,
+      "idx": 14,
+      "big_size": [
+        369,
+        385
+      ],
+      "n_children": 3,
+      "children_idx": "16,18,19",
+      "frame_red_area": 40529,
+      "children_red_area": 27489,
+      "residual_ratio": 0.3217,
+      "n_sig": 6,
+      "red_ratio": 0.2853,
+      "largest_cc_coverage": 0.1089
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 776,
+      "id": 6961,
+      "idx": 23,
+      "big_size": [
+        399,
+        395
+      ],
+      "n_children": 1,
+      "children_idx": "27",
+      "frame_red_area": 47155,
+      "children_red_area": 13458,
+      "residual_ratio": 0.7146,
+      "n_sig": 3,
+      "red_ratio": 0.2992,
+      "largest_cc_coverage": 0.1386
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 776,
+      "id": 6962,
+      "idx": 24,
+      "big_size": [
+        399,
+        386
+      ],
+      "n_children": 1,
+      "children_idx": "30",
+      "frame_red_area": 39019,
+      "children_red_area": 10586,
+      "residual_ratio": 0.7287,
+      "n_sig": 3,
+      "red_ratio": 0.2533,
+      "largest_cc_coverage": 0.1091
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 776,
+      "id": 6963,
+      "idx": 25,
+      "big_size": [
+        413,
+        404
+      ],
+      "n_children": 4,
+      "children_idx": "28,29,32,33",
+      "frame_red_area": 48173,
+      "children_red_area": 46374,
+      "residual_ratio": 0.0373,
+      "n_sig": 5,
+      "red_ratio": 0.2887,
+      "largest_cc_coverage": 0.0765
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 776,
+      "id": 6964,
+      "idx": 26,
+      "big_size": [
+        395,
+        399
+      ],
+      "n_children": 1,
+      "children_idx": "31",
+      "frame_red_area": 34378,
+      "children_red_area": 8305,
+      "residual_ratio": 0.7584,
+      "n_sig": 5,
+      "red_ratio": 0.2181,
+      "largest_cc_coverage": 0.058
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 777,
+      "id": 6973,
+      "idx": 1,
+      "big_size": [
+        384,
+        369
+      ],
+      "n_children": 2,
+      "children_idx": "6,10",
+      "frame_red_area": 38244,
+      "children_red_area": 16373,
+      "residual_ratio": 0.5719,
+      "n_sig": 4,
+      "red_ratio": 0.2699,
+      "largest_cc_coverage": 0.1695
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 777,
+      "id": 6986,
+      "idx": 14,
+      "big_size": [
+        330,
+        353
+      ],
+      "n_children": 2,
+      "children_idx": "16,17",
+      "frame_red_area": 35523,
+      "children_red_area": 18244,
+      "residual_ratio": 0.4864,
+      "n_sig": 5,
+      "red_ratio": 0.3049,
+      "largest_cc_coverage": 0.1114
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 778,
+      "id": 6990,
+      "idx": 0,
+      "big_size": [
+        405,
+        405
+      ],
+      "n_children": 2,
+      "children_idx": "3,4",
+      "frame_red_area": 38016,
+      "children_red_area": 18688,
+      "residual_ratio": 0.5084,
+      "n_sig": 5,
+      "red_ratio": 0.2318,
+      "largest_cc_coverage": 0.0713
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 778,
+      "id": 7003,
+      "idx": 13,
+      "big_size": [
+        418,
+        402
+      ],
+      "n_children": 2,
+      "children_idx": "15,16",
+      "frame_red_area": 40717,
+      "children_red_area": 29081,
+      "residual_ratio": 0.2858,
+      "n_sig": 6,
+      "red_ratio": 0.2423,
+      "largest_cc_coverage": 0.0647
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 780,
+      "id": 7017,
+      "idx": 0,
+      "big_size": [
+        399,
+        373
+      ],
+      "n_children": 3,
+      "children_idx": "4,6,8",
+      "frame_red_area": 36585,
+      "children_red_area": 20351,
+      "residual_ratio": 0.4437,
+      "n_sig": 4,
+      "red_ratio": 0.2458,
+      "largest_cc_coverage": 0.1194
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 781,
+      "id": 7140,
+      "idx": 2,
+      "big_size": [
+        413,
+        394
+      ],
+      "n_children": 3,
+      "children_idx": "4,5,7",
+      "frame_red_area": 40089,
+      "children_red_area": 23894,
+      "residual_ratio": 0.404,
+      "n_sig": 5,
+      "red_ratio": 0.2464,
+      "largest_cc_coverage": 0.0788
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 781,
+      "id": 7141,
+      "idx": 3,
+      "big_size": [
+        409,
+        376
+      ],
+      "n_children": 1,
+      "children_idx": "6",
+      "frame_red_area": 33045,
+      "children_red_area": 6363,
+      "residual_ratio": 0.8074,
+      "n_sig": 5,
+      "red_ratio": 0.2149,
+      "largest_cc_coverage": 0.0755
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 782,
+      "id": 7157,
+      "idx": 0,
+      "big_size": [
+        426,
+        396
+      ],
+      "n_children": 3,
+      "children_idx": "4,5,7",
+      "frame_red_area": 48768,
+      "children_red_area": 35839,
+      "residual_ratio": 0.2651,
+      "n_sig": 6,
+      "red_ratio": 0.2891,
+      "largest_cc_coverage": 0.0853
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 782,
+      "id": 7158,
+      "idx": 1,
+      "big_size": [
+        384,
+        322
+      ],
+      "n_children": 2,
+      "children_idx": "6,8",
+      "frame_red_area": 37827,
+      "children_red_area": 18350,
+      "residual_ratio": 0.5149,
+      "n_sig": 4,
+      "red_ratio": 0.3059,
+      "largest_cc_coverage": 0.0935
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 782,
+      "id": 7166,
+      "idx": 9,
+      "big_size": [
+        413,
+        395
+      ],
+      "n_children": 3,
+      "children_idx": "12,13,18",
+      "frame_red_area": 41153,
+      "children_red_area": 27836,
+      "residual_ratio": 0.3236,
+      "n_sig": 5,
+      "red_ratio": 0.2523,
+      "largest_cc_coverage": 0.0737
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 783,
+      "id": 7188,
+      "idx": 10,
+      "big_size": [
+        408,
+        385
+      ],
+      "n_children": 2,
+      "children_idx": "13,16",
+      "frame_red_area": 44351,
+      "children_red_area": 20341,
+      "residual_ratio": 0.5414,
+      "n_sig": 6,
+      "red_ratio": 0.2823,
+      "largest_cc_coverage": 0.0824
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 786,
+      "id": 7230,
+      "idx": 0,
+      "big_size": [
+        395,
+        247
+      ],
+      "n_children": 2,
+      "children_idx": "4,5",
+      "frame_red_area": 26605,
+      "children_red_area": 28054,
+      "residual_ratio": 0.0,
+      "n_sig": 3,
+      "red_ratio": 0.2727,
+      "largest_cc_coverage": 0.0952
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 786,
+      "id": 7232,
+      "idx": 2,
+      "big_size": [
+        214,
+        239
+      ],
+      "n_children": 1,
+      "children_idx": "3",
+      "frame_red_area": 16111,
+      "children_red_area": 10665,
+      "residual_ratio": 0.338,
+      "n_sig": 2,
+      "red_ratio": 0.315,
+      "largest_cc_coverage": 0.1453
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 787,
+      "id": 7245,
+      "idx": 0,
+      "big_size": [
+        403,
+        323
+      ],
+      "n_children": 1,
+      "children_idx": "2",
+      "frame_red_area": 29732,
+      "children_red_area": 12449,
+      "residual_ratio": 0.5813,
+      "n_sig": 3,
+      "red_ratio": 0.2284,
+      "largest_cc_coverage": 0.11
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 787,
+      "id": 7250,
+      "idx": 5,
+      "big_size": [
+        418,
+        386
+      ],
+      "n_children": 1,
+      "children_idx": "8",
+      "frame_red_area": 42800,
+      "children_red_area": 17054,
+      "residual_ratio": 0.6015,
+      "n_sig": 4,
+      "red_ratio": 0.2653,
+      "largest_cc_coverage": 0.1236
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 788,
+      "id": 7255,
+      "idx": 0,
+      "big_size": [
+        379,
+        260
+      ],
+      "n_children": 2,
+      "children_idx": "4,7",
+      "frame_red_area": 27351,
+      "children_red_area": 28759,
+      "residual_ratio": 0.0,
+      "n_sig": 3,
+      "red_ratio": 0.2776,
+      "largest_cc_coverage": 0.095
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 788,
+      "id": 7265,
+      "idx": 10,
+      "big_size": [
+        317,
+        236
+      ],
+      "n_children": 1,
+      "children_idx": "11",
+      "frame_red_area": 22344,
+      "children_red_area": 13295,
+      "residual_ratio": 0.405,
+      "n_sig": 2,
+      "red_ratio": 0.2987,
+      "largest_cc_coverage": 0.1363
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 788,
+      "id": 7267,
+      "idx": 12,
+      "big_size": [
+        403,
+        324
+      ],
+      "n_children": 1,
+      "children_idx": "17",
+      "frame_red_area": 35452,
+      "children_red_area": 14008,
+      "residual_ratio": 0.6049,
+      "n_sig": 3,
+      "red_ratio": 0.2715,
+      "largest_cc_coverage": 0.1376
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 789,
+      "id": 7035,
+      "idx": 2,
+      "big_size": [
+        386,
+        274
+      ],
+      "n_children": 1,
+      "children_idx": "5",
+      "frame_red_area": 26204,
+      "children_red_area": 15622,
+      "residual_ratio": 0.4038,
+      "n_sig": 4,
+      "red_ratio": 0.2478,
+      "largest_cc_coverage": 0.077
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 791,
+      "id": 7053,
+      "idx": 1,
+      "big_size": [
+        382,
+        393
+      ],
+      "n_children": 1,
+      "children_idx": "4",
+      "frame_red_area": 33265,
+      "children_red_area": 5704,
+      "residual_ratio": 0.8285,
+      "n_sig": 6,
+      "red_ratio": 0.2216,
+      "largest_cc_coverage": 0.0712
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 791,
+      "id": 7058,
+      "idx": 6,
+      "big_size": [
+        263,
+        317
+      ],
+      "n_children": 1,
+      "children_idx": "8",
+      "frame_red_area": 31209,
+      "children_red_area": 7694,
+      "residual_ratio": 0.7535,
+      "n_sig": 4,
+      "red_ratio": 0.3743,
+      "largest_cc_coverage": 0.1399
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 791,
+      "id": 7066,
+      "idx": 14,
+      "big_size": [
+        280,
+        193
+      ],
+      "n_children": 1,
+      "children_idx": "11",
+      "frame_red_area": 17368,
+      "children_red_area": 8160,
+      "residual_ratio": 0.5302,
+      "n_sig": 2,
+      "red_ratio": 0.3214,
+      "largest_cc_coverage": 0.1634
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 791,
+      "id": 7073,
+      "idx": 21,
+      "big_size": [
+        395,
+        418
+      ],
+      "n_children": 4,
+      "children_idx": "24,26,29,30",
+      "frame_red_area": 48729,
+      "children_red_area": 55403,
+      "residual_ratio": 0.0,
+      "n_sig": 5,
+      "red_ratio": 0.2951,
+      "largest_cc_coverage": 0.0639
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 791,
+      "id": 7074,
+      "idx": 22,
+      "big_size": [
+        384,
+        412
+      ],
+      "n_children": 4,
+      "children_idx": "25,27,31,32",
+      "frame_red_area": 42875,
+      "children_red_area": 46527,
+      "residual_ratio": 0.0,
+      "n_sig": 5,
+      "red_ratio": 0.271,
+      "largest_cc_coverage": 0.0536
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 791,
+      "id": 7075,
+      "idx": 23,
+      "big_size": [
+        377,
+        386
+      ],
+      "n_children": 1,
+      "children_idx": "35",
+      "frame_red_area": 31829,
+      "children_red_area": 7911,
+      "residual_ratio": 0.7515,
+      "n_sig": 5,
+      "red_ratio": 0.2187,
+      "largest_cc_coverage": 0.0677
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 792,
+      "id": 7088,
+      "idx": 0,
+      "big_size": [
+        393,
+        404
+      ],
+      "n_children": 4,
+      "children_idx": "2,3,6,7",
+      "frame_red_area": 45274,
+      "children_red_area": 45954,
+      "residual_ratio": 0.0,
+      "n_sig": 5,
+      "red_ratio": 0.2852,
+      "largest_cc_coverage": 0.0634
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 792,
+      "id": 7089,
+      "idx": 1,
+      "big_size": [
+        374,
+        390
+      ],
+      "n_children": 3,
+      "children_idx": "4,8,9",
+      "frame_red_area": 38075,
+      "children_red_area": 22448,
+      "residual_ratio": 0.4104,
+      "n_sig": 5,
+      "red_ratio": 0.261,
+      "largest_cc_coverage": 0.0903
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 792,
+      "id": 7100,
+      "idx": 12,
+      "big_size": [
+        382,
+        386
+      ],
+      "n_children": 3,
+      "children_idx": "13,16,17",
+      "frame_red_area": 35649,
+      "children_red_area": 22814,
+      "residual_ratio": 0.36,
+      "n_sig": 6,
+      "red_ratio": 0.2418,
+      "largest_cc_coverage": 0.09
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 793,
+      "id": 7116,
+      "idx": 2,
+      "big_size": [
+        373,
+        391
+      ],
+      "n_children": 3,
+      "children_idx": "5,6,8",
+      "frame_red_area": 39328,
+      "children_red_area": 31747,
+      "residual_ratio": 0.1928,
+      "n_sig": 5,
+      "red_ratio": 0.2697,
+      "largest_cc_coverage": 0.0713
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 793,
+      "id": 7117,
+      "idx": 3,
+      "big_size": [
+        357,
+        393
+      ],
+      "n_children": 1,
+      "children_idx": "10",
+      "frame_red_area": 28219,
+      "children_red_area": 5533,
+      "residual_ratio": 0.8039,
+      "n_sig": 6,
+      "red_ratio": 0.2011,
+      "largest_cc_coverage": 0.0633
+    },
+    {
+      "book": "秦印类编 检索版.pdf",
+      "page": 793,
+      "id": 7125,
+      "idx": 11,
+      "big_size": [
+        408,
+        431
+      ],
+      "n_children": 2,
+      "children_idx": "13,18",
+      "frame_red_area": 51313,
+      "children_red_area": 31529,
+      "residual_ratio": 0.3856,
+      "n_sig": 7,
+      "red_ratio": 0.2918,
+      "largest_cc_coverage": 0.0764
+    },
+    {
+      "book": "秦汉印典 上海书画 金怀英  1997 ok.pdf",
+      "page": 8,
+      "id": 75,
+      "idx": 3,
+      "big_size": [
+        270,
+        247
+      ],
+      "n_children": 1,
+      "children_idx": "7",
+      "frame_red_area": 28223,
+      "children_red_area": 9218,
+      "residual_ratio": 0.6734,
+      "n_sig": 4,
+      "red_ratio": 0.4232,
+      "largest_cc_coverage": 0.1239
+    },
+    {
+      "book": "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf",
+      "page": 14,
+      "id": 7283,
+      "idx": 4,
+      "big_size": [
+        400,
+        381
+      ],
+      "n_children": 1,
+      "children_idx": "6",
+      "frame_red_area": 53156,
+      "children_red_area": 35151,
+      "residual_ratio": 0.3387,
+      "n_sig": 2,
+      "red_ratio": 0.3488,
+      "largest_cc_coverage": 0.1619
+    },
+    {
+      "book": "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf",
+      "page": 23,
+      "id": 7316,
+      "idx": 3,
+      "big_size": [
+        397,
+        396
+      ],
+      "n_children": 1,
+      "children_idx": "5",
+      "frame_red_area": 32102,
+      "children_red_area": 4866,
+      "residual_ratio": 0.8484,
+      "n_sig": 3,
+      "red_ratio": 0.2042,
+      "largest_cc_coverage": 0.1123
+    },
+    {
+      "book": "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf",
+      "page": 29,
+      "id": 7448,
+      "idx": 0,
+      "big_size": [
+        278,
+        291
+      ],
+      "n_children": 1,
+      "children_idx": "1",
+      "frame_red_area": 18678,
+      "children_red_area": 8251,
+      "residual_ratio": 0.5583,
+      "n_sig": 2,
+      "red_ratio": 0.2309,
+      "largest_cc_coverage": 0.1333
+    },
+    {
+      "book": "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf",
+      "page": 41,
+      "id": 7383,
+      "idx": 5,
+      "big_size": [
+        333,
+        491
+      ],
+      "n_children": 1,
+      "children_idx": "6",
+      "frame_red_area": 46886,
+      "children_red_area": 19492,
+      "residual_ratio": 0.5843,
+      "n_sig": 2,
+      "red_ratio": 0.2868,
+      "largest_cc_coverage": 0.1826
+    },
+    {
+      "book": "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf",
+      "page": 43,
+      "id": 7392,
+      "idx": 1,
+      "big_size": [
+        393,
+        346
+      ],
+      "n_children": 2,
+      "children_idx": "3,5",
+      "frame_red_area": 58074,
+      "children_red_area": 24357,
+      "residual_ratio": 0.5806,
+      "n_sig": 8,
+      "red_ratio": 0.4271,
+      "largest_cc_coverage": 0.0712
+    }
+  ]
+}

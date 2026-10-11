@@ -1,0 +1,21 @@
+== conservative T1=0.5 T2=0.6 tie=area_max order=r2_first
+   rows 8708 → kept 8209 / marked 499 (R1=104, R2=395, 5.73%)  pages 341/1041  both-qualify=44
+     秦印类编 检索版.pdf                       marked   392/ 7183 (R1=  77 R2= 315) pages=258
+     福庵印缀 原版 高清.pdf                     marked    89/ 1214 (R1=  17 R2=  72) pages=69
+     黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.s marked     9/  200 (R1=   4 R2=   5) pages=8
+     古玺汇编 文物出版社 罗福颐  ok.pdf             marked     5/   23 (R1=   5 R2=   0) pages=2
+     吴颐人篆刻作品展示.pdf                      marked     2/   22 (R1=   0 R2=   2) pages=2
+     tmp.pdf                            marked     1/   31 (R1=   1 R2=   0) pages=1
+     秦汉印典 上海书画 金怀英  1997 ok.pdf         marked     1/   35 (R1=   0 R2=   1) pages=1
+   naming: rows_kept_with_cr_changed=1110 pages=307 redundant_files≈2196
+== aggressive T1=0.35 T2=0.5 tie=area_max order=r2_first
+   rows 8708 → kept 8159 / marked 549 (R1=189, R2=360, 6.3%)  pages 372/1041  both-qualify=114
+     秦印类编 检索版.pdf                       marked   427/ 7183 (R1= 143 R2= 284) pages=280
+     福庵印缀 原版 高清.pdf                     marked   103/ 1214 (R1=  34 R2=  69) pages=77
+     黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.s marked    10/  200 (R1=   6 R2=   4) pages=9
+     古玺汇编 文物出版社 罗福颐  ok.pdf             marked     5/   23 (R1=   5 R2=   0) pages=2
+     吴颐人篆刻作品展示.pdf                      marked     2/   22 (R1=   0 R2=   2) pages=2
+     tmp.pdf                            marked     1/   31 (R1=   1 R2=   0) pages=1
+     秦汉印典 上海书画 金怀英  1997 ok.pdf         marked     1/   35 (R1=   0 R2=   1) pages=1
+   naming: rows_kept_with_cr_changed=1157 pages=332 redundant_files≈2327
+== diff: {'only_aggressive': 85, 'only_conservative': 35}

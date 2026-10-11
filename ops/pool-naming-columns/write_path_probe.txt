@@ -1,0 +1,10 @@
+commit#1 counters: {'detected': 20, 'inserted': 20, 'updated': 0, 'skipped': 0, 'ocr_empty': 0}
+inserted rows: 20
+  col NULL=0 row NULL=0 img_path_tiff NULL=0 img_path NOT NULL=0
+  sample: {'id': 7473, 'idx': 0, 'text': '', 'img_path': None, 'col': 1, 'row': 1, 'img_path_tiff': 'output/books/P0PROBE/P1-C1-R1.tiff', 'x1': 10.0, 'y1': 20.0, 'x2': 30.0, 'y2': 40.0}
+commit#2 counters: {'detected': 20, 'inserted': 0, 'updated': 0, 'skipped': 20, 'ocr_empty': 0}
+historical 10-col before: {'id': 1, 'text': '', 'img_path': 'output/pairs/p13_0/stamp.png', 'x1': 204.0, 'y1': 269.0, 'x2': 327.0, 'y2': 391.0}
+update-arm verdict=updated; historical img_path after='output/pairs/p13_0/stamp.png' (preserved=True) text_updated=True
+E6 find_stamp_image -> source=img_path_tiff rel=output/books/P0PROBE/P1-C1-R1.tiff
+E5 missing_items(image) count=0 scope=('P0PROBE.pdf', 1, 1)
+OK

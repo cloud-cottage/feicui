@@ -1,0 +1,13 @@
+# E6 readout: GET http://127.0.0.1:5196/api/jobs/job-64bd6bebd36240a7b338c02c813302da/stamps/13/0/image
+# 2026-10-11T02:52:41Z
+HTTP/1.1 200 OK
+date: Sun, 11 Oct 2026 02:52:40 GMT
+server: uvicorn
+content-length: 79182
+cache-control: no-store
+x-feicui-img-path: output/books/%E9%BB%84%E7%89%A7%E7%94%AB%E5%8D%B0%E8%B0%B1/P13-C1-R1.tiff
+content-type: image/png
+
+# png magic: 89504e470d0a1a0a
+# /tmp/e6_p13_0.png: PNG image data, 343 x 341, 8-bit/color RGB, non-interlaced
+# bytes:    79182

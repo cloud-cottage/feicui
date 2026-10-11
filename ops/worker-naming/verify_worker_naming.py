@@ -1,5 +1,24 @@
 #!/usr/bin/env python
+# ══════════════════════════════════════════════════════════════════════════════
+# ⚠⚠⚠  已作废 / DEPRECATED —— 不得再作为验收证据  ⚠⚠⚠
+#   本脚本断言的是**旧「双份输出」口径**（TIFF ＋ 同名 webp 并存，见 commit
+#   `f9be1d4`）；该口径**已被 commit `58c879f` 取代** —— 现行口径＝「只出 TIFF」
+#   （worker 只写 `output/books/<目录键>/P<页>-C<列>-R<行>.tiff`，旧 webp 已退场、
+#   新命名目录与 `output/faces/**` 均不再新写 webp）。Kevin 2026-10-11 裁定「本地
+#   文件一律不再保存 webp」。
+#   并且本脚本用 `git show HEAD:server/worker/feicui_worker.py` 取「改造前」源码，
+#   而 HEAD 现已是**改造后**的新码 ⇒ `old_src` 含 `correct_image_v3`/`encode_tiff`/
+#   `output/books` ⇒ **跑它必然误判**（「改造前 worker 不含新逻辑」「旧 webp 未变」
+#   「三套并存」等断言全部失败）——它现在只会产出**误导性 FAIL 证据**。
+#   ⇒ 默认**拒绝运行**（exit 3）。仅当显式设 `FEICUI_RUN_DEPRECATED_VERIFY=1`
+#   强制复跑时，输出也只作**历史对照**，**不得写进任何验收结论**。
+#   现行验收请改用：`ops/pool-naming-columns/`（本次 P0 修复）＋
+#   `server/app/backfill_book_images.py --verify-only` ＋ E6/E5 活体端点读数。
+# ══════════════════════════════════════════════════════════════════════════════
 """worker 接新口径（P-C-R 命名 ＋ V3 校正 ＋ 双份输出）· 单页函数级验证（Kong / 2026-10-11）。
+
+**⚠ 此文件已作废（见文件头注释）：断言的是已被 `58c879f` 取代的「双份输出」旧口径，
+默认拒绝运行。** 保留仅作历史对照。
 
 **不建 job、不写库、不碰旧文件**（红线）。做法：
   1. 载入**改造前**的 worker（`git show HEAD:server/worker/feicui_worker.py`）与**改造后**的本文件；
@@ -78,6 +97,19 @@ def tiff_tags(path: Path) -> dict:
 
 
 def main() -> int:
+    banner = (
+        "\n" + "!" * 78 + "\n"
+        "!!  已作废 / DEPRECATED：本脚本断言旧「双份输出」口径（f9be1d4），\n"
+        "!!  已被「只出 TIFF」口径（commit 58c879f）取代；且它从 HEAD 取到的\n"
+        "!!  「改造前」源码现已是新码 ⇒ 跑它必然产出**误导性 FAIL**。\n"
+        "!!  默认拒绝运行。强制复跑：FEICUI_RUN_DEPRECATED_VERIFY=1（仅作历史对照，\n"
+        "!!  不得写进任何验收结论）。现行验收见 ops/pool-naming-columns/。\n"
+        + "!" * 78
+    )
+    print(banner)
+    if os.environ.get("FEICUI_RUN_DEPRECATED_VERIFY") != "1":
+        print("已作废：拒绝运行（exit 3）。")
+        return 3
     print(f"repo={REPO}\npage={PAGE} pdf={PDF_PATH} alias={TEMPLATE_ALIAS} book_key={BOOK_KEY}")
     check("源 PDF 在盘", PDF_PATH.is_file(), str(PDF_PATH))
 

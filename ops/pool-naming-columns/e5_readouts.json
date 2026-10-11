@@ -1,0 +1,34 @@
+{
+  "image": {
+    "count": 0,
+    "items_len": 0,
+    "items_head": []
+  },
+  "text": {
+    "count": 185,
+    "items_len": 185,
+    "items_head": [
+      {
+        "pdf_name": "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf",
+        "page": 13,
+        "idx": 0,
+        "img_path": "output/faces/HMF/p0013_00.webp",
+        "reason": "text_empty"
+      },
+      {
+        "pdf_name": "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf",
+        "page": 13,
+        "idx": 1,
+        "img_path": "output/faces/HMF/p0013_01.webp",
+        "reason": "text_empty"
+      },
+      {
+        "pdf_name": "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf",
+        "page": 13,
+        "idx": 2,
+        "img_path": "output/faces/HMF/p0013_02.webp",
+        "reason": "text_empty"
+      }
+    ]
+  }
+}

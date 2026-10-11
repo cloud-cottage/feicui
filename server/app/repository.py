@@ -441,52 +441,77 @@ def fail_pages(db_path: Path | str, *, job_id: str, pages: list[int], error: str
     return int(n)
 
 
+# 加法三列（migration `1a-0003-stamps-naming-columns`）：新行走库必须**一并落库**，
+# 否则新 job 行的 `col`/`row`/`img_path_tiff` 恒为 NULL（P0 真缺陷，Neng 质检 F1）。
+STAMP_NAMING_COLS = ("col", "row", "img_path_tiff")
+
+
 def _upsert_stamp(conn, row: dict[str, Any], on_conflict: str) -> str:
     """行级幂等（§2.4）：已存在 ⇒ `skip`（默认，**绝不改写旧行**）或显式 `update`。
 
     返回 `inserted` / `updated` / `skipped`（写入 `job_pages` 的 5 个计数列）。
     依据：AC-01 的判负形态＝「旧行任一字段被改写」，故默认 arm 必须**只跳过不覆盖**。
+
+    **影像列口径（2026-10-11「webp 退场」单）**：
+      * **新行 `img_path` 写 NULL** —— 该列语义＝历史 webp 面、已退场；不再写「虚拟 webp 路径」；
+      * **新行必须写 `col` / `row` / `img_path_tiff`**（新产物的真身在 TIFF 列，E6 首选它）；
+      * **历史行的 `img_path` 值一字不改** —— `update` 分支里传入 `img_path` 为空时**保留既有值**，
+        绝不把历史行已有的 webp 路径抹成 NULL（红线：现有 10 列内容指纹 before ≡ after）。
     """
     existing = db.query_one(
         conn,
-        """SELECT text, img_path, x1, y1, x2, y2 FROM stamps
+        """SELECT text, img_path, x1, y1, x2, y2, col, row, img_path_tiff FROM stamps
             WHERE pdf_name = ? AND page = ? AND idx = ?""",
         (row["pdf_name"], int(row["page"]), int(row["idx"])),
     )
+    img_path_in = row.get("img_path")  # 新写一律 None（webp 退场）；见下 `update` 分支的保护逻辑。
     if existing is None:
         conn.execute(
-            """INSERT INTO stamps(pdf_name, page, idx, text, img_path, x1, y1, x2, y2)
-               VALUES (?,?,?,?,?,?,?,?,?)
+            """INSERT INTO stamps(pdf_name, page, idx, text, img_path, x1, y1, x2, y2,
+                                  col, row, img_path_tiff)
+               VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
                ON CONFLICT(pdf_name, page, idx) DO NOTHING""",
             (
                 row["pdf_name"],
                 int(row["page"]),
                 int(row["idx"]),
                 row["text"],
-                row["img_path"],
+                None,                        # ★ 新行 img_path 落 NULL（该列＝历史 webp 面、已退场）
                 row["x1"],
                 row["y1"],
                 row["x2"],
                 row["y2"],
+                row.get("col"),
+                row.get("row"),
+                row.get("img_path_tiff"),
             ),
         )
         return "inserted"
     if on_conflict == ON_CONFLICT_UPDATE:
-        same = all(
-            existing[k] == row[k] for k in ("text", "img_path", "x1", "y1", "x2", "y2")
+        # `img_path` 已退场：传入为空 ⇒ 保留既有值（**历史行的 img_path 一字不改**，红线）。
+        new_img_path = img_path_in if img_path_in is not None else existing["img_path"]
+        same = (
+            existing["text"] == row["text"]
+            and existing["img_path"] == new_img_path
+            and all(existing[k] == row.get(k) for k in STAMP_NAMING_COLS)
+            and all(existing[k] == row[k] for k in ("x1", "y1", "x2", "y2"))
         )
         if same:
             return "skipped"
         conn.execute(
-            """UPDATE stamps SET text = ?, img_path = ?, x1 = ?, y1 = ?, x2 = ?, y2 = ?
+            """UPDATE stamps SET text = ?, img_path = ?, x1 = ?, y1 = ?, x2 = ?, y2 = ?,
+                      col = ?, row = ?, img_path_tiff = ?
                 WHERE pdf_name = ? AND page = ? AND idx = ?""",
             (
                 row["text"],
-                row["img_path"],
+                new_img_path,
                 row["x1"],
                 row["y1"],
                 row["x2"],
                 row["y2"],
+                row.get("col"),
+                row.get("row"),
+                row.get("img_path_tiff"),
                 row["pdf_name"],
                 int(row["page"]),
                 int(row["idx"]),
@@ -537,7 +562,13 @@ def commit_chunk(
                         "page": page,
                         "idx": item["idx"],
                         "text": item["text"],
-                        "img_path": item["img_path"],
+                        # ★ 新行 `img_path` 写 NULL（该列＝历史 webp 面、已退场；不再写「虚拟 webp 路径」）。
+                        #   worker 返回值里的 `img_path` 字符串仅供其它调用方复用，**不落库**。
+                        "img_path": None,
+                        # 加法三列：新产物的真身在 TIFF 列（`col`/`row` 为 P-C-R 命名坐标）。
+                        "col": item.get("col"),
+                        "row": item.get("row"),
+                        "img_path_tiff": item.get("img_path_tiff"),
                         "x1": item["x1"],
                         "y1": item["y1"],
                         "x2": item["x2"],

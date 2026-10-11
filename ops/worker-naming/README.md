@@ -1,3 +1,12 @@
+> ⚠⚠ **本目录整份已作废（DEPRECATED）—— 不得作为验收依据** ⚠⚠
+> 本目录记录的是**旧「双份输出」口径**（TIFF ＋ 同名 webp 并存，脚本/读数对应 commit
+> `f9be1d4`）。该口径**已被 commit `58c879f` 取代**：现行＝「**只出 TIFF**」（worker 只写
+> `output/books/<目录键>/P<页>-C<列>-R<行>.tiff`；旧 `output/faces/**` webp 退场）。Kevin
+> 2026-10-11 裁定「本地文件一律不再保存 webp」。
+> 其中「新 webp 列」「三套并存」「旧 webp 未变」等读数与断言**在新口径下不再成立**；
+> `verify_worker_naming.py` 已加运行时**拒绝执行**闸（默认 exit 3）。现行验收见
+> **`ops/pool-naming-columns/`**。本目录保留仅作历史对照。
+
 # ops/worker-naming —— worker 接「P-C-R 命名 ＋ V3 校正 ＋ 双份输出」单页函数级验证
 
 **单**：Kong（实现）· 2026-10-11 · 把新出图口径接进 worker（新 job 默认**双份输出**）。

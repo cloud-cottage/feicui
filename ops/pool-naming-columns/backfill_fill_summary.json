@@ -1,0 +1,123 @@
+{
+  "generated_at": "2026-10-11T10:51:48+0800",
+  "repo": "/Users/kevin/bistro/xiai/feicui",
+  "db_path": "/Users/kevin/bistro/xiai/data/yinpu.db",
+  "out_root": "/Users/kevin/bistro/xiai/feicui/output/books",
+  "scope": "books",
+  "books": [
+    "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf"
+  ],
+  "correction_algorithm": "dual-layer-v3",
+  "correction_params": {
+    "V3_LIGHTNESS_V_MIN": 0.7,
+    "V3_FG_CHROMA_STRENGTH": 1.0,
+    "V3_PAPER_MODE": "threshold",
+    "V3_CLEAN": false,
+    "INK_RATIO_MIN": 0.02,
+    "TARGET_HEX": "#C95021"
+  },
+  "tiff_container": "RGB 8-bit + tiff_deflate (Deflate, 无损)",
+  "webp_quality": 95,
+  "write_webp": false,
+  "layout": "tiff-only",
+  "render_dpi": 400,
+  "naming": "P<page>-C<col>-R<row> (大写/短横/不补零)",
+  "per_book": {},
+  "failures": [],
+  "correction_sample": [],
+  "fp10_before": "ee16bc755096239ed11d13ba1fc15f6bbf86de143e66da6327bdffa477d583ee",
+  "fp10_rows_before": 7472,
+  "fill_missing_cols": {
+    "mode": "fill-missing-cols-only",
+    "note": "只补缺列；img_path_tiff 已有效且在盘的行跳过；不渲染、不写 img_path（10 列一字不改）。",
+    "updated": 200,
+    "skipped": 0,
+    "failures": [],
+    "per_book": {
+      "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf": {
+        "dir_key": "黄牧甫印谱",
+        "rows": 200,
+        "filled": 200,
+        "skipped": 0
+      }
+    }
+  },
+  "fp10_after": "ee16bc755096239ed11d13ba1fc15f6bbf86de143e66da6327bdffa477d583ee",
+  "fp10_rows_after": 7472,
+  "fp10_identical": true,
+  "checks": {
+    "scope_books": [
+      "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf"
+    ],
+    "rows_in_scope": 200,
+    "layout_spec": "TIFF-only（本地不再保存 webp；Kevin 2026-10-11 口径变更）",
+    "null_new_columns": {
+      "count": 0,
+      "detail": []
+    },
+    "name_regex_tiff": {
+      "checked": 200,
+      "mismatch_count": 0,
+      "detail": []
+    },
+    "page_cr_unique": {
+      "conflicts": 0,
+      "detail": []
+    },
+    "two_way_reconcile_tiff": {
+      "db_expected_tiff": 200,
+      "disk_tiff": 200,
+      "missing_tiff": {
+        "count": 0,
+        "detail": []
+      },
+      "orphan_tiff": {
+        "count": 0,
+        "detail": []
+      },
+      "unexpected_P_files": {
+        "count": 0,
+        "detail": []
+      }
+    },
+    "legacy_webp_present": {
+      "count": 0,
+      "note": "本轮口径变更前已产出的 webp（新命名目录下）——**只列不删**，删除与 stamps.img_path／E6 取图端点一起处置，另有专单。",
+      "listed_cap": 200,
+      "detail": []
+    }
+  },
+  "sizes": {
+    "tiff_files": 200,
+    "webp_files": 0,
+    "tiff_bytes": 14858324,
+    "webp_bytes": 0,
+    "tiff_total_mib": 14.17,
+    "webp_total_mib": 0.0,
+    "max_tiff": {
+      "bytes": 713522,
+      "path": "output/books/黄牧甫印谱/P40-C1-R1.tiff",
+      "name": "P40-C1-R1.tiff"
+    },
+    "max_webp": {
+      "bytes": -1,
+      "path": null
+    },
+    "limit_4mib": 4194304,
+    "max_tiff_within_4mib": true,
+    "max_webp_within_4mib": true,
+    "webp_note": "webp 为本轮口径变更**之前**已产出的遗留件（只列不删）；新口径 TIFF-only ⇒ 本次/复跑**不再产 webp**（webp_written=0）。"
+  },
+  "totals": {
+    "stamps_in_scope": null,
+    "written_tiff": 200,
+    "webp_written_this_run": 0,
+    "webp_present_legacy": 0,
+    "failures": 0,
+    "tiff_bytes": 14858324,
+    "webp_bytes": 0
+  },
+  "idempotency": {
+    "skipped": "fill-missing-cols-only 模式不渲染、不产图；新列落库的幂等由复跑同一模式证明（第二次全部 skipped、updated=0）。"
+  }
+}

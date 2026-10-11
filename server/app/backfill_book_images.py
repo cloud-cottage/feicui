@@ -333,6 +333,85 @@ def process_book(
 
 
 # ──────────────────────────────────────────────────────────────────────────────
+# 「只补缺列」幂等模式（P0 修后补数据 · 2026-10-11）
+#   ★ 背景：池侧写库曾丢 `col`/`row`/`img_path_tiff` ⇒ 新 job 行**三列全 NULL**
+#     （实证：黄牧甫印谱 job job-64bd… 200 行，TIFF 已实际写出 200 件）。
+#   本模式**只补这 200 行**：逐行判「缺列」⇒ 按库内 bbox 复算 (C,R) ⇒ 期望
+#   `output/books/<目录键>/P<页>-C<列>-R<行>.tiff` **必须在盘**才更新；
+#   `img_path_tiff` 已有效且在盘的行**跳过**（幂等，复跑 0 更新）。
+#   **不渲染、不重出图**（复用已落盘 TIFF）；**不写 `img_path`**（现有 10 列一字不改）。
+# ──────────────────────────────────────────────────────────────────────────────
+def fill_missing_columns(
+    conn: sqlite3.Connection,
+    books: list[str],
+    out_root: Path,
+    mapping: dict,
+    *,
+    root: Path = REPO,
+) -> dict:
+    """只对**缺列行**补 `col`/`row`/`img_path_tiff`（幂等、不渲染、不写 `img_path`）。
+
+    「需补」判据（逐行）：`col` 为空 **或** `row` 为空 **或** `img_path_tiff` 空 **或**
+    其指向文件不在盘。补法＝按库内 bbox（`x1..y2`，**不重跑检测**）用 `naming.assign_cr`
+    复算 (C,R) ⇒ 期望路径；**该文件必须在盘**，否则逐条入失败清单（不静默跳过）。
+    """
+    updated = skipped = 0
+    failures: list[dict] = []
+    per_book: dict[str, dict] = {}
+    for b in books:
+        dir_key = naming.dir_key_for(b, mapping)
+        rows = list(
+            conn.execute(
+                "SELECT id, page, idx, x1, y1, x2, y2, col, row, img_path_tiff FROM stamps "
+                "WHERE pdf_name=? ORDER BY page, idx",
+                (b,),
+            )
+        )
+        by_page: dict[int, list[sqlite3.Row]] = defaultdict(list)
+        for r in rows:
+            by_page[int(r["page"])].append(r)
+
+        updates: list[tuple[int, int, str, int]] = []
+        b_upd = b_skip = 0
+        for page, prs in sorted(by_page.items()):
+            bboxes = [(float(r["x1"]), float(r["y1"]), float(r["x2"]), float(r["y2"])) for r in prs]
+            pairs = naming.assign_cr(bboxes)
+            for k, r in enumerate(prs):
+                cur = str(r["img_path_tiff"]).strip() if r["img_path_tiff"] else ""
+                on_disk = bool(cur) and (root / cur).is_file()
+                need = (r["col"] is None) or (r["row"] is None) or (not cur) or (not on_disk)
+                if not need:
+                    b_skip += 1
+                    continue
+                c, rr = pairs[k]
+                tiff_abs = (out_root / dir_key / naming.name_for(page, c, rr, ".tiff")).resolve()
+                if not tiff_abs.is_file():
+                    failures.append({
+                        "pdf_name": b, "page": int(page), "idx": int(r["idx"]),
+                        "reason": f"tiff_not_on_disk: {safe_rel(tiff_abs)}",
+                    })
+                    continue
+                updates.append((int(c), int(rr), safe_rel(tiff_abs), int(r["id"])))
+                b_upd += 1
+        if updates:
+            conn.executemany(
+                "UPDATE stamps SET col=?, row=?, img_path_tiff=? WHERE id=?", updates
+            )
+            conn.commit()
+        updated += b_upd
+        skipped += b_skip
+        per_book[b] = {"dir_key": dir_key, "rows": len(rows), "filled": b_upd, "skipped": b_skip}
+    return {
+        "mode": "fill-missing-cols-only",
+        "note": "只补缺列；img_path_tiff 已有效且在盘的行跳过；不渲染、不写 img_path（10 列一字不改）。",
+        "updated": updated,
+        "skipped": skipped,
+        "failures": failures,
+        "per_book": per_book,
+    }
+
+
+# ──────────────────────────────────────────────────────────────────────────────
 # 核对（新列↔文件名、页内唯一、双向对账〔TIFF〕、webp 遗留清点、体量）
 #   ★ 口径：本地文件**只认 `.tiff`**；既有 `.webp`（本人本轮已产者）**只列不删**，留删除单统一处置。
 # ──────────────────────────────────────────────────────────────────────────────
@@ -546,6 +625,9 @@ def build_argparser() -> argparse.ArgumentParser:
                    help="【默认关】同时写 .webp（口径变更后本地不再保存 webp；仅供历史/对照）")
     p.add_argument("--no-migrate", action="store_true", help="跳过迁移（列须已存在）")
     p.add_argument("--verify-only", action="store_true", help="只核对已落盘/已落库，不渲染不写")
+    p.add_argument("--fill-missing-cols", action="store_true",
+                   help="【只补缺列】幂等模式：仅对 col/row/img_path_tiff 缺列的行补这三列"
+                        "（img_path_tiff 已有效且在盘的行跳过）；不渲染、不写 img_path，可配 --all/--book")
     p.add_argument("--summary-name", default="summary.json")
     return p
 
@@ -623,6 +705,15 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.verify_only:
         books_stat = {}
+    elif args.fill_missing_cols:
+        # 【只补缺列】：不渲染、不重出图 —— 复用已落盘 TIFF 把缺列的 200 行补上（幂等）。
+        print(f"\n=== 【只补缺列】模式（{len(books)} 本；不渲染、不写 img_path）===")
+        fill = fill_missing_columns(conn, books, out_root, mapping)
+        report["fill_missing_cols"] = fill
+        for b, s in fill["per_book"].items():
+            print(f"  · {b[:28]:<28} 行 {s['rows']:>5} / 补 {s['filled']:>4} / 跳 {s['skipped']:>5}"
+                  f"  → output/books/{s['dir_key']}/")
+        print(f"  合计：补 {fill['updated']} 行、跳 {fill['skipped']} 行、失败 {len(fill['failures'])} 条")
     else:
         processor = load_processor()
         from PIL import Image as PIL_Image  # 延迟到需要时（图像栈在 venv）
@@ -696,16 +787,22 @@ def main(argv: list[str] | None = None) -> int:
         "tiff_bytes": report["sizes"]["tiff_bytes"], "webp_bytes": report["sizes"]["webp_bytes"],
     }
 
-    # 幂等核对（两种模式都跑；只需少量渲染 ＋ 解码像素比对）：同参数二次产出 ⇒ 解码像素逐字节相同
-    processor = load_processor()
-    from PIL import Image as PIL_Image
-    for b in books:
-        pdf_path = resolve_pdf(b, search_dirs)
-        if pdf_path is None:
-            report.setdefault("idempotency", {})[b] = {"skipped": "pdf_not_found"}
-            continue
-        report.setdefault("idempotency", {})[b] = idempotency_check(
-            conn, processor, PIL_Image, b, pdf_path, naming.dir_key_for(b, mapping), out_root, mapping)
+    # 幂等核对（渲染模式跑；fill-missing-cols 不产图 ⇒ 无需像素幂等探针）
+    if args.fill_missing_cols:
+        report["idempotency"] = {
+            "skipped": "fill-missing-cols-only 模式不渲染、不产图；新列落库的幂等由复跑同一模式证明"
+                       "（第二次全部 skipped、updated=0）。"
+        }
+    else:
+        processor = load_processor()
+        from PIL import Image as PIL_Image
+        for b in books:
+            pdf_path = resolve_pdf(b, search_dirs)
+            if pdf_path is None:
+                report.setdefault("idempotency", {})[b] = {"skipped": "pdf_not_found"}
+                continue
+            report.setdefault("idempotency", {})[b] = idempotency_check(
+                conn, processor, PIL_Image, b, pdf_path, naming.dir_key_for(b, mapping), out_root, mapping)
 
     conn.close()
     evidence_dir.mkdir(parents=True, exist_ok=True)
@@ -737,6 +834,7 @@ def main(argv: list[str] | None = None) -> int:
         and tw["missing_tiff"]["count"] == 0 and tw["orphan_tiff"]["count"] == 0
         and tw["unexpected_P_files"]["count"] == 0
         and len(report["failures"]) == 0
+        and len(report.get("fill_missing_cols", {}).get("failures", [])) == 0
     )
     print(f"\n== {'GREEN' if ok else 'RED（见失败清单/核对详表）'} ==")
     return 0 if ok else 1

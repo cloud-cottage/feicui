@@ -1,0 +1,107 @@
+{
+  "line": "印谱解析线 · ops/pool-naming-columns",
+  "title": "P0 池侧写库丢列（col/row/img_path_tiff）修复 ＋ 补齐现有缺列行（黄牧甫 200 行）＋ 旧证据纠偏",
+  "date": "2026-10-11",
+  "owner": "Kong（实现）· 质检 Neng F1",
+  "p0_defect": {
+    "summary": "池侧写库丢列：repository.py 的 stamps INSERT（_upsert_stamp）与 commit_chunk 只写旧 10 列 ⇒ 新 job 行的 col/row/img_path_tiff 全为 NULL。",
+    "evidence_book": "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf",
+    "evidence_job": "job-64bd6bebd36240a7b338c02c813302da",
+    "evidence_job_state": "DONE",
+    "evidence_job_pages": 50,
+    "evidence_rows": 200,
+    "symptom": "TIFF 已实际写出 200 件（output/books/黄牧甫印谱/），但 200 行 img_path_tiff 为空、img_path 指 output/faces/HMF/*.webp（该批 webp 已按 Kevin 指令删除）⇒ 结果页「取裁图」全 404（IMAGE_UNAVAILABLE）。"
+  },
+  "fix": {
+    "file": "server/app/repository.py",
+    "changes": [
+      "_upsert_stamp：INSERT 带上 col/row/img_path_tiff 三列；新行 img_path 写 NULL（该列语义＝历史 webp 面、已退场）。",
+      "commit_chunk：把 item 的 col/row/img_path_tiff 传入写库行 dict；img_path 传 None（不再落「虚拟 webp 路径」）。",
+      "_upsert_stamp update 分支：带上三新列；传入 img_path 为空时保留既有值 ⇒ 绝不抹掉历史行既有 img_path（红线）。"
+    ],
+    "unchanged": "默认行级幂等 arm（on_conflict=skip）非 update 时不覆盖任何既有行；历史行 img_path 值一字未改。"
+  },
+  "backfill": {
+    "mode": "backfill_book_images.py --fill-missing-cols（新增「只补缺列」幂等模式）",
+    "behavior": "只对缺列行补 col/row/img_path_tiff；img_path_tiff 已有效且在盘的行跳过；不渲染、不重出图、不写 img_path。",
+    "run1": {"books": ["黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf"], "rows": 200, "filled": 200, "skipped": 0, "failed": 0, "green": true},
+    "run2_idempotent": {"rows": 200, "filled": 0, "skipped": 200, "failed": 0, "green": true},
+    "artifacts": ["backfill_fill_summary.json", "backfill_fill_rerun.json"]
+  },
+  "verification": {
+    "write_path_probe": {
+      "script": "write_path_probe.py",
+      "stdout": "write_path_probe.txt",
+      "method": "scratch 副本库上直调 repository.commit_chunk（不建生产 job、不碰生产库、不碰 output/**）",
+      "rows_inserted": 20,
+      "col_null": 0, "row_null": 0, "img_path_tiff_null": 0, "img_path_not_null": 0,
+      "idempotent_second_call": {"skipped": 20, "updated": 0},
+      "historical_img_path_preserved_on_update_arm": true,
+      "e6_source": "img_path_tiff",
+      "e5_image_count": 0
+    },
+    "real_db": {
+      "fp10_all_before": "ee16bc755096239ed11d13ba1fc15f6bbf86de143e66da6327bdffa477d583ee",
+      "fp10_all_after": "ee16bc755096239ed11d13ba1fc15f6bbf86de143e66da6327bdffa477d583ee",
+      "rows_all": 7472,
+      "fp10_hmf_before": "fa32d9fc93f3dab26161bc4d6684388fe94d1a29ec64be89a3919f83bb7d9202",
+      "fp10_hmf_after": "fa32d9fc93f3dab26161bc4d6684388fe94d1a29ec64be89a3919f83bb7d9202",
+      "rows_hmf": 200,
+      "fp10_identical": true,
+      "hmf_col_null": 0, "hmf_row_null": 0, "hmf_img_path_tiff_null": 0,
+      "hmf_img_path_identical_to_baseline": true,
+      "table_col_null": 0, "table_img_path_tiff_null": 0
+    },
+    "e6_live": {
+      "url": "GET http://127.0.0.1:5196/api/jobs/job-64bd6bebd36240a7b338c02c813302da/stamps/13/0/image",
+      "status": 200,
+      "content_type": "image/png",
+      "png_magic": "89504e470d0a1a0a",
+      "decoded": "PNG image data, 343 x 341, 8-bit/color RGB, non-interlaced",
+      "bytes": 79182,
+      "x_feicui_img_path": "output/books/黄牧甫印谱/P13-C1-R1.tiff",
+      "artifact": "e6_readout.txt"
+    },
+    "e5_live": {
+      "image_count": 0,
+      "text_count": 185,
+      "note": "E5 image 不再误报该书影像缺失；text=185 为既有事实（该批未跑 OCR 释文），与本单无关。",
+      "artifact": "e5_readouts.json"
+    },
+    "api_restart": {
+      "sid": "feicui-api",
+      "new_pid": 57377,
+      "lstart": "2026-10-11T10:51:59",
+      "repository_py_mtime": "2026-10-11T10:50:40",
+      "lstart_ge_source_mtime": true
+    }
+  },
+  "f3_deprecated_evidence": {
+    "file": "ops/worker-naming/verify_worker_naming.py",
+    "action": "加醒目作废注记（绑定 f9be1d4 / 已被 58c879f 取代）＋ 运行时拒绝执行闸（默认 exit 3；FEICUI_RUN_DEPRECATED_VERIFY=1 才强制复跑，仅作历史对照）。",
+    "reason": "其断言的是旧「双份输出」口径（TIFF＋webp 并存）；且其 git show HEAD: 现取到新版 worker ⇒ 跑它必然误判、只产误导性 FAIL。",
+    "readme_banner": "ops/worker-naming/README.md 同步加作废横幅。"
+  },
+  "red_lines": {
+    "historical_10_cols_unchanged": "before ≡ after（全表 + 黄牧甫子集指纹逐字相等）",
+    "no_new_job": "未新建任何 production jobs / job_pages（只补既有 stamps 行的加法列）",
+    "output_faces_untouched": "output/faces/** 一字未碰（HMF 目录仍空）",
+    "no_file_deleted": "未删任何文件（仅 scratch 里自建的探针副本已自清理）",
+    "docs_untouched": "未碰 docs/**",
+    "git_index_discipline": "只暂存本单文件、显式 pathspec、提交前核 git diff --cached --name-only"
+  },
+  "files_changed": [
+    "server/app/repository.py",
+    "server/app/backfill_book_images.py",
+    "ops/worker-naming/verify_worker_naming.py",
+    "ops/worker-naming/README.md",
+    "ops/pool-naming-columns/README.md",
+    "ops/pool-naming-columns/summary.json",
+    "ops/pool-naming-columns/backfill_fill_summary.json",
+    "ops/pool-naming-columns/backfill_fill_rerun.json",
+    "ops/pool-naming-columns/write_path_probe.py",
+    "ops/pool-naming-columns/write_path_probe.txt",
+    "ops/pool-naming-columns/e6_readout.txt",
+    "ops/pool-naming-columns/e5_readouts.json"
+  ]
+}

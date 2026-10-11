@@ -1,0 +1,38 @@
+colorcal 自检  |  python=/Users/kevin/bistro/xiai/feicui/venv/bin/python
+repo=/Users/kevin/bistro/xiai/feicui
+
+=== 附：ink_mask 逐像素判据（§2.2.1）===
+[PASS] ink_mask 靶色/纸/印泥/中性/暗/黑 = T,F,T,F,T,F  | mask=[np.True_, np.False_, np.True_, np.False_, np.True_, np.False_]
+
+=== (a) CIEDE2000 业界已知色对（Sharma 2005 官方 34 组）===
+[PASS] ciede2000_lab: 34/34 Sharma 色对 |Δ| ≤ 1e-4  | 最大误差=4.95e-05 @pair#23
+[PASS] delta_e2000(rgb,rgb) == 0
+[PASS] delta_e2000(黑,白) ≈ 100  | = 100.0000
+      [读数] ΔE2000(典型印泥均值 (206,130,110) , 靶色 #C95021) = 15.2985
+
+=== (b)/(c) 人工合成图（印泥 (200, 95, 45) ＋ 纸 (234, 224, 200)）===
+      原图：印泥占比=0.2500  质心=(200.0, 95.0, 45.0)  HSV=(19.355, 0.775, 0.784)
+      mark=applied  gains=(1.0113, 0.701, 0.5796)  raw=(1.0113, 0.701, 0.5796)  clamped=False[]
+      校正前质心=(200.0, 95.0, 45.0) ΔE=3.9220
+      校正后质心=(201.0, 80.0, 33.0) ΔE=0.0000
+[PASS] (b) 合成图校正后 质心→靶色 ΔE2000 ≤ 2  | ΔE_after=0.0000（前 3.9220）
+[PASS] (b) 校正确实降低 ΔE（后 < 前）
+[PASS] (b) 合成案例未触发 clamp（增益都在 [0.5,2.0]）
+      [读数] 纸区色相：前 42.353° → 后 26.582°  偏移 -15.771° (纸像素 43200)
+[PASS] (c) 纸区色相偏移为有限读数（如实回报，不硬断零）  | -15.771°
+[PASS] apply_correction(k=1,1,1) 恒等（白 255 保持）
+
+=== (d) 低印泥占比 → skipped 分支 ===
+      ink_ratio=0.0100  mode=skipped  marker=skipped(ink_ratio=0.010000)
+[PASS] (d) mode == 'skipped'
+[PASS] (d) marker 形如 skipped(ink_ratio=…)
+[PASS] (d) 图未被改动（逐字节相等）
+[PASS] (d) delta_e_after == delta_e_before（未校正）
+[PASS] (d) 3% > 阈值 ⇒ applied
+
+=== 附：两侧 import 形态（server/.venv 无 numpy）===
+[PASS] 接口层 server/.venv（无 numpy）可 import colorcal：常量 ✓ 色差 ✓ 增益 ✓ 像素函数抛错 ✓  | API_OK
+
+========================================================================
+合计 15/15 PASS
+ALL PASS ✅

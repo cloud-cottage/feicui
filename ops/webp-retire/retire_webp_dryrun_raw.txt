@@ -1,0 +1,15 @@
+== webp 退场（DRY-RUN）==
+库：/Users/kevin/bistro/xiai/data/yinpu.db  根：/Users/kevin/bistro/xiai/feicui
+stamps 行数：7272
+将删：14514 件 / 7272 行 / 223881244 B（213.51 MB）
+    · 将删[books]：7272 件 / 7272 行 / 109488384 B
+    · 将删[faces]：7193 件 / 7193 行 / 112485616 B
+    · 将删[other]：49 件 / 49 行 / 1907244 B
+豁免：0 件 / 0 行 / 0 B（0.0 MB）
+释放总字节（dry-run 预估）：223881244 B（213.51 MB）
+盘面观测：output 下 webp 14698 件 / 230011282 B；其中未被任何行派生到（不删）184 件 / 6130038 B
+    · 盘上[books]：7272 件 / 109488384 B（被行派生 7272 / 未被派生 0）
+    · 盘上[faces]：7354 件 / 117031438 B（被行派生 7193 / 未被派生 161）
+    · 盘上[other]：72 件 / 3491460 B（被行派生 49 / 未被派生 23）
+报告：/Users/kevin/bistro/xiai/feicui/ops/webp-retire/retire_webp_dryrun_20261011_103822.json
+豁免清单：/Users/kevin/bistro/xiai/feicui/ops/webp-retire/retire_webp_dryrun_20261011_103822_exempt.jsonl

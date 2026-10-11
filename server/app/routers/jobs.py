@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import base64
 import hashlib
+import io
 import logging
 import os
 from pathlib import Path
@@ -490,6 +491,28 @@ MEDIA_BY_SUFFIX = {
 # §3.5：Content-Type ∈ {image/webp, image/png, image/jpeg}，**以文件实际类型为准**
 E6_CONTENT_TYPES = {"image/webp", "image/png", "image/jpeg"}
 
+# TIFF 的两种字节序 magic（家法容器：RGB 8-bit ＋ Deflate）。**TIFF 不是浏览器可渲染容器**，
+# 且 §3.5 的 `Content-Type` 白名单里没有 `image/tiff` ⇒ E6 命中 TIFF 时**服务端解码后回 PNG**。
+TIFF_MAGICS = (b"II*\x00", b"MM\x00*")
+
+
+def _tiff_bytes_to_png(data: bytes) -> bytes:
+    """TIFF 字节 → PNG 字节（**只用 PIL**）。
+
+    接口层 `server/.venv` **有 PIL、无 numpy / cv2**（§6.5 解释器矩阵）⇒ 一律 Pillow 解码，
+    **不得引入图像栈**、**不落盘**（一次性进内存）。TIFF 多为 `RGB/L` 等模式，统一 `convert("RGB")`
+    后再存 PNG（PNG 与 TIFF 同为 8-bit 三通道 ⇒ 像素值不变、无重采样）。
+    """
+    buf = io.BytesIO(data)
+    from PIL import Image  # 延迟导入：只在真遇到 TIFF 时才加载 Pillow（接口层本就有 PIL）
+
+    with Image.open(buf) as im:  # 只解码一次；句柄随 with 关掉，不留 fd
+        im.load()
+        rgb = im.convert("RGB")
+        out = io.BytesIO()
+        rgb.save(out, format="PNG")
+    return out.getvalue()
+
 
 def _sniff_media_type(data: bytes, rel_path: str) -> str:
     """按**内容**判定影像类型（magic 优先，后缀兜底）——不臆造、不用 `application/octet-stream` 兜底。"""
@@ -517,10 +540,15 @@ def stamp_image(
     """**E6** `GET /api/jobs/{job_id}/stamps/{page}/{idx}/image` —— 取印面裁图（**二进制**，§3.5）。
 
     * `{page}` **1-based**（↔ `stamps.page`）、`{idx}` **0-based**（↔ `stamps.idx`）；**无查询参数**；
-    * `200` = 影像字节（`Content-Type` 取文件实际类型、`Content-Length` 必填、**不包 JSON 信封**）；
-    * `404` = **三类同码**（job 不存在 / 记录不存在 / `img_path` 缺失或文件不在盘上）；
-    * `400` = 参数非法（非整数、`page < 1`、`idx < 0`）；`500` = 读盘异常；
-    * **只读**（不解析 / 不 OCR / 不写库 / 不写缓存）、**不占位冒充**、**不读 BLOB**（库内本无 BLOB 列）。
+    * `200` = 影像字节（`Content-Type` 取**实际返回**的类型、`Content-Length` 必填、**不包 JSON 信封**）；
+    * `404` = **三类同码**（job 不存在 / 记录不存在 / 影像缺失或文件不在盘上）；
+    * `400` = 参数非法（非整数、`page < 1`、`idx < 0`）；`500` = 读盘 / 解码异常；
+    * **只读**（不解析 / 不 OCR / 不写库 / **不写缓存**）、**不占位冒充**、**不读 BLOB**（库内本无 BLOB 列）。
+
+    **影像来源（2026-10-11「webp 退场」单）：** 优先 `stamps.img_path_tiff`、`img_path` 仅作
+    **兼容回退**（旧行未回填时仍可服务；`img_path` 列一字未改）。**TIFF 不是浏览器可渲染容器**
+    （§3.5 的 `Content-Type` 白名单亦无 `image/tiff`）⇒ 命中 TIFF 时用 **PIL 解码 → 回 PNG**
+    （`Content-Type: image/png`、`Content-Length` 按**回吐的 PNG 字节数**给；**不落盘**、不引入图像栈）。
     """
     page_i = _int_param(page, "page", minimum=1)
     if page_i is None:
@@ -530,7 +558,9 @@ def stamp_image(
         raise HTTPException(status_code=400, detail={"error": ERROR_BAD_PARAM, "detail": "idx 不能为空"})
 
     try:
-        _pdf_name, rel, abs_path = repository.find_stamp_image(st.db_path, job_id, page_i, idx_i, root=st.root)
+        _pdf_name, rel, abs_path, source = repository.find_stamp_image(
+            st.db_path, job_id, page_i, idx_i, root=st.root
+        )
     except repository.JobNotFound:
         raise HTTPException(status_code=404, detail={"error": "JOB_NOT_FOUND", "detail": f"job 不存在：{job_id}"})
     except repository.StampNotFound as exc:
@@ -546,17 +576,31 @@ def stamp_image(
     if not data:
         raise HTTPException(status_code=500, detail={"error": "IMAGE_READ_FAILED", "detail": "影像文件为空（0 字节）"})
 
-    ctype = _sniff_media_type(data, rel)
+    if data.startswith(TIFF_MAGICS):
+        # 家法 TIFF（`img_path_tiff` 首选面）⇒ **服务端解码回 PNG**（浏览器不渲染 TIFF）
+        try:
+            data = _tiff_bytes_to_png(data)
+        except Exception as exc:  # 损坏 / 不支持的 TIFF 变体 ⇒ 500（不得回吐半个文件、不占位冒充）
+            log.error("E6 TIFF 解码失败（来源列=%s）：%s", source, exc)
+            raise HTTPException(
+                status_code=500,
+                detail={"error": "IMAGE_READ_FAILED", "detail": "TIFF 解码失败（详见服务端日志）"},
+            )
+        ctype = "image/png"
+    else:
+        # 兼容回退面（历史 webp / png / jpg）⇒ 一律原字节回吐，内容类型照旧按实际字节判
+        ctype = _sniff_media_type(data, rel)
     return Response(
         content=data,
         media_type=ctype,
         headers={
-            "Content-Length": str(len(data)),
+            "Content-Length": str(len(data)),  # ＝ **实际回吐字节数**（转码后按 PNG 计）
             # §3.5 纪律⑤：dev 口径，避免干扰 §2.4 重跑幂等比对
             "Cache-Control": "no-store",
-            # §3.5 可选响应头：DB 内**相对**路径，供对账（不进体）
+            # §3.5 可选响应头：**本次实际服务的那份影像**的 DB 内相对路径（`img_path_tiff` 优先，
+            # 回退 `img_path`），供对账（不进体）。
             # §3.13：头值必须 **latin-1 可编码** ⇒ 含中文书名的相对路径（如
-            # `output/秦汉印典 …/p5_0.webp`）**必须百分号编码**——（本轮实测）原实现直接回吐
+            # `output/books/秦汉印典 …/P5-C1-R2.tiff`）**必须百分号编码**——（本轮实测）原实现直接回吐
             # DB 原值 ⇒ starlette 编码头值抛 `UnicodeEncodeError` ⇒ **E6 整条 500**
             # （中文书名书取图全挂；ASCII 名书正常）。前端用 `decodeURIComponent` 还原。
             "x-feicui-img-path": _header_safe(rel),

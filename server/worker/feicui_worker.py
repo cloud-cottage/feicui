@@ -23,12 +23,14 @@
     但 1b-i **不落边款影像**（faces 交付影像口径只定义印面；见 `REPORT_1b-i.md` 未完成项）。
 
 **影像命名 ＋ 颜色校正（2026-10-11 新增；口径真源 `docs/image-naming-draft-v0.1.md`
-＋ `docs/image-color-tiff-draft-v0.1.md`）**：新 job 默认**额外**产出——每枚裁图经 **V3 校正**
-（`colorcal.correct_image_v3`）后另写 `output/books/<目录键>/P<页>-C<列>-R<行>.tiff`（RGB 8-bit ＋
-Deflate）与同名 `.webp`（q95）；`(C,R)` 用 `naming.assign_cr` 算、目录键用 `naming.dir_key_for`。
-**旧 `output/faces/<book_key>/p<页4位>_<序2位>.webp` 路径与文件名一字不动，两者并存**。
-`col`/`row`/`img_path_tiff` 随页结果返回给池侧写库（**worker 仍不写库**）。两块地基按文件路径加载
-（`feicui/app.py` 会遮蔽 `server/app` 包名）。
+＋ `docs/image-color-tiff-draft-v0.1.md`）**：每枚裁图经 **V3 校正**
+（`colorcal.correct_image_v3`）后写 `output/books/<目录键>/P<页>-C<列>-R<行>.tiff`（RGB 8-bit ＋
+Deflate）；`(C,R)` 用 `naming.assign_cr` 算、目录键用 `naming.dir_key_for`。
+**webp 退场（Kevin 2026-10-11 裁定「本地文件一律不再保存 webp」）**：本 worker **不再新写任何 webp**
+—— 旧 `output/faces/<book_key>/p<页4位>_<序2位>.webp` **不再写**、新命名目录里的同名 `.webp` 也**不再写**；
+该行影像的**唯一产物 ＝ TIFF**。返回值的 `img_path` **仍是旧 webp 相对路径**（该列口径一字不改，
+E6 的兼容回退靠它），`col`/`row`/`img_path_tiff` 照旧返回给池侧写库（**worker 仍不写库**）。
+两块地基按文件路径加载（`feicui/app.py` 会遮蔽 `server/app` 包名）。
 
 通信协议（stdin / stdout，**一行一个 JSON**）：
   请求  `{"cmd":"process_chunk", "task_id", "pdf_path", "book_key", "template", "pages":[…],
@@ -168,6 +170,12 @@ def write_image_idempotent(path: Path, data: bytes) -> dict:
 
 
 def encode_webp(crop) -> bytes:
+    """WebP 编码（cv2，q95）——**本函数已不在印面解析线使用**（webp 退场：`process_page` 只出 TIFF）。
+
+    **保留不删**：`server/app/square_runner.py`（E7 工具端点 `square-crop`）**逐字复用**它作为
+    工具响应的 WebP 编码口径（见该文件 §12「复用 `worker.feicui_worker.encode_webp`」），
+    删掉会把工具端点打断。本单对它的默认行为**一字未动**。
+    """
     ok, buf = cv2.imencode(".webp", crop, [int(cv2.IMWRITE_WEBP_QUALITY), 95])
     if not ok:
         raise RuntimeError("webp 编码失败")
@@ -199,8 +207,9 @@ def process_page(doc, page_no: int, template: dict, book_key: str, pdf_name: str
     返回 `{detected, ocr_empty, items:[{idx,text,img_path,img_sha256,img_bytes,
     col,row,img_path_tiff,x1..y2}]}`。
 
-    **本单新增（旧路径/旧文件名一字不动、并存）**：把该页裁图经 **V3 校正**（`colorcal.correct_image_v3`）
-    后另写 `output/books/<目录键>/P<页>-C<列>-R<行>.tiff`（RGB 8-bit ＋ Deflate）与同名 `.webp`（q95）；
+    **影像（2026-10-11 webp 退场后）**：每枚裁图经 **V3 校正**（`colorcal.correct_image_v3`）后写
+    `output/books/<目录键>/P<页>-C<列>-R<行>.tiff`（RGB 8-bit ＋ Deflate）——**该行影像只此一份**；
+    **不再写任何 webp**（旧 `faces/<book_key>/pNNNN_II.webp` 与命名目录同名 `.webp` 均不再写）。
     `(C,R)` 由 `naming.assign_cr` 算、目录键由 `naming.dir_key_for`（未登记回落规范化书名）。
     **worker 只落盘、不写库**——`col`/`row`/`img_path_tiff` 随返回值交给池侧写库。
     """
@@ -276,20 +285,19 @@ def process_page(doc, page_no: int, template: dict, book_key: str, pdf_name: str
             if not stamp_text.strip():
                 ocr_empty += 1
 
-        # 旧 webp（**路径与文件名照旧、字节照旧**；幂等写，内容相同则不重写）
-        img_path = out_dir / f"p{page_no:04d}_{stamp_idx:02d}.webp"
-        info = write_image_idempotent(img_path, encode_webp(stamp_crop))
-
-        # ---- 新增双份（与旧 webp **并存**）：V3 校正后写 output/books/<目录键>/P<页>-C<列>-R<行>.{tiff,webp}
-        #      `stamp_crop` 是 BGR（cv2 口径）⇒ 先转 RGB 再校正；TIFF 存 RGB，webp 编码前转回 BGR。
+        # ---- 影像产物：**只出 TIFF**（`output/books/<目录键>/P<页>-C<列>-R<行>.tiff`，V3 校正后）。
+        #      **webp 退场**（Kevin 2026-10-11 裁定「本地文件一律不再保存 webp」）：本函数**不再新写任何
+        #      webp** —— ① 旧路径 `output/faces/<book_key>/pNNNN_II.webp` 不再写（下面只算路径、不写盘）；
+        #      ② 新命名目录里也不再写同名 `.webp`。
+        #      返回值口径：`img_path` 仍回**旧 webp 相对路径**（该列口径一字不改、既有行的值不受影响）；
+        #      新行的影像真身在 `img_path_tiff`（E6 首选它）。`img_sha256`/`img_bytes` 取**实际落盘的 TIFF**。
+        img_path = out_dir / f"p{page_no:04d}_{stamp_idx:02d}.webp"   # 仅供返回值（**不落盘**）
         c, r = cr[stamp_idx]
         corrected, _cc = colorcal.correct_image_v3(
             np.ascontiguousarray(cv2.cvtColor(stamp_crop, cv2.COLOR_BGR2RGB))
         )
         tiff_path = books_out / naming.name_for(page_no, c, r)            # 默认 ext=".tiff"
-        named_webp_path = books_out / naming.name_for(page_no, c, r, ".webp")
-        write_image_idempotent(tiff_path, encode_tiff(corrected))
-        write_image_idempotent(named_webp_path, encode_webp(cv2.cvtColor(corrected, cv2.COLOR_RGB2BGR)))
+        info = write_image_idempotent(tiff_path, encode_tiff(corrected))
 
         items.append(
             {

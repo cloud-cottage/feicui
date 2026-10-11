@@ -212,12 +212,32 @@ def _job_scope(conn, job_id: str) -> tuple[str, int, int]:
     return job["pdf_name"], lo, hi
 
 
+def _stamp_image_on_disk(root_abs: Path, img_path: Any, img_path_tiff: Any) -> bool:
+    """该行影像是否在盘上 —— **与 E6 同一解析顺序**（优先 `img_path_tiff`、回退 `img_path`）。
+
+    越界 / 绝对路径（§3.5 纪律④）在此**只当作「不在盘上」**：E5 是只读清单，不得抛异常打断整表。
+    """
+    for raw in (img_path_tiff, img_path):
+        if raw is None or str(raw).strip() == "":
+            continue
+        rel = str(raw).strip()
+        if os.path.isabs(rel):
+            continue
+        p = (root_abs / rel).resolve()
+        if _is_within(p, root_abs) and p.is_file():
+            return True
+    return False
+
+
 def missing_items(
     db_path: Path | str, job_id: str, kind: str, *, root: Path
 ) -> tuple[list[dict[str, Any]], tuple[str, int, int]]:
     """E5 复算（§3.1 E5）：范围＝该 job 的 `pdf_name` × `[page_from,page_to]`。
 
-    `kind='image'`：逐条 `os.path.exists(<root>/<img_path>)`（**只读文件系统，不写不建**）。
+    `kind='image'`：逐条按 **E6 同一解析顺序**（优先 `img_path_tiff`、回退 `img_path`）
+    `os.path.exists(<root>/<相对路径>)`（**只读文件系统，不写不建**）。
+    —— webp 退场后新行的影像只落 TIFF（`img_path_tiff`）；若仍只看 `img_path`，新 job 会**整本**
+    误报「影像缺失」，与 E6（能照常取图）自相矛盾。**`img_path` 取值一字未改**，此处只是读法对齐。
     `kind='text'` ：`text IS NULL OR trim(text)=''`。
     """
     if kind not in {"image", "text"}:
@@ -229,17 +249,21 @@ def missing_items(
         if kind == "image":
             rows = db.query_all(
                 conn,
-                """SELECT pdf_name, page, idx, img_path
+                """SELECT pdf_name, page, idx, img_path, img_path_tiff
                      FROM stamps
                     WHERE pdf_name = ? AND page BETWEEN ? AND ?
                     ORDER BY page, idx""",
                 (pdf_name, lo, hi),
             )
+            root_abs = Path(root).resolve()
             for r in rows:
                 img_path = r["img_path"]
-                if img_path is None or str(img_path).strip() == "":
+                tiff = r["img_path_tiff"]
+                if (img_path is None or str(img_path).strip() == "") and (
+                    tiff is None or str(tiff).strip() == ""
+                ):
                     reason = REASON_IMG_PATH_NULL
-                elif os.path.exists(os.path.join(str(root), str(img_path))):
+                elif _stamp_image_on_disk(root_abs, img_path, tiff):
                     continue
                 else:
                     reason = REASON_FILE_MISSING
@@ -713,12 +737,38 @@ def stamps_page(
 
 
 # --------------------------------------------------------------------------- E6
+# **影像面口径（2026-10-11「webp 退场」单；Kevin 裁定「本地文件一律不再保存 webp」）**：
+#   * 新产物**只有 TIFF**（`output/books/<目录键>/P<页>-C<列>-R<行>.tiff`，落 `stamps.img_path_tiff`）；
+#   * `img_path` 列 **一字不改**（历史行仍是 webp；E6 的兼容回退就靠它）；
+#   * ⇒ E6 取图**优先 `img_path_tiff`、`img_path` 仅作兼容回退**。TIFF **不是浏览器可渲染容器**
+#     （§3.5 的 `Content-Type` 白名单也不含 `image/tiff`）⇒ 由**路由层**用 PIL 解码后回 **PNG**。
+E6_SOURCE_TIFF = "img_path_tiff"
+E6_SOURCE_LEGACY = "img_path"
+
+
+def _resolve_img_rel(rel: str, root_abs: Path, *, column: str) -> Path:
+    """DB 内**相对**影像路径 → 绝对路径（§3.5 纪律④：必须＝ `FEICUI_ROOT` ＋ 相对路径、不得逃出）。
+
+    绝对路径 / 越出根 ⇒ `ImageUnavailable`（**拒绝**，不静默换用另一列）。
+    """
+    if os.path.isabs(rel):
+        raise ImageUnavailable(f"{column} 为绝对路径，拒绝（须相对 feicui/）：{rel!r}")
+    abs_path = (root_abs / rel).resolve()
+    if not _is_within(abs_path, root_abs):
+        raise ImageUnavailable(f"{column} 越出 FEICUI_ROOT，拒绝：{rel!r}")
+    return abs_path
+
+
 def find_stamp_image(
     db_path: Path | str, job_id: str, page: int, idx: int, *, root: Path
-) -> tuple[str, str, str]:
-    """E6 `(page, idx)` → 影像（§3.5）。返回 `(pdf_name, img_path_db_relative, abs_path)`。
+) -> tuple[str, str, str, str]:
+    """E6 `(page, idx)` → 影像（§3.5）。返回 `(pdf_name, 服务用的相对路径, 绝对路径, 来源列)`。
 
-    三类不存在（job / 记录 / 文件）**由调用方统一落成 404**（本函数分别抛 `JobNotFound` /
+    **来源列**（§3.22.6 落 `img_path_tiff`；webp 退场后新行的影像只有 TIFF）：
+      ① `img_path_tiff`（**首选**）—— 有值且文件在盘 ⇒ 用之；
+      ② `img_path`（**兼容回退**）—— 旧行未回填 TIFF（`img_path_tiff` 为空）或 TIFF 文件不在盘时用之。
+
+    三类不存在（job / 记录 / 文件）由调用方统一落成 404（本函数分别抛 `JobNotFound` /
     `StampNotFound` / `ImageUnavailable`，路由层同码）。
     """
     with db.ro(db_path) as conn:
@@ -726,26 +776,32 @@ def find_stamp_image(
         pdf_name, lo, hi = _job_scope(conn, job_id)
         row = db.query_one(
             conn,
-            """SELECT pdf_name, page, idx, img_path FROM stamps
+            """SELECT pdf_name, page, idx, img_path, img_path_tiff FROM stamps
                 WHERE pdf_name = ? AND page = ? AND idx = ?""",
             (pdf_name, int(page), int(idx)),
         )
         if row is None:
             raise StampNotFound(f"({page},{idx}) 在 job {job_id}（{pdf_name}，页 {lo}–{hi}）内不存在")
-        img_path = row["img_path"]
-        if img_path is None or str(img_path).strip() == "":
-            raise ImageUnavailable("img_path 为空（§3.5 404 第三类）")
-        rel = str(img_path).strip()
-        # ---- 越界校验（§3.5 纪律④）：路径必须 = FEICUI_ROOT + DB 相对路径，且不得逃出 root ----
-        if os.path.isabs(rel):
-            raise ImageUnavailable(f"img_path 为绝对路径，拒绝（须相对 feicui/）：{rel!r}")
-        root_abs = Path(root).resolve()
-        abs_path = (root_abs / rel).resolve()
-        if not _is_within(abs_path, root_abs):
-            raise ImageUnavailable(f"img_path 越出 FEICUI_ROOT，拒绝：{rel!r}")
-        if not abs_path.is_file():
-            raise ImageUnavailable(f"文件不在盘上：{rel!r}")
-        return str(row["pdf_name"]), rel, str(abs_path)
+        legacy = str(row["img_path"]).strip() if row["img_path"] is not None else ""
+        tiff = str(row["img_path_tiff"]).strip() if row["img_path_tiff"] is not None else ""
+
+    root_abs = Path(root).resolve()
+    # ① 首选（webp 退场后的唯一产物）
+    if tiff:
+        abs_tiff = _resolve_img_rel(tiff, root_abs, column="img_path_tiff")
+        if abs_tiff.is_file():
+            return str(pdf_name), tiff, str(abs_tiff), E6_SOURCE_TIFF
+    # ② 兼容回退（旧行未回填 / TIFF 文件不在盘 ⇒ 仍可服务）
+    if legacy:
+        abs_legacy = _resolve_img_rel(legacy, root_abs, column="img_path")
+        if abs_legacy.is_file():
+            return str(pdf_name), legacy, str(abs_legacy), E6_SOURCE_LEGACY
+    # ③ 两列都拿不到文件 ⇒ 404 第三类（原因按实际形态分列，不臆造）
+    if not tiff and not legacy:
+        raise ImageUnavailable("img_path 与 img_path_tiff 均为空（§3.5 404 第三类）")
+    raise ImageUnavailable(
+        f"影像文件不在盘上：img_path_tiff={tiff!r} / img_path={legacy!r}（§3.5 404 第三类）"
+    )
 
 
 def _is_within(path: Path, root: Path) -> bool:

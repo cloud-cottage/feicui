@@ -1,0 +1,33 @@
+
+--- scan() 读数 ---
+{"stamps_rows": 5}
+delete: 2 files / 1 rows
+exempt: {'no_img_path_tiff': 1, 'tiff_file_absent': 1}
+exempt files by reason: {'no_img_path_tiff': 1, 'tiff_file_absent': 1}
+census: {"scope_dirs": ["output"], "webp_on_disk": 5, "webp_on_disk_bytes": 41, "webp_in_delete_list": 2, "webp_in_exempt_list": 2, "webp_unreferenced": 1, "webp_unreferenced_bytes": 11, "webp_unreferenced_sample": ["output/books/BK/orphan/X1-C1-R1.webp"], "note": "未被任何 stamps 行派生到的 webp **不属本脚本处置面**（安全闸要求有 TIFF 可依）；本单只报数、不删。"}
+PASS  A 行两件 webp 过闸（faces ＋ named）: got=['output/books/BK/P1-C1-R1.webp', 'output/faces/bk/p1_0.webp'] want=['output/books/BK/P1-C1-R1.webp', 'output/faces/bk/p1_0.webp']
+PASS  豁免行数: got=2 want=2
+PASS  豁免件数: got=2 want=2
+PASS  桶 no_img_path_tiff（B）: got=1 want=1
+PASS  桶 tiff_file_absent（C）: got=1 want=1
+PASS  E 行绝对路径 ⇒ 记观测、不当候选: got=[{'id': 5, 'column': 'img_path', 'value': '/abs/evil.webp'}] want=[{'id': 5, 'column': 'img_path', 'value': '/abs/evil.webp'}]
+PASS  E 行确实未进任何桶/清单: got=[] want=[]
+PASS  D 行（无 webp 候选）不删不豁免: got=False want=False
+PASS  孤儿 webp 未进删除清单: got=False want=False
+PASS  盘面观测：孤儿计数: got=1 want=1
+PASS  盘面观测：盘上 webp 总数: got=5 want=5
+
+--- apply_plan() ---
+deleted: ['output/faces/bk/p1_0.webp', 'output/books/BK/P1-C1-R1.webp'] failed: []
+PASS  真删件数: got=2 want=2
+PASS  faces webp 已删: got=False want=False
+PASS  named webp 已删: got=False want=False
+PASS  TIFF 未动: got=True want=True
+PASS  豁免件仍在盘（B）: got=True want=True
+PASS  豁免件仍在盘（C）: got=True want=True
+PASS  孤儿 webp 仍在盘: got=True want=True
+PASS  库逐字不变（apply 前后）: got=[(1, 'bookA.pdf', 1, 0, 'output/faces/bk/p1_0.webp', 'output/books/BK/P1-C1-R1.tiff'), (2, 'bookA.pdf', 2, 0, 'output/faces/bk/p2_0.webp', None), (3, 'bookA.pdf', 3, 0, 'output/faces/bk/p3_0.webp', 'output/books/BK/P9-C1-R1.tiff'), (4, 'bookA.pdf', 4, 0, None, 'output/books/BK/P4-C1-R1.tiff'), (5, 'bookA.pdf', 5, 0, '/abs/evil.webp', None)] want=[(1, 'bookA.pdf', 1, 0, 'output/faces/bk/p1_0.webp', 'output/books/BK/P1-C1-R1.tiff'), (2, 'bookA.pdf', 2, 0, 'output/faces/bk/p2_0.webp', None), (3, 'bookA.pdf', 3, 0, 'output/faces/bk/p3_0.webp', 'output/books/BK/P9-C1-R1.tiff'), (4, 'bookA.pdf', 4, 0, None, 'output/books/BK/P4-C1-R1.tiff'), (5, 'bookA.pdf', 5, 0, '/abs/evil.webp', None)]
+PASS  库仍 5 行: got=5 want=5
+
+夹具：/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/retire-webp-gate-1791686264
+断言：ALL PASS

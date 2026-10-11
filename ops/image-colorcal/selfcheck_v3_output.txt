@@ -1,0 +1,53 @@
+colorcal V3 自检（双色分层处理：前景保 L* / 背景压平 / other 保留原样）  |  python=/Users/kevin/bistro/xiai/feicui/venv/bin/python
+repo=/Users/kevin/bistro/xiai/feicui
+
+=== (0) 既有自检 selfcheck_colorcal.py（V1a/V1b ＋ 原有断言）全过 ===
+  [PASS] 既有自检 ALL PASS（原有断言全过）  | 合计 36/36 PASS
+
+=== (d) Lab 数组换算往返（sRGB→Lab→sRGB 恒等）===
+  [PASS] Lab 往返逐像素误差 = 0（数组↔标量同式）  | max|Δpx|=0
+
+=== (d) V3 三桶：互斥且穷尽整图 ===
+      ink=25.0% paper=72.2% other=2.8%（浅/深分界 V≥0.7）
+  [PASS] (d) 三桶互斥（两两不交）
+  [PASS] (d) 三桶穷尽整图（并集 = 全图）
+
+=== (a)(b) 合成图（纸 (234, 224, 200) ＋ 淡印泥 (162, 104, 82) ＋ 黑墨 (20, 20, 20)）V3 ===
+      mode=applied marker=applied  前景色度方向=threshold  三桶 前=#C95021
+      核心质心 前=(162.0, 104.0, 82.0) ΔE=11.695 → 后=(201.0, 80.0, 33.0) ΔE=0.0000
+      背景质心 前=(234.0, 224.0, 200.0) ΔE=11.906 → 后=(255.0, 255.0, 255.0) ΔE=0.0000
+      IoU=1.0000  前景 L* 均值 Δ=0.0908 p90 Δ=0.0908  越色域裁剪率=0.0000  other 不变率=1.0000
+  [PASS] (a) 背景桶 → #FFFFFF 的 ΔE2000 ≤ 1  | ΔE=0.0000
+  [PASS] (a) 背景像素 = 纯白 (255,255,255)，逐字节
+  [PASS] (a) 前景核心 → #C95021 的 ΔE2000 ≤ 2  | ΔE=0.0000（前 11.6954）
+  [PASS] ★硬口径 other 桶像素逐像素不变（合成图·不变率）  | 不变率=100.00%（1600 像素）
+  [PASS] ★硬口径 黑墨字块逐字节不变
+  [PASS] (b) 前景掩膜前后 IoU ≥ 0.98  | IoU=1.0000
+  [PASS] (b) 前景 L* 均值变化 ≤ 阈值(1.0)  | Δmean=0.0908
+  [PASS] (b) 前景 L* p90 变化 ≤ 阈值(2.0)  | Δp90=0.0908
+  [PASS] (b) 前景「保 L*」无越色域裁剪（裁剪率 = 0）  | clip_rate=0.0000
+
+=== (c) 无印泥（ink_ratio < 2%）⇒ skipped(ink_ratio=…) ===
+      ink_ratio=0.0100  mode=skipped  marker=skipped(ink_ratio=0.010000)
+  [PASS] (c) mode == 'skipped' 且 skip_reason == 'ink_ratio'
+  [PASS] (c) marker 形如 skipped(ink_ratio=…)
+  [PASS] (c) 图未被改动（逐字节相等）
+
+=== 附：背景去噪 / 形态学清理（仅作用 paper 桶；可选）===
+  [PASS] v3_open3x3 结果 ⊆ 输入（只删、绝不新增 ⇒ 不会把非纸像素变白）
+  [PASS] v3_open3x3 删孤立点、保留大块
+  [PASS] clean=True：other 桶仍逐像素不变（硬口径）
+  [PASS] clean=True：背景仍向 #FFFFFF 靠（ΔE ≤ 1）  | ΔE=0.0000 移除纸点=0
+  [PASS] curve 模式（抬亮曲线 ＋ 中值去噪）可用且 other 不变
+  [PASS] v3_median3x3 输出同 shape/dtype
+
+=== (e) 真样本（120 等距系统抽样命中）V3：other 桶逐像素不变 ＋ IoU ===
+      03ac720b ink%=  5.9 other%= 9.72 ΔEcore=21.14 IoU=1.0000(raw 1.0000) L*Δ=0.002 other不变率=1.0000 clip=0.0000
+      09e2ce87 ink%= 68.5 other%= 0.00 ΔEcore= 3.21 IoU=1.0000(raw 0.9975) L*Δ=0.002 other不变率=1.0000 clip=0.0000
+      0d84221c ink%=  8.0 other%= 0.08 ΔEcore= 3.22 IoU=1.0000(raw 0.9988) L*Δ=0.005 other不变率=1.0000 clip=0.0000
+  [PASS] (e) 真样本 other 桶逐像素不变率 100%（72 张 applied 全过）  | 违例 0/72
+  [PASS] (e) 真样本前景 IoU ≥ 0.98（72 张 applied 全过）  | 违例 0/72
+
+========================================================================
+合计 24/24 PASS
+ALL PASS ✅

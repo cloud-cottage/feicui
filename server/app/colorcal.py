@@ -34,6 +34,17 @@
   5. **代价**：核心质心 → `#C95021` 的 ΔE 在本口径下**通常不为 0**（这正是 A/B 的看点：温和 vs 咬靶）；
      换来的是纸区白平衡 + 更小的「变冷」幅度（读数见 `ops/image-colorcal/`）。
 
+### V3（**默认口径**）：双色分层处理（Kevin 2026-10-11；口径件 §2.3）
+`v3_buckets` / `apply_foreground_chroma` / `flatten_paper` / `correct_image_v3` —— 分**三桶**：
+  1. `ink`＝印泥（**前景 / 核心**）；`paper`＝**浅色**非印泥（`非印泥 ∧ V=max/255 ≥ V3_LIGHTNESS_V_MIN=0.70`，**背景**）；
+     `other`＝**深色**非印泥（**黑墨 / 边款 / 墨拓 / 污渍**）；三桶互斥穷尽。
+  2. **前景高保真**：只把 `ink` 像素的**色度**（Lab `a*`/`b*`）向 `#C95021` 靠拢，**保留 `L*`（明度结构 / 纹理 / 边缘）**；
+     色度按靶色相取到**该 `L*` 的 sRGB 上限**（逐像素二分，**保 L\* ⇒ 不越域、不裁剪**）；含**保形兜底**（守 IoU≈1）。
+  3. **背景压平**：`paper` 桶阈值化 → **`#FFFFFF`**（可选抬亮曲线 / 3×3 开运算 / 中值去噪；**清理只作用 `paper` 桶**）。
+  4. **`other` 桶逐像素不变**（Kevin 已裁：黑墨 / 边款 / 墨拓 / 污渍都不动）。
+  5. **跳过口径**：`ink_ratio < 2%` ⇒ `skipped(ink_ratio=…)`（V3 无仿射 ⇒ 不产生 `limiting`/`degenerate`）。
+  6. **V1a（`correct_image` 双锚点仿射）/ V1b（纸白平衡）仍保留**（备选 / 对照，**未删**）。
+
 ### 判据口径（务必区分）
 * `centroid_core_*`（**核心质心**，**与锚点同定义**）：CA-1 判据——「印泥核心质心→目标色」，预期 ΔE≈0。
 * `centroid_all_*`（掩膜**全体**质心）：**仅观察项**。纸→纯白使全图变冷，全体质心**会变差**，
@@ -88,6 +99,12 @@ __all__ = [
     "skip_marker", "skip_marker_degenerate", "skip_marker_limiting",
     # V1b（可选口径：纸→纯白白平衡）
     "whitebalance_gains_for", "apply_gains_color", "correct_image_whitebalance",
+    # V3（**默认口径**：双色分层处理）
+    "V3_LIGHTNESS_V_MIN", "V3_FG_CHROMA_STRENGTH", "V3_PAPER_MODE", "V3_CLEAN",
+    "V3_CLEAN_K", "V3_FG_IOU_MIN", "V3_LSTAR_MEAN_TOL", "V3_LSTAR_P90_TOL", "V3_OTHER_DE_TOL",
+    "V3_FG_PRESERVE_MASK",
+    "v3_buckets", "apply_foreground_chroma", "flatten_paper", "v3_open3x3", "v3_median3x3",
+    "correct_image_v3",
     # 兼容（V1 对角增益）
     "gains_for", "apply_correction", "correct_image_diagonal",
 ]
@@ -119,6 +136,20 @@ INK_RATIO_MIN: float = 0.02   # 印泥占比跳过阈值（§2.2.4，待裁 R-c�
 # V1b（可选口径：纸→纯白白平衡）限幅 —— 单点可改
 WB_K_MIN: float = 0.5   # 增益下限（**几何上不生效**：W_lin255 ≤ 255 ⇒ k ≥ 1）
 WB_K_MAX: float = 3.0   # 增益上限（越界 ⇒ skipped(limiting)）
+
+# V3（**默认口径**：双色分层处理）—— 单点可改
+V3_LIGHTNESS_V_MIN: float = 0.70      # ★ 浅 / 深分界阀值：非印泥 ∧ V(=max/255) ≥ 此值 ⇒ paper 桶；否则 other 桶
+V3_FG_CHROMA_STRENGTH: float = 1.0    # 前景色度向 #C95021 靠拢强度（0=不动；1=色度完全对齐靶色、L* 保留）
+V3_PAPER_MODE: str = "threshold"      # 背景压平：'threshold'（阈值化→纯白）| 'curve'（抬亮曲线）
+V3_CLEAN: bool = False                # 背景压平是否先做形态学清理（3×3 开运算）；**默认关** —— threshold 全压平下
+                                      #   清理只会把**薄纸边**留在原色 ⇒ 反成背景残差（实测 p90 4.36/max 14.89）。
+                                      #   `clean=True` 为**可选去噪**（曲线模式更有意义），能力已实现并自检。
+V3_CLEAN_K: int = 3                   # 清理核尺寸（3×3）
+V3_FG_PRESERVE_MASK: bool = True       # 前景保形兜底：越域边界缘像素若会掉出 ink 掩膜 ⇒ 保留原色（掩膜逐像素不变）
+V3_FG_IOU_MIN: float = 0.98           # 前景掩膜前后 IoU 验收下限（§2.3.4）
+V3_LSTAR_MEAN_TOL: float = 1.0        # 前景 L* 均值允许变化（验收）
+V3_LSTAR_P90_TOL: float = 2.0         # 前景 L* p90 允许变化（验收）
+V3_OTHER_DE_TOL: float = 1.0          # other 桶允许色差（**硬口径：应逐像素不变 ⇒ ΔE=0**）
 
 # 印泥掩膜常量（§2.2.1）
 _INK_RG_DOMINANCE: float = 15.0   # r > g + 15 且 r > b + 15
@@ -1006,6 +1037,445 @@ def correct_image_whitebalance(rgb_array,
         "gray180_after": apply_gains_color((180, 180, 180), g["gains"]),
     })
     return corrected, report
+
+
+# --------------------------------------------------------------------------------------
+# V3（**默认口径**）：双色分层处理 —— 前景高保真 / 背景压平 / 深色保留原样
+#   口径真源：`docs/image-color-tiff-draft-v0.1.md` §2.3（Kevin 2026-10-11 新口径）。
+#   ① 分层三桶；② 前景只改**色度**、保留 **L\***；③ 背景压平向 `#FFFFFF`；
+#   ④ `other`（深色非印泥）桶**逐像素不变**（Kevin 已裁：黑墨 / 边款 / 墨拓 / 污渍都不动）。
+# --------------------------------------------------------------------------------------
+def v3_buckets(rgb_array, light_v_min: float = V3_LIGHTNESS_V_MIN) -> Dict[str, Any]:
+    """V3 分层三桶（§2.3.1）：
+
+    * `ink`   ＝ `ink_mask`（**前景 / 核心**，与既有掩膜同定义）；
+    * `paper` ＝ **非印泥 ∧ 亮度 `V = max(RGB)/255 ≥ light_v_min`**（**浅色背景**，可失真）；
+    * `other` ＝ **非印泥 ∧ `V < light_v_min`**（**深色非印泥**：黑墨 / 边款 / 阴影，默认保留原样）。
+
+    `light_v_min` 即**浅 / 深分界阀值**（单点可改，默认 `V3_LIGHTNESS_V_MIN = 0.70`）。
+    三桶**互斥且穷尽**整图（`ink` ∪ `paper` ∪ `other` ＝ 全图，两两不交）。
+
+    返回 `{"ink","paper","other"}` 三个 `(H,W)` 布尔数组 ＋ `{"ink_ratio","paper_ratio",
+    "other_ratio","light_v_min","total"}`。
+    """
+    np_ = _np()
+    arr = _as_rgb_array(rgb_array)
+    rgb = arr[..., :3].astype(np_.float64)
+    ink = ink_mask(arr)
+    v = rgb.max(axis=2) / 255.0
+    nonink = ~ink
+    paper = nonink & (v >= light_v_min)
+    other = nonink & (v < light_v_min)
+    total = int(rgb.shape[0]) * int(rgb.shape[1]) or 1
+    return {
+        "ink": ink, "paper": paper, "other": other,
+        "ink_ratio": int(ink.sum()) / total,
+        "paper_ratio": int(paper.sum()) / total,
+        "other_ratio": int(other.sum()) / total,
+        "light_v_min": float(light_v_min), "total": total,
+    }
+
+
+# ---- Lab 数组换算（V3 前景只改色度需要 Lab 往返；纯 numpy）--------------------------------
+_SRGB_TO_XYZ_M = (
+    (0.4124564, 0.3575761, 0.1804375),
+    (0.2126729, 0.7151522, 0.0721750),
+    (0.0193339, 0.1191920, 0.9503041),
+)
+_D65_WHITE = (0.95047, 1.00000, 1.08883)
+_LAB_EPS = 0.008856          # 与标量 xyz_to_lab 逐字一致
+_LAB_KAPPA = 7.787
+_LAB_OFF = 16.0 / 116.0
+
+
+def _srgb_to_lab_arr(rgb255):
+    """`(...,3)` 0–255 sRGB → `(...,3)` Lab（D65）；与标量 `srgb_to_lab` 同式（向量化）。"""
+    np_ = _np()
+    c = np_.clip(np_.asarray(rgb255, dtype=np_.float64) / 255.0, 0.0, None)
+    lin = _srgb_to_linear_arr(c)
+    xyz = lin @ np_.asarray(_SRGB_TO_XYZ_M, dtype=np_.float64).T
+    xyz = xyz / np_.asarray(_D65_WHITE, dtype=np_.float64)
+    f = np_.where(xyz > _LAB_EPS, np_.cbrt(np_.clip(xyz, 0.0, None)),
+                  _LAB_KAPPA * xyz + _LAB_OFF)
+    L = 116.0 * f[..., 1] - 16.0
+    a = 500.0 * (f[..., 0] - f[..., 1])
+    b = 200.0 * (f[..., 1] - f[..., 2])
+    return np_.stack([L, a, b], axis=-1)
+
+
+def _lab_to_lin_arr(lab):
+    """`(...,3)` Lab → `(...,3)` **线性 sRGB**（未裁剪；`_srgb_to_lab_arr` 的数值逆，同一矩阵求逆）。"""
+    np_ = _np()
+    lab = np_.asarray(lab, dtype=np_.float64)
+    L, a, b = lab[..., 0], lab[..., 1], lab[..., 2]
+    fy = (L + 16.0) / 116.0
+    fx = fy + a / 500.0
+    fz = fy - b / 200.0
+
+    def _finv(u):
+        u3 = u ** 3
+        return np_.where(u3 > _LAB_EPS, u3, (u - _LAB_OFF) / _LAB_KAPPA)
+
+    xyz = np_.stack([_finv(fx), _finv(fy), _finv(fz)], axis=-1) * np_.asarray(_D65_WHITE, dtype=np_.float64)
+    m_inv = np_.linalg.inv(np_.asarray(_SRGB_TO_XYZ_M, dtype=np_.float64))
+    return xyz @ m_inv.T
+
+
+def _lab_to_srgb_arr(lab, return_clip: bool = False):
+    """`(...,3)` Lab → `(...,3)` 0–255 sRGB。
+
+    `return_clip=True` 时**额外**返回 `(...,3)` 布尔「线性分量越出 `[0,1]`（色域外）」掩膜。
+    """
+    np_ = _np()
+    lin = _lab_to_lin_arr(lab)
+    clip = (lin < -_GAMUT_EPS) | (lin > 1.0 + _GAMUT_EPS)
+    out = np_.clip(_linear_to_srgb_arr(np_.clip(lin, 0.0, 1.0)) * 255.0, 0.0, 255.0)
+    return (out, clip) if return_clip else out
+
+
+_GAMUT_EPS = 1e-4
+
+
+def _lab_in_gamut(L, a, b):
+    """按分量判 `(L,a*,b*)` 是否落在 sRGB 色域内（线性分量 ∈ `[0,1]`，容差 `_GAMUT_EPS`）。"""
+    np_ = _np()
+    lin = _lab_to_lin_arr(np_.stack([L, a, b], axis=-1))
+    return (lin.min(axis=-1) >= -_GAMUT_EPS) & (lin.max(axis=-1) <= 1.0 + _GAMUT_EPS)
+
+
+# ---- 前景（高保真）：只改色度、保留 L* --------------------------------------------------
+def apply_foreground_chroma(rgb_array, mask, target: Sequence[float] = TARGET_RGB,
+                            strength: float = V3_FG_CHROMA_STRENGTH,
+                            preserve_mask: bool = V3_FG_PRESERVE_MASK) -> Tuple[Any, Dict[str, Any]]:
+    """把 `mask`（V3 的 `ink` 桶）像素的**色度**向 `target`（`#C95021`）靠拢，
+    **保留 `L*`（明度结构 / 纹理 / 边缘）** ⇒ `(校正后图, 读数 dict)`。
+
+    **实现选择（在 Lab 中，只改 `a*` / `b*`）—— 且做色域自适应**：
+    设靶色 Lab ＝ `(t_L, t_a, t_b)`，靶色相 `h_t = atan2(t_b, t_a)`、靶色度 `C_t = hypot(t_a,t_b)`。
+    对每个 `ink` 像素：`out_L* = in_L*`（**逐像素精确保留**）；色度取**靶色相**方向、并**裁剪到该 `L*`
+    在 sRGB 内可达的最大色度**（`out_C = min(strength·C_t, C_max(L, h_t))`，`C_max` 用逐分量二分求）：
+    即 `out_{a*,b*} = strength·out_C·(cos h_t, sin h_t) + (1−strength)·in_{a*,b*}`。
+
+    * **为何「保 L*」必须配「色域自适应」**：`#C95021` 是**亮而高饱和**（`L*≈49.8`）的红；
+      暗印泥（如 `L*≈26`）在 sRGB 内**根本装不下**该色度 ⇒ 若强行写入再裁剪，会**破坏 `L*`**
+      （实测暗印泥簇裁剪率 56〜68%、`L*` 均值漂移 2〜3）。改按 `L*` 上限取色度后 **`L*` 逐像素零漂移**、
+      且色度**尽量**贴近靶色 —— 正合 Kevin「高保真、保 L*、尽可能向 `#C95021` 靠拢」。
+    * **为何选 Lab 而非 HSV**：判据要「保留 `L*` 分布」——Lab 的 `L*` 是感知明度、与色度正交，
+      只写 `a*`/`b*` 时 `L*` 精确保留；HSV 的 `V` 只是最大通道，改 `H`/`S` 会连带改 `L*`。
+    * `strength=1`（默认）：色度完全按靶色相取到色域上限；`strength<1`：与原始色度按比混合。
+    * **保形兜底**（`preserve_mask=True`，默认）：色域边界处的**极亮淡缘像素**（`S` 恰在 0.25 附近）
+      在靶色相下可达色度略低，可能跌破 `ink_mask` 阈值而**掉出前景掩膜**（实测真样本原始 IoU 0.95〜0.98）。
+      为守 §2.3.4「前景掩膜前后 IoU ≈ 1」这些像素**保留原色** ⇒ **掩膜逐像素不变（IoU＝1.0）**；
+      未兜底的原始 IoU 另记 `iou_raw`（如实读数，不掩盖）。
+
+    **只改 `mask` 内像素**；`mask` 外**逐字节原样**（前景口径不得整体位移 / 重采样 / 模糊）。
+    """
+    np_ = _np()
+    arr = _as_rgb_array(rgb_array)
+    m = np_.asarray(mask, dtype=bool)
+    tL, ta, tb = srgb_to_lab(target)
+    h_t = math.atan2(tb, ta)
+    c_t = math.hypot(ta, tb) * float(strength)     # 目标色度（strength 缩放）
+    ca, cb = math.cos(h_t), math.sin(h_t)
+    out = arr.copy()
+    n = int(m.sum())
+    info: Dict[str, Any] = {
+        "masked_pixels": n, "gamut_clip_pixels": 0, "gamut_clip_rate": 0.0,
+        "chroma_reduced_pixels": 0, "chroma_reduced_rate": 0.0,
+        "mask_reverted_pixels": 0, "mask_reverted_rate": 0.0, "iou_raw": 1.0,
+        "target_lab": (float(tL), float(ta), float(tb)),
+        "target_hue_deg": math.degrees(h_t) % 360.0,
+        "target_chroma": math.hypot(ta, tb),
+        "strength": float(strength),
+        "change": "chroma-only (target hue; chroma capped to sRGB gamut at each L*); L* preserved",
+    }
+    if n:
+        rgb = arr[..., :3][m].astype(np_.float64)
+        lab = _srgb_to_lab_arr(rgb)
+        L = lab[..., 0]
+        a_i = lab[..., 1]
+        b_i = lab[..., 2]
+        # 逐像素在「靶色相」方向二分该 L* 的可达最大色度（保 L* ⇒ 不越域、不裁剪）
+        lo = np_.zeros_like(L)
+        hi = np_.full_like(L, c_t)
+        for _ in range(18):
+            mid = (lo + hi) * 0.5
+            ing = _lab_in_gamut(L, mid * ca, mid * cb)
+            lo = np_.where(ing, mid, lo)
+            hi = np_.where(ing, hi, mid)
+        c_use = lo
+        a_tgt = c_use * ca
+        b_tgt = c_use * cb
+        s = float(strength)
+        a_o = s * a_tgt + (1.0 - s) * a_i
+        b_o = s * b_tgt + (1.0 - s) * b_i
+        new_rgb, clip = _lab_to_srgb_arr(np_.stack([L, a_o, b_o], axis=-1), return_clip=True)
+        info["gamut_clip_pixels"] = int(clip.any(axis=-1).sum())
+        info["gamut_clip_rate"] = info["gamut_clip_pixels"] / n
+        info["chroma_reduced_pixels"] = int((c_use < c_t - 1e-6).sum())
+        info["chroma_reduced_rate"] = info["chroma_reduced_pixels"] / n
+        view = out[..., :3]
+        view[m] = np_.clip(np_.rint(new_rgb), 0.0, 255.0).astype(view.dtype)
+        # 保形兜底：未兜底的原始 IoU（非印泥像素未被改动 ⇒ 掩膜只会丢、不会增）
+        ink_after = ink_mask(out)
+        inter = int((m & ink_after).sum())
+        info["iou_raw"] = (inter / n) if n else 1.0
+        if preserve_mask:
+            lost = m & ~ink_after
+            info["mask_reverted_pixels"] = int(lost.sum())
+            info["mask_reverted_rate"] = int(lost.sum()) / n
+            if bool(lost.any()):
+                view[lost] = arr[..., :3][lost]
+    return out, info
+
+
+# ---- 背景（可失真）：形态学清理 ＋ 压平向 #FFFFFF（**清理只作用于 paper 桶**）-------------
+def _erode3x3(mask):
+    """二值 3×3 腐蚀（**edge 复制填充**；边界不致被无谓啃掉）。纯 numpy。"""
+    np_ = _np()
+    m = np_.asarray(mask, dtype=bool)
+    h, w = m.shape
+    mp = np_.pad(m, 1, mode="edge")
+    er = np_.ones_like(m)
+    for dy in (0, 1, 2):
+        for dx in (0, 1, 2):
+            er &= mp[dy:dy + h, dx:dx + w]
+    return er
+
+
+def _dilate3x3(mask):
+    """二值 3×3 膨胀（edge 复制填充）。纯 numpy。"""
+    np_ = _np()
+    m = np_.asarray(mask, dtype=bool)
+    h, w = m.shape
+    mp = np_.pad(m, 1, mode="edge")
+    dl = np_.zeros_like(m)
+    for dy in (0, 1, 2):
+        for dx in (0, 1, 2):
+            dl |= mp[dy:dy + h, dx:dx + w]
+    return dl
+
+
+def v3_open3x3(mask):
+    """二值 3×3 **开运算**（先腐蚀后膨胀），纯 numpy。用于 `paper` 桶清理：
+
+    只会**删去**孤立的纸点（纸纹噪点 / 椒盐），**绝不新增** —— 且与原始掩膜相与，
+    严格保证 `结果 ⊆ 输入` ⇒ **清理永远不会把非纸像素变白**（不会污染 `other` / `ink` 桶）。
+    """
+    np_ = _np()
+    m = np_.asarray(mask, dtype=bool)
+    return _dilate3x3(_erode3x3(m)) & m
+
+
+def v3_median3x3(rgb_array):
+    """逐通道 3×3 **中值滤波**（纯 numpy，edge 复制填充）。**仅供背景（paper 桶）去噪**。"""
+    np_ = _np()
+    arr = _as_rgb_array(rgb_array)
+    rgb = arr[..., :3].astype(np_.float64)
+    h, w = rgb.shape[0], rgb.shape[1]
+    pad = np_.pad(rgb, ((1, 1), (1, 1), (0, 0)), mode="edge")
+    stack = np_.empty((9, h, w, 3), dtype=np_.float64)
+    k = 0
+    for dy in (0, 1, 2):
+        for dx in (0, 1, 2):
+            stack[k] = pad[dy:dy + h, dx:dx + w]
+            k += 1
+    med = np_.median(stack, axis=0)
+    out = arr.copy()
+    out[..., :3] = np_.clip(np_.rint(med), 0.0, 255.0).astype(out[..., :3].dtype)
+    return out
+
+
+def flatten_paper(rgb_array, paper_mask, mode: str = V3_PAPER_MODE,
+                  clean: bool = V3_CLEAN, white: Sequence[float] = WHITE_RGB
+                  ) -> Tuple[Any, Dict[str, Any]]:
+    """背景压平：把 `paper` 桶像素向 `#FFFFFF` 推平 → `(校正后图, 读数 dict)`。
+
+    * `mode="threshold"`（**默认**）：`paper`（清理后）像素 `:= white`（**阈值化 → 纯白**，
+      背景质心 → `#FFFFFF` 的 ΔE ＝ **0**）；
+    * `mode="curve"`：先 3×3 中值去噪，再在**线性 RGB** 做抬亮曲线（把 `paper` 桶亮度 p95 映到 1.0）。
+
+    `clean=True` 时先对 `paper` 掩膜做 3×3 **开运算**（`v3_open3x3`，保证 ⊆ 原掩膜）去掉孤立纸点。
+    **默认 `clean=False`**（见常量注）：threshold 模式下纸桶是**薄边/碎屑**时，开运算会把它们整块删掉
+    ⇒ 反而**留在原色、拉高背景残差**；故压平默认**全量** `paper` 桶，形态学清理为**可选项**。
+    **清理与压平只写 `paper` 桶像素；`ink` / `other` 桶逐字节不变。**
+    """
+    np_ = _np()
+    arr = _as_rgb_array(rgb_array)
+    pm = np_.asarray(paper_mask, dtype=bool)
+    info: Dict[str, Any] = {"mode": mode, "raw_paper_pixels": int(pm.sum())}
+    if clean:
+        pm2 = v3_open3x3(pm)
+        info["cleaned_removed"] = int(pm.sum()) - int(pm2.sum())
+        info["clean"] = "open3x3"
+        pm = pm2
+    else:
+        info["clean"] = "none"
+    out = arr.copy()
+    view = out[..., :3]
+    if mode == "threshold":
+        view[pm] = np_.asarray([int(round(x)) for x in white[:3]], dtype=view.dtype)
+    elif mode == "curve":
+        src = v3_median3x3(arr) if clean else arr
+        rgb = src[..., :3].astype(np_.float64)
+        v = rgb.max(axis=2) / 255.0
+        ref = float(np_.percentile(v[pm], 95.0)) if bool(pm.any()) else 1.0
+        gain = 1.0 / max(ref, 1e-3)
+        lin = _srgb_to_linear_arr(rgb / 255.0) * gain
+        outv = np_.clip(np_.rint(_linear_to_srgb_arr(np_.clip(lin, 0.0, 1.0)) * 255.0), 0.0, 255.0)
+        view[pm] = outv.astype(view.dtype)[pm]
+        info["curve_gain"] = gain
+    else:
+        raise ValueError(f"paper mode 只支持 'threshold' / 'curve'，收到 {mode!r}")
+    info["flattened_pixels"] = int(pm.sum())
+    return out, info
+
+
+# ---- V3 单图校正（默认口径） -----------------------------------------------------------
+def _lstar_stats(img, mask) -> Optional[Dict[str, float]]:
+    np_ = _np()
+    if not bool(np_.asarray(mask, dtype=bool).any()):
+        return None
+    px = img[..., :3][mask].astype(np_.float64)
+    L = _srgb_to_lab_arr(px)[:, 0]
+    return {"mean": float(L.mean()), "p10": float(np_.percentile(L, 10.0)),
+            "p50": float(np_.percentile(L, 50.0)), "p90": float(np_.percentile(L, 90.0))}
+
+
+def correct_image_v3(rgb_array,
+                     target: Sequence[float] = TARGET_RGB,
+                     white: Sequence[float] = WHITE_RGB,
+                     ink_ratio_min: float = INK_RATIO_MIN,
+                     light_v_min: float = V3_LIGHTNESS_V_MIN,
+                     fg_strength: float = V3_FG_CHROMA_STRENGTH,
+                     fg_preserve_mask: bool = V3_FG_PRESERVE_MASK,
+                     paper_mode: str = V3_PAPER_MODE,
+                     clean: bool = V3_CLEAN,
+                     core_sat_quantile: float = INK_CORE_SAT_QUANTILE,
+                     ) -> Tuple[Any, Dict[str, Any]]:
+    """V3 单图校正（**双色分层处理，默认口径**）→ `(校正后图, 报告 dict)`。
+
+    流程：① 分三桶 → ② 前景（`ink`）只改色度、保 `L*` → ③ 背景（`paper`）清理后压平向 `#FFFFFF`
+    → ④ `other` 桶**逐像素不变**。
+
+    **跳过口径**：`ink_ratio < ink_ratio_min`（默认 2%）⇒ `skipped(ink_ratio=<值>)`。
+    （V3 **无仿射** ⇒ 不产生 `limiting`；`degenerate` 在 V1a 里指「两点定线病态」，
+     V3 无此中间量，故**仅继承方法无关的 `ink_ratio` 跳过** —— 如实登记，不虚设。）
+
+    报告键（可落 `images_manifest.jsonl` 的 `color_correction` 面）：
+      * `algorithm`＝`"dual-layer-v3"`、`mode`（applied/skipped）、`marker`、`skip_reason`
+      * `ink_ratio` / `paper_ratio` / `other_ratio`（三桶占比）
+      * `centroid_core_before` / `_after` ＋ `delta_e_before` / `_after`（**核心质心 → `#C95021`**，判据）
+      * `centroid_all_before` / `_after` ＋ ΔE（掩膜全体质心，**观察项**）
+      * `paper_before_rgb` / `paper_after_rgb` ＋ `bg_delta_e_before` / `_after`（**背景 → `#FFFFFF`**，判据）
+      * `iou`（前景掩膜前后 IoU，含**保形兜底**）＋ `iou_raw`（**未兜底**原始 IoU）＋ `iou_inter` / `iou_union`
+      * `lstar_before` / `lstar_after`（均值 / p10 / p50 / p90）＋ `lstar_mean_delta` / `_p50_delta` / `_p90_delta`
+      * `other_unchanged_rate`（`other` 桶逐像素不变率；**硬口径应 = 1.0**）
+      * `fg_gamut_clip_rate`（前景越色域裁剪率）、`bg_flattened_pixels` / `bg_cleaned_removed`
+    """
+    np_ = _np()
+    arr = _as_rgb_array(rgb_array)
+    bk = v3_buckets(arr, light_v_min)
+    ink, paper, other = bk["ink"], bk["paper"], bk["other"]
+    total = bk["total"]
+    ratio = bk["ink_ratio"]
+
+    core = ink_core_centroid(arr, core_sat_quantile)
+    cmask = core["mask"]
+    c_core_before = core["rgb"]
+    c_all_before = _mean_over_mask(arr, ink)
+    paper_before = _mean_over_mask(arr, paper)
+    ls_before = _lstar_stats(arr, ink)
+
+    report: Dict[str, Any] = {
+        "algorithm": "dual-layer-v3",
+        "target_rgb": tuple(int(round(v)) for v in target[:3]),
+        "target_hex": rgb_to_hex(target),
+        "white_rgb": tuple(int(round(v)) for v in white[:3]),
+        "light_v_min": float(light_v_min),
+        "fg_chroma_strength": float(fg_strength),
+        "paper_mode": paper_mode, "clean": bool(clean),
+        "ink_ratio": ratio, "paper_ratio": bk["paper_ratio"], "other_ratio": bk["other_ratio"],
+        "core_pixels": core["pixels"], "paper_pixels": int(paper.sum()),
+        "other_pixels": int(other.sum()),
+        "centroid_core_before": c_core_before,
+        "delta_e_before": (delta_e2000(c_core_before, target) if c_core_before else None),
+        "centroid_all_before": c_all_before,
+        "delta_e_all_before": (delta_e2000(c_all_before, target) if c_all_before else None),
+        "paper_before_rgb": paper_before,
+        "bg_delta_e_before": (delta_e2000(paper_before, white) if paper_before else None),
+        "lstar_before": ls_before,
+    }
+
+    def _skip(reason: str, marker: str) -> Tuple[Any, Dict[str, Any]]:
+        report.update({
+            "mode": "skipped", "marker": marker, "skip_reason": reason,
+            "centroid_core_after": c_core_before,
+            "centroid_all_after": c_all_before,
+            "delta_e_after": report["delta_e_before"],
+            "delta_e_all_after": report["delta_e_all_before"],
+            "ink_ratio_after": ratio,
+            "paper_after_rgb": paper_before,
+            "bg_delta_e_after": report["bg_delta_e_before"],
+            "iou": 1.0, "iou_inter": None, "iou_union": None,
+            "iou_raw": 1.0, "mask_reverted_pixels": 0, "mask_reverted_rate": 0.0,
+            "lstar_after": ls_before, "lstar_mean_delta": 0.0,
+            "lstar_p50_delta": 0.0, "lstar_p90_delta": 0.0,
+            "other_unchanged_rate": 1.0,
+            "fg_gamut_clip_rate": None, "fg_masked_pixels": 0,
+            "bg_flattened_pixels": 0, "bg_cleaned_removed": None,
+        })
+        return arr.copy(), report
+
+    if c_core_before is None or ratio < ink_ratio_min:
+        return _skip("ink_ratio", skip_marker(ratio))
+
+    out, fg = apply_foreground_chroma(arr, ink, target=target, strength=fg_strength,
+                                      preserve_mask=fg_preserve_mask)
+    out, bg = flatten_paper(out, paper, mode=paper_mode, clean=clean, white=white)
+
+    c_core_after = _mean_over_mask(out, cmask)
+    c_all_after = _mean_over_mask(out, ink)
+    paper_after = _mean_over_mask(out, paper)
+    ink_after = ink_mask(out)
+    inter = int((ink & ink_after).sum())
+    union = int((ink | ink_after).sum())
+    iou = (inter / union) if union else 1.0
+    ls_after = _lstar_stats(out, ink)
+    if bool(other.any()):
+        eq = np_.all(out[..., :3][other] == arr[..., :3][other], axis=-1)
+        other_rate = float(eq.mean())
+    else:
+        other_rate = 1.0
+
+    def _d(a, b, key):
+        if a is None or b is None:
+            return None
+        return abs(a[key] - b[key])
+
+    report.update({
+        "mode": "applied", "marker": "applied", "skip_reason": None,
+        "centroid_core_after": c_core_after,
+        "delta_e_after": (delta_e2000(c_core_after, target) if c_core_after else None),
+        "centroid_all_after": c_all_after,
+        "delta_e_all_after": (delta_e2000(c_all_after, target) if c_all_after else None),
+        "ink_ratio_after": int(ink_after.sum()) / total,
+        "paper_after_rgb": paper_after,
+        "bg_delta_e_after": (delta_e2000(paper_after, white) if paper_after else None),
+        "iou": iou, "iou_inter": inter, "iou_union": union,
+        "iou_raw": fg["iou_raw"], "mask_reverted_pixels": fg["mask_reverted_pixels"],
+        "mask_reverted_rate": fg["mask_reverted_rate"],
+        "lstar_after": ls_after,
+        "lstar_mean_delta": _d(ls_after, ls_before, "mean"),
+        "lstar_p50_delta": _d(ls_after, ls_before, "p50"),
+        "lstar_p90_delta": _d(ls_after, ls_before, "p90"),
+        "other_unchanged_rate": other_rate,
+        "fg_gamut_clip_rate": fg["gamut_clip_rate"],
+        "fg_masked_pixels": fg["masked_pixels"],
+        "bg_flattened_pixels": bg["flattened_pixels"],
+        "bg_cleaned_removed": bg.get("cleaned_removed"),
+    })
+    return out, report
 
 
 # --------------------------------------------------------------------------------------

@@ -1,0 +1,486 @@
+{
+  "generated_at": "2026-10-11T12:07:40+0800",
+  "repo": "/Users/kevin/bistro/xiai/feicui",
+  "db_path": "/Users/kevin/bistro/xiai/data/yinpu.db",
+  "out_root": "/Users/kevin/bistro/xiai/feicui/output/books",
+  "scope": "books",
+  "books": [
+    "tmp.pdf"
+  ],
+  "page_filter": null,
+  "correction_algorithm": "dual-layer-v3",
+  "correction_params": {
+    "V3_LIGHTNESS_V_MIN": 0.7,
+    "V3_FG_CHROMA_STRENGTH": 1.0,
+    "V3_PAPER_MODE": "threshold",
+    "V3_CLEAN": false,
+    "INK_RATIO_MIN": 0.02,
+    "TARGET_HEX": "#C95021"
+  },
+  "tiff_container": "RGB 8-bit + tiff_deflate (Deflate, 无损)",
+  "webp_quality": 95,
+  "write_webp": false,
+  "write_original": true,
+  "write_corrected": false,
+  "orig_only": false,
+  "original_crop": {
+    "enabled": true,
+    "orig_only": false,
+    "suffix": "-O",
+    "naming": "P<page>-C<col>-R<row>-O.tiff（大写 O、短横、不补零；后缀在扩展名之前）",
+    "definition": "400 dpi 渲染后按库内 bbox 原样裁出，**不做任何颜色处理**",
+    "container": "RGB 8-bit + tiff_deflate（与校正件同容器）",
+    "落点": "output/books/<目录键>/（与校正件同目录）",
+    "落库": "不新增列；O 路径由命名规则派生（校正件名换 `-O`）",
+    "idempotency": "按解码像素判（不得按文件 sha256）"
+  },
+  "layout": "original-only",
+  "render_dpi": 400,
+  "naming": "P<page>-C<col>-R<row> (大写/短横/不补零)",
+  "per_book": {
+    "tmp.pdf": {
+      "pdf_name": "tmp.pdf",
+      "pdf_path": "/Users/kevin/bistro/xiai/feicui/tmp.pdf",
+      "dir_key": "tmp.pdf",
+      "out_dir": "output/books/tmp.pdf",
+      "pages": 7,
+      "stamps": 31,
+      "written_tiff": 0,
+      "written_webp": 0,
+      "failed": 0,
+      "skipped_tiff_existing": 0,
+      "written_original": 0,
+      "skipped_original_existing": 0,
+      "tiff_bytes": 0,
+      "webp_bytes": 0,
+      "max_tiff": null,
+      "max_webp": null,
+      "original_bytes": 0,
+      "max_original": null,
+      "original_files_touched": 0,
+      "webp_written_this_run": 0,
+      "elapsed_s": 2.838,
+      "mode": "original-only"
+    }
+  },
+  "failures": [],
+  "correction_sample": [],
+  "fp10_before": "3713cc3cf11b6d3bfe0867bf9f25a84911b2e8119e6ffe4e615f71430b526d41",
+  "fp10_rows_before": 8708,
+  "elapsed_s_total": 2.839,
+  "fp10_after": "3713cc3cf11b6d3bfe0867bf9f25a84911b2e8119e6ffe4e615f71430b526d41",
+  "fp10_rows_after": 8708,
+  "fp10_identical": true,
+  "checks": {
+    "scope_books": [
+      "tmp.pdf"
+    ],
+    "rows_in_scope": 31,
+    "layout_spec": "TIFF-only（本地不再保存 webp；Kevin 2026-10-11 口径变更） ＋ 原始切片 O（`-O` 后缀，2026-10-11 新增）",
+    "correction_face": {
+      "state": "paused",
+      "write_corrected_this_run": false,
+      "criterion": "校正面仅在「本次开启写校正件」或「盘上确存在校正件」时纳入对账；停产态（paused）不因校正件缺失报 RED；O 面（O-1〜O-5）为主校验面。",
+      "db_expected_tiff": 31,
+      "disk_tiff": 0,
+      "missing_tiff_count": 31,
+      "orphan_tiff_count": 0,
+      "missing_is_failure": false,
+      "orphan_is_failure": false,
+      "paused_explanation": "校正件已暂停生产（docs/image-original-crop-draft-v0.1.md §6）：盘上无校正件属预期 ⇒ 校正面不参与判负；健康停产态退出码 0。O 面判据不变（删 O 件仍 RED）。"
+    },
+    "null_new_columns": {
+      "count": 0,
+      "detail": []
+    },
+    "name_regex_tiff": {
+      "checked": 31,
+      "mismatch_count": 0,
+      "detail": []
+    },
+    "page_cr_unique": {
+      "conflicts": 0,
+      "detail": []
+    },
+    "two_way_reconcile_tiff": {
+      "db_expected_tiff": 31,
+      "disk_tiff": 0,
+      "missing_tiff": {
+        "count": 31,
+        "detail": [
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P13-C1-R1.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P13-C2-R1.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P13-C3-R1.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P13-C4-R1.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P13-C4-R2.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P13-C4-R3.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P14-C1-R1.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P14-C1-R2.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P14-C2-R1.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P14-C2-R2.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P14-C3-R1.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P14-C3-R2.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P14-C4-R1.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P15-C1-R1.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P15-C1-R2.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P15-C2-R1.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P15-C2-R2.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P15-C3-R1.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P15-C3-R2.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P15-C3-R3.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P16-C1-R1.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P16-C2-R1.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P16-C2-R2.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P17-C1-R1.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P17-C2-R1.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P18-C1-R1.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P18-C2-R1.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P19-C1-R1.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P19-C2-R1.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P19-C3-R1.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P19-C3-R2.tiff"
+        ]
+      },
+      "orphan_tiff": {
+        "count": 0,
+        "detail": []
+      },
+      "unexpected_P_files": {
+        "count": 0,
+        "detail": []
+      }
+    },
+    "original_crop": {
+      "expect_original": true,
+      "name_regex_orig": {
+        "checked": 31,
+        "mismatch_count": 0
+      },
+      "two_way_reconcile_orig": {
+        "db_expected_orig": 31,
+        "disk_orig": 30,
+        "missing_orig": {
+          "count": 1,
+          "detail": [
+            "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P14-C4-R1-O.tiff"
+          ]
+        },
+        "orphan_orig": {
+          "count": 0,
+          "detail": []
+        }
+      }
+    },
+    "legacy_webp_present": {
+      "count": 0,
+      "note": "本轮口径变更前已产出的 webp（新命名目录下）——**只列不删**，删除与 stamps.img_path／E6 取图端点一起处置，另有专单。",
+      "listed_cap": 200,
+      "detail": []
+    }
+  },
+  "correction_face": {
+    "state": "paused",
+    "write_corrected_this_run": false,
+    "criterion": "校正面仅在「本次开启写校正件」或「盘上确存在校正件」时纳入对账；停产态（paused）不因校正件缺失报 RED；O 面（O-1〜O-5）为主校验面。",
+    "db_expected_tiff": 31,
+    "disk_tiff": 0,
+    "missing_tiff_count": 31,
+    "orphan_tiff_count": 0,
+    "missing_is_failure": false,
+    "orphan_is_failure": false,
+    "paused_explanation": "校正件已暂停生产（docs/image-original-crop-draft-v0.1.md §6）：盘上无校正件属预期 ⇒ 校正面不参与判负；健康停产态退出码 0。O 面判据不变（删 O 件仍 RED）。"
+  },
+  "sizes": {
+    "tiff_files": 0,
+    "webp_files": 0,
+    "original_files": 30,
+    "tiff_bytes": 0,
+    "webp_bytes": 0,
+    "original_bytes": 247124,
+    "tiff_total_mib": 0.0,
+    "webp_total_mib": 0.0,
+    "original_total_mib": 0.236,
+    "original_mean_bytes": 8237.5,
+    "tiff_mean_bytes": null,
+    "tiff_plus_original_total_mib": 0.236,
+    "max_tiff": {
+      "bytes": -1,
+      "path": null
+    },
+    "max_webp": {
+      "bytes": -1,
+      "path": null
+    },
+    "max_original": {
+      "bytes": 31286,
+      "path": "output/books/tmp.pdf/P13-C4-R3-O.tiff",
+      "name": "P13-C4-R3-O.tiff"
+    },
+    "limit_4mib": 4194304,
+    "max_tiff_within_4mib": true,
+    "max_webp_within_4mib": true,
+    "max_original_within_4mib": true,
+    "webp_note": "webp 为本轮口径变更**之前**已产出的遗留件（只列不删）；新口径 TIFF-only ⇒ 本次/复跑**不再产 webp**（webp_written=0）。",
+    "original_note": "原始切片 O ＝ 400 dpi 渲染后按库内 bbox 原样的裁片（**无颜色处理**）；单张最大字节对照 xiai 影像库 `store` 上限 4 MiB。"
+  },
+  "o4_container_check": {
+    "criterion": "mode=RGB && Photometric=2 && Compression=8（Deflate） && Predictor=2；非 JPEG-in-TIFF",
+    "checked": 30,
+    "bad_count": 0,
+    "all_ok": true,
+    "sample": [
+      {
+        "name": "P13-C1-R1-O.tiff",
+        "rel": "output/books/tmp.pdf/P13-C1-R1-O.tiff",
+        "mode": "RGB",
+        "size": [
+          123,
+          122
+        ],
+        "compression": 8,
+        "photometric": 2,
+        "predictor": 2,
+        "samples_per_pixel": 3,
+        "bits_per_sample": [
+          8,
+          8,
+          8
+        ],
+        "ok": true
+      },
+      {
+        "name": "P13-C2-R1-O.tiff",
+        "rel": "output/books/tmp.pdf/P13-C2-R1-O.tiff",
+        "mode": "RGB",
+        "size": [
+          142,
+          145
+        ],
+        "compression": 8,
+        "photometric": 2,
+        "predictor": 2,
+        "samples_per_pixel": 3,
+        "bits_per_sample": [
+          8,
+          8,
+          8
+        ],
+        "ok": true
+      },
+      {
+        "name": "P13-C3-R1-O.tiff",
+        "rel": "output/books/tmp.pdf/P13-C3-R1-O.tiff",
+        "mode": "RGB",
+        "size": [
+          92,
+          70
+        ],
+        "compression": 8,
+        "photometric": 2,
+        "predictor": 2,
+        "samples_per_pixel": 3,
+        "bits_per_sample": [
+          8,
+          8,
+          8
+        ],
+        "ok": true
+      },
+      {
+        "name": "P13-C4-R1-O.tiff",
+        "rel": "output/books/tmp.pdf/P13-C4-R1-O.tiff",
+        "mode": "RGB",
+        "size": [
+          83,
+          84
+        ],
+        "compression": 8,
+        "photometric": 2,
+        "predictor": 2,
+        "samples_per_pixel": 3,
+        "bits_per_sample": [
+          8,
+          8,
+          8
+        ],
+        "ok": true
+      },
+      {
+        "name": "P13-C4-R2-O.tiff",
+        "rel": "output/books/tmp.pdf/P13-C4-R2-O.tiff",
+        "mode": "RGB",
+        "size": [
+          125,
+          126
+        ],
+        "compression": 8,
+        "photometric": 2,
+        "predictor": 2,
+        "samples_per_pixel": 3,
+        "bits_per_sample": [
+          8,
+          8,
+          8
+        ],
+        "ok": true
+      },
+      {
+        "name": "P13-C4-R3-O.tiff",
+        "rel": "output/books/tmp.pdf/P13-C4-R3-O.tiff",
+        "mode": "RGB",
+        "size": [
+          142,
+          145
+        ],
+        "compression": 8,
+        "photometric": 2,
+        "predictor": 2,
+        "samples_per_pixel": 3,
+        "bits_per_sample": [
+          8,
+          8,
+          8
+        ],
+        "ok": true
+      },
+      {
+        "name": "P14-C1-R1-O.tiff",
+        "rel": "output/books/tmp.pdf/P14-C1-R1-O.tiff",
+        "mode": "RGB",
+        "size": [
+          76,
+          111
+        ],
+        "compression": 8,
+        "photometric": 2,
+        "predictor": 2,
+        "samples_per_pixel": 3,
+        "bits_per_sample": [
+          8,
+          8,
+          8
+        ],
+        "ok": true
+      },
+      {
+        "name": "P14-C1-R2-O.tiff",
+        "rel": "output/books/tmp.pdf/P14-C1-R2-O.tiff",
+        "mode": "RGB",
+        "size": [
+          99,
+          105
+        ],
+        "compression": 8,
+        "photometric": 2,
+        "predictor": 2,
+        "samples_per_pixel": 3,
+        "bits_per_sample": [
+          8,
+          8,
+          8
+        ],
+        "ok": true
+      },
+      {
+        "name": "P14-C2-R1-O.tiff",
+        "rel": "output/books/tmp.pdf/P14-C2-R1-O.tiff",
+        "mode": "RGB",
+        "size": [
+          73,
+          73
+        ],
+        "compression": 8,
+        "photometric": 2,
+        "predictor": 2,
+        "samples_per_pixel": 3,
+        "bits_per_sample": [
+          8,
+          8,
+          8
+        ],
+        "ok": true
+      },
+      {
+        "name": "P14-C2-R2-O.tiff",
+        "rel": "output/books/tmp.pdf/P14-C2-R2-O.tiff",
+        "mode": "RGB",
+        "size": [
+          101,
+          106
+        ],
+        "compression": 8,
+        "photometric": 2,
+        "predictor": 2,
+        "samples_per_pixel": 3,
+        "bits_per_sample": [
+          8,
+          8,
+          8
+        ],
+        "ok": true
+      }
+    ],
+    "bad": []
+  },
+  "totals": {
+    "stamps_in_scope": 31,
+    "written_tiff": 0,
+    "written_original": 30,
+    "tiff_written_this_run": 0,
+    "tiff_skipped_existing": 0,
+    "original_written_this_run": 0,
+    "original_skipped_existing": 0,
+    "webp_written_this_run": 0,
+    "webp_present_legacy": 0,
+    "failures": 0,
+    "tiff_bytes": 0,
+    "webp_bytes": 0,
+    "original_bytes": 247124,
+    "correction_face": "paused",
+    "correction_face_missing_is_failure": false
+  },
+  "idempotency": {
+    "tmp.pdf": {
+      "method": "decode-and-compare-pixels (NOT file sha256)",
+      "checked": 0,
+      "pixel_mismatch_count": 6,
+      "pixel_mismatch": [
+        {
+          "name": "P13-C1-R1.tiff",
+          "reason": "file_missing"
+        },
+        {
+          "name": "P14-C1-R2.tiff",
+          "reason": "file_missing"
+        },
+        {
+          "name": "P15-C1-R1.tiff",
+          "reason": "file_missing"
+        },
+        {
+          "name": "P16-C1-R1.tiff",
+          "reason": "file_missing"
+        },
+        {
+          "name": "P17-C1-R1.tiff",
+          "reason": "file_missing"
+        },
+        {
+          "name": "P18-C1-R1.tiff",
+          "reason": "file_missing"
+        }
+      ],
+      "reencode_decoded_pixels_stable": true,
+      "byte_identical_on_resave": 0,
+      "note": "同参数二次产出 ⇒ 解码像素逐字节相同；文件 sha256 可不同（Pillow tiff_deflate 大图末 strip 对齐填充字节未初始化）。",
+      "original": {
+        "method": "decode-and-compare-pixels vs 400dpi render（原始切片 O）",
+        "checked": 6,
+        "pixel_mismatch_count": 0,
+        "pixel_mismatch": [],
+        "reencode_decoded_pixels_stable": true,
+        "byte_identical_on_resave": 6
+      }
+    }
+  }
+}

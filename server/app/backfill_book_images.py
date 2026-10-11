@@ -46,6 +46,13 @@
       `... --all --orig-only`（**只补原始切片 O**：不跑 V3、不写校正件、不写库——全量补 O 用这条）
       `... --all --write-corrected`（**只出校正件**：须显式开关——校正件默认关，暂停生产 §6）
 幂等：按**解码像素**判（不得按文件 sha256 —— Pillow `tiff_deflate` 在大图上逐字节非确定）。
+
+★ **校正面停产态判据（Kevin 2026-10-11 口径；收口）**：本 CLI 的「TIFF 双向对账」**不再**默认按
+「库期望 ＝ 校正件数」判负 —— 校正件已停产，默认跑不该因盘上无校正件而 RED。
+纳入对账的条件（取或）：① 本次显式 `--write-corrected`（state=`active`）；② 盘上确存在校正件
+（state=`present`，孤儿判负、缺失仍不判负）。二者皆否 ⇒ `correction_face: paused`，
+**校正面不参与判负**、健康停产态退出码 **0**。**O 面（O-1〜O-5）永远是主校验面**：
+删掉任一 O 件 ⇒ `missing_orig>0` ⇒ 仍 **RED**。
 """
 from __future__ import annotations
 
@@ -549,7 +556,8 @@ def fill_missing_columns(
 #   ★ 口径：本地文件**只认 `.tiff`**；既有 `.webp`（本人本轮已产者）**只列不删**，留删除单统一处置。
 # ──────────────────────────────────────────────────────────────────────────────
 def verify(conn: sqlite3.Connection, books: list[str], out_root: Path, mapping: dict,
-           webp_list_cap: int = 200, expect_original: bool = True) -> dict:
+           webp_list_cap: int = 200, expect_original: bool = True,
+           write_corrected: bool = False) -> dict:
     rows = list(conn.execute(
         f"SELECT {','.join(DB_COLS_10 + NEW_COLS)} FROM stamps "
         f"WHERE pdf_name IN ({','.join('?' * len(books))}) ORDER BY pdf_name, page, idx",
@@ -618,11 +626,43 @@ def verify(conn: sqlite3.Connection, books: list[str], out_root: Path, mapping: 
     missing_orig = sorted(db_orig - disk_orig)
     orphan_orig = sorted(disk_orig - db_orig)
 
+    # ── 校正面（校正件）停产态判据（Kevin 2026-10-11 口径；Zang 收口）────────────
+    #   校正面 ＝ 颜色校正件 `P<页>-C<列>-R<行>.tiff`，**已暂停生产**（口径件 §6）。
+    #   纳入对账的条件（二者取或）：① 本次**显式开启写校正件**（`--write-corrected`）；
+    #   ② 盘上**确实存在**（库内该行）校正件。否则标 `paused`、校正面**不参与判负**。
+    #   ⇒ **停产态（默认）下不得因校正件缺失报 RED**；**O 面（O-1〜O-5）永远是主校验面**。
+    if write_corrected:
+        correction_face_state = "active"
+    elif len(disk_tiff) > 0:
+        correction_face_state = "present"
+    else:
+        correction_face_state = "paused"
+    # 停产/缺席态：**缺失方向不判负**（校正件停产 ⇒ 盘上无校正件属预期）；
+    # 「盘上存在校正件」的 `present` 态：缺失方向仍不判负（停产），但**在盘的校正件必须对得上库**（孤儿判负）。
+    # 只有显式写校正件（`active`）时，缺失方向才判负。
+    missing_tiff_is_failure = (correction_face_state == "active")
+    orphan_tiff_is_failure = (correction_face_state in ("active", "present"))
+    correction_face = {
+        "state": correction_face_state,
+        "write_corrected_this_run": bool(write_corrected),
+        "criterion": "校正面仅在「本次开启写校正件」或「盘上确存在校正件」时纳入对账；"
+                     "停产态（paused）不因校正件缺失报 RED；O 面（O-1〜O-5）为主校验面。",
+        "db_expected_tiff": len(db_tiff), "disk_tiff": len(disk_tiff),
+        "missing_tiff_count": len(missing_tiff), "orphan_tiff_count": len(orphan_tiff),
+        "missing_is_failure": missing_tiff_is_failure,
+        "orphan_is_failure": orphan_tiff_is_failure,
+        "paused_explanation": (
+            "校正件已暂停生产（docs/image-original-crop-draft-v0.1.md §6）：盘上无校正件属预期 "
+            "⇒ 校正面不参与判负；健康停产态退出码 0。O 面判据不变（删 O 件仍 RED）。"
+            if correction_face_state == "paused" else None),
+    }
+
     return {
         "scope_books": books,
         "rows_in_scope": len(rows),
         "layout_spec": "TIFF-only（本地不再保存 webp；Kevin 2026-10-11 口径变更）"
                        " ＋ 原始切片 O（`-O` 后缀，2026-10-11 新增）",
+        "correction_face": correction_face,
         "null_new_columns": {"count": len(null_new), "detail": null_new[:50]},
         "name_regex_tiff": {"checked": len(rows) - len(null_new),
                             "mismatch_count": len(colname_mismatch),
@@ -1091,8 +1131,11 @@ def main(argv: list[str] | None = None) -> int:
     report["fp10_rows_after"] = n_after
     report["fp10_identical"] = (fp_before == fp_after) and (n_before == n_after)
 
-    vchk = verify(conn, books, out_root, mapping, expect_original=(write_original or orig_only))
+    vchk = verify(conn, books, out_root, mapping, expect_original=(write_original or orig_only),
+                  write_corrected=write_corrected)
     report["checks"] = vchk
+    cf = vchk["correction_face"]
+    report["correction_face"] = cf
     report["sizes"] = size_report(conn, books, out_root, mapping)
     report["o4_container_check"] = container_check_original(books, out_root, mapping)
 
@@ -1110,6 +1153,8 @@ def main(argv: list[str] | None = None) -> int:
         "tiff_bytes": report["sizes"]["tiff_bytes"],
         "webp_bytes": report["sizes"]["webp_bytes"],
         "original_bytes": report["sizes"]["original_bytes"],
+        "correction_face": cf["state"],
+        "correction_face_missing_is_failure": cf["missing_is_failure"],
     }
 
     # 幂等核对（渲染模式跑；fill-missing-cols 不产图 ⇒ 无需像素幂等探针）
@@ -1156,9 +1201,10 @@ def main(argv: list[str] | None = None) -> int:
     print(f"页内 (C,R) 冲突页：{vchk['page_cr_unique']['conflicts']}；空新列：{vchk['null_new_columns']['count']}；"
           f"名不符：{vchk['name_regex_tiff']['mismatch_count']}")
     tw = vchk["two_way_reconcile_tiff"]
-    print(f"双向对账（TIFF）：库期望 {tw['db_expected_tiff']} / 盘上 {tw['disk_tiff']}；"
+    print(f"校正面（校正件）：state = {cf['state']}｜库期望 {tw['db_expected_tiff']} / 盘上 {tw['disk_tiff']}；"
           f"缺 {tw['missing_tiff']['count']} / 孤儿 {tw['orphan_tiff']['count']}；"
-          f"意外 P* 文件 {tw['unexpected_P_files']['count']}")
+          f"意外 P* 文件 {tw['unexpected_P_files']['count']}"
+          f"｜缺失判负 {'ON' if cf['missing_is_failure'] else 'OFF（停产 paused）'}")
     ow = vchk["original_crop"]["two_way_reconcile_orig"]
     print(f"双向对账（原始切片 O-5）：库期望 {ow['db_expected_orig']} / 盘上 {ow['disk_orig']}；"
           f"缺 {ow['missing_orig']['count']} / 孤儿 {ow['orphan_orig']['count']}；"
@@ -1167,7 +1213,10 @@ def main(argv: list[str] | None = None) -> int:
     print(f"证据：{outp}")
 
     orig_ok = True
-    if (write_original or orig_only) and not args.no_write_files and not args.verify_only:
+    # O 面判据（主校验面）：只要本次口径含 O 件（默认开 / `--orig-only`）即纳入判负 ——
+    # 「不写盘」(`--no-write-files`) 时同样判（否则删 O 件会被自愈或漏判，判据不可机械判负）。
+    # 仅 `--verify-only`（纯只读核对，不渲染）保持宽松。
+    if (write_original or orig_only) and not args.verify_only:
         o = vchk["original_crop"]
         ow = o["two_way_reconcile_orig"]
         orig_ok = (
@@ -1181,7 +1230,9 @@ def main(argv: list[str] | None = None) -> int:
         and vchk["page_cr_unique"]["conflicts"] == 0
         and vchk["null_new_columns"]["count"] == 0
         and vchk["name_regex_tiff"]["mismatch_count"] == 0
-        and tw["missing_tiff"]["count"] == 0 and tw["orphan_tiff"]["count"] == 0
+        # 校正面：仅当判定「纳入对账」的方向才计负（停产态缺校正件不判负；O 面永远判负）
+        and (not cf["missing_is_failure"] or tw["missing_tiff"]["count"] == 0)
+        and (not cf["orphan_is_failure"] or tw["orphan_tiff"]["count"] == 0)
         and tw["unexpected_P_files"]["count"] == 0
         and orig_ok
         and len(report["failures"]) == 0

@@ -1,0 +1,113 @@
+{
+  "generated_at": "2026-10-11T12:08:02+0800",
+  "criterion_source": "docs/image-original-crop-draft-v0.1.md §6（校正件停产）＋ Kevin 2026-10-11 停产态判据口径",
+  "scope": "tmp.pdf（书 31 枚 / 7 页 P13–P19；小书，代表性）",
+  "runs": {
+    "T1_default_paused_state": {
+      "expect": "GREEN / rc=0（停产态不因校正件缺失判负）",
+      "backfill_cli": {
+        "cmd": "backfill_book_images.py --book \"tmp.pdf\" --no-migrate --no-write-db",
+        "rc": 0,
+        "verdict": "GREEN",
+        "readings": {
+          "correction_face_state": "paused",
+          "correction_face_missing_is_failure": false,
+          "correction_face_orphan_is_failure": false,
+          "corrected_db_expected": 31,
+          "corrected_disk": 0,
+          "corrected_missing": 31,
+          "corrected_orphan": 0,
+          "o_db_expected": 31,
+          "o_disk": 31,
+          "o_missing": 0,
+          "o_orphan": 0,
+          "o4_container_all_ok": true,
+          "fp10_identical": true
+        }
+      },
+      "verify_original_crop": {
+        "cmd": "verify_original_crop.py --book \"tmp.pdf\" --page 13..19",
+        "rc": 0,
+        "verdict": "ALL PASS",
+        "readings": {
+          "correction_face_state": "paused",
+          "corrected_present": 0,
+          "o_rows": 31,
+          "o_present": 31,
+          "o_missing": 0,
+          "o5_missing_o": 0,
+          "o5_orphan_o": 0,
+          "verdict": {
+            "O-1": true,
+            "O-2": true,
+            "O-3": true,
+            "O-4": true,
+            "O-5": true,
+            "corrected_bytes_unchanged": true
+          },
+          "verdict_all_pass": true,
+          "failures": 0
+        }
+      }
+    },
+    "T2_one_O_renamed_reversible": {
+      "manipulation": "output/books/tmp.pdf/P14-C4-R1-O.tiff → *.pausecheck（可逆改名；read-only 跑，无自愈）",
+      "expect": "RED / rc!=0（O 面判据未被放宽；删 O 仍判负）",
+      "backfill_cli": {
+        "cmd": "backfill_book_images.py --book \"tmp.pdf\" --no-migrate --no-write-db --no-write-files",
+        "rc": 1,
+        "verdict": "RED",
+        "readings": {
+          "correction_face_state": "paused",
+          "correction_face_missing_is_failure": false,
+          "correction_face_orphan_is_failure": false,
+          "corrected_db_expected": 31,
+          "corrected_disk": 0,
+          "corrected_missing": 31,
+          "corrected_orphan": 0,
+          "o_db_expected": 31,
+          "o_disk": 30,
+          "o_missing": 1,
+          "o_orphan": 0,
+          "o4_container_all_ok": true,
+          "fp10_identical": true
+        }
+      },
+      "verify_original_crop": {
+        "cmd": "verify_original_crop.py --book \"tmp.pdf\" --page 13..19",
+        "rc": 1,
+        "verdict": "FAIL",
+        "readings": {
+          "correction_face_state": "paused",
+          "corrected_present": 0,
+          "o_rows": 31,
+          "o_present": 30,
+          "o_missing": 1,
+          "o5_missing_o": 1,
+          "o5_orphan_o": 0,
+          "verdict": {
+            "O-1": false,
+            "O-2": false,
+            "O-3": true,
+            "O-4": false,
+            "O-5": false,
+            "corrected_bytes_unchanged": true
+          },
+          "verdict_all_pass": false,
+          "failures": 1
+        }
+      },
+      "restore": {
+        "file": "output/books/tmp.pdf/P14-C4-R1-O.tiff",
+        "sha256_after": "375c4b99561d5077ffd7387cd650101f9615bf5b8073daab93a2a8683cfc097c",
+        "restored_ok": true,
+        "note": "改名验后原样复原（sha256 before==after=375c4b99…），零净变更"
+      }
+    }
+  },
+  "disk_after": {
+    "output_books_O_tiff": 8708,
+    "corrected_tiff": 0,
+    "tmp_pdf_files": 31
+  }
+}

@@ -87,3 +87,64 @@ E5 读数：仅校正件 / 仅 O **两态都不计缺失**；仅「皆无」计 
 
 Kevin 确定新的颜色 / 图像处理算法后另行下令开启；恢复动作：worker `process_page` 接回 `colorcal.correct_image_v3` + 写校正件（一行接回）；
 回填 CLI 加 `--write-corrected`（已就位）。本文件的 §1–§5（O 件）不受影响、继续有效。
+
+## 6. 停产态健康判据（Zang 2026-10-11 收口 · 照此实现并实跑验证）
+
+**口径**：① **O 面（O-1〜O-5）永远是主校验面**；② **校正面**（颜色校正件 `P<页>-C<列>-R<行>.tiff`）
+仅在「本次**显式开启写校正件**（`--write-corrected`）」**或**「盘上**确存在**校正件」时才纳入对账；
+**停产态（默认）下不得因校正面缺失报 RED**，汇总须明写 **`correction_face: paused`**；③ 判据**可机械判负**：
+**健康停产态退出码 = 0**；**人为删/改名任一 O 件 ⇒ 仍 RED**。
+
+**两条命令（只读、零写库；`--no-write-files` 防「缺件被自愈」）**：
+
+```bash
+cd /Users/kevin/bistro/xiai/feicui
+
+# ① 回填 CLI：双向对账＋汇总（默认＝停产态，只出 O）
+./venv/bin/python server/app/backfill_book_images.py --book "tmp.pdf" \
+    --no-migrate --no-write-db --evidence-dir ops/corrected-pause \
+    --summary-name pause-health-backfill-default.json
+#   健康停产态 ⇒ 末行 `== GREEN ==`、rc=0；`checks.correction_face.state == "paused"`
+
+# ② 原始切片 O 子集验收（O-1〜O-5 主校验面）
+./venv/bin/python ops/original-crop/verify_original_crop.py --book "tmp.pdf" \
+    --page 13 --page 14 --page 15 --page 16 --page 17 --page 18 --page 19 \
+    --out ops/corrected-pause/pause-health-crop-default.json
+#   健康停产态 ⇒ `ALL PASS: True`、rc=0；`correction_face.state == "paused"`
+```
+
+**期望字段（健康停产态）**：
+
+| 工具 | 字段 | 期望 |
+|---|---|---|
+| 回填 CLI | `checks.correction_face.state` | `"paused"` |
+| 回填 CLI | `checks.correction_face.missing_is_failure` | `false`（停产 ⇒ 缺校正件不判负） |
+| 回填 CLI | `checks.two_way_reconcile_tiff.missing_tiff.count` | `= 库期望校正件数`（列读数，**不计负**） |
+| 回填 CLI | `checks.original_crop.two_way_reconcile_orig.missing_orig.count` | `0`（**O 面判负**） |
+| 回填 CLI | `o4_container_check.all_ok` / `fp10_identical` | `true` |
+| 回填 CLI | `totals.correction_face` | `"paused"` |
+| O 子集验收 | `correction_face.state` | `"paused"` |
+| O 子集验收 | `verdict.O-1..O-5` | 全 `true` |
+| O 子集验收 | `verdict_all_pass` | `true` |
+
+**GREEN 示例（真读数 · `tmp.pdf` 31 枚 / 7 页）**：
+回填 CLI ⇒ `校正面（校正件）：state = paused｜库期望 31 / 盘上 0；缺 31 / 孤儿 0 …｜缺失判负 OFF（停产 paused）`
+＋ `双向对账（原始切片 O-5）：库期望 31 / 盘上 31；缺 0 / 孤儿 0` ⇒ **`== GREEN ==`，rc=0**。
+O 子集验收 ⇒ `{"O-1": true, "O-2": true, "O-3": true, "O-4": true, "O-5": true,…}` ⇒ **`ALL PASS: True`，rc=0**。
+
+**RED 反例（可机械判负 · 验后复原）**：把 `output/books/tmp.pdf/P14-C4-R1-O.tiff` 临时改名为
+`*.pausecheck`（**可逆**；用 `--no-write-files` 跑 ⇒ 缺件不被自愈）⇒
+回填 CLI：`O-5 缺 1` ⇒ **`== RED ==`，rc=1**；O 子集验收：`O-1/O-2/O-4/O-5 = false`、`failures 1` ⇒ **`ALL PASS: False`，rc=1**。
+**改名件已原样复原**（sha256 before ≡ after `375c4b99…`）⇒ 零净变更。
+
+**证据（本目录）**：`pause-health-verify.json`（两场景 × 两工具的 rc/字段真读数 ＋ 复原自证）；
+`pause-health-backfill-default.json` / `pause-health-backfill-o-deleted.json`（回填 CLI 原始 summary）；
+`pause-health-crop-default.json` / `pause-health-crop-o-deleted.json`（O 子集验收原始汇总）。
+
+**改动点（停产态判据收口）**：`server/app/backfill_book_images.py` `verify()` 增 `write_corrected` 入参，
+按「`active`（显式写校正件）/ `present`（盘上有校正件，孤儿判负）/ `paused`（皆否，不判负）」三态
+分类校正面；`main()` 的 `== GREEN/RED ==` 判定改为「仅纳入对账的方向才计负」，并把 O 面判负
+（`orig_ok`）从「写盘时才判」放宽为「口径含 O 件即判」（`--no-write-files` 同样判 ⇒ 删 O 可机械判负）。
+`ops/original-crop/verify_original_crop.py`：停产态下 O-3/O-2b 只在「校正件在盘」的行判、
+`missing_corrected` 只列不判负，新增 `correction_face` 字段；**O 面（O-1〜O-5）判据一字未改**。
+

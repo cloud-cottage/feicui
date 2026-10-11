@@ -1,0 +1,1628 @@
+{
+  "generated_at": "2026-10-11T12:07:48+0800",
+  "criterion_source": "docs/image-original-crop-draft-v0.1.md §2/§4（O-1〜O-5）",
+  "db_path": "/Users/kevin/bistro/xiai/data/yinpu.db",
+  "out_root": "/Users/kevin/bistro/xiai/feicui/output/books",
+  "page_filter": [
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19
+  ],
+  "render_dpi": 400.0,
+  "per_book": {
+    "tmp.pdf": {
+      "pdf_path": "/Users/kevin/bistro/xiai/feicui/tmp.pdf",
+      "pages": {
+        "13": {
+          "stamps": 6,
+          "o_present": 6,
+          "o_missing": 0,
+          "pixels_equal_render": 6,
+          "pixels_differ_corrected": 0,
+          "same_size_as_corrected": 0,
+          "container_ok": 6,
+          "corrected_present": 0,
+          "elapsed_s": 0.322
+        },
+        "14": {
+          "stamps": 7,
+          "o_present": 6,
+          "o_missing": 1,
+          "pixels_equal_render": 6,
+          "pixels_differ_corrected": 0,
+          "same_size_as_corrected": 0,
+          "container_ok": 6,
+          "corrected_present": 0,
+          "elapsed_s": 0.322
+        },
+        "15": {
+          "stamps": 7,
+          "o_present": 7,
+          "o_missing": 0,
+          "pixels_equal_render": 7,
+          "pixels_differ_corrected": 0,
+          "same_size_as_corrected": 0,
+          "container_ok": 7,
+          "corrected_present": 0,
+          "elapsed_s": 0.318
+        },
+        "16": {
+          "stamps": 3,
+          "o_present": 3,
+          "o_missing": 0,
+          "pixels_equal_render": 3,
+          "pixels_differ_corrected": 0,
+          "same_size_as_corrected": 0,
+          "container_ok": 3,
+          "corrected_present": 0,
+          "elapsed_s": 0.333
+        },
+        "17": {
+          "stamps": 2,
+          "o_present": 2,
+          "o_missing": 0,
+          "pixels_equal_render": 2,
+          "pixels_differ_corrected": 0,
+          "same_size_as_corrected": 0,
+          "container_ok": 2,
+          "corrected_present": 0,
+          "elapsed_s": 0.308
+        },
+        "18": {
+          "stamps": 2,
+          "o_present": 2,
+          "o_missing": 0,
+          "pixels_equal_render": 2,
+          "pixels_differ_corrected": 0,
+          "same_size_as_corrected": 0,
+          "container_ok": 2,
+          "corrected_present": 0,
+          "elapsed_s": 0.311
+        },
+        "19": {
+          "stamps": 4,
+          "o_present": 4,
+          "o_missing": 0,
+          "pixels_equal_render": 4,
+          "pixels_differ_corrected": 0,
+          "same_size_as_corrected": 0,
+          "container_ok": 4,
+          "corrected_present": 0,
+          "elapsed_s": 0.335
+        }
+      },
+      "pdf_found": true
+    }
+  },
+  "rows": [
+    {
+      "pdf_name": "tmp.pdf",
+      "page": 13,
+      "idx": 0,
+      "col": 1,
+      "row": 1,
+      "o_name": "P13-C1-R1-O.tiff",
+      "corrected_name": "P13-C1-R1.tiff",
+      "bbox": [
+        204,
+        269,
+        327,
+        391
+      ],
+      "raw_size": [
+        123,
+        122
+      ],
+      "o1_name_ok": true,
+      "o_mode": "RGB",
+      "o_size": [
+        123,
+        122
+      ],
+      "o_compression": 8,
+      "o_photometric": 2,
+      "o_predictor": 2,
+      "o_bits_per_sample": [
+        8,
+        8,
+        8
+      ],
+      "o_bytes": 422,
+      "o2_pixels_equal_400dpi_render": true,
+      "o4_container_ok": true,
+      "o3_same_size_as_corrected": null,
+      "o2_o_differs_from_corrected": null
+    },
+    {
+      "pdf_name": "tmp.pdf",
+      "page": 13,
+      "idx": 1,
+      "col": 2,
+      "row": 1,
+      "o_name": "P13-C2-R1-O.tiff",
+      "corrected_name": "P13-C2-R1.tiff",
+      "bbox": [
+        272,
+        795,
+        414,
+        940
+      ],
+      "raw_size": [
+        142,
+        145
+      ],
+      "o1_name_ok": true,
+      "o_mode": "RGB",
+      "o_size": [
+        142,
+        145
+      ],
+      "o_compression": 8,
+      "o_photometric": 2,
+      "o_predictor": 2,
+      "o_bits_per_sample": [
+        8,
+        8,
+        8
+      ],
+      "o_bytes": 7416,
+      "o2_pixels_equal_400dpi_render": true,
+      "o4_container_ok": true,
+      "o3_same_size_as_corrected": null,
+      "o2_o_differs_from_corrected": null
+    },
+    {
+      "pdf_name": "tmp.pdf",
+      "page": 13,
+      "idx": 2,
+      "col": 3,
+      "row": 1,
+      "o_name": "P13-C3-R1-O.tiff",
+      "corrected_name": "P13-C3-R1.tiff",
+      "bbox": [
+        477,
+        276,
+        569,
+        346
+      ],
+      "raw_size": [
+        92,
+        70
+      ],
+      "o1_name_ok": true,
+      "o_mode": "RGB",
+      "o_size": [
+        92,
+        70
+      ],
+      "o_compression": 8,
+      "o_photometric": 2,
+      "o_predictor": 2,
+      "o_bits_per_sample": [
+        8,
+        8,
+        8
+      ],
+      "o_bytes": 292,
+      "o2_pixels_equal_400dpi_render": true,
+      "o4_container_ok": true,
+      "o3_same_size_as_corrected": null,
+      "o2_o_differs_from_corrected": null
+    },
+    {
+      "pdf_name": "tmp.pdf",
+      "page": 13,
+      "idx": 3,
+      "col": 4,
+      "row": 3,
+      "o_name": "P13-C4-R3-O.tiff",
+      "corrected_name": "P13-C4-R3.tiff",
+      "bbox": [
+        628,
+        792,
+        770,
+        937
+      ],
+      "raw_size": [
+        142,
+        145
+      ],
+      "o1_name_ok": true,
+      "o_mode": "RGB",
+      "o_size": [
+        142,
+        145
+      ],
+      "o_compression": 8,
+      "o_photometric": 2,
+      "o_predictor": 2,
+      "o_bits_per_sample": [
+        8,
+        8,
+        8
+      ],
+      "o_bytes": 31286,
+      "o2_pixels_equal_400dpi_render": true,
+      "o4_container_ok": true,
+      "o3_same_size_as_corrected": null,
+      "o2_o_differs_from_corrected": null
+    },
+    {
+      "pdf_name": "tmp.pdf",
+      "page": 13,
+      "idx": 4,
+      "col": 4,
+      "row": 2,
+      "o_name": "P13-C4-R2-O.tiff",
+      "corrected_name": "P13-C4-R2.tiff",
+      "bbox": [
+        638,
+        800,
+        763,
+        926
+      ],
+      "raw_size": [
+        125,
+        126
+      ],
+      "o1_name_ok": true,
+      "o_mode": "RGB",
+      "o_size": [
+        125,
+        126
+      ],
+      "o_compression": 8,
+      "o_photometric": 2,
+      "o_predictor": 2,
+      "o_bits_per_sample": [
+        8,
+        8,
+        8
+      ],
+      "o_bytes": 23978,
+      "o2_pixels_equal_400dpi_render": true,
+      "o4_container_ok": true,
+      "o3_same_size_as_corrected": null,
+      "o2_o_differs_from_corrected": null
+    },
+    {
+      "pdf_name": "tmp.pdf",
+      "page": 13,
+      "idx": 5,
+      "col": 4,
+      "row": 1,
+      "o_name": "P13-C4-R1-O.tiff",
+      "corrected_name": "P13-C4-R1.tiff",
+      "bbox": [
+        732,
+        272,
+        815,
+        356
+      ],
+      "raw_size": [
+        83,
+        84
+      ],
+      "o1_name_ok": true,
+      "o_mode": "RGB",
+      "o_size": [
+        83,
+        84
+      ],
+      "o_compression": 8,
+      "o_photometric": 2,
+      "o_predictor": 2,
+      "o_bits_per_sample": [
+        8,
+        8,
+        8
+      ],
+      "o_bytes": 288,
+      "o2_pixels_equal_400dpi_render": true,
+      "o4_container_ok": true,
+      "o3_same_size_as_corrected": null,
+      "o2_o_differs_from_corrected": null
+    },
+    {
+      "pdf_name": "tmp.pdf",
+      "page": 14,
+      "idx": 0,
+      "col": 1,
+      "row": 2,
+      "o_name": "P14-C1-R2-O.tiff",
+      "corrected_name": "P14-C1-R2.tiff",
+      "bbox": [
+        206,
+        786,
+        305,
+        891
+      ],
+      "raw_size": [
+        99,
+        105
+      ],
+      "o1_name_ok": true,
+      "o_mode": "RGB",
+      "o_size": [
+        99,
+        105
+      ],
+      "o_compression": 8,
+      "o_photometric": 2,
+      "o_predictor": 2,
+      "o_bits_per_sample": [
+        8,
+        8,
+        8
+      ],
+      "o_bytes": 14156,
+      "o2_pixels_equal_400dpi_render": true,
+      "o4_container_ok": true,
+      "o3_same_size_as_corrected": null,
+      "o2_o_differs_from_corrected": null
+    },
+    {
+      "pdf_name": "tmp.pdf",
+      "page": 14,
+      "idx": 1,
+      "col": 1,
+      "row": 1,
+      "o_name": "P14-C1-R1-O.tiff",
+      "corrected_name": "P14-C1-R1.tiff",
+      "bbox": [
+        206,
+        262,
+        282,
+        373
+      ],
+      "raw_size": [
+        76,
+        111
+      ],
+      "o1_name_ok": true,
+      "o_mode": "RGB",
+      "o_size": [
+        76,
+        111
+      ],
+      "o_compression": 8,
+      "o_photometric": 2,
+      "o_predictor": 2,
+      "o_bits_per_sample": [
+        8,
+        8,
+        8
+      ],
+      "o_bytes": 322,
+      "o2_pixels_equal_400dpi_render": true,
+      "o4_container_ok": true,
+      "o3_same_size_as_corrected": null,
+      "o2_o_differs_from_corrected": null
+    },
+    {
+      "pdf_name": "tmp.pdf",
+      "page": 14,
+      "idx": 2,
+      "col": 2,
+      "row": 2,
+      "o_name": "P14-C2-R2-O.tiff",
+      "corrected_name": "P14-C2-R2.tiff",
+      "bbox": [
+        446,
+        793,
+        547,
+        899
+      ],
+      "raw_size": [
+        101,
+        106
+      ],
+      "o1_name_ok": true,
+      "o_mode": "RGB",
+      "o_size": [
+        101,
+        106
+      ],
+      "o_compression": 8,
+      "o_photometric": 2,
+      "o_predictor": 2,
+      "o_bits_per_sample": [
+        8,
+        8,
+        8
+      ],
+      "o_bytes": 900,
+      "o2_pixels_equal_400dpi_render": true,
+      "o4_container_ok": true,
+      "o3_same_size_as_corrected": null,
+      "o2_o_differs_from_corrected": null
+    },
+    {
+      "pdf_name": "tmp.pdf",
+      "page": 14,
+      "idx": 3,
+      "col": 2,
+      "row": 1,
+      "o_name": "P14-C2-R1-O.tiff",
+      "corrected_name": "P14-C2-R1.tiff",
+      "bbox": [
+        457,
+        264,
+        530,
+        337
+      ],
+      "raw_size": [
+        73,
+        73
+      ],
+      "o1_name_ok": true,
+      "o_mode": "RGB",
+      "o_size": [
+        73,
+        73
+      ],
+      "o_compression": 8,
+      "o_photometric": 2,
+      "o_predictor": 2,
+      "o_bits_per_sample": [
+        8,
+        8,
+        8
+      ],
+      "o_bytes": 370,
+      "o2_pixels_equal_400dpi_render": true,
+      "o4_container_ok": true,
+      "o3_same_size_as_corrected": null,
+      "o2_o_differs_from_corrected": null
+    },
+    {
+      "pdf_name": "tmp.pdf",
+      "page": 14,
+      "idx": 4,
+      "col": 3,
+      "row": 1,
+      "o_name": "P14-C3-R1-O.tiff",
+      "corrected_name": "P14-C3-R1.tiff",
+      "bbox": [
+        685,
+        261,
+        825,
+        397
+      ],
+      "raw_size": [
+        140,
+        136
+      ],
+      "o1_name_ok": true,
+      "o_mode": "RGB",
+      "o_size": [
+        140,
+        136
+      ],
+      "o_compression": 8,
+      "o_photometric": 2,
+      "o_predictor": 2,
+      "o_bits_per_sample": [
+        8,
+        8,
+        8
+      ],
+      "o_bytes": 466,
+      "o2_pixels_equal_400dpi_render": true,
+      "o4_container_ok": true,
+      "o3_same_size_as_corrected": null,
+      "o2_o_differs_from_corrected": null
+    },
+    {
+      "pdf_name": "tmp.pdf",
+      "page": 14,
+      "idx": 5,
+      "col": 3,
+      "row": 2,
+      "o_name": "P14-C3-R2-O.tiff",
+      "corrected_name": "P14-C3-R2.tiff",
+      "bbox": [
+        692,
+        794,
+        824,
+        933
+      ],
+      "raw_size": [
+        132,
+        139
+      ],
+      "o1_name_ok": true,
+      "o_mode": "RGB",
+      "o_size": [
+        132,
+        139
+      ],
+      "o_compression": 8,
+      "o_photometric": 2,
+      "o_predictor": 2,
+      "o_bits_per_sample": [
+        8,
+        8,
+        8
+      ],
+      "o_bytes": 20726,
+      "o2_pixels_equal_400dpi_render": true,
+      "o4_container_ok": true,
+      "o3_same_size_as_corrected": null,
+      "o2_o_differs_from_corrected": null
+    },
+    {
+      "pdf_name": "tmp.pdf",
+      "page": 14,
+      "idx": 6,
+      "col": 4,
+      "row": 1,
+      "o_name": "P14-C4-R1-O.tiff",
+      "corrected_name": "P14-C4-R1.tiff",
+      "bbox": [
+        1968,
+        845,
+        2289,
+        1106
+      ],
+      "raw_size": [
+        321,
+        261
+      ],
+      "o1_name_ok": true
+    },
+    {
+      "pdf_name": "tmp.pdf",
+      "page": 15,
+      "idx": 0,
+      "col": 1,
+      "row": 1,
+      "o_name": "P15-C1-R1-O.tiff",
+      "corrected_name": "P15-C1-R1.tiff",
+      "bbox": [
+        177,
+        250,
+        335,
+        408
+      ],
+      "raw_size": [
+        158,
+        158
+      ],
+      "o1_name_ok": true,
+      "o_mode": "RGB",
+      "o_size": [
+        158,
+        158
+      ],
+      "o_compression": 8,
+      "o_photometric": 2,
+      "o_predictor": 2,
+      "o_bits_per_sample": [
+        8,
+        8,
+        8
+      ],
+      "o_bytes": 554,
+      "o2_pixels_equal_400dpi_render": true,
+      "o4_container_ok": true,
+      "o3_same_size_as_corrected": null,
+      "o2_o_differs_from_corrected": null
+    },
+    {
+      "pdf_name": "tmp.pdf",
+      "page": 15,
+      "idx": 1,
+      "col": 1,
+      "row": 2,
+      "o_name": "P15-C1-R2-O.tiff",
+      "corrected_name": "P15-C1-R2.tiff",
+      "bbox": [
+        186,
+        812,
+        382,
+        1011
+      ],
+      "raw_size": [
+        196,
+        199
+      ],
+      "o1_name_ok": true,
+      "o_mode": "RGB",
+      "o_size": [
+        196,
+        199
+      ],
+      "o_compression": 8,
+      "o_photometric": 2,
+      "o_predictor": 2,
+      "o_bits_per_sample": [
+        8,
+        8,
+        8
+      ],
+      "o_bytes": 11208,
+      "o2_pixels_equal_400dpi_render": true,
+      "o4_container_ok": true,
+      "o3_same_size_as_corrected": null,
+      "o2_o_differs_from_corrected": null
+    },
+    {
+      "pdf_name": "tmp.pdf",
+      "page": 15,
+      "idx": 2,
+      "col": 2,
+      "row": 1,
+      "o_name": "P15-C2-R1-O.tiff",
+      "corrected_name": "P15-C2-R1.tiff",
+      "bbox": [
+        432,
+        244,
+        591,
+        455
+      ],
+      "raw_size": [
+        159,
+        211
+      ],
+      "o1_name_ok": true,
+      "o_mode": "RGB",
+      "o_size": [
+        159,
+        211
+      ],
+      "o_compression": 8,
+      "o_photometric": 2,
+      "o_predictor": 2,
+      "o_bits_per_sample": [
+        8,
+        8,
+        8
+      ],
+      "o_bytes": 798,
+      "o2_pixels_equal_400dpi_render": true,
+      "o4_container_ok": true,
+      "o3_same_size_as_corrected": null,
+      "o2_o_differs_from_corrected": null
+    },
+    {
+      "pdf_name": "tmp.pdf",
+      "page": 15,
+      "idx": 3,
+      "col": 2,
+      "row": 2,
+      "o_name": "P15-C2-R2-O.tiff",
+      "corrected_name": "P15-C2-R2.tiff",
+      "bbox": [
+        482,
+        815,
+        580,
+        952
+      ],
+      "raw_size": [
+        98,
+        137
+      ],
+      "o1_name_ok": true,
+      "o_mode": "RGB",
+      "o_size": [
+        98,
+        137
+      ],
+      "o_compression": 8,
+      "o_photometric": 2,
+      "o_predictor": 2,
+      "o_bits_per_sample": [
+        8,
+        8,
+        8
+      ],
+      "o_bytes": 18270,
+      "o2_pixels_equal_400dpi_render": true,
+      "o4_container_ok": true,
+      "o3_same_size_as_corrected": null,
+      "o2_o_differs_from_corrected": null
+    },
+    {
+      "pdf_name": "tmp.pdf",
+      "page": 15,
+      "idx": 4,
+      "col": 3,
+      "row": 3,
+      "o_name": "P15-C3-R3-O.tiff",
+      "corrected_name": "P15-C3-R3.tiff",
+      "bbox": [
+        692,
+        883,
+        747,
+        968
+      ],
+      "raw_size": [
+        55,
+        85
+      ],
+      "o1_name_ok": true,
+      "o_mode": "RGB",
+      "o_size": [
+        55,
+        85
+      ],
+      "o_compression": 8,
+      "o_photometric": 2,
+      "o_predictor": 2,
+      "o_bits_per_sample": [
+        8,
+        8,
+        8
+      ],
+      "o_bytes": 7148,
+      "o2_pixels_equal_400dpi_render": true,
+      "o4_container_ok": true,
+      "o3_same_size_as_corrected": null,
+      "o2_o_differs_from_corrected": null
+    },
+    {
+      "pdf_name": "tmp.pdf",
+      "page": 15,
+      "idx": 5,
+      "col": 3,
+      "row": 1,
+      "o_name": "P15-C3-R1-O.tiff",
+      "corrected_name": "P15-C3-R1.tiff",
+      "bbox": [
+        698,
+        243,
+        847,
+        446
+      ],
+      "raw_size": [
+        149,
+        203
+      ],
+      "o1_name_ok": true,
+      "o_mode": "RGB",
+      "o_size": [
+        149,
+        203
+      ],
+      "o_compression": 8,
+      "o_photometric": 2,
+      "o_predictor": 2,
+      "o_bits_per_sample": [
+        8,
+        8,
+        8
+      ],
+      "o_bytes": 650,
+      "o2_pixels_equal_400dpi_render": true,
+      "o4_container_ok": true,
+      "o3_same_size_as_corrected": null,
+      "o2_o_differs_from_corrected": null
+    },
+    {
+      "pdf_name": "tmp.pdf",
+      "page": 15,
+      "idx": 6,
+      "col": 3,
+      "row": 2,
+      "o_name": "P15-C3-R2-O.tiff",
+      "corrected_name": "P15-C3-R2.tiff",
+      "bbox": [
+        727,
+        806,
+        853,
+        971
+      ],
+      "raw_size": [
+        126,
+        165
+      ],
+      "o1_name_ok": true,
+      "o_mode": "RGB",
+      "o_size": [
+        126,
+        165
+      ],
+      "o_compression": 8,
+      "o_photometric": 2,
+      "o_predictor": 2,
+      "o_bits_per_sample": [
+        8,
+        8,
+        8
+      ],
+      "o_bytes": 30842,
+      "o2_pixels_equal_400dpi_render": true,
+      "o4_container_ok": true,
+      "o3_same_size_as_corrected": null,
+      "o2_o_differs_from_corrected": null
+    },
+    {
+      "pdf_name": "tmp.pdf",
+      "page": 16,
+      "idx": 0,
+      "col": 1,
+      "row": 1,
+      "o_name": "P16-C1-R1-O.tiff",
+      "corrected_name": "P16-C1-R1.tiff",
+      "bbox": [
+        180,
+        261,
+        587,
+        645
+      ],
+      "raw_size": [
+        407,
+        384
+      ],
+      "o1_name_ok": true,
+      "o_mode": "RGB",
+      "o_size": [
+        407,
+        384
+      ],
+      "o_compression": 8,
+      "o_photometric": 2,
+      "o_predictor": 2,
+      "o_bits_per_sample": [
+        8,
+        8,
+        8
+      ],
+      "o_bytes": 20422,
+      "o2_pixels_equal_400dpi_render": true,
+      "o4_container_ok": true,
+      "o3_same_size_as_corrected": null,
+      "o2_o_differs_from_corrected": null
+    },
+    {
+      "pdf_name": "tmp.pdf",
+      "page": 16,
+      "idx": 1,
+      "col": 2,
+      "row": 2,
+      "o_name": "P16-C2-R2-O.tiff",
+      "corrected_name": "P16-C2-R2.tiff",
+      "bbox": [
+        713,
+        837,
+        833,
+        954
+      ],
+      "raw_size": [
+        120,
+        117
+      ],
+      "o1_name_ok": true,
+      "o_mode": "RGB",
+      "o_size": [
+        120,
+        117
+      ],
+      "o_compression": 8,
+      "o_photometric": 2,
+      "o_predictor": 2,
+      "o_bits_per_sample": [
+        8,
+        8,
+        8
+      ],
+      "o_bytes": 16806,
+      "o2_pixels_equal_400dpi_render": true,
+      "o4_container_ok": true,
+      "o3_same_size_as_corrected": null,
+      "o2_o_differs_from_corrected": null
+    },
+    {
+      "pdf_name": "tmp.pdf",
+      "page": 16,
+      "idx": 2,
+      "col": 2,
+      "row": 1,
+      "o_name": "P16-C2-R1-O.tiff",
+      "corrected_name": "P16-C2-R1.tiff",
+      "bbox": [
+        746,
+        276,
+        842,
+        393
+      ],
+      "raw_size": [
+        96,
+        117
+      ],
+      "o1_name_ok": true,
+      "o_mode": "RGB",
+      "o_size": [
+        96,
+        117
+      ],
+      "o_compression": 8,
+      "o_photometric": 2,
+      "o_predictor": 2,
+      "o_bits_per_sample": [
+        8,
+        8,
+        8
+      ],
+      "o_bytes": 384,
+      "o2_pixels_equal_400dpi_render": true,
+      "o4_container_ok": true,
+      "o3_same_size_as_corrected": null,
+      "o2_o_differs_from_corrected": null
+    },
+    {
+      "pdf_name": "tmp.pdf",
+      "page": 17,
+      "idx": 0,
+      "col": 1,
+      "row": 1,
+      "o_name": "P17-C1-R1-O.tiff",
+      "corrected_name": "P17-C1-R1.tiff",
+      "bbox": [
+        159,
+        238,
+        412,
+        500
+      ],
+      "raw_size": [
+        253,
+        262
+      ],
+      "o1_name_ok": true,
+      "o_mode": "RGB",
+      "o_size": [
+        253,
+        262
+      ],
+      "o_compression": 8,
+      "o_photometric": 2,
+      "o_predictor": 2,
+      "o_bits_per_sample": [
+        8,
+        8,
+        8
+      ],
+      "o_bytes": 3118,
+      "o2_pixels_equal_400dpi_render": true,
+      "o4_container_ok": true,
+      "o3_same_size_as_corrected": null,
+      "o2_o_differs_from_corrected": null
+    },
+    {
+      "pdf_name": "tmp.pdf",
+      "page": 17,
+      "idx": 1,
+      "col": 2,
+      "row": 1,
+      "o_name": "P17-C2-R1-O.tiff",
+      "corrected_name": "P17-C2-R1.tiff",
+      "bbox": [
+        549,
+        247,
+        752,
+        455
+      ],
+      "raw_size": [
+        203,
+        208
+      ],
+      "o1_name_ok": true,
+      "o_mode": "RGB",
+      "o_size": [
+        203,
+        208
+      ],
+      "o_compression": 8,
+      "o_photometric": 2,
+      "o_predictor": 2,
+      "o_bits_per_sample": [
+        8,
+        8,
+        8
+      ],
+      "o_bytes": 758,
+      "o2_pixels_equal_400dpi_render": true,
+      "o4_container_ok": true,
+      "o3_same_size_as_corrected": null,
+      "o2_o_differs_from_corrected": null
+    },
+    {
+      "pdf_name": "tmp.pdf",
+      "page": 18,
+      "idx": 0,
+      "col": 1,
+      "row": 1,
+      "o_name": "P18-C1-R1-O.tiff",
+      "corrected_name": "P18-C1-R1.tiff",
+      "bbox": [
+        212,
+        281,
+        446,
+        516
+      ],
+      "raw_size": [
+        234,
+        235
+      ],
+      "o1_name_ok": true,
+      "o_mode": "RGB",
+      "o_size": [
+        234,
+        235
+      ],
+      "o_compression": 8,
+      "o_photometric": 2,
+      "o_predictor": 2,
+      "o_bits_per_sample": [
+        8,
+        8,
+        8
+      ],
+      "o_bytes": 4932,
+      "o2_pixels_equal_400dpi_render": true,
+      "o4_container_ok": true,
+      "o3_same_size_as_corrected": null,
+      "o2_o_differs_from_corrected": null
+    },
+    {
+      "pdf_name": "tmp.pdf",
+      "page": 18,
+      "idx": 1,
+      "col": 2,
+      "row": 1,
+      "o_name": "P18-C2-R1-O.tiff",
+      "corrected_name": "P18-C2-R1.tiff",
+      "bbox": [
+        589,
+        280,
+        817,
+        512
+      ],
+      "raw_size": [
+        228,
+        232
+      ],
+      "o1_name_ok": true,
+      "o_mode": "RGB",
+      "o_size": [
+        228,
+        232
+      ],
+      "o_compression": 8,
+      "o_photometric": 2,
+      "o_predictor": 2,
+      "o_bits_per_sample": [
+        8,
+        8,
+        8
+      ],
+      "o_bytes": 5428,
+      "o2_pixels_equal_400dpi_render": true,
+      "o4_container_ok": true,
+      "o3_same_size_as_corrected": null,
+      "o2_o_differs_from_corrected": null
+    },
+    {
+      "pdf_name": "tmp.pdf",
+      "page": 19,
+      "idx": 0,
+      "col": 1,
+      "row": 1,
+      "o_name": "P19-C1-R1-O.tiff",
+      "corrected_name": "P19-C1-R1.tiff",
+      "bbox": [
+        172,
+        244,
+        269,
+        339
+      ],
+      "raw_size": [
+        97,
+        95
+      ],
+      "o1_name_ok": true,
+      "o_mode": "RGB",
+      "o_size": [
+        97,
+        95
+      ],
+      "o_compression": 8,
+      "o_photometric": 2,
+      "o_predictor": 2,
+      "o_bits_per_sample": [
+        8,
+        8,
+        8
+      ],
+      "o_bytes": 344,
+      "o2_pixels_equal_400dpi_render": true,
+      "o4_container_ok": true,
+      "o3_same_size_as_corrected": null,
+      "o2_o_differs_from_corrected": null
+    },
+    {
+      "pdf_name": "tmp.pdf",
+      "page": 19,
+      "idx": 1,
+      "col": 2,
+      "row": 1,
+      "o_name": "P19-C2-R1-O.tiff",
+      "corrected_name": "P19-C2-R1.tiff",
+      "bbox": [
+        325,
+        841,
+        474,
+        992
+      ],
+      "raw_size": [
+        149,
+        151
+      ],
+      "o1_name_ok": true,
+      "o_mode": "RGB",
+      "o_size": [
+        149,
+        151
+      ],
+      "o_compression": 8,
+      "o_photometric": 2,
+      "o_predictor": 2,
+      "o_bits_per_sample": [
+        8,
+        8,
+        8
+      ],
+      "o_bytes": 1800,
+      "o2_pixels_equal_400dpi_render": true,
+      "o4_container_ok": true,
+      "o3_same_size_as_corrected": null,
+      "o2_o_differs_from_corrected": null
+    },
+    {
+      "pdf_name": "tmp.pdf",
+      "page": 19,
+      "idx": 2,
+      "col": 3,
+      "row": 2,
+      "o_name": "P19-C3-R2-O.tiff",
+      "corrected_name": "P19-C3-R2.tiff",
+      "bbox": [
+        668,
+        820,
+        851,
+        996
+      ],
+      "raw_size": [
+        183,
+        176
+      ],
+      "o1_name_ok": true,
+      "o_mode": "RGB",
+      "o_size": [
+        183,
+        176
+      ],
+      "o_compression": 8,
+      "o_photometric": 2,
+      "o_predictor": 2,
+      "o_bits_per_sample": [
+        8,
+        8,
+        8
+      ],
+      "o_bytes": 22570,
+      "o2_pixels_equal_400dpi_render": true,
+      "o4_container_ok": true,
+      "o3_same_size_as_corrected": null,
+      "o2_o_differs_from_corrected": null
+    },
+    {
+      "pdf_name": "tmp.pdf",
+      "page": 19,
+      "idx": 3,
+      "col": 3,
+      "row": 1,
+      "o_name": "P19-C3-R1-O.tiff",
+      "corrected_name": "P19-C3-R1.tiff",
+      "bbox": [
+        697,
+        253,
+        844,
+        391
+      ],
+      "raw_size": [
+        147,
+        138
+      ],
+      "o1_name_ok": true,
+      "o_mode": "RGB",
+      "o_size": [
+        147,
+        138
+      ],
+      "o_compression": 8,
+      "o_photometric": 2,
+      "o_predictor": 2,
+      "o_bits_per_sample": [
+        8,
+        8,
+        8
+      ],
+      "o_bytes": 470,
+      "o2_pixels_equal_400dpi_render": true,
+      "o4_container_ok": true,
+      "o3_same_size_as_corrected": null,
+      "o2_o_differs_from_corrected": null
+    }
+  ],
+  "failures": [
+    {
+      "pdf_name": "tmp.pdf",
+      "page": 14,
+      "idx": 6,
+      "reason": "o_missing: P14-C4-R1-O.tiff"
+    }
+  ],
+  "timing": {},
+  "corrected_bytes_unchanged": {},
+  "elapsed_s_total": 2.252,
+  "summary": {
+    "books": [
+      "tmp.pdf"
+    ],
+    "pages": [
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19
+    ],
+    "rows_checked": 31,
+    "O-1 naming": {
+      "rows": 31,
+      "name_ok": 31,
+      "mismatch": 0,
+      "o_present": 30,
+      "o_missing": 1
+    },
+    "O-2 originality": {
+      "decoded_pixels_equal_400dpi_render": 30,
+      "o_differs_from_corrected": 0,
+      "v3_applied_rows": 0,
+      "o2_expected_differs": 0,
+      "rows": 31,
+      "criterion": "解码像素 ≡ 400dpi 渲染原片（计数 == 行数）且 「O ≠ 校正件」计数 == V3-applied 行数（V3 skipped(ink_ratio<2%) 行 V3 是 no-op ⇒ 校正件 ≡ 原片 ⇒ O == 校正件合法）"
+    },
+    "O-3 geometry": {
+      "same_size_as_corrected": 0,
+      "judged_rows": 0,
+      "rows": 31,
+      "note": "停产态：校正面缺席的行不参与 O-3 对账（judged_rows=0 ⇒ 不算负）"
+    },
+    "O-4 container": {
+      "ok_rows": 30,
+      "rows": 31,
+      "criterion": "mode=RGB && Photometric=2 && Compression=8 && Predictor=2"
+    },
+    "O-5 two_way_reconcile": {
+      "db_expected_o_subset": 31,
+      "disk_o_total": 30,
+      "disk_corrected_total": 0,
+      "missing_o": {
+        "count": 1,
+        "detail": [
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P14-C4-R1-O.tiff"
+        ]
+      },
+      "orphan_o": {
+        "count": 0,
+        "detail": []
+      },
+      "missing_corrected": {
+        "count": 31,
+        "detail": [
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P13-C1-R1.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P13-C2-R1.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P13-C3-R1.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P13-C4-R1.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P13-C4-R2.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P13-C4-R3.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P14-C1-R1.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P14-C1-R2.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P14-C2-R1.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P14-C2-R2.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P14-C3-R1.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P14-C3-R2.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P14-C4-R1.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P15-C1-R1.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P15-C1-R2.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P15-C2-R1.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P15-C2-R2.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P15-C3-R1.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P15-C3-R2.tiff",
+          "/Users/kevin/bistro/xiai/feicui/output/books/tmp.pdf/P15-C3-R3.tiff"
+        ],
+        "judged": false,
+        "note": "校正面停产（paused）⇒ missing_corrected 不计负"
+      }
+    },
+    "sizes": {
+      "o_files": 30,
+      "o_total_bytes": 247124,
+      "o_total_mib": 0.236,
+      "o_mean_bytes": 8237.5,
+      "o_max_bytes": 31286,
+      "o_max_rel": "output/books/tmp.pdf/P13-C4-R3-O.tiff",
+      "limit_4mib": 4194304,
+      "o_max_within_4mib": true,
+      "corrected_total_bytes": 0,
+      "corrected_total_mib": 0.0,
+      "corrected_mean_bytes": null,
+      "ratio_o_over_corrected": null
+    },
+    "timing": {
+      "elapsed_s_total": 2.252,
+      "pages": 7,
+      "per_page": [
+        {
+          "pdf_name": "tmp.pdf",
+          "page": 13,
+          "stamps": 6,
+          "o_present": 6,
+          "o_missing": 0,
+          "pixels_equal_render": 6,
+          "pixels_differ_corrected": 0,
+          "same_size_as_corrected": 0,
+          "container_ok": 6,
+          "corrected_present": 0,
+          "elapsed_s": 0.322
+        },
+        {
+          "pdf_name": "tmp.pdf",
+          "page": 14,
+          "stamps": 7,
+          "o_present": 6,
+          "o_missing": 1,
+          "pixels_equal_render": 6,
+          "pixels_differ_corrected": 0,
+          "same_size_as_corrected": 0,
+          "container_ok": 6,
+          "corrected_present": 0,
+          "elapsed_s": 0.322
+        },
+        {
+          "pdf_name": "tmp.pdf",
+          "page": 15,
+          "stamps": 7,
+          "o_present": 7,
+          "o_missing": 0,
+          "pixels_equal_render": 7,
+          "pixels_differ_corrected": 0,
+          "same_size_as_corrected": 0,
+          "container_ok": 7,
+          "corrected_present": 0,
+          "elapsed_s": 0.318
+        },
+        {
+          "pdf_name": "tmp.pdf",
+          "page": 16,
+          "stamps": 3,
+          "o_present": 3,
+          "o_missing": 0,
+          "pixels_equal_render": 3,
+          "pixels_differ_corrected": 0,
+          "same_size_as_corrected": 0,
+          "container_ok": 3,
+          "corrected_present": 0,
+          "elapsed_s": 0.333
+        },
+        {
+          "pdf_name": "tmp.pdf",
+          "page": 17,
+          "stamps": 2,
+          "o_present": 2,
+          "o_missing": 0,
+          "pixels_equal_render": 2,
+          "pixels_differ_corrected": 0,
+          "same_size_as_corrected": 0,
+          "container_ok": 2,
+          "corrected_present": 0,
+          "elapsed_s": 0.308
+        },
+        {
+          "pdf_name": "tmp.pdf",
+          "page": 18,
+          "stamps": 2,
+          "o_present": 2,
+          "o_missing": 0,
+          "pixels_equal_render": 2,
+          "pixels_differ_corrected": 0,
+          "same_size_as_corrected": 0,
+          "container_ok": 2,
+          "corrected_present": 0,
+          "elapsed_s": 0.311
+        },
+        {
+          "pdf_name": "tmp.pdf",
+          "page": 19,
+          "stamps": 4,
+          "o_present": 4,
+          "o_missing": 0,
+          "pixels_equal_render": 4,
+          "pixels_differ_corrected": 0,
+          "same_size_as_corrected": 0,
+          "container_ok": 4,
+          "corrected_present": 0,
+          "elapsed_s": 0.335
+        }
+      ],
+      "stamps": 31,
+      "ms_per_stamp_incl_render": 72.6,
+      "s_per_page": 0.322
+    }
+  },
+  "correction_face": {
+    "state": "paused",
+    "corrected_present": 0,
+    "corrected_absent": 31,
+    "criterion": "校正件已暂停生产（docs/image-original-crop-draft-v0.1.md §6）：校正面缺席（paused）**不计负**；在盘的校正件仍纳入对账（O-3 尺寸 / O-2b O≠校正件）。**O 面（O-1〜O-5）判据不变**：删 O 件仍 RED。",
+    "missing_detail": [
+      {
+        "pdf_name": "tmp.pdf",
+        "page": 13,
+        "idx": 0,
+        "corrected_name": "P13-C1-R1.tiff",
+        "reason": "corrected_absent_paused"
+      },
+      {
+        "pdf_name": "tmp.pdf",
+        "page": 13,
+        "idx": 1,
+        "corrected_name": "P13-C2-R1.tiff",
+        "reason": "corrected_absent_paused"
+      },
+      {
+        "pdf_name": "tmp.pdf",
+        "page": 13,
+        "idx": 2,
+        "corrected_name": "P13-C3-R1.tiff",
+        "reason": "corrected_absent_paused"
+      },
+      {
+        "pdf_name": "tmp.pdf",
+        "page": 13,
+        "idx": 3,
+        "corrected_name": "P13-C4-R3.tiff",
+        "reason": "corrected_absent_paused"
+      },
+      {
+        "pdf_name": "tmp.pdf",
+        "page": 13,
+        "idx": 4,
+        "corrected_name": "P13-C4-R2.tiff",
+        "reason": "corrected_absent_paused"
+      },
+      {
+        "pdf_name": "tmp.pdf",
+        "page": 13,
+        "idx": 5,
+        "corrected_name": "P13-C4-R1.tiff",
+        "reason": "corrected_absent_paused"
+      },
+      {
+        "pdf_name": "tmp.pdf",
+        "page": 14,
+        "idx": 0,
+        "corrected_name": "P14-C1-R2.tiff",
+        "reason": "corrected_absent_paused"
+      },
+      {
+        "pdf_name": "tmp.pdf",
+        "page": 14,
+        "idx": 1,
+        "corrected_name": "P14-C1-R1.tiff",
+        "reason": "corrected_absent_paused"
+      },
+      {
+        "pdf_name": "tmp.pdf",
+        "page": 14,
+        "idx": 2,
+        "corrected_name": "P14-C2-R2.tiff",
+        "reason": "corrected_absent_paused"
+      },
+      {
+        "pdf_name": "tmp.pdf",
+        "page": 14,
+        "idx": 3,
+        "corrected_name": "P14-C2-R1.tiff",
+        "reason": "corrected_absent_paused"
+      },
+      {
+        "pdf_name": "tmp.pdf",
+        "page": 14,
+        "idx": 4,
+        "corrected_name": "P14-C3-R1.tiff",
+        "reason": "corrected_absent_paused"
+      },
+      {
+        "pdf_name": "tmp.pdf",
+        "page": 14,
+        "idx": 5,
+        "corrected_name": "P14-C3-R2.tiff",
+        "reason": "corrected_absent_paused"
+      },
+      {
+        "pdf_name": "tmp.pdf",
+        "page": 15,
+        "idx": 0,
+        "corrected_name": "P15-C1-R1.tiff",
+        "reason": "corrected_absent_paused"
+      },
+      {
+        "pdf_name": "tmp.pdf",
+        "page": 15,
+        "idx": 1,
+        "corrected_name": "P15-C1-R2.tiff",
+        "reason": "corrected_absent_paused"
+      },
+      {
+        "pdf_name": "tmp.pdf",
+        "page": 15,
+        "idx": 2,
+        "corrected_name": "P15-C2-R1.tiff",
+        "reason": "corrected_absent_paused"
+      },
+      {
+        "pdf_name": "tmp.pdf",
+        "page": 15,
+        "idx": 3,
+        "corrected_name": "P15-C2-R2.tiff",
+        "reason": "corrected_absent_paused"
+      },
+      {
+        "pdf_name": "tmp.pdf",
+        "page": 15,
+        "idx": 4,
+        "corrected_name": "P15-C3-R3.tiff",
+        "reason": "corrected_absent_paused"
+      },
+      {
+        "pdf_name": "tmp.pdf",
+        "page": 15,
+        "idx": 5,
+        "corrected_name": "P15-C3-R1.tiff",
+        "reason": "corrected_absent_paused"
+      },
+      {
+        "pdf_name": "tmp.pdf",
+        "page": 15,
+        "idx": 6,
+        "corrected_name": "P15-C3-R2.tiff",
+        "reason": "corrected_absent_paused"
+      },
+      {
+        "pdf_name": "tmp.pdf",
+        "page": 16,
+        "idx": 0,
+        "corrected_name": "P16-C1-R1.tiff",
+        "reason": "corrected_absent_paused"
+      }
+    ]
+  },
+  "verdict": {
+    "O-1": false,
+    "O-2": false,
+    "O-3": true,
+    "O-4": false,
+    "O-5": false,
+    "corrected_bytes_unchanged": true
+  },
+  "verdict_all_pass": false
+}

@@ -16,6 +16,11 @@
 
 **只读**：不写盘、不写库（唯一写件 ＝ 本脚本的 `--out` 汇总 JSON）。
 
+★ **校正面停产态判据（Kevin 2026-10-11 口径；收口）**：校正件已**暂停生产** ⇒ 停产态下
+**校正面缺席（`correction_face: paused`）不计负** —— O-3（尺寸）/ O-2b（O≠校正件）只在
+「校正件确实在盘」的行上判，`missing_corrected` 只列不判负。**O 面（O-1〜O-5）判据不变**：
+删掉任一 O 件 ⇒ `o_missing>0` ∧ `missing_o>0` ⇒ 仍 **RED**。
+
 用法：
     cd <feicui> && ./venv/bin/python ops/original-crop/verify_original_crop.py \
         --book "秦印类编 检索版.pdf" --page 40 --page 300 \
@@ -170,6 +175,9 @@ def main(argv=None) -> int:
     n_v3_applied = 0
     n_o_same_size_as_corrected = 0
     n_container_ok = 0
+    # 校正面（校正件）在场/缺席计数 —— 停产态：校正面缺席属预期，不计负（Kevin 2026-10-11 口径）。
+    n_corrected_present = 0
+    correction_face_missing: list[dict] = []
     o_sizes: list[int] = []
     corr_sizes: list[int] = []
     db_expected_o: set[str] = set()
@@ -202,7 +210,8 @@ def main(argv=None) -> int:
                 naming.assert_page_unique(pairs)
                 pg_stat = {"stamps": 0, "o_present": 0, "o_missing": 0,
                            "pixels_equal_render": 0, "pixels_differ_corrected": 0,
-                           "same_size_as_corrected": 0, "container_ok": 0, "elapsed_s": 0.0}
+                           "same_size_as_corrected": 0, "container_ok": 0,
+                           "corrected_present": 0, "elapsed_s": 0.0}
                 for k, r in enumerate(page_rows):
                     c, rr = pairs[k]
                     x1, y1, x2, y2 = (int(round(v)) for v in bboxes[k])
@@ -272,6 +281,8 @@ def main(argv=None) -> int:
 
                     # O-2 后半：O ≠ 校正件（校正件背景纯白 / O 保留原背景）
                     if c_path.is_file():
+                        n_corrected_present += 1
+                        pg_stat["corrected_present"] += 1
                         with PIL_Image.open(c_path) as imc:
                             c_arr = np.asarray(imc)
                         rec["corrected_size"] = list(imc.size)
@@ -306,10 +317,12 @@ def main(argv=None) -> int:
                             rep["failures"].append({"pdf_name": b, "page": pg, "idx": int(r["idx"]),
                                                     "reason": "o2_skipped_row_o_differs_corrected"})
                     else:
+                        # 校正面停产（paused）：校正件缺席属预期 —— **不计负**，只记入校正面清单。
                         rec["o3_same_size_as_corrected"] = None
                         rec["o2_o_differs_from_corrected"] = None
-                        rep["failures"].append({"pdf_name": b, "page": pg, "idx": int(r["idx"]),
-                                                "reason": f"corrected_missing: {c_name}"})
+                        correction_face_missing.append(
+                            {"pdf_name": b, "page": pg, "idx": int(r["idx"]),
+                             "corrected_name": c_name, "reason": "corrected_absent_paused"})
                     rep["rows"].append(rec)
 
                 # 盘上文件清点（该页目标名）
@@ -363,7 +376,9 @@ def main(argv=None) -> int:
             "criterion": "解码像素 ≡ 400dpi 渲染原片（计数 == 行数）且 「O ≠ 校正件」计数 == V3-applied 行数"
                          "（V3 skipped(ink_ratio<2%) 行 V3 是 no-op ⇒ 校正件 ≡ 原片 ⇒ O == 校正件合法）",
         },
-        "O-3 geometry": {"same_size_as_corrected": n_o_same_size_as_corrected, "rows": n_rows},
+        "O-3 geometry": {"same_size_as_corrected": n_o_same_size_as_corrected,
+                         "judged_rows": n_corrected_present, "rows": n_rows,
+                         "note": "停产态：校正面缺席的行不参与 O-3 对账（judged_rows=0 ⇒ 不算负）"},
         "O-4 container": {"ok_rows": n_container_ok, "rows": n_rows,
                           "criterion": "mode=RGB && Photometric=2 && Compression=8 && Predictor=2"},
         "O-5 two_way_reconcile": {
@@ -371,7 +386,9 @@ def main(argv=None) -> int:
             "disk_corrected_total": len(disk_corr),
             "missing_o": {"count": len(miss_o), "detail": miss_o[:20]},
             "orphan_o": {"count": len(orph_o), "detail": orph_o[:20]},
-            "missing_corrected": {"count": len(miss_c), "detail": miss_c[:20]},
+            "missing_corrected": {"count": len(miss_c), "detail": miss_c[:20],
+                                  "judged": bool(n_corrected_present),
+                                  "note": "校正面停产（paused）⇒ missing_corrected 不计负"},
         },
         "sizes": {
             "o_files": len(o_sizes), "o_total_bytes": tot_o,
@@ -423,14 +440,25 @@ def main(argv=None) -> int:
         rep["corrected_bytes_unchanged"] = {
             "checked": len(before), "unchanged": unchanged, "changed": changed,
             "missing": missing, "changed_detail": changed_list[:20],
-            "criterion": "既有校正件 sha256 before ≡ after（红线①「只增文件」）",
+            "criterion": "既有校正件 sha256 before ≡ after（红线①「只增文件」）；"
+                         "停产后 missing>0 属预期（校正面停产），不计负 —— 仅 changed>0 判负。",
         }
+
+    rep["correction_face"] = {
+        "state": "present" if n_corrected_present > 0 else "paused",
+        "corrected_present": n_corrected_present,
+        "corrected_absent": n_rows - n_corrected_present,
+        "criterion": "校正件已暂停生产（docs/image-original-crop-draft-v0.1.md §6）：校正面缺席"
+                     "（paused）**不计负**；在盘的校正件仍纳入对账（O-3 尺寸 / O-2b O≠校正件）。"
+                     "**O 面（O-1〜O-5）判据不变**：删 O 件仍 RED。",
+        "missing_detail": correction_face_missing[:20],
+    }
 
     rep["verdict"] = {
         "O-1": rep["summary"]["O-1 naming"]["mismatch"] == 0 and n_o_missing == 0,
         "O-2": (n_o_pixels_equal_render == n_rows
                 and n_o_pixels_differ_corrected == n_v3_applied),
-        "O-3": n_o_same_size_as_corrected == n_rows,
+        "O-3": n_o_same_size_as_corrected == n_corrected_present,
         "O-4": n_container_ok == n_rows,
         "O-5": (len(miss_o) == 0 and len(orph_o) == 0),
         "corrected_bytes_unchanged": (not before) or rep["corrected_bytes_unchanged"]["changed"] == 0,
@@ -444,6 +472,9 @@ def main(argv=None) -> int:
     print(json.dumps(rep["summary"], ensure_ascii=False, indent=2)[:4000])
     print("\n判决：", json.dumps(rep["verdict"], ensure_ascii=False),
           "⇒ ALL PASS:", rep["verdict_all_pass"])
+    cf = rep["correction_face"]
+    print(f"校正面：state = {cf['state']}｜校正件在盘 {cf['corrected_present']} / 缺席 {cf['corrected_absent']}"
+          f"（停产态缺席不计负）")
     print(f"失败清单 {len(rep['failures'])} 条；证据 {args.out}")
     return 0 if rep["verdict_all_pass"] else 1
 

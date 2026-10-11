@@ -1,4 +1,4 @@
-colorcal 自检（V2 双锚点仿射）  |  python=/Users/kevin/bistro/xiai/feicui/venv/bin/python
+colorcal 自检（V2 双锚点仿射 ＋ V1b 白平衡）  |  python=/Users/kevin/bistro/xiai/feicui/venv/bin/python
 repo=/Users/kevin/bistro/xiai/feicui
 
 === 附：ink_mask 逐像素判据（§2.2.1）===
@@ -21,33 +21,63 @@ repo=/Users/kevin/bistro/xiai/feicui
   [PASS] (b) 两条同时成立（mode=applied、未退化）  | a=(1.696, 1.458, 1.786) ∈ [0,3]；|b|≤255
   [PASS] apply_affine(a=1,b=0) 恒等
 
-=== (c) 退化用例：纸≈印泥色 ⇒ skipped(degenerate) ===
-      ink_ratio=1.0000  min|C−W|_lin=0.0  mode=skipped  marker=skipped(degenerate)  reason=degenerate
-  [PASS] (c) mode == 'skipped'
-  [PASS] (c) marker == 'skipped(degenerate)'
-  [PASS] (c) skip_reason == 'degenerate'
-  [PASS] (c) 图未被改动（逐字节相等）
+=== (a) 纸集排除印泥（★ v0.1 修订 3）⇒ 高印泥占比图不再越界 ===
+      纸锚点 W 对照:  不排除印泥(exclude_ink=False) = (230.0, 170.0, 140.0)（像素 6912，V≥0.902）
+                      排除印泥(exclude_ink=True ) = (225.0, 218.0, 205.0)（像素 40320，V≥0.882）
+      [纸 (225, 218, 205) | 印泥核心 (200, 95, 45) | 淡印泥 (230, 170, 140) | 掩膜占比 30%]
+      不排除印泥: raw_a=(1.946, 3.199, 4.173) 越界通道=2 ⇒ mode=skipped marker=skipped(limiting)
+      排除印泥  : raw_a=(2.372, 1.568, 1.686) 越界通道=0 ⇒ mode=applied a=(2.372, 1.568, 1.686)
+  [PASS] (a) 两口径的纸锚点 W 确实不同（证明排除印泥生效）
+  [PASS] (a) 对照（不排除印泥）⇒ 至少一通道 raw_a 越界（旧口径的病态）  | 越界通道数=2
+  [PASS] (a) 对照（不排除印泥）⇒ skipped(limiting)
+  [PASS] (a) 默认（排除印泥）⇒ raw_a 全在界内且 a 全在 [0,3] ⇒ applied  | mode=applied a=(2.372, 1.568, 1.686)
+      [V1b] k=(1.3281, 1.4263, 1.638) mode=applied marker=applied
+      [V1b] 纸→#FFFFFF ΔE 前=9.9128 后=0.0000 | 核心→#C95021 ΔE 前=3.9220 后=9.9936
 
-=== (d) 限幅越界用例 ⇒ 标记可见 ===
-      min|C−W|_lin=0.0764  raw_a=(5.447, 1.236, 1.254)
-      clamped=True channels=['r']  mode=skipped  marker=skipped(degenerate)  reason=limiting
-  [PASS] (d) 越界 ⇒ mode == 'skipped'
-  [PASS] (d) marker == 'skipped(degenerate)'（标记可见）
-  [PASS] (d) skip_reason == 'limiting'
-  [PASS] (d) 越界通道如实回报（clamped=True 且列出通道）  | channels=['r']
-  [PASS] (d) 图未被改动（未施加）
+=== (g) V1b（可选口径）：纸 → #FFFFFF 白平衡 ===
+      k=(1.2154, 1.3416, 1.7314)  min k=1.2154  mode=applied  marker=applied  clamped=False
+      纸→#FFFFFF ΔE: 前=11.9058 → 后=0.0000
+      核心→#C95021 ΔE: 前=3.9220 → 后=8.4148（**不咬靶色 ⇒ 不为 0**）
+  [PASS] (g) V1b: mode=applied、未越界
+  [PASS] (g) V1b: 纸区质心 → #FFFFFF 的 ΔE2000 ≤ 3  | ΔE=0.0000（前 11.9058）
+  [PASS] (g) V1b: k ≥ 1（几何必然：纸不可能比纯白更亮）  | min k=1.215383
+  [PASS] (g) V1b: 核心质心 ΔE 后 > 0.5（不咬靶色，与默认路径形成对照）  | ΔE_after=8.4148（默认双锚点同图 ≈0）
+      [越界臂] 纸(80,78,74)（不入掩膜）⇒ raw_gains=(12.466, 13.126, 14.603) min|W|_lin=0.06847816984440017 mode=skipped marker=skipped(limiting)
+  [PASS] (g) V1b 越界 ⇒ skipped(limiting)（独立标记）  | marker=skipped(limiting)
+  [PASS] (g) V1b 越界臂图未被改动
 
-=== (e) 低印泥占比 → skipped(ink_ratio=…) ===
-      ink_ratio=0.0100  mode=skipped  marker=skipped(ink_ratio=0.010000)
-  [PASS] (e) mode == 'skipped' 且 skip_reason == 'ink_ratio'
-  [PASS] (e) marker 形如 skipped(ink_ratio=…)
+=== (e) 退化用例：纸锚点不可得 ⇒ skipped(degenerate) ===
+      ink_ratio=1.0000  min|C−W|_lin=None  paper_pixels=0  paper_anchor_unavailable=True
+      mode=skipped  marker=skipped(degenerate)  reason=degenerate
+  [PASS] (e) mode == 'skipped'
+  [PASS] (e) marker == 'skipped(degenerate)'
+  [PASS] (e) skip_reason == 'degenerate'
   [PASS] (e) 图未被改动（逐字节相等）
-  [PASS] (e) delta_e_after == delta_e_before（未校正）
-  [PASS] (e) 3% > 阈值 ⇒ applied
+
+=== (b) 限幅越界用例 ⇒ 独立标记 skipped(limiting) ===
+      min|C−W|_lin=0.0764  raw_a=(5.447, 1.236, 1.254)
+      clamped=True channels=['r']  mode=skipped  marker=skipped(limiting)  reason=limiting
+  [PASS] (b) 越界 ⇒ mode == 'skipped'
+  [PASS] (b) marker == 'skipped(limiting)'（★ 独立标记，不再并入 degenerate）
+  [PASS] (b) marker != 'skipped(degenerate)'
+  [PASS] (b) skip_reason == 'limiting'
+  [PASS] (b) 越界通道如实回报（clamped=True 且列出通道）  | channels=['r']
+  [PASS] (b) 图未被改动（未施加）
+      [对照] 放宽 a_max=6 / |b|≤3000 ⇒ mode=applied marker=applied a=(5.447, 1.236, 1.254)
+  [PASS] (b) 默认不放宽上限（a_max=3、|b|≤255）；同时放宽 a/b 后同图 applied
+
+=== (f) 低印泥占比 → skipped(ink_ratio=…) ===
+      ink_ratio=0.0100  mode=skipped  marker=skipped(ink_ratio=0.010000)
+  [PASS] (f) mode == 'skipped' 且 skip_reason == 'ink_ratio'
+  [PASS] (f) marker 形如 skipped(ink_ratio=…)
+  [PASS] (f) 图未被改动（逐字节相等）
+  [PASS] (f) delta_e_after == delta_e_before（未校正）
+  [PASS] (f) 3% > 阈值 ⇒ applied
+  [PASS] (f) V1b 同跳过口径 ⇒ skipped(ink_ratio=…)
 
 === 附：两侧 import 形态（server/.venv 无 numpy）===
   [PASS] 接口层 server/.venv（无 numpy）可 import colorcal：常量 ✓ 色差 ✓ 仿射系数 ✓ 标量仿射 ✓ 像素函数抛错 ✓  | API_OK
 
 ========================================================================
-合计 23/23 PASS
+合计 36/36 PASS
 ALL PASS ✅

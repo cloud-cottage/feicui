@@ -7,16 +7,32 @@
   1. **印泥掩膜** `ink_mask`：`r > g+15` 且 `r > b+15` 且 `S > 0.25`（`S =(max−min)/max`）。**未变**。
   2. **印泥锚点 `C`＝「主色调」＝核心质心**：掩膜内**饱和度 ≥ p75** 的像素均值（**非**掩膜全体均值——
      全体均值含大量淡边像素、离纸色太近 ⇒ 两点定线病态）。
-  3. **纸区锚点 `W`**：**亮度（`V=max(RGB)/255`）≥ p90** 的像素均值。
+  3. **纸区锚点 `W`**：**「非印泥 ∧ 亮度（`V=max(RGB)/255`）≥ p90」** 的像素均值（**★ v0.1 修订 3**）。
+     纸集**先排除印泥像素**，再在**非印泥集**上取 p90 —— 高印泥占比的页上，若把淡印泥算进纸集，
+     `W` 被拉近 `C` ⇒ 两点定线病态、**蓝/绿通道 `a` 越界**（实测 120 抽样 limiting **32.5% → 14.1%**、
+     生效 **33 → 61**，而 ΔE 中位不变）。开关 `paper_centroid(..., exclude_ink=True)`（**默认 True**）；
+     `exclude_ink=False` 只作**对照读数**（旧口径）。
   4. 两点定线，**每通道 `out = a·in + b`**（**线性 RGB 中解、sRGB 往返**）：
        锚点② `C` → **`#C95021`**（`TARGET_RGB`）；锚点① `W` → **`#FFFFFF`**（`WHITE_RGB`）。
        线性 0–255 标度上逐字成立：`a = (T − 255)/(C − W)`、`b = 255 − a·W`。
   5. **限幅** `a ∈ [A_MIN, A_MAX]`（默认 0 / 3）、`b ∈ [B_MIN, B_MAX]`（默认 −255 / 255）；
-     **越界** ⇒ `skipped(degenerate)`（`skip_reason="limiting"`）；**病态**（线性空间任一分量
-     `|C−W| < DEGENERATE_MIN_LIN`＝0.02）⇒ `skipped(degenerate)`（`skip_reason="degenerate"`）。
+     **越界** ⇒ `skipped(limiting)`（`skip_reason="limiting"`，**★ v0.1 修订 4：独立标记，不再并入 degenerate**；
+     默认**不放宽上限**）；**病态**（线性空间任一分量 `|C−W| < DEGENERATE_MIN_LIN`＝0.02，
+     或**纸锚点不可得**——非印泥集为空）⇒ `skipped(degenerate)`（`skip_reason="degenerate"`）。
      **不得静默**，界值单点可改。
   6. **跳过兜底**：`ink_ratio < threshold`（默认 2%）⇒ 不校正，逐行标记 `skipped(ink_ratio=<值>)`。
   7. 目标色 **`#C95021` ＝ rgb(201,80,33)**（锚点②，**唯一常量、单点可改**）；白色锚点 `#FFFFFF`。
+
+### V1b（**可选口径，不取代默认**）：仅做「纸 → 纯白」的白平衡
+`whitebalance_gains_for` / `apply_gains_color` / `correct_image_whitebalance` —— **不咬印泥靶色**：
+  1. 纸锚点 `W` 同第 3 条（**非印泥 ∧ `V ≥ p90`**）。
+  2. 逐通道增益 **`k = white_lin / W_lin`**（线性 RGB、0–255 标度）⇒ **整图对角施加** `out_lin = k ⊙ in_lin`。
+  3. **限幅** `k ∈ [0.5, 3]`（`WB_K_MIN` / `WB_K_MAX`）；`k > 3` ⇒ `skipped(limiting)`。
+     **几何事实（如实登记）**：`W_lin255 ≤ 255`（纸不可能比纯白更亮）⇒ **`k ≥ 1` 恒成立**，
+     故 `k_min=0.5` 在本口径下**天然不生效**。
+  4. **跳过口径同形**：`skipped(ink_ratio=…)` / `skipped(degenerate)`（纸锚点不可得或线性任一分量 < 0.02）/ `skipped(limiting)`。
+  5. **代价**：核心质心 → `#C95021` 的 ΔE 在本口径下**通常不为 0**（这正是 A/B 的看点：温和 vs 咬靶）；
+     换来的是纸区白平衡 + 更小的「变冷」幅度（读数见 `ops/image-colorcal/`）。
 
 ### 判据口径（务必区分）
 * `centroid_core_*`（**核心质心**，**与锚点同定义**）：CA-1 判据——「印泥核心质心→目标色」，预期 ΔE≈0。
@@ -59,7 +75,7 @@ except Exception:  # pragma: no cover - 仅接口层命中
 __all__ = [
     # 常量
     "TARGET_RGB", "TARGET_HEX", "WHITE_RGB", "K_MIN", "K_MAX", "INK_RATIO_MIN",
-    "A_MIN", "A_MAX", "B_MIN", "B_MAX",
+    "A_MIN", "A_MAX", "B_MIN", "B_MAX", "WB_K_MIN", "WB_K_MAX",
     "PAPER_QUANTILE", "INK_CORE_SAT_QUANTILE", "DEGENERATE_MIN_LIN",
     # 色彩空间 / 色差
     "hex_to_rgb", "rgb_to_hex", "rgb_to_hsv", "srgb_to_linear", "linear_to_srgb",
@@ -69,7 +85,9 @@ __all__ = [
     "region_mean_rgb",
     # 校正主体（V2 双锚点仿射）
     "affine_for", "apply_affine", "apply_affine_color", "correct_image",
-    "skip_marker", "skip_marker_degenerate",
+    "skip_marker", "skip_marker_degenerate", "skip_marker_limiting",
+    # V1b（可选口径：纸→纯白白平衡）
+    "whitebalance_gains_for", "apply_gains_color", "correct_image_whitebalance",
     # 兼容（V1 对角增益）
     "gains_for", "apply_correction", "correct_image_diagonal",
 ]
@@ -98,6 +116,10 @@ K_MIN: float = 0.5      # 通道增益下限（旧路径 §2.2.3）
 K_MAX: float = 2.0      # 通道增益上限
 INK_RATIO_MIN: float = 0.02   # 印泥占比跳过阈值（§2.2.4，待裁 R-c）
 
+# V1b（可选口径：纸→纯白白平衡）限幅 —— 单点可改
+WB_K_MIN: float = 0.5   # 增益下限（**几何上不生效**：W_lin255 ≤ 255 ⇒ k ≥ 1）
+WB_K_MAX: float = 3.0   # 增益上限（越界 ⇒ skipped(limiting)）
+
 # 印泥掩膜常量（§2.2.1）
 _INK_RG_DOMINANCE: float = 15.0   # r > g + 15 且 r > b + 15
 _INK_S_MIN: float = 0.25          # S > 0.25
@@ -108,6 +130,7 @@ _DENOM_EPS: float = 1e-9
 # 跳过标记
 _SKIP_FMT = "skipped(ink_ratio={ratio:.6f})"
 _SKIP_DEGENERATE = "skipped(degenerate)"
+_SKIP_LIMITING = "skipped(limiting)"   # ★ v0.1 修订 4：独立标记（不再并入 degenerate）
 
 
 # --------------------------------------------------------------------------------------
@@ -391,17 +414,33 @@ def paper_mask(rgb_array, v_min: float = 0.70):
     return (~ink_mask(arr)) & (mx >= v_min * 255.0)
 
 
-def paper_centroid(rgb_array, quantile: float = PAPER_QUANTILE) -> Dict[str, Any]:
-    """**纸区质心（V2 锚点①）**：**亮度（`V = max(RGB)/255`）≥ p90** 的像素均值 → `#FFFFFF`。
+def paper_centroid(rgb_array, quantile: float = PAPER_QUANTILE,
+                   exclude_ink: bool = True) -> Dict[str, Any]:
+    """**纸区质心（V2 / V1b 锚点①）**：纸集 → `#FFFFFF`。
 
-    返回 `{"rgb": (r,g,b), "linear255": (…), "pixels": n, "v_threshold": v, "mask": ndarray}`。
+    **★ v0.1 修订 3（采纳 Kong 实测）—— 默认先排除印泥像素**：纸集 ＝
+    **非印泥 ∧ 亮度（`V = max(RGB)/255`）≥ p90(非印泥)** 的像素均值。
+    p90 阈值在**非印泥集**上取（不是全图 p90）—— 高印泥占比的页上，全图 p90 会落到**淡印泥**上
+    ⇒ 纸锚点 `W` 被拉近印泥质心 `C` ⇒ 两点定线病态、`a` 越界（实测 120 抽样 limiting `32.5% → 14.1%`、
+    生效 `33 → 61`）。`exclude_ink=False` 只作**对照读数**（旧口径，仅供诊断）。
+
+    返回 `{"rgb","linear255","pixels","v_threshold","mask","ink_excluded"}`；
+    **非印泥集为空**（整图皆印泥）或纸集为空时 ⇒ `rgb=None` / `pixels=0` / `mask` 全 False
+    （调用方据此判 `skipped(degenerate)`：纸锚点不可得）。
     """
     np_ = _np()
     arr = _as_rgb_array(rgb_array)
     rgb = arr[..., :3].astype(np_.float64)
     v = rgb.max(axis=2) / 255.0
-    thr = float(np_.percentile(v, float(quantile) * 100.0))
-    mask = v >= thr
+    sel = (~ink_mask(arr)) if exclude_ink else np_.ones(v.shape, dtype=bool)
+    empty = {"rgb": None, "linear255": None, "pixels": 0, "v_threshold": None,
+             "mask": np_.zeros(v.shape, dtype=bool), "ink_excluded": bool(exclude_ink)}
+    if not bool(sel.any()):
+        return empty
+    thr = float(np_.percentile(v[sel], float(quantile) * 100.0))
+    mask = sel & (v >= thr)
+    if not bool(mask.any()):
+        return empty
     px = rgb[mask]
     lin255 = 255.0 * _srgb_to_linear_arr(px / 255.0)
     return {
@@ -410,6 +449,7 @@ def paper_centroid(rgb_array, quantile: float = PAPER_QUANTILE) -> Dict[str, Any
         "pixels": int(mask.sum()),
         "v_threshold": thr,
         "mask": mask,
+        "ink_excluded": bool(exclude_ink),
     }
 
 
@@ -597,8 +637,31 @@ def skip_marker(ink_ratio: float) -> str:
 
 
 def skip_marker_degenerate() -> str:
-    """`skipped(degenerate)` 标记串（V2 病态 / 越界，**不得静默**）。"""
+    """`skipped(degenerate)` 标记串（病态 / 纸锚点不可得，**不得静默**）。"""
     return _SKIP_DEGENERATE
+
+
+def skip_marker_limiting() -> str:
+    """`skipped(limiting)` 标记串（**★ v0.1 修订 4：越界独立成标记**，不再并入 `degenerate`）。"""
+    return _SKIP_LIMITING
+
+
+def apply_gains_color(rgb: Sequence[float], gains: Any) -> Tuple[float, float, float]:
+    """标量版：把单个 0–255 sRGB 色过一遍**对角增益**（**纯 math，无 numpy**）。
+
+    `out_lin255 = k · in_lin255`（线性 RGB、0–255 标度）。用于「灰瓦 90/128/180/220 校正后色」
+    一类观察项（V1b / V1 兼容路径共用）。
+    """
+    k = _coerce_gains(gains)
+    out = [
+        255.0 * linear_to_srgb(
+            min(max(_srgb255_to_linear255(float(v)) * kv, 0.0), 255.0) / 255.0
+        )
+        for v, kv in zip([float(x) for x in rgb[:3]], k)
+    ]
+    return (min(max(out[0], 0.0), 255.0),
+            min(max(out[1], 0.0), 255.0),
+            min(max(out[2], 0.0), 255.0))
 
 
 # --------------------------------------------------------------------------------------
@@ -613,12 +676,16 @@ def correct_image(rgb_array,
                   paper_quantile: float = PAPER_QUANTILE,
                   core_sat_quantile: float = INK_CORE_SAT_QUANTILE,
                   degenerate_min_lin: float = DEGENERATE_MIN_LIN,
+                  paper_exclude_ink: bool = True,
                   ) -> Tuple[Any, Dict[str, Any]]:
     """单图校正（**V2 双锚点仿射**）→ `(校正后图, 报告 dict)`。
 
+    `paper_exclude_ink=True`（默认）＝纸锚点集合为「**非印泥 ∧ `V ≥ p90`**」（★ v0.1 修订 3）；
+    `False` 只作**对照读数**（旧口径）。
+
     报告键（逐行可落 `images_manifest.jsonl` 的 `color_correction` 面）：
       * `mode`          : `"applied"` / `"skipped"`
-      * `marker`        : `"applied"` / `skipped(ink_ratio=<值>)` / `skipped(degenerate)`
+      * `marker`        : `"applied"` / `skipped(ink_ratio=<值>)` / `skipped(degenerate)` / `skipped(limiting)`
       * `skip_reason`   : `None` / `"ink_ratio"` / `"degenerate"` / `"limiting"`
       * `ink_ratio`     : 印泥占比（**校正前掩膜**）
       * `centroid_core_before` / `centroid_core_after` : **核心质心**前后（**判据**；`after` 在
@@ -627,7 +694,7 @@ def correct_image(rgb_array,
       * `delta_e_before` / `delta_e_after` : **核心质心**→target 的 CIEDE2000（前 / 后）
       * `ink_ratio_after` : 校正后**重算掩膜**的占比（观察项）
       * `a` / `b` / `raw_a` / `raw_b` / `clamped` / `clamped_channels` / `min_lin_component`
-      * `paper_before_rgb` / `paper_after_rgb` / `paper_pixels`
+      * `paper_before_rgb` / `paper_after_rgb` / `paper_pixels` / `paper_ink_excluded`
       * `paper_delta_e_before` / `paper_delta_e_after` : 纸区质心→**white** 的 CIEDE2000（锚点①判据）
       * `paper_hue_before` / `paper_hue_after` / `paper_hue_shift` : 纸区色相漂移读数（观察项）
       * `gray180_after` : 中灰 (180,180,180) 校正后色（观察项；量化「整体变冷」）
@@ -641,7 +708,7 @@ def correct_image(rgb_array,
     c_core = core["rgb"]
     c_all = _mean_over_mask(arr, m_all)
 
-    paper = paper_centroid(arr, paper_quantile)
+    paper = paper_centroid(arr, paper_quantile, exclude_ink=paper_exclude_ink)
     pmask = paper["mask"]
     paper_before = paper["rgb"] if paper["pixels"] else None
 
@@ -660,6 +727,7 @@ def correct_image(rgb_array,
         "delta_e_all_before": (delta_e2000(c_all, target) if c_all else None),
         "paper_pixels": int(pmask.sum()),
         "paper_v_threshold": paper["v_threshold"],
+        "paper_ink_excluded": paper["ink_excluded"],
         "paper_before_rgb": paper_before,
         "paper_delta_e_before": (delta_e2000(paper_before, white) if paper_before else None),
         "paper_hue_before": (rgb_to_hsv(paper_before)[0] if paper_before else None),
@@ -686,8 +754,11 @@ def correct_image(rgb_array,
         report.update(extra)
         return arr.copy(), report
 
-    if c_core is None or ratio < ink_ratio_min or paper_before is None:
+    if c_core is None or ratio < ink_ratio_min:
         return _skip("ink_ratio", skip_marker(ratio))
+    if paper_before is None:
+        # **纸锚点不可得**（非印泥集为空）⇒ 病态；**不得**与「低印泥占比」混为一谈
+        return _skip("degenerate", skip_marker_degenerate(), paper_anchor_unavailable=True)
 
     aff = affine_for(c_core, paper_before, target=target, white=white,
                      a_min=a_min, a_max=a_max, b_min=b_min, b_max=b_max,
@@ -701,7 +772,9 @@ def correct_image(rgb_array,
         "target_rgb": aff["target_rgb"],
     }
     if aff["degenerate"]:
-        return _skip(aff["degenerate_reason"], skip_marker_degenerate(), **common)
+        reason = aff["degenerate_reason"]
+        marker = skip_marker_limiting() if reason == "limiting" else skip_marker_degenerate()
+        return _skip(reason, marker, **common)
 
     corrected = apply_affine(arr, aff)
 
@@ -735,6 +808,202 @@ def correct_image(rgb_array,
         "paper_hue_after": hue_a,
         "paper_hue_shift": hue_shift,
         "gray180_after": apply_affine_color((180, 180, 180), aff),
+    })
+    return corrected, report
+
+
+# --------------------------------------------------------------------------------------
+# V1b（**可选口径，不取代默认**）：仅做「纸 → 纯白」的白平衡
+# --------------------------------------------------------------------------------------
+def whitebalance_gains_for(paper: Sequence[float],
+                           white: Sequence[float] = WHITE_RGB,
+                           k_min: float = WB_K_MIN,
+                           k_max: float = WB_K_MAX,
+                           degenerate_min_lin: float = DEGENERATE_MIN_LIN) -> Dict[str, Any]:
+    """【V1b】逐通道增益 `k = white_lin / W_lin`（线性 RGB、**0–255 标度**、白点 `#FFFFFF`）。
+
+    **不咬印泥靶色**：只把纸区质心 `W` 白平衡到 `white`。整图**对角**施加 `out_lin255 = k·in_lin255`。
+
+    返回 dict：
+      * `gains` / `raw_gains`  : 逐通道增益（clamp 前 / 后；`raw` 分母为零时记 `None`）
+      * `clamped` / `clamped_channels` / `clamped_detail` : 越界（`k ∉ [k_min, k_max]`）
+      * `degenerate` / `degenerate_reason` : `None` / `"degenerate"`（`W` 线性 0–1 任一分量 < 阈值 ⇒ 纸近黑）/ `"limiting"`
+      * `min_lin_component`    : `min W_lin(0–1)`
+      * `space` / `paper_rgb` / `white_rgb` / `k_min` / `k_max`
+
+    **几何事实（如实登记）**：`W_lin255 ≤ 255`（纸不可能比纯白更亮）⇒ **`k ≥ 1` 恒成立**，
+    故 `k_min` 在本口径下**天然不生效**，只有 `k > k_max` 会触发 `skipped(limiting)`。
+    """
+    if paper is None or len(paper) < 3:
+        raise ValueError("paper 需为长度≥3 的 0–255 RGB")
+    w = [float(x) for x in paper[:3]]
+    wh = [float(x) for x in white[:3]]
+
+    min_lin_component = min(_srgb255_to_linear(v) for v in w)  # 线性 0–1
+    raw: List[float] = []
+    detail: List[Dict[str, Any]] = []
+    for ch, wv, whv in zip("rgb", w, wh):
+        wl = _srgb255_to_linear255(wv)       # W（线性 0–255）
+        whl = _srgb255_to_linear255(whv)     # 白（线性 0–255；#FFFFFF ⇒ 255）
+        raw_k = (whl / wl) if wl > _DENOM_EPS else math.inf
+        raw.append(raw_k)
+        detail.append({"channel": ch, "w_lin255": wl, "white_lin255": whl,
+                       "raw_k": (None if math.isinf(raw_k) else raw_k)})
+
+    gains: List[float] = []
+    clamped_channels: List[str] = []
+    for ch, rk, d in zip("rgb", raw, detail):
+        gk = rk if not math.isfinite(rk) else min(max(rk, k_min), k_max)
+        gains.append(gk)
+        d["final"] = gk
+        if (not math.isfinite(rk)) or gk != rk:
+            clamped_channels.append(ch)
+    clamped = bool(clamped_channels)
+
+    if min_lin_component < degenerate_min_lin:
+        degenerate, reason = True, "degenerate"
+    elif clamped:
+        degenerate, reason = True, "limiting"
+    else:
+        degenerate, reason = False, None
+
+    return {
+        "gains": tuple(gains),
+        "raw_gains": tuple((None if math.isinf(k) else k) for k in raw),
+        "clamped": clamped,
+        "clamped_channels": clamped_channels,
+        "clamped_detail": detail,
+        "degenerate": degenerate,
+        "degenerate_reason": reason,
+        "min_lin_component": min_lin_component,
+        "paper_rgb": tuple(w),
+        "white_rgb": tuple(int(round(x)) for x in wh),
+        "k_min": float(k_min), "k_max": float(k_max),
+        "degenerate_min_lin": float(degenerate_min_lin),
+        "space": "linear-rgb-255",
+    }
+
+
+def correct_image_whitebalance(rgb_array,
+                               white: Sequence[float] = WHITE_RGB,
+                               target: Sequence[float] = TARGET_RGB,
+                               ink_ratio_min: float = INK_RATIO_MIN,
+                               k_min: float = WB_K_MIN, k_max: float = WB_K_MAX,
+                               paper_quantile: float = PAPER_QUANTILE,
+                               degenerate_min_lin: float = DEGENERATE_MIN_LIN,
+                               paper_exclude_ink: bool = True,
+                               ) -> Tuple[Any, Dict[str, Any]]:
+    """单图校正（**V1b 白平衡，可选口径**）→ `(校正后图, 报告 dict)`。**默认路径仍是 `correct_image`**。
+
+    **只做纸 → 纯白的白平衡**：纸锚点 `W`（非印泥 ∧ `V ≥ p90`）→ `white`（`#FFFFFF`），
+    逐通道对角增益 `k = white_lin / W_lin`，**不咬印泥靶色**。
+
+    **跳过口径与默认路径同形**：`skipped(ink_ratio=…)` / `skipped(degenerate)` / `skipped(limiting)`；
+    逐行可判、不得静默。
+
+    报告**额外**保留 `centroid_core_*` → `target` 的 ΔE（**观察项**）：本口径下它**通常不为 0**，
+    这正是「温和 V1b」与「咬靶默认路径」的直接对照读数。
+    """
+    arr = _as_rgb_array(rgb_array)
+    total = int(arr.shape[0]) * int(arr.shape[1]) or 1
+    m_all = ink_mask(arr)
+    ratio = int(m_all.sum()) / total
+
+    core = ink_core_centroid(arr)
+    c_core = core["rgb"]
+    c_all = _mean_over_mask(arr, m_all)
+
+    paper = paper_centroid(arr, paper_quantile, exclude_ink=paper_exclude_ink)
+    pmask = paper["mask"]
+    paper_before = paper["rgb"] if paper["pixels"] else None
+
+    report: Dict[str, Any] = {
+        "algorithm": "whitebalance-diagonal",
+        "target_rgb": tuple(int(round(v)) for v in target[:3]),
+        "target_hex": rgb_to_hex(target),
+        "target_role": "observation-only（本口径不咬靶色）",
+        "white_rgb": tuple(int(round(v)) for v in white[:3]),
+        "ink_ratio": ratio,
+        "core_pixels": core["pixels"],
+        "core_sat_threshold": core["sat_threshold"],
+        "centroid_core_before": c_core,
+        "delta_e_before": (delta_e2000(c_core, target) if c_core else None),
+        "centroid_all_before": c_all,
+        "delta_e_all_before": (delta_e2000(c_all, target) if c_all else None),
+        "paper_pixels": int(pmask.sum()),
+        "paper_v_threshold": paper["v_threshold"],
+        "paper_ink_excluded": paper["ink_excluded"],
+        "paper_before_rgb": paper_before,
+        "paper_delta_e_before": (delta_e2000(paper_before, white) if paper_before else None),
+        "paper_hue_before": (rgb_to_hsv(paper_before)[0] if paper_before else None),
+        "gains": None, "raw_gains": None, "clamped": False, "clamped_channels": [],
+        "min_lin_component": None,
+    }
+
+    def _skip(reason: str, marker: str, **extra) -> Tuple[Any, Dict[str, Any]]:
+        report.update({
+            "mode": "skipped",
+            "marker": marker,
+            "skip_reason": reason,
+            "centroid_core_after": c_core,
+            "centroid_all_after": c_all,
+            "ink_ratio_after": ratio,
+            "delta_e_after": report["delta_e_before"],
+            "delta_e_all_after": report["delta_e_all_before"],
+            "paper_after_rgb": paper_before,
+            "paper_delta_e_after": report["paper_delta_e_before"],
+            "paper_hue_after": report["paper_hue_before"],
+            "paper_hue_shift": (0.0 if paper_before else None),
+            "gray180_after": (180.0, 180.0, 180.0),
+        })
+        report.update(extra)
+        return arr.copy(), report
+
+    if c_core is None or ratio < ink_ratio_min:
+        return _skip("ink_ratio", skip_marker(ratio))
+    if paper_before is None:
+        return _skip("degenerate", skip_marker_degenerate(), paper_anchor_unavailable=True)
+
+    g = whitebalance_gains_for(paper_before, white=white, k_min=k_min, k_max=k_max,
+                               degenerate_min_lin=degenerate_min_lin)
+    common = {
+        "gains": g["gains"], "raw_gains": g["raw_gains"],
+        "clamped": g["clamped"], "clamped_channels": g["clamped_channels"],
+        "clamped_detail": g["clamped_detail"], "min_lin_component": g["min_lin_component"],
+        "paper_rgb": g["paper_rgb"], "white_rgb": g["white_rgb"],
+    }
+    if g["degenerate"]:
+        reason = g["degenerate_reason"]
+        marker = skip_marker_limiting() if reason == "limiting" else skip_marker_degenerate()
+        return _skip(reason, marker, **common)
+
+    corrected = apply_correction(arr, g["gains"])
+    c_core_after = _mean_over_mask(corrected, core["mask"])
+    c_all_after = _mean_over_mask(corrected, m_all)
+    mask_after = ink_mask(corrected)
+    ratio_after = int(mask_after.sum()) / total
+    paper_after = _mean_over_mask(corrected, pmask)
+    hue_b = rgb_to_hsv(paper_before)[0] if paper_before else None
+    hue_a = rgb_to_hsv(paper_after)[0] if paper_after else None
+    hue_shift = None
+    if hue_b is not None and hue_a is not None:
+        hue_shift = (hue_a - hue_b + 180.0) % 360.0 - 180.0
+
+    report.update(common)
+    report.update({
+        "mode": "applied",
+        "marker": "applied",
+        "skip_reason": None,
+        "centroid_core_after": c_core_after,
+        "delta_e_after": (delta_e2000(c_core_after, target) if c_core_after else None),
+        "centroid_all_after": c_all_after,
+        "delta_e_all_after": (delta_e2000(c_all_after, target) if c_all_after else None),
+        "ink_ratio_after": ratio_after,
+        "paper_after_rgb": paper_after,
+        "paper_delta_e_after": (delta_e2000(paper_after, white) if paper_after else None),
+        "paper_hue_after": hue_a,
+        "paper_hue_shift": hue_shift,
+        "gray180_after": apply_gains_color((180, 180, 180), g["gains"]),
     })
     return corrected, report
 

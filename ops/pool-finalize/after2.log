@@ -1,0 +1,15 @@
+db           = /Users/kevin/.hermes/profiles/zang/cache/scratch/feicui_tpl_unusable/test.db
+prod_db      = False
+applied      = 0
+skipped      = 2
+journal_mode = wal
+schema_sha256= 8640138d0985144c8f72856581b43fba1ba69afd6581e3fa74de1ffb7cbe4d1a
+tables       = job_pages,jobs,schema_migrations,sqlite_sequence,stamps
+2026-10-11 08:49:49,580 INFO feicui.pool 池启动：workers=1 db=/Users/kevin/.hermes/profiles/zang/cache/scratch/feicui_tpl_unusable/test.db faces=/Users/kevin/.hermes/profiles/zang/cache/scratch/feicui_tpl_unusable/faces doc_preprocess=True cpu_threads=2 on_conflict=skip worker_python=/Users/kevin/bistro/xiai/feicui/venv/bin/python manager_python=/Users/kevin/bistro/xiai/feicui/server/.venv/bin/python
+2026-10-11 08:49:49,580 INFO feicui.pool 🔒 单写者锁：/Users/kevin/.hermes/profiles/zang/cache/scratch/feicui_tpl_unusable/run/pool.state.lock
+2026-10-11 08:49:49,582 INFO feicui.pool worker#0 已启动 pid=13861（第 1 次）
+2026-10-11 08:49:53,232 INFO feicui.pool worker#0 ready pid=13861 python=3.11.16 exe=/Users/kevin/bistro/xiai/feicui/venv/bin/python cwd=/Users/kevin/bistro/xiai/feicui paddleocr=3.7.0 doc_preprocess=True cpu_threads=2 faces=/Users/kevin/.hermes/profiles/zang/cache/scratch/feicui_tpl_unusable/faces
+2026-10-11 08:49:53,237 ERROR feicui.pool job job-aed2b2dcca5b4a5bb381418242962b9e 模板不可用（缺 ['hsv_low', 'hsv_high', 'min_area', 'text_offset', 'density_min', 'density_max']）⇒ 全部待办页记 FAILED，job 一次落终态
+2026-10-11 08:49:53,239 ERROR feicui.pool job job-aed2b2dcca5b4a5bb381418242962b9e：6 页记 FAILED（template_unusable: missing keys ['hsv_low', 'hsv_high', 'min_area', 'text_offset', 'density_min', 'density_max']）
+2026-10-11 08:49:53,241 ERROR feicui.pool job job-aed2b2dcca5b4a5bb381418242962b9e 收尾 ⇒ FAILED_PARTIAL（error=template_unusable: missing keys ['hsv_low', 'hsv_high', 'min_area', 'text_offset', 'density_min', 'density_max']）
+2026-10-11 08:49:53,242 INFO feicui.pool 池退出：{"chunks_committed": 0, "pages_done": 0, "pages_failed": 6, "detected": 0, "inserted": 0, "updated": 0, "skipped": 0, "ocr_empty": 0, "requeued_pages": 0, "imgs_written": 0, "imgs_reused": 0, "worker_deaths": 0}

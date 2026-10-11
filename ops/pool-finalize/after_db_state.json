@@ -1,0 +1,173 @@
+{
+  "_what": "修后那次 scratch 跑的 jobs / job_pages 读数（只读查询，未写库）",
+  "_source_db": "/Users/kevin/.hermes/profiles/zang/cache/scratch/feicui_tpl_unusable/test.db",
+  "_read_mode": "sqlite3 'file:<db>?mode=ro'",
+  "_provenance": "scratch 探针库（after2.log 表头 prod_db=False）；最后一次写入 2026-10-11T08:49:53+08:00（after2 跑）",
+  "_schema_sha256": "8640138d0985144c8f72856581b43fba1ba69afd6581e3fa74de1ffb7cbe4d1a",
+  "_captured_at": "2026-10-11T08:53:32",
+  "_note": "原件 test.db 仍在 scratch 目录（闲置 24h 会被清理）；本 JSON 为其读数快照，非库文件本身",
+  "jobs": [
+    {
+      "job_id": "job-aed2b2dcca5b4a5bb381418242962b9e",
+      "pdf_path": "/Users/kevin/.hermes/profiles/zang/cache/scratch/feicui_tpl_unusable/placeholder.pdf",
+      "pdf_name": "未标定探针书.pdf",
+      "book_key": null,
+      "page_from": 1,
+      "page_to": 6,
+      "chunk_size": 3,
+      "total_pages": 6,
+      "state": "FAILED_PARTIAL",
+      "cursor_chunk_lo": null,
+      "cursor_chunk_hi": null,
+      "rerun": 0,
+      "error": "template_unusable: missing keys ['hsv_low', 'hsv_high', 'min_area', 'text_offset', 'density_min', 'density_max']",
+      "created_at": "2026-10-11T08:47:52+08:00",
+      "started_at": "2026-10-11T08:49:53+08:00",
+      "finished_at": "2026-10-11T08:49:53+08:00",
+      "updated_at": "2026-10-11T08:49:53+08:00"
+    }
+  ],
+  "job_pages": [
+    {
+      "id": 1,
+      "job_id": "job-aed2b2dcca5b4a5bb381418242962b9e",
+      "pdf_name": "未标定探针书.pdf",
+      "page": 1,
+      "chunk_index": 0,
+      "state": "FAILED",
+      "detected": 0,
+      "inserted": 0,
+      "updated": 0,
+      "skipped": 0,
+      "ocr_empty": 0,
+      "error": "template_unusable: missing keys ['hsv_low', 'hsv_high', 'min_area', 'text_offset', 'density_min', 'density_max']",
+      "started_at": null,
+      "finished_at": "2026-10-11T08:49:53+08:00",
+      "updated_at": "2026-10-11T08:49:53+08:00"
+    },
+    {
+      "id": 2,
+      "job_id": "job-aed2b2dcca5b4a5bb381418242962b9e",
+      "pdf_name": "未标定探针书.pdf",
+      "page": 2,
+      "chunk_index": 0,
+      "state": "FAILED",
+      "detected": 0,
+      "inserted": 0,
+      "updated": 0,
+      "skipped": 0,
+      "ocr_empty": 0,
+      "error": "template_unusable: missing keys ['hsv_low', 'hsv_high', 'min_area', 'text_offset', 'density_min', 'density_max']",
+      "started_at": null,
+      "finished_at": "2026-10-11T08:49:53+08:00",
+      "updated_at": "2026-10-11T08:49:53+08:00"
+    },
+    {
+      "id": 3,
+      "job_id": "job-aed2b2dcca5b4a5bb381418242962b9e",
+      "pdf_name": "未标定探针书.pdf",
+      "page": 3,
+      "chunk_index": 0,
+      "state": "FAILED",
+      "detected": 0,
+      "inserted": 0,
+      "updated": 0,
+      "skipped": 0,
+      "ocr_empty": 0,
+      "error": "template_unusable: missing keys ['hsv_low', 'hsv_high', 'min_area', 'text_offset', 'density_min', 'density_max']",
+      "started_at": null,
+      "finished_at": "2026-10-11T08:49:53+08:00",
+      "updated_at": "2026-10-11T08:49:53+08:00"
+    },
+    {
+      "id": 4,
+      "job_id": "job-aed2b2dcca5b4a5bb381418242962b9e",
+      "pdf_name": "未标定探针书.pdf",
+      "page": 4,
+      "chunk_index": 1,
+      "state": "FAILED",
+      "detected": 0,
+      "inserted": 0,
+      "updated": 0,
+      "skipped": 0,
+      "ocr_empty": 0,
+      "error": "template_unusable: missing keys ['hsv_low', 'hsv_high', 'min_area', 'text_offset', 'density_min', 'density_max']",
+      "started_at": null,
+      "finished_at": "2026-10-11T08:49:53+08:00",
+      "updated_at": "2026-10-11T08:49:53+08:00"
+    },
+    {
+      "id": 5,
+      "job_id": "job-aed2b2dcca5b4a5bb381418242962b9e",
+      "pdf_name": "未标定探针书.pdf",
+      "page": 5,
+      "chunk_index": 1,
+      "state": "FAILED",
+      "detected": 0,
+      "inserted": 0,
+      "updated": 0,
+      "skipped": 0,
+      "ocr_empty": 0,
+      "error": "template_unusable: missing keys ['hsv_low', 'hsv_high', 'min_area', 'text_offset', 'density_min', 'density_max']",
+      "started_at": null,
+      "finished_at": "2026-10-11T08:49:53+08:00",
+      "updated_at": "2026-10-11T08:49:53+08:00"
+    },
+    {
+      "id": 6,
+      "job_id": "job-aed2b2dcca5b4a5bb381418242962b9e",
+      "pdf_name": "未标定探针书.pdf",
+      "page": 6,
+      "chunk_index": 1,
+      "state": "FAILED",
+      "detected": 0,
+      "inserted": 0,
+      "updated": 0,
+      "skipped": 0,
+      "ocr_empty": 0,
+      "error": "template_unusable: missing keys ['hsv_low', 'hsv_high', 'min_area', 'text_offset', 'density_min', 'density_max']",
+      "started_at": null,
+      "finished_at": "2026-10-11T08:49:53+08:00",
+      "updated_at": "2026-10-11T08:49:53+08:00"
+    }
+  ],
+  "job_pages_aggregate": [
+    {
+      "state": "FAILED",
+      "n": 6
+    }
+  ],
+  "supplementary_run": {
+    "_what": "旁证（非本单主读数）：修复后另一次 scratch 回归跑的读数，模板缺键集合不同（['a','b']），仍是 1 轮收口",
+    "_source_db": "/Users/kevin/.hermes/profiles/zang/cache/scratch/feicui_tpl_unusable/copy_regress.db",
+    "_read_mode": "sqlite3 'file:<db>?mode=ro'",
+    "_db_mtime": "2026-10-11T08:51:40",
+    "jobs": [
+      {
+        "job_id": "job-aed2b2dcca5b4a5bb381418242962b9e",
+        "pdf_path": "/Users/kevin/.hermes/profiles/zang/cache/scratch/feicui_tpl_unusable/placeholder.pdf",
+        "pdf_name": "未标定探针书.pdf",
+        "book_key": null,
+        "page_from": 1,
+        "page_to": 6,
+        "chunk_size": 3,
+        "total_pages": 6,
+        "state": "FAILED_PARTIAL",
+        "cursor_chunk_lo": null,
+        "cursor_chunk_hi": null,
+        "rerun": 0,
+        "error": "template_unusable: missing keys ['a','b']",
+        "created_at": "2026-10-11T08:47:52+08:00",
+        "started_at": "2026-10-11T08:49:53+08:00",
+        "finished_at": "2026-10-11T08:51:40+08:00",
+        "updated_at": "2026-10-11T08:51:40+08:00"
+      }
+    ],
+    "job_pages_aggregate": [
+      {
+        "state": "FAILED",
+        "n": 6
+      }
+    ]
+  }
+}

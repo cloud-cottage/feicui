@@ -49,14 +49,17 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 DEFAULT_DB = Path("/Users/kevin/bistro/xiai/data/yinpu.db")
 
-#: 包含判定容差（px）——派单给定。
-TOL_PX = 8.0
+# ---------------------------------------------------------------------------
+# ★ **生产单一实现**：规则的唯一真源＝`server/app/dedup.py`（方案 A 落地 2026-10-11）。
+#   本离线标定器**不再自带一份规则**：几何（IoU / 包含 / 面积比）与页内去重
+#   （`dedup_page`）一律**委托**该模块 ⇒ 标定与生产**逐位同源**（防两实现漂移）。
+#   下方 `TOL_PX` / `DEFAULT_R2_MIN_CHILDREN` / `VARIANTS` 仅作**别名**指向生产常量。
+#   锚点：`ops/dedup-calibration/README.md`，标定 commit `f5b901f`。
+# ---------------------------------------------------------------------------
 
-#: **R2 收窄口径（Kong 去重收口单 2026-10-11）**：大框须桥接 **≥ 2 个已检出子框**
-#: 才判为假组框而丢；**单子框一律不动**。理由：Zang 视觉复核两例（福庵 p110 idx0 /
-#: p74 idx0）证明「单子框 + 完整边框大印」的 A 是**真印章**，其子框才是碎片；按旧口径
-#: （≥1 子框即丢）会误杀。旧口径 = 1，保留可切换以复现旧读数做对照。
-DEFAULT_R2_MIN_CHILDREN = 2
+def _load_prod_dedup():
+    """按文件路径加载（`feicui/app.py` 会遮蔽包名；且与 worker 侧同源）。"""
+    return _load_module(REPO / "server" / "app" / "dedup.py", "feicui_dedup_core")
 
 #: 两版阈值变体（派单给定；**R2 一律走收窄口径 ≥2 子框**）。
 VARIANTS = {
@@ -81,6 +84,17 @@ def _load_module(path: Path, name: str):
 
 def load_naming():
     return _load_module(REPO / "server" / "app" / "naming.py", "feicui_naming_for_dedup")
+
+
+# ★ **生产单一实现**（在 `_load_module` 定义之后加载）：规则的唯一真源＝`server/app/dedup.py`。
+CORE = _load_prod_dedup()
+
+#: 包含判定容差（px）——**别名**（生产单一实现 `server/app/dedup.py`，非本文件自持）。
+TOL_PX = CORE.TOL_PX
+
+#: **R2 收窄口径**：大框须桥接 **≥ 2 个已检出子框**才丢；**单子框一律不动**（误杀锚点见标定件 §1.1）。
+#: 旧口径 = 1，保留可切换以复现旧读数；**别名**指向生产常量。
+DEFAULT_R2_MIN_CHILDREN = CORE.R2_MIN_CHILDREN
 
 
 # ---------------------------------------------------------------------------
@@ -118,30 +132,18 @@ class Box:
 
 
 def iou(a: Box | tuple, b: Box | tuple) -> float:
-    """交并比（空并集 ⇒ 0.0）。支持 Box 或 `(x1,y1,x2,y2)`。"""
-    ax1, ay1, ax2, ay2 = a.xyxy() if isinstance(a, Box) else a
-    bx1, by1, bx2, by2 = b.xyxy() if isinstance(b, Box) else b
-    ix1, iy1 = max(ax1, bx1), max(ay1, by1)
-    ix2, iy2 = min(ax2, bx2), min(ay2, by2)
-    iw, ih = max(0.0, ix2 - ix1), max(0.0, iy2 - iy1)
-    inter = iw * ih
-    aa = max(0.0, ax2 - ax1) * max(0.0, ay2 - ay1)
-    ba = max(0.0, bx2 - bx1) * max(0.0, by2 - by1)
-    union = aa + ba - inter
-    return inter / union if union > 0 else 0.0
+    """交并比 —— **委托生产单一实现** `server/app/dedup.py::iou`（不在此自持一份）。"""
+    return CORE.iou(a, b)
 
 
 def contains(a: Box, b: Box, tol: float = TOL_PX) -> bool:
-    """`a` 是否包含 `b`（四边容差 `tol` px）。"""
-    ax1, ay1, ax2, ay2 = a.xyxy()
-    bx1, by1, bx2, by2 = b.xyxy()
-    return (ax1 - tol <= bx1 and ay1 - tol <= by1 and ax2 + tol >= bx2 and ay2 + tol >= by2)
+    """`a` 是否包含 `b`（四边容差 `tol` px）——**委托生产单一实现**。"""
+    return CORE.contains(a, b, tol)
 
 
 def area_ratio(small: Box, big: Box) -> float:
-    """`area(small)/area(big)`（big 面积为 0 ⇒ 0.0）。"""
-    ba = big.area()
-    return small.area() / ba if ba > 0 else 0.0
+    """`area(small)/area(big)` —— **委托生产单一实现**。"""
+    return CORE.area_ratio(small, big)
 
 
 def _median(xs):
@@ -198,103 +200,31 @@ def dedup_page(boxes: list, t1: float, t2: float, tol: float = TOL_PX,
                tie_break: str = "area_max", order: str = "r2_first",
                r2_min_children: int = DEFAULT_R2_MIN_CHILDREN,
                r2_enabled: bool = True) -> PageResult:
-    """单页去重（纯函数）。返回「保留 / 标记」与 R1 簇信息。
+    """单页去重 —— **委托生产单一实现** `server/app/dedup.py::dedup_page`（本函数只做形状适配）。
+
+    规则本体（R1 近重复 / R2 组框 / 合成顺序 / tie-break）**一律不在此自持**；
+    返回 `PageResult(kept, marked, clusters)` 供本标定器的统计 / 命名影响复用。
 
     `r2_min_children`：R2 收窄口径——大框须桥接 **≥ 该数**个子框才丢（默认 2；1 ＝ 旧口径）。
     `r2_enabled=False`：整条 R2 关闭（仅做 R1；用于方案 C 对照）。
     """
-    page_median_area = _median([b.area() for b in boxes])
-    marked: dict[int, Mark] = {}
+    res = CORE.dedup_page(
+        list(boxes), t1=t1, t2=t2, tol=tol, r2_min_children=r2_min_children,
+        tie_break=tie_break, order=order, r2_enabled=r2_enabled,
+    )
     by_id = {b.id: b for b in boxes}
-    r1_edges: list[tuple] = []
-    r2_edges: list[tuple] = []
-    for i, a in enumerate(boxes):
-        for b in boxes[i + 1:]:
-            v = iou(a, b)
-            if v >= t1:
-                r1_edges.append((a, b, v))
-            for big, small in ((a, b), (b, a)):
-                if contains(big, small, tol) and 0.0 < area_ratio(small, big) < t2:
-                    r2_edges.append((big, small, area_ratio(small, big)))
-
-    def apply_r2(survivors: set) -> None:
-        """在 `survivors` 上执行 R2：丢 A（组框），A 含多子只丢一次。"""
-        kids: dict[int, list] = {}
-        for big, small, ratio in r2_edges:
-            if big.id in survivors and small.id in survivors:
-                kids.setdefault(big.id, []).append((small, ratio))
-        for big_id, cs in kids.items():
-            if len(cs) < r2_min_children:   # 收窄：单子框（不足阈值）一律不动
-                continue
-            big = by_id[big_id]
-            partner = sorted(cs, key=lambda cs_: (-cs_[0].area(), cs_[0].idx))[0]
-            marked[big_id] = Mark(
-                box_id=big_id, book=big.pdf_name, page=big.page, idx=big.idx, reason="R2",
-                metric=partner[1], partner_id=partner[0].id, partner_idx=partner[0].idx,
-                children=[c[0].idx for c in sorted(cs, key=lambda x: x[0].idx)],
-            )
-            survivors.discard(big_id)
-
-    def apply_r1(survivors: set) -> list:
-        parent = {bid: bid for bid in survivors}
-
-        def find(x):
-            while parent[x] != x:
-                parent[x] = parent[parent[x]]
-                x = parent[x]
-            return x
-
-        def union(x, y):
-            rx, ry = find(x), find(y)
-            if rx != ry:
-                parent[ry] = rx
-
-        for a, b, _v in r1_edges:
-            if a.id in survivors and b.id in survivors:
-                union(a.id, b.id)
-        groups: dict[int, list] = {}
-        for bid in survivors:
-            groups.setdefault(find(bid), []).append(bid)
-        clusters = []
-        for root, members in groups.items():
-            cluster = sorted((by_id[m] for m in members), key=lambda b: b.idx)
-            if len(cluster) > 1:
-                clusters.append(cluster)
-                rep = _pick_representative(cluster, page_median_area, tie_break)
-                for b in cluster:
-                    if b.id == rep.id:
-                        continue
-                    v = max(iou(b, o) for o in cluster if o.id != b.id)
-                    marked[b.id] = Mark(
-                        box_id=b.id, book=b.pdf_name, page=b.page, idx=b.idx, reason="R1",
-                        metric=v, partner_id=rep.id, partner_idx=rep.idx,
-                    )
-        return clusters
-
-    remaining = {b.id for b in boxes}
-    if order == "r2_first":
-        if r2_enabled:
-            apply_r2(remaining)
-        clusters = apply_r1(remaining)
-    elif order == "r1_first":
-        clusters = apply_r1(remaining)
-        # R2 只在 R1 幸存者上判（否则会把簇代表也丢掉、留下空簇）
-        if r2_enabled:
-            apply_r2({b.id for b in boxes if b.id not in marked})
-    else:
-        raise ValueError(f"order 须为 r2_first / r1_first：{order!r}")
-
-    # 透明化：标记行「同时」满足的另一规则
-    r1_ids = {a.id for a, _b, _v in r1_edges} | {b.id for _a, b, _v in r1_edges}
-    r2_all = {m.box_id for m in marked.values() if m.reason == "R2"}
-    for m in marked.values():
-        if m.reason == "R1" and m.box_id in r2_all:
-            m.also_qualifies.append("R2")
-        if m.reason == "R2" and m.box_id in r1_ids:
-            m.also_qualifies.append("R1")
-
-    kept = [b for b in boxes if b.id not in marked]
-    return PageResult(kept=kept, marked=list(marked.values()), clusters=clusters)
+    marked = []
+    for m in sorted(res.marks, key=lambda m: (m.box_id)):
+        b = by_id[m.box_id]
+        marked.append(Mark(
+            box_id=m.box_id, book=b.pdf_name, page=b.page, idx=b.idx, reason=m.reason,
+            metric=m.metric, partner_id=m.keeper_id, partner_idx=m.keeper_idx,
+            also_qualifies=list(m.also), children=list(m.children_idx),
+        ))
+    kept_ids = set(res.kept_ids)
+    kept = [b for b in boxes if b.id in kept_ids]
+    clusters = [[by_id[bid] for bid in cl] for cl in res.clusters]
+    return PageResult(kept=kept, marked=marked, clusters=clusters)
 
 
 # ---------------------------------------------------------------------------

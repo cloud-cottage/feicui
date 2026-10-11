@@ -237,6 +237,11 @@ def ensure_schema(conn: sqlite3.Connection) -> None:
     conn.commit()
 
 
+def has_column(conn: sqlite3.Connection, table: str, column: str) -> bool:
+    """该表是否有某列（用于**加法列的向后兼容**：库未跑 `1a-0004` 时不加过滤，不崩）。"""
+    return any(r[1] == column for r in conn.execute(f"PRAGMA table_info({table})"))
+
+
 def stamps_snapshot(conn: sqlite3.Connection) -> list[dict]:
     """既有表的只读快照（自检脚本用它对帐：导出前后必须完全一致）。"""
     rows = conn.execute(
@@ -760,8 +765,14 @@ def _field_presence(rec: dict, key: str):
 
 def export_book(pdf_name: str, seq: int | None = None, batch_date: str | None = None,
                 out_root: Path | None = None, conn: sqlite3.Connection | None = None,
-                verbose: bool = True) -> dict:
-    """整书导出 = 一个 batch_id。返回该批次的报告 dict（并落 package + 侧表）。"""
+                verbose: bool = True, include_duplicates: bool = False) -> dict:
+    """整书导出 = 一个 batch_id。返回该批次的报告 dict（并落 package + 侧表）。
+
+    `include_duplicates`：**默认 False** ⇒ 排除去重标记行（`stamps.dup_kind IS NOT NULL`，
+    即方案 A 判定的近重复 / 组框，见 `server/app/dedup.py`）——「前端/导出侧隐藏」的导出面。
+    置 True 可把被标记行一并导出（可回溯口径）。库未跑迁移 `1a-0004`（无 `dup_kind` 列）时
+    **自动退化为不过滤**（向后兼容，不崩）。
+    """
     own_conn = conn is None
     conn = conn or connect()
     ensure_schema(conn)
@@ -773,13 +784,16 @@ def export_book(pdf_name: str, seq: int | None = None, batch_date: str | None = 
     key = code_entry.get("key") or "BOOK"
     geom = geometry_for(key, geometry)
 
+    dup_filter = ""
+    if not include_duplicates and has_column(conn, "stamps", "dup_kind"):
+        dup_filter = " AND dup_kind IS NULL"
     rows = conn.execute(
         "SELECT id, pdf_name, page, idx, text, img_path, x1, y1, x2, y2 FROM stamps "
-        "WHERE pdf_name=? ORDER BY page, idx, id",
+        "WHERE pdf_name=?" + dup_filter + " ORDER BY page, idx, id",
         (pdf_name,),
     ).fetchall()
     if not rows:
-        raise SystemExit(f"没有该书的 stamps 记录：{pdf_name!r}")
+        raise SystemExit(f"没有该书的 stamps 记录（去重排除后）：{pdf_name!r}")
 
     batch_date = batch_date or dt.datetime.now().strftime("%Y%m%d")
     seq = seq if seq is not None else _batch_seq(conn, pdf_name, batch_date)
@@ -1193,7 +1207,8 @@ def cmd_export(args) -> None:
         books = [r["pdf_name"] for r in conn.execute("SELECT DISTINCT pdf_name FROM stamps ORDER BY pdf_name")]
         conn.close()
     for b in books:
-        export_book(b, seq=args.seq, batch_date=args.date)
+        export_book(b, seq=args.seq, batch_date=args.date,
+                    include_duplicates=getattr(args, "include_duplicates", False))
 
 
 def cmd_books(args) -> None:
@@ -1248,6 +1263,8 @@ def main(argv=None) -> int:
     p.add_argument("--book", action="append", help="限定书（可多次）；缺省全部书各出一个批次")
     p.add_argument("--seq", type=int, help="批次序号（缺省按当日已有批次自增）")
     p.add_argument("--date", help="批次日期 YYYYMMDD（缺省今天）")
+    p.add_argument("--include-duplicates", dest="include_duplicates", action="store_true",
+                   help="导出时**不**排除去重标记行（默认排除 stamps.dup_kind IS NOT NULL）")
     p.set_defaults(func=cmd_export)
 
     p = sub.add_parser("batches", help="列出已导出批次")

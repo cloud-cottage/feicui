@@ -1,0 +1,262 @@
+{
+  "line": "feicui 印面检测去重 · 方案 A 收口（P0 修复 + 历史标记 + 展示/导出隐藏）",
+  "role": "Kong（实现）",
+  "calibration_commit": "f5b901f",
+  "date": "2026-10-11",
+  "p0": {
+    "symptom": "worker 导入阶段即崩：server/app/dedup.py 的 @dataclass 在按路径加载（未注册 sys.modules）时触发 dataclasses → sys.modules.get(cls.__module__).__dict__ ⇒ AttributeError: 'NoneType' object has no attribute '__dict__'；影响＝任何新 job 在建 worker 时即失败（生产 P0）",
+    "root_cause": "@dataclass 装饰期依赖 sys.modules[cls.__module__]；feicui_worker._load_by_path 只 module_from_spec+exec_module，未注册",
+    "fix_1": "server/worker/feicui_worker.py::_load_by_path 先 sys.modules[name]=mod 再 exec_module（失败时 pop 回滚）",
+    "fix_2": "server/app/dedup.py 去 @dataclass（DedupMark / PageDedup 改普通类 + __slots__，字段逐一对应）",
+    "regression": "ops/dedup-apply/verify_worker_dedup.py 经真 process_page 重跑：9/9 页 raw/after/dropped/geometry 全 match"
+  },
+  "new_job_dedup_verify": {
+    "pdf": "秦印类编 检索版.pdf",
+    "pages": [
+      {
+        "page": 725,
+        "detected_raw": 19,
+        "detected_after": 14,
+        "dedup_dropped": 5,
+        "items": 14,
+        "db_rows": 19,
+        "db_marked": 5,
+        "db_kept": 14,
+        "match_raw": true,
+        "match_after": true,
+        "match_dropped": true,
+        "match_kept_boxes": true
+      },
+      {
+        "page": 776,
+        "detected_raw": 34,
+        "detected_after": 31,
+        "dedup_dropped": 3,
+        "items": 31,
+        "db_rows": 34,
+        "db_marked": 3,
+        "db_kept": 31,
+        "match_raw": true,
+        "match_after": true,
+        "match_dropped": true,
+        "match_kept_boxes": true
+      },
+      {
+        "page": 773,
+        "detected_raw": 28,
+        "detected_after": 25,
+        "dedup_dropped": 3,
+        "items": 25,
+        "db_rows": 28,
+        "db_marked": 3,
+        "db_kept": 25,
+        "match_raw": true,
+        "match_after": true,
+        "match_dropped": true,
+        "match_kept_boxes": true
+      },
+      {
+        "page": 749,
+        "detected_raw": 22,
+        "detected_after": 19,
+        "dedup_dropped": 3,
+        "items": 19,
+        "db_rows": 22,
+        "db_marked": 3,
+        "db_kept": 19,
+        "match_raw": true,
+        "match_after": true,
+        "match_dropped": true,
+        "match_kept_boxes": true
+      },
+      {
+        "page": 56,
+        "detected_raw": 21,
+        "detected_after": 18,
+        "dedup_dropped": 3,
+        "items": 18,
+        "db_rows": 21,
+        "db_marked": 3,
+        "db_kept": 18,
+        "match_raw": true,
+        "match_after": true,
+        "match_dropped": true,
+        "match_kept_boxes": true
+      },
+      {
+        "page": 96,
+        "detected_raw": 13,
+        "detected_after": 10,
+        "dedup_dropped": 3,
+        "items": 10,
+        "db_rows": 13,
+        "db_marked": 3,
+        "db_kept": 10,
+        "match_raw": true,
+        "match_after": true,
+        "match_dropped": true,
+        "match_kept_boxes": true
+      },
+      {
+        "page": 73,
+        "detected_raw": 4,
+        "detected_after": 3,
+        "dedup_dropped": 1,
+        "items": 3,
+        "db_rows": 4,
+        "db_marked": 1,
+        "db_kept": 3,
+        "match_raw": true,
+        "match_after": true,
+        "match_dropped": true,
+        "match_kept_boxes": true
+      },
+      {
+        "page": 387,
+        "detected_raw": 3,
+        "detected_after": 2,
+        "dedup_dropped": 1,
+        "items": 2,
+        "db_rows": 3,
+        "db_marked": 1,
+        "db_kept": 2,
+        "match_raw": true,
+        "match_after": true,
+        "match_dropped": true,
+        "match_kept_boxes": true
+      },
+      {
+        "page": 446,
+        "detected_raw": 6,
+        "detected_after": 4,
+        "dedup_dropped": 2,
+        "items": 4,
+        "db_rows": 6,
+        "db_marked": 2,
+        "db_kept": 4,
+        "match_raw": true,
+        "match_after": true,
+        "match_dropped": true,
+        "match_kept_boxes": true
+      }
+    ],
+    "aggregate": {
+      "pages_checked": 9,
+      "detected_raw_sum": 150,
+      "detected_after_sum": 126,
+      "dedup_dropped_sum": 24,
+      "db_rows_sum": 150,
+      "db_marked_sum": 24,
+      "all_match(raw&after&dropped&boxes)": true
+    },
+    "all_match": true
+  },
+  "db_face": {
+    "stamps_columns": [
+      "id",
+      "pdf_name",
+      "page",
+      "idx",
+      "text",
+      "img_path",
+      "x1",
+      "y1",
+      "x2",
+      "y2",
+      "col",
+      "row",
+      "img_path_tiff",
+      "dup_kind",
+      "dup_of_id",
+      "dup_algo"
+    ],
+    "columns_n": 16,
+    "rows_total": 8708,
+    "dup_marked": 268,
+    "near_duplicate": 143,
+    "group_frame": 125,
+    "dup_algo_distinct": "dedup-A-v1;t1=0.5;t2=0.6;tol=8.0;minc=2",
+    "dup_of_id_violations": 0,
+    "anchors_null": {
+      "7701": null,
+      "7990": null
+    },
+    "schema_migrations": [
+      "1a-0001-jobs",
+      "1a-0002-stamps-indexes",
+      "1a-0003-stamps-naming-columns",
+      "1a-0004-stamps-dedup-columns"
+    ],
+    "per_book": {
+      "秦印类编 检索版.pdf": {
+        "total": 7183,
+        "marked": 231
+      },
+      "福庵印缀 原版 高清.pdf": {
+        "total": 1214,
+        "marked": 25
+      },
+      "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf": {
+        "total": 200,
+        "marked": 6
+      },
+      "古玺汇编 文物出版社 罗福颐  ok.pdf": {
+        "total": 23,
+        "marked": 5
+      },
+      "tmp.pdf": {
+        "total": 31,
+        "marked": 1
+      },
+      "吴颐人篆刻作品展示.pdf": {
+        "total": 22,
+        "marked": 0
+      },
+      "秦汉印典 上海书画 金怀英  1997 ok.pdf": {
+        "total": 35,
+        "marked": 0
+      }
+    }
+  },
+  "cols13_fingerprint": {
+    "before_eq_after": true,
+    "cols13_md5": "17ada51244edac62aa2147d6b9a9612d",
+    "algo": "dedup-A-v1;t1=0.5;t2=0.6;tol=8.0;minc=2",
+    "before_source": "/Users/kevin/.hermes/profiles/zang/cache/scratch/dedup-apply/yinpu.db.prebak",
+    "serialization": "md5(\"\".join(\"|\".join(<13-col values> per row) for row in ORDER BY id; NULL->\"\").encode(\"utf-8\"))"
+  },
+  "e3_live": {
+    "job_id_demo": "job-90344a7802954afdaad447d875f2e15b",
+    "pdf_name": "秦印类编 检索版.pdf",
+    "total_default_exclude_dups": 6952,
+    "total_include_duplicates_true": 7183,
+    "excluded": 231,
+    "e5_missing_kind_image_count": 0,
+    "e6_marked_row": {
+      "page": 29,
+      "idx": 4,
+      "dup_kind": "group_frame",
+      "status": 200,
+      "content_type": "image/png",
+      "magic": "89504e470d0a1a0a",
+      "served": "output/books/秦印类编 检索版/P29-C2-R6-O.tiff (三跳回落)"
+    }
+  },
+  "api_restart": {
+    "pid": 45901,
+    "started": "2026-10-11 13:15:54",
+    "dedup_py_mtime": "2026-10-11 13:14:26",
+    "health": 200,
+    "self_proof": "活进程启动时刻 ≥ dedup.py mtime ✓"
+  },
+  "redlines": {
+    "no_delete_files": true,
+    "no_change_existing_13_cols": "before≡after 17ada51244edac62aa2147d6b9a9612d",
+    "no_create_job": true,
+    "no_regenerate_images": true,
+    "only_own_files_staged": true,
+    "explicit_pathspec": true,
+    "api_restarted": true,
+    "image_stack_in_feicui_venv": true
+  }
+}

@@ -425,6 +425,20 @@ def _resolve_limit(raw: str | None) -> int:
     return limit
 
 
+def _bool_param(raw: str | None, name: str) -> bool:
+    """查询参数布尔解析（缺省 / 空 ⇒ False）；**非法值一律 400**（不静默忽略）。"""
+    if raw is None or raw == "":
+        return False
+    low = str(raw).strip().lower()
+    if low in {"1", "true", "yes", "y"}:
+        return True
+    if low in {"0", "false", "no", "n"}:
+        return False
+    raise HTTPException(
+        status_code=400, detail={"error": ERROR_BAD_PARAM, "detail": f"{name} 只能是 true/false：{raw!r}"}
+    )
+
+
 def _job_exists(st: Settings, job_id: str) -> dict:
     with db.ro(st.db_path) as conn:
         return repository.get_job_row(conn, job_id)
@@ -437,12 +451,20 @@ def list_stamps(
     page: str | None = Query(default=None, description="1-based 页码（与 cursor 互斥）"),
     limit: str | None = Query(default=None, description=f"页长，默认 {PAGE_LIMIT_DEFAULT}，上限 {PAGE_LIMIT_MAX}"),
     cursor: str | None = Query(default=None, description="上一页的 next_cursor（游标分页，翻页稳定）"),
+    include_duplicates: str | None = Query(
+        default=None,
+        description="是否包含去重标记行：默认 false ⇒ 排除 stamps.dup_kind IS NOT NULL（方案 A 判定的近重复/组框）",
+    ),
     st: Settings = Depends(_settings),
 ) -> PagedEnvelope:
-    """**E3** `GET /api/jobs/{job_id}/stamps?page=&limit=&cursor=` —— 分页取结果。
+    """**E3** `GET /api/jobs/{job_id}/stamps?page=&limit=&cursor=&include_duplicates=` —— 分页取结果。
 
     信封＝§3.2 S-3 的 **6 字段** `{items[], page, limit, total, has_more, next_cursor}`；
     `items[]` 为**实体数组**（每条＝与平台 §9.3 对齐的记录对象，逐条带 `missing_required`，见 `records.py`）。
+
+    **去重标记排除（方案 A 落地 2026-10-11）**：`include_duplicates` 缺省 / `false` ⇒ 结果**排除**去重标记行
+    （`stamps.dup_kind IS NOT NULL`）——「前端/导出侧隐藏」的展示面；`total` / `has_more` 与行集**同口径**
+    （信封自洽）。置 `true` 可含被标记行（可回溯）。**不删行、不改行**。
 
     **规范缺口（本单取法，已登记）**：`page` 与 `cursor` 的同时给法规范未定 ⇒ 本层判**互斥**（同给即 400）。
     """
@@ -453,8 +475,10 @@ def list_stamps(
         )
     page_i = _int_param(page, "page", minimum=1)
     limit_i = _resolve_limit(limit)
+    include_dup = _bool_param(include_duplicates, "include_duplicates")
     try:
-        res = repository.stamps_page(st.db_path, job_id, limit=limit_i, cursor=cursor, page=page_i)
+        res = repository.stamps_page(st.db_path, job_id, limit=limit_i, cursor=cursor, page=page_i,
+                                     include_duplicates=include_dup)
     except repository.JobNotFound:
         raise HTTPException(status_code=404, detail={"error": "JOB_NOT_FOUND", "detail": f"job 不存在：{job_id}"})
     except repository.BadCursor as exc:

@@ -82,10 +82,24 @@ _OCR = None
 # ★ `feicui/app.py`（Streamlit 应用）会**遮蔽** `server/app` 的包名 ⇒ 一律**按文件路径**加载这两块
 #   地基（见技能 feicui-ingest「硬约束」/ docs 同名提示），不触发 `import app`、不拉起接口层依赖。
 def _load_by_path(mod_name: str, rel: str):
+    """按文件路径加载模块（`feicui/app.py` 遮蔽 `server/app` 包名，故不走 `import`）。
+
+    **★ 必须先注册进 `sys.modules` 再 `exec_module`（P0 修复，2026-10-11）**：
+    模块内若有 `@dataclass`，`dataclasses` 在装饰期会走
+    `sys.modules.get(cls.__module__).__dict__`（解析 `__module__` / 注解）——
+    未注册 ⇒ `sys.modules.get()` 得 `None` ⇒ `AttributeError: 'NoneType' object has no attribute '__dict__'`，
+    整个 worker 在**导入阶段**即崩（任何新 job 都挂）。标准做法＝先 `sys.modules[name] = mod`
+    再 `exec_module`，使模块在自身执行期间即可被按名解析。
+    """
     spec = importlib.util.spec_from_file_location(mod_name, str(ROOT / rel))
     assert spec is not None and spec.loader is not None, f"无法加载 {rel}"
     mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
+    sys.modules[mod_name] = mod          # ★ P0 修复：先注册，再执行（dataclass 依赖它）
+    try:
+        spec.loader.exec_module(mod)
+    except BaseException:
+        sys.modules.pop(mod_name, None)  # 加载失败不残留半成品模块
+        raise
     return mod
 
 
@@ -93,6 +107,9 @@ naming = _load_by_path("feicui_naming", "server/app/naming.py")       # assign_c
 # ★ 校正件暂停期本模块**暂不调用** `colorcal.correct_image_v3`（§6）；仍按路径加载保留接线，
 #   恢复生产时**一行接回**（`correct_image_v3`）。模块自身纯 stdlib ⇒ 加载无副作用。
 colorcal = _load_by_path("feicui_colorcal", "server/app/colorcal.py")  # correct_image_v3（默认口径；暂停期未调用）
+# ★ **去重（方案 A）的生产单一实现**：`server/app/dedup.py`（口径真源 ops/dedup-calibration/，标定 f5b901f）。
+#   本 worker 在**检测之后、写盘/命名之前**对它调用 ⇒ **只对新 job 生效**；历史行由 `dedup_apply.py` 标记。
+dedup = _load_by_path("feicui_dedup", "server/app/dedup.py")
 
 try:  # 目录键表（加法文件 config/book_dir_keys.json）；缺失时不让 worker 起不来，回落规范化书名
     DIR_KEYS = naming.load_dir_keys()
@@ -260,6 +277,27 @@ def write_tiff_idempotent_pixels(path: Path, rgb, predictor: int | None = None) 
 
 
 # --------------------------------------------------------------------------- 单页处理
+def _dedup_candidates(candidates: list) -> list:
+    """对**单页检测候选**做方案 A 去重（只对新 job 生效）。
+
+    口径真源＝`server/app/dedup.py`（生产单一实现；阈值＝该模块单点常量 T1=0.5 / T2=0.6 /
+    TOL=8 px / R2_MIN_CHILDREN=2；标定依据 `ops/dedup-calibration/README.md`，commit `f5b901f`）。
+    **规则不自持**：这里只做「候选 dict ↔ rect」的适配，去重判定一律走 `dedup.dedup_page`。
+    入参已按 x 升序（idx 顺序口径）；返回**保留候选**（保持原序 ⇒ idx 自然重排为 0..k-1）。
+    **框本身一字不改**（bbox / area / aspect 原样）。
+    """
+    if len(candidates) < 2:
+        return candidates
+    rects = [
+        {"id": i, "idx": i,
+         "x1": c["bbox"][0], "y1": c["bbox"][1], "x2": c["bbox"][2], "y2": c["bbox"][3]}
+        for i, c in enumerate(candidates)
+    ]
+    page = dedup.dedup_page(rects)  # 默认 T1/T2/tol/r2_min_children/tie_break/order（单点常量）
+    keep = set(page.kept_ids)
+    return [c for i, c in enumerate(candidates) if i in keep]
+
+
 def process_page(doc, page_no: int, template: dict, book_key: str, pdf_name: str | None = None) -> dict:
     """处理**一页**（`page_no` 为 1-based 页号，↔ `stamps.page`）。编排同 `processor.process_page`。
 
@@ -286,6 +324,13 @@ def process_page(doc, page_no: int, template: dict, book_key: str, pdf_name: str
 
     stamp_candidates = processor.detect_stamp_regions(img, hsv_low, hsv_high, min_area, pad_ratio)
     stamp_candidates.sort(key=lambda c: c["bbox"][0])  # 从左到右（idx 顺序口径）
+
+    # ★ 方案 A 去重（只对新 job 生效；口径真源 `server/app/dedup.py`，标定 f5b901f）：
+    #   检测之后、命名/写盘之前 ⇒ 幸存候选**重排为连续 idx**（0..k-1），下游 (C,R) / 影像 / 落库行数随动。
+    #   **不改任何 bbox**、**不删文件**；被判定重复的相邻红区不再各自成行（枚数不再虚高）。
+    detected_raw = len(stamp_candidates)
+    stamp_candidates = _dedup_candidates(stamp_candidates)
+    dedup_dropped = detected_raw - len(stamp_candidates)
 
     # 影像命名 P-C-R（口径真源 `docs/image-naming-draft-v0.1.md`）：列/行由页内 bbox 推导，
     # 与 `stamp_idx` 同序；页内 (C,R) 唯一（构造上恒真，撞名机械判负）。
@@ -389,7 +434,8 @@ def process_page(doc, page_no: int, template: dict, book_key: str, pdf_name: str
             }
         )
 
-    return {"detected": len(stamp_candidates), "ocr_empty": ocr_empty, "items": items}
+    return {"detected": len(stamp_candidates), "detected_raw": detected_raw,
+            "dedup_dropped": dedup_dropped, "ocr_empty": ocr_empty, "items": items}
 
 
 # --------------------------------------------------------------------------- 协议主循环
@@ -416,6 +462,8 @@ def handle_chunk(req: dict) -> None:
                         "page": int(page_no),
                         "ok": True,
                         "detected": out["detected"],
+                        "detected_raw": out.get("detected_raw", out["detected"]),
+                        "dedup_dropped": out.get("dedup_dropped", 0),
                         "ocr_empty": out["ocr_empty"],
                         "items": out["items"],
                         "elapsed_ms": int((time.time() - p0) * 1000),

@@ -1,0 +1,83 @@
+17ada51244edac62aa2147d6b9a9612d  rows=8708  /Users/kevin/.hermes/profiles/zang/cache/scratch/dedup-apply/yinpu.db.prebak
+17ada51244edac62aa2147d6b9a9612d  rows=8708  /Users/kevin/bistro/xiai/data/yinpu.db
+
+before ≡ after : True   (baseline=17ada51244edac62aa2147d6b9a9612d)
+{
+  "/Users/kevin/.hermes/profiles/zang/cache/scratch/dedup-apply/yinpu.db.prebak": {
+    "db_path": "/Users/kevin/.hermes/profiles/zang/cache/scratch/dedup-apply/yinpu.db.prebak",
+    "cols13": [
+      "id",
+      "pdf_name",
+      "page",
+      "idx",
+      "text",
+      "img_path",
+      "x1",
+      "y1",
+      "x2",
+      "y2",
+      "col",
+      "row",
+      "img_path_tiff"
+    ],
+    "schema_cols": [
+      "id",
+      "pdf_name",
+      "page",
+      "idx",
+      "text",
+      "img_path",
+      "x1",
+      "y1",
+      "x2",
+      "y2",
+      "col",
+      "row",
+      "img_path_tiff"
+    ],
+    "rows": 8708,
+    "serialized_bytes": 1309196,
+    "serialization": "md5(\"\".join(\"|\".join(<13-col values> per row) for row in ORDER BY id; NULL->\"\").encode(\"utf-8\"))",
+    "cols13_md5": "17ada51244edac62aa2147d6b9a9612d"
+  },
+  "/Users/kevin/bistro/xiai/data/yinpu.db": {
+    "db_path": "/Users/kevin/bistro/xiai/data/yinpu.db",
+    "cols13": [
+      "id",
+      "pdf_name",
+      "page",
+      "idx",
+      "text",
+      "img_path",
+      "x1",
+      "y1",
+      "x2",
+      "y2",
+      "col",
+      "row",
+      "img_path_tiff"
+    ],
+    "schema_cols": [
+      "id",
+      "pdf_name",
+      "page",
+      "idx",
+      "text",
+      "img_path",
+      "x1",
+      "y1",
+      "x2",
+      "y2",
+      "col",
+      "row",
+      "img_path_tiff",
+      "dup_kind",
+      "dup_of_id",
+      "dup_algo"
+    ],
+    "rows": 8708,
+    "serialized_bytes": 1309196,
+    "serialization": "md5(\"\".join(\"|\".join(<13-col values> per row) for row in ORDER BY id; NULL->\"\").encode(\"utf-8\"))",
+    "cols13_md5": "17ada51244edac62aa2147d6b9a9612d"
+  }
+}

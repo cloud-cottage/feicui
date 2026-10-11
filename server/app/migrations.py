@@ -103,6 +103,19 @@ MIGRATIONS: list[tuple[str, str, list[str]]] = [
             "ALTER TABLE stamps ADD COLUMN img_path_tiff TEXT",
         ],
     ),
+    (
+        "1a-0004-stamps-dedup-columns",
+        "stamps 加法新增列 dup_kind / dup_of_id / dup_algo（印面去重方案 A 的历史行标记；"
+        "口径真源 ops/dedup-calibration/ 标定 commit f5b901f）——只加列，不改既有列、不改任何行；"
+        "值由 server/app/dedup_apply.py 幂等写入（新 job 在检测器侧去重、不写这三列）",
+        [
+            "ALTER TABLE stamps ADD COLUMN dup_kind TEXT",
+            "ALTER TABLE stamps ADD COLUMN dup_of_id INTEGER",
+            "ALTER TABLE stamps ADD COLUMN dup_algo TEXT",
+            # 部分索引：只索引被标记行（命中 E3/导出侧「排除 dup_kind IS NULL」的过滤）
+            "CREATE INDEX IF NOT EXISTS idx_stamps_dup_kind ON stamps(dup_kind) WHERE dup_kind IS NOT NULL",
+        ],
+    ),
 ]
 
 

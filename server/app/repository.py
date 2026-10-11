@@ -717,6 +717,11 @@ def decode_cursor_e7(cursor: str) -> tuple[str, str]:
 
 
 # --------------------------------------------------------------------------- E3
+def _stamps_has_dup_kind(conn) -> bool:
+    """`stamps` 是否有加法列 `dup_kind`（迁移 `1a-0004`）——用于**向后兼容**的过滤闸。"""
+    return any(r[1] == "dup_kind" for r in conn.execute("PRAGMA table_info(stamps)"))
+
+
 def stamps_page(
     db_path: Path | str,
     job_id: str,
@@ -724,21 +729,30 @@ def stamps_page(
     limit: int,
     cursor: str | None = None,
     page: int | None = None,
+    include_duplicates: bool = False,
 ) -> dict[str, Any]:
     """E3 一页结果（§3.1 E3）。
 
     * 范围＝该 job 的 `pdf_name` × 该 job 的页区间（与 E5 / AC-07 **同口径**，由 `job_pages` 复算）；
     * 排序＝`(page, idx, id)` **稳定序** ⇒ 游标翻页无重叠 / 无遗漏（`(pdf_name,page,idx)` 有唯一索引兜底）；
     * `total`＝该范围全量条数（**不是**剩余条数）；`has_more`＝本页之后是否还有行；
-    * `next_cursor`＝本页**最后一行**的游标；`has_more=false` ⇒ `None`（S-3 的互斥一致性）。
+    * `next_cursor`＝本页**最后一行**的游标；`has_more=false` ⇒ `None`（S-3 的互斥一致性）；
+    * **去重标记排除（方案 A 落地 2026-10-11）**：`include_duplicates=False`（默认）⇒ 排除
+      `dup_kind IS NOT NULL` 的行（方案 A 判定的近重复 / 组框，见 `server/app/dedup.py`）——「前端/导出侧
+      隐藏」的展示面。`total` / `has_more` / `offset` 与行集**同口径**过滤（信封自洽）。置 True 可含被标记行
+      （可回溯口径）。库无 `dup_kind` 列（未跑迁移 `1a-0004`）时**自动退化为不过滤**。**不删行、不改行**。
     """
     with db.ro(db_path) as conn:
         job = get_job_row(conn, job_id)
         pdf_name, lo, hi = _job_scope(conn, job_id)
+        dup_filter = ""
+        if not include_duplicates and _stamps_has_dup_kind(conn):
+            dup_filter = " AND dup_kind IS NULL"
         total = int(
             db.query_one(
                 conn,
-                "SELECT COUNT(*) AS c FROM stamps WHERE pdf_name = ? AND page BETWEEN ? AND ?",
+                "SELECT COUNT(*) AS c FROM stamps WHERE pdf_name = ? AND page BETWEEN ? AND ?"
+                + dup_filter,
                 (pdf_name, lo, hi),
             )["c"]
         )
@@ -749,7 +763,7 @@ def stamps_page(
                     conn,
                     """SELECT COUNT(*) AS c FROM stamps
                         WHERE pdf_name = ? AND page BETWEEN ? AND ?
-                          AND (page < ? OR (page = ? AND idx <= ?))""",
+                          AND (page < ? OR (page = ? AND idx <= ?))""" + dup_filter,
                     (pdf_name, lo, hi, cp, cp, ci),
                 )["c"]
             )
@@ -757,7 +771,7 @@ def stamps_page(
                 conn,
                 """SELECT id, pdf_name, page, idx, text, img_path, x1, y1, x2, y2 FROM stamps
                     WHERE pdf_name = ? AND page BETWEEN ? AND ?
-                      AND (page > ? OR (page = ? AND idx > ?))
+                      AND (page > ? OR (page = ? AND idx > ?))""" + dup_filter + """
                     ORDER BY page, idx, id LIMIT ?""",
                 (pdf_name, lo, hi, cp, cp, ci, limit),
             )
@@ -766,7 +780,7 @@ def stamps_page(
             rows = db.query_all(
                 conn,
                 """SELECT id, pdf_name, page, idx, text, img_path, x1, y1, x2, y2 FROM stamps
-                    WHERE pdf_name = ? AND page BETWEEN ? AND ?
+                    WHERE pdf_name = ? AND page BETWEEN ? AND ?""" + dup_filter + """
                     ORDER BY page, idx, id LIMIT ? OFFSET ?""",
                 (pdf_name, lo, hi, limit, offset),
             )

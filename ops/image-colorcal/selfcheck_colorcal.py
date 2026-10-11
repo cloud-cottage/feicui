@@ -1,17 +1,20 @@
 #!/usr/bin/env python
-"""`app/colorcal.py` 自检（Kong 地基单 · 口径件 §2.2 / §4）。
+"""`app/colorcal.py` 自检（Kong 地基单 · **V2 双锚点仿射**口径）。
 
 跑法（**必须用 worker venv**，含 numpy/PIL）：
     /Users/kevin/bistro/xiai/feicui/venv/bin/python \
         /Users/kevin/bistro/xiai/feicui/ops/image-colorcal/selfcheck_colorcal.py
 
-至少断言（与派单 ② 一一对应）：
-  (a) `ciede2000_lab` 对 **Sharma, Wu & Dalal (2005)** 的 34 组业界已知 Lab 色对在容差 1e-4 内
-      （`delta_e2000` 的 sRGB 入口共用同一核心，另附一组 sRGB 往返对照）；
-  (b) 人工合成图（给定印泥色＋纸色）校正后**质心 → 靶色 ΔE2000 ≤ 2**（无 clamp ⇒ 应≈0）；
-  (c) 纸区**色相偏移读数**（CA-2 口径，如实回报，不硬断零）；
-  (d) `ink_ratio < 阈值` 走 `skipped` 分支、返回 `skipped(ink_ratio=…)` 标记、且图**未被改动**。
-另附：`ink_mask` 逐像素判据、`apply_correction` 恒等性、两侧 import 形态（server/.venv 无 numpy）。
+断言（与派单 ＋ Zang/Kevin 追加裁定一一对应）：
+  (a) `ciede2000_lab` 对 **Sharma, Wu & Dalal (2005)** 官方 **34 组** Lab 色对，容差 1e-4（全过）；
+  (b) 合成图（纸 `(234,224,200)` ＋ 印泥 `(200,95,45)`）校正后：
+        **纸区质心 → `#FFFFFF` 的 ΔE2000 ≤ 3** **且** **印泥核心质心 → `#C95021` 的 ΔE2000 ≤ 2**
+        （**两条同时成立**）；
+  (c) 退化用例（纸≈印泥色 ⇒ 线性 `|C−W|` 任一分量过小）⇒ `skipped(degenerate)`（`skip_reason=degenerate`）；
+  (d) 限幅越界用例 ⇒ 标记可见（`skipped(degenerate)`、`skip_reason=limiting`、raw_a/raw_b 如实回报）；
+  (e) `ink_ratio < 阈值` ⇒ `skipped(ink_ratio=…)`、图未被改动；
+  (f) CIEDE2000 对官方 34 组色对仍全过（同 (a)）。
+另附：`ink_mask` 逐像素判据、`apply_affine` 恒等性、核心质心定义、两侧 import 形态（server/.venv 无 numpy）。
 """
 from __future__ import annotations
 
@@ -23,7 +26,6 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "server"))
 
 import numpy as np                      # noqa: E402
-from PIL import Image                   # noqa: E402
 
 from app import colorcal as cc          # noqa: E402
 
@@ -32,12 +34,12 @@ RESULTS = []
 
 def check(name: str, cond: bool, detail: str = "") -> bool:
     RESULTS.append((name, bool(cond)))
-    print(("[PASS] " if cond else "[FAIL] ") + name + (("  | " + detail) if detail else ""))
+    print(("  [PASS] " if cond else "  [FAIL] ") + name + (("  | " + detail) if detail else ""))
     return bool(cond)
 
 
 # ======================================================================================
-# (a) CIEDE2000 业界已知色对（Sharma et al. 2005 官方 34 组补充测试数据）
+# (a)/(f) CIEDE2000 业界已知色对（Sharma et al. 2005 官方 34 组补充测试数据）
 #   参考来源：G. Sharma, W. Wu, E. N. Dalal,
 #   "The CIEDE2000 Color-Difference Formula: Implementation Notes,
 #    Supplementary Test Data, and Mathematical Observations",
@@ -83,8 +85,8 @@ SHARMA_PAIRS = [
 ]
 
 
-def test_ciede2000():
-    print("\n=== (a) CIEDE2000 业界已知色对（Sharma 2005 官方 34 组）===")
+def test_ciede2000() -> float:
+    print("\n=== (a)/(f) CIEDE2000 业界已知色对（Sharma 2005 官方 34 组）===")
     worst = 0.0
     worst_i = -1
     for i, (L1, a1, b1, L2, a2, b2, exp) in enumerate(SHARMA_PAIRS, 1):
@@ -94,38 +96,35 @@ def test_ciede2000():
             worst, worst_i = err, i
         if err > 1e-4:
             print(f"      pair#{i}: got={got:.6f} exp={exp:.4f} err={err:.2e}")
-    check("ciede2000_lab: 34/34 Sharma 色对 |Δ| ≤ 1e-4",
+    check(f"ciede2000_lab: {len(SHARMA_PAIRS)}/{len(SHARMA_PAIRS)} Sharma 色对 |Δ| ≤ 1e-4",
           worst <= 1e-4, f"最大误差={worst:.2e} @pair#{worst_i}")
-    # sRGB 入口（共用同一核心）：全等色 ⇒ 0；黑↔白 ⇒ 100（L 差）
     check("delta_e2000(rgb,rgb) == 0", abs(cc.delta_e2000((201, 80, 33), (201, 80, 33))) < 1e-9)
     de_bw = cc.delta_e2000((0, 0, 0), (255, 255, 255))
     check("delta_e2000(黑,白) ≈ 100", abs(de_bw - 100.0) < 1.0, f"= {de_bw:.4f}")
-    # 已知色对：目标色 vs 现图典型印泥均值 rgb(206,130,110) 的 ΔE（口径件 §1.2 读数）
-    de_typ = cc.delta_e2000((206, 130, 110), cc.TARGET_RGB)
-    print(f"      [读数] ΔE2000(典型印泥均值 (206,130,110) , 靶色 #C95021) = {de_typ:.4f}")
+    return worst
 
 
 # ======================================================================================
-# (b) / (c) 人工合成图：给定印泥色 ＋ 纸色
+# (b)(c)(d) 人工合成图
 # ======================================================================================
-PAPER_RGB = (234, 224, 200)   # 纸色（暖白、低饱和 ⇒ 原图不入选印泥掩膜）
-INK_RGB = (200, 95, 45)       # 印泥色（偏淡红橙：需提饱和才到 #C95021，且增益仍在 [0.5,2.0]）
+PAPER_RGB = (234, 224, 200)   # 纸色（暖白、低饱和 ⇒ 不入印泥掩膜）
+INK_RGB = (200, 95, 45)       # 印泥色（掩膜内，均匀 ⇒ 核心质心＝印泥色）
 
 
-def make_synthetic(ink_ratio: float, h: int = 240, w: int = 240) -> "np.ndarray":
+def make_synthetic(ink_ratio: float, paper=PAPER_RGB, ink=INK_RGB, h: int = 240, w: int = 240) -> "np.ndarray":
     img = np.zeros((h, w, 3), np.uint8)
-    img[:, :] = PAPER_RGB
+    img[:, :] = paper
     side = int(round((ink_ratio * h * w) ** 0.5))
     y0 = (h - side) // 2
     x0 = (w - side) // 2
-    img[y0:y0 + side, x0:x0 + side] = INK_RGB
+    img[y0:y0 + side, x0:x0 + side] = ink
     return img
 
 
 def test_ink_mask_basic():
     print("\n=== 附：ink_mask 逐像素判据（§2.2.1）===")
     px = np.array([[[201, 80, 33],      # 靶色：r>g+15✓ r>b+15✓ S=0.836✓ ⇒ 入选
-                    [234, 224, 200],    # 纸：r-b=34✓ 但 S=0.145✗ ⇒ 不入选
+                    [234, 224, 200],    # 纸：S=0.145✗ ⇒ 不入选
                     [206, 130, 110],    # 典型印泥：r-g=76✓ r-b=96✓ S=0.466✓ ⇒ 入选
                     [200, 190, 180],    # 近中性：S=0.10✗ ⇒ 不入选
                     [60, 40, 20],       # 暗印泥：r-g=20✓ r-b=40✓ S=0.667✓ ⇒ 入选
@@ -136,62 +135,99 @@ def test_ink_mask_basic():
 
 
 def test_synthetic():
-    print("\n=== (b)/(c) 人工合成图（印泥 %s ＋ 纸 %s）===" % (INK_RGB, PAPER_RGB))
+    print(f"\n=== (b) 合成图（纸 {PAPER_RGB} ＋ 印泥 {INK_RGB}）双锚点仿射 ===")
     img = make_synthetic(0.25)
-    c_before, ratio = cc.ink_centroid(img)
-    print(f"      原图：印泥占比={ratio:.4f}  质心={tuple(round(x,1) for x in c_before)}  "
-          f"HSV={tuple(round(x,3) for x in cc.rgb_to_hsv(c_before))}")
-    de_before = cc.delta_e2000(c_before, cc.TARGET_RGB)
 
-    corrected, rep = cc.correct_image(img, target=cc.TARGET_RGB)
+    # 锚点定义核对：核心质心＝印泥色；纸区质心＝纸色
+    core = cc.ink_core_centroid(img)
+    paper = cc.paper_centroid(img)
+    print(f"      核心质心 C={tuple(round(x,2) for x in core['rgb'])}（像素 {core['pixels']}，"
+          f"S≥{core['sat_threshold']:.3f}）")
+    print(f"      纸区质心 W={tuple(round(x,2) for x in paper['rgb'])}（像素 {paper['pixels']}，"
+          f"V≥{paper['v_threshold']:.3f}）")
 
-    print(f"      mark={rep['marker']}  gains={tuple(round(x,4) for x in rep['gains'])}  "
-          f"raw={tuple(None if x is None else round(x,4) for x in rep['raw_gains'])}  "
-          f"clamped={rep['clamped']}{rep['clamped_channels']}")
-    print(f"      校正前质心={tuple(round(x,1) for x in rep['centroid_before'])} ΔE={de_before:.4f}")
-    print(f"      校正后质心={tuple(round(x,1) for x in rep['centroid_after'])} "
-          f"ΔE={rep['delta_e_after']:.4f}")
+    corrected, rep = cc.correct_image(img, target=cc.TARGET_RGB, white=cc.WHITE_RGB)
 
-    check("(b) 合成图校正后 质心→靶色 ΔE2000 ≤ 2",
+    print(f"      mark={rep['marker']}  a={tuple(round(x,3) for x in rep['a'])}  "
+          f"b={tuple(round(x,1) for x in rep['b'])}  clamped={rep['clamped']}  "
+          f"min|C−W|_lin={rep['min_lin_component']:.4f}")
+    print(f"      核心质心 前={tuple(round(x,1) for x in rep['centroid_core_before'])} "
+          f"ΔE={rep['delta_e_before']:.4f} → 后="
+          f"{tuple(round(x,1) for x in rep['centroid_core_after'])} ΔE={rep['delta_e_after']:.4f}")
+    print(f"      纸区质心 → #FFFFFF : 前 ΔE={rep['paper_delta_e_before']:.4f} "
+          f"→ 后 ΔE={rep['paper_delta_e_after']:.4f}（纸色后={tuple(round(x,1) for x in rep['paper_after_rgb'])}）")
+    print(f"      [观察项] 掩膜全体质心 前={tuple(round(x,1) for x in rep['centroid_all_before'])} "
+          f"ΔE={rep['delta_e_all_before']:.3f} → 后="
+          f"{tuple(round(x,1) for x in rep['centroid_all_after'])} ΔE={rep['delta_e_all_after']:.3f}")
+
+    check("(b) 印泥核心质心 → #C95021 的 ΔE2000 ≤ 2",
           rep["delta_e_after"] is not None and rep["delta_e_after"] <= 2.0,
-          f"ΔE_after={rep['delta_e_after']:.4f}（前 {de_before:.4f}）")
-    check("(b) 校正确实降低 ΔE（后 < 前）", rep["delta_e_after"] < de_before)
-    check("(b) 合成案例未触发 clamp（增益都在 [0.5,2.0]）", rep["clamped"] is False)
+          f"ΔE_after={rep['delta_e_after']:.4f}（前 {rep['delta_e_before']:.4f}）")
+    check("(b) 纸区质心 → #FFFFFF 的 ΔE2000 ≤ 3",
+          rep["paper_delta_e_after"] is not None and rep["paper_delta_e_after"] <= 3.0,
+          f"ΔE={rep['paper_delta_e_after']:.4f}（前 {rep['paper_delta_e_before']:.4f}）")
+    check("(b) 两条同时成立（mode=applied、未退化）",
+          rep["mode"] == "applied" and not rep["clamped"],
+          f"a={tuple(round(x,3) for x in rep['a'])} ∈ [0,3]；|b|≤255")
 
-    # (c) 纸区色相偏移读数
-    print(f"      [读数] 纸区色相：前 {rep['paper_hue_before']:.3f}° → 后 "
-          f"{rep['paper_hue_after']:.3f}°  偏移 {rep['paper_hue_shift']:+.3f}° "
-          f"(纸像素 {rep['paper_pixels']})")
-    check("(c) 纸区色相偏移为有限读数（如实回报，不硬断零）",
-          rep["paper_hue_shift"] is not None and abs(rep["paper_hue_shift"]) < 180.0,
-          f"{rep['paper_hue_shift']:+.3f}°")
-
-    # 恒等性：全等增益不改图；白点在校正后为同一变换
-    white = np.full((8, 8, 3), 255, np.uint8)
-    same = np.array_equal(cc.apply_correction(white, (1.0, 1.0, 1.0)), white)
-    check("apply_correction(k=1,1,1) 恒等（白 255 保持）", same)
+    # 恒等性：a=1,b=0 ⇒ 不改图
+    same = np.array_equal(cc.apply_affine(np.full((8, 8, 3), 200, np.uint8), ([1.0, 1.0, 1.0], [0.0, 0.0, 0.0])),
+                          np.full((8, 8, 3), 200, np.uint8))
+    check("apply_affine(a=1,b=0) 恒等", same)
 
 
-def test_skip():
-    print("\n=== (d) 低印泥占比 → skipped 分支 ===")
+def test_degenerate():
+    print("\n=== (c) 退化用例：纸≈印泥色 ⇒ skipped(degenerate) ===")
+    # 全图同一偏红色 ⇒ 掩膜＝全图、纸区＝全图 ⇒ C＝W（线性 |C−W| 任一分量＝0）
+    img = np.zeros((60, 60, 3), np.uint8)
+    img[:, :] = (200, 120, 100)
+    corr, rep = cc.correct_image(img)
+    print(f"      ink_ratio={rep['ink_ratio']:.4f}  min|C−W|_lin={rep['min_lin_component']}  "
+          f"mode={rep['mode']}  marker={rep['marker']}  reason={rep['skip_reason']}")
+    check("(c) mode == 'skipped'", rep["mode"] == "skipped")
+    check("(c) marker == 'skipped(degenerate)'", rep["marker"] == "skipped(degenerate)")
+    check("(c) skip_reason == 'degenerate'", rep["skip_reason"] == "degenerate")
+    check("(c) 图未被改动（逐字节相等）", np.array_equal(corr, img))
+
+
+def test_limiting():
+    print("\n=== (d) 限幅越界用例 ⇒ 标记可见 ===")
+    # R 通道纸/印泥线性距离小（未到病态 0.02）⇒ a_R 越上限 3 ⇒ limiting
+    PAPER2 = (250, 240, 235)
+    INK2 = (241, 100, 60)
+    img = make_synthetic(0.25, paper=PAPER2, ink=INK2)
+    corr, rep = cc.correct_image(img)
+    print(f"      min|C−W|_lin={rep['min_lin_component']:.4f}  raw_a={tuple(None if x is None else round(x,3) for x in rep['raw_a'])}")
+    print(f"      clamped={rep['clamped']} channels={rep['clamped_channels']}  "
+          f"mode={rep['mode']}  marker={rep['marker']}  reason={rep['skip_reason']}")
+    check("(d) 越界 ⇒ mode == 'skipped'", rep["mode"] == "skipped")
+    check("(d) marker == 'skipped(degenerate)'（标记可见）", rep["marker"] == "skipped(degenerate)")
+    check("(d) skip_reason == 'limiting'", rep["skip_reason"] == "limiting")
+    check("(d) 越界通道如实回报（clamped=True 且列出通道）",
+          rep["clamped"] is True and len(rep["clamped_channels"]) >= 1,
+          f"channels={rep['clamped_channels']}")
+    check("(d) 图未被改动（未施加）", np.array_equal(corr, img))
+
+
+def test_skip_ink_ratio():
+    print("\n=== (e) 低印泥占比 → skipped(ink_ratio=…) ===")
     img = make_synthetic(0.01)                    # ≈1% < 2%
     corr, rep = cc.correct_image(img, target=cc.TARGET_RGB, ink_ratio_min=0.02)
     print(f"      ink_ratio={rep['ink_ratio']:.4f}  mode={rep['mode']}  marker={rep['marker']}")
-    check("(d) mode == 'skipped'", rep["mode"] == "skipped")
-    check("(d) marker 形如 skipped(ink_ratio=…)",
+    check("(e) mode == 'skipped' 且 skip_reason == 'ink_ratio'",
+          rep["mode"] == "skipped" and rep["skip_reason"] == "ink_ratio")
+    check("(e) marker 形如 skipped(ink_ratio=…)",
           isinstance(rep["marker"], str) and rep["marker"].startswith("skipped(ink_ratio=")
           and rep["marker"].endswith(")"))
-    check("(d) 图未被改动（逐字节相等）", np.array_equal(corr, img))
-    check("(d) delta_e_after == delta_e_before（未校正）",
-          rep["delta_e_after"] == rep["delta_e_before"])
-    # 边界：阈值以上走 applied
+    check("(e) 图未被改动（逐字节相等）", np.array_equal(corr, img))
+    check("(e) delta_e_after == delta_e_before（未校正）", rep["delta_e_after"] == rep["delta_e_before"])
     img_ok = make_synthetic(0.03)
     _, rep_ok = cc.correct_image(img_ok, ink_ratio_min=0.02)
-    check("(d) 3% > 阈值 ⇒ applied", rep_ok["mode"] == "applied")
+    check("(e) 3% > 阈值 ⇒ applied", rep_ok["mode"] == "applied")
 
 
 # ======================================================================================
-# 两侧 import 形态（口径件 §2.5 红线 3：两侧共用同一份实现）
+# 两侧 import 形态（两侧共用同一份实现）
 # ======================================================================================
 def test_two_sided_import():
     print("\n=== 附：两侧 import 形态（server/.venv 无 numpy）===")
@@ -203,9 +239,14 @@ def test_two_sided_import():
         "import sys; sys.path.insert(0, %r)\n"
         "from app import colorcal as cc\n"
         "assert cc.TARGET_RGB == (201, 80, 33), cc.TARGET_RGB\n"
+        "assert cc.WHITE_RGB == (255, 255, 255), cc.WHITE_RGB\n"
         "assert abs(cc.delta_e2000((206,130,110),(201,80,33)) - %.6f) < 1e-6\n"
+        "aff = cc.affine_for((206,130,110),(234,224,200))\n"
+        "assert len(aff['a']) == 3 and len(aff['b']) == 3\n"
         "g = cc.gains_for((206,130,110))\n"
         "assert g['clamped'] is True and 'b' in g['clamped_channels']\n"
+        "c = cc.apply_affine_color((180,180,180), aff)\n"
+        "assert len(c) == 3\n"
         "try:\n"
         "    import numpy\n"
         "    raise SystemExit('numpy 不应存在于接口层')\n"
@@ -217,20 +258,22 @@ def test_two_sided_import():
         "except RuntimeError:\n"
         "    pass\n"
         "print('API_OK')\n"
-    ) % (str(REPO / "server"), cc.delta_e2000((206, 130, 110), cc.TARGET_RGB))
+    ) % (str(REPO / "server"), cc.delta_e2000((206, 130, 110), (201, 80, 33)))
     r = subprocess.run([str(api_py), "-c", code], capture_output=True, text=True, cwd=str(REPO))
     ok = (r.returncode == 0) and ("API_OK" in r.stdout)
-    check("接口层 server/.venv（无 numpy）可 import colorcal：常量 ✓ 色差 ✓ 增益 ✓ 像素函数抛错 ✓",
+    check("接口层 server/.venv（无 numpy）可 import colorcal：常量 ✓ 色差 ✓ 仿射系数 ✓ 标量仿射 ✓ 像素函数抛错 ✓",
           ok, (r.stdout.strip() + r.stderr.strip())[-400:])
 
 
 def main():
-    print(f"colorcal 自检  |  python={sys.executable}")
+    print(f"colorcal 自检（V2 双锚点仿射）  |  python={sys.executable}")
     print(f"repo={REPO}")
     test_ink_mask_basic()
     test_ciede2000()
     test_synthetic()
-    test_skip()
+    test_degenerate()
+    test_limiting()
+    test_skip_ink_ratio()
     test_two_sided_import()
     n = len(RESULTS)
     npass = sum(1 for _, ok in RESULTS if ok)

@@ -68,7 +68,8 @@ def main():
             load_err += 1
             rows.append({"path": os.path.relpath(p, REPO), "error": f"{type(e).__name__}: {e}"})
             continue
-        _, rep = cc.correct_image(arr, target=cc.TARGET_RGB, ink_ratio_min=cc.INK_RATIO_MIN)
+        # V1 对角增益口径（兼容路径；默认路径已改为 V2 双锚点仿射 correct_image）
+        _, rep = cc.correct_image_diagonal(arr, target=cc.TARGET_RGB, ink_ratio_min=cc.INK_RATIO_MIN)
         cb = rep["centroid_before"]
         hsv = cc.rgb_to_hsv(cb) if cb else None
         # counterfactual：只 clamp 上限（放开下限 k_min）—— 量「下限 clamp 是否为未达标阻因」

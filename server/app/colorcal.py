@@ -1,34 +1,50 @@
-"""影像颜色校正 V1（印泥锚点白平衡）—— **纯函数模块**（两侧共用唯一一份实现）。
+"""影像颜色校正 V2（**双锚点仿射**）—— **纯函数模块**（两侧共用唯一一份实现）。
 
-口径真源：`feicui/docs/image-color-tiff-draft-v0.1.md` **§2.2**（逐条照登）。
+口径真源：`feicui/docs/image-color-tiff-draft-v0.1.md`（§2.2 算法口径 / §4 验收候选）。
 本模块是 **Kong 地基单**（先行）的产物：只提供纯函数 ＋ 常量，**不接入任何线、不读写文件 / DB**。
 
-算法 V1（§2.2 逐条）：
-  1. **印泥掩膜** `ink_mask`：`r > g+15` 且 `r > b+15` 且 `S > 0.25`（`S =(max−min)/max`）。
-  2. **质心** `ink_centroid`：掩膜内像素均值（＝本件定义的「主色调」）＋ 印泥占比。
-  3. **锚点映射** `gains_for`：通道增益 `k = target / C`（**线性 RGB** 中算、sRGB 往返），
-     clamp `k ∈ [K_MIN, K_MAX]`（默认 0.5 / 2.0），整图施加同一变换（`apply_correction`）。
-  4. **跳过兜底** `correct_image`：`ink_ratio < threshold`（默认 2%）⇒ **不校正**并逐行标记
-     `skipped(ink_ratio=<值>)`（**不得静默**，承 AC-54 / CA-5 同一纪律）。
-  5. 目标色 **`#C95021` ＝ rgb(201,80,33)**（`TARGET_RGB`，**唯一常量、单点可改**）。
+算法 V2（**双锚点仿射**，承 Zang / Kevin 2026-10-11 追加裁定）：
+  1. **印泥掩膜** `ink_mask`：`r > g+15` 且 `r > b+15` 且 `S > 0.25`（`S =(max−min)/max`）。**未变**。
+  2. **印泥锚点 `C`＝「主色调」＝核心质心**：掩膜内**饱和度 ≥ p75** 的像素均值（**非**掩膜全体均值——
+     全体均值含大量淡边像素、离纸色太近 ⇒ 两点定线病态）。
+  3. **纸区锚点 `W`**：**亮度（`V=max(RGB)/255`）≥ p90** 的像素均值。
+  4. 两点定线，**每通道 `out = a·in + b`**（**线性 RGB 中解、sRGB 往返**）：
+       锚点② `C` → **`#C95021`**（`TARGET_RGB`）；锚点① `W` → **`#FFFFFF`**（`WHITE_RGB`）。
+       线性 0–255 标度上逐字成立：`a = (T − 255)/(C − W)`、`b = 255 − a·W`。
+  5. **限幅** `a ∈ [A_MIN, A_MAX]`（默认 0 / 3）、`b ∈ [B_MIN, B_MAX]`（默认 −255 / 255）；
+     **越界** ⇒ `skipped(degenerate)`（`skip_reason="limiting"`）；**病态**（线性空间任一分量
+     `|C−W| < DEGENERATE_MIN_LIN`＝0.02）⇒ `skipped(degenerate)`（`skip_reason="degenerate"`）。
+     **不得静默**，界值单点可改。
+  6. **跳过兜底**：`ink_ratio < threshold`（默认 2%）⇒ 不校正，逐行标记 `skipped(ink_ratio=<值>)`。
+  7. 目标色 **`#C95021` ＝ rgb(201,80,33)**（锚点②，**唯一常量、单点可改**）；白色锚点 `#FFFFFF`。
+
+### 判据口径（务必区分）
+* `centroid_core_*`（**核心质心**，**与锚点同定义**）：CA-1 判据——「印泥核心质心→目标色」，预期 ΔE≈0。
+* `centroid_all_*`（掩膜**全体**质心）：**仅观察项**。纸→纯白使全图变冷，全体质心**会变差**，
+  **不得**拿它当判据（实测 9.2 → 20.6）。
+
+### 为什么是「线性 RGB、0–255 标度」的 a / b
+「线性 RGB 中解、sRGB 往返」指像素变换走 `sRGB → 线性 → 仿射 → 线性 → sRGB`（**gamma 正确**）。
+系数在同一线性域上给出：把线性分量按 0–255 标度表达（`in_lin255 = 255·srgb_to_linear(in/255)`），
+则 `a = (T − 255)/(C − W)`、`b = 255 − a·W` 逐字成立，且 `b` 天然落在 `[−255, 255]`——
+这是「限幅 `b ∈ [−255, 255]`」有意义的唯一标度（若用 0–1 线性域，`b` 恒 ∈ [−1, 1]，界形同虚设）。
 
 ### 为什么写成「可被两侧 import」
 本仓解释器矩阵（`feicui.spec.md` §6.5）：worker 侧 `feicui/venv` 有 numpy/PIL/cv2；
 接口层 `server/.venv` **只有 PIL、没有 numpy**。故本模块：
 
 * 顶部 **numpy 为可选依赖**（`try/except`）—— 缺 numpy 时模块仍可被 `server/.venv` import，
-  只是**像素函数**（`ink_mask` / `ink_centroid` / `apply_correction` / `correct_image` / `paper_mask`）
-  被调用时抛 `RuntimeError`；**纯算术函数**（`delta_e2000` / `gains_for` / 色彩空间换算 / 常量）
-  用 `math` 实现、**零 numpy 依赖**，两侧都能跑。
+  只是**像素函数**（掩膜 / 质心 / 纸区 / `apply_affine` / `apply_correction` / `correct_image`）
+  被调用时抛 `RuntimeError`；**纯算术函数**（`delta_e2000` / `affine_for` / `gains_for` /
+  `apply_affine_color` / 色彩空间换算 / 常量）用 `math` 实现、**零 numpy 依赖**，两侧都能跑。
 * **不含 skimage / cv2 依赖**（CIEDE2000 为手写实现）。
 * 只依赖 **numpy（可选）＋ 标准库**。
 
-### 「纸保中性」的准确含义（**须与 CA-2 一起读**）
-§2.2.3 说「整图施加同一变换 ⇒ 纸保持中性（不被染色）」。本模块的实现是**单条全局对角增益**
-（`out_linear = k ⊙ in_linear`，**无偏移项**）——即「同一变换」的字面义：不按区域分别染色。
-**但**：对角增益只在 3 个 k 相等时才严格保白；实测本语料需压蓝/压绿 ⇒ k 不等 ⇒
-近白（纸）会有可测的**色相漂移**（实测见 `ops/image-colorcal/`）。因此本模块**不宣称零漂移**，
-而是把漂移**如实读数并回报**（`paper_mask` ＋ 报告里的纸质心/色相），供 CA-2 与 R 裁处断。
+### 兼容：旧的「对角增益」路径
+V1 的单条全局对角增益 `out_linear = k ⊙ in_linear`（`k = target / C`，clamp 到 `[0.5, 2.0]`）
+**保留为兼容函数**（`gains_for` / `apply_correction` / `correct_image_diagonal`），
+但**不再作默认路径**——实测对角增益**数学上无法**同时满足「印泥→`#C95021`」与「纸保中性」
+（`ops/image-colorcal/` 有对照读数）。默认路径＝ `correct_image`（**双锚点仿射**）。
 """
 from __future__ import annotations
 
@@ -42,23 +58,43 @@ except Exception:  # pragma: no cover - 仅接口层命中
 
 __all__ = [
     # 常量
-    "TARGET_RGB", "K_MIN", "K_MAX", "INK_RATIO_MIN",
+    "TARGET_RGB", "TARGET_HEX", "WHITE_RGB", "K_MIN", "K_MAX", "INK_RATIO_MIN",
+    "A_MIN", "A_MAX", "B_MIN", "B_MAX",
+    "PAPER_QUANTILE", "INK_CORE_SAT_QUANTILE", "DEGENERATE_MIN_LIN",
     # 色彩空间 / 色差
     "hex_to_rgb", "rgb_to_hex", "rgb_to_hsv", "srgb_to_linear", "linear_to_srgb",
     "srgb_to_xyz", "xyz_to_lab", "srgb_to_lab", "lab_to_state", "ciede2000_lab", "delta_e2000",
     # 像素面（需 numpy）
-    "ink_mask", "ink_centroid", "paper_mask", "region_mean_rgb",
-    # 校正主体
-    "gains_for", "apply_correction", "correct_image", "skip_marker",
+    "ink_mask", "ink_centroid", "ink_core_centroid", "paper_mask", "paper_centroid",
+    "region_mean_rgb",
+    # 校正主体（V2 双锚点仿射）
+    "affine_for", "apply_affine", "apply_affine_color", "correct_image",
+    "skip_marker", "skip_marker_degenerate",
+    # 兼容（V1 对角增益）
+    "gains_for", "apply_correction", "correct_image_diagonal",
 ]
 
 # --------------------------------------------------------------------------------------
-# 常量（§2.2.5「唯一常量、单点可改」）
+# 常量（§2.2「唯一常量、单点可改」）
 # --------------------------------------------------------------------------------------
-TARGET_RGB: Tuple[int, int, int] = (201, 80, 33)   # #C95021 印泥目标色
+TARGET_RGB: Tuple[int, int, int] = (201, 80, 33)      # #C95021 印泥目标色（锚点②）
+WHITE_RGB: Tuple[int, int, int] = (255, 255, 255)     # #FFFFFF 纸区目标色（锚点①）
 TARGET_HEX: str = "#C95021"
 
-K_MIN: float = 0.5      # 通道增益下限（§2.2.3）
+# 仿射限幅（**线性 RGB、0–255 标度**；界值单点可改）
+A_MIN: float = 0.0        # 增益下限（负增益＝反相，判越界 ⇒ 退化跳过）
+A_MAX: float = 3.0        # 增益上限
+B_MIN: float = -255.0     # 偏移下限（0–255 线性标度）
+B_MAX: float = 255.0      # 偏移上限
+
+# 锚点定义（分位）
+PAPER_QUANTILE: float = 0.90          # 纸区：亮度 V 最高的 10% 像素均值 → #FFFFFF
+INK_CORE_SAT_QUANTILE: float = 0.75   # 印泥核心：掩膜内饱和度 S ≥ p75 的像素均值 → #C95021
+# 病态判定：线性空间（0–1）任一分量 `|C−W|` 低于此值 ⇒ skipped(degenerate)
+DEGENERATE_MIN_LIN: float = 0.02
+
+# 兼容（V1 对角增益）常量
+K_MIN: float = 0.5      # 通道增益下限（旧路径 §2.2.3）
 K_MAX: float = 2.0      # 通道增益上限
 INK_RATIO_MIN: float = 0.02   # 印泥占比跳过阈值（§2.2.4，待裁 R-c）
 
@@ -66,8 +102,12 @@ INK_RATIO_MIN: float = 0.02   # 印泥占比跳过阈值（§2.2.4，待裁 R-c�
 _INK_RG_DOMINANCE: float = 15.0   # r > g + 15 且 r > b + 15
 _INK_S_MIN: float = 0.25          # S > 0.25
 
-# 跳过标记格式（§2.2.4：`skipped(ink_ratio=<值>)`）—— 值＝原始占比，单点可改
+# 分母数值零守卫（线性 0–255 标度上；`|C−W|` 过小另由病态判据兜底）
+_DENOM_EPS: float = 1e-9
+
+# 跳过标记
 _SKIP_FMT = "skipped(ink_ratio={ratio:.6f})"
+_SKIP_DEGENERATE = "skipped(degenerate)"
 
 
 # --------------------------------------------------------------------------------------
@@ -78,7 +118,8 @@ def _np():
         raise RuntimeError(
             "colorcal 的像素函数需要 numpy（worker 侧 feicui/venv 已装）；"
             "接口层 server/.venv 无 numpy（feicui.spec.md §6.5），该层只应 import 本模块的"
-            "常量与纯算术函数（delta_e2000 / gains_for / 色彩空间换算）。"
+            "常量与纯算术函数（delta_e2000 / affine_for / gains_for / apply_affine_color / "
+            "色彩空间换算）。"
         )
     return np
 
@@ -129,7 +170,13 @@ def linear_to_srgb(x: float) -> float:
 
 
 def _srgb255_to_linear(v: float) -> float:
+    """0–255 sRGB → 线性（**0–1**）。"""
     return srgb_to_linear(float(v) / 255.0)
+
+
+def _srgb255_to_linear255(v: float) -> float:
+    """0–255 sRGB → 线性（**0–255 标度**，仿射求解域）。"""
+    return 255.0 * srgb_to_linear(float(v) / 255.0)
 
 
 def srgb_to_xyz(rgb: Sequence[float], ) -> Tuple[float, float, float]:
@@ -255,20 +302,26 @@ def _as_rgb_array(rgb_array: Any):
     return arr
 
 
+def _sat_array(rgb):
+    """逐像素饱和度 `S =(max−min)/max`（`max==0` ⇒ 0）。"""
+    np_ = _np()
+    mx = rgb.max(axis=2)
+    mn = rgb.min(axis=2)
+    s = np_.zeros_like(mx, dtype=np_.float64)
+    np_.divide(mx - mn, mx, out=s, where=mx > 0)
+    return s
+
+
 def ink_mask(rgb_array) -> Any:
-    """印泥掩膜（§2.2.1）：`r > g+15` 且 `r > b+15` 且 `S > 0.25`，返回 `(H, W)` 布尔数组。
+    """印泥掩膜（§2.2.1）：`r > g+15` 且 `r > b+15` 且 `S > 0.25`，返回 `(H, W)` 布尔数组（**V2 未变**）。
 
     `S =(max−min)/max`；`max==0`（纯黑）时 `S` 记 0（不入选）。
     """
     np_ = _np()
     arr = _as_rgb_array(rgb_array)
-    r = arr[..., 0].astype(np_.float64)
-    g = arr[..., 1].astype(np_.float64)
-    b = arr[..., 2].astype(np_.float64)
-    mx = np_.maximum(np_.maximum(r, g), b)
-    mn = np_.minimum(np_.minimum(r, g), b)
-    s = np_.zeros_like(mx)
-    np_.divide(mx - mn, mx, out=s, where=mx > 0)
+    rgb = arr[..., :3].astype(np_.float64)
+    r, g, b = rgb[..., 0], rgb[..., 1], rgb[..., 2]
+    s = _sat_array(rgb)
     return (r > g + _INK_RG_DOMINANCE) & (r > b + _INK_RG_DOMINANCE) & (s > _INK_S_MIN)
 
 
@@ -282,10 +335,16 @@ def _mean_over_mask(arr, mask) -> Optional[Tuple[float, float, float]]:
     return (float(c[0]), float(c[1]), float(c[2]))
 
 
+def region_mean_rgb(rgb_array, mask) -> Optional[Tuple[float, float, float]]:
+    """给定掩膜内的均值色（`(r,g,b)` 0–255）；掩膜为空返回 None。"""
+    return _mean_over_mask(_as_rgb_array(rgb_array), mask)
+
+
 def ink_centroid(rgb_array) -> Tuple[Optional[Tuple[float, float, float]], float]:
-    """印泥质心 ＋ 印泥占比（§2.2.2）。
+    """印泥**掩膜全体**质心 ＋ 印泥占比（§2.2.2）。
 
     返回 `(centroid_rgb, ink_ratio)`：无印泥像素时 `centroid_rgb is None`（`ratio=0.0`）。
+    **注**：V2 的「主色调」锚点用 `ink_core_centroid`（核心质心），此全体质心仅作观察项。
     """
     arr = _as_rgb_array(rgb_array)
     mask = ink_mask(arr)
@@ -294,39 +353,404 @@ def ink_centroid(rgb_array) -> Tuple[Optional[Tuple[float, float, float]], float
     return _mean_over_mask(arr, mask), ratio
 
 
-def paper_mask(rgb_array, v_min: float = 0.70):
-    """纸区掩膜（**本模块自定，用于 CA-2 读数**）：`非印泥` 且 `V ≥ v_min`（`V = max/255`）。
+def ink_core_centroid(rgb_array, sat_quantile: float = INK_CORE_SAT_QUANTILE) -> Dict[str, Any]:
+    """**印泥核心质心（V2「主色调」锚点）**：掩膜内**饱和度 `S ≥ p75**` 的像素均值。
 
-    纸＝亮、低饱和的背景；用它取纸区均值色，量校正前后**色相漂移**（CA-2 / ②(c)）。
+    返回 `{"rgb": (r,g,b), "linear255": (…), "pixels": n, "mask": ndarray,
+    "sat_threshold": s, "all_pixels": n_all}`；掩膜为空时各值 `None` / 0。
+    `mask` 为**核心**像素集合（供 `centroid_after` 在同一集合上量），不可序列化到 JSON。
     """
+    np_ = _np()
+    arr = _as_rgb_array(rgb_array)
+    rgb = arr[..., :3].astype(np_.float64)
+    m = ink_mask(arr)
+    n_all = int(m.sum())
+    if n_all == 0:
+        return {"rgb": None, "linear255": None, "pixels": 0, "mask": m,
+                "sat_threshold": None, "all_pixels": 0}
+    s = _sat_array(rgb)
+    thr = float(np_.percentile(s[m], float(sat_quantile) * 100.0))
+    core = m & (s >= thr)
+    px = rgb[core]
+    lin255 = 255.0 * _srgb_to_linear_arr(px / 255.0)
+    return {
+        "rgb": tuple(float(x) for x in px.mean(axis=0)),
+        "linear255": tuple(float(x) for x in lin255.mean(axis=0)),
+        "pixels": int(core.sum()),
+        "mask": core,
+        "sat_threshold": thr,
+        "all_pixels": n_all,
+    }
+
+
+def paper_mask(rgb_array, v_min: float = 0.70):
+    """纸区掩膜（**V1 兼容，仅供对照读数**）：`非印泥` 且 `V ≥ v_min`（`V = max/255`）。"""
     np_ = _np()
     arr = _as_rgb_array(rgb_array)
     mx = arr[..., :3].max(axis=2).astype(np_.float64)
     return (~ink_mask(arr)) & (mx >= v_min * 255.0)
 
 
-def region_mean_rgb(rgb_array, mask) -> Optional[Tuple[float, float, float]]:
-    """给定掩膜内的均值色（`(r,g,b)` 0–255）；掩膜为空返回 None。"""
-    return _mean_over_mask(_as_rgb_array(rgb_array), mask)
+def paper_centroid(rgb_array, quantile: float = PAPER_QUANTILE) -> Dict[str, Any]:
+    """**纸区质心（V2 锚点①）**：**亮度（`V = max(RGB)/255`）≥ p90** 的像素均值 → `#FFFFFF`。
+
+    返回 `{"rgb": (r,g,b), "linear255": (…), "pixels": n, "v_threshold": v, "mask": ndarray}`。
+    """
+    np_ = _np()
+    arr = _as_rgb_array(rgb_array)
+    rgb = arr[..., :3].astype(np_.float64)
+    v = rgb.max(axis=2) / 255.0
+    thr = float(np_.percentile(v, float(quantile) * 100.0))
+    mask = v >= thr
+    px = rgb[mask]
+    lin255 = 255.0 * _srgb_to_linear_arr(px / 255.0)
+    return {
+        "rgb": tuple(float(x) for x in px.mean(axis=0)),
+        "linear255": tuple(float(x) for x in lin255.mean(axis=0)),
+        "pixels": int(mask.sum()),
+        "v_threshold": thr,
+        "mask": mask,
+    }
 
 
 # --------------------------------------------------------------------------------------
-# 锚点映射 / 校正主体
+# 数组版 sRGB ↔ 线性（被 apply_* 共用）
+# --------------------------------------------------------------------------------------
+def _srgb_to_linear_arr(c):
+    np_ = _np()
+    c = np_.clip(c, 0.0, None)
+    return np_.where(c <= 0.04045, c / 12.92, ((c + 0.055) / 1.055) ** 2.4)
+
+
+def _linear_to_srgb_arr(c):
+    np_ = _np()
+    c = np_.clip(c, 0.0, None)
+    return np_.where(c <= 0.0031308, c * 12.92, 1.055 * np_.power(c, 1.0 / 2.4) - 0.055)
+
+
+# --------------------------------------------------------------------------------------
+# V2 校正主体：双锚点仿射
+# --------------------------------------------------------------------------------------
+def affine_for(centroid: Sequence[float],
+               paper: Sequence[float],
+               target: Sequence[float] = TARGET_RGB,
+               white: Sequence[float] = WHITE_RGB,
+               a_min: float = A_MIN, a_max: float = A_MAX,
+               b_min: float = B_MIN, b_max: float = B_MAX,
+               degenerate_min_lin: float = DEGENERATE_MIN_LIN) -> Dict[str, Any]:
+    """双锚点仿射系数（**逐通道 `out = a·in + b`，线性 RGB、0–255 标度**）。
+
+    两点定线：
+      * 锚点② 印泥核心质心 `centroid`(C) → `target`(T，默认 `#C95021`）；
+      * 锚点① 纸区质心 `paper`(W) → `white`（默认 `#FFFFFF`）。
+    ⇒ `a = (T − 255) / (C − W)`、`b = 255 − a·W`（线性 0–255 标度；`255` ＝ 白色锚点值）。
+
+    返回 dict：
+      * `a` / `b`             : 逐通道系数（tuple3；`b` 为 0–255 线性标度）
+      * `raw_a` / `raw_b`     : clamp 前（越界时如实给出，可 ±inf / nan）
+      * `clamped`             : 任一通道越界
+      * `clamped_channels`    : 如 `["r","b"]`
+      * `clamped_detail`      : 逐通道 raw→final ＋ 线性分量
+      * `degenerate`          : 退化（病态 / 越界）
+      * `degenerate_reason`   : `None` / `"degenerate"`（线性任一分量 `|C−W|` 过小）/ `"limiting"`（越界）
+      * `dist_cw`             : `|C−W|`（0–255 RGB 欧氏）
+      * `min_lin_component`   : `min_b |C_lin − W_lin|`（线性 0–1 标度）
+      * `centroid_rgb` / `paper_rgb` / `target_rgb` / `white_rgb` : 输入回显
+    """
+    if centroid is None or paper is None or len(centroid) < 3 or len(paper) < 3:
+        raise ValueError("centroid / paper 需为长度≥3 的 0–255 RGB")
+    c = [float(x) for x in centroid[:3]]
+    w = [float(x) for x in paper[:3]]
+    t = [float(x) for x in target[:3]]
+    wh = [float(x) for x in white[:3]]
+    dist = math.sqrt(sum((x - y) ** 2 for x, y in zip(c, w)))
+    min_lin_component = min(abs(_srgb255_to_linear(x) - _srgb255_to_linear(y)) for x, y in zip(c, w))
+
+    raw_a: List[float] = []
+    raw_b: List[float] = []
+    detail: List[Dict[str, Any]] = []
+    denom_degen = False
+    for ch, cv, wv, tv, whv in zip("rgb", c, w, t, wh):
+        cl = _srgb255_to_linear255(cv)      # C（线性 0–255）
+        wl = _srgb255_to_linear255(wv)      # W（线性 0–255）
+        tl = _srgb255_to_linear255(tv)      # T（线性 0–255）
+        whl = _srgb255_to_linear255(whv)    # 白（线性 0–255；#FFFFFF ⇒ 255）
+        denom = cl - wl
+        if abs(denom) < _DENOM_EPS:
+            denom_degen = True
+            ar = math.inf
+            br = math.nan
+        else:
+            ar = (tl - whl) / denom         # a = (T − 255)/(C − W)
+            br = whl - ar * wl              # b = 255 − a·W
+        raw_a.append(ar)
+        raw_b.append(br)
+        detail.append({"channel": ch, "w_lin255": wl, "c_lin255": cl, "t_lin255": tl,
+                       "raw_a": (None if math.isinf(ar) else ar),
+                       "raw_b": (None if math.isnan(br) else br)})
+
+    a_final: List[float] = []
+    b_final: List[float] = []
+    clamped_channels: List[str] = []
+    for ch, ar, br in zip("rgb", raw_a, raw_b):
+        af = ar if not math.isfinite(ar) else min(max(ar, a_min), a_max)
+        bf = br if not math.isfinite(br) else min(max(br, b_min), b_max)
+        a_final.append(af)
+        b_final.append(bf)
+        if (not math.isfinite(ar)) or af != ar:
+            clamped_channels.append(ch)
+        elif (not math.isfinite(br)) or bf != br:
+            clamped_channels.append(ch)
+    clamped = bool(clamped_channels)
+
+    # 退化 / 越界判定（病态优先：线性任一分量 |C−W| 过小）
+    if denom_degen or min_lin_component < degenerate_min_lin:
+        degenerate, reason = True, "degenerate"
+    elif clamped:
+        degenerate, reason = True, "limiting"
+    else:
+        degenerate, reason = False, None
+
+    return {
+        "a": tuple(a_final),
+        "b": tuple(b_final),
+        "raw_a": tuple(raw_a),
+        "raw_b": tuple(raw_b),
+        "clamped": clamped,
+        "clamped_channels": clamped_channels,
+        "clamped_detail": detail,
+        "degenerate": degenerate,
+        "degenerate_reason": reason,
+        "dist_cw": dist,
+        "min_lin_component": min_lin_component,
+        "centroid_rgb": tuple(c),
+        "paper_rgb": tuple(w),
+        "target_rgb": tuple(int(round(x)) for x in t),
+        "white_rgb": tuple(int(round(x)) for x in wh),
+        "a_min": float(a_min), "a_max": float(a_max),
+        "b_min": float(b_min), "b_max": float(b_max),
+        "degenerate_min_lin": float(degenerate_min_lin),
+    }
+
+
+def _coerce_affine(affine: Any) -> Tuple[List[float], List[float]]:
+    if isinstance(affine, dict):
+        a = affine.get("a")
+        b = affine.get("b")
+        if a is None or b is None:
+            raise ValueError("affine dict 缺 'a' / 'b' 键")
+    else:
+        seq = list(affine)
+        if len(seq) != 2:
+            raise ValueError("affine 需为 (a, b) 二元组或 affine_for(...) 的 dict")
+        a, b = seq
+    a = [float(x) for x in a]
+    b = [float(x) for x in b]
+    if len(a) != 3 or len(b) != 3:
+        raise ValueError(f"a / b 需各 3 个通道，收到 len(a)={len(a)} len(b)={len(b)}")
+    return a, b
+
+
+def apply_affine(rgb_array, affine) -> Any:
+    """整图施加双锚点仿射（**线性 0–255 标度**、sRGB 往返）：`out_lin255 = a·in_lin255 + b`。
+
+    `affine` 可为 `affine_for(...)` 的返回 dict，或 `(a, b)`（各 3 元）。同 shape / dtype。
+    """
+    np_ = _np()
+    a, b = _coerce_affine(affine)
+    arr = _as_rgb_array(rgb_array)
+    orig_dtype = arr.dtype
+    rgb = arr[..., :3].astype(np_.float64)
+    lin255 = 255.0 * _srgb_to_linear_arr(rgb / 255.0)
+    out_lin255 = lin255 * np_.asarray(a, dtype=np_.float64) + np_.asarray(b, dtype=np_.float64)
+    out = _linear_to_srgb_arr(np_.clip(out_lin255, 0.0, 255.0) / 255.0) * 255.0
+    out = np_.clip(out, 0.0, 255.0)
+    if np_.issubdtype(orig_dtype, np_.integer):
+        out = np_.rint(out).astype(orig_dtype)
+    else:
+        out = out.astype(orig_dtype)
+    result = arr.copy()
+    result[..., :3] = out
+    return result
+
+
+def apply_affine_color(rgb: Sequence[float], affine: Any) -> Tuple[float, float, float]:
+    """标量版：把单个 0–255 sRGB 色过一遍双锚点仿射（**纯 math，无 numpy**）。
+
+    用于「中灰 180 校正后色」等观察项。
+    """
+    a, b = _coerce_affine(affine)
+    out = [
+        255.0 * linear_to_srgb(
+            min(max(_srgb255_to_linear255(float(v)) * av + bv, 0.0), 255.0) / 255.0
+        )
+        for v, av, bv in zip([float(x) for x in rgb[:3]], a, b)
+    ]
+    return (min(max(out[0], 0.0), 255.0),
+            min(max(out[1], 0.0), 255.0),
+            min(max(out[2], 0.0), 255.0))
+
+
+def skip_marker(ink_ratio: float) -> str:
+    """`skipped(ink_ratio=<值>)` 标记串（§2.2.4 / CA-5）。"""
+    return _SKIP_FMT.format(ratio=float(ink_ratio))
+
+
+def skip_marker_degenerate() -> str:
+    """`skipped(degenerate)` 标记串（V2 病态 / 越界，**不得静默**）。"""
+    return _SKIP_DEGENERATE
+
+
+# --------------------------------------------------------------------------------------
+# 单图校正（V2 默认路径：双锚点仿射）
+# --------------------------------------------------------------------------------------
+def correct_image(rgb_array,
+                  target: Sequence[float] = TARGET_RGB,
+                  white: Sequence[float] = WHITE_RGB,
+                  ink_ratio_min: float = INK_RATIO_MIN,
+                  a_min: float = A_MIN, a_max: float = A_MAX,
+                  b_min: float = B_MIN, b_max: float = B_MAX,
+                  paper_quantile: float = PAPER_QUANTILE,
+                  core_sat_quantile: float = INK_CORE_SAT_QUANTILE,
+                  degenerate_min_lin: float = DEGENERATE_MIN_LIN,
+                  ) -> Tuple[Any, Dict[str, Any]]:
+    """单图校正（**V2 双锚点仿射**）→ `(校正后图, 报告 dict)`。
+
+    报告键（逐行可落 `images_manifest.jsonl` 的 `color_correction` 面）：
+      * `mode`          : `"applied"` / `"skipped"`
+      * `marker`        : `"applied"` / `skipped(ink_ratio=<值>)` / `skipped(degenerate)`
+      * `skip_reason`   : `None` / `"ink_ratio"` / `"degenerate"` / `"limiting"`
+      * `ink_ratio`     : 印泥占比（**校正前掩膜**）
+      * `centroid_core_before` / `centroid_core_after` : **核心质心**前后（**判据**；`after` 在
+        **同一核心像素集合**上算，**不重算掩膜** ⇒ 无 clip 时恰＝target）
+      * `centroid_all_before` / `centroid_all_after` : 掩膜**全体**质心（**观察项**，勿当判据）
+      * `delta_e_before` / `delta_e_after` : **核心质心**→target 的 CIEDE2000（前 / 后）
+      * `ink_ratio_after` : 校正后**重算掩膜**的占比（观察项）
+      * `a` / `b` / `raw_a` / `raw_b` / `clamped` / `clamped_channels` / `min_lin_component`
+      * `paper_before_rgb` / `paper_after_rgb` / `paper_pixels`
+      * `paper_delta_e_before` / `paper_delta_e_after` : 纸区质心→**white** 的 CIEDE2000（锚点①判据）
+      * `paper_hue_before` / `paper_hue_after` / `paper_hue_shift` : 纸区色相漂移读数（观察项）
+      * `gray180_after` : 中灰 (180,180,180) 校正后色（观察项；量化「整体变冷」）
+    """
+    arr = _as_rgb_array(rgb_array)
+    total = int(arr.shape[0]) * int(arr.shape[1]) or 1
+    m_all = ink_mask(arr)
+    ratio = int(m_all.sum()) / total
+
+    core = ink_core_centroid(arr, core_sat_quantile)
+    c_core = core["rgb"]
+    c_all = _mean_over_mask(arr, m_all)
+
+    paper = paper_centroid(arr, paper_quantile)
+    pmask = paper["mask"]
+    paper_before = paper["rgb"] if paper["pixels"] else None
+
+    report: Dict[str, Any] = {
+        "algorithm": "affine-2anchor",
+        "target_rgb": tuple(int(round(v)) for v in target[:3]),
+        "target_hex": rgb_to_hex(target),
+        "white_rgb": tuple(int(round(v)) for v in white[:3]),
+        "ink_ratio": ratio,
+        "core_pixels": core["pixels"],
+        "core_sat_threshold": core["sat_threshold"],
+        "centroid_core_before": c_core,
+        "centroid_core_before_hsv": (rgb_to_hsv(c_core) if c_core else None),
+        "delta_e_before": (delta_e2000(c_core, target) if c_core else None),
+        "centroid_all_before": c_all,
+        "delta_e_all_before": (delta_e2000(c_all, target) if c_all else None),
+        "paper_pixels": int(pmask.sum()),
+        "paper_v_threshold": paper["v_threshold"],
+        "paper_before_rgb": paper_before,
+        "paper_delta_e_before": (delta_e2000(paper_before, white) if paper_before else None),
+        "paper_hue_before": (rgb_to_hsv(paper_before)[0] if paper_before else None),
+        "a": None, "b": None, "raw_a": None, "raw_b": None,
+        "clamped": False, "clamped_channels": [], "min_lin_component": None,
+    }
+
+    def _skip(reason: str, marker: str, **extra) -> Tuple[Any, Dict[str, Any]]:
+        report.update({
+            "mode": "skipped",
+            "marker": marker,
+            "skip_reason": reason,
+            "centroid_core_after": c_core,
+            "centroid_all_after": c_all,
+            "ink_ratio_after": ratio,
+            "delta_e_after": report["delta_e_before"],
+            "delta_e_all_after": report["delta_e_all_before"],
+            "paper_after_rgb": paper_before,
+            "paper_delta_e_after": report["paper_delta_e_before"],
+            "paper_hue_after": report["paper_hue_before"],
+            "paper_hue_shift": (0.0 if paper_before else None),
+            "gray180_after": (180.0, 180.0, 180.0),
+        })
+        report.update(extra)
+        return arr.copy(), report
+
+    if c_core is None or ratio < ink_ratio_min or paper_before is None:
+        return _skip("ink_ratio", skip_marker(ratio))
+
+    aff = affine_for(c_core, paper_before, target=target, white=white,
+                     a_min=a_min, a_max=a_max, b_min=b_min, b_max=b_max,
+                     degenerate_min_lin=degenerate_min_lin)
+    common = {
+        "a": aff["a"], "b": aff["b"], "raw_a": aff["raw_a"], "raw_b": aff["raw_b"],
+        "clamped": aff["clamped"], "clamped_channels": aff["clamped_channels"],
+        "clamped_detail": aff["clamped_detail"], "dist_cw": aff["dist_cw"],
+        "min_lin_component": aff["min_lin_component"],
+        "paper_rgb": aff["paper_rgb"], "white_rgb": aff["white_rgb"],
+        "target_rgb": aff["target_rgb"],
+    }
+    if aff["degenerate"]:
+        return _skip(aff["degenerate_reason"], skip_marker_degenerate(), **common)
+
+    corrected = apply_affine(arr, aff)
+
+    # 映射后质心：**同一像素集合**在纠正图上的均值
+    c_core_after = _mean_over_mask(corrected, core["mask"])
+    c_all_after = _mean_over_mask(corrected, m_all)
+    # 重算掩膜（观察项）
+    mask_after = ink_mask(corrected)
+    ratio_after = int(mask_after.sum()) / total
+
+    paper_after = _mean_over_mask(corrected, pmask)
+    hue_b = rgb_to_hsv(paper_before)[0] if paper_before else None
+    hue_a = rgb_to_hsv(paper_after)[0] if paper_after else None
+    hue_shift = None
+    if hue_b is not None and hue_a is not None:
+        hue_shift = (hue_a - hue_b + 180.0) % 360.0 - 180.0  # 环绕到 [-180,180]
+
+    report.update(common)
+    report.update({
+        "mode": "applied",
+        "marker": "applied",
+        "skip_reason": None,
+        "centroid_core_after": c_core_after,
+        "centroid_core_after_hsv": (rgb_to_hsv(c_core_after) if c_core_after else None),
+        "delta_e_after": (delta_e2000(c_core_after, target) if c_core_after else None),
+        "centroid_all_after": c_all_after,
+        "delta_e_all_after": (delta_e2000(c_all_after, target) if c_all_after else None),
+        "ink_ratio_after": ratio_after,
+        "paper_after_rgb": paper_after,
+        "paper_delta_e_after": (delta_e2000(paper_after, white) if paper_after else None),
+        "paper_hue_after": hue_a,
+        "paper_hue_shift": hue_shift,
+        "gray180_after": apply_affine_color((180, 180, 180), aff),
+    })
+    return corrected, report
+
+
+# --------------------------------------------------------------------------------------
+# 兼容（V1 对角增益）—— **不得再作默认路径**
 # --------------------------------------------------------------------------------------
 def gains_for(centroid: Sequence[float],
               target: Sequence[float] = TARGET_RGB,
               k_min: float = K_MIN,
               k_max: float = K_MAX,
               space: str = "linear-rgb") -> Dict[str, Any]:
-    """算通道增益（§2.2.3）：`k = target / C`，**线性 RGB** 中算、clamp 到 `[k_min, k_max]`。
+    """【V1 兼容】算通道增益（§2.2.3）：`k = target / C`，**线性 RGB** 中算、clamp 到 `[k_min, k_max]`。
 
-    参数
-      centroid : 印泥质心（**0–255 sRGB**）
-      target   : 目标色（0–255 sRGB；默认 `TARGET_RGB`）
-      space    : 只支持 `"linear-rgb"`（口径唯一）
-    返回 dict：`gains`(clamp 后 3 元组) / `raw_gains`(clamp 前，可能 ±inf) /
-              `clamped`(bool 任一通道被 clamp) / `clamped_channels`(如 `["g","b"]`) /
-              `clamped_detail`(逐通道 raw→final) / `centroid_rgb` / `target_rgb` / `k_min` / `k_max` / `space`。
+    **保留仅为兼容 / 对照**；V1 对角口径数学上无法同时满足「印泥→`#C95021`」与「纸保中性」，
+    **默认路径已改为双锚点仿射**（`correct_image`）。
     """
     if space != "linear-rgb":
         raise ValueError(f"space 只支持 'linear-rgb'（口径 V1），收到 {space!r}")
@@ -376,23 +800,11 @@ def _coerce_gains(gains: Any) -> List[float]:
     return seq
 
 
-def _srgb_to_linear_arr(c):
-    np_ = _np()
-    c = np_.clip(c, 0.0, None)
-    return np_.where(c <= 0.04045, c / 12.92, ((c + 0.055) / 1.055) ** 2.4)
-
-
-def _linear_to_srgb_arr(c):
-    np_ = _np()
-    c = np_.clip(c, 0.0, None)
-    return np_.where(c <= 0.0031308, c * 12.92, 1.055 * np_.power(c, 1.0 / 2.4) - 0.055)
-
-
 def apply_correction(rgb_array, gains) -> Any:
-    """整图施加同一变换（§2.2.3）：线性 RGB 中逐通道乘增益，再回 sRGB。
+    """【V1 兼容】整图施加对角增益（§2.2.3）：线性 RGB 中逐通道乘增益，再回 sRGB。
 
     `gains` 可为 `gains_for(...)` 的返回 dict，或长度 3 的序列。返回与输入同 shape / dtype。
-    变换＝**单条全局对角增益**（无偏移项）——「纸保中性」的字面义（同一变换整图施加）。
+    **默认路径已改为双锚点仿射**（`apply_affine`）。
     """
     np_ = _np()
     k = _coerce_gains(gains)
@@ -411,29 +823,16 @@ def apply_correction(rgb_array, gains) -> Any:
     return result
 
 
-def skip_marker(ink_ratio: float) -> str:
-    """`skipped(ink_ratio=<值>)` 标记串（§2.2.4 / CA-5）。"""
-    return _SKIP_FMT.format(ratio=float(ink_ratio))
+def correct_image_diagonal(rgb_array,
+                           target: Sequence[float] = TARGET_RGB,
+                           ink_ratio_min: float = INK_RATIO_MIN,
+                           k_min: float = K_MIN,
+                           k_max: float = K_MAX,
+                           ) -> Tuple[Any, Dict[str, Any]]:
+    """【V1 兼容】单图校正（对角增益口径）→ `(校正后图, 报告 dict)`。
 
-
-def correct_image(rgb_array,
-                  target: Sequence[float] = TARGET_RGB,
-                  ink_ratio_min: float = INK_RATIO_MIN,
-                  k_min: float = K_MIN,
-                  k_max: float = K_MAX,
-                  ) -> Tuple[Any, Dict[str, Any]]:
-    """单图校正（§2.2 全流程）→ `(校正后图, 报告 dict)`。
-
-    报告键（**逐行可落 `images_manifest.jsonl` 的 `color_correction` 面**）：
-      * `mode`          : `"applied"` / `"skipped"`
-      * `marker`        : `"applied"` 或 `skipped(ink_ratio=<值>)`
-      * `ink_ratio`     : 印泥占比（校正前掩膜）
-      * `centroid_before` / `centroid_after` : 前后质心（`centroid_after` ＝ **同一印泥像素集合**
-        校色后的均值 ⇒ 无 clamp 时 **恰等于 target**；这正是「把印泥质心映射到目标色」的判据）
-      * `ink_ratio_after` : 校正后**重算掩膜**的占比（观察项：校色可能把纸也推进印泥掩膜）
-      * `delta_e_before` / `delta_e_after` : 质心→target 的 CIEDE2000（前 / 后）
-      * `clamped` / `clamped_channels` / `gains` / `raw_gains`
-      * `paper_hue_before` / `paper_hue_after` / `paper_hue_shift` : 纸区色相漂移读数（CA-2）
+    报告的键与 V1 一致（`gains` / `raw_gains` / `clamped` / 前后质心 / ΔE / 纸区色相…）。
+    纸区读数沿用 V1 的 `paper_mask`（非印泥且 `V≥0.70`）定义。**仅为对照 / 复现历史读数。**
     """
     arr = _as_rgb_array(rgb_array)
     mask = ink_mask(arr)
@@ -442,6 +841,7 @@ def correct_image(rgb_array,
     c_before = _mean_over_mask(arr, mask)
 
     report: Dict[str, Any] = {
+        "algorithm": "diagonal-gain",
         "target_rgb": tuple(int(round(v)) for v in target[:3]),
         "target_hex": rgb_to_hex(target),
         "ink_ratio": ratio,
@@ -454,13 +854,13 @@ def correct_image(rgb_array,
         "raw_gains": None,
     }
 
-    # 纸区读数（掩膜取**原图**，前后共用同一像素集合）
     pmask = paper_mask(arr)
     paper_before = _mean_over_mask(arr, pmask)
 
     if c_before is None or ratio < ink_ratio_min:
         report.update({
             "mode": "skipped",
+            "skip_reason": "ink_ratio",
             "marker": skip_marker(ratio),
             "centroid_after": c_before,
             "ink_ratio_after": ratio,
@@ -475,9 +875,7 @@ def correct_image(rgb_array,
     g = gains_for(c_before, target=target, k_min=k_min, k_max=k_max)
     corrected = apply_correction(arr, g["gains"])
 
-    # 映射后质心：**同一印泥像素集合**在纠正图上的均值（无 clamp ⇒ = target）
     c_after = _mean_over_mask(corrected, mask)
-    # 重算掩膜（观察项）
     mask_after = ink_mask(corrected)
     ratio_after = int(mask_after.sum()) / total
 
@@ -491,6 +889,7 @@ def correct_image(rgb_array,
 
     report.update({
         "mode": "applied",
+        "skip_reason": None,
         "marker": "applied",
         "clamped": g["clamped"],
         "clamped_channels": g["clamped_channels"],

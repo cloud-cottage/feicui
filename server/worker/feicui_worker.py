@@ -26,9 +26,15 @@
 ＋ `docs/image-color-tiff-draft-v0.1.md`）**：每枚裁图经 **V3 校正**
 （`colorcal.correct_image_v3`）后写 `output/books/<目录键>/P<页>-C<列>-R<行>.tiff`（RGB 8-bit ＋
 Deflate）；`(C,R)` 用 `naming.assign_cr` 算、目录键用 `naming.dir_key_for`。
+
+**原始切片 `-O`（2026-10-11 新增；口径真源 `docs/image-original-crop-draft-v0.1.md` §2）**：
+每次裁切**额外**写同目录 `P<页>-C<列>-R<行>-O.tiff` ＝ **未做颜色处理的原片**
+（同一 400 dpi 渲染、同一 bbox、同容器）；命名由 `naming.name_for_original` 派生、
+**幂等按解码像素判**（`write_tiff_idempotent_pixels`）；**返回值不新增字段**。
 **webp 退场（Kevin 2026-10-11 裁定「本地文件一律不再保存 webp」）**：本 worker **不再新写任何 webp**
 —— 旧 `output/faces/<book_key>/p<页4位>_<序2位>.webp` **不再写**、新命名目录里的同名 `.webp` 也**不再写**；
-该行影像的**唯一产物 ＝ TIFF**。返回值的 `img_path` **仍是旧 webp 相对路径**（该列口径一字不改，
+该行影像的产物 ＝ **TIFF ×2**（校正件 `P…-C…-R….tiff` ＋ 原始切片 `P…-C…-R…-O.tiff`）。
+返回值的 `img_path` **仍是旧 webp 相对路径**（该列口径一字不改，
 E6 的兼容回退靠它），`col`/`row`/`img_path_tiff` 照旧返回给池侧写库（**worker 仍不写库**）。
 两块地基按文件路径加载（`feicui/app.py` 会遮蔽 `server/app` 包名）。
 
@@ -190,14 +196,61 @@ def rel_path(path: Path) -> str:
         return str(path)
 
 
-def encode_tiff(rgb) -> bytes:
+# ★ O 件编码（Kevin 2026-10-11 裁定「O 件用 TIFF 编码」＋ Zang 实测裁决）：
+#   **Deflate ＋ Predictor=2（水平差分）**。实测：deflate 均 391.9 KB → +Predictor 均 289.7 KB
+#   ＝ 73.9%（省 26.1%）；lzw 反 137.5%；**三种编码解码像素与原片逐像素相等均成立**。
+#   ⇒ O 件一律以此编码写出（旧编码 O 件由幂等判据「解码像素相等 ∧ 容器合要求」自动升级重写）。
+#   ★ 校正件 `P-C-R.tiff` 的编码与字节**一字不动**（`encode_tiff` 默认 `predictor=None` ⇒ 逐字节不变）。
+O_TIFF_PREDICTOR = 2
+TIFF_TAG_PREDICTOR = 317
+TIFF_TAG_COMPRESSION = 259
+
+
+def encode_tiff(rgb, predictor: int | None = None) -> bytes:
     """RGB 8-bit ＋ Deflate（无损）TIFF 字节 —— 家法容器（与印章线 / xiai 影像库同）。
 
     `rgb` 须为 `(H, W, 3)` 0–255 RGB（`uint8`；**不是 BGR**）。
+    `predictor=None`（**校正件路径**）⇒ 逐字节与既往一致（红线①）；`predictor=O_TIFF_PREDICTOR`
+    （**O 件路径**）⇒ 追加 `tiffinfo={317: 2}`（Deflate ＋ 水平差分 Predictor）。
     """
     buf = io.BytesIO()
-    Image.fromarray(np.ascontiguousarray(rgb)).save(buf, format="TIFF", compression="tiff_deflate")
+    arr = np.ascontiguousarray(rgb)
+    if predictor:
+        Image.fromarray(arr).save(
+            buf, format="TIFF", compression="tiff_deflate",
+            tiffinfo={TIFF_TAG_PREDICTOR: int(predictor)})
+    else:
+        Image.fromarray(arr).save(buf, format="TIFF", compression="tiff_deflate")
     return buf.getvalue()
+
+
+def write_tiff_idempotent_pixels(path: Path, rgb, predictor: int | None = None) -> dict:
+    """**按解码像素**幂等写 TIFF（口径件 `docs/image-original-crop-draft-v0.1.md` §2「幂等」）。
+
+    判据 **不得按文件 sha256**（Pillow `tiff_deflate` 在大图上逐字节非确定）：
+    已存在且**解码像素逐像素相等** **且**（`predictor is None` 或 **容器合要求**：
+    `Compression=8` ∧ `Predictor==predictor`）⇒ **不重写、不动字节**；否则写入。
+    `predictor=None`（**校正件路径**）⇒ 只按解码像素判、不查 / 不改编码 ⇒ 校正件字节一字不动。
+    `predictor=O_TIFF_PREDICTOR`（**O 件路径**）⇒ 旧编码 O 件被自动升级重写为新编码。
+    返回 `{"written": bool, "bytes": int}`。
+    """
+    if path.is_file():
+        try:
+            with Image.open(path) as im:
+                ondisk = np.asarray(im)
+                tag_pred = im.tag_v2.get(TIFF_TAG_PREDICTOR)
+                tag_comp = im.tag_v2.get(TIFF_TAG_COMPRESSION)
+            container_ok = (
+                predictor is None
+                or (tag_pred == predictor and tag_comp == 8)
+            )
+            if container_ok and np.array_equal(ondisk, rgb):
+                return {"written": False, "bytes": path.stat().st_size}
+        except Exception:
+            pass  # 解不开 / 像素不一致 ⇒ 落到下面覆盖写（不静默）
+    data = encode_tiff(rgb, predictor)
+    write_image_idempotent(path, data)   # 复用「临时文件 + fsync + 原子替换」（先影像后 DB 行）
+    return {"written": True, "bytes": len(data)}
 
 
 # --------------------------------------------------------------------------- 单页处理
@@ -208,10 +261,13 @@ def process_page(doc, page_no: int, template: dict, book_key: str, pdf_name: str
     col,row,img_path_tiff,x1..y2}]}`。
 
     **影像（2026-10-11 webp 退场后）**：每枚裁图经 **V3 校正**（`colorcal.correct_image_v3`）后写
-    `output/books/<目录键>/P<页>-C<列>-R<行>.tiff`（RGB 8-bit ＋ Deflate）——**该行影像只此一份**；
+    `output/books/<目录键>/P<页>-C<列>-R<行>.tiff`（RGB 8-bit ＋ Deflate）——**校正件**；
+    **并额外**写同目录 `P<页>-C<列>-R<行>-O.tiff` ＝ **原始切片**（400 dpi 渲染后按同一 bbox
+    原样裁出、**不做任何颜色处理**的原片；口径真源 `docs/image-original-crop-draft-v0.1.md` §2）。
     **不再写任何 webp**（旧 `faces/<book_key>/pNNNN_II.webp` 与命名目录同名 `.webp` 均不再写）。
     `(C,R)` 由 `naming.assign_cr` 算、目录键由 `naming.dir_key_for`（未登记回落规范化书名）。
-    **worker 只落盘、不写库**——`col`/`row`/`img_path_tiff` 随返回值交给池侧写库。
+    **worker 只落盘、不写库**——`col`/`row`/`img_path_tiff` 随返回值交给池侧写库；
+    **返回值不因 O 而新增字段**（O 路径由命名规则派生）。
     """
     page = doc[page_no - 1]
     img = processor.render_page(page)
@@ -293,11 +349,16 @@ def process_page(doc, page_no: int, template: dict, book_key: str, pdf_name: str
         #      新行的影像真身在 `img_path_tiff`（E6 首选它）。`img_sha256`/`img_bytes` 取**实际落盘的 TIFF**。
         img_path = out_dir / f"p{page_no:04d}_{stamp_idx:02d}.webp"   # 仅供返回值（**不落盘**）
         c, r = cr[stamp_idx]
-        corrected, _cc = colorcal.correct_image_v3(
-            np.ascontiguousarray(cv2.cvtColor(stamp_crop, cv2.COLOR_BGR2RGB))
-        )
+        # 原片（RGB）—— 原始切片 O 与 V3 校正件**同一像素、同一几何**（同 bbox / 同渲染倍率）
+        stamp_rgb = np.ascontiguousarray(cv2.cvtColor(stamp_crop, cv2.COLOR_BGR2RGB))
+        corrected, _cc = colorcal.correct_image_v3(stamp_rgb)             # V3 默认口径
         tiff_path = books_out / naming.name_for(page_no, c, r)            # 默认 ext=".tiff"
         info = write_image_idempotent(tiff_path, encode_tiff(corrected))
+        # ★ 原始切片 `-O`（2026-10-11 新增；口径件 `docs/image-original-crop-draft-v0.1.md`）：
+        #   **未做颜色处理的原片**，落同目录 `P<页>-C<列>-R<行>-O.tiff`（TIFF RGB 8-bit ＋ Deflate）；
+        #   幂等**按解码像素**判（不得按文件 sha256）。**返回值口径不变**（O 路径由命名派生、不新增字段）。
+        orig_path = books_out / naming.name_for_original(page_no, c, r)
+        write_tiff_idempotent_pixels(orig_path, stamp_rgb, predictor=O_TIFF_PREDICTOR)
 
         items.append(
             {

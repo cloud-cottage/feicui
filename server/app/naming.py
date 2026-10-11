@@ -8,6 +8,16 @@
 
 名字形 `P<页码>-C<列号>-R<行号>`：**大写 `P`/`C`/`R` ＋ 短横、不补零**（如 `P299-C1-R3`）。
 
+**原始切片 `-O`（2026-10-11 新增；口径真源 `docs/image-original-crop-draft-v0.1.md` §2）**：
+每枚印面除**校正件** `P<页>-C<列>-R<行>.tiff` 外，另出一份**原始切片**
+`P<页>-C<列>-R<行>-O.tiff`（`O` ＝ Original）：
+
+* **`-O` 后缀排在扩展名之前**（大写 `O`、短横分隔、不补零）；
+* **同几何、同容器、同目录**（同 `bbox` / 同渲染倍率 / TIFF RGB 8-bit ＋ Deflate）；
+* **无颜色处理**（不跑 V3）；`O` 路径由命名规则**派生**
+  （校正件名把 `.tiff` 换成 `-O.tiff`）⇒ **不落库、不新增列**。
+
+
 | 位 | 口径 |
 | --- | --- |
 | `P` | ＝ `stamps.page`（**1-based**；不用书上印刷页码） |
@@ -33,6 +43,8 @@ __all__ = [
     # 常量
     "NAME_RE",
     "NAME_RE_TIFF",
+    "ORIGINAL_SUFFIX",
+    "NAME_RE_ORIG",
     "COLUMN_GAP_WIDTH_FACTOR",
     "COLUMN_GAP_MIN_PX",
     "DEFAULT_DIR_KEYS_PATH",
@@ -47,8 +59,13 @@ __all__ = [
     "is_page_unique",
     # 名字 / 目录键
     "name_for",
+    "name_for_original",
+    "is_original_name",
     "parse_name",
+    "parse_original_name",
     "matches_name",
+    "matches_original_name",
+    "original_name_from_corrected",
     "normalize_book_name",
     "dir_key_for",
     "dir_key_entry",
@@ -66,8 +83,15 @@ COLUMN_GAP_MIN_PX = 8.0
 
 #: 名字形通用正则（大写 P/C/R、短横、不补零；扩展名须为 `.xxx`）。
 NAME_RE = re.compile(r"^P(?P<page>[0-9]+)-C(?P<col>[0-9]+)-R(?P<row>[0-9]+)\.(?P<ext>[A-Za-z0-9]+)$")
-#: 本单验收用的 TIFF 面正则（逐字照派单 (b)）。
+#: 本单验收用的 TIFF 面正则（逐字照派单 (b)）。**只匹配校正件**（`-O` 原片不匹配）。
 NAME_RE_TIFF = re.compile(r"^P[0-9]+-C[0-9]+-R[0-9]+\.tiff$")
+
+#: 原始切片后缀（`O` ＝ Original）；**排在扩展名之前**（口径件 §2「命名」）。
+ORIGINAL_SUFFIX = "-O"
+#: 原始切片名字形正则：`P<页>-C<列>-R<行>-O.<ext>`（大写 `O`、短横、不补零）。
+NAME_RE_ORIG = re.compile(
+    r"^P(?P<page>[0-9]+)-C(?P<col>[0-9]+)-R(?P<row>[0-9]+)-O\.(?P<ext>[A-Za-z0-9]+)$"
+)
 
 #: 目录键表（加法文件）默认路径：`<feicui>/config/book_dir_keys.json`。
 DEFAULT_DIR_KEYS_PATH = Path(__file__).resolve().parents[2] / "config" / "book_dir_keys.json"
@@ -208,6 +232,64 @@ def name_for(page: int, c: int, r: int, ext: str = ".tiff") -> str:
     if not ext.startswith("."):
         ext = "." + ext
     return f"P{p}-C{cc}-R{rr}{ext}"
+
+
+def name_for_original(page: int, c: int, r: int, ext: str = ".tiff") -> str:
+    """原始切片名字形 `P<页码>-C<列号>-R<行号>-O.<ext>`（**大写 `O`、短横、不补零**）。
+
+    口径真源 `docs/image-original-crop-draft-v0.1.md` §2「命名」：`O` ＝ Original，
+    **后缀排在扩展名之前**（例 `P40-C1-R1-O.tiff`）。`page`/`c`/`r` 均须 `>= 1`。
+    """
+    base = name_for(page, c, r, ext)          # 复用校验（页码/列号/行号 + 扩展名口径）
+    suffix = _ext_with_dot(ext)
+    return base[: -len(suffix)] + ORIGINAL_SUFFIX + suffix
+
+
+def _ext_with_dot(ext: str) -> str:
+    """扩展名规范化（补前导点）；空 ⇒ 抛错（与 `name_for` 同口径）。"""
+    if not ext:
+        raise ValueError("ext 不得为空")
+    return ext if ext.startswith(".") else "." + ext
+
+
+def is_original_name(name: str) -> bool:
+    """`name` 是否合**原始切片**名字形（`P<p>-C<c>-R<r>-O.<ext>`）。"""
+    return NAME_RE_ORIG.match(str(name)) is not None
+
+
+def parse_original_name(name: str) -> dict[str, Any] | None:
+    """解析**原始切片**名字形 ⇒ `{"page","col","row","ext"}`；不合形 ⇒ `None`。"""
+    m = NAME_RE_ORIG.match(str(name))
+    if not m:
+        return None
+    return {
+        "page": int(m.group("page")),
+        "col": int(m.group("col")),
+        "row": int(m.group("row")),
+        "ext": m.group("ext"),
+    }
+
+
+def matches_original_name(name: str, ext: str | None = None) -> bool:
+    """`name` 是否合原始切片名字形；`ext` 给出时还须扩展名相同。"""
+    info = parse_original_name(name)
+    if info is None:
+        return False
+    if ext is None:
+        return True
+    want = ext[1:] if ext.startswith(".") else ext
+    return info["ext"] == want
+
+
+def original_name_from_corrected(name: str) -> str | None:
+    """**校正件名 → 原始切片名**（派生；口径件 §2「落库」＝O 路径由命名派生）。
+
+    `P40-C1-R1.tiff` ⇒ `P40-C1-R1-O.tiff`。入参不合校正件名字形 ⇒ `None`。
+    """
+    if not NAME_RE.match(str(name)):
+        return None
+    stem, dot, ext = str(name).rpartition(".")
+    return f"{stem}{ORIGINAL_SUFFIX}{dot}{ext}"
 
 
 def parse_name(name: str) -> dict[str, Any] | None:

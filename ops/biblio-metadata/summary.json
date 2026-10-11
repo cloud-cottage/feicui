@@ -1,13 +1,13 @@
 {
-  "batch_id": "biblio-20261011-133511",
-  "created_at": "2026-10-11T13:37:06+08:00",
+  "batch_id": "biblio-20261011-140326",
+  "created_at": "2026-10-11T14:05:20+08:00",
   "status": "done",
   "books_total": 1,
   "books_scanned": 1,
   "books_ok": 0,
   "books_failed": 0,
   "candidates_ok": 0,
-  "elapsed_s": 114.8,
+  "elapsed_s": 114.34,
   "params": {
     "dpi": 200.0,
     "face_head": 6,

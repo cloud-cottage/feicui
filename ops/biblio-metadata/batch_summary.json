@@ -1,21 +1,21 @@
 {
-  "batch_id": "biblio-summary-3aaf6a97bc9b",
-  "created_at": "2026-10-11T13:41:43+08:00",
+  "batch_id": "biblio-summary-8d75b2c34660",
+  "created_at": "2026-10-11T14:05:20+08:00",
   "status": "aggregated",
   "kind": "summary",
   "books_total": 7,
   "member_batch_count": 7,
   "member_batches": [
-    "biblio-20261011-132236",
-    "biblio-20261011-132603",
-    "biblio-20261011-132804",
-    "biblio-20261011-133009",
-    "biblio-20261011-133217",
-    "biblio-20261011-133318",
-    "biblio-20261011-133511"
+    "biblio-20261011-135114",
+    "biblio-20261011-135441",
+    "biblio-20261011-135640",
+    "biblio-20261011-135835",
+    "biblio-20261011-140031",
+    "biblio-20261011-140132",
+    "biblio-20261011-140326"
   ],
   "books_ok": 2,
-  "candidates_ok": 4,
+  "candidates_ok": 3,
   "books": [
     "tmp.pdf",
     "古玺汇编 文物出版社 罗福颐  ok.pdf",

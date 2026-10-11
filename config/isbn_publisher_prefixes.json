@@ -1,24 +1,25 @@
 {
   "schema": "yinsuo.feicui.isbn_publisher_prefixes.v1",
   "status": "ADDITIVE_PENDING_JING_REGISTRATION",
-  "note": "出版社前缀本地白名单（Kong 2026-10-11 收口：由 server/app/biblio.py 内联表落成配置文件，供审计与扩展）。键＝出版者前缀数字串（ISBN 去 EAN 978/979 与组号 7、再去校验位后的前导数字）；值＝出版社名（可写字符串或对象取 publisher 字段）。**未登记前缀一律 verify_state=unverified、不得判 ok**；命中本表但与 OCR 出版社不一致 ⇒ verify_state=conflict（保留双方证据）。biblio.load_publisher_prefixes() 读本文件；文件缺失/不可解析 ⇒ 回落 biblio.PUBLISHER_PREFIXES_DEFAULT（同最小三条）。**单点可改**。",
+  "note": "出版社前缀本地白名单（Kong 2026-10-11 收口：由 server/app/biblio.py 内联表落成配置文件，供审计与扩展）。键＝出版者前缀数字串（ISBN 去 EAN 978/979 与组号 7、再去校验位后的前导数字）；值＝出版社名（可写字符串或对象取 publisher 字段）。**未登记前缀一律 verify_state=unverified、不得判 ok**；命中本表但与 OCR 出版社不一致 ⇒ verify_state=conflict（保留双方证据）。biblio.load_publisher_prefixes() 读本文件；文件缺失/不可解析 ⇒ 回落 biblio.PUBLISHER_PREFIXES_DEFAULT（同最小三条）。**单点可改**。本表为**本地最小集**，非权威源；权威源＝阶段 2 的 PDC / OLCC。",
+  "correction_note": "Zang 2026-10-11 更正归属：本文件初版把 80635 / 5010 两条的 source / verified_by 写作「Kevin 2026-10-11 复核给定」，与事实不符 —— 这三条均由 **Zang 依据本项目自有 OCR/文本层样本推定**（见各条 source），**Kevin 未曾逐条复核**。元数据校验子系统的核心是来源可信度，故逐条更正并留痕；三条均标「待权威源（PDC/OLCC）复核」。",
   "prefixes": {
     "5508": {
       "publisher": "西泠印社出版社",
-      "source": "docs/biblio-metadata-draft-v0.1.md §5-3 样本锚（照登）",
-      "verified_by": "Kevin 2026-10-11",
+      "source": "Zang 实测 OCR 样本：秦印类编 检索版 第 850 页 CIP/版权页「圖書在版編目（CIP）數據…西泠印社出版社，2025.4」；口径件 docs/biblio-metadata-draft-v0.1.md §5-3",
+      "verified_by": "Zang（样本自证）｜待权威源（PDC/OLCC）复核",
       "sample_isbn": "9787550847224"
     },
     "80635": {
       "publisher": "上海书画出版社",
-      "source": "Kevin 2026-10-11 复核给定（本单交回件）",
-      "verified_by": "Kevin 2026-10-11",
+      "source": "Zang 依据样本推定：秦汉印典 上海书画 金怀英 1997 ok.pdf 第 2 页文本层『ISBN 7-80635-095-0/J · 895』，同行出版者字样＝上海书画出版社",
+      "verified_by": "Zang（样本自证）｜待权威源（PDC/OLCC）复核",
       "sample_isbn": "7806350950"
     },
     "5010": {
       "publisher": "文物出版社",
-      "source": "Kevin 2026-10-11 复核给定（本单交回件）",
-      "verified_by": "Kevin 2026-10-11",
+      "source": "Zang 依据样本推定：古玺汇编 文物出版社 罗福颐 ok.pdf 第 3 页 OCR『ISBN 7-5010-0798-5/K·341』，同行出版者字样＝文物出版社",
+      "verified_by": "Zang（样本自证）｜待权威源（PDC/OLCC）复核",
       "sample_isbn": "7501007985"
     }
   }

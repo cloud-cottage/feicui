@@ -39,6 +39,8 @@
         132
       ],
       "isbn_candidates": [],
+      "isbn_accepted": [],
+      "isbn_rejected": [],
       "cip_candidates": [],
       "publishers": [
         "印刷厂印刷浙江省新华书店"
@@ -126,6 +128,6 @@
     "pdf_sha256": "e9c29a6dfb66cfab6b33be403bdf45d8902c8e41341d74d4a401d021a7774f6e",
     "pages_scanned": 10,
     "scan_dpi": 200.0,
-    "elapsed_s": 114.8
+    "elapsed_s": 114.34
   }
 ]

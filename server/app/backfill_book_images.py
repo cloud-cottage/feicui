@@ -25,8 +25,12 @@
 （400 dpi 渲染后按库内 bbox 原样裁出）；**同几何 / 同容器（TIFF RGB 8-bit＋Deflate）/ 同目录**；
 命名由 `naming.name_for_original` 派生（**不落库、不新增列**）。
 
-* 开关：**默认开**，`--no-original` 关；`--orig-only` ＝「**只出 O 件**」
-  （不跑 V3、**不写校正件**、不写库——全量补 O 的最省路径，也天然满足「不改既有校正件」红线）。
+* 开关（**校正件已暂停生产** —— Kevin 2026-10-11，最高优先；口径件 §6）：
+  * **O 件默认开**（`--no-original` 关）；`--orig-only` ＝「**只出 O 件**」
+    （不跑 V3、**不写校正件**、不写库——全量补 O 的最省路径，也天然满足「不改既有校正件」红线）；
+  * **校正件默认关**（`WRITE_CORRECTED_DEFAULT=False`）；写它须**显式** `--write-corrected`
+    ⇒ **默认路径不触碰任何已有校正件**（既不读改、也不重写）；
+  * `--orig-only` 与 `--write-corrected` 同时给 ⇒ `--orig-only` 优先（只出 O）。
 * **幂等按解码像素判**（§2：不得按文件 sha256 —— Pillow `tiff_deflate` 大图逐字节非确定）：
   已存在且**解码像素逐像素相等** ⇒ 跳过不重写。
 * **校正件也按解码像素幂等**（红线①「只增文件」）：已存在且像素一致 ⇒ **不重写**
@@ -40,7 +44,7 @@
       `... --book "tmp.pdf"`（按书名单跑）
       `... --all --verify-only`（只做核对，不渲染/不写）
       `... --all --orig-only`（**只补原始切片 O**：不跑 V3、不写校正件、不写库——全量补 O 用这条）
-      `... --all --no-original`（只出校正件，回到本单之前的形态）
+      `... --all --write-corrected`（**只出校正件**：须显式开关——校正件默认关，暂停生产 §6）
 幂等：按**解码像素**判（不得按文件 sha256 —— Pillow `tiff_deflate` 在大图上逐字节非确定）。
 """
 from __future__ import annotations
@@ -87,6 +91,10 @@ WRITE_WEBP_DEFAULT = False
 # ★ 原始切片 `-O`（口径件 `docs/image-original-crop-draft-v0.1.md`）：**默认开**
 #   （Kevin 2026-10-11「输出时保留原始切片」）；`--no-original` 关；`--orig-only` 只出 O。
 WRITE_ORIGINAL_DEFAULT = True
+# ★ 校正件 `P-C-R.tiff` 已**暂停生产**（Kevin 2026-10-11，最高优先；口径件 §6）：
+#   回填 **默认只写 O**（`write_corrected` 默认 **False**）；写校正件须**显式** `--write-corrected`。
+#   ⇒ **默认路径不触碰任何已有校正件**（不跑 V3、不重写 `P?-C?-R?.tiff`）。
+WRITE_CORRECTED_DEFAULT = False
 
 DEFAULT_DB = REPO.parent / "data" / "yinpu.db"
 DEFAULT_OUT_ROOT = REPO / "output" / "books"
@@ -252,6 +260,7 @@ def process_book(
     write_db: bool,
     write_webp: bool,
     write_original: bool,
+    write_corrected: bool,
     orig_only: bool,
     only_pages: list[int] | None,
     limit_pages: int | None,
@@ -261,6 +270,7 @@ def process_book(
     """单书出图 ⇒ 统计 dict（含 updates / failures / sample）。
 
     `write_original`（默认口径开）⇒ 每次裁切**额外**写 `…-O.tiff`（无颜色处理的原片）。
+    `write_corrected`（**默认关**；校正件已暂停生产 §6）⇒ 才跑 V3、才写校正件 `P?-C?-R?.tiff`。
     `orig_only=True` ⇒ **只出 O 件**：不跑 V3、不写校正件、不写库（全量补 O 的最省路径）。
     """
     import numpy as np
@@ -291,7 +301,9 @@ def process_book(
         "original_bytes": 0, "max_original": None, "original_files_touched": 0,
         "webp_written_this_run": 0,
         "elapsed_s": 0.0,
-        "mode": ("orig-only" if orig_only else ("tiff+original" if write_original else "tiff-only")),
+        "mode": ("orig-only" if orig_only
+                 else ("tiff+original" if (write_corrected and write_original)
+                       else ("tiff-only" if write_corrected else "original-only"))),
     }
     updates: list[tuple[int, int, int, str]] = []   # (id, col, row, img_path_tiff)
     failures: list[dict] = []
@@ -371,9 +383,10 @@ def process_book(
                                                     "rel": safe_rel(orig_path)}
 
                 # ── ② 校正件（V3 后像素；**只增文件** ⇒ 已存在且像素一致则不重写）
+                #     ★ 校正件已暂停生产（§6）：**默认不跑 V3、不写**（仅 `--write-corrected` 时执行）。
                 corrected = None
                 rep: dict = {}
-                if not orig_only:
+                if write_corrected and not orig_only:
                     try:
                         corrected, rep = colorcal.correct_image_v3(crop_bgr)   # V3 默认口径
                     except Exception as exc:
@@ -384,7 +397,7 @@ def process_book(
                         stat["failed"] += 1
                         continue
 
-                if (not orig_only) and write_files:
+                if write_corrected and (not orig_only) and write_files:
                     try:
                         info_c = write_tiff_idempotent_pixels(tiff_path, corrected, PIL_Image, np)
                         if write_webp:                                                      # 口径默认关
@@ -882,6 +895,10 @@ def build_argparser() -> argparse.ArgumentParser:
                     help="【只出原始切片 O】每次裁切只写 `…-O.tiff`（无颜色处理）；"
                          "**不跑 V3、不写校正件、不写库** —— 全量补 O 的最省路径"
                          "（也天然满足「不改既有校正件」红线）")
+    p.add_argument("--write-corrected", action="store_true", default=WRITE_CORRECTED_DEFAULT,
+                   help="【默认关】写颜色校正件 `P?-C?-R?.tiff`（V3 双色分层）。"
+                        "校正件已暂停生产（口径件 §6）⇒ 须**显式**开启；"
+                        "默认路径**不触碰任何已有校正件**")
     p.add_argument("--no-migrate", action="store_true", help="跳过迁移（列须已存在）")
     p.add_argument("--verify-only", action="store_true", help="只核对已落盘/已落库，不渲染不写")
     p.add_argument("--fill-missing-cols", action="store_true",
@@ -912,12 +929,22 @@ def main(argv: list[str] | None = None) -> int:
     # 原始切片 O：默认开（口径件 `docs/image-original-crop-draft-v0.1.md`）；`--no-original` 关。
     write_original = bool(WRITE_ORIGINAL_DEFAULT and not args.no_original)
     orig_only = bool(args.orig_only)
-    write_db = (not args.no_write_db) and (not orig_only)
+    # 校正件：**默认关**（暂停生产 §6）；写它须显式 `--write-corrected`。
+    write_corrected = bool(args.write_corrected)
+    # 写库（加法三列）与校正件同生同灭 —— 默认只写 O ⇒ 不写库（守「不改既有列值」红线）。
+    write_db = (not args.no_write_db) and write_corrected and (not orig_only)
     if orig_only:
         print("原始切片    = ON（--orig-only：只写 `…-O.tiff`，不跑 V3、不写校正件、不写库）")
     else:
         print(f"原始切片    = {'ON' if write_original else 'OFF（--no-original）'}"
               f"（`P<页>-C<列>-R<行>-O.tiff`，无颜色处理的原片）")
+    print(f"校正件      = {'ON（--write-corrected）' if (write_corrected and not orig_only) else 'OFF（默认；校正件已暂停生产 §6）'}"
+          f"｜写库 = {'ON' if write_db else 'OFF'}")
+    if (not args.verify_only) and (not args.fill_missing_cols) and (not write_original) \
+            and (not write_corrected) and (not args.write_webp):
+        print("✗ 无事可做：--no-original 且未给 --write-corrected（校正件默认关）⇒ 无产出面。"
+              "若要只出校正件（历史形态），加 --write-corrected。")
+        return 2
 
     mapping = naming.load_dir_keys()
     search_dirs = search_dirs_for(args)
@@ -964,6 +991,7 @@ def main(argv: list[str] | None = None) -> int:
         "webp_quality": WEBP_QUALITY,
         "write_webp": bool(args.write_webp),
         "write_original": write_original,
+        "write_corrected": write_corrected,
         "orig_only": orig_only,
         "original_crop": {
             "enabled": write_original,
@@ -976,9 +1004,10 @@ def main(argv: list[str] | None = None) -> int:
             "落库": "不新增列；O 路径由命名规则派生（校正件名换 `-O`）",
             "idempotency": "按解码像素判（不得按文件 sha256）",
         },
-        "layout": ("tiff+original" if (write_original and not orig_only)
-                   else ("original-only" if orig_only
-                         else ("tiff-only" if not args.write_webp else "tiff+webp"))),
+        "layout": ("orig-only" if orig_only
+                   else ("tiff+original" if (write_corrected and write_original)
+                         else ("tiff-only" if write_corrected
+                               else ("original-only" if write_original else "none")))),
         "render_dpi": 400,
         "naming": "P<page>-C<col>-R<row> (大写/短横/不补零)",
         "per_book": {},
@@ -1040,7 +1069,7 @@ def main(argv: list[str] | None = None) -> int:
                 conn=conn, processor=processor, PIL_Image=PIL_Image, pdf_name=b, pdf_path=pdf_path,
                 dir_key=dir_key, out_root=out_root, write_files=not args.no_write_files,
                 write_db=write_db, write_webp=args.write_webp,
-                write_original=write_original, orig_only=orig_only,
+                write_original=write_original, write_corrected=write_corrected, orig_only=orig_only,
                 only_pages=sorted(set(args.pages)) or None,
                 limit_pages=args.limit_pages,
                 limit_stamps=args.limit_stamps, sample_names=s_names,

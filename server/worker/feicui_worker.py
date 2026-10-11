@@ -22,10 +22,12 @@
   * **边款**：仍照样检测（其结果参与 `exclude_mask`，会改变释文块匹配 ⇒ 不检测就不是同一份解析），
     但 1b-i **不落边款影像**（faces 交付影像口径只定义印面；见 `REPORT_1b-i.md` 未完成项）。
 
-**影像命名 ＋ 颜色校正（2026-10-11 新增；口径真源 `docs/image-naming-draft-v0.1.md`
-＋ `docs/image-color-tiff-draft-v0.1.md`）**：每枚裁图经 **V3 校正**
-（`colorcal.correct_image_v3`）后写 `output/books/<目录键>/P<页>-C<列>-R<行>.tiff`（RGB 8-bit ＋
-Deflate）；`(C,R)` 用 `naming.assign_cr` 算、目录键用 `naming.dir_key_for`。
+**影像命名 ＋ 颜色校正（2026-10-11；口径真源 `docs/image-naming-draft-v0.1.md`
+＋ `docs/image-color-tiff-draft-v0.1.md`）**：`(C,R)` 用 `naming.assign_cr` 算、目录键用
+`naming.dir_key_for`。**★ 校正件已暂停生产（Kevin 2026-10-11，最高优先；口径真源
+`docs/image-original-crop-draft-v0.1.md` §6）**：本 worker **不再跑 V3、不再写校正件**
+`output/books/<目录键>/P<页>-C<列>-R<行>.tiff`（该路径仍作为 `img_path_tiff` 的**约定返回值**，
+由 E6/E5 回落链处理它不在盘的事实）。
 
 **原始切片 `-O`（2026-10-11 新增；口径真源 `docs/image-original-crop-draft-v0.1.md` §2）**：
 每次裁切**额外**写同目录 `P<页>-C<列>-R<行>-O.tiff` ＝ **未做颜色处理的原片**
@@ -88,7 +90,9 @@ def _load_by_path(mod_name: str, rel: str):
 
 
 naming = _load_by_path("feicui_naming", "server/app/naming.py")       # assign_cr / name_for / dir_key_for
-colorcal = _load_by_path("feicui_colorcal", "server/app/colorcal.py")  # correct_image_v3（默认口径）
+# ★ 校正件暂停期本模块**暂不调用** `colorcal.correct_image_v3`（§6）；仍按路径加载保留接线，
+#   恢复生产时**一行接回**（`correct_image_v3`）。模块自身纯 stdlib ⇒ 加载无副作用。
+colorcal = _load_by_path("feicui_colorcal", "server/app/colorcal.py")  # correct_image_v3（默认口径；暂停期未调用）
 
 try:  # 目录键表（加法文件 config/book_dir_keys.json）；缺失时不让 worker 起不来，回落规范化书名
     DIR_KEYS = naming.load_dir_keys()
@@ -232,7 +236,9 @@ def write_tiff_idempotent_pixels(path: Path, rgb, predictor: int | None = None) 
     `Compression=8` ∧ `Predictor==predictor`）⇒ **不重写、不动字节**；否则写入。
     `predictor=None`（**校正件路径**）⇒ 只按解码像素判、不查 / 不改编码 ⇒ 校正件字节一字不动。
     `predictor=O_TIFF_PREDICTOR`（**O 件路径**）⇒ 旧编码 O 件被自动升级重写为新编码。
-    返回 `{"written": bool, "bytes": int}`。
+    返回 `{"written": bool, "bytes": int, "sha256": str}`（`sha256` ＝ **该件在盘字节**的摘要；
+    worker 侧 `img_sha256` 口径据此）。`predictor=None`（校正件路径）⇒ 只按解码像素判、
+    不查 / 不改编码 ⇒ 校正件字节一字不动。`predictor=O_TIFF_PREDICTOR`（O 件路径）⇒ 旧编码 O 件被自动升级重写。
     """
     if path.is_file():
         try:
@@ -245,12 +251,12 @@ def write_tiff_idempotent_pixels(path: Path, rgb, predictor: int | None = None) 
                 or (tag_pred == predictor and tag_comp == 8)
             )
             if container_ok and np.array_equal(ondisk, rgb):
-                return {"written": False, "bytes": path.stat().st_size}
+                return {"written": False, "bytes": path.stat().st_size, "sha256": _sha256_file(path)}
         except Exception:
             pass  # 解不开 / 像素不一致 ⇒ 落到下面覆盖写（不静默）
     data = encode_tiff(rgb, predictor)
-    write_image_idempotent(path, data)   # 复用「临时文件 + fsync + 原子替换」（先影像后 DB 行）
-    return {"written": True, "bytes": len(data)}
+    w = write_image_idempotent(path, data)   # 复用「临时文件 + fsync + 原子替换」（先影像后 DB 行）
+    return {"written": True, "bytes": len(data), "sha256": w["sha256"]}
 
 
 # --------------------------------------------------------------------------- 单页处理
@@ -349,16 +355,21 @@ def process_page(doc, page_no: int, template: dict, book_key: str, pdf_name: str
         #      新行的影像真身在 `img_path_tiff`（E6 首选它）。`img_sha256`/`img_bytes` 取**实际落盘的 TIFF**。
         img_path = out_dir / f"p{page_no:04d}_{stamp_idx:02d}.webp"   # 仅供返回值（**不落盘**）
         c, r = cr[stamp_idx]
-        # 原片（RGB）—— 原始切片 O 与 V3 校正件**同一像素、同一几何**（同 bbox / 同渲染倍率）
+        # 原片（RGB）—— 原始切片 O 与（昔日的）V3 校正件**同一像素、同一几何**（同 bbox / 同渲染倍率）
         stamp_rgb = np.ascontiguousarray(cv2.cvtColor(stamp_crop, cv2.COLOR_BGR2RGB))
-        corrected, _cc = colorcal.correct_image_v3(stamp_rgb)             # V3 默认口径
-        tiff_path = books_out / naming.name_for(page_no, c, r)            # 默认 ext=".tiff"
-        info = write_image_idempotent(tiff_path, encode_tiff(corrected))
-        # ★ 原始切片 `-O`（2026-10-11 新增；口径件 `docs/image-original-crop-draft-v0.1.md`）：
-        #   **未做颜色处理的原片**，落同目录 `P<页>-C<列>-R<行>-O.tiff`（TIFF RGB 8-bit ＋ Deflate）；
-        #   幂等**按解码像素**判（不得按文件 sha256）。**返回值口径不变**（O 路径由命名派生、不新增字段）。
+        # ★ 校正件已暂停生产（Kevin 2026-10-11，最高优先；口径真源
+        #   `docs/image-original-crop-draft-v0.1.md` §6）：**新 job 不再写非 O 件** ——
+        #   不跑 V3（`correct_image_v3`）、不落 `P<页>-C<列>-R<行>.tiff`。
+        #   `img_path_tiff` **仍回校正件的约定路径**（＝命名派生值；该文件**不再落盘**）——
+        #   其不在盘的事实由 E6/E5 的回落链（`img_path_tiff` → 同目录同名 `-O.tiff` → `img_path`）处理，
+        #   **返回值口径保持**（不新增字段、不删字段）。
+        tiff_path = books_out / naming.name_for(page_no, c, r)            # 约定路径（仅供返回值，**不落盘**）
+        # ★ 原始切片 `-O`（当前**唯一在产**的印面影像面；口径件 §2 / §6）：
+        #   **未做颜色处理的原片**，落同目录 `P<页>-C<列>-R<行>-O.tiff`
+        #   （TIFF RGB 8-bit ＋ Deflate ＋ `Predictor=2`）；幂等**按解码像素**判（不得按文件 sha256）。
+        #   `img_sha256`/`img_bytes`/`img_written` 取**实际落盘的 TIFF**（＝ O 件）。
         orig_path = books_out / naming.name_for_original(page_no, c, r)
-        write_tiff_idempotent_pixels(orig_path, stamp_rgb, predictor=O_TIFF_PREDICTOR)
+        info = write_tiff_idempotent_pixels(orig_path, stamp_rgb, predictor=O_TIFF_PREDICTOR)
 
         items.append(
             {

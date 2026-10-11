@@ -1,0 +1,90 @@
+{
+  "root": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/cp-ut-vnfxi9gn",
+  "db": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/cp-ut-vnfxi9gn/scratch.db",
+  "scenarios": {
+    "only_corrected(idx0)": {
+      "ok": true,
+      "pdf_name": "tmp.pdf",
+      "rel": "output/books/tmp.pdf/P1-C1-R1.tiff",
+      "abs": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/cp-ut-vnfxi9gn/output/books/tmp.pdf/P1-C1-R1.tiff",
+      "source": "img_path_tiff",
+      "abs_is_file": true
+    },
+    "only_o(idx1)": {
+      "ok": true,
+      "pdf_name": "tmp.pdf",
+      "rel": "output/books/tmp.pdf/P1-C1-R2-O.tiff",
+      "abs": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/cp-ut-vnfxi9gn/output/books/tmp.pdf/P1-C1-R2-O.tiff",
+      "source": "img_path_tiff/-O",
+      "abs_is_file": true
+    },
+    "neither(idx2)": {
+      "ok": false,
+      "error": "IMAGE_UNAVAILABLE",
+      "detail": "影像文件不在盘上：img_path_tiff='output/books/tmp.pdf/P1-C1-R3.tiff'（含派生 -O）/ img_path=''（§3.5 404 第三类）"
+    },
+    "legacy_only(idx3)": {
+      "ok": true,
+      "pdf_name": "tmp.pdf",
+      "rel": "output/books/tmp.pdf/P1-C1-R4.webp",
+      "abs": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/cp-ut-vnfxi9gn/output/books/tmp.pdf/P1-C1-R4.webp",
+      "source": "img_path",
+      "abs_is_file": true
+    }
+  },
+  "files_forged": {
+    "corrected": "output/books/tmp.pdf/P1-C1-R1.tiff",
+    "o": "output/books/tmp.pdf/P1-C1-R2-O.tiff",
+    "legacy": "output/books/tmp.pdf/P1-C1-R4.webp"
+  },
+  "e5": {
+    "scope": [
+      "tmp.pdf",
+      1,
+      1
+    ],
+    "missing": [
+      {
+        "pdf_name": "tmp.pdf",
+        "page": 1,
+        "idx": 2,
+        "img_path": null,
+        "reason": "file_missing"
+      }
+    ],
+    "missing_idx": [
+      2
+    ],
+    "missing_reason": [
+      "file_missing"
+    ]
+  },
+  "checks": [
+    {
+      "name": "仅校正件 ⇒ 用校正件",
+      "pass": true,
+      "read": "img_path_tiff"
+    },
+    {
+      "name": "仅 O ⇒ 用 O（新回落）",
+      "pass": true,
+      "read": "img_path_tiff/-O"
+    },
+    {
+      "name": "皆无 ⇒ IMAGE_UNAVAILABLE",
+      "pass": true,
+      "read": "IMAGE_UNAVAILABLE"
+    },
+    {
+      "name": "无 tiff、仅 legacy ⇒ 用 img_path",
+      "pass": true,
+      "read": "img_path"
+    },
+    {
+      "name": "E5：仅校正件/仅 O 两态不计缺失，仅 idx2 计 file_missing",
+      "pass": true,
+      "read": "[2]"
+    }
+  ],
+  "all_pass": true
+}

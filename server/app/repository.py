@@ -18,6 +18,7 @@ from pathlib import Path
 from typing import Any
 
 from . import db
+from . import naming
 
 log = logging.getLogger("feicui.repository")
 
@@ -212,12 +213,31 @@ def _job_scope(conn, job_id: str) -> tuple[str, int, int]:
     return job["pdf_name"], lo, hi
 
 
+def _original_rel_from_tiff(tiff_rel: str) -> str | None:
+    """校正件相对路径 → **同目录同名 `-O.tiff`** 相对路径（口径件 §6 回落链第②段）。
+
+    `output/books/<目录键>/P<页>-C<列>-R<行>.tiff` ⇒ `…/P<页>-C<列>-R<行>-O.tiff`
+    （同目录；O 名字形由 `naming.original_name_from_corrected` 派生，**不落库、不加列**）。
+    入参不合校正件名字形 ⇒ `None`（不臆造路径）。
+    """
+    d, base = os.path.split(str(tiff_rel))
+    o_name = naming.original_name_from_corrected(base)
+    if not o_name:
+        return None
+    return os.path.join(d, o_name) if d else o_name
+
+
 def _stamp_image_on_disk(root_abs: Path, img_path: Any, img_path_tiff: Any) -> bool:
-    """该行影像是否在盘上 —— **与 E6 同一解析顺序**（优先 `img_path_tiff`、回退 `img_path`）。
+    """该行影像是否在盘上 —— **与 E6 同一解析顺序**：
+    `img_path_tiff`（校正件）→ **同目录同名 `-O.tiff`**（原始切片）→ `img_path`（历史 webp）。
 
     越界 / 绝对路径（§3.5 纪律④）在此**只当作「不在盘上」**：E5 是只读清单，不得抛异常打断整表。
     """
-    for raw in (img_path_tiff, img_path):
+    candidates: list[Any] = [img_path_tiff]
+    if img_path_tiff is not None and str(img_path_tiff).strip():
+        candidates.append(_original_rel_from_tiff(str(img_path_tiff).strip()))
+    candidates.append(img_path)
+    for raw in candidates:
         if raw is None or str(raw).strip() == "":
             continue
         rel = str(raw).strip()
@@ -771,9 +791,13 @@ def stamps_page(
 # **影像面口径（2026-10-11「webp 退场」单；Kevin 裁定「本地文件一律不再保存 webp」）**：
 #   * 新产物**只有 TIFF**（`output/books/<目录键>/P<页>-C<列>-R<行>.tiff`，落 `stamps.img_path_tiff`）；
 #   * `img_path` 列 **一字不改**（历史行仍是 webp；E6 的兼容回退就靠它）；
-#   * ⇒ E6 取图**优先 `img_path_tiff`、`img_path` 仅作兼容回退**。TIFF **不是浏览器可渲染容器**
-#     （§3.5 的 `Content-Type` 白名单也不含 `image/tiff`）⇒ 由**路由层**用 PIL 解码后回 **PNG**。
+#   * ⇒ E6 取图**优先 `img_path_tiff`（校正件）→ 同目录同名 `-O.tiff`（原始切片）→ `img_path`（历史 webp）**。
+#     口径真源 `docs/image-original-crop-draft-v0.1.md` **§6（校正件输出暂停，Kevin 2026-10-11）**：
+#     校正件已停产、已产的 8708 件原样保留；新行影像面只有 O 件 ⇒ 校正件不在盘时**自动落 O 件**。
+#     TIFF **不是浏览器可渲染容器**（§3.5 的 `Content-Type` 白名单也不含 `image/tiff`）
+#     ⇒ 由**路由层**用 PIL 解码后回 **PNG**。
 E6_SOURCE_TIFF = "img_path_tiff"
+E6_SOURCE_ORIGINAL = "img_path_tiff/-O"
 E6_SOURCE_LEGACY = "img_path"
 
 
@@ -795,9 +819,10 @@ def find_stamp_image(
 ) -> tuple[str, str, str, str]:
     """E6 `(page, idx)` → 影像（§3.5）。返回 `(pdf_name, 服务用的相对路径, 绝对路径, 来源列)`。
 
-    **来源列**（§3.22.6 落 `img_path_tiff`；webp 退场后新行的影像只有 TIFF）：
-      ① `img_path_tiff`（**首选**）—— 有值且文件在盘 ⇒ 用之；
-      ② `img_path`（**兼容回退**）—— 旧行未回填 TIFF（`img_path_tiff` 为空）或 TIFF 文件不在盘时用之。
+    **来源列／回落链（口径件 `docs/image-original-crop-draft-v0.1.md` §6；校正件已暂停生产）**：
+      ① `img_path_tiff`（**首选**，校正件）—— 有值且文件在盘 ⇒ 用之；
+      ② **同目录同名 `-O.tiff`**（**原始切片**）—— 校正件不在盘时用之（O 路径由命名派生、不落库）；
+      ③ `img_path`（**兼容回退**）—— 旧行未回填、且校正件与 O 都不在盘时用之。
 
     三类不存在（job / 记录 / 文件）由调用方统一落成 404（本函数分别抛 `JobNotFound` /
     `StampNotFound` / `ImageUnavailable`，路由层同码）。
@@ -817,21 +842,27 @@ def find_stamp_image(
         tiff = str(row["img_path_tiff"]).strip() if row["img_path_tiff"] is not None else ""
 
     root_abs = Path(root).resolve()
-    # ① 首选（webp 退场后的唯一产物）
+    # ① 首选（校正件）
     if tiff:
         abs_tiff = _resolve_img_rel(tiff, root_abs, column="img_path_tiff")
         if abs_tiff.is_file():
             return str(pdf_name), tiff, str(abs_tiff), E6_SOURCE_TIFF
-    # ② 兼容回退（旧行未回填 / TIFF 文件不在盘 ⇒ 仍可服务）
+        # ② 回落：校正件不在盘 ⇒ 试**同目录同名 `-O.tiff`**（原始切片；校正件停产后新行的影像面）
+        o_rel = _original_rel_from_tiff(tiff)
+        if o_rel:
+            o_abs = (root_abs / o_rel).resolve()
+            if _is_within(o_abs, root_abs) and o_abs.is_file():
+                return str(pdf_name), o_rel, str(o_abs), E6_SOURCE_ORIGINAL
+    # ③ 兼容回退（旧行未回填 / 校正件与 O 都不在盘 ⇒ 仍可服务）
     if legacy:
         abs_legacy = _resolve_img_rel(legacy, root_abs, column="img_path")
         if abs_legacy.is_file():
             return str(pdf_name), legacy, str(abs_legacy), E6_SOURCE_LEGACY
-    # ③ 两列都拿不到文件 ⇒ 404 第三类（原因按实际形态分列，不臆造）
+    # ④ 三处都拿不到文件 ⇒ 404 第三类（原因按实际形态分列，不臆造）
     if not tiff and not legacy:
         raise ImageUnavailable("img_path 与 img_path_tiff 均为空（§3.5 404 第三类）")
     raise ImageUnavailable(
-        f"影像文件不在盘上：img_path_tiff={tiff!r} / img_path={legacy!r}（§3.5 404 第三类）"
+        f"影像文件不在盘上：img_path_tiff={tiff!r}（含派生 -O）/ img_path={legacy!r}（§3.5 404 第三类）"
     )
 
 

@@ -545,9 +545,10 @@ def stamp_image(
     * `400` = 参数非法（非整数、`page < 1`、`idx < 0`）；`500` = 读盘 / 解码异常；
     * **只读**（不解析 / 不 OCR / 不写库 / **不写缓存**）、**不占位冒充**、**不读 BLOB**（库内本无 BLOB 列）。
 
-    **影像来源（2026-10-11「webp 退场」单）：** 优先 `stamps.img_path_tiff`、`img_path` 仅作
-    **兼容回退**（旧行未回填时仍可服务；`img_path` 列一字未改）。**TIFF 不是浏览器可渲染容器**
-    （§3.5 的 `Content-Type` 白名单亦无 `image/tiff`）⇒ 命中 TIFF 时用 **PIL 解码 → 回 PNG**
+    **影像来源／回落链（口径件 `docs/image-original-crop-draft-v0.1.md` §6；校正件已暂停生产）：**
+    优先 `stamps.img_path_tiff`（校正件）→ **同目录同名 `-O.tiff`（原始切片）** → `img_path`（历史 webp，
+    **仅兼容回退**；该列一字未改）。**TIFF 不是浏览器可渲染容器**（§3.5 的 `Content-Type` 白名单亦无
+    `image/tiff`）⇒ 命中 TIFF（校正件或 O 件都一样）时用 **PIL 解码 → 回 PNG**
     （`Content-Type: image/png`、`Content-Length` 按**回吐的 PNG 字节数**给；**不落盘**、不引入图像栈）。
     """
     page_i = _int_param(page, "page", minimum=1)

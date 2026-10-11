@@ -1,0 +1,82 @@
+{
+  "repo": "/Users/kevin/bistro/xiai/feicui",
+  "scratch": "/Users/kevin/.hermes/profiles/zang/cache/scratch/cp-worker",
+  "pdf": "/Users/kevin/bistro/xiai/feicui/inbox/20261011/吴颐人篆刻作品展示.pdf",
+  "book": "吴颐人篆刻作品展示.pdf",
+  "dir_key": "吴颐人篆刻作品展示",
+  "page": 8,
+  "detected": 4,
+  "items": 4,
+  "books_out": "/Users/kevin/.hermes/profiles/zang/cache/scratch/cp-worker/books/吴颐人篆刻作品展示",
+  "corrected_files_before": 0,
+  "o_files_before": 0,
+  "corrected_files_after": 0,
+  "o_files_after": 4,
+  "corrected_new_written": 0,
+  "o_new_written": 4,
+  "checks": {
+    "新写校正件数 == 0": true,
+    "只新写 O（数 == 枚数 ∧ > 0）": true,
+    "各枚 img_path_tiff 约定路径不在盘 ∧ -O 在盘 ∧ webp 不在盘": true,
+    "返回值齐备 col/row/img_sha256/img_bytes": true
+  },
+  "items_detail_sample": [
+    {
+      "idx": 0,
+      "col": 1,
+      "row": 2,
+      "img_path": "../../../.hermes/profiles/zang/cache/scratch/cp-worker/faces/吴颐人篆刻作品展示.pdf/p0008_00.webp",
+      "img_path_tiff": "../../../.hermes/profiles/zang/cache/scratch/cp-worker/books/吴颐人篆刻作品展示/P8-C1-R2.tiff",
+      "img_sha256": "fe94fb05966e3940d2b6d499dec78cf3fcb1983f06efb37cd602569d296b09aa",
+      "img_bytes": 96968,
+      "img_written": true,
+      "tiff_on_disk(应 False)": false,
+      "o_on_disk(应 True)": true,
+      "webp_on_disk(应 False)": false,
+      "o_name": "P8-C1-R2-O.tiff"
+    },
+    {
+      "idx": 1,
+      "col": 1,
+      "row": 1,
+      "img_path": "../../../.hermes/profiles/zang/cache/scratch/cp-worker/faces/吴颐人篆刻作品展示.pdf/p0008_01.webp",
+      "img_path_tiff": "../../../.hermes/profiles/zang/cache/scratch/cp-worker/books/吴颐人篆刻作品展示/P8-C1-R1.tiff",
+      "img_sha256": "5e08813e097eea324847e1420cd5c748f4d06693f50756cf3cf0d8929c839bbf",
+      "img_bytes": 28784,
+      "img_written": true,
+      "tiff_on_disk(应 False)": false,
+      "o_on_disk(应 True)": true,
+      "webp_on_disk(应 False)": false,
+      "o_name": "P8-C1-R1-O.tiff"
+    },
+    {
+      "idx": 2,
+      "col": 1,
+      "row": 3,
+      "img_path": "../../../.hermes/profiles/zang/cache/scratch/cp-worker/faces/吴颐人篆刻作品展示.pdf/p0008_02.webp",
+      "img_path_tiff": "../../../.hermes/profiles/zang/cache/scratch/cp-worker/books/吴颐人篆刻作品展示/P8-C1-R3.tiff",
+      "img_sha256": "bd4985c3de25ab98cf52f4fe45d024bc0bfa3906777bb4ee286553fd41a5dbb0",
+      "img_bytes": 16544,
+      "img_written": true,
+      "tiff_on_disk(应 False)": false,
+      "o_on_disk(应 True)": true,
+      "webp_on_disk(应 False)": false,
+      "o_name": "P8-C1-R3-O.tiff"
+    },
+    {
+      "idx": 3,
+      "col": 2,
+      "row": 1,
+      "img_path": "../../../.hermes/profiles/zang/cache/scratch/cp-worker/faces/吴颐人篆刻作品展示.pdf/p0008_03.webp",
+      "img_path_tiff": "../../../.hermes/profiles/zang/cache/scratch/cp-worker/books/吴颐人篆刻作品展示/P8-C2-R1.tiff",
+      "img_sha256": "3cd107f15febe7be0f52cc8c9225f64f77f6b93e7259ad4cf25a2e026b420dbf",
+      "img_bytes": 20908,
+      "img_written": true,
+      "tiff_on_disk(应 False)": false,
+      "o_on_disk(应 True)": true,
+      "webp_on_disk(应 False)": false,
+      "o_name": "P8-C2-R1-O.tiff"
+    }
+  ],
+  "all_pass": true
+}

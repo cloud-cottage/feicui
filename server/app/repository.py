@@ -567,20 +567,26 @@ def job_outstanding(db_path: Path | str, job_id: str) -> dict[str, int]:
     return {k: int(row[k] or 0) for k in ("total", "pending", "running", "done", "failed")}
 
 
-def maybe_finalize_job(db_path: Path | str, job_id: str) -> str | None:
-    """所有页都到终态 ⇒ 收尾：无 FAILED 记 `DONE`，否则 `FAILED_PARTIAL`（§2.2）。"""
+def maybe_finalize_job(db_path: Path | str, job_id: str, *, error: str | None = None) -> str | None:
+    """所有页都到终态 ⇒ 收尾：无 FAILED 记 `DONE`，否则 `FAILED_PARTIAL`（§2.2）。
+
+    `error` 为**本次收尾的原因覆盖**（缺省保持既有形态：`FAILED_PARTIAL` ⇒ `failed_pages=<n>`、
+    `DONE` ⇒ `NULL`）——供池在「模板不可用」一类**由池直接落终态**的场景写明具体原因，
+    避免 `jobs.error` 被压成泛化的 `failed_pages=`。
+    """
     now = db.now_iso()
     st = job_outstanding(db_path, job_id)
     if st["pending"] or st["running"]:
         return None
     state = "FAILED_PARTIAL" if st["failed"] else "DONE"
+    if error is None:
+        error = f"failed_pages={st['failed']}" if state == "FAILED_PARTIAL" else None
     with db.tx(db_path) as conn:
         conn.execute(
             """UPDATE jobs
-                  SET state = ?, finished_at = ?, updated_at = ?,
-                      error = CASE WHEN ? = 'FAILED_PARTIAL' THEN 'failed_pages=' || ? ELSE NULL END
+                  SET state = ?, finished_at = ?, updated_at = ?, error = ?
                 WHERE job_id = ?""",
-            (state, now, now, state, st["failed"], job_id),
+            (state, now, now, error, job_id),
         )
     return state
 

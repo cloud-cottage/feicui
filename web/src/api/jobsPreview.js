@@ -7,7 +7,7 @@
 //   E10 GET /api/jobs/{job_id}/pages/{page}/boxes         ⇒ 该页检测框（JSON，现场检测）
 //
 // 纪律（写死在此，便于一处收口）：
-//   ① `{page}` **1-based**、查询参数白名单**只有 `dpi`**（`{72,110,150}`，默认 **110**）；
+//   ① `{page}` **1-based**、查询参数白名单**只有 `dpi`**（`{72,110,150}`，默认 **150**）；
 //   ② 两个端点的 `dpi` 必须**取同一个值** —— E10 的 `render.width/height` 与 E9 那张 PNG 的像素尺寸
 //      必须是**同一像素空间**，覆盖层才可能对齐（PP-3）；本模块默认两处都显式带 `?dpi=`；
 //   ③ 取图失败**如实显示**真实原因码（§2.1 错误面：BAD_PARAM / JOB_NOT_FOUND / PDF_MISSING /
@@ -23,9 +23,9 @@ export const PREVIEW_PNG_PATH_TEMPLATE = '/api/jobs/{job_id}/pages/{page}/previe
 /** E10 路径模板（前端唯一来源） */
 export const PREVIEW_BOXES_PATH_TEMPLATE = '/api/jobs/{job_id}/pages/{page}/boxes'
 
-/** `dpi` 白名单（§2.6：默认 110；非白名单 ⇒ 后端 400 BAD_PARAM） */
+/** `dpi` 白名单（§2.6 / §3.21.2：默认 **150**（Kevin 2026-10-11 批：110 → 150）；非白名单 ⇒ 后端 400 BAD_PARAM） */
 export const PREVIEW_DPI_WHITELIST = [72, 110, 150]
-export const PREVIEW_DPI_DEFAULT = 110
+export const PREVIEW_DPI_DEFAULT = 150
 
 /** 未标定书的人读提示前缀（§2.3 ②：与后端 `notes` 里的措辞同源） */
 export const UNMARKED_BOOK_NOTE_PREFIX = '本书未标定'

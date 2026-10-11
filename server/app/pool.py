@@ -354,10 +354,20 @@ class Pool:
         self._last_job = claimed
         if not books.template_usable(template):
             missing = books.missing_template_keys(template)
-            log.error("job %s 模板不可用（缺 %s）⇒ 全部待办页记 FAILED", claimed["job_id"], missing)
-            self._fail_all_pending(claimed, f"template_unusable: missing keys {missing}")
+            err = f"template_unusable: missing keys {missing}"
+            log.error("job %s 模板不可用（缺 %s）⇒ 全部待办页记 FAILED，job 一次落终态", claimed["job_id"], missing)
+            self._fail_all_pending(claimed, err)
+            # ★ 收口（本轮修复）：模板不可用时**必须当场把 job 写进终态**。
+            # 否则 state 停在 `claim_job` 刚置的 `RUNNING` ⇒ 该 job 仍是「活跃 job」，
+            # 下一个 tick 又被 `claim_job` 认领 ⇒ 池每 ~0.3 s 无限重试（白烧 CPU、E2 永远「解析中」）。
+            # 与常规收尾同源：复用 `maybe_finalize_job`（页全到终态 ⇒ FAILED_PARTIAL），
+            # 并把 `jobs.error` 覆写成本次真实原因（而不是泛化的 `failed_pages=`）。
+            state = repository.maybe_finalize_job(self.st.db_path, claimed["job_id"], error=err)
+            if state is None:  # 理论不可达：`_fail_all_pending` 已把 PENDING/RUNNING 页全部记 FAILED
+                log.error("job %s 收尾异常：仍见待办页（state 未落终态）", claimed["job_id"])
+            log.error("job %s 收尾 ⇒ %s（error=%s）", claimed["job_id"], state, err)
             self.job = None
-            self.job_finished = "FAILED_PARTIAL"
+            self.job_finished = state or "FAILED_PARTIAL"
             return
         log.info(
             "认领 job %s：pdf=%s book_key=%s 模板别名=%s 页区间=[%s,%s] chunk_size=%s "

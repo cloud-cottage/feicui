@@ -131,8 +131,12 @@ config.py           配置：默认值 < 配置文件 < 环境变量
 
 **未实现（1b，非本单验收）**：`E3 GET /api/jobs/{job_id}/stamps`、`E4 POST /api/jobs/{job_id}/export`——**未注册路由**（调用得 `404`）。
 
-**非规范端点（新增，仅运维/自测）**：`GET /api/health`（存活探针）、`GET /api/meta/migrations`（迁移记账只读视图）。
+**非规范端点（新增，仅运维/自测）**：`GET /api/health`（存活探针）、`GET /api/meta/migrations`（迁移记账只读视图）、`GET /api/meta/pool`（**执行层 / 池现况只读视图**，2026-10-11 **补登记**）。
 规范 §3 只定义 E1–E5，**未禁止**额外元数据端点；如判定违规，删这两条即可（`app/main.py` 尾部）。
+
+- `GET /api/meta/pool`（**补登记，2026-10-11**）：**只读**，非规范 §3 端点（**前缀合法：`/api/meta/**`，规范 §3.6 条①**）。实现＝`server/app/main.py::pool_status()`（`app.get("/api/meta/pool", tags=["meta"])`）。
+  - **语义**：池是**无端口进程**（不入 ctrl 面板 `services` 表，见 `ctrl/PORTS.md` P9），故其现况只能这样读——**不臆造读数**：`{db_path, prod_db, …poolctl.status(st)}`；池在跑与否由 **`flock` 探测**（对 `server/.run/pool.state.lock` 非阻塞试锁），活跃 job 由**库内复算**得出。
+  - **登记依据**：规范 **§3.6 条④**「新增 / 删除须在 `feicui/server/README.md` 登记」（本文件只在**类别**上约束）。**本条只补登记、不改实现与契约**。
 
 ## 7. 配置
 

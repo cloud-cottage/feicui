@@ -1,0 +1,380 @@
+[
+  {
+    "book_ref": "秦汉印典 上海书画 金怀英  1997 ok.pdf",
+    "isbn13": "9787806350959",
+    "isbn10": "7806350950",
+    "isbn13_derived": true,
+    "isbn10_derived": false,
+    "cip_code": null,
+    "title": null,
+    "publisher": "上海节画出版社",
+    "pub_year": "2000",
+    "edition": null,
+    "source": "text_layer",
+    "verify_state": "conflict",
+    "verify_note": "冲突：出版者前缀 80635 ⇒ 「上海书画出版社」 ≠ OCR 出版社「上海节画出版社」（双方证据保留，不静默取一）",
+    "evidence": {
+      "scan_face_pages": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        804,
+        805,
+        806,
+        807
+      ],
+      "ocr_pages": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        804,
+        805,
+        806,
+        807
+      ],
+      "isbn_candidates": [
+        {
+          "raw": "1",
+          "normalized": "1",
+          "kind": null,
+          "valid": false,
+          "total": null,
+          "check_digit": null,
+          "expected_check": null,
+          "start": 73,
+          "end": 84,
+          "snippet": " .....20003<) \n各地新华节店婭铜\n杭州輩安羨術彩印贏印剧\n汗本, 787X 1092 1/16 蟬, 50.5 \n1997 年6 月第1 版\n1997 年6 月ll!l",
+          "labeled": false,
+          "anchor_near": true,
+          "anchor_word": "ISBN",
+          "shape_reason": "bad_len(1)",
+          "rejected_reason": "bad_len(1)",
+          "source": "text_layer",
+          "page": 2
+        },
+        {
+          "raw": "1092",
+          "normalized": "1092",
+          "kind": null,
+          "valid": false,
+          "total": null,
+          "check_digit": null,
+          "expected_check": null,
+          "start": 73,
+          "end": 84,
+          "snippet": " .....20003<) \n各地新华节店婭铜\n杭州輩安羨術彩印贏印剧\n汗本, 787X 1092 1/16 蟬, 50.5 \n1997 年6 月第1 版\n1997 年6 月ll!l",
+          "labeled": false,
+          "anchor_near": true,
+          "anchor_word": "ISBN",
+          "shape_reason": "bad_len(4)",
+          "rejected_reason": "bad_len(4)",
+          "source": "text_layer",
+          "page": 2
+        },
+        {
+          "raw": "787X",
+          "normalized": "787X",
+          "kind": null,
+          "valid": false,
+          "total": null,
+          "check_digit": null,
+          "expected_check": null,
+          "start": 73,
+          "end": 84,
+          "snippet": " .....20003<) \n各地新华节店婭铜\n杭州輩安羨術彩印贏印剧\n汗本, 787X 1092 1/16 蟬, 50.5 \n1997 年6 月第1 版\n1997 年6 月ll!l",
+          "labeled": false,
+          "anchor_near": true,
+          "anchor_word": "ISBN",
+          "shape_reason": "bad_len(4)",
+          "rejected_reason": "bad_len(4)",
+          "source": "text_layer",
+          "page": 2
+        },
+        {
+          "raw": "787X 1092 1",
+          "normalized": "787X10921",
+          "kind": null,
+          "valid": false,
+          "total": null,
+          "check_digit": null,
+          "expected_check": null,
+          "start": 73,
+          "end": 84,
+          "snippet": " .....20003<) \n各地新华节店婭铜\n杭州輩安羨術彩印贏印剧\n汗本, 787X 1092 1/16 蟬, 50.5 \n1997 年6 月第1 版\n1997 年6 月ll!l",
+          "labeled": false,
+          "anchor_near": true,
+          "anchor_word": "ISBN",
+          "shape_reason": "bad_len(9)",
+          "rejected_reason": "bad_len(9)",
+          "source": "text_layer",
+          "page": 2
+        },
+        {
+          "raw": "7-80635-095-0",
+          "normalized": "7806350950",
+          "kind": "isbn10",
+          "valid": true,
+          "total": 264,
+          "check_digit": 0,
+          "expected_check": 0,
+          "start": 146,
+          "end": 159,
+          "snippet": "第1 版\n1997 年6 月ll!l 次印刷\n印敗：l一s·.ooo\nISBN 7-80635-095-0/J · 895 \n定價: 148 圓\n",
+          "labeled": true,
+          "anchor_near": true,
+          "anchor_word": "ISBN",
+          "shape_reason": null,
+          "rejected_reason": null,
+          "source": "text_layer",
+          "page": 2
+        }
+      ],
+      "isbn_accepted": [
+        {
+          "raw": "7-80635-095-0",
+          "normalized": "7806350950",
+          "kind": "isbn10",
+          "valid": true,
+          "page": 2,
+          "source": "text_layer",
+          "labeled": true,
+          "anchor_near": true,
+          "shape_reason": null,
+          "rejected_reason": null
+        }
+      ],
+      "isbn_rejected": [
+        {
+          "raw": "1",
+          "normalized": "1",
+          "kind": null,
+          "valid": false,
+          "page": 2,
+          "source": "text_layer",
+          "labeled": false,
+          "anchor_near": true,
+          "shape_reason": "bad_len(1)",
+          "rejected_reason": "bad_len(1)"
+        },
+        {
+          "raw": "1092",
+          "normalized": "1092",
+          "kind": null,
+          "valid": false,
+          "page": 2,
+          "source": "text_layer",
+          "labeled": false,
+          "anchor_near": true,
+          "shape_reason": "bad_len(4)",
+          "rejected_reason": "bad_len(4)"
+        },
+        {
+          "raw": "787X",
+          "normalized": "787X",
+          "kind": null,
+          "valid": false,
+          "page": 2,
+          "source": "text_layer",
+          "labeled": false,
+          "anchor_near": true,
+          "shape_reason": "bad_len(4)",
+          "rejected_reason": "bad_len(4)"
+        },
+        {
+          "raw": "787X 1092 1",
+          "normalized": "787X10921",
+          "kind": null,
+          "valid": false,
+          "page": 2,
+          "source": "text_layer",
+          "labeled": false,
+          "anchor_near": true,
+          "shape_reason": "bad_len(9)",
+          "rejected_reason": "bad_len(9)"
+        }
+      ],
+      "cip_candidates": [],
+      "publishers": [
+        "上海节画出版社",
+        "印典金懷英编上海书画出版社",
+        "各地新华书店",
+        "英編秦漢印典上海書畫出版社"
+      ],
+      "pub_years": [
+        2000,
+        1997
+      ],
+      "cross_verify": {
+        "verify_state": "conflict",
+        "prefix": "80635",
+        "table_publisher": "上海书画出版社",
+        "ocr_publisher": "上海节画出版社",
+        "match": false,
+        "note": "冲突：出版者前缀 80635 ⇒ 「上海书画出版社」 ≠ OCR 出版社「上海节画出版社」（双方证据保留，不静默取一）"
+      },
+      "page_evidence": [
+        {
+          "page": 1,
+          "evidence": [
+            {
+              "source": "local_ocr",
+              "chars": 8,
+              "excerpt": "秦漢印典16AA"
+            }
+          ]
+        },
+        {
+          "page": 2,
+          "evidence": [
+            {
+              "source": "text_layer",
+              "chars": 179,
+              "excerpt": "秦漢印典\n金懷英編\n上海节画出版社出版友行\nu:·· 山畫237` .....20003<) \n各地新华节店婭铜\n杭州輩安羨術彩印贏印剧\n汗本, 787X 1092 1/16 蟬, 50.5 \n1997 年6 月第1 版\n1997 年6 月ll!l 次印刷\n印敗：l一s·.ooo\nISBN 7-80635-095-0/J · 895 \n定價: 148 圓\n"
+            },
+            {
+              "source": "local_ocr",
+              "chars": 148,
+              "excerpt": "秦漢印典金懷英编上海书画出版社出版发行(上海衡山路237号 邮政编码200031)各地新华书店经销 杭州臨安美術彩印廠印刷开本：787×1092 1/16 印张：50.51997年6月第1版 1997年6月第1次印刷印数:1—3,000ISBN7-80635-095-0/J·895定價：148圓"
+            }
+          ]
+        },
+        {
+          "page": 3,
+          "evidence": [
+            {
+              "source": "text_layer",
+              "chars": 30,
+              "excerpt": "上\n海\n書\n畫\n出\n版\n社\n秦\n漢\n印\n典\n金\n懷\n英\n編\n"
+            },
+            {
+              "source": "local_ocr",
+              "chars": 15,
+              "excerpt": "金懷英編秦漢印典上海書畫出版社"
+            }
+          ]
+        },
+        {
+          "page": 4,
+          "evidence": [
+            {
+              "source": "text_layer",
+              "chars": 1196,
+              "excerpt": "自\n從\n文\n人\n篆\n刻\n堀\n起\n以\n來\n，\n印\n人\n們\n在\n篆\n刻\n創\n作\n方\n画\n無\n不\n奉\n秦\n溟\n印\n爲\n宗\n。\n以\n此\n可\n見\n，\n秦\n漢\n時\n期\n的\n印\n章\n，\n早\n就\n被\n公\n認\n爲\n有\n着\n極\n高\n的\n藝\n術\n性\n，\n有\n着\n重\n要\n的\n欣\n賞\n和\n學\n習\n價\n值\n。\n秦\n漢\n時\n期\n的\n印\n章\n，\n與\n其\n它\n任\n何\n時\n期\n的\n印\n章\n一\n樣\n，\n由\n官\n用\n體\n系\n和\n民\n用\n體\n系\n二\n大\n部\n份\n組\n戒\n。\n編\n纂\n秦\n漢\n印\n譜\n，\n輯\n收\n其\n中\n的\n官\n用\n體\n系\n者\n，\n通\n常\n憑\n借\n秦\n漢\n時\n期\n所\n設\n的\n官\n爵\n、\n府\n署\n、\n地\n名\n變\n化\n情\n況\n以\n及\n官\n印\n製\n作\n制\n度\n等\n史\n料\n考\n得\n，\n輯\n收\n其\n中\n的\n民\n用\n體\n系\n者\n，\n問\n題\n就\n比\n較\n複\n雜\n，\n所\n遇\n困\n難\n也\n較\n多\n。\n民\n用\n體\n系\n者\n，\n在\n當\n時\n没\n有\n嚴\n格\n的\n時\n代\n性\n制\n作\n制\n度\n制\n約\n，\n在\n朝\n代\n變\n更\n前\n後\n這\n一\n段\n時\n間\n中\n的\n作\n品\n面\n目\n大\n多\n近\n同\n，\n如\n戰\n國\n後\n期\n秦\n國\n和\n秦\n朝\n之\n間\n、\n秦\n和\n漢\n初\n之\n間\n的\n私\n印\n在\n文\n字\n、\n佈\n局\n形\n式\n方\n面\n均\n未\n發\n生\n很\n大\n的\n變\n化\n，\n繼\n摸\n之\n後\n的\n三\n國\n和\n兩\n晉\n的\n大\n多\n私\n印\n在\n印\n文\n和\n佈\n局\n方\n面\n依\n然\n以\n漢\n法\n爲\n之\n，\n類\n似\n于\n如\n此\n的\n一\n系\n列\n歷\n史\n性\n的\n客\n觀\n因\n素\n，\n使\n虞\n于\n這\n種\n時\n期\n中\n的\n相\n當\n數\n量\n的\n印\n章\n不\n只\n在\n過\n去\n、\n今\n天\n甚\n至\n將\n來\n都\n無\n法\n被\n確\n切\n斷\n代\n，\n儘\n管\n以\n一\n些\n明\n確\n爲\n秦\n濮\n墓\n葬\n中\n出\n土\n的\n印\n章\n作\n爲\n衡\n祉\n之\n用\n的\n標\n準\n器\n去\n進\n行\n過\n對\n照\n邊\n收\n集\n其\n它\n秦\n筷\n印\n章\n，\n但\n是\n被\n輯\n收\n者\n中\n也\n難\n免\n混\n雜\n進\n少\n且\n具\n有\n秦\n漢\n面\n目\n的\n戰\n國\n後\n期\n秦\n國\n和\n三\n國\n、\n兩\n晉\n之\n物\n，\n這\n是\n任\n何\n一\n本\n秦\n摸\n專\n題\n印\n譜\n在\n編\n纂\n中\n都\n避\n免\n不\n開\n的\n一\n個\n賁\n際\n問\n題\n。\n輯\n集\n秦\n漢\n印\n章\n成\n譜\n，\n雖\n已\n不\n乏\n先\n例\n，\n然\n而\n以\n往\n成\n冊\n者\n在\n所\n收\n數\n釐\n、\n版\n本\n、\n犏\n纂\n方\n法\n等\n綜\n合\n方\n面\n均\n未\n能\n盡\n如\n人\n意\n。\n今\n通\n過\n廣\n泛\n收\n集\n和\n遴\n選\n，\n得\n傳\n世\n及\n新\n出\n土\n秦\n漢\n印\n的\n拓\n本\n逾\n五\n千\n方\n，\n按\n官\n用\n體\n系\n和\n民\n用\n體\n系\n二\n大\n部\n份\n類\n绱\n，\n每\n印\n附\n以\n釋\n文\n，\n原\n大\n影\n印\n成\n一\n集\n，\n以\n饗\n有\n癖\n于\n此\n者\n。\n出\n版\n前\n言\n"
+            },
+            {
+              "source": "local_ocr",
+              "chars": 559,
+              "excerpt": "作品面目大多近同如戰國後期秦國和秦朝之間秦和漢初之間的私印在文字佈局形式方多民用體系者在當時没有嚴格的時代性制作制度制約在朝代變更前後這一段時間中的况以及官印製作制度等史料考得；輯收其中的民用體系者問題就比較複雜所遇困難也較編纂秦漢印譜輯收其中的官用體系者通常憑借秦漢時期所設的官爵府署地名變化情期的印章早就被公認爲有着極高的藝術性有着重要的欣賞和學習價值按官用體系和民用體系二大部份類編每印附以釋文原大影印成一集以饗有癖于此者合方面均未能盡如人意今通過廣泛收集和遴選得傳世及新出土秦漢印的拓本逾五千方一個實際問題。面目的戰國後期秦國和三國兩晉之物這是任何一本秦漢專題印譜在編纂中都避免不開的用的標準器去進行邊對照邊收集其它秦漢印章但是被輯收者中也難免混雜進少量具有秦漢去今天甚至將來都無法被確切斷代儘管以一些明確爲秦漢墓葬中出土的印章作爲衡量之之類似于如此的一系列歷史性的客觀因素使處于這種時期中的相當數量的印章不只在過面均未發生很大的變化繼漢之後的三國和兩晉的大多私印在印文和佈局方面依然以漢法爲秦漢時期的印章與其它任何時期的印章一樣由官用體系和民用體系二大部份組成。自從文人篆刻崛起以來印人們在篆刻創作方面無不奉秦漢印爲宗以此可見秦漢時輯集秦漢印章成譜雖已不乏先例然而以往成册者在所收數量版本編纂方法等綜出版前言"
+            }
+          ]
+        },
+        {
+          "page": 5,
+          "evidence": [
+            {
+              "source": "text_layer",
+              "chars": 48,
+              "excerpt": "; \ni \n府\n府\n霽\n罈\n[ \ni \n君\n印\n府\n矚\n鸝\n上\n右\n[ \n揭\n府\n印\n. \n驪\n"
+            },
+            {
+              "source": "local_ocr",
+              "chars": 40,
+              "excerpt": "到到 38RDEPEO上市路证昌印子院务店出型云刊同DX后器路印中房馆中行适念馆"
+            }
+          ]
+        },
+        {
+          "page": 6,
+          "evidence": [
+            {
+              "source": "text_layer",
+              "chars": 65,
+              "excerpt": "官\n田\n臣\n印\n• \n苣\n矗\n少\n內\n• \n泰\n窪\n上\n左\n田\n璽\n弄\n狗\n廚\n印\n安\n民\n正\n印\n鼴\n霉\n右\n公\n田\n印\n2 \n"
+            },
+            {
+              "source": "local_ocr",
+              "chars": 41,
+              "excerpt": "茝陽少内弄狗廚印右公田印E園福MEA田官田臣印泰竊上左田安民正印1O原福七M图回R"
+            }
+          ]
+        },
+        {
+          "page": 804,
+          "evidence": [
+            {
+              "source": "text_layer",
+              "chars": 20,
+              "excerpt": "G \n笆\n。\n麪\n® \ng \n800 \n"
+            },
+            {
+              "source": "local_ocr",
+              "chars": 7,
+              "excerpt": "上场市局CSR"
+            }
+          ]
+        },
+        {
+          "page": 805,
+          "evidence": [
+            {
+              "source": "text_layer",
+              "chars": 30,
+              "excerpt": "l~ \n\"~ \n。\n@ \n＇繆志·l \nE \n靄\n801 \n"
+            },
+            {
+              "source": "local_ocr",
+              "chars": 10,
+              "excerpt": "大67M507801"
+            }
+          ]
+        },
+        {
+          "page": 806,
+          "evidence": [
+            {
+              "source": "text_layer",
+              "chars": 27,
+              "excerpt": "（·項\n;J· \n屈\n図\ne) \nE \n口\n802 \n"
+            },
+            {
+              "source": "local_ocr",
+              "chars": 6,
+              "excerpt": "印店3802"
+            }
+          ]
+        },
+        {
+          "page": 807,
+          "evidence": [
+            {
+              "source": "text_layer",
+              "chars": 18,
+              "excerpt": "囝\n四\n因\n巴\n団\n0 \n803 \n"
+            },
+            {
+              "source": "local_ocr",
+              "chars": 6,
+              "excerpt": "CER2杭金"
+            }
+          ]
+        }
+      ]
+    },
+    "dir_key_recommended": "7806350950",
+    "dir_key_source_recommended": "ISBN",
+    "dir_key_current": "7806350950",
+    "dir_key_source_current": "ISBN",
+    "isbn_source": "text_layer",
+    "recorded_isbn": "7806350950",
+    "pdf_sha256": "6825a09a7ac225ae97d1fa2ba880ed498be4fd58b8df599a742642696db18fb0",
+    "pages_scanned": 10,
+    "scan_dpi": 200.0,
+    "elapsed_s": 58.54
+  }
+]

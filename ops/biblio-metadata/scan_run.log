@@ -1,0 +1,14 @@
+[biblio] batch=biblio-20261011-131638 books=7 dpi=200.0 face=head6+tail4
+/Users/kevin/bistro/xiai/feicui/venv/lib/python3.11/site-packages/paddle/utils/cpp_extension/extension_utils.py:712: UserWarning: No ccache found. Please be aware that recompiling all source files may be required. You can download and install ccache from: https://github.com/ccache/ccache/blob/master/doc/INSTALL.md
+  warnings.warn(warning_message)
+[32mCreating model: ('PP-LCNet_x1_0_doc_ori', None, None)[0m
+[32mModel files already exist. Using cached files. To redownload, please delete the directory manually: `/Users/kevin/.paddlex/official_models/PP-LCNet_x1_0_doc_ori`.[0m
+[32mCreating model: ('UVDoc', None, None)[0m
+[32mModel files already exist. Using cached files. To redownload, please delete the directory manually: `/Users/kevin/.paddlex/official_models/UVDoc`.[0m
+[32mCreating model: ('PP-OCRv6_medium_det', None, None)[0m
+[32mModel files already exist. Using cached files. To redownload, please delete the directory manually: `/Users/kevin/.paddlex/official_models/PP-OCRv6_medium_det`.[0m
+[32mCreating model: ('PP-OCRv6_medium_rec', None, None)[0m
+[32mModel files already exist. Using cached files. To redownload, please delete the directory manually: `/Users/kevin/.paddlex/official_models/PP-OCRv6_medium_rec`.[0m
+[biblio] 秦汉印典 上海书画 金怀英  1997 ok.pdf: isbn13=9787806350959 isbn10=7806350950 publisher=上海节画出版社 state=unverified rec_key=7806350950 (60.18s)
+[biblio] 古玺汇编 文物出版社 罗福颐  ok.pdf: isbn13=9787501007981 isbn10=7501007985 publisher=文物出版社 state=unverified rec_key=7501007985 (112.02s)
+[biblio] 黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf: isbn13=None isbn10=None publisher=印刷厂印刷浙江省新华书店 state=unverified rec_key=黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk) (113.99s)

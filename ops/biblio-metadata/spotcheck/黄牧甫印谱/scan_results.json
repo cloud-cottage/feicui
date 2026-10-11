@@ -1,0 +1,133 @@
+[
+  {
+    "book_ref": "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf",
+    "isbn13": null,
+    "isbn10": null,
+    "isbn13_derived": false,
+    "isbn10_derived": false,
+    "cip_code": null,
+    "title": null,
+    "publisher": "印刷厂印刷浙江省新华书店",
+    "pub_year": "1982",
+    "edition": null,
+    "source": "local_ocr",
+    "verify_state": "unverified",
+    "verify_note": "版权页扫描面内未识别到可用 ISBN（校验位）",
+    "evidence": {
+      "scan_face_pages": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        129,
+        130,
+        131,
+        132
+      ],
+      "ocr_pages": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        129,
+        130,
+        131,
+        132
+      ],
+      "isbn_candidates": [],
+      "isbn_accepted": [],
+      "isbn_rejected": [],
+      "cip_candidates": [],
+      "publishers": [
+        "印刷厂印刷浙江省新华书店"
+      ],
+      "pub_years": [
+        1982
+      ],
+      "cross_verify": {
+        "verify_state": "unverified",
+        "prefix": null,
+        "table_publisher": null,
+        "ocr_publisher": "印刷厂印刷浙江省新华书店",
+        "match": null,
+        "note": "版权页扫描面内未识别到可用 ISBN（校验位）"
+      },
+      "page_evidence": [
+        {
+          "page": 1,
+          "evidence": [
+            {
+              "source": "local_ocr",
+              "chars": 2,
+              "excerpt": "国捷"
+            }
+          ]
+        },
+        {
+          "page": 2,
+          "evidence": [
+            {
+              "source": "local_ocr",
+              "chars": 2,
+              "excerpt": "数字"
+            }
+          ]
+        },
+        {
+          "page": 4,
+          "evidence": [
+            {
+              "source": "local_ocr",
+              "chars": 111,
+              "excerpt": "图书馆推工程数字黄牧甫印谱西洽印社出版新华印刷厂印刷浙江省新华书店发行开本：787×1092 1/16 印张 81982年3月第一版 1982年3月第一次印刷印数 0,001—7,100书号8.191.164定价2.50元"
+            }
+          ]
+        },
+        {
+          "page": 5,
+          "evidence": [
+            {
+              "source": "local_ocr",
+              "chars": 13,
+              "excerpt": "中成空全卫定济务8事MAR"
+            }
+          ]
+        },
+        {
+          "page": 129,
+          "evidence": [
+            {
+              "source": "local_ocr",
+              "chars": 54,
+              "excerpt": "固我皇雪之毛氣點全市到司星三珠UIk`LOtSHIAA雪NDDHDOIFUE同法同十是星一桂重一心局局刷民司"
+            }
+          ]
+        },
+        {
+          "page": 132,
+          "evidence": [
+            {
+              "source": "local_ocr",
+              "chars": 27,
+              "excerpt": "封面题签沙孟海扉页题字王福庵封面印章罗叔子责任编辑西林"
+            }
+          ]
+        }
+      ]
+    },
+    "dir_key_recommended": "黄牧甫印谱",
+    "dir_key_source_recommended": "chinese_title",
+    "dir_key_current": "黄牧甫印谱",
+    "dir_key_source_current": "chinese_title",
+    "isbn_source": null,
+    "recorded_isbn": null,
+    "pdf_sha256": "e9c29a6dfb66cfab6b33be403bdf45d8902c8e41341d74d4a401d021a7774f6e",
+    "pages_scanned": 10,
+    "scan_dpi": 200.0,
+    "elapsed_s": 116.4
+  }
+]

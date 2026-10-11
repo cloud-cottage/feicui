@@ -1,0 +1,25 @@
+单书抽验（逐书各起一进程；独立库 var/biblio_ingest.spotcheck.db；独立 out-dir spotcheck/<书名>/）—— Kong 2026-10-11
+命令：./venv/bin/python ops/biblio-metadata/scan_biblio.py --only <书名> --db var/biblio_ingest.spotcheck.db --out-dir ops/biblio-metadata/spotcheck/<书名>
+四本均 rc=0，无 SIGSEGV。
+
+===== SPOTCHECK 秦印类编 =====
+[biblio] batch=biblio-20261011-134155 books=1 dpi=200.0 face=head6+tail4
+[biblio] 秦印类编 检索版.pdf: isbn13=9787550847224 isbn10=7550847223 publisher=西泠印社出版社 state=ok rec_key=9787550847224 (202.44s)
+[biblio] done: {"books_total": 1, "books_scanned": 1, "books_ok": 1, "elapsed_s": 202.45}
+
+===== SPOTCHECK 福庵印缀 =====
+[biblio] batch=biblio-20261011-134520 books=1 dpi=200.0 face=head6+tail4
+[biblio] 福庵印缀 原版 高清.pdf: isbn13=None isbn10=None publisher=中國藝術家出版社 state=unverified rec_key=福庵印缀 原版 高清 (118.08s)
+[biblio] done: {"books_total": 1, "books_scanned": 1, "books_ok": 0, "elapsed_s": 118.08}
+
+===== SPOTCHECK 黄牧甫印谱 =====
+[biblio] batch=biblio-20261011-134720 books=1 dpi=200.0 face=head6+tail4
+[biblio] 黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf: isbn13=None isbn10=None publisher=印刷厂印刷浙江省新华书店 state=unverified rec_key=黄牧甫印谱 (116.4s)
+[biblio] done: {"books_total": 1, "books_scanned": 1, "books_ok": 0, "elapsed_s": 116.4}
+
+===== SPOTCHECK 秦汉印典 =====
+[biblio] batch=biblio-20261011-134918 books=1 dpi=200.0 face=head6+tail4
+[biblio] 秦汉印典 上海书画 金怀英  1997 ok.pdf: isbn13=9787806350959 isbn10=7806350950 publisher=上海节画出版社 state=conflict rec_key=7806350950 (58.54s)
+[biblio] done: {"books_total": 1, "books_scanned": 1, "books_ok": 0, "elapsed_s": 58.54}
+
+===== ALL DONE =====

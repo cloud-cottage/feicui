@@ -1,0 +1,32 @@
+{
+  "batch_id": "biblio-20261011-134720",
+  "created_at": "2026-10-11T13:49:16+08:00",
+  "status": "done",
+  "books_total": 1,
+  "books_scanned": 1,
+  "books_ok": 0,
+  "books_failed": 0,
+  "candidates_ok": 0,
+  "elapsed_s": 116.4,
+  "params": {
+    "dpi": 200.0,
+    "face_head": 6,
+    "face_tail": 4,
+    "anchor_words": [
+      "ISBN",
+      "圖書在版編目",
+      "在版编目",
+      "CIP",
+      "核字"
+    ],
+    "no_ocr": false,
+    "only": "黄牧甫印谱"
+  },
+  "constants": {
+    "PUBLISHER_PREFIX_MAP": {
+      "5508": "西泠印社出版社",
+      "80635": "上海书画出版社",
+      "5010": "文物出版社"
+    }
+  }
+}

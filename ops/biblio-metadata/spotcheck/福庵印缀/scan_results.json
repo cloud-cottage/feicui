@@ -1,0 +1,220 @@
+[
+  {
+    "book_ref": "福庵印缀 原版 高清.pdf",
+    "isbn13": null,
+    "isbn10": null,
+    "isbn13_derived": false,
+    "isbn10_derived": false,
+    "cip_code": null,
+    "title": null,
+    "publisher": "中國藝術家出版社",
+    "pub_year": "1992",
+    "edition": null,
+    "source": "local_ocr",
+    "verify_state": "unverified",
+    "verify_note": "版权页扫描面内未识别到可用 ISBN（校验位）",
+    "evidence": {
+      "scan_face_pages": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        233,
+        234,
+        235,
+        236
+      ],
+      "ocr_pages": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        233,
+        234,
+        235,
+        236
+      ],
+      "isbn_candidates": [
+        {
+          "raw": "00852-62287502",
+          "normalized": "0085262287502",
+          "kind": null,
+          "valid": false,
+          "total": null,
+          "check_digit": null,
+          "expected_check": null,
+          "start": 57,
+          "end": 71,
+          "snippet": "編選：周建國高申傑出版發行：中國藝術家出版社地址：香港九龍文福道22号8A電話：00852-62287502責任編輯：李平承印：中國藝術家出版社承印部開版印書定9.75印張ISBN 988",
+          "labeled": false,
+          "anchor_near": true,
+          "anchor_word": "ISBN",
+          "shape_reason": "prefix_not_978_979",
+          "rejected_reason": "prefix_not_978_979",
+          "source": "local_ocr",
+          "page": 234
+        },
+        {
+          "raw": "988-19923-2-1",
+          "normalized": "9881992321",
+          "kind": "isbn10",
+          "valid": false,
+          "total": 354,
+          "check_digit": 1,
+          "expected_check": 10,
+          "start": 108,
+          "end": 121,
+          "snippet": "502責任編輯：李平承印：中國藝術家出版社承印部開版印書定9.75印張ISBN 988-19923-2-1本：889×11941/24次：2010年12月第一版第一次印刷數：1000號：",
+          "labeled": true,
+          "anchor_near": true,
+          "anchor_word": "ISBN",
+          "shape_reason": null,
+          "rejected_reason": null,
+          "source": "local_ocr",
+          "page": 234
+        },
+        {
+          "raw": "978-988-19923-2-19789881992321",
+          "normalized": "97898819923219789881992321",
+          "kind": null,
+          "valid": false,
+          "total": null,
+          "check_digit": null,
+          "expected_check": null,
+          "start": 166,
+          "end": 196,
+          "snippet": "×11941/24次：2010年12月第一版第一次印刷數：1000號：ISBN 978-988-19923-2-19789881992321>價：258圓定價：258.00圓",
+          "labeled": true,
+          "anchor_near": true,
+          "anchor_word": "ISBN",
+          "shape_reason": "too_long(26)",
+          "rejected_reason": "too_long(26)",
+          "source": "local_ocr",
+          "page": 234
+        }
+      ],
+      "isbn_accepted": [],
+      "isbn_rejected": [
+        {
+          "raw": "00852-62287502",
+          "normalized": "0085262287502",
+          "kind": null,
+          "valid": false,
+          "page": 234,
+          "source": "local_ocr",
+          "labeled": false,
+          "anchor_near": true,
+          "shape_reason": "prefix_not_978_979",
+          "rejected_reason": "prefix_not_978_979"
+        },
+        {
+          "raw": "988-19923-2-1",
+          "normalized": "9881992321",
+          "kind": "isbn10",
+          "valid": false,
+          "page": 234,
+          "source": "local_ocr",
+          "labeled": true,
+          "anchor_near": true,
+          "shape_reason": null,
+          "rejected_reason": null
+        },
+        {
+          "raw": "978-988-19923-2-19789881992321",
+          "normalized": "97898819923219789881992321",
+          "kind": null,
+          "valid": false,
+          "page": 234,
+          "source": "local_ocr",
+          "labeled": true,
+          "anchor_near": true,
+          "shape_reason": "too_long(26)",
+          "rejected_reason": "too_long(26)"
+        }
+      ],
+      "cip_candidates": [],
+      "publishers": [
+        "中國藝術家出版社"
+      ],
+      "pub_years": [
+        1992,
+        2010,
+        1978
+      ],
+      "cross_verify": {
+        "verify_state": "unverified",
+        "prefix": null,
+        "table_publisher": null,
+        "ocr_publisher": "中國藝術家出版社",
+        "match": null,
+        "note": "版权页扫描面内未识别到可用 ISBN（校验位）"
+      },
+      "page_evidence": [
+        {
+          "page": 3,
+          "evidence": [
+            {
+              "source": "local_ocr",
+              "chars": 6,
+              "excerpt": "成之先生篆扉"
+            }
+          ]
+        },
+        {
+          "page": 4,
+          "evidence": [
+            {
+              "source": "local_ocr",
+              "chars": 13,
+              "excerpt": "靖黙閣尼遺景逡孝周乘谷敬署"
+            }
+          ]
+        },
+        {
+          "page": 5,
+          "evidence": [
+            {
+              "source": "local_ocr",
+              "chars": 553,
+              "excerpt": "假》等。續福厂印稿以及說文部屬檢異》和麋研齋作篆通印繼八家傳麋研齋印存麋研齋印存重輯本麋研齋印存重輯本齋春住樓麋硯齋遺有福庵藏印羅刹江民印稿福庵居士晚年又自號持默老人持默居士居署遊藝室苦晚禔以字行別號鋤石農微幾屈瓠印傭羅刹江民石奴先生的治藝歷程及書刻成就對我等後學都將大有裨益。的三月二日，是福厂先生逝世五十周年的忌日在此緬懷福厂社創始人之一的王福厂先生誕辰一百三十周年的紀念日而今年篆刻家創建於清代末年的我國第一個印學研究團體西泠印王福厂一八八〇一九六〇初名壽祺字維季後更名今年的七月十七日是我國近現代著名金石文字學家書法王福厂先生生平及書刻藝術一脈書工二篆卓千秋棲慈湖各書院講席期間以長紫陽書院最久同伯先生有四書考證校勘金石碑版著書立說為樂歷主梅青黽山塘甲第三十七名曾授刑部福建江西司主事辭官歸養後以教呂廬老人圖二是清光緒丁丑科一八七七年進士’為第二舉人父親王同一八三九一九〇三’字同伯號肖蘭晚號之家祖父琅琊王氏武林支系十五世）王言是清嘉慶戊寅恩科禔右軍後人等印圖一先生生於杭州一個世代書香人王同伯先生家傳》秀水姚寶侃撰）他曾刻有琅琊王右軍後人十二即解子其長子王壽摶字子慶為清光緒丁酉科舉人次子王壽元（字調仲三子王壽保後更名綺字定叔雖無功名然工福厂先生祖上系出琅琊宋南遷隨扈至杭遂為杭之仁和周建國〇〇一"
+            }
+          ]
+        },
+        {
+          "page": 6,
+          "evidence": [
+            {
+              "source": "local_ocr",
+              "chars": 711,
+              "excerpt": "儀同伯先生對幼子福厂如此彬彬好學亦有意引導常把自己染’一心向學對父親兄長的一手好字圖三四尤其心文及省文的來龍去脈如數家珍故他在作書篆刻時用字精期間他著實下了一番苦功從中窮究了六書原理對古文籀檢異》圖五越十年又完成了麋研齋作篆通假》圖六檢異·自序二十七歲時便完成了他第一部著述說文部屬印存·自序他邊勤奮學習邊用心搜集浙皖前賢之作於二印章見汪啟淑丁敬兩氏印譜輒心儀焉麋研齋對金石書刻之癖好已漸入骨髓他曾說余年十二即解愛好成冊時光緒庚子十有一月此時福厂先生年僅十三歲然人石鼓集聯之扉頁上題曰呂廬主人集字命四子壽祺雙鉤名計十紙視前書似略勝仍當令壽祺藏之又在呂廬老碑臨帖之作交予其保存在書禮器碑》後跋曰余既書年十二三即好為篆分諸書厥後稍稍治說文之學說文部屬百五十四方同時他還究心於文字訓詁金石篆籀之學余十八歲時輯得福庵藏印十六冊內中收印人四十家印章二禮器碑全冊付壽祺矣尚有剩紙爰復書其銘文及碑末題屬柳果藥誤極晁足給足君高升工拙時不計也時成式月十日同記天久由不能出外心推捷不空以寫字收之字之余今幸書此七弟三再矣叫乃二月初四日臨起渥吏樂政民以據律水安先生影寫本國權鈔先善記王福厂前輩送著原稿藏西泠印社圖三圖一圖五通段橐本麋研齋作篆時客武昌東鄉丙辰二月初九羅劇江民文獻之微也梧矮手潭用廣泛傳押点鄉邦尚富急時謀梓育獻富世不歌替景究碑光什石印其他著作绿薄家食力有来通佳手院久假编次納植壽之梨来徒排等學行無似不克表朝先德叹白候所兼書十數種内惟唐十種又喜經拾碑字集為職語陽鸡码以下起使碑版不下表之暇覃清金石尤少及隸白岐紫陽慈湖龜山梅青詳席著近籍後觀政西替早感遂祀造主先大夫天懷滤泊不樂仕遁通罗壽摶俗弟綺壽祺謹識歲在著離敲祥章月三日2?圖四圖二圖六"
+            }
+          ]
+        },
+        {
+          "page": 234,
+          "evidence": [
+            {
+              "source": "local_ocr",
+              "chars": 213,
+              "excerpt": "扉頁題簽：江成之封底篆刻：福庵印綴編選：周建國高申傑出版發行：中國藝術家出版社地址：香港九龍文福道22号8A電話：00852-62287502責任編輯：李平承印：中國藝術家出版社承印部開版印書定9.75印張ISBN 988-19923-2-1本：889×11941/24次：2010年12月第一版第一次印刷數：1000號：ISBN 978-988-19923-2-19789881992321>價：258圓定價：258.00圓"
+            }
+          ]
+        }
+      ]
+    },
+    "dir_key_recommended": "福庵印缀 原版 高清",
+    "dir_key_source_recommended": "chinese_title",
+    "dir_key_current": "福庵印缀 原版 高清",
+    "dir_key_source_current": "chinese_title",
+    "isbn_source": null,
+    "recorded_isbn": null,
+    "pdf_sha256": "0a82f2245d27eba25a85a5313612f6b7ba6de18b6e0f43490ba6b1f2b4a2f659",
+    "pages_scanned": 10,
+    "scan_dpi": 200.0,
+    "elapsed_s": 118.08
+  }
+]

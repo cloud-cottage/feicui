@@ -1,0 +1,222 @@
+{
+  "generated_at": "2026-10-11T13:41:26+08:00",
+  "source_db": "var/biblio_ingest.db",
+  "note": "收口后复算（形态闸重放）；只读库、不切目录键",
+  "constants": {
+    "MAX_ISBN_DIGITS": 13,
+    "PUBLISHER_PREFIX_MAP": {
+      "5508": "西泠印社出版社",
+      "80635": "上海书画出版社",
+      "5010": "文物出版社"
+    }
+  },
+  "rows": [
+    {
+      "book_ref": "tmp.pdf",
+      "dir_key_current": "tmp.pdf",
+      "dir_key_source_current": "pdf_name_unconfirmed",
+      "isbn13_recomputed": null,
+      "isbn10_recomputed": null,
+      "publisher": "印刷厂印刷浙江省新华书店",
+      "verify_state_recomputed": "unverified",
+      "verify_note": "扫描面内未识别到可用 ISBN（校验位）",
+      "dir_key_recommended": "tmp.pdf",
+      "dir_key_source_recommended": "pdf_name_unconfirmed",
+      "needs_switch": false,
+      "isbn13_db_old": null,
+      "isbn10_db_old": null,
+      "verify_state_db_old": "unverified",
+      "dir_key_recommended_db_old": "tmp.pdf",
+      "accepted": [],
+      "rejected": []
+    },
+    {
+      "book_ref": "古玺汇编 文物出版社 罗福颐  ok.pdf",
+      "dir_key_current": "7501007985",
+      "dir_key_source_current": "ISBN",
+      "isbn13_recomputed": null,
+      "isbn10_recomputed": "7501007985",
+      "publisher": "文物出版社",
+      "verify_state_recomputed": "ok",
+      "verify_note": "校验位通过；出版者前缀 5010 ⇒ 文物出版社 与 OCR 出版社一致",
+      "dir_key_recommended": "7501007985",
+      "dir_key_source_recommended": "ISBN",
+      "needs_switch": false,
+      "isbn13_db_old": "9787501007981",
+      "isbn10_db_old": "7501007985",
+      "verify_state_db_old": "ok",
+      "dir_key_recommended_db_old": "7501007985",
+      "accepted": [
+        {
+          "raw": "7-5010-0798-5",
+          "normalized": "7501007985",
+          "kind": "isbn10",
+          "valid": true,
+          "page": 3,
+          "source": "local_ocr",
+          "anchor_near": true,
+          "degenerate_reason": null
+        }
+      ],
+      "rejected": [
+        {
+          "raw": "1111111111111 \n0000086775",
+          "normalized": "11111111111110000086775",
+          "shape_reason": "too_long(23)",
+          "kind": null,
+          "valid": false,
+          "page": 2,
+          "source": "text_layer"
+        }
+      ]
+    },
+    {
+      "book_ref": "吴颐人篆刻作品展示.pdf",
+      "dir_key_current": "吴颐人篆刻作品展示",
+      "dir_key_source_current": "chinese_title",
+      "isbn13_recomputed": null,
+      "isbn10_recomputed": null,
+      "publisher": null,
+      "verify_state_recomputed": "unverified",
+      "verify_note": "扫描面内未识别到可用 ISBN（校验位）",
+      "dir_key_recommended": "吴颐人篆刻作品展示",
+      "dir_key_source_recommended": "chinese_title",
+      "needs_switch": false,
+      "isbn13_db_old": null,
+      "isbn10_db_old": null,
+      "verify_state_db_old": "unverified",
+      "dir_key_recommended_db_old": "吴颐人篆刻作品展示",
+      "accepted": [],
+      "rejected": []
+    },
+    {
+      "book_ref": "福庵印缀 原版 高清.pdf",
+      "dir_key_current": "福庵印缀 原版 高清",
+      "dir_key_source_current": "chinese_title",
+      "isbn13_recomputed": null,
+      "isbn10_recomputed": null,
+      "publisher": "中國藝術家出版社",
+      "verify_state_recomputed": "unverified",
+      "verify_note": "扫描面内未识别到可用 ISBN（校验位）",
+      "dir_key_recommended": "福庵印缀 原版 高清",
+      "dir_key_source_recommended": "chinese_title",
+      "needs_switch": false,
+      "isbn13_db_old": "9789881992321",
+      "isbn10_db_old": "2321978988",
+      "verify_state_db_old": "unverified",
+      "dir_key_recommended_db_old": "2321978988",
+      "accepted": [],
+      "rejected": [
+        {
+          "raw": "988-19923-2-1",
+          "normalized": "9881992321",
+          "kind": "isbn10",
+          "valid": false,
+          "page": 234,
+          "source": "local_ocr",
+          "anchor_near": true,
+          "degenerate_reason": null,
+          "shape_reason": null
+        },
+        {
+          "raw": "978-988-19923-2-19789881992321",
+          "normalized": "97898819923219789881992321",
+          "shape_reason": "too_long(26)",
+          "kind": null,
+          "valid": false,
+          "page": 234,
+          "source": "local_ocr"
+        }
+      ]
+    },
+    {
+      "book_ref": "秦印类编 检索版.pdf",
+      "dir_key_current": "秦印类编 检索版",
+      "dir_key_source_current": "chinese_title",
+      "isbn13_recomputed": "9787550847224",
+      "isbn10_recomputed": null,
+      "publisher": "西泠印社出版社",
+      "verify_state_recomputed": "ok",
+      "verify_note": "校验位通过；出版者前缀 5508 ⇒ 西泠印社出版社 与 OCR 出版社一致",
+      "dir_key_recommended": "9787550847224",
+      "dir_key_source_recommended": "ISBN",
+      "needs_switch": true,
+      "isbn13_db_old": "9787550847224",
+      "isbn10_db_old": "2478755084",
+      "verify_state_db_old": "ok",
+      "dir_key_recommended_db_old": "2478755084",
+      "accepted": [
+        {
+          "raw": "978-7-5508-4722-4",
+          "normalized": "9787550847224",
+          "kind": "isbn13",
+          "valid": true,
+          "page": 850,
+          "source": "local_ocr",
+          "anchor_near": true,
+          "degenerate_reason": null
+        }
+      ],
+      "rejected": [
+        {
+          "raw": "978-7-5508-4722-4787550847224",
+          "normalized": "9787550847224787550847224",
+          "shape_reason": "too_long(25)",
+          "kind": null,
+          "valid": false,
+          "page": 851,
+          "source": "local_ocr"
+        }
+      ]
+    },
+    {
+      "book_ref": "秦汉印典 上海书画 金怀英  1997 ok.pdf",
+      "dir_key_current": "7806350950",
+      "dir_key_source_current": "ISBN",
+      "isbn13_recomputed": null,
+      "isbn10_recomputed": "7806350950",
+      "publisher": "上海节画出版社",
+      "verify_state_recomputed": "conflict",
+      "verify_note": "冲突：出版者前缀 80635 ⇒ 「上海书画出版社」 ≠ OCR 出版社「上海节画出版社」（双方证据保留，不静默取一）",
+      "dir_key_recommended": "7806350950",
+      "dir_key_source_recommended": "ISBN",
+      "needs_switch": false,
+      "isbn13_db_old": "9787806350959",
+      "isbn10_db_old": "7806350950",
+      "verify_state_db_old": "conflict",
+      "dir_key_recommended_db_old": "7806350950",
+      "accepted": [
+        {
+          "raw": "7-80635-095-0",
+          "normalized": "7806350950",
+          "kind": "isbn10",
+          "valid": true,
+          "page": 2,
+          "source": "text_layer",
+          "anchor_near": true,
+          "degenerate_reason": null
+        }
+      ],
+      "rejected": []
+    },
+    {
+      "book_ref": "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf",
+      "dir_key_current": "黄牧甫印谱",
+      "dir_key_source_current": "chinese_title",
+      "isbn13_recomputed": null,
+      "isbn10_recomputed": null,
+      "publisher": "印刷厂印刷浙江省新华书店",
+      "verify_state_recomputed": "unverified",
+      "verify_note": "扫描面内未识别到可用 ISBN（校验位）",
+      "dir_key_recommended": "黄牧甫印谱",
+      "dir_key_source_recommended": "chinese_title",
+      "needs_switch": false,
+      "isbn13_db_old": null,
+      "isbn10_db_old": null,
+      "verify_state_db_old": "unverified",
+      "dir_key_recommended_db_old": "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk)",
+      "accepted": [],
+      "rejected": []
+    }
+  ]
+}

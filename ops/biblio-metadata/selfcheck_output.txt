@@ -1,0 +1,86 @@
+  [PASS] 纯函数纪律：不 import `sqlite3`（实际 import=['__future__', 'json', 'os', 'pathlib', 're', 'typing']）
+  [PASS] 纯函数纪律：不 import `cv2`（实际 import=['__future__', 'json', 'os', 'pathlib', 're', 'typing']）
+  [PASS] 纯函数纪律：不 import `pymupdf`（实际 import=['__future__', 'json', 'os', 'pathlib', 're', 'typing']）
+  [PASS] 纯函数纪律：不 import `PIL`（实际 import=['__future__', 'json', 'os', 'pathlib', 're', 'typing']）
+  [PASS] 纯函数纪律：不 import `paddleocr`（实际 import=['__future__', 'json', 'os', 'pathlib', 're', 'typing']）
+  [PASS] 纯函数纪律：不 import `numpy`（实际 import=['__future__', 'json', 'os', 'pathlib', 're', 'typing']）
+  [PASS] BM-1 normalize 去连字符/空格
+  [PASS] BM-1 normalize ISBN-10
+  [PASS] BM-1 normalize x→X
+  [PASS] BM-1 normalize None ⇒ None
+  [PASS] BM-1 ISBN-13 样本 9787550847224（total=136, check=4）  [{"normalized": "9787550847224", "kind": "isbn13", "valid": true, "total": 136, "check_digit": 4, "expected_check": 4}]
+  [PASS] BM-1 ISBN-10 样本 7806350950（264）
+  [PASS] BM-1 ISBN-10 样本 7501007985（198）
+  [PASS] BM-1 ISBN-10 含 X 校验通过（043942089X）
+  [PASS] BM-1 非法校验位 ISBN-13 ⇒ invalid
+  [PASS] BM-1 非法校验位 ISBN-10 ⇒ invalid
+  [PASS] BM-1 位数不合 ⇒ kind=None
+  [PASS] BM-1 非 978/979 前缀 ⇒ kind=None
+  [PASS] BM-1 ISBN-10→13（7806350950）
+  [PASS] BM-1 ISBN-13→10（9787550847224）
+  [PASS] BM-1 979 前缀无 ISBN-10 ⇒ None
+  [PASS] BM-2 样本锚 核字第2025WX8837號 ⇒ 2025WX8837
+  [PASS] BM-2 简体「核字第…号」命中
+  [PASS] BM-2 松散空白命中
+  [PASS] BM-2 不含核字 ⇒ 不误命中
+  [PASS] BM-2 含「核」不含「核字…號」⇒ 不误命中
+  [PASS] BM-2 多命中计数
+  [PASS] 交叉自证 表项 5508 ⇒ 西泠印社出版社（照登）
+  [PASS] 前缀候选含 5508
+  [PASS] 前缀匹配 ⇒ 出版社
+  [PASS] BM-3 校验位过 ∧ 前缀与 OCR 出版社一致 ⇒ ok  [校验位通过；出版者前缀 5508 ⇒ 西泠印社出版社 与 OCR 出版社一致]
+  [PASS] BM-4 前缀与 OCR 出版社不一致 ⇒ conflict
+  [PASS] BM-4 冲突：双方证据均保留（不静默取一）
+  [PASS] BM-4 校验位不过 ⇒ checksum_fail（优先于冲突）
+  [PASS] 校验位过 ∧ 前缀未收录本地表 ⇒ unverified（不臆断）
+  [PASS] BM-3 前缀 80635 ⇒ 上海书画出版社（来自 config/isbn_publisher_prefixes.json）
+  [PASS] 出版社抽取去重
+  [PASS] 出版社抽取不误命中「…厂印刷」
+  [PASS] BM-5 密钥缺失 ⇒ 跳过 ＋ unverified  [{"skipped": true, "reason": "missing_key", "verify_state": "unverified"}]
+  [PASS] BM-5 密钥缺失 ⇒ 未发起网络
+  [PASS] BM-5 有密钥无 http 客户端 ⇒ 跳过
+  [PASS] BM-5 有密钥不伪造成功 ⇒ unverified
+  [PASS] BM-5 未知供应商 ⇒ KeyError
+  [PASS] BM-6 豆瓣 in_verify_chain=False（不进校验链）
+  [PASS] BM-6 douban_registration 返回深拷贝（常量不被误改）
+  [PASS] BM-6 豆瓣缓存位登记在 var/（运行时）
+  [PASS] 抓取面 ＝ 前 6 页 ∪ 末 4 页
+  [PASS] OCR 渲染 ＝ 200 dpi
+  [PASS] 851 页 ⇒ 面页下标正确（含 850/851）
+  [PASS] 页数 <10 ⇒ 退化全页
+  [PASS] 0 页 ⇒ 空面
+  [PASS] 锚词命中（含小写 isbn）
+  [PASS] 锚词不误命中
+  [PASS] 目录键推荐：优先 ISBN-13（缺陷②修正）  [9787550847224]
+  [PASS] 目录键推荐：ISBN-10 直接落
+  [PASS] 目录键推荐：无 ISBN ⇒ 中文书名
+  [PASS] 目录键推荐：身份未确认 ⇒ 回落 PDF 名
+  [PASS] find_isbn_candidates：合形 ＋ labeled
+  [PASS] find_isbn_candidates：ISBN-10
+  [PASS] find_isbn_candidates：核字串（含字母）不冒充 ISBN
+  [PASS] 退化串守卫：`1111111111111` 不冒充 ISBN（全 1 的 1111111111 校验位恰好合法）
+  [PASS] 退化串守卫：全 0 串不冒充
+  [PASS] 退化守卫不误伤真 ISBN-13
+  [PASS] 退化守卫不误伤真 ISBN-10
+  [PASS] 退化守卫常量 MIN_DISTINCT_DIGITS=3（单点可改）
+  [PASS] 形态闸：秦印检索表 25 位拼接串 ⇒ 无候选
+  [PASS] 形态闸：福庵 26 位拼接串 ⇒ 无候选（假号 9789881992321 被拒）
+  [PASS] 形态闸：拼接串留痕为 too_long(26)（不切片、kind=None）  [too_long(26)]
+  [PASS] shape_reason：26 位 ⇒ too_long(26)
+  [PASS] shape_reason：合形 13/10 位 ⇒ None
+  [PASS] shape_reason：12 位 ⇒ bad_len(12)
+  [PASS] 形态闸常量 MAX_ISBN_DIGITS=13（单点可改）
+  [PASS] 缺陷②：直读 ISBN-13 ⇒ 目录键落 13 位
+  [PASS] 缺陷②：只有 ISBN-10 ⇒ 目录键落 10 位（既有口径不破）
+  [PASS] 缺陷②：13/10 同时给出 ⇒ 优先 13 位
+  [PASS] 缺陷③：去下载站来源缀 ⇒ 黄牧甫印谱
+  [PASS] 缺陷③：黄牧甫目录键不再输出垃圾整串
+  [PASS] 缺陷③：无来源缀者逐字不动（秦印/福庵/吴颐人）
+  [PASS] 缺陷③：来源标记常量含 z-library / 1lib
+  [PASS] 前缀表配置文件：最小集三条齐  [{'5508': '西泠印社出版社', '80635': '上海书画出版社', '5010': '文物出版社'}]
+  [PASS] PUBLISHER_PREFIX_MAP 由配置文件载入（与 load 一致）
+  [PASS] 前缀表：文件缺失 ⇒ 回落内联最小集（不抛错）
+  [PASS] 退化闸：1111111111（合形 10 位）⇒ all_same_char
+  [PASS] 退化闸：1111111111 不冒充 ISBN（合形但退化）
+
+84/84 PASS

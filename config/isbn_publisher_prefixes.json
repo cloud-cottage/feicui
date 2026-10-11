@@ -1,0 +1,25 @@
+{
+  "schema": "yinsuo.feicui.isbn_publisher_prefixes.v1",
+  "status": "ADDITIVE_PENDING_JING_REGISTRATION",
+  "note": "出版社前缀本地白名单（Kong 2026-10-11 收口：由 server/app/biblio.py 内联表落成配置文件，供审计与扩展）。键＝出版者前缀数字串（ISBN 去 EAN 978/979 与组号 7、再去校验位后的前导数字）；值＝出版社名（可写字符串或对象取 publisher 字段）。**未登记前缀一律 verify_state=unverified、不得判 ok**；命中本表但与 OCR 出版社不一致 ⇒ verify_state=conflict（保留双方证据）。biblio.load_publisher_prefixes() 读本文件；文件缺失/不可解析 ⇒ 回落 biblio.PUBLISHER_PREFIXES_DEFAULT（同最小三条）。**单点可改**。",
+  "prefixes": {
+    "5508": {
+      "publisher": "西泠印社出版社",
+      "source": "docs/biblio-metadata-draft-v0.1.md §5-3 样本锚（照登）",
+      "verified_by": "Kevin 2026-10-11",
+      "sample_isbn": "9787550847224"
+    },
+    "80635": {
+      "publisher": "上海书画出版社",
+      "source": "Kevin 2026-10-11 复核给定（本单交回件）",
+      "verified_by": "Kevin 2026-10-11",
+      "sample_isbn": "7806350950"
+    },
+    "5010": {
+      "publisher": "文物出版社",
+      "source": "Kevin 2026-10-11 复核给定（本单交回件）",
+      "verified_by": "Kevin 2026-10-11",
+      "sample_isbn": "7501007985"
+    }
+  }
+}

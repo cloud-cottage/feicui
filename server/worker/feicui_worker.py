@@ -22,6 +22,14 @@
   * **边款**：仍照样检测（其结果参与 `exclude_mask`，会改变释文块匹配 ⇒ 不检测就不是同一份解析），
     但 1b-i **不落边款影像**（faces 交付影像口径只定义印面；见 `REPORT_1b-i.md` 未完成项）。
 
+**影像命名 ＋ 颜色校正（2026-10-11 新增；口径真源 `docs/image-naming-draft-v0.1.md`
+＋ `docs/image-color-tiff-draft-v0.1.md`）**：新 job 默认**额外**产出——每枚裁图经 **V3 校正**
+（`colorcal.correct_image_v3`）后另写 `output/books/<目录键>/P<页>-C<列>-R<行>.tiff`（RGB 8-bit ＋
+Deflate）与同名 `.webp`（q95）；`(C,R)` 用 `naming.assign_cr` 算、目录键用 `naming.dir_key_for`。
+**旧 `output/faces/<book_key>/p<页4位>_<序2位>.webp` 路径与文件名一字不动，两者并存**。
+`col`/`row`/`img_path_tiff` 随页结果返回给池侧写库（**worker 仍不写库**）。两块地基按文件路径加载
+（`feicui/app.py` 会遮蔽 `server/app` 包名）。
+
 通信协议（stdin / stdout，**一行一个 JSON**）：
   请求  `{"cmd":"process_chunk", "task_id", "pdf_path", "book_key", "template", "pages":[…],
           "faces_dir", "rel_root", "render_dpi"?}` / `{"cmd":"ping"}` / `{"cmd":"shutdown"}`
@@ -31,6 +39,8 @@
 from __future__ import annotations
 
 import hashlib
+import importlib.util
+import io
 import json
 import os
 import sys
@@ -47,12 +57,36 @@ import cv2  # noqa: E402
 import numpy as np  # noqa: E402
 import pymupdf  # noqa: E402
 import processor  # noqa: E402  —— 同一份解析实现（§1.2 I-1）
+from PIL import Image  # noqa: E402  —— 新增双份的 TIFF（RGB 8-bit ＋ Deflate）落盘
 
 DOC_PREPROCESS = str(os.environ.get("FEICUI_DOC_PREPROCESS", "1")).lower() not in {"0", "false", "no", "off"}
 CPU_THREADS = int(os.environ.get("FEICUI_CPU_THREADS", "2"))  # 派单口径：不超过 2
 FACES_DIR = Path(os.environ.get("FEICUI_FACES_DIR") or (ROOT / "output" / "faces")).resolve()
 REL_ROOT = Path(os.environ.get("FEICUI_ROOT") or ROOT).resolve()
+# 新增双份（P-C-R 命名目录）落点根：`output/books/<目录键>/`（口径真源 docs/image-naming-draft-v0.1.md）
+BOOKS_DIR = Path(os.environ.get("FEICUI_BOOKS_DIR") or (ROOT / "output" / "books")).resolve()
 _OCR = None
+
+
+# --------------------------------------------------------------------------- 命名 / 颜色校正地基
+# ★ `feicui/app.py`（Streamlit 应用）会**遮蔽** `server/app` 的包名 ⇒ 一律**按文件路径**加载这两块
+#   地基（见技能 feicui-ingest「硬约束」/ docs 同名提示），不触发 `import app`、不拉起接口层依赖。
+def _load_by_path(mod_name: str, rel: str):
+    spec = importlib.util.spec_from_file_location(mod_name, str(ROOT / rel))
+    assert spec is not None and spec.loader is not None, f"无法加载 {rel}"
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+naming = _load_by_path("feicui_naming", "server/app/naming.py")       # assign_cr / name_for / dir_key_for
+colorcal = _load_by_path("feicui_colorcal", "server/app/colorcal.py")  # correct_image_v3（默认口径）
+
+try:  # 目录键表（加法文件 config/book_dir_keys.json）；缺失时不让 worker 起不来，回落规范化书名
+    DIR_KEYS = naming.load_dir_keys()
+except Exception as _exc:  # pragma: no cover
+    print(f"[worker] 目录键表加载失败，回落规范化书名：{_exc!r}", file=sys.stderr, flush=True)
+    DIR_KEYS = {"books": {}}
 
 
 def log(msg: str) -> None:
@@ -148,11 +182,27 @@ def rel_path(path: Path) -> str:
         return str(path)
 
 
+def encode_tiff(rgb) -> bytes:
+    """RGB 8-bit ＋ Deflate（无损）TIFF 字节 —— 家法容器（与印章线 / xiai 影像库同）。
+
+    `rgb` 须为 `(H, W, 3)` 0–255 RGB（`uint8`；**不是 BGR**）。
+    """
+    buf = io.BytesIO()
+    Image.fromarray(np.ascontiguousarray(rgb)).save(buf, format="TIFF", compression="tiff_deflate")
+    return buf.getvalue()
+
+
 # --------------------------------------------------------------------------- 单页处理
-def process_page(doc, page_no: int, template: dict, book_key: str) -> dict:
+def process_page(doc, page_no: int, template: dict, book_key: str, pdf_name: str | None = None) -> dict:
     """处理**一页**（`page_no` 为 1-based 页号，↔ `stamps.page`）。编排同 `processor.process_page`。
 
-    返回 `{detected, ocr_empty, items:[{idx,text,img_path,img_sha256,img_bytes,x1..y2}]}`。
+    返回 `{detected, ocr_empty, items:[{idx,text,img_path,img_sha256,img_bytes,
+    col,row,img_path_tiff,x1..y2}]}`。
+
+    **本单新增（旧路径/旧文件名一字不动、并存）**：把该页裁图经 **V3 校正**（`colorcal.correct_image_v3`）
+    后另写 `output/books/<目录键>/P<页>-C<列>-R<行>.tiff`（RGB 8-bit ＋ Deflate）与同名 `.webp`（q95）；
+    `(C,R)` 由 `naming.assign_cr` 算、目录键由 `naming.dir_key_for`（未登记回落规范化书名）。
+    **worker 只落盘、不写库**——`col`/`row`/`img_path_tiff` 随返回值交给池侧写库。
     """
     page = doc[page_no - 1]
     img = processor.render_page(page)
@@ -165,6 +215,14 @@ def process_page(doc, page_no: int, template: dict, book_key: str) -> dict:
 
     stamp_candidates = processor.detect_stamp_regions(img, hsv_low, hsv_high, min_area, pad_ratio)
     stamp_candidates.sort(key=lambda c: c["bbox"][0])  # 从左到右（idx 顺序口径）
+
+    # 影像命名 P-C-R（口径真源 `docs/image-naming-draft-v0.1.md`）：列/行由页内 bbox 推导，
+    # 与 `stamp_idx` 同序；页内 (C,R) 唯一（构造上恒真，撞名机械判负）。
+    cr = naming.assign_cr([c["bbox"] for c in stamp_candidates])
+    naming.assert_page_unique(cr)
+    # 目录键：ISBN 优先、无 ISBN 落中文书名、未登记回落规范化书名（标 fallback_unregistered）
+    dir_key = naming.dir_key_for(pdf_name, DIR_KEYS) if pdf_name else book_key
+    books_out = BOOKS_DIR / dir_key
 
     # 边款参与 exclude_mask ⇒ 影响释文块匹配 ⇒ 必须照样检测（1b-i 不落边款影像）
     edge_candidates = []
@@ -218,8 +276,20 @@ def process_page(doc, page_no: int, template: dict, book_key: str) -> dict:
             if not stamp_text.strip():
                 ocr_empty += 1
 
+        # 旧 webp（**路径与文件名照旧、字节照旧**；幂等写，内容相同则不重写）
         img_path = out_dir / f"p{page_no:04d}_{stamp_idx:02d}.webp"
         info = write_image_idempotent(img_path, encode_webp(stamp_crop))
+
+        # ---- 新增双份（与旧 webp **并存**）：V3 校正后写 output/books/<目录键>/P<页>-C<列>-R<行>.{tiff,webp}
+        #      `stamp_crop` 是 BGR（cv2 口径）⇒ 先转 RGB 再校正；TIFF 存 RGB，webp 编码前转回 BGR。
+        c, r = cr[stamp_idx]
+        corrected, _cc = colorcal.correct_image_v3(
+            np.ascontiguousarray(cv2.cvtColor(stamp_crop, cv2.COLOR_BGR2RGB))
+        )
+        tiff_path = books_out / naming.name_for(page_no, c, r)            # 默认 ext=".tiff"
+        named_webp_path = books_out / naming.name_for(page_no, c, r, ".webp")
+        write_image_idempotent(tiff_path, encode_tiff(corrected))
+        write_image_idempotent(named_webp_path, encode_webp(cv2.cvtColor(corrected, cv2.COLOR_RGB2BGR)))
 
         items.append(
             {
@@ -229,6 +299,9 @@ def process_page(doc, page_no: int, template: dict, book_key: str) -> dict:
                 "img_sha256": info["sha256"],
                 "img_bytes": info["bytes"],
                 "img_written": info["written"],
+                "col": c,
+                "row": r,
+                "img_path_tiff": rel_path(tiff_path),
                 "x1": sx1,
                 "y1": sy1,
                 "x2": sx2,
@@ -248,12 +321,14 @@ def reply(obj: dict) -> None:
 def handle_chunk(req: dict) -> None:
     task_id = req["task_id"]
     t0 = time.time()
+    # `pdf_name` ＝ PDF 文件名（与 `config/templates.json` / `book_dir_keys.json` 同源，逐字含扩展名）
+    pdf_name = os.path.basename(str(req["pdf_path"]).rstrip("/"))
     doc = pymupdf.open(req["pdf_path"])
     try:
         for page_no in req["pages"]:
             p0 = time.time()
             try:
-                out = process_page(doc, int(page_no), req["template"], req["book_key"])
+                out = process_page(doc, int(page_no), req["template"], req["book_key"], pdf_name)
                 reply(
                     {
                         "type": "page",
@@ -298,6 +373,7 @@ def ready_banner() -> dict:
         "doc_preprocess": DOC_PREPROCESS,
         "cpu_threads": CPU_THREADS,
         "faces_dir": str(FACES_DIR),
+        "books_dir": str(BOOKS_DIR),
     }
 
 

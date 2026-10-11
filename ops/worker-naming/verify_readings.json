@@ -1,0 +1,201 @@
+{
+  "page": 13,
+  "pdf_name": "tmp.pdf",
+  "book_key": "TMP",
+  "template_alias": "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf",
+  "dir_key": "tmp.pdf",
+  "out_dir": "output/books/tmp.pdf",
+  "detected": 6,
+  "timing_ms": {
+    "old_min": 263.9,
+    "new_min": 1162.0,
+    "delta_ms": 898.1,
+    "delta_pct": 340.29,
+    "note": "本页旧路径未触发 OCR（density 门未过）⇒ 基线偏低；见 ocr_projection"
+  },
+  "ocr_projection": {
+    "ocr_proxy_ms": 6930.0,
+    "proj_old_ms": 7193.9,
+    "proj_new_ms": 8092.0,
+    "proj_delta_pct": 12.48,
+    "note": "OCR 用同尺寸裁图代理（生产页常见走 OCR）；投影相对开销随 OCR 占比下降"
+  },
+  "tiff_byte_determinism": {
+    "encodings": 20,
+    "distinct_sha256": 1,
+    "pixels_equal": true,
+    "probe": "crops[0]"
+  },
+  "new_block_marginal_ms": {
+    "per_stamp_min": 66.6,
+    "per_stamp_max": 259.8,
+    "total": 1052.2,
+    "stamps": 6,
+    "breakdown": {
+      "v3": 968.9,
+      "tiff": 16.7,
+      "webp": 66.6
+    },
+    "note": "V3 校正 ＋ TIFF Deflate 编码 ＋ 命名 webp 编码（不含落盘 fsync）"
+  },
+  "old_webp_unchanged": {
+    "count": 6,
+    "sha256_unchanged": true,
+    "mtime_unchanged": true,
+    "baseline_dir": "output/faces/TMP"
+  },
+  "files": [
+    {
+      "idx": 0,
+      "col": 1,
+      "row": 1,
+      "old_webp": "output/faces/TMP/p0013_00.webp",
+      "new_tiff": "output/books/tmp.pdf/P13-C1-R1.tiff",
+      "new_webp": "output/books/tmp.pdf/P13-C1-R1.webp",
+      "tiff_w": 343,
+      "tiff_h": 341,
+      "tiff_mode": "RGB",
+      "tiff_compression_tag": 8,
+      "tiff_photometric": 2,
+      "tiff_samples": 3,
+      "bbox_w": 343,
+      "bbox_h": 341,
+      "tiff_bytes": 73572,
+      "tiff_sha256": "3cef70e24cc190a05ff6d24ae84b15cc541996041b008b151a518ffa2acad81d",
+      "new_webp_bytes": 27980
+    },
+    {
+      "idx": 1,
+      "col": 2,
+      "row": 1,
+      "old_webp": "output/faces/TMP/p0013_01.webp",
+      "new_tiff": "output/books/tmp.pdf/P13-C2-R1.tiff",
+      "new_webp": "output/books/tmp.pdf/P13-C2-R1.webp",
+      "tiff_w": 399,
+      "tiff_h": 408,
+      "tiff_mode": "RGB",
+      "tiff_compression_tag": 8,
+      "tiff_photometric": 2,
+      "tiff_samples": 3,
+      "bbox_w": 399,
+      "bbox_h": 408,
+      "tiff_bytes": 90066,
+      "tiff_sha256": "abea534266b17b6c74e09666d39b57263efbb2c23db05020f5a67b9078843087",
+      "new_webp_bytes": 32808
+    },
+    {
+      "idx": 2,
+      "col": 3,
+      "row": 1,
+      "old_webp": "output/faces/TMP/p0013_02.webp",
+      "new_tiff": "output/books/tmp.pdf/P13-C3-R1.tiff",
+      "new_webp": "output/books/tmp.pdf/P13-C3-R1.webp",
+      "tiff_w": 255,
+      "tiff_h": 186,
+      "tiff_mode": "RGB",
+      "tiff_compression_tag": 8,
+      "tiff_photometric": 2,
+      "tiff_samples": 3,
+      "bbox_w": 255,
+      "bbox_h": 186,
+      "tiff_bytes": 37646,
+      "tiff_sha256": "619eee7aa672a136259dea306ec266c84b1ba5ca18af5840de289c3d5d2cc7fe",
+      "new_webp_bytes": 19078
+    },
+    {
+      "idx": 3,
+      "col": 4,
+      "row": 3,
+      "old_webp": "output/faces/TMP/p0013_03.webp",
+      "new_tiff": "output/books/tmp.pdf/P13-C4-R3.tiff",
+      "new_webp": "output/books/tmp.pdf/P13-C4-R3.webp",
+      "tiff_w": 398,
+      "tiff_h": 407,
+      "tiff_mode": "RGB",
+      "tiff_compression_tag": 8,
+      "tiff_photometric": 2,
+      "tiff_samples": 3,
+      "bbox_w": 398,
+      "bbox_h": 407,
+      "tiff_bytes": 118432,
+      "tiff_sha256": "b164ba5d4470e9530f3d959a45d7a545f427c6f0faa4a4561a4a770c06675382",
+      "new_webp_bytes": 40960
+    },
+    {
+      "idx": 4,
+      "col": 4,
+      "row": 2,
+      "old_webp": "output/faces/TMP/p0013_04.webp",
+      "new_tiff": "output/books/tmp.pdf/P13-C4-R2.tiff",
+      "new_webp": "output/books/tmp.pdf/P13-C4-R2.webp",
+      "tiff_w": 347,
+      "tiff_h": 352,
+      "tiff_mode": "RGB",
+      "tiff_compression_tag": 8,
+      "tiff_photometric": 2,
+      "tiff_samples": 3,
+      "bbox_w": 347,
+      "bbox_h": 352,
+      "tiff_bytes": 91664,
+      "tiff_sha256": "4ff1ce389dfe2e6e9ac4f8db886a21694d84872f2f31d6db1c4991a70a31481d",
+      "new_webp_bytes": 33964
+    },
+    {
+      "idx": 5,
+      "col": 4,
+      "row": 1,
+      "old_webp": "output/faces/TMP/p0013_05.webp",
+      "new_tiff": "output/books/tmp.pdf/P13-C4-R1.tiff",
+      "new_webp": "output/books/tmp.pdf/P13-C4-R1.webp",
+      "tiff_w": 234,
+      "tiff_h": 236,
+      "tiff_mode": "RGB",
+      "tiff_compression_tag": 8,
+      "tiff_photometric": 2,
+      "tiff_samples": 3,
+      "bbox_w": 234,
+      "bbox_h": 236,
+      "tiff_bytes": 31880,
+      "tiff_sha256": "f6eb7715d83748363e0df6beb949024cb118ddbf4bb52b2d72aed079b7367977",
+      "new_webp_bytes": 14074
+    }
+  ],
+  "returned_new_fields": [
+    {
+      "idx": 0,
+      "col": 1,
+      "row": 1,
+      "img_path_tiff": "output/books/tmp.pdf/P13-C1-R1.tiff"
+    },
+    {
+      "idx": 1,
+      "col": 2,
+      "row": 1,
+      "img_path_tiff": "output/books/tmp.pdf/P13-C2-R1.tiff"
+    },
+    {
+      "idx": 2,
+      "col": 3,
+      "row": 1,
+      "img_path_tiff": "output/books/tmp.pdf/P13-C3-R1.tiff"
+    },
+    {
+      "idx": 3,
+      "col": 4,
+      "row": 3,
+      "img_path_tiff": "output/books/tmp.pdf/P13-C4-R3.tiff"
+    },
+    {
+      "idx": 4,
+      "col": 4,
+      "row": 2,
+      "img_path_tiff": "output/books/tmp.pdf/P13-C4-R2.tiff"
+    },
+    {
+      "idx": 5,
+      "col": 4,
+      "row": 1,
+      "img_path_tiff": "output/books/tmp.pdf/P13-C4-R1.tiff"
+    }
+  ]
+}

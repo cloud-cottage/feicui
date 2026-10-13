@@ -1,0 +1,37 @@
+{
+  "spec_id": "seal_upload_20261013_13_14",
+  "batch_ids": [
+    "seal_upload_20261013_13",
+    "seal_upload_20261013_14"
+  ],
+  "dynasty": "當代",
+  "author": "佚名",
+  "dir_key": "无信息",
+  "source_note": "Kevin 2026-10-13 追加指令：2 张本地印面图导入（批 2）；朝代統一當代、作者佚名、释文留空；「书的编号/页/列/行」本批无信息",
+  "items": [
+    {
+      "seq": 13,
+      "batch_id": "seal_upload_20261013_13",
+      "source_seal_id": "local_upload_20261013_13",
+      "upload_id": "up_d6e6f0ac6d020748",
+      "source_filename": "image_91eca8.png",
+      "source_original": "/Users/kevin/Library/Application Support/Hermes/composer-images/image_91eca8.png",
+      "source_path": "/Users/kevin/bistro/xiai/feicui/var/seal_uploads/seal_upload_20261013_13/image_91eca8.png",
+      "sha256": "d6e6f0ac6d020748b43b62529ad543211388ba5271b88ac14f0932fa822a134f",
+      "width": 816,
+      "height": 1164
+    },
+    {
+      "seq": 14,
+      "batch_id": "seal_upload_20261013_14",
+      "source_seal_id": "local_upload_20261013_14",
+      "upload_id": "up_f76e95a25ea5ef59",
+      "source_filename": "image_827d80.png",
+      "source_original": "/Users/kevin/Library/Application Support/Hermes/composer-images/image_827d80.png",
+      "source_path": "/Users/kevin/bistro/xiai/feicui/var/seal_uploads/seal_upload_20261013_14/image_827d80.png",
+      "sha256": "f76e95a25ea5ef5962ab6c433a3a42cc085bffec3ad813544dc24335d66e3923",
+      "width": 886,
+      "height": 1400
+    }
+  ]
+}

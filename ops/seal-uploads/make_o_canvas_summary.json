@@ -12,13 +12,25 @@
     "subject_ratio": 0.62,
     "bg_seed": 20261013,
     "dir_key": "无信息",
-    "naming_base": "无信息-无信息-无信息-无信息-戰國-佚名-<seq>",
+    "naming_base": "无信息-无信息-无信息-无信息-<朝代>-佚名-<seq>",
     "white20": {
       "background": "plain_white",
       "padding_px": 20,
       "subject_long_px": 1160,
       "subject_ratio": 0.966667,
       "note": "Kevin 2026-10-13 第三版：长边 1200 纯白底、四周各留恰 20px（不加 19% 宽留白）；只新增 PNG，不动 O 件／另两版／库"
+    },
+    "batches": {
+      "batch_spec_02": {
+        "spec": "batch_spec_02.json",
+        "dynasty": "當代",
+        "author": "佚名",
+        "items": 2,
+        "seqs": [
+          13,
+          14
+        ]
+      }
     }
   },
   "items": [
@@ -7019,6 +7031,1206 @@
             "bbox_size": [
               461,
               290
+            ],
+            "source_margin_px": [
+              20,
+              20,
+              20,
+              20
+            ]
+          }
+        }
+      }
+    },
+    {
+      "seq": "13",
+      "source_seal_id": "local_upload_20261013_13",
+      "source": "/Users/kevin/bistro/xiai/feicui/var/seal_uploads/seal_upload_20261013_13/image_91eca8.png",
+      "source_size": [
+        816,
+        1164
+      ],
+      "core_bbox_in_source": [
+        205,
+        211,
+        580,
+        957
+      ],
+      "core_mask_px": {
+        "raw": 76133,
+        "closed": 76463,
+        "mask": 76463,
+        "ink_ratio": 0.080155
+      },
+      "o": {
+        "name": "无信息-无信息-无信息-无信息-當代-佚名-13-O.tiff",
+        "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/无信息-无信息-无信息-无信息-當代-佚名-13-O.tiff",
+        "crop_box": [
+          185,
+          191,
+          600,
+          977
+        ],
+        "size": [
+          415,
+          786
+        ],
+        "bytes": 316064,
+        "tiff_sha256_file": "c7e1f6ef3dab0e9b409a840701fe86d15102e4cfba2a5d31a1aa826479f6b5f4",
+        "pixel_sha256": "b155da7c15a53ad8d49b7354b984dca986960d5f898bbc911d27092e27b5265a",
+        "margins_px": {
+          "left": 20,
+          "top": 20,
+          "right": 20,
+          "bottom": 20
+        },
+        "expected_margins_px": {
+          "left": 20,
+          "top": 20,
+          "right": 20,
+          "bottom": 20
+        },
+        "margin_diff_px": {
+          "left": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0
+        },
+        "margin_ok": true,
+        "clamped_edges": []
+      },
+      "canvas_paper": {
+        "png": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/无信息-无信息-无信息-无信息-當代-佚名-13-canvas.png",
+        "png_bytes": 861800,
+        "png_sha256": "2bf22feb3ae6095aa01feb02e4fe6dc20bb2d3c930abbe95a3901334747c7f8b",
+        "canvas_size": [
+          634,
+          1200
+        ],
+        "readings": {
+          "freeze": {
+            "claim": "印泥本体像素与原片的差异＝**仅几何重采样**（零色彩处理）",
+            "resample": "lanczos",
+            "paste_px": 76034,
+            "seal_mask_px": 76034,
+            "max_abs_pixel_diff_vs_resampled_source": 0,
+            "max_abs_pixel_diff_over_seal_mask": 0,
+            "bit_exact_no_color_processing": true,
+            "roundtrip_ssim_vs_source_crop": 0.999084,
+            "roundtrip_deltaE76_mean_vs_source_crop": 0.1779,
+            "source_crop_size": [
+              375,
+              746
+            ],
+            "subject_size_on_canvas": [
+              374,
+              744
+            ],
+            "scale": 0.997333,
+            "note": "bit_exact ⇒ 印区内像素**逐像素等于** Lanczos 重采样结果（未做任何颜色/光影处理）；roundtrip 读数＝主体下/上采样再还原的损失量"
+          },
+          "bg_no_seal": {
+            "claim": "成品**宣纸纸底**与**印章掩膜外**均无印泥像素",
+            "ink_px_in_generated_background": 0,
+            "ink_px_outside_seal_mask": 0,
+            "ink_px_outside_seal_mask_excluding_halo_band": 0,
+            "ink_px_in_halo_band": 0,
+            "background_region_px": 667334,
+            "ok": true,
+            "note": "口径①「背景」＝新宣纸纸底（贴片外 ∧ 晕染环带外）＝判据 `ok`；「掩膜外交集」另给两个读数（含/不含晕染环带）：B 口径下贴片内照片纸边可能有照片自带的淡红边，本读数如实登记"
+          },
+          "halo": {
+            "claim": "晕染只在掩膜**外侧** 1–3 px 环带、alpha ≤ 8%，掩膜内 ≡ 0",
+            "applied": true,
+            "policy": "seal",
+            "band_px": 2,
+            "alpha_band_max": 0.08,
+            "alpha_cap": 0.08,
+            "alpha_inside_mask_max": 0.0,
+            "alpha_outside_band_max": 0.0,
+            "band_px_count": 17432,
+            "color_rgb_ink_mean": [
+              241.898,
+              35.192,
+              36.529
+            ],
+            "band_px_on_paste_region": 0,
+            "effect_on_paste_region_mean_abs_delta_rgb": 0.0,
+            "ok": true
+          },
+          "composition": {
+            "claim": "画布最长边 1200、主体最长边＝画布最长边×62%±1%、居中偏差 ≤ 2 px",
+            "canvas_size": [
+              634,
+              1200
+            ],
+            "canvas_long_side": 1200,
+            "subject_size": [
+              374,
+              744
+            ],
+            "subject_long_side": 744,
+            "subject_ratio_actual": 0.62,
+            "subject_ratio_target": 0.62,
+            "subject_ratio_ok": true,
+            "padding_px": null,
+            "padding_px_per_side": [
+              130,
+              228,
+              130,
+              228
+            ],
+            "padding_ok": true,
+            "offset_px": [
+              130,
+              228
+            ],
+            "center_offset_px": [
+              0.0,
+              0.0
+            ],
+            "center_ok": true,
+            "canvas_long_side_ok": true,
+            "aspect_source": [
+              415,
+              786
+            ],
+            "aspect_canvas": [
+              634,
+              1200
+            ]
+          },
+          "reproducibility": {
+            "claim": "同种子同输出（背景逐像素相同 ＋ 成品逐像素相同）",
+            "background_mode": "paper",
+            "bg_seed": 20261013,
+            "bg_reproducible_same_seed": true,
+            "bg_sha256": "9ad52c4bc3566314ee5e284e90092b6c471d12dbee8be9a9b1c0a782b6a8ccbf",
+            "canvas_sha256": "69a2e79dc5a3321eabf7a41057d08297ae407607c4358413c6911bf5b4dc715c",
+            "bg_stats": {
+              "shape": [
+                1200,
+                634,
+                3
+              ],
+              "min": [
+                250.0,
+                250.0,
+                247.0
+              ],
+              "max": [
+                255.0,
+                255.0,
+                255.0
+              ],
+              "mean": [
+                252.502,
+                252.502,
+                250.51
+              ],
+              "std": [
+                1.524,
+                1.524,
+                1.694
+              ]
+            },
+            "bg_is_pure_white": false,
+            "bg_in_gamut": true
+          },
+          "segmentation": {
+            "close_kernel_px": 5,
+            "fringe_px": 2,
+            "fill_holes": false,
+            "ink_ratio": 0.233401,
+            "raw_px": 76133,
+            "closed_px": 76463,
+            "mask_px": 76463,
+            "hole_px": 0,
+            "fringe_px_added": 0,
+            "radius_effective_px": 155.67,
+            "bbox_in_source": [
+              20,
+              20,
+              395,
+              766
+            ],
+            "bbox_size": [
+              375,
+              746
+            ],
+            "source_margin_px": [
+              20,
+              20,
+              20,
+              20
+            ]
+          }
+        }
+      },
+      "canvas_plain_white": {
+        "png": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/无信息-无信息-无信息-无信息-當代-佚名-13-canvas-white.png",
+        "png_bytes": 185384,
+        "png_sha256": "65ca5e81828e89e5567f1a4ba0d9316a2d8dd19262ad5e9170478db995ba1809",
+        "canvas_size": [
+          634,
+          1200
+        ],
+        "readings": {
+          "freeze": {
+            "claim": "印泥本体像素与原片的差异＝**仅几何重采样**（零色彩处理）",
+            "resample": "lanczos",
+            "paste_px": 76034,
+            "seal_mask_px": 76034,
+            "max_abs_pixel_diff_vs_resampled_source": 0,
+            "max_abs_pixel_diff_over_seal_mask": 0,
+            "bit_exact_no_color_processing": true,
+            "roundtrip_ssim_vs_source_crop": 0.999084,
+            "roundtrip_deltaE76_mean_vs_source_crop": 0.1779,
+            "source_crop_size": [
+              375,
+              746
+            ],
+            "subject_size_on_canvas": [
+              374,
+              744
+            ],
+            "scale": 0.997333,
+            "note": "bit_exact ⇒ 印区内像素**逐像素等于** Lanczos 重采样结果（未做任何颜色/光影处理）；roundtrip 读数＝主体下/上采样再还原的损失量"
+          },
+          "bg_no_seal": {
+            "claim": "成品**宣纸纸底**与**印章掩膜外**均无印泥像素",
+            "ink_px_in_generated_background": 0,
+            "ink_px_outside_seal_mask": 0,
+            "ink_px_outside_seal_mask_excluding_halo_band": 0,
+            "ink_px_in_halo_band": 0,
+            "background_region_px": 667334,
+            "ok": true,
+            "note": "口径①「背景」＝新宣纸纸底（贴片外 ∧ 晕染环带外）＝判据 `ok`；「掩膜外交集」另给两个读数（含/不含晕染环带）：B 口径下贴片内照片纸边可能有照片自带的淡红边，本读数如实登记"
+          },
+          "halo": {
+            "claim": "晕染只在掩膜**外侧** 1–3 px 环带、alpha ≤ 8%，掩膜内 ≡ 0",
+            "applied": true,
+            "policy": "seal",
+            "band_px": 2,
+            "alpha_band_max": 0.08,
+            "alpha_cap": 0.08,
+            "alpha_inside_mask_max": 0.0,
+            "alpha_outside_band_max": 0.0,
+            "band_px_count": 17432,
+            "color_rgb_ink_mean": [
+              241.898,
+              35.192,
+              36.529
+            ],
+            "band_px_on_paste_region": 0,
+            "effect_on_paste_region_mean_abs_delta_rgb": 0.0,
+            "ok": true
+          },
+          "composition": {
+            "claim": "画布最长边 1200、主体最长边＝画布最长边×62%±1%、居中偏差 ≤ 2 px",
+            "canvas_size": [
+              634,
+              1200
+            ],
+            "canvas_long_side": 1200,
+            "subject_size": [
+              374,
+              744
+            ],
+            "subject_long_side": 744,
+            "subject_ratio_actual": 0.62,
+            "subject_ratio_target": 0.62,
+            "subject_ratio_ok": true,
+            "padding_px": null,
+            "padding_px_per_side": [
+              130,
+              228,
+              130,
+              228
+            ],
+            "padding_ok": true,
+            "offset_px": [
+              130,
+              228
+            ],
+            "center_offset_px": [
+              0.0,
+              0.0
+            ],
+            "center_ok": true,
+            "canvas_long_side_ok": true,
+            "aspect_source": [
+              415,
+              786
+            ],
+            "aspect_canvas": [
+              634,
+              1200
+            ]
+          },
+          "reproducibility": {
+            "claim": "同种子同输出（背景逐像素相同 ＋ 成品逐像素相同）",
+            "background_mode": "plain_white",
+            "bg_seed": 20261013,
+            "bg_reproducible_same_seed": true,
+            "bg_sha256": "3bba816a02110e988776f19af48e58a37938438731118b182a1a2938ef196b01",
+            "canvas_sha256": "f622e5c9f2c220a8f902e9084be2884ae8d5adc7b53acf464c7d7289e93b38fb",
+            "bg_stats": {
+              "shape": [
+                1200,
+                634,
+                3
+              ],
+              "min": [
+                255.0,
+                255.0,
+                255.0
+              ],
+              "max": [
+                255.0,
+                255.0,
+                255.0
+              ],
+              "mean": [
+                255.0,
+                255.0,
+                255.0
+              ],
+              "std": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "bg_is_pure_white": true,
+            "bg_in_gamut": true
+          },
+          "segmentation": {
+            "close_kernel_px": 5,
+            "fringe_px": 2,
+            "fill_holes": false,
+            "ink_ratio": 0.233401,
+            "raw_px": 76133,
+            "closed_px": 76463,
+            "mask_px": 76463,
+            "hole_px": 0,
+            "fringe_px_added": 0,
+            "radius_effective_px": 155.67,
+            "bbox_in_source": [
+              20,
+              20,
+              395,
+              766
+            ],
+            "bbox_size": [
+              375,
+              746
+            ],
+            "source_margin_px": [
+              20,
+              20,
+              20,
+              20
+            ]
+          }
+        }
+      },
+      "canvas_white_20px": {
+        "png": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/无信息-无信息-无信息-无信息-當代-佚名-13-canvas-white-20px.png",
+        "png_bytes": 357311,
+        "png_sha256": "cd460c55dfbc83ba45f6b78b2d7034d2883fac01ee0e9e85af8465a236ce8ee2",
+        "canvas_size": [
+          623,
+          1200
+        ],
+        "canvas_long_side": 1200,
+        "subject_size": [
+          583,
+          1160
+        ],
+        "subject_ratio_actual": 0.966667,
+        "padding_px": 20,
+        "padding_px_per_side_rect": [
+          20,
+          20,
+          20,
+          20
+        ],
+        "padding_ok": true,
+        "padding_measured_mask_bbox_px": {
+          "left": 20,
+          "top": 20,
+          "right": 20,
+          "bottom": 20
+        },
+        "padding_measured_nonwhite_bbox_px": {
+          "left": 18,
+          "top": 18,
+          "right": 18,
+          "bottom": 18
+        },
+        "center_offset_px": [
+          0.0,
+          0.0
+        ],
+        "freeze_bit_exact": true,
+        "bg_pure_white_std0": true,
+        "halo_ok": true,
+        "halo_alpha_band_max": 0.08,
+        "halo_alpha_inside_mask_max": 0.0,
+        "bg_reproducible_same_seed": true,
+        "canvas_recompose_bit_exact": true,
+        "canvas_sha256": "cf63c4ea94fbe1f2817236f16613c52f69bf7e8c820b58db9b9a57d1d97ebddb",
+        "readings": {
+          "freeze": {
+            "claim": "印泥本体像素与原片的差异＝**仅几何重采样**（零色彩处理）",
+            "resample": "lanczos",
+            "paste_px": 184802,
+            "seal_mask_px": 184802,
+            "max_abs_pixel_diff_vs_resampled_source": 0,
+            "max_abs_pixel_diff_over_seal_mask": 0,
+            "bit_exact_no_color_processing": true,
+            "roundtrip_ssim_vs_source_crop": 0.999482,
+            "roundtrip_deltaE76_mean_vs_source_crop": 0.1375,
+            "source_crop_size": [
+              375,
+              746
+            ],
+            "subject_size_on_canvas": [
+              583,
+              1160
+            ],
+            "scale": 1.554667,
+            "note": "bit_exact ⇒ 印区内像素**逐像素等于** Lanczos 重采样结果（未做任何颜色/光影处理）；roundtrip 读数＝主体下/上采样再还原的损失量"
+          },
+          "bg_no_seal": {
+            "claim": "成品**宣纸纸底**与**印章掩膜外**均无印泥像素",
+            "ink_px_in_generated_background": 0,
+            "ink_px_outside_seal_mask": 0,
+            "ink_px_outside_seal_mask_excluding_halo_band": 0,
+            "ink_px_in_halo_band": 0,
+            "background_region_px": 534835,
+            "ok": true,
+            "note": "口径①「背景」＝新宣纸纸底（贴片外 ∧ 晕染环带外）＝判据 `ok`；「掩膜外交集」另给两个读数（含/不含晕染环带）：B 口径下贴片内照片纸边可能有照片自带的淡红边，本读数如实登记"
+          },
+          "halo": {
+            "claim": "晕染只在掩膜**外侧** 1–3 px 环带、alpha ≤ 8%，掩膜内 ≡ 0",
+            "applied": true,
+            "policy": "seal",
+            "band_px": 2,
+            "alpha_band_max": 0.08,
+            "alpha_cap": 0.08,
+            "alpha_inside_mask_max": 0.0,
+            "alpha_outside_band_max": 0.0,
+            "band_px_count": 27963,
+            "color_rgb_ink_mean": [
+              241.898,
+              35.192,
+              36.529
+            ],
+            "band_px_on_paste_region": 0,
+            "effect_on_paste_region_mean_abs_delta_rgb": 0.0,
+            "ok": true
+          },
+          "composition": {
+            "claim": "画布最长边 1200、主体最长边＝画布最长边−2·padding_px（四周均匀 padding_px 留白）、居中偏差 ≤ 1 px",
+            "canvas_size": [
+              623,
+              1200
+            ],
+            "canvas_long_side": 1200,
+            "subject_size": [
+              583,
+              1160
+            ],
+            "subject_long_side": 1160,
+            "subject_ratio_actual": 0.966667,
+            "subject_ratio_target": 0.9666666666666667,
+            "subject_ratio_ok": true,
+            "padding_px": 20,
+            "padding_px_per_side": [
+              20,
+              20,
+              20,
+              20
+            ],
+            "padding_ok": true,
+            "offset_px": [
+              20,
+              20
+            ],
+            "center_offset_px": [
+              0.0,
+              0.0
+            ],
+            "center_ok": true,
+            "canvas_long_side_ok": true,
+            "aspect_source": [
+              415,
+              786
+            ],
+            "aspect_canvas": [
+              623,
+              1200
+            ]
+          },
+          "reproducibility": {
+            "claim": "同种子同输出（背景逐像素相同 ＋ 成品逐像素相同）",
+            "background_mode": "plain_white",
+            "bg_seed": 20261013,
+            "bg_reproducible_same_seed": true,
+            "bg_sha256": "1a1ab4c158682288f903b4aa5fee914e65f937d1d90e5e7d61dae0935f39da27",
+            "canvas_sha256": "cf63c4ea94fbe1f2817236f16613c52f69bf7e8c820b58db9b9a57d1d97ebddb",
+            "bg_stats": {
+              "shape": [
+                1200,
+                623,
+                3
+              ],
+              "min": [
+                255.0,
+                255.0,
+                255.0
+              ],
+              "max": [
+                255.0,
+                255.0,
+                255.0
+              ],
+              "mean": [
+                255.0,
+                255.0,
+                255.0
+              ],
+              "std": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "bg_is_pure_white": true,
+            "bg_in_gamut": true
+          },
+          "segmentation": {
+            "close_kernel_px": 5,
+            "fringe_px": 2,
+            "fill_holes": false,
+            "ink_ratio": 0.233401,
+            "raw_px": 76133,
+            "closed_px": 76463,
+            "mask_px": 76463,
+            "hole_px": 0,
+            "fringe_px_added": 0,
+            "radius_effective_px": 155.67,
+            "bbox_in_source": [
+              20,
+              20,
+              395,
+              766
+            ],
+            "bbox_size": [
+              375,
+              746
+            ],
+            "source_margin_px": [
+              20,
+              20,
+              20,
+              20
+            ]
+          }
+        }
+      }
+    },
+    {
+      "seq": "14",
+      "source_seal_id": "local_upload_20261013_14",
+      "source": "/Users/kevin/bistro/xiai/feicui/var/seal_uploads/seal_upload_20261013_14/image_827d80.png",
+      "source_size": [
+        886,
+        1400
+      ],
+      "core_bbox_in_source": [
+        112,
+        90,
+        776,
+        1255
+      ],
+      "core_mask_px": {
+        "raw": 235353,
+        "closed": 235534,
+        "mask": 235534,
+        "ink_ratio": 0.18974
+      },
+      "o": {
+        "name": "无信息-无信息-无信息-无信息-當代-佚名-14-O.tiff",
+        "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/无信息-无信息-无信息-无信息-當代-佚名-14-O.tiff",
+        "crop_box": [
+          92,
+          70,
+          796,
+          1275
+        ],
+        "size": [
+          704,
+          1205
+        ],
+        "bytes": 1324118,
+        "tiff_sha256_file": "8913523f58b627ce6e11463071a27398701ae2ce091d1d3a5980d33cc7370900",
+        "pixel_sha256": "ebb7f96b99616d04907efad7765c831b6ae23a1fa3ea04f493d18d2fdce199d0",
+        "margins_px": {
+          "left": 20,
+          "top": 20,
+          "right": 20,
+          "bottom": 20
+        },
+        "expected_margins_px": {
+          "left": 20,
+          "top": 20,
+          "right": 20,
+          "bottom": 20
+        },
+        "margin_diff_px": {
+          "left": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0
+        },
+        "margin_ok": true,
+        "clamped_edges": []
+      },
+      "canvas_paper": {
+        "png": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/无信息-无信息-无信息-无信息-當代-佚名-14-canvas.png",
+        "png_bytes": 971120,
+        "png_sha256": "6d98ac3247a1b2d6ad55b55170d853e63373fd8f659a4979b1ebeb6807d10901",
+        "canvas_size": [
+          701,
+          1200
+        ],
+        "readings": {
+          "freeze": {
+            "claim": "印泥本体像素与原片的差异＝**仅几何重采样**（零色彩处理）",
+            "resample": "lanczos",
+            "paste_px": 96081,
+            "seal_mask_px": 96081,
+            "max_abs_pixel_diff_vs_resampled_source": 0,
+            "max_abs_pixel_diff_over_seal_mask": 0,
+            "bit_exact_no_color_processing": true,
+            "roundtrip_ssim_vs_source_crop": 0.995994,
+            "roundtrip_deltaE76_mean_vs_source_crop": 0.4508,
+            "source_crop_size": [
+              664,
+              1165
+            ],
+            "subject_size_on_canvas": [
+              424,
+              744
+            ],
+            "scale": 0.638554,
+            "note": "bit_exact ⇒ 印区内像素**逐像素等于** Lanczos 重采样结果（未做任何颜色/光影处理）；roundtrip 读数＝主体下/上采样再还原的损失量"
+          },
+          "bg_no_seal": {
+            "claim": "成品**宣纸纸底**与**印章掩膜外**均无印泥像素",
+            "ink_px_in_generated_background": 0,
+            "ink_px_outside_seal_mask": 0,
+            "ink_px_outside_seal_mask_excluding_halo_band": 0,
+            "ink_px_in_halo_band": 0,
+            "background_region_px": 726055,
+            "ok": true,
+            "note": "口径①「背景」＝新宣纸纸底（贴片外 ∧ 晕染环带外）＝判据 `ok`；「掩膜外交集」另给两个读数（含/不含晕染环带）：B 口径下贴片内照片纸边可能有照片自带的淡红边，本读数如实登记"
+          },
+          "halo": {
+            "claim": "晕染只在掩膜**外侧** 1–3 px 环带、alpha ≤ 8%，掩膜内 ≡ 0",
+            "applied": true,
+            "policy": "seal",
+            "band_px": 2,
+            "alpha_band_max": 0.08,
+            "alpha_cap": 0.08,
+            "alpha_inside_mask_max": 0.0,
+            "alpha_outside_band_max": 0.0,
+            "band_px_count": 19064,
+            "color_rgb_ink_mean": [
+              234.51,
+              106.124,
+              48.196
+            ],
+            "band_px_on_paste_region": 0,
+            "effect_on_paste_region_mean_abs_delta_rgb": 0.0,
+            "ok": true
+          },
+          "composition": {
+            "claim": "画布最长边 1200、主体最长边＝画布最长边×62%±1%、居中偏差 ≤ 2 px",
+            "canvas_size": [
+              701,
+              1200
+            ],
+            "canvas_long_side": 1200,
+            "subject_size": [
+              424,
+              744
+            ],
+            "subject_long_side": 744,
+            "subject_ratio_actual": 0.62,
+            "subject_ratio_target": 0.62,
+            "subject_ratio_ok": true,
+            "padding_px": null,
+            "padding_px_per_side": [
+              138,
+              228,
+              139,
+              228
+            ],
+            "padding_ok": true,
+            "offset_px": [
+              138,
+              228
+            ],
+            "center_offset_px": [
+              0.5,
+              0.0
+            ],
+            "center_ok": true,
+            "canvas_long_side_ok": true,
+            "aspect_source": [
+              704,
+              1205
+            ],
+            "aspect_canvas": [
+              701,
+              1200
+            ]
+          },
+          "reproducibility": {
+            "claim": "同种子同输出（背景逐像素相同 ＋ 成品逐像素相同）",
+            "background_mode": "paper",
+            "bg_seed": 20261013,
+            "bg_reproducible_same_seed": true,
+            "bg_sha256": "23cfaa13fd77417b88451642a93a4e6004beeeb4f8630d96236c334fc1b7dc82",
+            "canvas_sha256": "b31e68eafd2eafd1b4e11ee589228f144a127c207436e800a372fd54feabdb94",
+            "bg_stats": {
+              "shape": [
+                1200,
+                701,
+                3
+              ],
+              "min": [
+                250.0,
+                250.0,
+                247.0
+              ],
+              "max": [
+                255.0,
+                255.0,
+                255.0
+              ],
+              "mean": [
+                252.502,
+                252.501,
+                250.51
+              ],
+              "std": [
+                1.525,
+                1.526,
+                1.697
+              ]
+            },
+            "bg_is_pure_white": false,
+            "bg_in_gamut": true
+          },
+          "segmentation": {
+            "close_kernel_px": 5,
+            "fringe_px": 2,
+            "fill_holes": false,
+            "ink_ratio": 0.277434,
+            "raw_px": 235353,
+            "closed_px": 235534,
+            "mask_px": 235534,
+            "hole_px": 0,
+            "fringe_px_added": 0,
+            "radius_effective_px": 273.71,
+            "bbox_in_source": [
+              20,
+              20,
+              684,
+              1185
+            ],
+            "bbox_size": [
+              664,
+              1165
+            ],
+            "source_margin_px": [
+              20,
+              20,
+              20,
+              20
+            ]
+          }
+        }
+      },
+      "canvas_plain_white": {
+        "png": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/无信息-无信息-无信息-无信息-當代-佚名-14-canvas-white.png",
+        "png_bytes": 227392,
+        "png_sha256": "1f5b0a62e03245aa2252aaf809241e6a5cb8c9e60780780b3c81644933b22dc6",
+        "canvas_size": [
+          701,
+          1200
+        ],
+        "readings": {
+          "freeze": {
+            "claim": "印泥本体像素与原片的差异＝**仅几何重采样**（零色彩处理）",
+            "resample": "lanczos",
+            "paste_px": 96081,
+            "seal_mask_px": 96081,
+            "max_abs_pixel_diff_vs_resampled_source": 0,
+            "max_abs_pixel_diff_over_seal_mask": 0,
+            "bit_exact_no_color_processing": true,
+            "roundtrip_ssim_vs_source_crop": 0.995994,
+            "roundtrip_deltaE76_mean_vs_source_crop": 0.4508,
+            "source_crop_size": [
+              664,
+              1165
+            ],
+            "subject_size_on_canvas": [
+              424,
+              744
+            ],
+            "scale": 0.638554,
+            "note": "bit_exact ⇒ 印区内像素**逐像素等于** Lanczos 重采样结果（未做任何颜色/光影处理）；roundtrip 读数＝主体下/上采样再还原的损失量"
+          },
+          "bg_no_seal": {
+            "claim": "成品**宣纸纸底**与**印章掩膜外**均无印泥像素",
+            "ink_px_in_generated_background": 0,
+            "ink_px_outside_seal_mask": 0,
+            "ink_px_outside_seal_mask_excluding_halo_band": 0,
+            "ink_px_in_halo_band": 0,
+            "background_region_px": 726055,
+            "ok": true,
+            "note": "口径①「背景」＝新宣纸纸底（贴片外 ∧ 晕染环带外）＝判据 `ok`；「掩膜外交集」另给两个读数（含/不含晕染环带）：B 口径下贴片内照片纸边可能有照片自带的淡红边，本读数如实登记"
+          },
+          "halo": {
+            "claim": "晕染只在掩膜**外侧** 1–3 px 环带、alpha ≤ 8%，掩膜内 ≡ 0",
+            "applied": true,
+            "policy": "seal",
+            "band_px": 2,
+            "alpha_band_max": 0.08,
+            "alpha_cap": 0.08,
+            "alpha_inside_mask_max": 0.0,
+            "alpha_outside_band_max": 0.0,
+            "band_px_count": 19064,
+            "color_rgb_ink_mean": [
+              234.51,
+              106.124,
+              48.196
+            ],
+            "band_px_on_paste_region": 0,
+            "effect_on_paste_region_mean_abs_delta_rgb": 0.0,
+            "ok": true
+          },
+          "composition": {
+            "claim": "画布最长边 1200、主体最长边＝画布最长边×62%±1%、居中偏差 ≤ 2 px",
+            "canvas_size": [
+              701,
+              1200
+            ],
+            "canvas_long_side": 1200,
+            "subject_size": [
+              424,
+              744
+            ],
+            "subject_long_side": 744,
+            "subject_ratio_actual": 0.62,
+            "subject_ratio_target": 0.62,
+            "subject_ratio_ok": true,
+            "padding_px": null,
+            "padding_px_per_side": [
+              138,
+              228,
+              139,
+              228
+            ],
+            "padding_ok": true,
+            "offset_px": [
+              138,
+              228
+            ],
+            "center_offset_px": [
+              0.5,
+              0.0
+            ],
+            "center_ok": true,
+            "canvas_long_side_ok": true,
+            "aspect_source": [
+              704,
+              1205
+            ],
+            "aspect_canvas": [
+              701,
+              1200
+            ]
+          },
+          "reproducibility": {
+            "claim": "同种子同输出（背景逐像素相同 ＋ 成品逐像素相同）",
+            "background_mode": "plain_white",
+            "bg_seed": 20261013,
+            "bg_reproducible_same_seed": true,
+            "bg_sha256": "c5cfadd046fd55076bd390887e0d325acfda470ef829a43e3728ffc7c7a225ae",
+            "canvas_sha256": "d144f8a59b3b87a2fa32c5d4b4ccce174b67084bd16bbda5ed23aaf4fb38a209",
+            "bg_stats": {
+              "shape": [
+                1200,
+                701,
+                3
+              ],
+              "min": [
+                255.0,
+                255.0,
+                255.0
+              ],
+              "max": [
+                255.0,
+                255.0,
+                255.0
+              ],
+              "mean": [
+                255.0,
+                255.0,
+                255.0
+              ],
+              "std": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "bg_is_pure_white": true,
+            "bg_in_gamut": true
+          },
+          "segmentation": {
+            "close_kernel_px": 5,
+            "fringe_px": 2,
+            "fill_holes": false,
+            "ink_ratio": 0.277434,
+            "raw_px": 235353,
+            "closed_px": 235534,
+            "mask_px": 235534,
+            "hole_px": 0,
+            "fringe_px_added": 0,
+            "radius_effective_px": 273.71,
+            "bbox_in_source": [
+              20,
+              20,
+              684,
+              1185
+            ],
+            "bbox_size": [
+              664,
+              1165
+            ],
+            "source_margin_px": [
+              20,
+              20,
+              20,
+              20
+            ]
+          }
+        }
+      },
+      "canvas_white_20px": {
+        "png": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/无信息-无信息-无信息-无信息-當代-佚名-14-canvas-white-20px.png",
+        "png_bytes": 457557,
+        "png_sha256": "66c9bbee577912b24758e769dec82edb252bb505049cf328ae3a6f8f92b01244",
+        "canvas_size": [
+          701,
+          1200
+        ],
+        "canvas_long_side": 1200,
+        "subject_size": [
+          661,
+          1160
+        ],
+        "subject_ratio_actual": 0.966667,
+        "padding_px": 20,
+        "padding_px_per_side_rect": [
+          20,
+          20,
+          20,
+          20
+        ],
+        "padding_ok": true,
+        "padding_measured_mask_bbox_px": {
+          "left": 20,
+          "top": 20,
+          "right": 20,
+          "bottom": 20
+        },
+        "padding_measured_nonwhite_bbox_px": {
+          "left": 18,
+          "top": 18,
+          "right": 18,
+          "bottom": 18
+        },
+        "center_offset_px": [
+          0.0,
+          0.0
+        ],
+        "freeze_bit_exact": true,
+        "bg_pure_white_std0": true,
+        "halo_ok": true,
+        "halo_alpha_band_max": 0.08,
+        "halo_alpha_inside_mask_max": 0.0,
+        "bg_reproducible_same_seed": true,
+        "canvas_recompose_bit_exact": true,
+        "canvas_sha256": "88ebc6e84bfb0b9ed35b10289abe4de169f89ff1854c1a46c234a920414e276a",
+        "readings": {
+          "freeze": {
+            "claim": "印泥本体像素与原片的差异＝**仅几何重采样**（零色彩处理）",
+            "resample": "lanczos",
+            "paste_px": 234032,
+            "seal_mask_px": 234032,
+            "max_abs_pixel_diff_vs_resampled_source": 0,
+            "max_abs_pixel_diff_over_seal_mask": 0,
+            "bit_exact_no_color_processing": true,
+            "roundtrip_ssim_vs_source_crop": 0.998843,
+            "roundtrip_deltaE76_mean_vs_source_crop": 0.2033,
+            "source_crop_size": [
+              664,
+              1165
+            ],
+            "subject_size_on_canvas": [
+              661,
+              1160
+            ],
+            "scale": 0.995482,
+            "note": "bit_exact ⇒ 印区内像素**逐像素等于** Lanczos 重采样结果（未做任何颜色/光影处理）；roundtrip 读数＝主体下/上采样再还原的损失量"
+          },
+          "bg_no_seal": {
+            "claim": "成品**宣纸纸底**与**印章掩膜外**均无印泥像素",
+            "ink_px_in_generated_background": 0,
+            "ink_px_outside_seal_mask": 0,
+            "ink_px_outside_seal_mask_excluding_halo_band": 0,
+            "ink_px_in_halo_band": 0,
+            "background_region_px": 577383,
+            "ok": true,
+            "note": "口径①「背景」＝新宣纸纸底（贴片外 ∧ 晕染环带外）＝判据 `ok`；「掩膜外交集」另给两个读数（含/不含晕染环带）：B 口径下贴片内照片纸边可能有照片自带的淡红边，本读数如实登记"
+          },
+          "halo": {
+            "claim": "晕染只在掩膜**外侧** 1–3 px 环带、alpha ≤ 8%，掩膜内 ≡ 0",
+            "applied": true,
+            "policy": "seal",
+            "band_px": 2,
+            "alpha_band_max": 0.08,
+            "alpha_cap": 0.08,
+            "alpha_inside_mask_max": 0.0,
+            "alpha_outside_band_max": 0.0,
+            "band_px_count": 29785,
+            "color_rgb_ink_mean": [
+              234.51,
+              106.124,
+              48.196
+            ],
+            "band_px_on_paste_region": 0,
+            "effect_on_paste_region_mean_abs_delta_rgb": 0.0,
+            "ok": true
+          },
+          "composition": {
+            "claim": "画布最长边 1200、主体最长边＝画布最长边−2·padding_px（四周均匀 padding_px 留白）、居中偏差 ≤ 1 px",
+            "canvas_size": [
+              701,
+              1200
+            ],
+            "canvas_long_side": 1200,
+            "subject_size": [
+              661,
+              1160
+            ],
+            "subject_long_side": 1160,
+            "subject_ratio_actual": 0.966667,
+            "subject_ratio_target": 0.9666666666666667,
+            "subject_ratio_ok": true,
+            "padding_px": 20,
+            "padding_px_per_side": [
+              20,
+              20,
+              20,
+              20
+            ],
+            "padding_ok": true,
+            "offset_px": [
+              20,
+              20
+            ],
+            "center_offset_px": [
+              0.0,
+              0.0
+            ],
+            "center_ok": true,
+            "canvas_long_side_ok": true,
+            "aspect_source": [
+              704,
+              1205
+            ],
+            "aspect_canvas": [
+              701,
+              1200
+            ]
+          },
+          "reproducibility": {
+            "claim": "同种子同输出（背景逐像素相同 ＋ 成品逐像素相同）",
+            "background_mode": "plain_white",
+            "bg_seed": 20261013,
+            "bg_reproducible_same_seed": true,
+            "bg_sha256": "c5cfadd046fd55076bd390887e0d325acfda470ef829a43e3728ffc7c7a225ae",
+            "canvas_sha256": "88ebc6e84bfb0b9ed35b10289abe4de169f89ff1854c1a46c234a920414e276a",
+            "bg_stats": {
+              "shape": [
+                1200,
+                701,
+                3
+              ],
+              "min": [
+                255.0,
+                255.0,
+                255.0
+              ],
+              "max": [
+                255.0,
+                255.0,
+                255.0
+              ],
+              "mean": [
+                255.0,
+                255.0,
+                255.0
+              ],
+              "std": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "bg_is_pure_white": true,
+            "bg_in_gamut": true
+          },
+          "segmentation": {
+            "close_kernel_px": 5,
+            "fringe_px": 2,
+            "fill_holes": false,
+            "ink_ratio": 0.277434,
+            "raw_px": 235353,
+            "closed_px": 235534,
+            "mask_px": 235534,
+            "hole_px": 0,
+            "fringe_px_added": 0,
+            "radius_effective_px": 273.71,
+            "bbox_in_source": [
+              20,
+              20,
+              684,
+              1185
+            ],
+            "bbox_size": [
+              664,
+              1165
             ],
             "source_margin_px": [
               20,

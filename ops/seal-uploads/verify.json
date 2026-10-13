@@ -1,15 +1,20 @@
 {
-  "generated_at": "2026-10-13T15:37:59+08:00",
+  "generated_at": "2026-10-13T16:04:57+08:00",
   "db_counts": {
-    "seals": 3691,
+    "seals": 3693,
     "seal_links": 8964,
     "seal_images": 6765,
-    "seal_import_batches": 2,
-    "seal_uploads": 12
+    "seal_import_batches": 4,
+    "seal_uploads": 14
   },
   "existing_rows_fingerprint": {
     "sha256": "2214e13c3df5f3c7018956b6791dd6856bf5c3845a079730125059e0c99aa6d6",
     "before": "2214e13c3df5f3c7018956b6791dd6856bf5c3845a079730125059e0c99aa6d6"
+  },
+  "existing_rows_fingerprint_b2": {
+    "rows": 3691,
+    "sha256": "010f168cea9cf8205d6c5b374c19c264c84945376a7cca98766b99210d4da99e",
+    "before": "010f168cea9cf8205d6c5b374c19c264c84945376a7cca98766b99210d4da99e"
   },
   "rows": [
     {
@@ -70,6 +75,20 @@
     {
       "seq": "12",
       "source_seal_id": "local_upload_20261013_12",
+      "ok": true
+    }
+  ],
+  "rows_batch2": [
+    {
+      "seq": 13,
+      "source_seal_id": "local_upload_20261013_13",
+      "batch_id": "seal_upload_20261013_13",
+      "ok": true
+    },
+    {
+      "seq": 14,
+      "source_seal_id": "local_upload_20261013_14",
+      "batch_id": "seal_upload_20261013_14",
       "ok": true
     }
   ],
@@ -470,6 +489,74 @@
       "expected_size_bbox_plus_40_clamped": [
         501,
         330
+      ],
+      "size_ok": true,
+      "pixels_equal_source_crop": true,
+      "crop_in_source_bounds": true,
+      "ink_margins_px": {
+        "left": 20,
+        "top": 20,
+        "right": 20,
+        "bottom": 20
+      },
+      "margin_20px_ok": true
+    },
+    {
+      "seq": "13",
+      "file": "无信息-无信息-无信息-无信息-當代-佚名-13-O.tiff",
+      "exists": true,
+      "container": {
+        "compression": 8,
+        "predictor": 2,
+        "bits": [
+          8,
+          8,
+          8
+        ],
+        "photometric": 2
+      },
+      "container_ok": true,
+      "size": [
+        415,
+        786
+      ],
+      "expected_size_bbox_plus_40_clamped": [
+        415,
+        786
+      ],
+      "size_ok": true,
+      "pixels_equal_source_crop": true,
+      "crop_in_source_bounds": true,
+      "ink_margins_px": {
+        "left": 20,
+        "top": 20,
+        "right": 20,
+        "bottom": 20
+      },
+      "margin_20px_ok": true
+    },
+    {
+      "seq": "14",
+      "file": "无信息-无信息-无信息-无信息-當代-佚名-14-O.tiff",
+      "exists": true,
+      "container": {
+        "compression": 8,
+        "predictor": 2,
+        "bits": [
+          8,
+          8,
+          8
+        ],
+        "photometric": 2
+      },
+      "container_ok": true,
+      "size": [
+        704,
+        1205
+      ],
+      "expected_size_bbox_plus_40_clamped": [
+        704,
+        1205
       ],
       "size_ok": true,
       "pixels_equal_source_crop": true,
@@ -1563,6 +1650,186 @@
       "corner_gamut_ok": true,
       "ink_px_outside_seal_and_halo": 0,
       "bg_no_ink": true
+    },
+    {
+      "seq": "13",
+      "version": "paper",
+      "file": "无信息-无信息-无信息-无信息-當代-佚名-13-canvas.png",
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/无信息-无信息-无信息-无信息-當代-佚名-13-canvas.png",
+      "at_canonical_path": true,
+      "png_magic": true,
+      "size": [
+        634,
+        1200
+      ],
+      "long_side_1200": true,
+      "subject_ratio": 0.62,
+      "ratio_62pct": true,
+      "center_offset_px": [
+        0.0,
+        0.0
+      ],
+      "center_ok": true,
+      "corners": [
+        [
+          254,
+          254,
+          252
+        ],
+        [
+          255,
+          255,
+          253
+        ],
+        [
+          252,
+          251,
+          250
+        ],
+        [
+          255,
+          255,
+          253
+        ]
+      ],
+      "corner_gamut_ok": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true
+    },
+    {
+      "seq": "13",
+      "version": "plain_white",
+      "file": "无信息-无信息-无信息-无信息-當代-佚名-13-canvas-white.png",
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/无信息-无信息-无信息-无信息-當代-佚名-13-canvas-white.png",
+      "at_canonical_path": true,
+      "png_magic": true,
+      "size": [
+        634,
+        1200
+      ],
+      "long_side_1200": true,
+      "subject_ratio": 0.62,
+      "ratio_62pct": true,
+      "center_offset_px": [
+        0.0,
+        0.0
+      ],
+      "center_ok": true,
+      "corners": [
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ],
+      "corner_gamut_ok": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true
+    },
+    {
+      "seq": "14",
+      "version": "paper",
+      "file": "无信息-无信息-无信息-无信息-當代-佚名-14-canvas.png",
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/无信息-无信息-无信息-无信息-當代-佚名-14-canvas.png",
+      "at_canonical_path": true,
+      "png_magic": true,
+      "size": [
+        701,
+        1200
+      ],
+      "long_side_1200": true,
+      "subject_ratio": 0.62,
+      "ratio_62pct": true,
+      "center_offset_px": [
+        0.5,
+        0.0
+      ],
+      "center_ok": true,
+      "corners": [
+        [
+          252,
+          251,
+          250
+        ],
+        [
+          253,
+          253,
+          251
+        ],
+        [
+          251,
+          251,
+          250
+        ],
+        [
+          255,
+          255,
+          253
+        ]
+      ],
+      "corner_gamut_ok": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true
+    },
+    {
+      "seq": "14",
+      "version": "plain_white",
+      "file": "无信息-无信息-无信息-无信息-當代-佚名-14-canvas-white.png",
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/无信息-无信息-无信息-无信息-當代-佚名-14-canvas-white.png",
+      "at_canonical_path": true,
+      "png_magic": true,
+      "size": [
+        701,
+        1200
+      ],
+      "long_side_1200": true,
+      "subject_ratio": 0.62,
+      "ratio_62pct": true,
+      "center_offset_px": [
+        0.5,
+        0.0
+      ],
+      "center_ok": true,
+      "corners": [
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ],
+      "corner_gamut_ok": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true
     }
   ],
   "canvases_white20": [
@@ -1571,6 +1838,8 @@
       "file": "无信息-无信息-无信息-无信息-戰國-佚名-01-canvas-white-20px.png",
       "naming_ok": true,
       "exists": true,
+      "at_canonical_path": false,
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/异形印章 1200px 裁切原图/无信息-无信息-无信息-无信息-戰國-佚名-01-canvas-white-20px.png",
       "png_magic": true,
       "size": [
         507,
@@ -1628,6 +1897,8 @@
       "file": "无信息-无信息-无信息-无信息-戰國-佚名-02-canvas-white-20px.png",
       "naming_ok": true,
       "exists": true,
+      "at_canonical_path": false,
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/异形印章 1200px 裁切原图/无信息-无信息-无信息-无信息-戰國-佚名-02-canvas-white-20px.png",
       "png_magic": true,
       "size": [
         443,
@@ -1685,6 +1956,8 @@
       "file": "无信息-无信息-无信息-无信息-戰國-佚名-03-canvas-white-20px.png",
       "naming_ok": true,
       "exists": true,
+      "at_canonical_path": false,
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/异形印章 1200px 裁切原图/无信息-无信息-无信息-无信息-戰國-佚名-03-canvas-white-20px.png",
       "png_magic": true,
       "size": [
         1200,
@@ -1742,6 +2015,8 @@
       "file": "无信息-无信息-无信息-无信息-戰國-佚名-04-canvas-white-20px.png",
       "naming_ok": true,
       "exists": true,
+      "at_canonical_path": false,
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/异形印章 1200px 裁切原图/无信息-无信息-无信息-无信息-戰國-佚名-04-canvas-white-20px.png",
       "png_magic": true,
       "size": [
         786,
@@ -1799,6 +2074,8 @@
       "file": "无信息-无信息-无信息-无信息-戰國-佚名-05-canvas-white-20px.png",
       "naming_ok": true,
       "exists": true,
+      "at_canonical_path": false,
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/异形印章 1200px 裁切原图/无信息-无信息-无信息-无信息-戰國-佚名-05-canvas-white-20px.png",
       "png_magic": true,
       "size": [
         925,
@@ -1856,6 +2133,8 @@
       "file": "无信息-无信息-无信息-无信息-戰國-佚名-06-canvas-white-20px.png",
       "naming_ok": true,
       "exists": true,
+      "at_canonical_path": false,
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/异形印章 1200px 裁切原图/无信息-无信息-无信息-无信息-戰國-佚名-06-canvas-white-20px.png",
       "png_magic": true,
       "size": [
         817,
@@ -1913,6 +2192,8 @@
       "file": "无信息-无信息-无信息-无信息-戰國-佚名-07-canvas-white-20px.png",
       "naming_ok": true,
       "exists": true,
+      "at_canonical_path": false,
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/异形印章 1200px 裁切原图/无信息-无信息-无信息-无信息-戰國-佚名-07-canvas-white-20px.png",
       "png_magic": true,
       "size": [
         1200,
@@ -1970,6 +2251,8 @@
       "file": "无信息-无信息-无信息-无信息-戰國-佚名-08-canvas-white-20px.png",
       "naming_ok": true,
       "exists": true,
+      "at_canonical_path": false,
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/异形印章 1200px 裁切原图/无信息-无信息-无信息-无信息-戰國-佚名-08-canvas-white-20px.png",
       "png_magic": true,
       "size": [
         1200,
@@ -2027,6 +2310,8 @@
       "file": "无信息-无信息-无信息-无信息-戰國-佚名-09-canvas-white-20px.png",
       "naming_ok": true,
       "exists": true,
+      "at_canonical_path": false,
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/异形印章 1200px 裁切原图/无信息-无信息-无信息-无信息-戰國-佚名-09-canvas-white-20px.png",
       "png_magic": true,
       "size": [
         1200,
@@ -2084,6 +2369,8 @@
       "file": "无信息-无信息-无信息-无信息-戰國-佚名-10-canvas-white-20px.png",
       "naming_ok": true,
       "exists": true,
+      "at_canonical_path": false,
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/异形印章 1200px 裁切原图/无信息-无信息-无信息-无信息-戰國-佚名-10-canvas-white-20px.png",
       "png_magic": true,
       "size": [
         1200,
@@ -2141,6 +2428,8 @@
       "file": "无信息-无信息-无信息-无信息-戰國-佚名-11-canvas-white-20px.png",
       "naming_ok": true,
       "exists": true,
+      "at_canonical_path": false,
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/异形印章 1200px 裁切原图/无信息-无信息-无信息-无信息-戰國-佚名-11-canvas-white-20px.png",
       "png_magic": true,
       "size": [
         1059,
@@ -2198,10 +2487,130 @@
       "file": "无信息-无信息-无信息-无信息-戰國-佚名-12-canvas-white-20px.png",
       "naming_ok": true,
       "exists": true,
+      "at_canonical_path": false,
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/异形印章 1200px 裁切原图/无信息-无信息-无信息-无信息-戰國-佚名-12-canvas-white-20px.png",
       "png_magic": true,
       "size": [
         1200,
         770
+      ],
+      "long_side_1200": true,
+      "padding_rect_px": [
+        20,
+        20,
+        20,
+        20
+      ],
+      "padding_rect_ok": true,
+      "padding_mask_bbox_px": {
+        "left": 20,
+        "top": 20,
+        "right": 20,
+        "bottom": 20
+      },
+      "padding_mask_bbox_ok": true,
+      "padding_nonwhite_bbox_px": {
+        "left": 18,
+        "top": 18,
+        "right": 18,
+        "bottom": 18
+      },
+      "padding_nonwhite_ok": true,
+      "subject_ratio": 0.966667,
+      "ratio_0_9667": true,
+      "subject_ratio_pixel_bbox": 0.966667,
+      "ratio_pixel_ok": true,
+      "center_offset_px": [
+        0.0,
+        0.0
+      ],
+      "center_ok": true,
+      "center_offset_pixel_bbox": [
+        0.0,
+        0.0
+      ],
+      "center_pixel_ok": true,
+      "freeze_bit_exact": true,
+      "bg_pure_white_std0": true,
+      "halo_ok": true,
+      "halo_alpha_band_max": 0.08,
+      "corners_white": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true,
+      "canvas_recompose_bit_exact": true,
+      "pixels_equal_independent_recompute": true,
+      "png_sha256_matches_summary": true
+    },
+    {
+      "seq": "13",
+      "file": "无信息-无信息-无信息-无信息-當代-佚名-13-canvas-white-20px.png",
+      "naming_ok": true,
+      "exists": true,
+      "at_canonical_path": true,
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/无信息-无信息-无信息-无信息-當代-佚名-13-canvas-white-20px.png",
+      "png_magic": true,
+      "size": [
+        623,
+        1200
+      ],
+      "long_side_1200": true,
+      "padding_rect_px": [
+        20,
+        20,
+        20,
+        20
+      ],
+      "padding_rect_ok": true,
+      "padding_mask_bbox_px": {
+        "left": 20,
+        "top": 20,
+        "right": 20,
+        "bottom": 20
+      },
+      "padding_mask_bbox_ok": true,
+      "padding_nonwhite_bbox_px": {
+        "left": 18,
+        "top": 18,
+        "right": 18,
+        "bottom": 18
+      },
+      "padding_nonwhite_ok": true,
+      "subject_ratio": 0.966667,
+      "ratio_0_9667": true,
+      "subject_ratio_pixel_bbox": 0.966667,
+      "ratio_pixel_ok": true,
+      "center_offset_px": [
+        0.0,
+        0.0
+      ],
+      "center_ok": true,
+      "center_offset_pixel_bbox": [
+        0.0,
+        0.0
+      ],
+      "center_pixel_ok": true,
+      "freeze_bit_exact": true,
+      "bg_pure_white_std0": true,
+      "halo_ok": true,
+      "halo_alpha_band_max": 0.08,
+      "corners_white": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true,
+      "canvas_recompose_bit_exact": true,
+      "pixels_equal_independent_recompute": true,
+      "png_sha256_matches_summary": true
+    },
+    {
+      "seq": "14",
+      "file": "无信息-无信息-无信息-无信息-當代-佚名-14-canvas-white-20px.png",
+      "naming_ok": true,
+      "exists": true,
+      "at_canonical_path": true,
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/无信息-无信息-无信息-无信息-當代-佚名-14-canvas-white-20px.png",
+      "png_magic": true,
+      "size": [
+        701,
+        1200
       ],
       "long_side_1200": true,
       "padding_rect_px": [
@@ -2254,257 +2663,359 @@
   "existing_outputs_unchanged": [
     {
       "seq": "01",
+      "batch": 1,
       "what": "无信息-无信息-无信息-无信息-戰國-佚名-01-O.tiff",
       "ok": true
     },
     {
       "seq": "01",
+      "batch": 1,
       "what": "无信息-无信息-无信息-无信息-戰國-佚名-01-canvas.png",
       "ok": true,
       "at_canonical_path": false
     },
     {
       "seq": "01",
+      "batch": 1,
       "what": "无信息-无信息-无信息-无信息-戰國-佚名-01-canvas-white.png",
       "ok": true,
       "at_canonical_path": true
     },
     {
       "seq": "02",
+      "batch": 1,
       "what": "无信息-无信息-无信息-无信息-戰國-佚名-02-O.tiff",
       "ok": true
     },
     {
       "seq": "02",
+      "batch": 1,
       "what": "无信息-无信息-无信息-无信息-戰國-佚名-02-canvas.png",
       "ok": true,
       "at_canonical_path": false
     },
     {
       "seq": "02",
+      "batch": 1,
       "what": "无信息-无信息-无信息-无信息-戰國-佚名-02-canvas-white.png",
       "ok": true,
       "at_canonical_path": true
     },
     {
       "seq": "03",
+      "batch": 1,
       "what": "无信息-无信息-无信息-无信息-戰國-佚名-03-O.tiff",
       "ok": true
     },
     {
       "seq": "03",
+      "batch": 1,
       "what": "无信息-无信息-无信息-无信息-戰國-佚名-03-canvas.png",
       "ok": true,
       "at_canonical_path": false
     },
     {
       "seq": "03",
+      "batch": 1,
       "what": "无信息-无信息-无信息-无信息-戰國-佚名-03-canvas-white.png",
       "ok": true,
       "at_canonical_path": true
     },
     {
       "seq": "04",
+      "batch": 1,
       "what": "无信息-无信息-无信息-无信息-戰國-佚名-04-O.tiff",
       "ok": true
     },
     {
       "seq": "04",
+      "batch": 1,
       "what": "无信息-无信息-无信息-无信息-戰國-佚名-04-canvas.png",
       "ok": true,
       "at_canonical_path": false
     },
     {
       "seq": "04",
+      "batch": 1,
       "what": "无信息-无信息-无信息-无信息-戰國-佚名-04-canvas-white.png",
       "ok": true,
       "at_canonical_path": true
     },
     {
       "seq": "05",
+      "batch": 1,
       "what": "无信息-无信息-无信息-无信息-戰國-佚名-05-O.tiff",
       "ok": true
     },
     {
       "seq": "05",
+      "batch": 1,
       "what": "无信息-无信息-无信息-无信息-戰國-佚名-05-canvas.png",
       "ok": true,
       "at_canonical_path": false
     },
     {
       "seq": "05",
+      "batch": 1,
       "what": "无信息-无信息-无信息-无信息-戰國-佚名-05-canvas-white.png",
       "ok": true,
       "at_canonical_path": true
     },
     {
       "seq": "06",
+      "batch": 1,
       "what": "无信息-无信息-无信息-无信息-戰國-佚名-06-O.tiff",
       "ok": true
     },
     {
       "seq": "06",
+      "batch": 1,
       "what": "无信息-无信息-无信息-无信息-戰國-佚名-06-canvas.png",
       "ok": true,
       "at_canonical_path": false
     },
     {
       "seq": "06",
+      "batch": 1,
       "what": "无信息-无信息-无信息-无信息-戰國-佚名-06-canvas-white.png",
       "ok": true,
       "at_canonical_path": true
     },
     {
       "seq": "07",
+      "batch": 1,
       "what": "无信息-无信息-无信息-无信息-戰國-佚名-07-O.tiff",
       "ok": true
     },
     {
       "seq": "07",
+      "batch": 1,
       "what": "无信息-无信息-无信息-无信息-戰國-佚名-07-canvas.png",
       "ok": true,
       "at_canonical_path": false
     },
     {
       "seq": "07",
+      "batch": 1,
       "what": "无信息-无信息-无信息-无信息-戰國-佚名-07-canvas-white.png",
       "ok": true,
       "at_canonical_path": true
     },
     {
       "seq": "08",
+      "batch": 1,
       "what": "无信息-无信息-无信息-无信息-戰國-佚名-08-O.tiff",
       "ok": true
     },
     {
       "seq": "08",
+      "batch": 1,
       "what": "无信息-无信息-无信息-无信息-戰國-佚名-08-canvas.png",
       "ok": true,
       "at_canonical_path": false
     },
     {
       "seq": "08",
+      "batch": 1,
       "what": "无信息-无信息-无信息-无信息-戰國-佚名-08-canvas-white.png",
       "ok": true,
       "at_canonical_path": true
     },
     {
       "seq": "09",
+      "batch": 1,
       "what": "无信息-无信息-无信息-无信息-戰國-佚名-09-O.tiff",
       "ok": true
     },
     {
       "seq": "09",
+      "batch": 1,
       "what": "无信息-无信息-无信息-无信息-戰國-佚名-09-canvas.png",
       "ok": true,
       "at_canonical_path": false
     },
     {
       "seq": "09",
+      "batch": 1,
       "what": "无信息-无信息-无信息-无信息-戰國-佚名-09-canvas-white.png",
       "ok": true,
       "at_canonical_path": true
     },
     {
       "seq": "10",
+      "batch": 1,
       "what": "无信息-无信息-无信息-无信息-戰國-佚名-10-O.tiff",
       "ok": true
     },
     {
       "seq": "10",
+      "batch": 1,
       "what": "无信息-无信息-无信息-无信息-戰國-佚名-10-canvas.png",
       "ok": true,
       "at_canonical_path": false
     },
     {
       "seq": "10",
+      "batch": 1,
       "what": "无信息-无信息-无信息-无信息-戰國-佚名-10-canvas-white.png",
       "ok": true,
       "at_canonical_path": true
     },
     {
       "seq": "11",
+      "batch": 1,
       "what": "无信息-无信息-无信息-无信息-戰國-佚名-11-O.tiff",
       "ok": true
     },
     {
       "seq": "11",
+      "batch": 1,
       "what": "无信息-无信息-无信息-无信息-戰國-佚名-11-canvas.png",
       "ok": true,
       "at_canonical_path": false
     },
     {
       "seq": "11",
+      "batch": 1,
       "what": "无信息-无信息-无信息-无信息-戰國-佚名-11-canvas-white.png",
       "ok": true,
       "at_canonical_path": true
     },
     {
       "seq": "12",
+      "batch": 1,
       "what": "无信息-无信息-无信息-无信息-戰國-佚名-12-O.tiff",
       "ok": true
     },
     {
       "seq": "12",
+      "batch": 1,
       "what": "无信息-无信息-无信息-无信息-戰國-佚名-12-canvas.png",
       "ok": true,
       "at_canonical_path": false
     },
     {
       "seq": "12",
+      "batch": 1,
       "what": "无信息-无信息-无信息-无信息-戰國-佚名-12-canvas-white.png",
+      "ok": true,
+      "at_canonical_path": true
+    },
+    {
+      "seq": "13",
+      "batch": 2,
+      "what": "无信息-无信息-无信息-无信息-當代-佚名-13-O.tiff",
+      "ok": true
+    },
+    {
+      "seq": "13",
+      "batch": 2,
+      "what": "无信息-无信息-无信息-无信息-當代-佚名-13-canvas.png",
+      "ok": true,
+      "at_canonical_path": true
+    },
+    {
+      "seq": "13",
+      "batch": 2,
+      "what": "无信息-无信息-无信息-无信息-當代-佚名-13-canvas-white.png",
+      "ok": true,
+      "at_canonical_path": true
+    },
+    {
+      "seq": "14",
+      "batch": 2,
+      "what": "无信息-无信息-无信息-无信息-當代-佚名-14-O.tiff",
+      "ok": true
+    },
+    {
+      "seq": "14",
+      "batch": 2,
+      "what": "无信息-无信息-无信息-无信息-當代-佚名-14-canvas.png",
+      "ok": true,
+      "at_canonical_path": true
+    },
+    {
+      "seq": "14",
+      "batch": 2,
+      "what": "无信息-无信息-无信息-无信息-當代-佚名-14-canvas-white.png",
       "ok": true,
       "at_canonical_path": true
     }
   ],
   "sources_unchanged": [
     {
+      "batch": 1,
       "file": "image_6e9080.png",
       "unchanged": true
     },
     {
+      "batch": 1,
       "file": "image_270063.png",
       "unchanged": true
     },
     {
+      "batch": 1,
       "file": "image_064c98.png",
       "unchanged": true
     },
     {
+      "batch": 1,
       "file": "image_9e72d7.png",
       "unchanged": true
     },
     {
+      "batch": 1,
       "file": "image_f88298.png",
       "unchanged": true
     },
     {
+      "batch": 1,
       "file": "image_8cd872.png",
       "unchanged": true
     },
     {
+      "batch": 1,
       "file": "image_2106f1.png",
       "unchanged": true
     },
     {
+      "batch": 1,
       "file": "image_ce4f21.png",
       "unchanged": true
     },
     {
+      "batch": 1,
       "file": "image_e344a2.png",
       "unchanged": true
     },
     {
+      "batch": 1,
       "file": "image_e9185a.png",
       "unchanged": true
     },
     {
+      "batch": 1,
       "file": "image_21c243.png",
       "unchanged": true
     },
     {
+      "batch": 1,
       "file": "image_1df10e.png",
       "unchanged": true
+    },
+    {
+      "batch": 2,
+      "file": "image_91eca8.png",
+      "unchanged": true,
+      "original_still_on_disk": true,
+      "var_copy_ok": true
+    },
+    {
+      "batch": 2,
+      "file": "image_827d80.png",
+      "unchanged": true,
+      "original_still_on_disk": true,
+      "var_copy_ok": true
     }
   ],
   "yinpu": {
@@ -2519,7 +3030,7 @@
     "ok": true
   },
   "api": {
-    "list_total": 3691,
+    "list_total": 3693,
     "list_has_new_fields": true,
     "upload_row": {
       "dynasty": "戰國",
@@ -2527,6 +3038,14 @@
       "seal_wen": "",
       "audit_status": "UNREVIEWED_PENDING_HUMAN_REVIEW",
       "source_kind": "local_upload"
+    },
+    "upload_row_b2": {
+      "dynasty": "當代",
+      "author_name": "佚名",
+      "seal_wen": "",
+      "audit_status": "UNREVIEWED_PENDING_HUMAN_REVIEW",
+      "source_kind": "local_upload",
+      "batch_id": "seal_upload_20261013_13"
     },
     "uploads_route_rejects_non_multipart": true
   },

@@ -14,6 +14,9 @@
 
 跑法：`feicui/venv/bin/python ops/seal-uploads/make_o_and_canvas.py`（幂等：产物确定性重算覆盖）；
 第三版只跑 `… --variant white20`（不写库、不动既有文件）。
+批 2（Kevin 2026-10-13 追加 2 张，朝代＝當代）：`… --spec batch_spec_02.json [--variant white20]`
+——汇总按 seq 合并（**spec 外条目原样保留** ⇒ 批 1 十二件的 readings/sha 锚不动）；
+每张 dynasty 取 item 级（缺省回 spec 顶层）。
 """
 from __future__ import annotations
 
@@ -31,29 +34,40 @@ sys.path.insert(0, str(REPO / "server"))
 from app import seal_canvas  # noqa: E402  (seal_canvas: 纯函数，不写库)
 
 OPS = REPO / "ops" / "seal-uploads"
-SPEC = json.loads((OPS / "batch_spec.json").read_text(encoding="utf-8"))
-OUT_DIR = REPO / "output" / "seals" / SPEC["dir_key"]  # output/seals/无信息
+DEFAULT_SPEC = OPS / "batch_spec.json"                # 批 1 spec（12 张，戰國）
+DEFAULT_SUMMARY = OPS / "make_o_canvas_summary.json"
 PAD = 20          # 距核心图像外围留白（Kevin 2026-10-13 指定）
 WHITE20_PAD = 20  # 第三版成品四周留白（Kevin 2026-10-13 指定；⇒ 主体长边 1200−2×20=1160）
-DYNASTY = SPEC["dynasty"]
-AUTHOR = SPEC["author"]
 WEN = "无信息"    # 释文本批留空 ⇒ 命名按「没信息就写无信息」
 P = C = R = "无信息"  # 页/列/行本批无信息
+
+
+def _load_spec(path: str | Path) -> dict:
+    return json.loads(Path(path).read_text(encoding="utf-8"))
+
+
+def _item_dynasty(spec: dict, item: dict) -> str:
+    """每张可自带 dynasty（批 2：當代）；缺省回 spec 顶层（批 1：戰國）。"""
+    return str(item.get("dynasty") or spec["dynasty"])
 
 
 def pixel_sha(arr) -> str:
     return hashlib.sha256(np.ascontiguousarray(np.asarray(arr, dtype=np.uint8)).tobytes()).hexdigest()
 
 
-def main() -> int:
+def main(spec_path: str | Path = DEFAULT_SPEC, summary_path: str | Path = DEFAULT_SUMMARY) -> int:
+    SPEC = _load_spec(spec_path)
+    OUT_DIR = REPO / "output" / "seals" / SPEC["dir_key"]  # output/seals/无信息
+    AUTHOR = SPEC["author"]
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     items_out = []
     for item in SPEC["items"]:
         seq = int(item["seq"])
+        dynasty_i = _item_dynasty(SPEC, item)
         src = Path(item["source_path"])
         arr = np.asarray(Image.open(src).convert("RGB"))
         H, W = int(arr.shape[0]), int(arr.shape[1])
-        base = f"{P}-{C}-{R}-{WEN}-{DYNASTY}-{AUTHOR}-{seq:02d}"
+        base = f"{P}-{C}-{R}-{WEN}-{dynasty_i}-{AUTHOR}-{seq:02d}"
         o_name = f"{base}-O.tiff"
         o_path = OUT_DIR / o_name
 
@@ -127,31 +141,45 @@ def main() -> int:
               f"canvas={cp['canvas_size']} ratio={cp['subject_ratio_actual']:.4f} "
               f"freeze={canvases['paper']['readings']['freeze']['bit_exact_no_color_processing']}")
 
-    summary = {
-        "module": "ops/seal-uploads/make_o_and_canvas.py",
-        "constants": {"pad_px": PAD, "core_mask": "seal_canvas.seal_mask (close5+fringe2, fill_holes=False)",
-                      "caliber": "A", "backgrounds": ["paper", "plain_white"],
-                      "canvas_long_side": seal_canvas.CANVAS_LONG_SIDE,
-                      "subject_ratio": seal_canvas.SUBJECT_LONG_SIDE_RATIO,
-                      "bg_seed": seal_canvas.BG_SEED_DEFAULT, "dir_key": SPEC["dir_key"],
-                      "naming_base": f"{P}-{C}-{R}-{WEN}-{DYNASTY}-{AUTHOR}-<seq>"},
-        "items": items_out,
+    # 汇总按 seq 合并：spec 外的既有条目（批 1 十二件）**原样保留**，spec 内重算覆盖（幂等）
+    spath = Path(summary_path)
+    prev = json.loads(spath.read_text(encoding="utf-8")) if spath.is_file() else None
+    spec_seqs = {str(int(i["seq"])) for i in SPEC["items"]}
+    preserved = [i for i in (prev["items"] if prev else []) if str(int(i["seq"])) not in spec_seqs]
+    merged = sorted(preserved + items_out, key=lambda x: int(x["seq"]))
+    constants = dict(prev["constants"]) if prev else {}
+    constants.update({
+        "pad_px": PAD, "core_mask": "seal_canvas.seal_mask (close5+fringe2, fill_holes=False)",
+        "caliber": "A", "backgrounds": ["paper", "plain_white"],
+        "canvas_long_side": seal_canvas.CANVAS_LONG_SIDE,
+        "subject_ratio": seal_canvas.SUBJECT_LONG_SIDE_RATIO,
+        "bg_seed": seal_canvas.BG_SEED_DEFAULT, "dir_key": SPEC["dir_key"],
+        "naming_base": f"{P}-{C}-{R}-{WEN}-<朝代>-{AUTHOR}-<seq>",
+    })
+    constants.setdefault("batches", {})[Path(spec_path).stem] = {
+        "spec": Path(spec_path).name, "dynasty": SPEC["dynasty"], "author": AUTHOR,
+        "items": len(SPEC["items"]), "seqs": sorted(int(i["seq"]) for i in SPEC["items"]),
     }
-    (OPS / "make_o_canvas_summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2),
-                                                    encoding="utf-8")
+    summary = {"module": "ops/seal-uploads/make_o_and_canvas.py",
+               "constants": constants, "items": merged}
+    spath.write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
     n_ok = sum(1 for i in items_out if i["o"]["margin_ok"])
-    print(f"[done] O 件 12 ＋ canvas 24；留白判据 ok {n_ok}/12；汇总 → make_o_canvas_summary.json")
-    return 0 if n_ok == 12 else 1
+    print(f"[done] O 件 {len(SPEC['items'])} ＋ canvas {len(SPEC['items']) * 2}；留白判据 ok {n_ok}/{len(SPEC['items'])}；"
+          f"汇总（{len(merged)} 件）→ {spath.name}")
+    return 0 if n_ok == len(SPEC["items"]) else 1
 
 
-def main_white20() -> int:
-    """第三版（Kevin 2026-10-13）：长边 1200 纯白底、四周各留恰 20px ⇒ `…-canvas-white-20px.png` ×12。
+def main_white20(spec_path: str | Path = DEFAULT_SPEC, summary_path: str | Path = DEFAULT_SUMMARY) -> int:
+    """第三版（Kevin 2026-10-13）：长边 1200 纯白底、四周各留恰 20px ⇒ `…-canvas-white-20px.png`。
 
-    只新增 12 张 PNG ＋ 回填 `make_o_canvas_summary.json` 第三变体块（`constants.white20` ＋
-    每件 `canvas_white_20px`）；**不重写 O 件、不重算另两版 canvas、不写 seal_ingest.db**。
+    只新增 PNG ＋ 回填汇总第三变体块（`constants.white20` ＋ 每件 `canvas_white_20px`）；
+    **不重写 O 件、不重算另两版 canvas、不写 seal_ingest.db**；spec 外既有条目原样保留。
     主体输入与另两版同源（源图 core bbox 裁区），动笔前先与既有 O 件**只读**逐像素核对。
     """
-    summary_path = OPS / "make_o_canvas_summary.json"
+    SPEC = _load_spec(spec_path)
+    OUT_DIR = REPO / "output" / "seals" / SPEC["dir_key"]
+    AUTHOR = SPEC["author"]
+    summary_path = Path(summary_path)
     if not summary_path.is_file():
         raise SystemExit("缺 make_o_canvas_summary.json——第三版回填以 full 变体的基线为底，先跑 full")
     summary = json.loads(summary_path.read_text(encoding="utf-8"))
@@ -159,6 +187,7 @@ def main_white20() -> int:
     n_ok = 0
     for item in SPEC["items"]:
         seq = int(item["seq"])
+        dynasty_i = _item_dynasty(SPEC, item)
         key = str(seq)
         if key not in idx_by_seq:
             raise SystemExit(f"summary 基线缺 seq={seq}")
@@ -173,7 +202,7 @@ def main_white20() -> int:
         if o_back.shape != crop.shape or not bool(np.array_equal(o_back, crop)):
             raise SystemExit(f"源裁区 ≢ 既有 O 件解码像素 ⇒ 拒绝出第三版（不动既有文件）：{o_path.name}")
 
-        base = f"{P}-{C}-{R}-{WEN}-{DYNASTY}-{AUTHOR}-{seq:02d}"
+        base = f"{P}-{C}-{R}-{WEN}-{dynasty_i}-{AUTHOR}-{seq:02d}"
         res = seal_canvas.compose(crop, caliber="A", background="plain_white", padding_px=WHITE20_PAD)
         res2 = seal_canvas.compose(crop, caliber="A", background="plain_white", padding_px=WHITE20_PAD)
         repro_bit = bool(np.array_equal(res["canvas"], res2["canvas"]))
@@ -230,8 +259,9 @@ def main_white20() -> int:
                 "只新增 PNG，不动 O 件／另两版／库",
     }
     summary_path.write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"[done] white20 12 件：判据 ok {n_ok}/12；summary 第三变体块已回填 → make_o_canvas_summary.json")
-    return 0 if n_ok == 12 else 1
+    print(f"[done] white20 {len(SPEC['items'])} 件：判据 ok {n_ok}/{len(SPEC['items'])}；"
+          f"summary 第三变体块已回填 → {summary_path.name}")
+    return 0 if n_ok == len(SPEC["items"]) else 1
 
 
 if __name__ == "__main__":
@@ -240,5 +270,10 @@ if __name__ == "__main__":
     _ap.add_argument("--variant", choices=("full", "white20"), default="full",
                      help="full＝原行为（O 件＋paper/white 两版＋台账）；"
                           "white20＝只出第三版 …-canvas-white-20px.png（不写库、不动既有文件）")
+    _ap.add_argument("--spec", default=str(DEFAULT_SPEC),
+                     help="spec JSON（默认 batch_spec.json＝批 1；批 2 用 batch_spec_02.json）")
+    _ap.add_argument("--summary", default=str(DEFAULT_SUMMARY),
+                     help="汇总 JSON（默认 make_o_canvas_summary.json；按 seq 合并，spec 外条目原样保留）")
     _args = _ap.parse_args()
-    raise SystemExit(main() if _args.variant == "full" else main_white20())
+    raise SystemExit(main(_args.spec, _args.summary) if _args.variant == "full"
+                     else main_white20(_args.spec, _args.summary))

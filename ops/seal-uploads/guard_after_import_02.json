@@ -1,0 +1,95 @@
+{
+  "batch_ids": [
+    "seal_upload_20261013_13",
+    "seal_upload_20261013_14"
+  ],
+  "generated_at": "2026-10-13T15:55:34+08:00",
+  "counts_after": {
+    "seals": 3693,
+    "seal_links": 8964,
+    "seal_images": 6765,
+    "seal_import_batches": 4,
+    "seal_uploads": 14
+  },
+  "expected_counts": {
+    "seals": 3693,
+    "seal_links": 8964,
+    "seal_images": 6765,
+    "seal_import_batches": 4,
+    "seal_uploads": 14
+  },
+  "import": {
+    "ok": 2,
+    "skipped_replay": 0,
+    "failed": 0
+  },
+  "rows": [
+    {
+      "seq": 13,
+      "source_seal_id": "local_upload_20261013_13",
+      "batch_id": "seal_upload_20261013_13",
+      "upload_id": "up_d6e6f0ac6d020748",
+      "dynasty": "當代",
+      "dynasty_source": "kevin_2026-10-13 指定",
+      "author_name": "佚名",
+      "seal_wen": "",
+      "audit_status": "UNREVIEWED_PENDING_HUMAN_REVIEW",
+      "source_kind": "local_upload",
+      "upload_sha256": "d6e6f0ac6d020748b43b62529ad543211388ba5271b88ac14f0932fa822a134f",
+      "upload_source_path": "/Users/kevin/bistro/xiai/feicui/var/seal_uploads/seal_upload_20261013_13/image_91eca8.png",
+      "upload_width": 816,
+      "upload_height": 1164,
+      "checks": {
+        "dynasty_is_當代": true,
+        "dynasty_source_ok": true,
+        "author_is_佚名": true,
+        "seal_wen_empty": true,
+        "audit_status_ok": true,
+        "source_kind_ok": true,
+        "batch_id_is_per_seal": true,
+        "sha256_matches_source": true,
+        "width_height_ok": true,
+        "original_copied_on_disk": true
+      }
+    },
+    {
+      "seq": 14,
+      "source_seal_id": "local_upload_20261013_14",
+      "batch_id": "seal_upload_20261013_14",
+      "upload_id": "up_f76e95a25ea5ef59",
+      "dynasty": "當代",
+      "dynasty_source": "kevin_2026-10-13 指定",
+      "author_name": "佚名",
+      "seal_wen": "",
+      "audit_status": "UNREVIEWED_PENDING_HUMAN_REVIEW",
+      "source_kind": "local_upload",
+      "upload_sha256": "f76e95a25ea5ef5962ab6c433a3a42cc085bffec3ad813544dc24335d66e3923",
+      "upload_source_path": "/Users/kevin/bistro/xiai/feicui/var/seal_uploads/seal_upload_20261013_14/image_827d80.png",
+      "upload_width": 886,
+      "upload_height": 1400,
+      "checks": {
+        "dynasty_is_當代": true,
+        "dynasty_source_ok": true,
+        "author_is_佚名": true,
+        "seal_wen_empty": true,
+        "audit_status_ok": true,
+        "source_kind_ok": true,
+        "batch_id_is_per_seal": true,
+        "sha256_matches_source": true,
+        "width_height_ok": true,
+        "original_copied_on_disk": true
+      }
+    }
+  ],
+  "guards": {
+    "seals_existing_before": "010f168cea9cf8205d6c5b374c19c264c84945376a7cca98766b99210d4da99e",
+    "seals_existing_after": "010f168cea9cf8205d6c5b374c19c264c84945376a7cca98766b99210d4da99e",
+    "links_before": "06a855f737f30a07758ce83ab2abdc30ccad2a2753dbc81753e7090e052aa5c1",
+    "links_after": "06a855f737f30a07758ce83ab2abdc30ccad2a2753dbc81753e7090e052aa5c1",
+    "images_before": "fd17c19bffc5ded062dbac131b8e818a178fc0a67850534b383719bf75ad0293",
+    "images_after": "fd17c19bffc5ded062dbac131b8e818a178fc0a67850534b383719bf75ad0293",
+    "batches_before": "29a8b76bfa474fa8730e58028e8335c703f754460e9a78c6f26af4907b73a19c",
+    "batches_after": "29a8b76bfa474fa8730e58028e8335c703f754460e9a78c6f26af4907b73a19c"
+  },
+  "all_checks_pass": true
+}

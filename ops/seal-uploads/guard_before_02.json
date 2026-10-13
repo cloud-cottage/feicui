@@ -1,0 +1,330 @@
+{
+  "generated_at": "2026-10-13T15:55:13+08:00",
+  "note": "seal-uploads 批 2 写前指纹（＝批 1 导入后的库状态：seals 3691 行全量）；「既有行」判据＝WHERE source_seal_id NOT IN (两个新 id)",
+  "algorithm": "guard = sha256 over canonical jsonl (one json.dumps(list(row),ensure_ascii=False,separators=(',',':')) per row + '\\n'), rows ordered by the stated key; full column list snapshotted in 'schemas'",
+  "seal_ingest": {
+    "db_path": "/Users/kevin/bistro/xiai/feicui/var/seal_ingest.db",
+    "backup": "/Users/kevin/.hermes/profiles/zang/cache/scratch/seal-uploads-20261013-b2/seal_ingest.backup-20261013-b2.db",
+    "counts": {
+      "seals": 3691,
+      "seal_links": 8964,
+      "seal_images": 6765,
+      "seal_import_batches": 2,
+      "seal_uploads": 12
+    },
+    "sha256": {
+      "seals_before": "010f168cea9cf8205d6c5b374c19c264c84945376a7cca98766b99210d4da99e",
+      "fudan_rows_before": "2214e13c3df5f3c7018956b6791dd6856bf5c3845a079730125059e0c99aa6d6",
+      "links_before": "06a855f737f30a07758ce83ab2abdc30ccad2a2753dbc81753e7090e052aa5c1",
+      "images_before": "fd17c19bffc5ded062dbac131b8e818a178fc0a67850534b383719bf75ad0293",
+      "batches_before": "29a8b76bfa474fa8730e58028e8335c703f754460e9a78c6f26af4907b73a19c"
+    },
+    "schemas": {
+      "seals": [
+        [
+          "source_seal_id",
+          "TEXT"
+        ],
+        [
+          "seal_uri",
+          "TEXT"
+        ],
+        [
+          "category",
+          "TEXT"
+        ],
+        [
+          "seal_wen",
+          "TEXT"
+        ],
+        [
+          "seal_wen_chs",
+          "TEXT"
+        ],
+        [
+          "seal_wen_pinyin",
+          "TEXT"
+        ],
+        [
+          "seal_wen_wzly",
+          "TEXT"
+        ],
+        [
+          "seal_wen_wzly_chs",
+          "TEXT"
+        ],
+        [
+          "seal_wen_yssw",
+          "TEXT"
+        ],
+        [
+          "seal_wen_yssw_chs",
+          "TEXT"
+        ],
+        [
+          "seal_wen_wyz",
+          "TEXT"
+        ],
+        [
+          "seal_wen_zjsw",
+          "TEXT"
+        ],
+        [
+          "seal_wen_zjsw_chs",
+          "TEXT"
+        ],
+        [
+          "seal_ys_xz",
+          "INTEGER"
+        ],
+        [
+          "seal_ys_label",
+          "TEXT"
+        ],
+        [
+          "seal_ys_kf",
+          "TEXT"
+        ],
+        [
+          "seal_ys_st",
+          "TEXT"
+        ],
+        [
+          "seal_zyz",
+          "TEXT"
+        ],
+        [
+          "seal_yz",
+          "TEXT"
+        ],
+        [
+          "seal_yz_person_name",
+          "TEXT"
+        ],
+        [
+          "seal_yz_person_name_chs",
+          "TEXT"
+        ],
+        [
+          "seal_yz_name",
+          "TEXT"
+        ],
+        [
+          "seal_yz_ref_id",
+          "TEXT"
+        ],
+        [
+          "seal_yzzkz",
+          "TEXT"
+        ],
+        [
+          "seal_yzzkz_chs",
+          "TEXT"
+        ],
+        [
+          "seal_yzzkz_id",
+          "TEXT"
+        ],
+        [
+          "seal_bk",
+          "TEXT"
+        ],
+        [
+          "seal_bk_chs",
+          "TEXT"
+        ],
+        [
+          "seal_bkzkz",
+          "TEXT"
+        ],
+        [
+          "seal_bkzkz_chs",
+          "TEXT"
+        ],
+        [
+          "seal_bkzkz_id",
+          "TEXT"
+        ],
+        [
+          "as_book_id",
+          "TEXT"
+        ],
+        [
+          "related_book",
+          "TEXT"
+        ],
+        [
+          "seal_yt_url",
+          "TEXT"
+        ],
+        [
+          "seal_ytsw_url",
+          "TEXT"
+        ],
+        [
+          "seal_yzbk_url",
+          "TEXT"
+        ],
+        [
+          "seal_yzqt_url",
+          "TEXT"
+        ],
+        [
+          "seal_threed_url",
+          "TEXT"
+        ],
+        [
+          "seal_title",
+          "TEXT"
+        ],
+        [
+          "seal_title_chs",
+          "TEXT"
+        ],
+        [
+          "seal_org",
+          "TEXT"
+        ],
+        [
+          "seal_org_name",
+          "TEXT"
+        ],
+        [
+          "seal_cz",
+          "TEXT"
+        ],
+        [
+          "seal_cc",
+          "TEXT"
+        ],
+        [
+          "seal_ly",
+          "TEXT"
+        ],
+        [
+          "seal_yn",
+          "TEXT"
+        ],
+        [
+          "seal_yksj_lsjn",
+          "TEXT"
+        ],
+        [
+          "seal_yksj_lsjn_chs",
+          "TEXT"
+        ],
+        [
+          "seal_yksj_gyjn",
+          "TEXT"
+        ],
+        [
+          "audit_status",
+          "TEXT"
+        ],
+        [
+          "misc",
+          "TEXT"
+        ],
+        [
+          "raw_json",
+          "TEXT"
+        ],
+        [
+          "batch_id",
+          "TEXT"
+        ],
+        [
+          "updated_at",
+          "TEXT"
+        ]
+      ]
+    }
+  },
+  "yinpu": {
+    "path": "/Users/kevin/bistro/xiai/data/yinpu.db",
+    "note": "沿批 1 guard_before.json 原文（本批红线：一字不写）",
+    "stat_before": {
+      "": {
+        "size": 3182592,
+        "mtime_ns": 1791862472028118632
+      },
+      "-wal": {
+        "size": 0,
+        "mtime_ns": 1791862759698075283
+      },
+      "-shm": {
+        "size": 32768,
+        "mtime_ns": 1791872176961486667
+      }
+    },
+    "tables_present": [
+      "export_batches",
+      "export_records",
+      "images",
+      "job_pages",
+      "jobs",
+      "schema_migrations",
+      "seals",
+      "sqlite_sequence",
+      "stamps"
+    ],
+    "counts": {
+      "stamps": 8708,
+      "jobs": 12,
+      "job_pages": 1170
+    },
+    "stamps_dump_sha256": "cdcf45e130ef2da70ef1017932a40c4f871d25287c4c21977489cddf645ee5fb",
+    "stamps_cols": [
+      "id",
+      "pdf_name",
+      "page",
+      "idx",
+      "text",
+      "img_path",
+      "x1",
+      "y1",
+      "x2",
+      "y2",
+      "col",
+      "row",
+      "img_path_tiff",
+      "dup_kind",
+      "dup_of_id",
+      "dup_algo"
+    ]
+  },
+  "source_images": [
+    {
+      "seq": 13,
+      "source_filename": "image_91eca8.png",
+      "source_path": "/Users/kevin/Library/Application Support/Hermes/composer-images/image_91eca8.png",
+      "sha256": "d6e6f0ac6d020748b43b62529ad543211388ba5271b88ac14f0932fa822a134f",
+      "bytes": 337484
+    },
+    {
+      "seq": 14,
+      "source_filename": "image_827d80.png",
+      "source_path": "/Users/kevin/Library/Application Support/Hermes/composer-images/image_827d80.png",
+      "sha256": "f76e95a25ea5ef5962ab6c433a3a42cc085bffec3ad813544dc24335d66e3923",
+      "bytes": 1709293
+    }
+  ],
+  "batch_plan": [
+    {
+      "seq": 13,
+      "batch_id": "seal_upload_20261013_13",
+      "source_seal_id": "local_upload_20261013_13",
+      "dynasty": "當代",
+      "dynasty_source": "kevin_2026-10-13 指定",
+      "author": "佚名"
+    },
+    {
+      "seq": 14,
+      "batch_id": "seal_upload_20261013_14",
+      "source_seal_id": "local_upload_20261013_14",
+      "dynasty": "當代",
+      "dynasty_source": "kevin_2026-10-13 指定",
+      "author": "佚名"
+    }
+  ]
+}

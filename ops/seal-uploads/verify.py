@@ -1,12 +1,16 @@
 #!/usr/bin/env python
-"""seal-uploads 批 1 终验（独立复算；Kevin 2026-10-13 单）——真读数，不采信批跑自报。
+"""seal-uploads 批 1＋批 2 终验（独立复算；Kevin 2026-10-13 单）——真读数，不采信批跑自报。
 
-核：① seals 计数＋12 行逐项＋既有行指纹 before≡after；② O 件 12 件（容器/尺寸＝bbox+40px clamp/
-解码像素≡源裁区/四边留白 20px 数值验证）；③ canvas 24 件（1200/62% 居中/角部色域/掩膜外无印泥，
-paper 与 plain_white 各一份判据）；③b canvas 第三版（white-20px）12 件（Kevin 2026-10-13 追加：
-长边 1200/四周留白恰 20px/主体 0.9667/冻结 bit_exact/背景纯白 std=0/晕染 α≤8% 且掩膜内≡0/
-居中偏差 ≤1px/同参复算可复现/成品像素≡独立复算）＋③c 既有产物 sha 未动（O 件＋两版 canvas）；
-④ 12 张原件 sha 未动；⑤ yinpu.db 一字未写（scratch 副本指纹）；
+批 1＝12 张（戰國）；批 2＝2 张（Kevin 2026-10-13 追加，朝代＝**當代**、作者＝佚名、释文留空，
+每张一个批次 `seal_upload_20261013_13/_14`）。现共 **14 件**，判据：
+① seals 计数（3693）＋ 14 行逐项 ＋ 既有行指纹 before≡after（批 1 口径：fudan 3679 行；
+   批 2 口径：写前全量 **3691 行**，`WHERE source_seal_id NOT IN (两个新 id)`，guard_before_02.json）；
+② O 件 14 件（容器/尺寸＝bbox+40px clamp/解码像素≡源裁区/四边留白 20px 数值验证）；
+③ canvas 28 件（1200/62% 居中/角部色域/掩膜外无印泥，paper 与 plain_white 各一份判据）；
+③b canvas 第三版（white-20px）14 件（长边 1200/四周留白恰 20px/主体 0.9667/冻结 bit_exact/
+   背景纯白 std=0/晕染 α≤8% 且掩膜内≡0/居中偏差 ≤1px/同参复算可复现/成品像素≡独立复算）；
+③c **批 1 既有产物 36 文件 sha 未动**（O 件 12＋两版 canvas 24；批 2 新件另经 ②/③/③b 断言）；
+④ 14 张原件 sha 未动（批 1 十二张＋批 2 两张源图与 var 副本）；⑤ yinpu.db 一字未写（scratch 副本指纹）；
 ⑥ 生产 API 活读数（5196）。结果 → `verify.json`；判据全过退出 0。
 
 跑法：`feicui/venv/bin/python ops/seal-uploads/verify.py`
@@ -30,6 +34,8 @@ from app import seal_canvas  # noqa: E402
 
 OPS = REPO / "ops" / "seal-uploads"
 GUARD = json.loads((OPS / "guard_before.json").read_text(encoding="utf-8"))
+GUARD2 = json.loads((OPS / "guard_before_02.json").read_text(encoding="utf-8"))
+SPEC2 = json.loads((OPS / "batch_spec_02.json").read_text(encoding="utf-8"))
 SUMMARY = json.loads((OPS / "make_o_canvas_summary.json").read_text(encoding="utf-8"))
 OUT_DIR = REPO / "output" / "seals" / "无信息"
 DB = REPO / "var" / "seal_ingest.db"
@@ -73,16 +79,32 @@ def main() -> int:
               for t in ("seals", "seal_links", "seal_images", "seal_import_batches", "seal_uploads")}
     con.close()
     res["db_counts"] = counts
-    check("seals=3691", counts["seals"] == 3691, counts)
-    check("seal_uploads=12", counts["seal_uploads"] == 12, counts)
+    check("seals=3693", counts["seals"] == 3693, counts)
+    check("seal_uploads=14", counts["seal_uploads"] == 14, counts)
     check("seal_links=8964 不变", counts["seal_links"] == 8964, counts)
     check("seal_images=6765 不变", counts["seal_images"] == 6765, counts)
-    check("batches=2（原1＋本批1）", counts["seal_import_batches"] == 2, counts)
+    check("batches=4（fudan1＋批1 1＋批2 2）", counts["seal_import_batches"] == 4, counts)
 
     h_after = dump_hash(cols_before, "WHERE source_kind='fudan_api'")
     res["existing_rows_fingerprint"] = {"sha256": h_after, "before": GUARD["seal_ingest"]["sha256"]["seals_before"]}
-    check("既有 3679 行指纹 before≡after",
+    check("既有 fudan 3679 行指纹 before≡after（批 1 guard）",
           h_after == GUARD["seal_ingest"]["sha256"]["seals_before"], h_after[:16])
+
+    # 批 2 口径：写前全量 3691 行（＝批 1 后状态）零改动（guard_before_02.json）
+    con_n = sqlite3.connect(DB)
+    n_existing = con_n.execute(
+        "SELECT COUNT(*) FROM seals WHERE source_seal_id NOT IN "
+        "('local_upload_20261013_13','local_upload_20261013_14')").fetchone()[0]
+    con_n.close()
+    h_existing2 = dump_hash(cols_before, "WHERE source_seal_id NOT IN "
+                                          "('local_upload_20261013_13','local_upload_20261013_14')")
+    res["existing_rows_fingerprint_b2"] = {"rows": n_existing, "sha256": h_existing2,
+                                           "before": GUARD2["seal_ingest"]["sha256"]["seals_before"]}
+    check("既有 3691 行指纹 before≡after（批 2 guard；＝fudan 3679＋批1 12）",
+          n_existing == 3691 and h_existing2 == GUARD2["seal_ingest"]["sha256"]["seals_before"],
+          (n_existing, h_existing2[:16]))
+    check("批 2 guard 自洽：fudan 子集指纹 ≡ 批 1 guard",
+          GUARD2["seal_ingest"]["sha256"]["fudan_rows_before"] == GUARD["seal_ingest"]["sha256"]["seals_before"])
 
     con = sqlite3.connect(DB)
     con.row_factory = sqlite3.Row
@@ -90,7 +112,7 @@ def main() -> int:
         "SELECT * FROM seals WHERE source_kind='local_upload' ORDER BY source_seal_id")}
     ups = {r["seq"]: dict(r) for r in con.execute("SELECT * FROM seal_uploads ORDER BY seq")}
     con.close()
-    check("local_upload 行数=12", len(rows) == 12, len(rows))
+    check("local_upload 行数=14（批1 12＋批2 2）", len(rows) == 14, len(rows))
     row_checks = []
     for item in GUARD["source_images"]:
         seq = int(item["seq"])
@@ -108,6 +130,26 @@ def main() -> int:
         row_checks.append({"seq": item["seq"], "source_seal_id": sid, "ok": bool(ok)})
         check(f"行{item['seq']} {sid} 逐项断言", bool(ok))
     res["rows"] = row_checks
+
+    # 批 2（Kevin 2026-10-13 追加 2 张：朝代＝當代；每张一个批次，目录与 batch_id 同名）
+    row_checks2 = []
+    for item in SPEC2["items"]:
+        seq = int(item["seq"])
+        sid = item["source_seal_id"]
+        r = rows.get(sid)
+        up = ups.get(seq)
+        ok = (r is not None and up is not None
+              and r["dynasty"] == SPEC2["dynasty"] and r["dynasty_source"] == "kevin_2026-10-13 指定"
+              and r["author_name"] == "佚名" and r["seal_wen"] == ""
+              and r["audit_status"] == "UNREVIEWED_PENDING_HUMAN_REVIEW"
+              and r["source_kind"] == "local_upload" and r["batch_id"] == item["batch_id"]
+              and up["sha256"] == item["sha256"] and up["source_seal_id"] == sid
+              and Path(up["source_path"]).is_file()
+              and Path(up["source_path"]).parent.name == item["batch_id"]
+              and sha_file(Path(up["source_path"])) == item["sha256"])
+        row_checks2.append({"seq": seq, "source_seal_id": sid, "batch_id": item["batch_id"], "ok": bool(ok)})
+        check(f"行{seq} {sid} 逐项断言（當代）", bool(ok))
+    res["rows_batch2"] = row_checks2
 
     # ── ② O 件 ─────────────────────────────────────────────────────────────────────
     o_checks = []
@@ -205,6 +247,9 @@ def main() -> int:
     # 判据：长边 1200；几何四周留白恰 20px（独立复算 compose ⇒ 与成品逐像素相等，构图量即成品的量）；
     # 主体/画布＝0.9667；冻结 bit_exact；背景纯白 std=0；晕染 α≤8% 且掩膜内≡0；居中偏差 ≤1px；
     # 同参复算逐像素可复现；掩膜外无印泥；角部纯白；成品像素口径（掩膜/非白 bbox 留白）如实登记。
+    # 注：批 1 的 12 张 white20 已被 Kevin 本人移入子目录 `异形印章 1200px 裁切原图/`（sha 未变）——
+    # 与 paper 版同法，验证接受「规范位置 ∨ 用户子目录」两处，如实记录 relocate 状态（06 曾在搬移中
+    # 遗失，已按批 1 记录的确定性参数重算重建，sha256 位级同一件，见 README）。
     w20_checks = []
     W20_PAD = 20
     for it in SUMMARY["items"]:
@@ -212,7 +257,9 @@ def main() -> int:
         seq = it["seq"]
         name20 = Path(it["canvas_plain_white"]["png"]).name.replace("-canvas-white.png",
                                                                     "-canvas-white-20px.png")
-        p = OUT_DIR / name20
+        canonical20 = OUT_DIR / name20
+        relocated20 = OUT_DIR / "异形印章 1200px 裁切原图" / name20
+        p = canonical20 if canonical20.is_file() else relocated20
         name_ok = b is not None and Path(b["png"]).name == name20
         ok_have = b is not None and p.is_file()
         data = p.read_bytes() if ok_have else b""
@@ -271,6 +318,7 @@ def main() -> int:
             moff = (0.0, 0.0)
         sha_ok = bool(ok_have and hashlib.sha256(data).hexdigest() == b["png_sha256"])
         row = {"seq": seq, "file": name20, "naming_ok": name_ok, "exists": ok_have,
+               "at_canonical_path": p == canonical20, "path": str(p),
                "png_magic": png_magic, "size": [w, h], "long_side_1200": long_ok,
                "padding_rect_px": pad_sides, "padding_rect_ok": pad_ok,
                "padding_mask_bbox_px": mask_pad_px, "padding_mask_bbox_ok": mask_pad_ok,
@@ -308,32 +356,45 @@ def main() -> int:
         check(f"w20{seq} 像素口径居中≤1px", center_px_ok, moff)
         check(f"w20{seq} sha256≡summary", sha_ok)
     res["canvases_white20"] = w20_checks
-    n_w20 = sum(1 for _ in OUT_DIR.glob("*-canvas-white-20px.png"))
-    check("white20 恰 12 张", n_w20 == 12, n_w20)
+    _w20_names = ({p.name for p in OUT_DIR.glob("*-canvas-white-20px.png")}
+                  | {p.name for p in (OUT_DIR / "异形印章 1200px 裁切原图").glob("*-canvas-white-20px.png")})
+    check("white20 恰 14 张（批1 12 在 Kevin 子目录＋批2 2 规范位）", len(_w20_names) == 14, len(_w20_names))
 
-    # ── ③c 既有产物 sha 未动（O 件 12 ＋ 两版 canvas 24；本单只新增第三版 12 张）──────────
+    # ── ③c 既有产物 sha 未动（**批 1 的 36 件**＝O 12＋两版 canvas 24 是冻结锚；批 2 新件另经 ②/③/③b）──
     unchanged = []
     for it in SUMMARY["items"]:
+        batch_no = 1 if int(it["seq"]) <= 12 else 2
         o_p = OUT_DIR / it["o"]["name"]
         ok_o = o_p.is_file() and sha_file(o_p) == it["o"]["tiff_sha256_file"]
-        unchanged.append({"seq": it["seq"], "what": it["o"]["name"], "ok": bool(ok_o)})
+        unchanged.append({"seq": it["seq"], "batch": batch_no, "what": it["o"]["name"], "ok": bool(ok_o)})
         check(f"既有 {it['o']['name']} sha 未动", ok_o)
         for key in ("canvas_paper", "canvas_plain_white"):
             canonical = OUT_DIR / Path(it[key]["png"]).name
             relocated = OUT_DIR / "异形印章 1200px" / Path(it[key]["png"]).name
             cp = canonical if canonical.is_file() else relocated
             ok_c = cp.is_file() and sha_file(cp) == it[key]["png_sha256"]
-            unchanged.append({"seq": it["seq"], "what": Path(it[key]["png"]).name,
+            unchanged.append({"seq": it["seq"], "batch": batch_no, "what": Path(it[key]["png"]).name,
                               "ok": bool(ok_c), "at_canonical_path": cp == canonical})
             check(f"既有 {Path(it[key]['png']).name} sha 未动", ok_c)
     res["existing_outputs_unchanged"] = unchanged
+    b1_rows = [u for u in unchanged if u.get("batch") == 1]
+    check("批 1 既有 36 文件 sha 全部未动（O 12＋两版 canvas 24）",
+          len(b1_rows) == 36 and all(u["ok"] for u in b1_rows), len(b1_rows))
 
     # ── ④ 原件 sha ─────────────────────────────────────────────────────────────────
     src_ok = []
     for item in GUARD["source_images"]:
         ok = sha_file(Path(item["source_path"])) == item["sha256"]
-        src_ok.append({"file": item["source_filename"], "unchanged": ok})
+        src_ok.append({"batch": 1, "file": item["source_filename"], "unchanged": ok})
         check(f"原件未动 {item['source_filename']}", ok)
+    for item in SPEC2["items"]:
+        p_orig = Path(item["source_original"])
+        p_copy = Path(item["source_path"])
+        ok_orig = p_orig.is_file() and sha_file(p_orig) == item["sha256"]
+        ok_copy = p_copy.is_file() and sha_file(p_copy) == item["sha256"]
+        src_ok.append({"batch": 2, "file": item["source_filename"], "unchanged": bool(ok_orig and ok_copy),
+                       "original_still_on_disk": bool(ok_orig), "var_copy_ok": bool(ok_copy)})
+        check(f"原件未动 {item['source_filename']}（源＋var 副本）", bool(ok_orig and ok_copy))
     res["sources_unchanged"] = src_ok
 
     # ── ⑤ yinpu.db 未写 ────────────────────────────────────────────────────────────
@@ -370,6 +431,10 @@ def main() -> int:
         with urllib.request.urlopen("http://127.0.0.1:5196/api/seals/local_upload_20261013_01", timeout=10) as resp:
             d = json.loads(resp.read())
             api["upload_row"] = {k: d.get(k) for k in ("dynasty", "author_name", "seal_wen", "audit_status", "source_kind")}
+        with urllib.request.urlopen("http://127.0.0.1:5196/api/seals/local_upload_20261013_13", timeout=10) as resp:
+            d = json.loads(resp.read())
+            api["upload_row_b2"] = {k: d.get(k) for k in ("dynasty", "author_name", "seal_wen",
+                                                          "audit_status", "source_kind", "batch_id")}
         req = urllib.request.Request("http://127.0.0.1:5196/api/seals/uploads", data=b"", method="POST",
                                      headers={"Content-Type": "application/json"})
         try:
@@ -380,9 +445,10 @@ def main() -> int:
     except Exception as exc:  # noqa: BLE001
         api["error"] = repr(exc)
     res["api"] = api
-    check("API total=3691", api.get("list_total") == 3691, api.get("list_total"))
+    check("API total=3693", api.get("list_total") == 3693, api.get("list_total"))
     check("API 列表带新字段", bool(api.get("list_has_new_fields")))
-    check("API 上传行可读", api.get("upload_row", {}).get("dynasty") == "戰國")
+    check("API 批 1 上传行可读（戰國）", api.get("upload_row", {}).get("dynasty") == "戰國")
+    check("API 批 2 上传行可读（當代）", api.get("upload_row_b2", {}).get("dynasty") == "當代")
     check("API uploads 路由活（400 拒非 multipart）", bool(api.get("uploads_route_rejects_non_multipart")))
 
     res["fails"] = FAILS

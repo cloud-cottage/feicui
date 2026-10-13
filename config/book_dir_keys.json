@@ -76,34 +76,43 @@
     "rows_rewritten_img_path_tiff": 8455,
     "books": {
       "秦汉印典 上海书画 金怀英  1997 ok.pdf": {
-        "from": "9787806350959",
-        "to": "9787806350959"
+        "from": "7806350950",
+        "to": "9787806350959",
+        "dir_moved": true
       },
       "古玺汇编 文物出版社 罗福颐  ok.pdf": {
-        "from": "9787501007981",
-        "to": "9787501007981"
+        "from": "7501007985",
+        "to": "9787501007981",
+        "dir_moved": true
       },
       "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf": {
-        "from": "黄牧甫印谱",
-        "to": "黄牧甫印谱"
+        "from": "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk)",
+        "to": "黄牧甫印谱",
+        "dir_moved": false,
+        "note": "配置键由长名改为规范书名；盘上目录与库内路径**本已**是「黄牧甫印谱」⇒ 未 mv、未改库（no-op）"
       },
       "秦印类编 检索版.pdf": {
-        "from": "9787550847224",
-        "to": "9787550847224"
+        "from": "秦印类编 检索版",
+        "to": "9787550847224",
+        "dir_moved": true
       },
       "tmp.pdf": {
         "from": "tmp.pdf",
-        "to": "tmp.pdf"
+        "to": "tmp.pdf",
+        "dir_moved": false
       },
       "吴颐人篆刻作品展示.pdf": {
         "from": "吴颐人篆刻作品展示",
-        "to": "吴颐人篆刻作品展示"
+        "to": "吴颐人篆刻作品展示",
+        "dir_moved": false
       },
       "福庵印缀 原版 高清.pdf": {
-        "from": "福庵印缀",
-        "to": "福庵印缀"
+        "from": "福庵印缀 原版 高清",
+        "to": "福庵印缀",
+        "dir_moved": true
       }
     },
+    "correction_note": "Zang 2026-10-13 更正：本块初版把 `books[].from` 误写成与 `to` 相同（7/7 相等）⇒ 无法据以判迁移前键，已按 `ops/dirkey-migration/README.md §1` 的映射表逐条回填真实前键，并加 `dir_moved` 区分「改名」与「仅配置键变更（no-op）」。",
     "evidence": "ops/dirkey-migration/"
   }
 }

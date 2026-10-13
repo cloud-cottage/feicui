@@ -1,0 +1,128 @@
+{
+  "schema": "feicui.book-page-2400.first_seal_probe.v1",
+  "page": 29,
+  "scan": {
+    "dpi": 300.0,
+    "size_px": [
+      2125,
+      3059
+    ]
+  },
+  "detector": {
+    "ink_mask": "server/app/colorcal.ink_mask (V2: r>g+15 ∧ r>b+15 ∧ S>0.25)",
+    "close_px": 15,
+    "min_area_300dpi": 4000,
+    "max_aspect": 2.0
+  },
+  "candidates": [
+    {
+      "x0": 533,
+      "y0": 555,
+      "x1": 798,
+      "y1": 823,
+      "w": 265,
+      "h": 268,
+      "area": 65832,
+      "aspect": 1.011,
+      "read_order": 1,
+      "grid_row": 1,
+      "grid_col": 1
+    },
+    {
+      "x0": 1422,
+      "y0": 560,
+      "x1": 1565,
+      "y1": 820,
+      "w": 143,
+      "h": 260,
+      "area": 33960,
+      "aspect": 1.818,
+      "read_order": 2,
+      "grid_row": 1,
+      "grid_col": 2
+    },
+    {
+      "x0": 513,
+      "y0": 1387,
+      "x1": 813,
+      "y1": 1661,
+      "w": 300,
+      "h": 274,
+      "area": 75132,
+      "aspect": 1.095,
+      "read_order": 3,
+      "grid_row": 2,
+      "grid_col": 1
+    },
+    {
+      "x0": 1359,
+      "y0": 1399,
+      "x1": 1627,
+      "y1": 1651,
+      "w": 268,
+      "h": 252,
+      "area": 63267,
+      "aspect": 1.063,
+      "read_order": 4,
+      "grid_row": 2,
+      "grid_col": 2
+    },
+    {
+      "x0": 540,
+      "y0": 2214,
+      "x1": 781,
+      "y1": 2478,
+      "w": 241,
+      "h": 264,
+      "area": 57891,
+      "aspect": 1.095,
+      "read_order": 5,
+      "grid_row": 3,
+      "grid_col": 1
+    },
+    {
+      "x0": 1357,
+      "y0": 2218,
+      "x1": 1625,
+      "y1": 2475,
+      "w": 268,
+      "h": 257,
+      "area": 64850,
+      "aspect": 1.043,
+      "read_order": 6,
+      "grid_row": 3,
+      "grid_col": 2
+    }
+  ],
+  "candidate_count": 6,
+  "reading_order_definition": "上→下（行带聚合）→ 行内左→右",
+  "first_seal": {
+    "read_order": 1,
+    "grid": "C1-R1",
+    "bbox_300dpi": [
+      533,
+      555,
+      798,
+      823
+    ],
+    "size_px_300dpi": [
+      265,
+      268
+    ],
+    "bbox_2400dpi": [
+      4264,
+      4440,
+      6384,
+      6584
+    ],
+    "size_px_2400dpi": [
+      2120,
+      2144
+    ],
+    "size_mm": [
+      22.437,
+      22.691
+    ]
+  },
+  "ink_ratio": 0.039083
+}

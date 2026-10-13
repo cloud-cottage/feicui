@@ -1,0 +1,945 @@
+{
+  "schema": "feicui.book-page-2400.readings.v2",
+  "generator": "ops/book-page-2400/render_page_2400.py",
+  "page": 29,
+  "source": {
+    "pdf": "inbox/20261011/秦印类编 检索版.pdf",
+    "page": 29,
+    "xref": 112,
+    "embedded_jpeg_md5": "4b45bfe1a899e69e0ecb3dbe1751b18a",
+    "size_px": [
+      2125,
+      3059
+    ],
+    "dpi": 300,
+    "text_layer": "无（纯图版页）"
+  },
+  "params": {
+    "scan_dpi": 300,
+    "target_dpi": 2400,
+    "upsample_factor": 8,
+    "source_px": [
+      2125,
+      3059
+    ],
+    "output_px": [
+      17000,
+      24472
+    ],
+    "bit_depth": 48,
+    "samples_per_pixel": 3,
+    "bits_per_sample": 16,
+    "container": {
+      "compression_tag": 8,
+      "predictor": 2,
+      "photometric": "rgb",
+      "planarconfig": "contig",
+      "bigtiff": true
+    },
+    "encoder": "tifffile 自带 deflate+predictor（本脚本只供原始 uint16 像素）",
+    "strip_out_rows": 256,
+    "margin_src_rows": 8,
+    "paper_rule": {
+      "min_gray": 210.0,
+      "max_sat": 0.15
+    },
+    "paper_texture": {
+      "seed": 20261013,
+      "colour_range_rgb": [
+        [
+          250,
+          250,
+          247
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ],
+      "base_rgb": [
+        252.5,
+        252.5,
+        250.5
+      ],
+      "grain_sigma": 0.85,
+      "fiber_sigma": 1.45,
+      "chroma_sigma": 0.3,
+      "fiber_cell_px": [
+        66,
+        7
+      ],
+      "fiber_std_probe": 0.214706,
+      "noise": "numpy uint64 splitmix64 位置哈希（与分块顺序无关）"
+    },
+    "halo": {
+      "band_out_px": 16,
+      "alpha_max": 0.08,
+      "colour_rgb": [
+        239.42,
+        66.7,
+        62.968
+      ],
+      "restricted_to_paper": true
+    },
+    "color_calib": {
+      "strength": 0.0,
+      "mode": "归一化色度向全页印泥均值收敛（保 R+G+B 不变）",
+      "chroma_mean": [
+        0.669961,
+        0.169944
+      ],
+      "conflict": "与『内容零色彩改动』冲突 ⇒ 待裁；--color-calib 0 即完全冻结"
+    },
+    "crop": {
+      "bits": 8,
+      "box_300dpi": [
+        533,
+        555,
+        798,
+        823
+      ],
+      "box_2400dpi": [
+        4264,
+        4440,
+        6384,
+        6584
+      ],
+      "quantizer": "q8 = round(page_u16 / 257)"
+    }
+  },
+  "render": {
+    "out_path": "output/book-pages/9787550847224/P29-2400dpi-48bit-frozen.tif",
+    "out_bytes": 1906199278,
+    "shape": [
+      24472,
+      17000,
+      3
+    ],
+    "dtype": "uint16",
+    "bits_per_pixel": 48,
+    "rowsperstrip": 256,
+    "strips": 96,
+    "strip_stats": [
+      {
+        "strip": 0,
+        "y0": 0,
+        "y1": 256,
+        "seconds": 0.876
+      },
+      {
+        "strip": 1,
+        "y0": 256,
+        "y1": 512,
+        "seconds": 0.854
+      },
+      {
+        "strip": 2,
+        "y0": 512,
+        "y1": 768,
+        "seconds": 0.869
+      },
+      {
+        "strip": 3,
+        "y0": 768,
+        "y1": 1024,
+        "seconds": 0.847
+      },
+      {
+        "strip": 4,
+        "y0": 1024,
+        "y1": 1280,
+        "seconds": 0.859
+      },
+      {
+        "strip": 5,
+        "y0": 1280,
+        "y1": 1536,
+        "seconds": 0.83
+      },
+      {
+        "strip": 6,
+        "y0": 1536,
+        "y1": 1792,
+        "seconds": 0.847
+      },
+      {
+        "strip": 7,
+        "y0": 1792,
+        "y1": 2048,
+        "seconds": 0.804
+      },
+      {
+        "strip": 8,
+        "y0": 2048,
+        "y1": 2304,
+        "seconds": 0.844
+      },
+      {
+        "strip": 9,
+        "y0": 2304,
+        "y1": 2560,
+        "seconds": 0.906
+      },
+      {
+        "strip": 10,
+        "y0": 2560,
+        "y1": 2816,
+        "seconds": 0.852
+      },
+      {
+        "strip": 11,
+        "y0": 2816,
+        "y1": 3072,
+        "seconds": 0.839
+      },
+      {
+        "strip": 12,
+        "y0": 3072,
+        "y1": 3328,
+        "seconds": 0.847
+      },
+      {
+        "strip": 13,
+        "y0": 3328,
+        "y1": 3584,
+        "seconds": 0.829
+      },
+      {
+        "strip": 14,
+        "y0": 3584,
+        "y1": 3840,
+        "seconds": 0.844
+      },
+      {
+        "strip": 15,
+        "y0": 3840,
+        "y1": 4096,
+        "seconds": 0.819
+      },
+      {
+        "strip": 16,
+        "y0": 4096,
+        "y1": 4352,
+        "seconds": 0.84
+      },
+      {
+        "strip": 17,
+        "y0": 4352,
+        "y1": 4608,
+        "seconds": 0.924
+      },
+      {
+        "strip": 18,
+        "y0": 4608,
+        "y1": 4864,
+        "seconds": 0.901
+      },
+      {
+        "strip": 19,
+        "y0": 4864,
+        "y1": 5120,
+        "seconds": 0.9
+      },
+      {
+        "strip": 20,
+        "y0": 5120,
+        "y1": 5376,
+        "seconds": 0.908
+      },
+      {
+        "strip": 21,
+        "y0": 5376,
+        "y1": 5632,
+        "seconds": 0.884
+      },
+      {
+        "strip": 22,
+        "y0": 5632,
+        "y1": 5888,
+        "seconds": 0.896
+      },
+      {
+        "strip": 23,
+        "y0": 5888,
+        "y1": 6144,
+        "seconds": 0.891
+      },
+      {
+        "strip": 24,
+        "y0": 6144,
+        "y1": 6400,
+        "seconds": 0.9
+      },
+      {
+        "strip": 25,
+        "y0": 6400,
+        "y1": 6656,
+        "seconds": 0.898
+      },
+      {
+        "strip": 26,
+        "y0": 6656,
+        "y1": 6912,
+        "seconds": 0.853
+      },
+      {
+        "strip": 27,
+        "y0": 6912,
+        "y1": 7168,
+        "seconds": 0.827
+      },
+      {
+        "strip": 28,
+        "y0": 7168,
+        "y1": 7424,
+        "seconds": 0.839
+      },
+      {
+        "strip": 29,
+        "y0": 7424,
+        "y1": 7680,
+        "seconds": 0.843
+      },
+      {
+        "strip": 30,
+        "y0": 7680,
+        "y1": 7936,
+        "seconds": 0.879
+      },
+      {
+        "strip": 31,
+        "y0": 7936,
+        "y1": 8192,
+        "seconds": 0.837
+      },
+      {
+        "strip": 32,
+        "y0": 8192,
+        "y1": 8448,
+        "seconds": 0.923
+      },
+      {
+        "strip": 33,
+        "y0": 8448,
+        "y1": 8704,
+        "seconds": 0.892
+      },
+      {
+        "strip": 34,
+        "y0": 8704,
+        "y1": 8960,
+        "seconds": 0.898
+      },
+      {
+        "strip": 35,
+        "y0": 8960,
+        "y1": 9216,
+        "seconds": 0.841
+      },
+      {
+        "strip": 36,
+        "y0": 9216,
+        "y1": 9472,
+        "seconds": 0.926
+      },
+      {
+        "strip": 37,
+        "y0": 9472,
+        "y1": 9728,
+        "seconds": 0.819
+      },
+      {
+        "strip": 38,
+        "y0": 9728,
+        "y1": 9984,
+        "seconds": 0.904
+      },
+      {
+        "strip": 39,
+        "y0": 9984,
+        "y1": 10240,
+        "seconds": 0.829
+      },
+      {
+        "strip": 40,
+        "y0": 10240,
+        "y1": 10496,
+        "seconds": 0.851
+      },
+      {
+        "strip": 41,
+        "y0": 10496,
+        "y1": 10752,
+        "seconds": 0.826
+      },
+      {
+        "strip": 42,
+        "y0": 10752,
+        "y1": 11008,
+        "seconds": 0.863
+      },
+      {
+        "strip": 43,
+        "y0": 11008,
+        "y1": 11264,
+        "seconds": 0.894
+      },
+      {
+        "strip": 44,
+        "y0": 11264,
+        "y1": 11520,
+        "seconds": 0.889
+      },
+      {
+        "strip": 45,
+        "y0": 11520,
+        "y1": 11776,
+        "seconds": 0.876
+      },
+      {
+        "strip": 46,
+        "y0": 11776,
+        "y1": 12032,
+        "seconds": 0.896
+      },
+      {
+        "strip": 47,
+        "y0": 12032,
+        "y1": 12288,
+        "seconds": 0.872
+      },
+      {
+        "strip": 48,
+        "y0": 12288,
+        "y1": 12544,
+        "seconds": 0.897
+      },
+      {
+        "strip": 49,
+        "y0": 12544,
+        "y1": 12800,
+        "seconds": 0.866
+      },
+      {
+        "strip": 50,
+        "y0": 12800,
+        "y1": 13056,
+        "seconds": 0.873
+      },
+      {
+        "strip": 51,
+        "y0": 13056,
+        "y1": 13312,
+        "seconds": 0.876
+      },
+      {
+        "strip": 52,
+        "y0": 13312,
+        "y1": 13568,
+        "seconds": 0.84
+      },
+      {
+        "strip": 53,
+        "y0": 13568,
+        "y1": 13824,
+        "seconds": 0.818
+      },
+      {
+        "strip": 54,
+        "y0": 13824,
+        "y1": 14080,
+        "seconds": 0.873
+      },
+      {
+        "strip": 55,
+        "y0": 14080,
+        "y1": 14336,
+        "seconds": 0.828
+      },
+      {
+        "strip": 56,
+        "y0": 14336,
+        "y1": 14592,
+        "seconds": 0.844
+      },
+      {
+        "strip": 57,
+        "y0": 14592,
+        "y1": 14848,
+        "seconds": 0.825
+      },
+      {
+        "strip": 58,
+        "y0": 14848,
+        "y1": 15104,
+        "seconds": 0.908
+      },
+      {
+        "strip": 59,
+        "y0": 15104,
+        "y1": 15360,
+        "seconds": 0.89
+      },
+      {
+        "strip": 60,
+        "y0": 15360,
+        "y1": 15616,
+        "seconds": 0.886
+      },
+      {
+        "strip": 61,
+        "y0": 15616,
+        "y1": 15872,
+        "seconds": 0.817
+      },
+      {
+        "strip": 62,
+        "y0": 15872,
+        "y1": 16128,
+        "seconds": 0.898
+      },
+      {
+        "strip": 63,
+        "y0": 16128,
+        "y1": 16384,
+        "seconds": 0.892
+      },
+      {
+        "strip": 64,
+        "y0": 16384,
+        "y1": 16640,
+        "seconds": 0.903
+      },
+      {
+        "strip": 65,
+        "y0": 16640,
+        "y1": 16896,
+        "seconds": 0.878
+      },
+      {
+        "strip": 66,
+        "y0": 16896,
+        "y1": 17152,
+        "seconds": 0.893
+      },
+      {
+        "strip": 67,
+        "y0": 17152,
+        "y1": 17408,
+        "seconds": 0.826
+      },
+      {
+        "strip": 68,
+        "y0": 17408,
+        "y1": 17664,
+        "seconds": 0.838
+      },
+      {
+        "strip": 69,
+        "y0": 17664,
+        "y1": 17920,
+        "seconds": 0.881
+      },
+      {
+        "strip": 70,
+        "y0": 17920,
+        "y1": 18176,
+        "seconds": 0.881
+      },
+      {
+        "strip": 71,
+        "y0": 18176,
+        "y1": 18432,
+        "seconds": 0.865
+      },
+      {
+        "strip": 72,
+        "y0": 18432,
+        "y1": 18688,
+        "seconds": 0.889
+      },
+      {
+        "strip": 73,
+        "y0": 18688,
+        "y1": 18944,
+        "seconds": 0.872
+      },
+      {
+        "strip": 74,
+        "y0": 18944,
+        "y1": 19200,
+        "seconds": 0.883
+      },
+      {
+        "strip": 75,
+        "y0": 19200,
+        "y1": 19456,
+        "seconds": 0.874
+      },
+      {
+        "strip": 76,
+        "y0": 19456,
+        "y1": 19712,
+        "seconds": 0.876
+      },
+      {
+        "strip": 77,
+        "y0": 19712,
+        "y1": 19968,
+        "seconds": 0.892
+      },
+      {
+        "strip": 78,
+        "y0": 19968,
+        "y1": 20224,
+        "seconds": 0.851
+      },
+      {
+        "strip": 79,
+        "y0": 20224,
+        "y1": 20480,
+        "seconds": 0.907
+      },
+      {
+        "strip": 80,
+        "y0": 20480,
+        "y1": 20736,
+        "seconds": 0.899
+      },
+      {
+        "strip": 81,
+        "y0": 20736,
+        "y1": 20992,
+        "seconds": 0.899
+      },
+      {
+        "strip": 82,
+        "y0": 20992,
+        "y1": 21248,
+        "seconds": 0.848
+      },
+      {
+        "strip": 83,
+        "y0": 21248,
+        "y1": 21504,
+        "seconds": 0.841
+      },
+      {
+        "strip": 84,
+        "y0": 21504,
+        "y1": 21760,
+        "seconds": 0.909
+      },
+      {
+        "strip": 85,
+        "y0": 21760,
+        "y1": 22016,
+        "seconds": 0.89
+      },
+      {
+        "strip": 86,
+        "y0": 22016,
+        "y1": 22272,
+        "seconds": 0.82
+      },
+      {
+        "strip": 87,
+        "y0": 22272,
+        "y1": 22528,
+        "seconds": 0.84
+      },
+      {
+        "strip": 88,
+        "y0": 22528,
+        "y1": 22784,
+        "seconds": 0.849
+      },
+      {
+        "strip": 89,
+        "y0": 22784,
+        "y1": 23040,
+        "seconds": 0.84
+      },
+      {
+        "strip": 90,
+        "y0": 23040,
+        "y1": 23296,
+        "seconds": 0.841
+      },
+      {
+        "strip": 91,
+        "y0": 23296,
+        "y1": 23552,
+        "seconds": 0.827
+      },
+      {
+        "strip": 92,
+        "y0": 23552,
+        "y1": 23808,
+        "seconds": 0.843
+      },
+      {
+        "strip": 93,
+        "y0": 23808,
+        "y1": 24064,
+        "seconds": 0.829
+      },
+      {
+        "strip": 94,
+        "y0": 24064,
+        "y1": 24320,
+        "seconds": 0.857
+      },
+      {
+        "strip": 95,
+        "y0": 24320,
+        "y1": 24472,
+        "seconds": 0.468
+      }
+    ],
+    "processing_seconds": 82.98,
+    "write_seconds": 25.6,
+    "elapsed_s": 108.77,
+    "peak_rss_bytes": 3593109504,
+    "peak_rss_bytes_before_write": 595542016,
+    "scratch": "/Users/kevin/.hermes/profiles/zang/cache/scratch/p29-run/p29-2400-ws3wrf1d",
+    "crop_rows_filled": 2144,
+    "crop_rows_total": 2144,
+    "crop_bytes": 4892690
+  },
+  "verification": {
+    "container": {
+      "shape": [
+        24472,
+        17000,
+        3
+      ],
+      "dtype": "uint16",
+      "bits_per_sample": 16,
+      "bits_per_pixel": 48,
+      "samples_per_pixel": 3,
+      "compression": 8,
+      "predictor": 2,
+      "photometric": 2,
+      "planarconfig": 1,
+      "rowsperstrip": 256,
+      "tiled": false,
+      "strips": 96,
+      "bigtiff": true,
+      "software": "feicui ops/book-page-2400 render_page_2400.py",
+      "description": "feicui Qin Yin Lei Bian p29 2400dpi 48bit RGB (ops/book-page-2400 render_page_2400.py v2)",
+      "x_resolution": [
+        2400,
+        1
+      ],
+      "resolution_unit": 2,
+      "page_count": 1
+    },
+    "out_bytes": 1906199278,
+    "out_gib": 1.775,
+    "sha256": "d5585c188cd75e62ea4ef5a4ad9a4d4d8c65228de807bde5b18bc3b43afb5008",
+    "strips_checked": 96,
+    "strips_total": 96,
+    "rows_checked": 24472,
+    "pixels_checked": 416024000,
+    "roundtrip": {
+      "decode_vs_recompute_mismatch_px": 0,
+      "max_abs_diff_u16": 0
+    },
+    "freeze": {
+      "rule": "非纸底 ∧ 非印泥（含印刷黑字/图形）⇒ 逐像素 == clip(8× Lanczos)",
+      "pixels": 11379210,
+      "mismatch_px": 0,
+      "max_abs_diff_u16": 0,
+      "lanczos_ringing": {
+        "pixels_float_out_of_8bit_range": 12201268,
+        "max_overshoot_8bit_units": 56.747,
+        "note": "8× Lanczos 在源 8bit 饱和处产生振铃越界（>255 或 <0）⇒ 量化进 16bit （v = round(c·257)）时按通道裁剪；属『Lanczos + 量化』固有，非额外处理"
+      }
+    },
+    "ink_colorcalib": {
+      "rule": "仅印泥像素、归一化色度向全页均值收敛、逐像素有界强度；⑤ 与 ①「内容零色彩改动」冲突 · 登记为待裁",
+      "strength_requested": 0.0,
+      "pixels": 16267606,
+      "changed_px": 0,
+      "max_abs_diff_u16": 0,
+      "max_abs_diff_8bit_equiv": 0.0,
+      "max_abs_sum_RGB_jump_float": 0.0,
+      "sum_invariant_tolerance_float": 0.001,
+      "skipped_invalid_domain_px": 0,
+      "skipped_invalid_domain_note": "Lanczos 振铃越界像素（任一通道 >255 或 <0，Σ 可 ≤0）不参与色度换算 ⇒ 归一化不是良定义；这些像素 t=0、逐像素原样保留",
+      "max_abs_sum_RGB_jump_u16_store": 0,
+      "sum_jump_u16_note": "store 域 Σ 差只出现在『Lanczos 振铃越界被裁剪』的像素上：裁剪后 R 已顶 65535/G,B 已触 0，再叠加校准必然改变 Σ —— 浮点域 Σ 在有效域像素上代数恒成立（|Δ| ≤ tol，残差＝float32 末位）",
+      "px_over_abs_diff_u16": {
+        "257": 0,
+        "1285": 0,
+        "2570": 0,
+        "5140": 0,
+        "10280": 0
+      },
+      "realized_strength": {
+        "mean": 0.0,
+        "max": 0.0,
+        "px_at_cap": 0,
+        "note": "逐像素 t ≤ strength；t 取『不使任一通道越出 [0,255]』的最大可行值"
+      }
+    },
+    "paper_background": {
+      "declared_range_rgb": [
+        [
+          250,
+          250,
+          247
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ],
+      "observed_min_u16": [
+        255,
+        255,
+        255
+      ],
+      "observed_max_u16": [
+        65535,
+        65535,
+        65535
+      ],
+      "observed_min_u8_round": [
+        1,
+        1,
+        1
+      ],
+      "observed_max_u8_round": [
+        255,
+        255,
+        255
+      ],
+      "pixels": 388377184,
+      "outside_declared_range_px": 3713526,
+      "outside_declared_range_and_outside_halo_px": 0,
+      "note": "晕染环带（外缘 16 px、α≤8%、向印泥均色收敛）内的纸底像素**按设计**可越出 #FAFAF7–#FFFFFF 下限"
+    },
+    "crop": {
+      "path": "output/samples/book-page-2400/P29-C1-R1-frozen-page-crop.tiff",
+      "bytes": 4892690,
+      "sha256": "260f36bfaa7d924d1eb46b890d041674339d4c627a8e824fac0aa0f8eb7c7206",
+      "container": {
+        "shape": [
+          2144,
+          2120,
+          3
+        ],
+        "dtype": "uint8",
+        "bits_per_sample": 8,
+        "bits_per_pixel": 24,
+        "samples_per_pixel": 3,
+        "compression": 8,
+        "predictor": 2,
+        "photometric": 2,
+        "planarconfig": 1,
+        "rowsperstrip": 10,
+        "tiled": false,
+        "strips": 215,
+        "bigtiff": false,
+        "software": null,
+        "description": "",
+        "x_resolution": null,
+        "resolution_unit": null,
+        "page_count": 1
+      },
+      "quantizer": "q8 = round(page_u16 / 257)（固定、可逆：|page/257 − q8| ≤ 0.5）",
+      "vs_page_mismatch_px": 0,
+      "pixels": 4545280,
+      "per_strip": [
+        {
+          "strip": 17,
+          "rows": 168,
+          "max_abs_diff": 0
+        },
+        {
+          "strip": 18,
+          "rows": 256,
+          "max_abs_diff": 0
+        },
+        {
+          "strip": 19,
+          "rows": 256,
+          "max_abs_diff": 0
+        },
+        {
+          "strip": 20,
+          "rows": 256,
+          "max_abs_diff": 0
+        },
+        {
+          "strip": 21,
+          "rows": 256,
+          "max_abs_diff": 0
+        },
+        {
+          "strip": 22,
+          "rows": 256,
+          "max_abs_diff": 0
+        },
+        {
+          "strip": 23,
+          "rows": 256,
+          "max_abs_diff": 0
+        },
+        {
+          "strip": 24,
+          "rows": 256,
+          "max_abs_diff": 0
+        },
+        {
+          "strip": 25,
+          "rows": 184,
+          "max_abs_diff": 0
+        }
+      ],
+      "bbox_2400dpi": [
+        4264,
+        4440,
+        6384,
+        6584
+      ],
+      "size_px": [
+        2120,
+        2144
+      ],
+      "size_mm_from_2400dpi": [
+        22.437,
+        22.691
+      ],
+      "size_mm_from_300dpi_bbox": [
+        22.437,
+        22.691
+      ]
+    }
+  },
+  "measured": {
+    "out_bytes": 1906199278,
+    "out_gib": 1.775,
+    "out_sha256": "d5585c188cd75e62ea4ef5a4ad9a4d4d8c65228de807bde5b18bc3b43afb5008",
+    "raw_uncompressed_bytes": 2496144000,
+    "paper_px_share": 0.933545,
+    "ink_px_share": 0.039103,
+    "cpu_seconds": 312.3
+  },
+  "checks": {
+    "shape_ok": true,
+    "bits_ok": true,
+    "compression_ok": true,
+    "bigtiff_ok": true,
+    "roundtrip_ok": true,
+    "freeze_ok": true,
+    "halo_out_of_range_ok": true,
+    "ink_sum_preserved_ok": true,
+    "ink_strength_bounded_ok": true,
+    "crop_ok": true
+  }
+}

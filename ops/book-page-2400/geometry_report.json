@@ -1,0 +1,643 @@
+{
+  "schema": "feicui.book-page-2400.geometry_report.v1",
+  "generator": "ops/book-page-2400/geometry_report.py",
+  "source_pdf": "inbox/20261011/秦印类编 检索版.pdf",
+  "page_count": 851,
+  "page_size_distribution": [
+    {
+      "width_pt": 510.0,
+      "height_pt": 734.16,
+      "pages": 780,
+      "share": 0.916569,
+      "width_mm": 179.917,
+      "height_mm": 258.995,
+      "delta_from_dominant_pt": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "width_pt": 490.0,
+      "height_pt": 726.0,
+      "pages": 39,
+      "share": 0.045828,
+      "width_mm": 172.861,
+      "height_mm": 256.117,
+      "delta_from_dominant_pt": [
+        -20.0,
+        -8.16
+      ]
+    },
+    {
+      "width_pt": 512.88,
+      "height_pt": 734.16,
+      "pages": 3,
+      "share": 0.003525,
+      "width_mm": 180.933,
+      "height_mm": 258.995,
+      "delta_from_dominant_pt": [
+        2.88,
+        0.0
+      ]
+    },
+    {
+      "width_pt": 510.96,
+      "height_pt": 734.16,
+      "pages": 2,
+      "share": 0.00235,
+      "width_mm": 180.255,
+      "height_mm": 258.995,
+      "delta_from_dominant_pt": [
+        0.96,
+        0.0
+      ]
+    },
+    {
+      "width_pt": 511.44,
+      "height_pt": 734.16,
+      "pages": 2,
+      "share": 0.00235,
+      "width_mm": 180.425,
+      "height_mm": 258.995,
+      "delta_from_dominant_pt": [
+        1.44,
+        0.0
+      ]
+    },
+    {
+      "width_pt": 511.44,
+      "height_pt": 735.12,
+      "pages": 2,
+      "share": 0.00235,
+      "width_mm": 180.425,
+      "height_mm": 259.334,
+      "delta_from_dominant_pt": [
+        1.44,
+        0.96
+      ]
+    },
+    {
+      "width_pt": 510.0,
+      "height_pt": 736.08,
+      "pages": 2,
+      "share": 0.00235,
+      "width_mm": 179.917,
+      "height_mm": 259.673,
+      "delta_from_dominant_pt": [
+        0.0,
+        1.92
+      ]
+    },
+    {
+      "width_pt": 510.0,
+      "height_pt": 734.88,
+      "pages": 2,
+      "share": 0.00235,
+      "width_mm": 179.917,
+      "height_mm": 259.249,
+      "delta_from_dominant_pt": [
+        0.0,
+        0.72
+      ]
+    },
+    {
+      "width_pt": 511.2,
+      "height_pt": 734.16,
+      "pages": 2,
+      "share": 0.00235,
+      "width_mm": 180.34,
+      "height_mm": 258.995,
+      "delta_from_dominant_pt": [
+        1.2,
+        0.0
+      ]
+    },
+    {
+      "width_pt": 510.0,
+      "height_pt": 735.12,
+      "pages": 2,
+      "share": 0.00235,
+      "width_mm": 179.917,
+      "height_mm": 259.334,
+      "delta_from_dominant_pt": [
+        0.0,
+        0.96
+      ]
+    },
+    {
+      "width_pt": 512.16,
+      "height_pt": 736.08,
+      "pages": 1,
+      "share": 0.001175,
+      "width_mm": 180.679,
+      "height_mm": 259.673,
+      "delta_from_dominant_pt": [
+        2.16,
+        1.92
+      ]
+    },
+    {
+      "width_pt": 510.0,
+      "height_pt": 730.08,
+      "pages": 1,
+      "share": 0.001175,
+      "width_mm": 179.917,
+      "height_mm": 257.556,
+      "delta_from_dominant_pt": [
+        0.0,
+        -4.08
+      ]
+    },
+    {
+      "width_pt": 511.92,
+      "height_pt": 734.16,
+      "pages": 1,
+      "share": 0.001175,
+      "width_mm": 180.594,
+      "height_mm": 258.995,
+      "delta_from_dominant_pt": [
+        1.92,
+        0.0
+      ]
+    },
+    {
+      "width_pt": 510.0,
+      "height_pt": 725.76,
+      "pages": 1,
+      "share": 0.001175,
+      "width_mm": 179.917,
+      "height_mm": 256.032,
+      "delta_from_dominant_pt": [
+        0.0,
+        -8.4
+      ]
+    },
+    {
+      "width_pt": 508.8,
+      "height_pt": 734.16,
+      "pages": 1,
+      "share": 0.001175,
+      "width_mm": 179.493,
+      "height_mm": 258.995,
+      "delta_from_dominant_pt": [
+        -1.2,
+        0.0
+      ]
+    },
+    {
+      "width_pt": 514.56,
+      "height_pt": 734.16,
+      "pages": 1,
+      "share": 0.001175,
+      "width_mm": 181.525,
+      "height_mm": 258.995,
+      "delta_from_dominant_pt": [
+        4.56,
+        0.0
+      ]
+    },
+    {
+      "width_pt": 512.16,
+      "height_pt": 734.16,
+      "pages": 1,
+      "share": 0.001175,
+      "width_mm": 180.679,
+      "height_mm": 258.995,
+      "delta_from_dominant_pt": [
+        2.16,
+        0.0
+      ]
+    },
+    {
+      "width_pt": 512.4,
+      "height_pt": 734.16,
+      "pages": 1,
+      "share": 0.001175,
+      "width_mm": 180.763,
+      "height_mm": 258.995,
+      "delta_from_dominant_pt": [
+        2.4,
+        0.0
+      ]
+    },
+    {
+      "width_pt": 512.64,
+      "height_pt": 734.16,
+      "pages": 1,
+      "share": 0.001175,
+      "width_mm": 180.848,
+      "height_mm": 258.995,
+      "delta_from_dominant_pt": [
+        2.64,
+        0.0
+      ]
+    },
+    {
+      "width_pt": 501.84,
+      "height_pt": 734.16,
+      "pages": 1,
+      "share": 0.001175,
+      "width_mm": 177.038,
+      "height_mm": 258.995,
+      "delta_from_dominant_pt": [
+        -8.16,
+        0.0
+      ]
+    },
+    {
+      "width_pt": 509.52,
+      "height_pt": 734.16,
+      "pages": 1,
+      "share": 0.001175,
+      "width_mm": 179.747,
+      "height_mm": 258.995,
+      "delta_from_dominant_pt": [
+        -0.48,
+        0.0
+      ]
+    },
+    {
+      "width_pt": 511.68,
+      "height_pt": 734.16,
+      "pages": 1,
+      "share": 0.001175,
+      "width_mm": 180.509,
+      "height_mm": 258.995,
+      "delta_from_dominant_pt": [
+        1.68,
+        0.0
+      ]
+    },
+    {
+      "width_pt": 510.0,
+      "height_pt": 733.92,
+      "pages": 1,
+      "share": 0.001175,
+      "width_mm": 179.917,
+      "height_mm": 258.911,
+      "delta_from_dominant_pt": [
+        0.0,
+        -0.24
+      ]
+    },
+    {
+      "width_pt": 510.0,
+      "height_pt": 733.2,
+      "pages": 1,
+      "share": 0.001175,
+      "width_mm": 179.917,
+      "height_mm": 258.657,
+      "delta_from_dominant_pt": [
+        0.0,
+        -0.96
+      ]
+    },
+    {
+      "width_pt": 524.16,
+      "height_pt": 735.84,
+      "pages": 1,
+      "share": 0.001175,
+      "width_mm": 184.912,
+      "height_mm": 259.588,
+      "delta_from_dominant_pt": [
+        14.16,
+        1.68
+      ]
+    }
+  ],
+  "dominant_page_size": {
+    "width_pt": 510.0,
+    "height_pt": 734.16,
+    "width_mm": 179.92,
+    "height_mm": 259.0,
+    "pages": 780,
+    "share": 0.916569,
+    "conclusion_mm": "最可能页尺寸 ≈180×259 mm（16 开制）",
+    "conclusion_pt": "510.0 × 734.16 pt"
+  },
+  "observed_minor_deviations_within_pm2pt": [
+    {
+      "width_pt": 510.96,
+      "height_pt": 734.16,
+      "pages": 2,
+      "share": 0.00235,
+      "width_mm": 180.255,
+      "height_mm": 258.995,
+      "delta_from_dominant_pt": [
+        0.96,
+        0.0
+      ]
+    },
+    {
+      "width_pt": 511.44,
+      "height_pt": 734.16,
+      "pages": 2,
+      "share": 0.00235,
+      "width_mm": 180.425,
+      "height_mm": 258.995,
+      "delta_from_dominant_pt": [
+        1.44,
+        0.0
+      ]
+    },
+    {
+      "width_pt": 511.44,
+      "height_pt": 735.12,
+      "pages": 2,
+      "share": 0.00235,
+      "width_mm": 180.425,
+      "height_mm": 259.334,
+      "delta_from_dominant_pt": [
+        1.44,
+        0.96
+      ]
+    },
+    {
+      "width_pt": 510.0,
+      "height_pt": 736.08,
+      "pages": 2,
+      "share": 0.00235,
+      "width_mm": 179.917,
+      "height_mm": 259.673,
+      "delta_from_dominant_pt": [
+        0.0,
+        1.92
+      ]
+    },
+    {
+      "width_pt": 510.0,
+      "height_pt": 734.88,
+      "pages": 2,
+      "share": 0.00235,
+      "width_mm": 179.917,
+      "height_mm": 259.249,
+      "delta_from_dominant_pt": [
+        0.0,
+        0.72
+      ]
+    },
+    {
+      "width_pt": 511.2,
+      "height_pt": 734.16,
+      "pages": 2,
+      "share": 0.00235,
+      "width_mm": 180.34,
+      "height_mm": 258.995,
+      "delta_from_dominant_pt": [
+        1.2,
+        0.0
+      ]
+    },
+    {
+      "width_pt": 510.0,
+      "height_pt": 735.12,
+      "pages": 2,
+      "share": 0.00235,
+      "width_mm": 179.917,
+      "height_mm": 259.334,
+      "delta_from_dominant_pt": [
+        0.0,
+        0.96
+      ]
+    },
+    {
+      "width_pt": 511.92,
+      "height_pt": 734.16,
+      "pages": 1,
+      "share": 0.001175,
+      "width_mm": 180.594,
+      "height_mm": 258.995,
+      "delta_from_dominant_pt": [
+        1.92,
+        0.0
+      ]
+    },
+    {
+      "width_pt": 508.8,
+      "height_pt": 734.16,
+      "pages": 1,
+      "share": 0.001175,
+      "width_mm": 179.493,
+      "height_mm": 258.995,
+      "delta_from_dominant_pt": [
+        -1.2,
+        0.0
+      ]
+    },
+    {
+      "width_pt": 509.52,
+      "height_pt": 734.16,
+      "pages": 1,
+      "share": 0.001175,
+      "width_mm": 179.747,
+      "height_mm": 258.995,
+      "delta_from_dominant_pt": [
+        -0.48,
+        0.0
+      ]
+    },
+    {
+      "width_pt": 511.68,
+      "height_pt": 734.16,
+      "pages": 1,
+      "share": 0.001175,
+      "width_mm": 180.509,
+      "height_mm": 258.995,
+      "delta_from_dominant_pt": [
+        1.68,
+        0.0
+      ]
+    },
+    {
+      "width_pt": 510.0,
+      "height_pt": 733.92,
+      "pages": 1,
+      "share": 0.001175,
+      "width_mm": 179.917,
+      "height_mm": 258.911,
+      "delta_from_dominant_pt": [
+        0.0,
+        -0.24
+      ]
+    },
+    {
+      "width_pt": 510.0,
+      "height_pt": 733.2,
+      "pages": 1,
+      "share": 0.001175,
+      "width_mm": 179.917,
+      "height_mm": 258.657,
+      "delta_from_dominant_pt": [
+        0.0,
+        -0.96
+      ]
+    }
+  ],
+  "observed_outliers_beyond_pm2pt": [
+    {
+      "width_pt": 490.0,
+      "height_pt": 726.0,
+      "pages": 39,
+      "share": 0.045828,
+      "width_mm": 172.861,
+      "height_mm": 256.117,
+      "delta_from_dominant_pt": [
+        -20.0,
+        -8.16
+      ]
+    },
+    {
+      "width_pt": 512.88,
+      "height_pt": 734.16,
+      "pages": 3,
+      "share": 0.003525,
+      "width_mm": 180.933,
+      "height_mm": 258.995,
+      "delta_from_dominant_pt": [
+        2.88,
+        0.0
+      ]
+    },
+    {
+      "width_pt": 512.16,
+      "height_pt": 736.08,
+      "pages": 1,
+      "share": 0.001175,
+      "width_mm": 180.679,
+      "height_mm": 259.673,
+      "delta_from_dominant_pt": [
+        2.16,
+        1.92
+      ]
+    },
+    {
+      "width_pt": 510.0,
+      "height_pt": 730.08,
+      "pages": 1,
+      "share": 0.001175,
+      "width_mm": 179.917,
+      "height_mm": 257.556,
+      "delta_from_dominant_pt": [
+        0.0,
+        -4.08
+      ]
+    },
+    {
+      "width_pt": 510.0,
+      "height_pt": 725.76,
+      "pages": 1,
+      "share": 0.001175,
+      "width_mm": 179.917,
+      "height_mm": 256.032,
+      "delta_from_dominant_pt": [
+        0.0,
+        -8.4
+      ]
+    },
+    {
+      "width_pt": 514.56,
+      "height_pt": 734.16,
+      "pages": 1,
+      "share": 0.001175,
+      "width_mm": 181.525,
+      "height_mm": 258.995,
+      "delta_from_dominant_pt": [
+        4.56,
+        0.0
+      ]
+    },
+    {
+      "width_pt": 512.16,
+      "height_pt": 734.16,
+      "pages": 1,
+      "share": 0.001175,
+      "width_mm": 180.679,
+      "height_mm": 258.995,
+      "delta_from_dominant_pt": [
+        2.16,
+        0.0
+      ]
+    },
+    {
+      "width_pt": 512.4,
+      "height_pt": 734.16,
+      "pages": 1,
+      "share": 0.001175,
+      "width_mm": 180.763,
+      "height_mm": 258.995,
+      "delta_from_dominant_pt": [
+        2.4,
+        0.0
+      ]
+    },
+    {
+      "width_pt": 512.64,
+      "height_pt": 734.16,
+      "pages": 1,
+      "share": 0.001175,
+      "width_mm": 180.848,
+      "height_mm": 258.995,
+      "delta_from_dominant_pt": [
+        2.64,
+        0.0
+      ]
+    },
+    {
+      "width_pt": 501.84,
+      "height_pt": 734.16,
+      "pages": 1,
+      "share": 0.001175,
+      "width_mm": 177.038,
+      "height_mm": 258.995,
+      "delta_from_dominant_pt": [
+        -8.16,
+        0.0
+      ]
+    },
+    {
+      "width_pt": 524.16,
+      "height_pt": 735.84,
+      "pages": 1,
+      "share": 0.001175,
+      "width_mm": 184.912,
+      "height_mm": 259.588,
+      "delta_from_dominant_pt": [
+        14.16,
+        1.68
+      ]
+    }
+  ],
+  "scan_resolution": {
+    "page": 29,
+    "embedded_image": {
+      "xref": 112,
+      "width_px": 2125,
+      "height_px": 3059,
+      "bpc": 8,
+      "colorspace": "DeviceRGB",
+      "filter": "DCTDecode (JPEG)",
+      "covers_full_page": true
+    },
+    "dpi_x": 300.0,
+    "dpi_y": 300.0,
+    "note": "2125 px ÷ (510 pt / 72) = 300.0 dpi；3059 px ÷ (734.16 pt / 72) = 300.0 dpi"
+  },
+  "target_2400dpi": {
+    "page": 29,
+    "width_px": 17000,
+    "height_px": 24472,
+    "megapixels": 416.024,
+    "bit_depth": 48,
+    "samples_per_pixel": 3,
+    "bits_per_sample": 16,
+    "raw_uncompressed_bytes": 2496144000,
+    "raw_uncompressed_gib": 2.325,
+    "derivation": "510.0 pt/72*2400 = 17000 px；734.16 pt/72*2400 = 24472 px（皆为整数）",
+    "upsample_factor_from_scan": 8
+  },
+  "text_layer": {
+    "page": 29,
+    "text_len": 0,
+    "kind": "纯图版页（无文本层）"
+  }
+}

@@ -10,6 +10,13 @@
       "pdf_name_unconfirmed": "书本身份未确认 ⇒ 目录键回落 PDF 名（含扩展名）并标记，待确认后改"
     }
   },
+  "print_size_1to1": {
+    "meaning": "该书按**原大（1:1）印刷** ⇒ 由印面像素反算的毫米数即实物尺寸（mm = px/dpi×25.4；同一 dpi 下与页几何自洽）",
+    "ui_requirement": "用户导入此类书时给**勾选框【印刷尺寸即实物尺寸】**（Kevin 需求，2026-10-13；⚠ 待 Jing 按 §0.4 入册 —— **本单不自编 R 号**）",
+    "covered_books": [
+      "9787550847224"
+    ]
+  },
   "books": {
     "秦汉印典 上海书画 金怀英  1997 ok.pdf": {
       "dir_key": "9787806350959",
@@ -46,7 +53,21 @@
       "isbn": "9787550847224",
       "isbn13": "9787550847224",
       "isbn_source": "local_ocr",
-      "migrated_at": "2026-10-13T11:33:03+08:00"
+      "migrated_at": "2026-10-13T11:33:03+08:00",
+      "print_size_1to1": true,
+      "print_size_1to1_evidence": {
+        "set_at": "2026-10-13T21:00:00+08:00",
+        "basis": "整页 2400 dpi 处理轮（ops/book-page-2400/）实测：页 29 首枚印面 @300 dpi bbox (533,555)-(798,823) = 265×268 px ⇒ 22.437 × 22.691 mm；2400 dpi 同印面 2120×2144 px，反算毫米数一致（= 页几何自洽）",
+        "checked_against": "秦印常态实物尺寸 ≈22 mm 见方 ⇒ 落在常识域内（印证原大印刷，非 3 mm / 200 mm 一类失配值）",
+        "page_size_dominant_mm": [179.92, 259.0],
+        "scan_dpi": 300,
+        "readings": [
+          "ops/book-page-2400/first_seal_probe.json",
+          "ops/book-page-2400/geometry_report.json"
+        ],
+        "crop_artifact": "output/book-pages/9787550847224/P29-C1-R1-无信息-戰國-佚名-O.tiff（2120×2144 px @2400 dpi，output/ 不入库）",
+        "open_question": "勾选框【印刷尺寸即实物尺寸】尚未落 UI（登记在顶层 print_size_1to1.ui_requirement；待 Jing 入册）；**未逐枚核验**该页其余 5 枚，如需逐枚反算可一句话加跑"
+      }
     },
     "tmp.pdf": {
       "dir_key": "tmp.pdf",

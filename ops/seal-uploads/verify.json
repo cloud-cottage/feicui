@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-13T15:08:43+08:00",
+  "generated_at": "2026-10-13T15:37:59+08:00",
   "db_counts": {
     "seals": 3691,
     "seal_links": 8964,
@@ -1563,6 +1563,898 @@
       "corner_gamut_ok": true,
       "ink_px_outside_seal_and_halo": 0,
       "bg_no_ink": true
+    }
+  ],
+  "canvases_white20": [
+    {
+      "seq": "01",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-01-canvas-white-20px.png",
+      "naming_ok": true,
+      "exists": true,
+      "png_magic": true,
+      "size": [
+        507,
+        1200
+      ],
+      "long_side_1200": true,
+      "padding_rect_px": [
+        20,
+        20,
+        20,
+        20
+      ],
+      "padding_rect_ok": true,
+      "padding_mask_bbox_px": {
+        "left": 20,
+        "top": 20,
+        "right": 20,
+        "bottom": 20
+      },
+      "padding_mask_bbox_ok": true,
+      "padding_nonwhite_bbox_px": {
+        "left": 18,
+        "top": 18,
+        "right": 18,
+        "bottom": 18
+      },
+      "padding_nonwhite_ok": true,
+      "subject_ratio": 0.966667,
+      "ratio_0_9667": true,
+      "subject_ratio_pixel_bbox": 0.966667,
+      "ratio_pixel_ok": true,
+      "center_offset_px": [
+        0.0,
+        0.0
+      ],
+      "center_ok": true,
+      "center_offset_pixel_bbox": [
+        0.0,
+        0.0
+      ],
+      "center_pixel_ok": true,
+      "freeze_bit_exact": true,
+      "bg_pure_white_std0": true,
+      "halo_ok": true,
+      "halo_alpha_band_max": 0.08,
+      "corners_white": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true,
+      "canvas_recompose_bit_exact": true,
+      "pixels_equal_independent_recompute": true,
+      "png_sha256_matches_summary": true
+    },
+    {
+      "seq": "02",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-02-canvas-white-20px.png",
+      "naming_ok": true,
+      "exists": true,
+      "png_magic": true,
+      "size": [
+        443,
+        1200
+      ],
+      "long_side_1200": true,
+      "padding_rect_px": [
+        20,
+        20,
+        20,
+        20
+      ],
+      "padding_rect_ok": true,
+      "padding_mask_bbox_px": {
+        "left": 20,
+        "top": 20,
+        "right": 20,
+        "bottom": 20
+      },
+      "padding_mask_bbox_ok": true,
+      "padding_nonwhite_bbox_px": {
+        "left": 18,
+        "top": 18,
+        "right": 18,
+        "bottom": 18
+      },
+      "padding_nonwhite_ok": true,
+      "subject_ratio": 0.966667,
+      "ratio_0_9667": true,
+      "subject_ratio_pixel_bbox": 0.966667,
+      "ratio_pixel_ok": true,
+      "center_offset_px": [
+        0.0,
+        0.0
+      ],
+      "center_ok": true,
+      "center_offset_pixel_bbox": [
+        0.0,
+        0.0
+      ],
+      "center_pixel_ok": true,
+      "freeze_bit_exact": true,
+      "bg_pure_white_std0": true,
+      "halo_ok": true,
+      "halo_alpha_band_max": 0.08,
+      "corners_white": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true,
+      "canvas_recompose_bit_exact": true,
+      "pixels_equal_independent_recompute": true,
+      "png_sha256_matches_summary": true
+    },
+    {
+      "seq": "03",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-03-canvas-white-20px.png",
+      "naming_ok": true,
+      "exists": true,
+      "png_magic": true,
+      "size": [
+        1200,
+        1173
+      ],
+      "long_side_1200": true,
+      "padding_rect_px": [
+        20,
+        20,
+        20,
+        20
+      ],
+      "padding_rect_ok": true,
+      "padding_mask_bbox_px": {
+        "left": 20,
+        "top": 20,
+        "right": 20,
+        "bottom": 20
+      },
+      "padding_mask_bbox_ok": true,
+      "padding_nonwhite_bbox_px": {
+        "left": 18,
+        "top": 18,
+        "right": 18,
+        "bottom": 18
+      },
+      "padding_nonwhite_ok": true,
+      "subject_ratio": 0.966667,
+      "ratio_0_9667": true,
+      "subject_ratio_pixel_bbox": 0.966667,
+      "ratio_pixel_ok": true,
+      "center_offset_px": [
+        0.0,
+        0.0
+      ],
+      "center_ok": true,
+      "center_offset_pixel_bbox": [
+        0.0,
+        0.0
+      ],
+      "center_pixel_ok": true,
+      "freeze_bit_exact": true,
+      "bg_pure_white_std0": true,
+      "halo_ok": true,
+      "halo_alpha_band_max": 0.08,
+      "corners_white": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true,
+      "canvas_recompose_bit_exact": true,
+      "pixels_equal_independent_recompute": true,
+      "png_sha256_matches_summary": true
+    },
+    {
+      "seq": "04",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-04-canvas-white-20px.png",
+      "naming_ok": true,
+      "exists": true,
+      "png_magic": true,
+      "size": [
+        786,
+        1200
+      ],
+      "long_side_1200": true,
+      "padding_rect_px": [
+        20,
+        20,
+        20,
+        20
+      ],
+      "padding_rect_ok": true,
+      "padding_mask_bbox_px": {
+        "left": 20,
+        "top": 20,
+        "right": 20,
+        "bottom": 20
+      },
+      "padding_mask_bbox_ok": true,
+      "padding_nonwhite_bbox_px": {
+        "left": 18,
+        "top": 18,
+        "right": 18,
+        "bottom": 18
+      },
+      "padding_nonwhite_ok": true,
+      "subject_ratio": 0.966667,
+      "ratio_0_9667": true,
+      "subject_ratio_pixel_bbox": 0.966667,
+      "ratio_pixel_ok": true,
+      "center_offset_px": [
+        0.0,
+        0.0
+      ],
+      "center_ok": true,
+      "center_offset_pixel_bbox": [
+        0.0,
+        0.0
+      ],
+      "center_pixel_ok": true,
+      "freeze_bit_exact": true,
+      "bg_pure_white_std0": true,
+      "halo_ok": true,
+      "halo_alpha_band_max": 0.08,
+      "corners_white": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true,
+      "canvas_recompose_bit_exact": true,
+      "pixels_equal_independent_recompute": true,
+      "png_sha256_matches_summary": true
+    },
+    {
+      "seq": "05",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-05-canvas-white-20px.png",
+      "naming_ok": true,
+      "exists": true,
+      "png_magic": true,
+      "size": [
+        925,
+        1200
+      ],
+      "long_side_1200": true,
+      "padding_rect_px": [
+        20,
+        20,
+        20,
+        20
+      ],
+      "padding_rect_ok": true,
+      "padding_mask_bbox_px": {
+        "left": 21,
+        "top": 20,
+        "right": 20,
+        "bottom": 20
+      },
+      "padding_mask_bbox_ok": true,
+      "padding_nonwhite_bbox_px": {
+        "left": 18,
+        "top": 18,
+        "right": 18,
+        "bottom": 18
+      },
+      "padding_nonwhite_ok": true,
+      "subject_ratio": 0.966667,
+      "ratio_0_9667": true,
+      "subject_ratio_pixel_bbox": 0.966667,
+      "ratio_pixel_ok": true,
+      "center_offset_px": [
+        0.0,
+        0.0
+      ],
+      "center_ok": true,
+      "center_offset_pixel_bbox": [
+        0.5,
+        0.0
+      ],
+      "center_pixel_ok": true,
+      "freeze_bit_exact": true,
+      "bg_pure_white_std0": true,
+      "halo_ok": true,
+      "halo_alpha_band_max": 0.08,
+      "corners_white": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true,
+      "canvas_recompose_bit_exact": true,
+      "pixels_equal_independent_recompute": true,
+      "png_sha256_matches_summary": true
+    },
+    {
+      "seq": "06",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-06-canvas-white-20px.png",
+      "naming_ok": true,
+      "exists": true,
+      "png_magic": true,
+      "size": [
+        817,
+        1200
+      ],
+      "long_side_1200": true,
+      "padding_rect_px": [
+        20,
+        20,
+        20,
+        20
+      ],
+      "padding_rect_ok": true,
+      "padding_mask_bbox_px": {
+        "left": 20,
+        "top": 20,
+        "right": 20,
+        "bottom": 20
+      },
+      "padding_mask_bbox_ok": true,
+      "padding_nonwhite_bbox_px": {
+        "left": 18,
+        "top": 18,
+        "right": 18,
+        "bottom": 18
+      },
+      "padding_nonwhite_ok": true,
+      "subject_ratio": 0.966667,
+      "ratio_0_9667": true,
+      "subject_ratio_pixel_bbox": 0.966667,
+      "ratio_pixel_ok": true,
+      "center_offset_px": [
+        0.0,
+        0.0
+      ],
+      "center_ok": true,
+      "center_offset_pixel_bbox": [
+        0.0,
+        0.0
+      ],
+      "center_pixel_ok": true,
+      "freeze_bit_exact": true,
+      "bg_pure_white_std0": true,
+      "halo_ok": true,
+      "halo_alpha_band_max": 0.08,
+      "corners_white": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true,
+      "canvas_recompose_bit_exact": true,
+      "pixels_equal_independent_recompute": true,
+      "png_sha256_matches_summary": true
+    },
+    {
+      "seq": "07",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-07-canvas-white-20px.png",
+      "naming_ok": true,
+      "exists": true,
+      "png_magic": true,
+      "size": [
+        1200,
+        1116
+      ],
+      "long_side_1200": true,
+      "padding_rect_px": [
+        20,
+        20,
+        20,
+        20
+      ],
+      "padding_rect_ok": true,
+      "padding_mask_bbox_px": {
+        "left": 20,
+        "top": 22,
+        "right": 21,
+        "bottom": 20
+      },
+      "padding_mask_bbox_ok": true,
+      "padding_nonwhite_bbox_px": {
+        "left": 18,
+        "top": 18,
+        "right": 18,
+        "bottom": 18
+      },
+      "padding_nonwhite_ok": true,
+      "subject_ratio": 0.966667,
+      "ratio_0_9667": true,
+      "subject_ratio_pixel_bbox": 0.965833,
+      "ratio_pixel_ok": true,
+      "center_offset_px": [
+        0.0,
+        0.0
+      ],
+      "center_ok": true,
+      "center_offset_pixel_bbox": [
+        0.5,
+        1.0
+      ],
+      "center_pixel_ok": true,
+      "freeze_bit_exact": true,
+      "bg_pure_white_std0": true,
+      "halo_ok": true,
+      "halo_alpha_band_max": 0.08,
+      "corners_white": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true,
+      "canvas_recompose_bit_exact": true,
+      "pixels_equal_independent_recompute": true,
+      "png_sha256_matches_summary": true
+    },
+    {
+      "seq": "08",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-08-canvas-white-20px.png",
+      "naming_ok": true,
+      "exists": true,
+      "png_magic": true,
+      "size": [
+        1200,
+        728
+      ],
+      "long_side_1200": true,
+      "padding_rect_px": [
+        20,
+        20,
+        20,
+        20
+      ],
+      "padding_rect_ok": true,
+      "padding_mask_bbox_px": {
+        "left": 20,
+        "top": 22,
+        "right": 20,
+        "bottom": 20
+      },
+      "padding_mask_bbox_ok": true,
+      "padding_nonwhite_bbox_px": {
+        "left": 18,
+        "top": 18,
+        "right": 18,
+        "bottom": 18
+      },
+      "padding_nonwhite_ok": true,
+      "subject_ratio": 0.966667,
+      "ratio_0_9667": true,
+      "subject_ratio_pixel_bbox": 0.966667,
+      "ratio_pixel_ok": true,
+      "center_offset_px": [
+        0.0,
+        0.0
+      ],
+      "center_ok": true,
+      "center_offset_pixel_bbox": [
+        0.0,
+        1.0
+      ],
+      "center_pixel_ok": true,
+      "freeze_bit_exact": true,
+      "bg_pure_white_std0": true,
+      "halo_ok": true,
+      "halo_alpha_band_max": 0.08,
+      "corners_white": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true,
+      "canvas_recompose_bit_exact": true,
+      "pixels_equal_independent_recompute": true,
+      "png_sha256_matches_summary": true
+    },
+    {
+      "seq": "09",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-09-canvas-white-20px.png",
+      "naming_ok": true,
+      "exists": true,
+      "png_magic": true,
+      "size": [
+        1200,
+        1128
+      ],
+      "long_side_1200": true,
+      "padding_rect_px": [
+        20,
+        20,
+        20,
+        20
+      ],
+      "padding_rect_ok": true,
+      "padding_mask_bbox_px": {
+        "left": 20,
+        "top": 20,
+        "right": 20,
+        "bottom": 20
+      },
+      "padding_mask_bbox_ok": true,
+      "padding_nonwhite_bbox_px": {
+        "left": 18,
+        "top": 18,
+        "right": 18,
+        "bottom": 18
+      },
+      "padding_nonwhite_ok": true,
+      "subject_ratio": 0.966667,
+      "ratio_0_9667": true,
+      "subject_ratio_pixel_bbox": 0.966667,
+      "ratio_pixel_ok": true,
+      "center_offset_px": [
+        0.0,
+        0.0
+      ],
+      "center_ok": true,
+      "center_offset_pixel_bbox": [
+        0.0,
+        0.0
+      ],
+      "center_pixel_ok": true,
+      "freeze_bit_exact": true,
+      "bg_pure_white_std0": true,
+      "halo_ok": true,
+      "halo_alpha_band_max": 0.08,
+      "corners_white": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true,
+      "canvas_recompose_bit_exact": true,
+      "pixels_equal_independent_recompute": true,
+      "png_sha256_matches_summary": true
+    },
+    {
+      "seq": "10",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-10-canvas-white-20px.png",
+      "naming_ok": true,
+      "exists": true,
+      "png_magic": true,
+      "size": [
+        1200,
+        1200
+      ],
+      "long_side_1200": true,
+      "padding_rect_px": [
+        20,
+        20,
+        20,
+        20
+      ],
+      "padding_rect_ok": true,
+      "padding_mask_bbox_px": {
+        "left": 20,
+        "top": 20,
+        "right": 20,
+        "bottom": 20
+      },
+      "padding_mask_bbox_ok": true,
+      "padding_nonwhite_bbox_px": {
+        "left": 18,
+        "top": 18,
+        "right": 18,
+        "bottom": 18
+      },
+      "padding_nonwhite_ok": true,
+      "subject_ratio": 0.966667,
+      "ratio_0_9667": true,
+      "subject_ratio_pixel_bbox": 0.966667,
+      "ratio_pixel_ok": true,
+      "center_offset_px": [
+        0.0,
+        0.0
+      ],
+      "center_ok": true,
+      "center_offset_pixel_bbox": [
+        0.0,
+        0.0
+      ],
+      "center_pixel_ok": true,
+      "freeze_bit_exact": true,
+      "bg_pure_white_std0": true,
+      "halo_ok": true,
+      "halo_alpha_band_max": 0.08,
+      "corners_white": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true,
+      "canvas_recompose_bit_exact": true,
+      "pixels_equal_independent_recompute": true,
+      "png_sha256_matches_summary": true
+    },
+    {
+      "seq": "11",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-11-canvas-white-20px.png",
+      "naming_ok": true,
+      "exists": true,
+      "png_magic": true,
+      "size": [
+        1059,
+        1200
+      ],
+      "long_side_1200": true,
+      "padding_rect_px": [
+        20,
+        20,
+        20,
+        20
+      ],
+      "padding_rect_ok": true,
+      "padding_mask_bbox_px": {
+        "left": 20,
+        "top": 20,
+        "right": 20,
+        "bottom": 20
+      },
+      "padding_mask_bbox_ok": true,
+      "padding_nonwhite_bbox_px": {
+        "left": 18,
+        "top": 18,
+        "right": 18,
+        "bottom": 18
+      },
+      "padding_nonwhite_ok": true,
+      "subject_ratio": 0.966667,
+      "ratio_0_9667": true,
+      "subject_ratio_pixel_bbox": 0.966667,
+      "ratio_pixel_ok": true,
+      "center_offset_px": [
+        0.0,
+        0.0
+      ],
+      "center_ok": true,
+      "center_offset_pixel_bbox": [
+        0.0,
+        0.0
+      ],
+      "center_pixel_ok": true,
+      "freeze_bit_exact": true,
+      "bg_pure_white_std0": true,
+      "halo_ok": true,
+      "halo_alpha_band_max": 0.08,
+      "corners_white": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true,
+      "canvas_recompose_bit_exact": true,
+      "pixels_equal_independent_recompute": true,
+      "png_sha256_matches_summary": true
+    },
+    {
+      "seq": "12",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-12-canvas-white-20px.png",
+      "naming_ok": true,
+      "exists": true,
+      "png_magic": true,
+      "size": [
+        1200,
+        770
+      ],
+      "long_side_1200": true,
+      "padding_rect_px": [
+        20,
+        20,
+        20,
+        20
+      ],
+      "padding_rect_ok": true,
+      "padding_mask_bbox_px": {
+        "left": 20,
+        "top": 20,
+        "right": 20,
+        "bottom": 20
+      },
+      "padding_mask_bbox_ok": true,
+      "padding_nonwhite_bbox_px": {
+        "left": 18,
+        "top": 18,
+        "right": 18,
+        "bottom": 18
+      },
+      "padding_nonwhite_ok": true,
+      "subject_ratio": 0.966667,
+      "ratio_0_9667": true,
+      "subject_ratio_pixel_bbox": 0.966667,
+      "ratio_pixel_ok": true,
+      "center_offset_px": [
+        0.0,
+        0.0
+      ],
+      "center_ok": true,
+      "center_offset_pixel_bbox": [
+        0.0,
+        0.0
+      ],
+      "center_pixel_ok": true,
+      "freeze_bit_exact": true,
+      "bg_pure_white_std0": true,
+      "halo_ok": true,
+      "halo_alpha_band_max": 0.08,
+      "corners_white": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true,
+      "canvas_recompose_bit_exact": true,
+      "pixels_equal_independent_recompute": true,
+      "png_sha256_matches_summary": true
+    }
+  ],
+  "existing_outputs_unchanged": [
+    {
+      "seq": "01",
+      "what": "无信息-无信息-无信息-无信息-戰國-佚名-01-O.tiff",
+      "ok": true
+    },
+    {
+      "seq": "01",
+      "what": "无信息-无信息-无信息-无信息-戰國-佚名-01-canvas.png",
+      "ok": true,
+      "at_canonical_path": false
+    },
+    {
+      "seq": "01",
+      "what": "无信息-无信息-无信息-无信息-戰國-佚名-01-canvas-white.png",
+      "ok": true,
+      "at_canonical_path": true
+    },
+    {
+      "seq": "02",
+      "what": "无信息-无信息-无信息-无信息-戰國-佚名-02-O.tiff",
+      "ok": true
+    },
+    {
+      "seq": "02",
+      "what": "无信息-无信息-无信息-无信息-戰國-佚名-02-canvas.png",
+      "ok": true,
+      "at_canonical_path": false
+    },
+    {
+      "seq": "02",
+      "what": "无信息-无信息-无信息-无信息-戰國-佚名-02-canvas-white.png",
+      "ok": true,
+      "at_canonical_path": true
+    },
+    {
+      "seq": "03",
+      "what": "无信息-无信息-无信息-无信息-戰國-佚名-03-O.tiff",
+      "ok": true
+    },
+    {
+      "seq": "03",
+      "what": "无信息-无信息-无信息-无信息-戰國-佚名-03-canvas.png",
+      "ok": true,
+      "at_canonical_path": false
+    },
+    {
+      "seq": "03",
+      "what": "无信息-无信息-无信息-无信息-戰國-佚名-03-canvas-white.png",
+      "ok": true,
+      "at_canonical_path": true
+    },
+    {
+      "seq": "04",
+      "what": "无信息-无信息-无信息-无信息-戰國-佚名-04-O.tiff",
+      "ok": true
+    },
+    {
+      "seq": "04",
+      "what": "无信息-无信息-无信息-无信息-戰國-佚名-04-canvas.png",
+      "ok": true,
+      "at_canonical_path": false
+    },
+    {
+      "seq": "04",
+      "what": "无信息-无信息-无信息-无信息-戰國-佚名-04-canvas-white.png",
+      "ok": true,
+      "at_canonical_path": true
+    },
+    {
+      "seq": "05",
+      "what": "无信息-无信息-无信息-无信息-戰國-佚名-05-O.tiff",
+      "ok": true
+    },
+    {
+      "seq": "05",
+      "what": "无信息-无信息-无信息-无信息-戰國-佚名-05-canvas.png",
+      "ok": true,
+      "at_canonical_path": false
+    },
+    {
+      "seq": "05",
+      "what": "无信息-无信息-无信息-无信息-戰國-佚名-05-canvas-white.png",
+      "ok": true,
+      "at_canonical_path": true
+    },
+    {
+      "seq": "06",
+      "what": "无信息-无信息-无信息-无信息-戰國-佚名-06-O.tiff",
+      "ok": true
+    },
+    {
+      "seq": "06",
+      "what": "无信息-无信息-无信息-无信息-戰國-佚名-06-canvas.png",
+      "ok": true,
+      "at_canonical_path": false
+    },
+    {
+      "seq": "06",
+      "what": "无信息-无信息-无信息-无信息-戰國-佚名-06-canvas-white.png",
+      "ok": true,
+      "at_canonical_path": true
+    },
+    {
+      "seq": "07",
+      "what": "无信息-无信息-无信息-无信息-戰國-佚名-07-O.tiff",
+      "ok": true
+    },
+    {
+      "seq": "07",
+      "what": "无信息-无信息-无信息-无信息-戰國-佚名-07-canvas.png",
+      "ok": true,
+      "at_canonical_path": false
+    },
+    {
+      "seq": "07",
+      "what": "无信息-无信息-无信息-无信息-戰國-佚名-07-canvas-white.png",
+      "ok": true,
+      "at_canonical_path": true
+    },
+    {
+      "seq": "08",
+      "what": "无信息-无信息-无信息-无信息-戰國-佚名-08-O.tiff",
+      "ok": true
+    },
+    {
+      "seq": "08",
+      "what": "无信息-无信息-无信息-无信息-戰國-佚名-08-canvas.png",
+      "ok": true,
+      "at_canonical_path": false
+    },
+    {
+      "seq": "08",
+      "what": "无信息-无信息-无信息-无信息-戰國-佚名-08-canvas-white.png",
+      "ok": true,
+      "at_canonical_path": true
+    },
+    {
+      "seq": "09",
+      "what": "无信息-无信息-无信息-无信息-戰國-佚名-09-O.tiff",
+      "ok": true
+    },
+    {
+      "seq": "09",
+      "what": "无信息-无信息-无信息-无信息-戰國-佚名-09-canvas.png",
+      "ok": true,
+      "at_canonical_path": false
+    },
+    {
+      "seq": "09",
+      "what": "无信息-无信息-无信息-无信息-戰國-佚名-09-canvas-white.png",
+      "ok": true,
+      "at_canonical_path": true
+    },
+    {
+      "seq": "10",
+      "what": "无信息-无信息-无信息-无信息-戰國-佚名-10-O.tiff",
+      "ok": true
+    },
+    {
+      "seq": "10",
+      "what": "无信息-无信息-无信息-无信息-戰國-佚名-10-canvas.png",
+      "ok": true,
+      "at_canonical_path": false
+    },
+    {
+      "seq": "10",
+      "what": "无信息-无信息-无信息-无信息-戰國-佚名-10-canvas-white.png",
+      "ok": true,
+      "at_canonical_path": true
+    },
+    {
+      "seq": "11",
+      "what": "无信息-无信息-无信息-无信息-戰國-佚名-11-O.tiff",
+      "ok": true
+    },
+    {
+      "seq": "11",
+      "what": "无信息-无信息-无信息-无信息-戰國-佚名-11-canvas.png",
+      "ok": true,
+      "at_canonical_path": false
+    },
+    {
+      "seq": "11",
+      "what": "无信息-无信息-无信息-无信息-戰國-佚名-11-canvas-white.png",
+      "ok": true,
+      "at_canonical_path": true
+    },
+    {
+      "seq": "12",
+      "what": "无信息-无信息-无信息-无信息-戰國-佚名-12-O.tiff",
+      "ok": true
+    },
+    {
+      "seq": "12",
+      "what": "无信息-无信息-无信息-无信息-戰國-佚名-12-canvas.png",
+      "ok": true,
+      "at_canonical_path": false
+    },
+    {
+      "seq": "12",
+      "what": "无信息-无信息-无信息-无信息-戰國-佚名-12-canvas-white.png",
+      "ok": true,
+      "at_canonical_path": true
     }
   ],
   "sources_unchanged": [

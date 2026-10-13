@@ -3,7 +3,10 @@
 
 核：① seals 计数＋12 行逐项＋既有行指纹 before≡after；② O 件 12 件（容器/尺寸＝bbox+40px clamp/
 解码像素≡源裁区/四边留白 20px 数值验证）；③ canvas 24 件（1200/62% 居中/角部色域/掩膜外无印泥，
-paper 与 plain_white 各一份判据）；④ 12 张原件 sha 未动；⑤ yinpu.db 一字未写（scratch 副本指纹）；
+paper 与 plain_white 各一份判据）；③b canvas 第三版（white-20px）12 件（Kevin 2026-10-13 追加：
+长边 1200/四周留白恰 20px/主体 0.9667/冻结 bit_exact/背景纯白 std=0/晕染 α≤8% 且掩膜内≡0/
+居中偏差 ≤1px/同参复算可复现/成品像素≡独立复算）＋③c 既有产物 sha 未动（O 件＋两版 canvas）；
+④ 12 张原件 sha 未动；⑤ yinpu.db 一字未写（scratch 副本指纹）；
 ⑥ 生产 API 活读数（5196）。结果 → `verify.json`；判据全过退出 0。
 
 跑法：`feicui/venv/bin/python ops/seal-uploads/verify.py`
@@ -197,6 +200,133 @@ def main() -> int:
             check(f"canvas{it['seq']}{suffix} 角部色域", corner_ok, corners[0])
             check(f"canvas{it['seq']}{suffix} 掩膜外无印泥", ink_outside == 0, ink_outside)
     res["canvases"] = cv_checks
+
+    # ── ③b canvas 第三版（white-20px）12 件（Kevin 2026-10-13 追加；独立复算，不采信批跑自报）──
+    # 判据：长边 1200；几何四周留白恰 20px（独立复算 compose ⇒ 与成品逐像素相等，构图量即成品的量）；
+    # 主体/画布＝0.9667；冻结 bit_exact；背景纯白 std=0；晕染 α≤8% 且掩膜内≡0；居中偏差 ≤1px；
+    # 同参复算逐像素可复现；掩膜外无印泥；角部纯白；成品像素口径（掩膜/非白 bbox 留白）如实登记。
+    w20_checks = []
+    W20_PAD = 20
+    for it in SUMMARY["items"]:
+        b = it.get("canvas_white_20px")
+        seq = it["seq"]
+        name20 = Path(it["canvas_plain_white"]["png"]).name.replace("-canvas-white.png",
+                                                                    "-canvas-white-20px.png")
+        p = OUT_DIR / name20
+        name_ok = b is not None and Path(b["png"]).name == name20
+        ok_have = b is not None and p.is_file()
+        data = p.read_bytes() if ok_have else b""
+        png_magic = data[:8] == b"\x89PNG\r\n\x1a\n"
+        arr = np.asarray(Image.open(p).convert("RGB")) if ok_have else None
+        w, h = (int(arr.shape[1]), int(arr.shape[0])) if ok_have else (0, 0)
+        # 独立复算（本脚本自己的两次 compose：与批跑互不为同一次计算）
+        sarr = np.asarray(Image.open(Path(it["source"])).convert("RGB"))
+        cx0, cy0, cx1, cy1 = it["o"]["crop_box"]
+        crop = np.ascontiguousarray(sarr[cy0:cy1, cx0:cx1])
+        re1 = seal_canvas.compose(crop, caliber="A", background="plain_white", padding_px=W20_PAD)
+        re2 = seal_canvas.compose(crop, caliber="A", background="plain_white", padding_px=W20_PAD)
+        comp = re1["readings"]["composition"]
+        rc = re1["readings"]
+        pad_sides = comp["padding_px_per_side"]
+        pixels_equal_recompute = ok_have and bool(np.array_equal(arr, re1["canvas"]))
+        repro_bit = bool(np.array_equal(re1["canvas"], re2["canvas"]))
+        pad_ok = bool(comp["padding_ok"] and comp["padding_px"] == W20_PAD
+                      and all(s == W20_PAD for s in pad_sides))
+        long_ok = bool(comp["canvas_long_side"] == 1200 and max(w, h) == 1200)
+        ratio_ok = abs(comp["subject_ratio_actual"] - 1160 / 1200) <= 0.0001
+        center_ok = max(comp["center_offset_px"]) <= 1.0
+        freeze_ok = bool(rc["freeze"]["bit_exact_no_color_processing"])
+        bg = rc["reproducibility"]
+        bg_ok = bool(bg["bg_is_pure_white"] and max(bg["bg_stats"]["std"]) == 0.0)
+        halo = rc["halo"]
+        halo_ok = bool(halo["ok"] and halo["alpha_inside_mask_max"] == 0.0
+                       and halo["alpha_band_max"] <= 0.08)
+        if ok_have:
+            seg_cv = seal_canvas.seal_mask(arr)
+            mx0, my0, mx1, my1 = seg_cv["bbox"]
+            mask_pad_px = {"left": int(mx0), "top": int(my0), "right": int(w - mx1), "bottom": int(h - my1)}
+            ys, xs = np.where((arr != 255).any(axis=2))
+            nonwhite_pad_px = {"left": int(xs.min()), "top": int(ys.min()),
+                               "right": int(w - 1 - xs.max()), "bottom": int(h - 1 - ys.max())}
+            corners = [arr[0, 0], arr[0, -1], arr[-1, 0], arr[-1, -1]]
+            corners_white = all(tuple(c) == (255, 255, 255) for c in corners)
+            ink = seal_canvas.ink_mask(arr)
+            halo_zone = seal_canvas.resize_mask_bool(
+                __import__("cv2").dilate(seg_cv["mask"].astype(np.uint8),
+                                         __import__("cv2").getStructuringElement(
+                                             __import__("cv2").MORPH_ELLIPSE, (9, 9))) > 0, (w, h))
+            ink_outside = int((ink & ~halo_zone).sum())
+            mask_pad_ok = all(20 <= v <= 22 for v in mask_pad_px.values())
+            nonwhite_ok = all(16 <= v <= 20 for v in nonwhite_pad_px.values())
+            subj_long = max(mx1 - mx0, my1 - my0)
+            ratio_px_val = round(subj_long / float(max(w, h)), 6)
+            ratio_px_ok = abs(subj_long / float(max(w, h)) - 1160 / 1200) <= 0.01
+            moff = (abs((mx0 + (mx1 - mx0) / 2.0) - w / 2.0), abs((my0 + (my1 - my0) / 2.0) - h / 2.0))
+            center_px_ok = max(moff) <= 1.0
+        else:
+            mask_pad_px = nonwhite_pad_px = {}
+            corners_white = mask_pad_ok = nonwhite_ok = ratio_px_ok = center_px_ok = False
+            ink_outside = -1
+            ratio_px_val = None
+            moff = (0.0, 0.0)
+        sha_ok = bool(ok_have and hashlib.sha256(data).hexdigest() == b["png_sha256"])
+        row = {"seq": seq, "file": name20, "naming_ok": name_ok, "exists": ok_have,
+               "png_magic": png_magic, "size": [w, h], "long_side_1200": long_ok,
+               "padding_rect_px": pad_sides, "padding_rect_ok": pad_ok,
+               "padding_mask_bbox_px": mask_pad_px, "padding_mask_bbox_ok": mask_pad_ok,
+               "padding_nonwhite_bbox_px": nonwhite_pad_px, "padding_nonwhite_ok": nonwhite_ok,
+               "subject_ratio": comp["subject_ratio_actual"], "ratio_0_9667": ratio_ok,
+               "subject_ratio_pixel_bbox": ratio_px_val, "ratio_pixel_ok": ratio_px_ok,
+               "center_offset_px": comp["center_offset_px"], "center_ok": center_ok,
+               "center_offset_pixel_bbox": [round(moff[0], 2), round(moff[1], 2)],
+               "center_pixel_ok": center_px_ok,
+               "freeze_bit_exact": freeze_ok, "bg_pure_white_std0": bg_ok,
+               "halo_ok": halo_ok, "halo_alpha_band_max": halo["alpha_band_max"],
+               "corners_white": corners_white, "ink_px_outside_seal_and_halo": ink_outside,
+               "bg_no_ink": ink_outside == 0,
+               "canvas_recompose_bit_exact": repro_bit,
+               "pixels_equal_independent_recompute": pixels_equal_recompute,
+               "png_sha256_matches_summary": sha_ok}
+        w20_checks.append(row)
+        check(f"w20{seq} 命名规范", name_ok, name20)
+        check(f"w20{seq} 存在＋PNG", ok_have and png_magic, name20)
+        check(f"w20{seq} 长边1200", long_ok, (w, h))
+        check(f"w20{seq} 四周留白恰20（几何）", pad_ok, pad_sides)
+        check(f"w20{seq} 主体/画布=0.9667", ratio_ok, comp["subject_ratio_actual"])
+        check(f"w20{seq} 居中偏差≤1px", center_ok, comp["center_offset_px"])
+        check(f"w20{seq} 冻结 bit_exact", freeze_ok)
+        check(f"w20{seq} 背景纯白 std=0", bg_ok)
+        check(f"w20{seq} 晕染 α≤8% 且掩膜内≡0", halo_ok,
+              (halo["alpha_band_max"], halo["alpha_inside_mask_max"]))
+        check(f"w20{seq} 同参复算逐像素可复现", repro_bit)
+        check(f"w20{seq} 成品像素≡独立复算", pixels_equal_recompute)
+        check(f"w20{seq} 角部纯白", corners_white)
+        check(f"w20{seq} 掩膜外无印泥", ink_outside == 0, ink_outside)
+        check(f"w20{seq} 掩膜bbox留白20–22", mask_pad_ok, mask_pad_px)
+        check(f"w20{seq} 非白bbox留白16–20（晕染≤2px）", nonwhite_ok, nonwhite_pad_px)
+        check(f"w20{seq} 像素口径 0.9667±0.01", ratio_px_ok, ratio_px_val)
+        check(f"w20{seq} 像素口径居中≤1px", center_px_ok, moff)
+        check(f"w20{seq} sha256≡summary", sha_ok)
+    res["canvases_white20"] = w20_checks
+    n_w20 = sum(1 for _ in OUT_DIR.glob("*-canvas-white-20px.png"))
+    check("white20 恰 12 张", n_w20 == 12, n_w20)
+
+    # ── ③c 既有产物 sha 未动（O 件 12 ＋ 两版 canvas 24；本单只新增第三版 12 张）──────────
+    unchanged = []
+    for it in SUMMARY["items"]:
+        o_p = OUT_DIR / it["o"]["name"]
+        ok_o = o_p.is_file() and sha_file(o_p) == it["o"]["tiff_sha256_file"]
+        unchanged.append({"seq": it["seq"], "what": it["o"]["name"], "ok": bool(ok_o)})
+        check(f"既有 {it['o']['name']} sha 未动", ok_o)
+        for key in ("canvas_paper", "canvas_plain_white"):
+            canonical = OUT_DIR / Path(it[key]["png"]).name
+            relocated = OUT_DIR / "异形印章 1200px" / Path(it[key]["png"]).name
+            cp = canonical if canonical.is_file() else relocated
+            ok_c = cp.is_file() and sha_file(cp) == it[key]["png_sha256"]
+            unchanged.append({"seq": it["seq"], "what": Path(it[key]["png"]).name,
+                              "ok": bool(ok_c), "at_canonical_path": cp == canonical})
+            check(f"既有 {Path(it[key]['png']).name} sha 未动", ok_c)
+    res["existing_outputs_unchanged"] = unchanged
 
     # ── ④ 原件 sha ─────────────────────────────────────────────────────────────────
     src_ok = []

@@ -4,6 +4,8 @@
 `seal_uploads`）→ **② 导入 12 张本地印面图**（戰國／佚名／释文留空）→ **③ O 件 12 件**
 （红掩膜 bbox ＋ 20px 留白）→ **④ 1200px 成品 24 件**（A 口径 × 两版背景：宣纸 / 纯白），
 外加 **⑤ 导入端点**（`POST /api/seals/uploads`）与 **⑥ 终验证据**。
+（2026-10-13 追加 **⑦ 第三版成品**：纯白底＋四周只留 20px ⇒ `…-canvas-white-20px.png` ×12，
+`verify.json all_pass=true` 复验含新增判据。）
 
 ## 0. 一页汇总（真读数；判据全过，`verify.json all_pass=true`）
 
@@ -15,6 +17,7 @@
 | O 件 | 12/12：TIFF RGB 8-bit ＋ **Deflate(8) ＋ Predictor=2**；尺寸＝bbox＋40px（clamp 原图界；本批 12 件**无一 clamp**）；**四边留白实测恰 20px**（O 件上复算掩膜 bbox 数值验证）；**解码像素 ≡ 源裁区逐像素**（本体零色彩处理） |
 | canvas·paper | 12/12：长边 **1200** ✓；主体 **62.00%** ✓；居中偏差 ≤2px ✓；印区位级冻结（max_abs_diff=0）✓；宣纸底无印泥像素 ✓；晕染掩膜内 α≡0、环带 ≤8% ✓；背景色域 `#FAFAF7–#FFFFFF` ✓；同种子复现 ✓ |
 | canvas·plain_white | 12/12：同上全绿；**背景恰 `#FFFFFF`**（min=max=255，角部四点逐点 =255）✓ |
+| canvas·plain_white·20px（第三版，Kevin 2026-10-13 追加） | 12/12：长边 **1200** ✓；**四周留白几何恰 20px**（`[20,20,20,20]`，主体长边 **1160**＝画布 **96.67%**，不加 19% 宽留白）✓；居中偏差 **0**（判据 ≤1px）✓；印区位级冻结（max_abs_diff=0）✓；**背景纯白 `#FFFFFF`（std=0，角部四点逐点 =255）**✓；晕染 α≤8%（band_max=0.08）且掩膜内≡0 ✓；同参复算**逐像素可复现**、verify 独立复算与成品**逐像素相等** ✓；掩膜外无印泥 ✓ |
 | 原件 | 12/12 sha256 未动 |
 | yinpu.db | **一字未写**：stamps 8708 行 dump sha256 ＋ 三表计数 ＋ 主库 size 全等（指纹取 scratch 只读副本） |
 | API | 已重启（ctrl 面板，新 PID lstart ≥ 全部源文件 mtime）；`total=3691`；上传行/新列可读；`POST /api/seals/uploads` 路由活（非 multipart ⇒ 400，零写入） |
@@ -25,7 +28,8 @@
   sha256 `da68aa8a…`，integrity ok，3679 行）。写前先取 guard（`guard_before.json`），写后复核
   （`guard_after_import.json`、`verify.json`）。
 - 原件拷贝：`var/seal_uploads/seal_upload_20261013_01/image_<hash>.png`（12 件，字节＝源文件）。
-- 产物：`output/seals/无信息/`——O 件 12 ＋ `…-canvas-white.png` 12；**paper 版 12 件已被 Kevin
+- 产物：`output/seals/无信息/`——O 件 12 ＋ `…-canvas-white.png` 12 ＋ `…-canvas-white-20px.png` 12
+  （第三版，Kevin 2026-10-13 追加：纯白底＋四周恰 20px）；**paper 版 12 件已被 Kevin
   本人移入子目录 `异形印章 1200px/`（sha 未变，另有同名 zip）——如实登记，未代移回**；
   `seal_uploads.canvas_path` 仍指规范位置（子目录为用户现状）。
 - 汇总/证据（入库）：本目录 `guard_before.json` / `guard_after_import.json` / `batch_spec.json` /
@@ -49,7 +53,10 @@
   （Kevin 2026-10-13 追加）：`background="paper"`（宣纸底纹，原口径）与 `"plain_white"`
   （纯白 `#FFFFFF`，跳过纹理；其余算法完全相同）；`run_batch(backgrounds=…)`／CLI
   `--backgrounds paper,plain_white` 默认两版都出。canvas 交付 **PNG**（tiff 为可选项，本批未产，
-  需要时 `write_tiff_lossless` 一行可得）。
+  需要时 `write_tiff_lossless` 一行可得）。**第三版**（Kevin 2026-10-13 追加）：`compose(padding_px=20)`
+  ——主体长边＝1200−2×20＝**1160**、画布＝主体四周各外扩 20px（四边留白恰 20、居中偏差 0）、
+  纯白底 ⇒ `…-canvas-white-20px.png`；`--variant white20` 只出第三版（**不写库、不动既有文件**，
+  动笔前先与既有 O 件只读逐像素核对）。
 - **朝代枚举真源＝xiai**（15 种）；「战国」按枚举写 **`戰國`**。feicui 侧不复制枚举，只如实记
   `dynasty` ＋ `dynasty_source`。
 
@@ -81,7 +88,8 @@ skipped 1、缺 dynasty/非 multipart/空文件段 400、列表与单枚读面�
 cd /Users/kevin/bistro/xiai/feicui
 ./venv/bin/python ops/seal-uploads/import_uploads.py     # 幂等：重放＝skipped 12
 ./venv/bin/python ops/seal-uploads/make_o_and_canvas.py  # 幂等：确定性重算覆盖（不动 Kevin 子目录/zip）
-./venv/bin/python ops/seal-uploads/verify.py             # 终验；全绿 exit 0 → verify.json
+./venv/bin/python ops/seal-uploads/make_o_and_canvas.py --variant white20  # 第三版：只新增 …-canvas-white-20px.png ×12（不写库、不动既有文件）
+./venv/bin/python ops/seal-uploads/verify.py             # 终验；全绿 exit 0 → verify.json（判据含第三版 ③b/③c）
 ```
 
 ## 7. 待裁项（给 Kevin）

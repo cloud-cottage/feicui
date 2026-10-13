@@ -15,6 +15,7 @@
 | 6 | 构图：画布最长边 **1200 px**、纵横比沿用原片；主体缩放至画布最长边 **62%** 居中 | `画布 = 1200 ×(1200·短/长)` 取整；主体最长边＝`round(0.62·1200)=744`，按原比例取整，居中（整数偏移） | `CANVAS_LONG_SIDE=1200`、`SUBJECT_LONG_SIDE_RATIO=0.62` |
 | 7 | **「主体」的两种读法**（提示词歧义） | **A ＝印章本体紧致外接框内容**（掩膜闭合后的外接框；几何框内含框内白线）；**B ＝整幅原片**。两种都出 | `CALIBER_A`/`CALIBER_B` |
 | 8 | **背景两版**（Kevin 2026-10-13 追加：1200px 成品出两版） | `paper`＝程序化宣纸底纹（原口径）；`plain_white`＝纯白 `#FFFFFF` 画布（跳过纹理生成；62%/1200/本体零色彩/晕染规则**完全相同**）。批量/CLI 两版都出（`plain_white` 产物名加 `-white` 后缀） | `BACKGROUND_PAPER`/`BACKGROUND_PLAIN_WHITE`/`BACKGROUND_MODES`、`compose(background=…)`、`run_batch(backgrounds=…)`、CLI `--backgrounds` |
+| 9 | **构图第三版**（Kevin 2026-10-13 追加：纯白底四周只留约 20px 留白，不加 19% 宽留白） | `padding_px=20`：主体最长边＝`canvas_long_side−2·padding_px`（1200→**1160**，主体/画布＝0.9667）；**画布＝主体四周各外扩 `padding_px`**（四边留白恰 20px、长轴两端恰 20、居中偏差 0）；冻结/晕染/分割/背景规则不变 | `compose(padding_px=…)`、`run_batch(padding_px=…)`、CLI `--padding-px` |
 
 ## 1. 分割：**复用既有掩膜**（不重写检测）
 
@@ -430,7 +431,8 @@ def _ink_mean_rgb(rgb, mask) -> Optional[Tuple[float, float, float]]:
 # ── 合成主体 ──────────────────────────────────────────────────────────────────────
 def compose(rgb, *, caliber: str = CALIBER_A, alpha_mode: str = ALPHA_MODE_INK,
             seed: int = BG_SEED_DEFAULT, canvas_long_side: int = CANVAS_LONG_SIDE,
-            subject_ratio: float = SUBJECT_LONG_SIDE_RATIO, halo_band_px: int = HALO_BAND_PX,
+            subject_ratio: float = SUBJECT_LONG_SIDE_RATIO, padding_px: Optional[int] = None,
+            halo_band_px: int = HALO_BAND_PX,
             halo_alpha_max: float = HALO_ALPHA_MAX, close_px: int = CLOSE_KERNEL_PX,
             fringe_px: int = FRINGE_PX, fill_holes: bool = False,
             halo: bool = True, halo_policy: str = HALO_POLICY_SEAL,
@@ -440,6 +442,9 @@ def compose(rgb, *, caliber: str = CALIBER_A, alpha_mode: str = ALPHA_MODE_INK,
     流程：分割 → 取主体（A＝掩膜外接框 / B＝整幅）→ Lanczos 到 62% → 居中贴到底
     （`background="paper"`＝程序化宣纸底纹；`"plain_white"`＝纯白 `#FFFFFF`，跳过纹理生成，
     其余——62% 居中、长边 1200、本体零色彩、晕染规则——完全相同）→ 掩膜外侧晕染 → 出读数。
+    `padding_px`（Kevin 2026-10-13 第三版）：给定后**忽略 `subject_ratio`**——主体最长边＝
+    `canvas_long_side−2·padding_px`，**画布＝主体四周各外扩 `padding_px`**（均匀留白，四边恰 pad）；
+    其余（冻结/晕染/分割/背景）规则不变。
     返回 dict：`canvas`（uint8 HxWx3）、`mask_canvas`、`halo`、`readings`、`meta`、`seg`。
     """
     np_ = _np()
@@ -477,11 +482,22 @@ def compose(rgb, *, caliber: str = CALIBER_A, alpha_mode: str = ALPHA_MODE_INK,
     else:
         paste_src = np_.ones(seal_src.shape, dtype=bool)
     crop_h, crop_w = int(crop.shape[0]), int(crop.shape[1])
-    cw, ch = canvas_size(src_w, src_h, long_side=canvas_long_side)
-    tw, th = subject_target_size(crop_w, crop_h, long_side=canvas_long_side, ratio=subject_ratio)
+    if padding_px is not None:
+        # ⑥ 第三版（Kevin 2026-10-13）：均匀 20px 留白——主体长边＝长边−2·pad，画布＝主体外扩四周各 pad
+        pad = int(padding_px)
+        if pad < 0 or 2 * pad >= int(canvas_long_side):
+            raise ValueError(f"padding_px 须满足 0 ≤ 2·padding_px < canvas_long_side，收到 {padding_px!r}")
+        ratio_eff = (int(canvas_long_side) - 2 * pad) / float(canvas_long_side)
+        tw, th = subject_target_size(crop_w, crop_h, long_side=canvas_long_side, ratio=ratio_eff)
+        cw, ch = tw + 2 * pad, th + 2 * pad   # ⇒ 四边留白恰 pad（长轴两端恰 pad、居中偏差 0）
+    else:
+        cw, ch = canvas_size(src_w, src_h, long_side=canvas_long_side)
+        tw, th = subject_target_size(crop_w, crop_h, long_side=canvas_long_side, ratio=subject_ratio)
+        ratio_eff = float(subject_ratio)
     sub, a_sub = resample_subject(crop, paste_src, (tw, th))
     seal_local = resize_mask_bool(seal_src, (tw, th))   # 真印章掩膜（画布尺度：② 判据用）
     ox, oy = (cw - tw) // 2, (ch - th) // 2
+    pad_sides = [int(ox), int(oy), int(cw - ox - tw), int(ch - oy - th)]  # 四边留白（几何量，恰值）
 
     if background == BACKGROUND_PLAIN_WHITE:
         bg = np_.full((ch, cw, 3), 255, dtype=np_.uint8)   # 纯白 #FFFFFF（无纹理、无种子）
@@ -588,14 +604,18 @@ def compose(rgb, *, caliber: str = CALIBER_A, alpha_mode: str = ALPHA_MODE_INK,
                        and halo_out["alpha_band_max"] <= HALO_ALPHA_MAX + 1e-12),
         },
         "composition": {
-            "claim": "画布最长边 1200、主体最长边＝画布最长边×62%±1%、居中偏差 ≤ 2 px",
+            "claim": ("画布最长边 1200、主体最长边＝画布最长边×62%±1%、居中偏差 ≤ 2 px" if padding_px is None
+                      else "画布最长边 1200、主体最长边＝画布最长边−2·padding_px（四周均匀 padding_px 留白）、居中偏差 ≤ 1 px"),
             "canvas_size": [cw, ch],
             "canvas_long_side": int(max(cw, ch)),
             "subject_size": [tw, th],
             "subject_long_side": int(max(tw, th)),
             "subject_ratio_actual": round(max(tw, th) / float(max(cw, ch)), 6),
-            "subject_ratio_target": float(subject_ratio),
-            "subject_ratio_ok": bool(abs(max(tw, th) / float(max(cw, ch)) - float(subject_ratio)) <= 0.01),
+            "subject_ratio_target": float(ratio_eff),
+            "subject_ratio_ok": bool(abs(max(tw, th) / float(max(cw, ch)) - float(ratio_eff)) <= 0.01),
+            "padding_px": (None if padding_px is None else int(padding_px)),
+            "padding_px_per_side": pad_sides,
+            "padding_ok": bool(padding_px is None or all(s == int(padding_px) for s in pad_sides)),
             "offset_px": [ox, oy],
             "center_offset_px": [round(abs((ox + tw / 2.0) - cw / 2.0), 3),
                                  round(abs((oy + th / 2.0) - ch / 2.0), 3)],
@@ -636,6 +656,7 @@ def compose(rgb, *, caliber: str = CALIBER_A, alpha_mode: str = ALPHA_MODE_INK,
                            else "B＝整幅原片"),
         "seed": int(seed), "source_size": [src_w, src_h],
         "canvas_long_side": int(canvas_long_side), "subject_ratio": float(subject_ratio),
+        "padding_px": (None if padding_px is None else int(padding_px)),
         "halo_band_px": int(halo_band_px), "halo_alpha_max": float(halo_alpha_max),
         "halo_policy": halo_policy,
         "halo_applied": bool(halo and ink_rgb is not None),
@@ -691,6 +712,7 @@ def comparison_image(source_rgb, canvas_rgb, *, height: int = 744, gap: int = 8,
 def run_batch(inputs: Sequence[Dict[str, Any]], out_dir: Path, *, calibers: Sequence[str] = CALIBERS,
               alpha_mode: str = ALPHA_MODE_INK, seed: int = BG_SEED_DEFAULT,
               canvas_long_side: int = CANVAS_LONG_SIDE, subject_ratio: float = SUBJECT_LONG_SIDE_RATIO,
+              padding_px: Optional[int] = None,
               halo_band_px: int = HALO_BAND_PX, halo_alpha_max: float = HALO_ALPHA_MAX,
               close_px: int = CLOSE_KERNEL_PX, fringe_px: int = FRINGE_PX,
               fill_holes: bool = False, halo: bool = True, halo_policy: str = HALO_POLICY_SEAL,
@@ -700,6 +722,8 @@ def run_batch(inputs: Sequence[Dict[str, Any]], out_dir: Path, *, calibers: Sequ
 
     背景（Kevin 2026-10-13 追加）：`paper`（宣纸底纹）⇒ 产物名 `{name}-{cal}.png`；
     `plain_white`（纯白 #FFFFFF）⇒ 产物名 `{name}-{cal}-white.png`。两版读数各自独立给出。
+    `padding_px`（Kevin 2026-10-13 第三版）：给定 ⇒ 构图改均匀留白模式（见 `compose`），
+    产物名再加 `-{padding_px}px` 后缀（纯白底 ⇒ `{name}-{cal}-white-20px.png`）。
     `inputs` 项：`{"name": str, "path": str|Path, "meta": {...任意溯源字段...}}`（**只读** `path`）。
     """
     np_ = _np()
@@ -722,6 +746,7 @@ def run_batch(inputs: Sequence[Dict[str, Any]], out_dir: Path, *, calibers: Sequ
                 try:
                     res = compose(arr, caliber=cal, alpha_mode=alpha_mode, seed=seed,
                                   canvas_long_side=canvas_long_side, subject_ratio=subject_ratio,
+                                  padding_px=padding_px,
                                   halo_band_px=halo_band_px, halo_alpha_max=halo_alpha_max,
                                   close_px=close_px, fringe_px=fringe_px, fill_holes=fill_holes, halo=halo,
                                   halo_policy=halo_policy, background=bg_mode)
@@ -730,6 +755,8 @@ def run_batch(inputs: Sequence[Dict[str, Any]], out_dir: Path, *, calibers: Sequ
                         {"caliber": cal, "background": bg_mode, "error": f"{type(exc).__name__}: {exc}"})
                     continue
                 stem = f"{name}-{cal}" if bg_mode == BACKGROUND_PAPER else f"{name}-{cal}-white"
+                if padding_px is not None:
+                    stem += f"-{int(padding_px)}px"   # 第三版（均匀留白）产物名后缀
                 png = out_dir / f"{stem}.png"
                 tif = out_dir / f"{stem}.tiff"
                 cmp_png = out_dir / f"{stem}-compare.png"
@@ -755,6 +782,7 @@ def run_batch(inputs: Sequence[Dict[str, Any]], out_dir: Path, *, calibers: Sequ
         "constants": {
             "canvas_long_side": int(canvas_long_side), "subject_long_side_ratio": float(subject_ratio),
             "subject_long_side_target_px": int(round(subject_ratio * canvas_long_side)),
+            "padding_px": (None if padding_px is None else int(padding_px)),
             "halo_band_px": int(halo_band_px), "halo_alpha_max": float(halo_alpha_max),
             "close_kernel_px": int(close_px), "fringe_px": int(fringe_px),
             "fill_holes": bool(fill_holes), "halo": bool(halo), "halo_policy": halo_policy,
@@ -792,6 +820,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     ap.add_argument("--seed", type=int, default=BG_SEED_DEFAULT)
     ap.add_argument("--canvas-long-side", type=int, default=CANVAS_LONG_SIDE)
     ap.add_argument("--subject-ratio", type=float, default=SUBJECT_LONG_SIDE_RATIO)
+    ap.add_argument("--padding-px", type=int, default=None,
+                    help="构图第三版（Kevin 2026-10-13）：四周均匀留白 px（如 20 ⇒ 主体长边=1200−2·20=1160）；缺省＝62% 口径")
     ap.add_argument("--halo-band-px", type=int, default=HALO_BAND_PX)
     ap.add_argument("--halo-alpha-max", type=float, default=HALO_ALPHA_MAX)
     ap.add_argument("--halo-policy", default=HALO_POLICY_SEAL, choices=list(HALO_POLICIES))
@@ -813,7 +843,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     summary = run_batch(
         items, Path(args.out), calibers=[c.strip() for c in args.calibers.split(",") if c.strip()],
         alpha_mode=args.alpha, seed=args.seed, canvas_long_side=args.canvas_long_side,
-        subject_ratio=args.subject_ratio, halo_band_px=args.halo_band_px,
+        subject_ratio=args.subject_ratio, padding_px=args.padding_px,
+        halo_band_px=args.halo_band_px,
         halo_alpha_max=args.halo_alpha_max, close_px=args.close_px, fringe_px=args.fringe_px,
         fill_holes=args.fill_holes, halo=not args.no_halo, halo_policy=args.halo_policy,
         write_compare=not args.no_compare,

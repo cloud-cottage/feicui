@@ -1,0 +1,116 @@
+{
+  "batch_id": "seal_upload_20261013_01",
+  "dynasty": "戰國",
+  "author": "佚名",
+  "dir_key": "无信息",
+  "items": [
+    {
+      "seq": 1,
+      "source_seal_id": "local_upload_20261013_01",
+      "upload_id": "up_1d9bfc48145f70a7",
+      "source_path": "/Users/kevin/bistro/xiai/feicui/var/seal_uploads/seal_upload_20261013_01/image_6e9080.png",
+      "sha256": "1d9bfc48145f70a7da85612139d8557d1ca766bb0b116b1435791751cecfa961",
+      "width": 266,
+      "height": 570
+    },
+    {
+      "seq": 2,
+      "source_seal_id": "local_upload_20261013_02",
+      "upload_id": "up_99b0321714842715",
+      "source_path": "/Users/kevin/bistro/xiai/feicui/var/seal_uploads/seal_upload_20261013_01/image_270063.png",
+      "sha256": "99b0321714842715352348799313a13e5db850b4ac15c8fc181d06200d0c7090",
+      "width": 290,
+      "height": 620
+    },
+    {
+      "seq": 3,
+      "source_seal_id": "local_upload_20261013_03",
+      "upload_id": "up_1fd1a4ecf8c6187d",
+      "source_path": "/Users/kevin/bistro/xiai/feicui/var/seal_uploads/seal_upload_20261013_01/image_064c98.png",
+      "sha256": "1fd1a4ecf8c6187d822dc25001f862786a941cbe8acfe25ab007bd9f8afd7b72",
+      "width": 454,
+      "height": 448
+    },
+    {
+      "seq": 4,
+      "source_seal_id": "local_upload_20261013_04",
+      "upload_id": "up_56f0656d9fe1204d",
+      "source_path": "/Users/kevin/bistro/xiai/feicui/var/seal_uploads/seal_upload_20261013_01/image_9e72d7.png",
+      "sha256": "56f0656d9fe1204dad56a9f09ec278998010c7db21120c2d893e43637b43ea33",
+      "width": 576,
+      "height": 862
+    },
+    {
+      "seq": 5,
+      "source_seal_id": "local_upload_20261013_05",
+      "upload_id": "up_a5edadfaab5123e2",
+      "source_path": "/Users/kevin/bistro/xiai/feicui/var/seal_uploads/seal_upload_20261013_01/image_f88298.png",
+      "sha256": "a5edadfaab5123e2d43d5ade3a5f129fd015f17419da1f6b3a42a6b584176ad3",
+      "width": 402,
+      "height": 450
+    },
+    {
+      "seq": 6,
+      "source_seal_id": "local_upload_20261013_06",
+      "upload_id": "up_08328094207c1f63",
+      "source_path": "/Users/kevin/bistro/xiai/feicui/var/seal_uploads/seal_upload_20261013_01/image_8cd872.png",
+      "sha256": "08328094207c1f63ffef25424928615abc00343ff2eb3b3cf38399e4f11c7285",
+      "width": 398,
+      "height": 448
+    },
+    {
+      "seq": 7,
+      "source_seal_id": "local_upload_20261013_07",
+      "upload_id": "up_8379cdd2de91350a",
+      "source_path": "/Users/kevin/bistro/xiai/feicui/var/seal_uploads/seal_upload_20261013_01/image_2106f1.png",
+      "sha256": "8379cdd2de91350a0480bc5219a347332050c062723c48eddcc18424af49809c",
+      "width": 378,
+      "height": 396
+    },
+    {
+      "seq": 8,
+      "source_seal_id": "local_upload_20261013_08",
+      "upload_id": "up_f012356c09ea50f8",
+      "source_path": "/Users/kevin/bistro/xiai/feicui/var/seal_uploads/seal_upload_20261013_01/image_ce4f21.png",
+      "sha256": "f012356c09ea50f86b7e6d1ab72a280131f13ec2bd963855d699377b67162421",
+      "width": 514,
+      "height": 478
+    },
+    {
+      "seq": 9,
+      "source_seal_id": "local_upload_20261013_09",
+      "upload_id": "up_837ec449627912a8",
+      "source_path": "/Users/kevin/bistro/xiai/feicui/var/seal_uploads/seal_upload_20261013_01/image_e344a2.png",
+      "sha256": "837ec449627912a838ff67980ad752319e2c2f9bd6d5fa411e5e762fbd2414fe",
+      "width": 468,
+      "height": 536
+    },
+    {
+      "seq": 10,
+      "source_seal_id": "local_upload_20261013_10",
+      "upload_id": "up_3bf998e30aedc1d6",
+      "source_path": "/Users/kevin/bistro/xiai/feicui/var/seal_uploads/seal_upload_20261013_01/image_e9185a.png",
+      "sha256": "3bf998e30aedc1d6b46aab71fa5553c533b88d555805744657e6437623967001",
+      "width": 636,
+      "height": 524
+    },
+    {
+      "seq": 11,
+      "source_seal_id": "local_upload_20261013_11",
+      "upload_id": "up_96b976edd2ffb015",
+      "source_path": "/Users/kevin/bistro/xiai/feicui/var/seal_uploads/seal_upload_20261013_01/image_21c243.png",
+      "sha256": "96b976edd2ffb015ca668138fa84688f77b2073dbd1c9f9e1606988ffbe9ebcd",
+      "width": 416,
+      "height": 448
+    },
+    {
+      "seq": 12,
+      "source_seal_id": "local_upload_20261013_12",
+      "upload_id": "up_2c907177226f2d8c",
+      "source_path": "/Users/kevin/bistro/xiai/feicui/var/seal_uploads/seal_upload_20261013_01/image_1df10e.png",
+      "sha256": "2c907177226f2d8c0c1c1a6fd9491349171212ba86ada597a680bf63bcc9c02d",
+      "width": 926,
+      "height": 564
+    }
+  ]
+}

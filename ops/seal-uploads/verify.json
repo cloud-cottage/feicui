@@ -1,0 +1,1643 @@
+{
+  "generated_at": "2026-10-13T15:08:43+08:00",
+  "db_counts": {
+    "seals": 3691,
+    "seal_links": 8964,
+    "seal_images": 6765,
+    "seal_import_batches": 2,
+    "seal_uploads": 12
+  },
+  "existing_rows_fingerprint": {
+    "sha256": "2214e13c3df5f3c7018956b6791dd6856bf5c3845a079730125059e0c99aa6d6",
+    "before": "2214e13c3df5f3c7018956b6791dd6856bf5c3845a079730125059e0c99aa6d6"
+  },
+  "rows": [
+    {
+      "seq": "01",
+      "source_seal_id": "local_upload_20261013_01",
+      "ok": true
+    },
+    {
+      "seq": "02",
+      "source_seal_id": "local_upload_20261013_02",
+      "ok": true
+    },
+    {
+      "seq": "03",
+      "source_seal_id": "local_upload_20261013_03",
+      "ok": true
+    },
+    {
+      "seq": "04",
+      "source_seal_id": "local_upload_20261013_04",
+      "ok": true
+    },
+    {
+      "seq": "05",
+      "source_seal_id": "local_upload_20261013_05",
+      "ok": true
+    },
+    {
+      "seq": "06",
+      "source_seal_id": "local_upload_20261013_06",
+      "ok": true
+    },
+    {
+      "seq": "07",
+      "source_seal_id": "local_upload_20261013_07",
+      "ok": true
+    },
+    {
+      "seq": "08",
+      "source_seal_id": "local_upload_20261013_08",
+      "ok": true
+    },
+    {
+      "seq": "09",
+      "source_seal_id": "local_upload_20261013_09",
+      "ok": true
+    },
+    {
+      "seq": "10",
+      "source_seal_id": "local_upload_20261013_10",
+      "ok": true
+    },
+    {
+      "seq": "11",
+      "source_seal_id": "local_upload_20261013_11",
+      "ok": true
+    },
+    {
+      "seq": "12",
+      "source_seal_id": "local_upload_20261013_12",
+      "ok": true
+    }
+  ],
+  "o_pieces": [
+    {
+      "seq": "01",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-01-O.tiff",
+      "exists": true,
+      "container": {
+        "compression": 8,
+        "predictor": 2,
+        "bits": [
+          8,
+          8,
+          8
+        ],
+        "photometric": 2
+      },
+      "container_ok": true,
+      "size": [
+        231,
+        514
+      ],
+      "expected_size_bbox_plus_40_clamped": [
+        231,
+        514
+      ],
+      "size_ok": true,
+      "pixels_equal_source_crop": true,
+      "crop_in_source_bounds": true,
+      "ink_margins_px": {
+        "left": 20,
+        "top": 20,
+        "right": 20,
+        "bottom": 20
+      },
+      "margin_20px_ok": true
+    },
+    {
+      "seq": "02",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-02-O.tiff",
+      "exists": true,
+      "container": {
+        "compression": 8,
+        "predictor": 2,
+        "bits": [
+          8,
+          8,
+          8
+        ],
+        "photometric": 2
+      },
+      "container_ok": true,
+      "size": [
+        214,
+        541
+      ],
+      "expected_size_bbox_plus_40_clamped": [
+        214,
+        541
+      ],
+      "size_ok": true,
+      "pixels_equal_source_crop": true,
+      "crop_in_source_bounds": true,
+      "ink_margins_px": {
+        "left": 20,
+        "top": 20,
+        "right": 20,
+        "bottom": 20
+      },
+      "margin_20px_ok": true
+    },
+    {
+      "seq": "03",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-03-O.tiff",
+      "exists": true,
+      "container": {
+        "compression": 8,
+        "predictor": 2,
+        "bits": [
+          8,
+          8,
+          8
+        ],
+        "photometric": 2
+      },
+      "container_ok": true,
+      "size": [
+        297,
+        291
+      ],
+      "expected_size_bbox_plus_40_clamped": [
+        297,
+        291
+      ],
+      "size_ok": true,
+      "pixels_equal_source_crop": true,
+      "crop_in_source_bounds": true,
+      "ink_margins_px": {
+        "left": 20,
+        "top": 20,
+        "right": 20,
+        "bottom": 20
+      },
+      "margin_20px_ok": true
+    },
+    {
+      "seq": "04",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-04-O.tiff",
+      "exists": true,
+      "container": {
+        "compression": 8,
+        "predictor": 2,
+        "bits": [
+          8,
+          8,
+          8
+        ],
+        "photometric": 2
+      },
+      "container_ok": true,
+      "size": [
+        408,
+        612
+      ],
+      "expected_size_bbox_plus_40_clamped": [
+        408,
+        612
+      ],
+      "size_ok": true,
+      "pixels_equal_source_crop": true,
+      "crop_in_source_bounds": true,
+      "ink_margins_px": {
+        "left": 20,
+        "top": 20,
+        "right": 20,
+        "bottom": 20
+      },
+      "margin_20px_ok": true
+    },
+    {
+      "seq": "05",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-05-O.tiff",
+      "exists": true,
+      "container": {
+        "compression": 8,
+        "predictor": 2,
+        "bits": [
+          8,
+          8,
+          8
+        ],
+        "photometric": 2
+      },
+      "container_ok": true,
+      "size": [
+        236,
+        297
+      ],
+      "expected_size_bbox_plus_40_clamped": [
+        236,
+        297
+      ],
+      "size_ok": true,
+      "pixels_equal_source_crop": true,
+      "crop_in_source_bounds": true,
+      "ink_margins_px": {
+        "left": 20,
+        "top": 20,
+        "right": 20,
+        "bottom": 20
+      },
+      "margin_20px_ok": true
+    },
+    {
+      "seq": "06",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-06-O.tiff",
+      "exists": true,
+      "container": {
+        "compression": 8,
+        "predictor": 2,
+        "bits": [
+          8,
+          8,
+          8
+        ],
+        "photometric": 2
+      },
+      "container_ok": true,
+      "size": [
+        188,
+        261
+      ],
+      "expected_size_bbox_plus_40_clamped": [
+        188,
+        261
+      ],
+      "size_ok": true,
+      "pixels_equal_source_crop": true,
+      "crop_in_source_bounds": true,
+      "ink_margins_px": {
+        "left": 20,
+        "top": 20,
+        "right": 20,
+        "bottom": 20
+      },
+      "margin_20px_ok": true
+    },
+    {
+      "seq": "07",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-07-O.tiff",
+      "exists": true,
+      "container": {
+        "compression": 8,
+        "predictor": 2,
+        "bits": [
+          8,
+          8,
+          8
+        ],
+        "photometric": 2
+      },
+      "container_ok": true,
+      "size": [
+        234,
+        220
+      ],
+      "expected_size_bbox_plus_40_clamped": [
+        234,
+        220
+      ],
+      "size_ok": true,
+      "pixels_equal_source_crop": true,
+      "crop_in_source_bounds": true,
+      "ink_margins_px": {
+        "left": 20,
+        "top": 20,
+        "right": 20,
+        "bottom": 20
+      },
+      "margin_20px_ok": true
+    },
+    {
+      "seq": "08",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-08-O.tiff",
+      "exists": true,
+      "container": {
+        "compression": 8,
+        "predictor": 2,
+        "bits": [
+          8,
+          8,
+          8
+        ],
+        "photometric": 2
+      },
+      "container_ok": true,
+      "size": [
+        340,
+        218
+      ],
+      "expected_size_bbox_plus_40_clamped": [
+        340,
+        218
+      ],
+      "size_ok": true,
+      "pixels_equal_source_crop": true,
+      "crop_in_source_bounds": true,
+      "ink_margins_px": {
+        "left": 20,
+        "top": 20,
+        "right": 20,
+        "bottom": 20
+      },
+      "margin_20px_ok": true
+    },
+    {
+      "seq": "09",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-09-O.tiff",
+      "exists": true,
+      "container": {
+        "compression": 8,
+        "predictor": 2,
+        "bits": [
+          8,
+          8,
+          8
+        ],
+        "photometric": 2
+      },
+      "container_ok": true,
+      "size": [
+        280,
+        265
+      ],
+      "expected_size_bbox_plus_40_clamped": [
+        280,
+        265
+      ],
+      "size_ok": true,
+      "pixels_equal_source_crop": true,
+      "crop_in_source_bounds": true,
+      "ink_margins_px": {
+        "left": 20,
+        "top": 20,
+        "right": 20,
+        "bottom": 20
+      },
+      "margin_20px_ok": true
+    },
+    {
+      "seq": "10",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-10-O.tiff",
+      "exists": true,
+      "container": {
+        "compression": 8,
+        "predictor": 2,
+        "bits": [
+          8,
+          8,
+          8
+        ],
+        "photometric": 2
+      },
+      "container_ok": true,
+      "size": [
+        347,
+        347
+      ],
+      "expected_size_bbox_plus_40_clamped": [
+        347,
+        347
+      ],
+      "size_ok": true,
+      "pixels_equal_source_crop": true,
+      "crop_in_source_bounds": true,
+      "ink_margins_px": {
+        "left": 20,
+        "top": 20,
+        "right": 20,
+        "bottom": 20
+      },
+      "margin_20px_ok": true
+    },
+    {
+      "seq": "11",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-11-O.tiff",
+      "exists": true,
+      "container": {
+        "compression": 8,
+        "predictor": 2,
+        "bits": [
+          8,
+          8,
+          8
+        ],
+        "photometric": 2
+      },
+      "container_ok": true,
+      "size": [
+        199,
+        221
+      ],
+      "expected_size_bbox_plus_40_clamped": [
+        199,
+        221
+      ],
+      "size_ok": true,
+      "pixels_equal_source_crop": true,
+      "crop_in_source_bounds": true,
+      "ink_margins_px": {
+        "left": 20,
+        "top": 20,
+        "right": 20,
+        "bottom": 20
+      },
+      "margin_20px_ok": true
+    },
+    {
+      "seq": "12",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-12-O.tiff",
+      "exists": true,
+      "container": {
+        "compression": 8,
+        "predictor": 2,
+        "bits": [
+          8,
+          8,
+          8
+        ],
+        "photometric": 2
+      },
+      "container_ok": true,
+      "size": [
+        501,
+        330
+      ],
+      "expected_size_bbox_plus_40_clamped": [
+        501,
+        330
+      ],
+      "size_ok": true,
+      "pixels_equal_source_crop": true,
+      "crop_in_source_bounds": true,
+      "ink_margins_px": {
+        "left": 20,
+        "top": 20,
+        "right": 20,
+        "bottom": 20
+      },
+      "margin_20px_ok": true
+    }
+  ],
+  "canvases": [
+    {
+      "seq": "01",
+      "version": "paper",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-01-canvas.png",
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/异形印章 1200px/无信息-无信息-无信息-无信息-戰國-佚名-01-canvas.png",
+      "at_canonical_path": false,
+      "png_magic": true,
+      "size": [
+        539,
+        1200
+      ],
+      "long_side_1200": true,
+      "subject_ratio": 0.62,
+      "ratio_62pct": true,
+      "center_offset_px": [
+        0.5,
+        0.0
+      ],
+      "center_ok": true,
+      "corners": [
+        [
+          254,
+          253,
+          251
+        ],
+        [
+          253,
+          252,
+          251
+        ],
+        [
+          251,
+          252,
+          250
+        ],
+        [
+          251,
+          251,
+          249
+        ]
+      ],
+      "corner_gamut_ok": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true
+    },
+    {
+      "seq": "01",
+      "version": "plain_white",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-01-canvas-white.png",
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/无信息-无信息-无信息-无信息-戰國-佚名-01-canvas-white.png",
+      "at_canonical_path": true,
+      "png_magic": true,
+      "size": [
+        539,
+        1200
+      ],
+      "long_side_1200": true,
+      "subject_ratio": 0.62,
+      "ratio_62pct": true,
+      "center_offset_px": [
+        0.5,
+        0.0
+      ],
+      "center_ok": true,
+      "corners": [
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ],
+      "corner_gamut_ok": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true
+    },
+    {
+      "seq": "02",
+      "version": "paper",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-02-canvas.png",
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/异形印章 1200px/无信息-无信息-无信息-无信息-戰國-佚名-02-canvas.png",
+      "at_canonical_path": false,
+      "png_magic": true,
+      "size": [
+        475,
+        1200
+      ],
+      "long_side_1200": true,
+      "subject_ratio": 0.62,
+      "ratio_62pct": true,
+      "center_offset_px": [
+        0.5,
+        0.0
+      ],
+      "center_ok": true,
+      "corners": [
+        [
+          255,
+          254,
+          253
+        ],
+        [
+          252,
+          252,
+          250
+        ],
+        [
+          253,
+          254,
+          251
+        ],
+        [
+          252,
+          251,
+          249
+        ]
+      ],
+      "corner_gamut_ok": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true
+    },
+    {
+      "seq": "02",
+      "version": "plain_white",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-02-canvas-white.png",
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/无信息-无信息-无信息-无信息-戰國-佚名-02-canvas-white.png",
+      "at_canonical_path": true,
+      "png_magic": true,
+      "size": [
+        475,
+        1200
+      ],
+      "long_side_1200": true,
+      "subject_ratio": 0.62,
+      "ratio_62pct": true,
+      "center_offset_px": [
+        0.5,
+        0.0
+      ],
+      "center_ok": true,
+      "corners": [
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ],
+      "corner_gamut_ok": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true
+    },
+    {
+      "seq": "03",
+      "version": "paper",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-03-canvas.png",
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/异形印章 1200px/无信息-无信息-无信息-无信息-戰國-佚名-03-canvas.png",
+      "at_canonical_path": false,
+      "png_magic": true,
+      "size": [
+        1200,
+        1176
+      ],
+      "long_side_1200": true,
+      "subject_ratio": 0.62,
+      "ratio_62pct": true,
+      "center_offset_px": [
+        0.0,
+        0.5
+      ],
+      "center_ok": true,
+      "corners": [
+        [
+          255,
+          255,
+          254
+        ],
+        [
+          250,
+          250,
+          247
+        ],
+        [
+          250,
+          250,
+          247
+        ],
+        [
+          251,
+          251,
+          250
+        ]
+      ],
+      "corner_gamut_ok": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true
+    },
+    {
+      "seq": "03",
+      "version": "plain_white",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-03-canvas-white.png",
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/无信息-无信息-无信息-无信息-戰國-佚名-03-canvas-white.png",
+      "at_canonical_path": true,
+      "png_magic": true,
+      "size": [
+        1200,
+        1176
+      ],
+      "long_side_1200": true,
+      "subject_ratio": 0.62,
+      "ratio_62pct": true,
+      "center_offset_px": [
+        0.0,
+        0.5
+      ],
+      "center_ok": true,
+      "corners": [
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ],
+      "corner_gamut_ok": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true
+    },
+    {
+      "seq": "04",
+      "version": "paper",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-04-canvas.png",
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/异形印章 1200px/无信息-无信息-无信息-无信息-戰國-佚名-04-canvas.png",
+      "at_canonical_path": false,
+      "png_magic": true,
+      "size": [
+        800,
+        1200
+      ],
+      "long_side_1200": true,
+      "subject_ratio": 0.62,
+      "ratio_62pct": true,
+      "center_offset_px": [
+        0.5,
+        0.0
+      ],
+      "center_ok": true,
+      "corners": [
+        [
+          253,
+          253,
+          251
+        ],
+        [
+          250,
+          250,
+          248
+        ],
+        [
+          250,
+          250,
+          247
+        ],
+        [
+          254,
+          255,
+          252
+        ]
+      ],
+      "corner_gamut_ok": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true
+    },
+    {
+      "seq": "04",
+      "version": "plain_white",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-04-canvas-white.png",
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/无信息-无信息-无信息-无信息-戰國-佚名-04-canvas-white.png",
+      "at_canonical_path": true,
+      "png_magic": true,
+      "size": [
+        800,
+        1200
+      ],
+      "long_side_1200": true,
+      "subject_ratio": 0.62,
+      "ratio_62pct": true,
+      "center_offset_px": [
+        0.5,
+        0.0
+      ],
+      "center_ok": true,
+      "corners": [
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ],
+      "corner_gamut_ok": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true
+    },
+    {
+      "seq": "05",
+      "version": "paper",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-05-canvas.png",
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/异形印章 1200px/无信息-无信息-无信息-无信息-戰國-佚名-05-canvas.png",
+      "at_canonical_path": false,
+      "png_magic": true,
+      "size": [
+        954,
+        1200
+      ],
+      "long_side_1200": true,
+      "subject_ratio": 0.62,
+      "ratio_62pct": true,
+      "center_offset_px": [
+        0.0,
+        0.0
+      ],
+      "center_ok": true,
+      "corners": [
+        [
+          253,
+          254,
+          252
+        ],
+        [
+          253,
+          253,
+          251
+        ],
+        [
+          252,
+          252,
+          250
+        ],
+        [
+          252,
+          252,
+          250
+        ]
+      ],
+      "corner_gamut_ok": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true
+    },
+    {
+      "seq": "05",
+      "version": "plain_white",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-05-canvas-white.png",
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/无信息-无信息-无信息-无信息-戰國-佚名-05-canvas-white.png",
+      "at_canonical_path": true,
+      "png_magic": true,
+      "size": [
+        954,
+        1200
+      ],
+      "long_side_1200": true,
+      "subject_ratio": 0.62,
+      "ratio_62pct": true,
+      "center_offset_px": [
+        0.0,
+        0.0
+      ],
+      "center_ok": true,
+      "corners": [
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ],
+      "corner_gamut_ok": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true
+    },
+    {
+      "seq": "06",
+      "version": "paper",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-06-canvas.png",
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/异形印章 1200px/无信息-无信息-无信息-无信息-戰國-佚名-06-canvas.png",
+      "at_canonical_path": false,
+      "png_magic": true,
+      "size": [
+        864,
+        1200
+      ],
+      "long_side_1200": true,
+      "subject_ratio": 0.62,
+      "ratio_62pct": true,
+      "center_offset_px": [
+        0.0,
+        0.0
+      ],
+      "center_ok": true,
+      "corners": [
+        [
+          254,
+          254,
+          252
+        ],
+        [
+          253,
+          253,
+          251
+        ],
+        [
+          250,
+          250,
+          248
+        ],
+        [
+          253,
+          253,
+          250
+        ]
+      ],
+      "corner_gamut_ok": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true
+    },
+    {
+      "seq": "06",
+      "version": "plain_white",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-06-canvas-white.png",
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/无信息-无信息-无信息-无信息-戰國-佚名-06-canvas-white.png",
+      "at_canonical_path": true,
+      "png_magic": true,
+      "size": [
+        864,
+        1200
+      ],
+      "long_side_1200": true,
+      "subject_ratio": 0.62,
+      "ratio_62pct": true,
+      "center_offset_px": [
+        0.0,
+        0.0
+      ],
+      "center_ok": true,
+      "corners": [
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ],
+      "corner_gamut_ok": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true
+    },
+    {
+      "seq": "07",
+      "version": "paper",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-07-canvas.png",
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/异形印章 1200px/无信息-无信息-无信息-无信息-戰國-佚名-07-canvas.png",
+      "at_canonical_path": false,
+      "png_magic": true,
+      "size": [
+        1200,
+        1128
+      ],
+      "long_side_1200": true,
+      "subject_ratio": 0.62,
+      "ratio_62pct": true,
+      "center_offset_px": [
+        0.0,
+        0.5
+      ],
+      "center_ok": true,
+      "corners": [
+        [
+          253,
+          253,
+          251
+        ],
+        [
+          250,
+          250,
+          247
+        ],
+        [
+          255,
+          255,
+          254
+        ],
+        [
+          252,
+          252,
+          250
+        ]
+      ],
+      "corner_gamut_ok": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true
+    },
+    {
+      "seq": "07",
+      "version": "plain_white",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-07-canvas-white.png",
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/无信息-无信息-无信息-无信息-戰國-佚名-07-canvas-white.png",
+      "at_canonical_path": true,
+      "png_magic": true,
+      "size": [
+        1200,
+        1128
+      ],
+      "long_side_1200": true,
+      "subject_ratio": 0.62,
+      "ratio_62pct": true,
+      "center_offset_px": [
+        0.0,
+        0.5
+      ],
+      "center_ok": true,
+      "corners": [
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ],
+      "corner_gamut_ok": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true
+    },
+    {
+      "seq": "08",
+      "version": "paper",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-08-canvas.png",
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/异形印章 1200px/无信息-无信息-无信息-无信息-戰國-佚名-08-canvas.png",
+      "at_canonical_path": false,
+      "png_magic": true,
+      "size": [
+        1200,
+        769
+      ],
+      "long_side_1200": true,
+      "subject_ratio": 0.62,
+      "ratio_62pct": true,
+      "center_offset_px": [
+        0.0,
+        0.5
+      ],
+      "center_ok": true,
+      "corners": [
+        [
+          254,
+          254,
+          252
+        ],
+        [
+          250,
+          250,
+          247
+        ],
+        [
+          253,
+          252,
+          250
+        ],
+        [
+          250,
+          250,
+          247
+        ]
+      ],
+      "corner_gamut_ok": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true
+    },
+    {
+      "seq": "08",
+      "version": "plain_white",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-08-canvas-white.png",
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/无信息-无信息-无信息-无信息-戰國-佚名-08-canvas-white.png",
+      "at_canonical_path": true,
+      "png_magic": true,
+      "size": [
+        1200,
+        769
+      ],
+      "long_side_1200": true,
+      "subject_ratio": 0.62,
+      "ratio_62pct": true,
+      "center_offset_px": [
+        0.0,
+        0.5
+      ],
+      "center_ok": true,
+      "corners": [
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ],
+      "corner_gamut_ok": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true
+    },
+    {
+      "seq": "09",
+      "version": "paper",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-09-canvas.png",
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/异形印章 1200px/无信息-无信息-无信息-无信息-戰國-佚名-09-canvas.png",
+      "at_canonical_path": false,
+      "png_magic": true,
+      "size": [
+        1200,
+        1136
+      ],
+      "long_side_1200": true,
+      "subject_ratio": 0.62,
+      "ratio_62pct": true,
+      "center_offset_px": [
+        0.0,
+        0.0
+      ],
+      "center_ok": true,
+      "corners": [
+        [
+          254,
+          254,
+          252
+        ],
+        [
+          250,
+          250,
+          247
+        ],
+        [
+          253,
+          253,
+          252
+        ],
+        [
+          250,
+          250,
+          247
+        ]
+      ],
+      "corner_gamut_ok": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true
+    },
+    {
+      "seq": "09",
+      "version": "plain_white",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-09-canvas-white.png",
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/无信息-无信息-无信息-无信息-戰國-佚名-09-canvas-white.png",
+      "at_canonical_path": true,
+      "png_magic": true,
+      "size": [
+        1200,
+        1136
+      ],
+      "long_side_1200": true,
+      "subject_ratio": 0.62,
+      "ratio_62pct": true,
+      "center_offset_px": [
+        0.0,
+        0.0
+      ],
+      "center_ok": true,
+      "corners": [
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ],
+      "corner_gamut_ok": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true
+    },
+    {
+      "seq": "10",
+      "version": "paper",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-10-canvas.png",
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/异形印章 1200px/无信息-无信息-无信息-无信息-戰國-佚名-10-canvas.png",
+      "at_canonical_path": false,
+      "png_magic": true,
+      "size": [
+        1200,
+        1200
+      ],
+      "long_side_1200": true,
+      "subject_ratio": 0.62,
+      "ratio_62pct": true,
+      "center_offset_px": [
+        0.0,
+        0.0
+      ],
+      "center_ok": true,
+      "corners": [
+        [
+          253,
+          253,
+          251
+        ],
+        [
+          250,
+          250,
+          247
+        ],
+        [
+          252,
+          252,
+          250
+        ],
+        [
+          251,
+          251,
+          249
+        ]
+      ],
+      "corner_gamut_ok": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true
+    },
+    {
+      "seq": "10",
+      "version": "plain_white",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-10-canvas-white.png",
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/无信息-无信息-无信息-无信息-戰國-佚名-10-canvas-white.png",
+      "at_canonical_path": true,
+      "png_magic": true,
+      "size": [
+        1200,
+        1200
+      ],
+      "long_side_1200": true,
+      "subject_ratio": 0.62,
+      "ratio_62pct": true,
+      "center_offset_px": [
+        0.0,
+        0.0
+      ],
+      "center_ok": true,
+      "corners": [
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ],
+      "corner_gamut_ok": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true
+    },
+    {
+      "seq": "11",
+      "version": "paper",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-11-canvas.png",
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/异形印章 1200px/无信息-无信息-无信息-无信息-戰國-佚名-11-canvas.png",
+      "at_canonical_path": false,
+      "png_magic": true,
+      "size": [
+        1081,
+        1200
+      ],
+      "long_side_1200": true,
+      "subject_ratio": 0.62,
+      "ratio_62pct": true,
+      "center_offset_px": [
+        0.5,
+        0.0
+      ],
+      "center_ok": true,
+      "corners": [
+        [
+          254,
+          254,
+          252
+        ],
+        [
+          254,
+          254,
+          252
+        ],
+        [
+          254,
+          254,
+          251
+        ],
+        [
+          252,
+          252,
+          249
+        ]
+      ],
+      "corner_gamut_ok": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true
+    },
+    {
+      "seq": "11",
+      "version": "plain_white",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-11-canvas-white.png",
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/无信息-无信息-无信息-无信息-戰國-佚名-11-canvas-white.png",
+      "at_canonical_path": true,
+      "png_magic": true,
+      "size": [
+        1081,
+        1200
+      ],
+      "long_side_1200": true,
+      "subject_ratio": 0.62,
+      "ratio_62pct": true,
+      "center_offset_px": [
+        0.5,
+        0.0
+      ],
+      "center_ok": true,
+      "corners": [
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ],
+      "corner_gamut_ok": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true
+    },
+    {
+      "seq": "12",
+      "version": "paper",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-12-canvas.png",
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/异形印章 1200px/无信息-无信息-无信息-无信息-戰國-佚名-12-canvas.png",
+      "at_canonical_path": false,
+      "png_magic": true,
+      "size": [
+        1200,
+        790
+      ],
+      "long_side_1200": true,
+      "subject_ratio": 0.62,
+      "ratio_62pct": true,
+      "center_offset_px": [
+        0.0,
+        0.0
+      ],
+      "center_ok": true,
+      "corners": [
+        [
+          254,
+          254,
+          252
+        ],
+        [
+          250,
+          250,
+          247
+        ],
+        [
+          252,
+          252,
+          250
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ],
+      "corner_gamut_ok": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true
+    },
+    {
+      "seq": "12",
+      "version": "plain_white",
+      "file": "无信息-无信息-无信息-无信息-戰國-佚名-12-canvas-white.png",
+      "path": "/Users/kevin/bistro/xiai/feicui/output/seals/无信息/无信息-无信息-无信息-无信息-戰國-佚名-12-canvas-white.png",
+      "at_canonical_path": true,
+      "png_magic": true,
+      "size": [
+        1200,
+        790
+      ],
+      "long_side_1200": true,
+      "subject_ratio": 0.62,
+      "ratio_62pct": true,
+      "center_offset_px": [
+        0.0,
+        0.0
+      ],
+      "center_ok": true,
+      "corners": [
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ],
+      "corner_gamut_ok": true,
+      "ink_px_outside_seal_and_halo": 0,
+      "bg_no_ink": true
+    }
+  ],
+  "sources_unchanged": [
+    {
+      "file": "image_6e9080.png",
+      "unchanged": true
+    },
+    {
+      "file": "image_270063.png",
+      "unchanged": true
+    },
+    {
+      "file": "image_064c98.png",
+      "unchanged": true
+    },
+    {
+      "file": "image_9e72d7.png",
+      "unchanged": true
+    },
+    {
+      "file": "image_f88298.png",
+      "unchanged": true
+    },
+    {
+      "file": "image_8cd872.png",
+      "unchanged": true
+    },
+    {
+      "file": "image_2106f1.png",
+      "unchanged": true
+    },
+    {
+      "file": "image_ce4f21.png",
+      "unchanged": true
+    },
+    {
+      "file": "image_e344a2.png",
+      "unchanged": true
+    },
+    {
+      "file": "image_e9185a.png",
+      "unchanged": true
+    },
+    {
+      "file": "image_21c243.png",
+      "unchanged": true
+    },
+    {
+      "file": "image_1df10e.png",
+      "unchanged": true
+    }
+  ],
+  "yinpu": {
+    "counts": {
+      "stamps": 8708,
+      "jobs": 12,
+      "job_pages": 1170
+    },
+    "stamps_dump_sha256": "cdcf45e130ef2da70ef1017932a40c4f871d25287c4c21977489cddf645ee5fb",
+    "before_sha": "cdcf45e130ef2da70ef1017932a40c4f871d25287c4c21977489cddf645ee5fb",
+    "main_db_size_unchanged": true,
+    "ok": true
+  },
+  "api": {
+    "list_total": 3691,
+    "list_has_new_fields": true,
+    "upload_row": {
+      "dynasty": "戰國",
+      "author_name": "佚名",
+      "seal_wen": "",
+      "audit_status": "UNREVIEWED_PENDING_HUMAN_REVIEW",
+      "source_kind": "local_upload"
+    },
+    "uploads_route_rejects_non_multipart": true
+  },
+  "fails": [],
+  "all_pass": true
+}

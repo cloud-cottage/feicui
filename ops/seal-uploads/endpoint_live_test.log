@@ -1,0 +1,31 @@
+scratch copy rows: 3691
+2026-10-13 14:53:20,424 INFO feicui.api feicui-api(1c-activate) 就绪：db=/Users/kevin/.hermes/profiles/zang/cache/scratch/seal-uploads-20261013/live_test/empty_work.db prod_db=False root=/Users/kevin/bistro/xiai/feicui chunk_size=8 export_root=/Users/kevin/bistro/xiai/feicui/exports
+2026-10-13 14:53:20,436 INFO feicui.api.inbox_gc inbox 启动扫描（**只 dry-run，未删任何文件**）：文件 14 / 3505.62 MiB；将回收 0（0.00 MiB）；豁免 14；容量闸=False；容量闸目标=42949672960 B / 最多可回收=3675905726 B / **缺口=0 B**；报告 /Users/kevin/bistro/xiai/feicui/ops/job-upload/inbox_gc_20261013-145320.json
+2026-10-13 14:53:20,437 WARNING feicui.api.poolctl 补跑扫描失败：OperationalError('unable to open database file')
+2026-10-13 14:53:20,437 INFO feicui.api.poolctl 启动补跑：无活跃 job（QUEUED/RUNNING）⇒ 不拉起池
+uvicorn pid=97128 health:
+{"ok":false,"api_version":"1c-activate","db_path":"/Users/kevin/.hermes/profiles/zang/cache/scratch/seal-uploads-20261013/live_test/empty_work.db","db_exists":false,"prod_db":false,"root":"/Users/kevi
+== T1 happy path（多图 + 表单字段；batch_id 用不同日期段，避免与已导入 12 行的 source_seal_id 撞号）==
+2026-10-13 14:53:20,803 INFO feicui.api.seals.router 印章本地上传导入：batch_id=seal_upload_20261012_99 accepted=2 skipped=0 failed=0
+{"batch_id": "seal_upload_20261012_99", "counts": {"accepted": 2, "skipped": 0, "failed": 0}, "failed": [], "accepted": [{"id": "local_upload_20261012_01", "w": 80, "h": 60}, {"id": "local_upload_20261012_02", "w": 90, "h": 70}], "dynasty": "戰國"}
+== T2 幂等重放（同内容同批）==
+2026-10-13 14:53:20,820 INFO feicui.api.seals.router 印章本地上传导入：batch_id=seal_upload_20261012_99 accepted=0 skipped=1 failed=0
+{'accepted': 0, 'skipped': 1, 'failed': 0}
+== T3 缺 dynasty ⇒ 400 ==
+400 {"detail":{"error":"BAD_PARAM","detail":"表单字段 dynasty 必填（朝代枚举真源＝xiai，如「戰國」）"}}
+== T4 非 multipart ⇒ 400 ==
+400 
+== T5 空文件段 ⇒ 400 ==
+400
+== T6 GET 列表含新字段 ==
+total: 3693 first: {'source_seal_id': '469', 'source_kind': 'fudan_api', 'dynasty': None, 'author_name': None}
+== T7 GET 单枚（上传导入行）==
+{'source_seal_id': 'local_upload_20261013_01', 'dynasty': '戰國', 'dynasty_source': 'kevin_2026-10-13 指定', 'author_name': '佚名', 'seal_wen': '', 'audit_status': 'UNREVIEWED_PENDING_HUMAN_REVIEW', 'source_kind': 'local_upload'}
+== T8 既有行仍可读（Fudan 3922）==
+200
+== scratch 库终态 ==
+seals: 3693 (expect 3693 = 3691+2)
+seal_uploads: 14 (expect 14)
+local_upload rows: 14 (expect 14)
+fudan rows: 3679 (expect 3679)
+LIVE_TEST_DONE

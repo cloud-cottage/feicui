@@ -1,0 +1,601 @@
+{
+  "generated_at": "2026-10-13T14:34:20+08:00",
+  "algorithm": "guard = sha256 over canonical jsonl (one json.dumps(list(row),ensure_ascii=False,separators=(',',':')) per row + '\\n'), rows ordered by the stated key; full column list snapshotted in 'schemas'",
+  "seal_ingest": {
+    "db_path": "/Users/kevin/bistro/xiai/feicui/var/seal_ingest.db",
+    "db_sha256_file": "e6de9d2dbebf5c43d3936e158f03f70bb25d9a5750df6f0fc1445d812bfd1438",
+    "counts": {
+      "seals": 3679,
+      "seal_links": 8964,
+      "seal_images": 6765,
+      "seal_import_batches": 1
+    },
+    "sha256": {
+      "seals_before": "2214e13c3df5f3c7018956b6791dd6856bf5c3845a079730125059e0c99aa6d6",
+      "links_before": "06a855f737f30a07758ce83ab2abdc30ccad2a2753dbc81753e7090e052aa5c1",
+      "images_before": "fd17c19bffc5ded062dbac131b8e818a178fc0a67850534b383719bf75ad0293",
+      "batches_before": "a42fa510293842b7067ba5e9cfe77236b78f811e9d544ec27b7003ad6252bade"
+    },
+    "schemas": {
+      "seals": [
+        [
+          "source_seal_id",
+          "TEXT"
+        ],
+        [
+          "seal_uri",
+          "TEXT"
+        ],
+        [
+          "category",
+          "TEXT"
+        ],
+        [
+          "seal_wen",
+          "TEXT"
+        ],
+        [
+          "seal_wen_chs",
+          "TEXT"
+        ],
+        [
+          "seal_wen_pinyin",
+          "TEXT"
+        ],
+        [
+          "seal_wen_wzly",
+          "TEXT"
+        ],
+        [
+          "seal_wen_wzly_chs",
+          "TEXT"
+        ],
+        [
+          "seal_wen_yssw",
+          "TEXT"
+        ],
+        [
+          "seal_wen_yssw_chs",
+          "TEXT"
+        ],
+        [
+          "seal_wen_wyz",
+          "TEXT"
+        ],
+        [
+          "seal_wen_zjsw",
+          "TEXT"
+        ],
+        [
+          "seal_wen_zjsw_chs",
+          "TEXT"
+        ],
+        [
+          "seal_ys_xz",
+          "INTEGER"
+        ],
+        [
+          "seal_ys_label",
+          "TEXT"
+        ],
+        [
+          "seal_ys_kf",
+          "TEXT"
+        ],
+        [
+          "seal_ys_st",
+          "TEXT"
+        ],
+        [
+          "seal_zyz",
+          "TEXT"
+        ],
+        [
+          "seal_yz",
+          "TEXT"
+        ],
+        [
+          "seal_yz_person_name",
+          "TEXT"
+        ],
+        [
+          "seal_yz_person_name_chs",
+          "TEXT"
+        ],
+        [
+          "seal_yz_name",
+          "TEXT"
+        ],
+        [
+          "seal_yz_ref_id",
+          "TEXT"
+        ],
+        [
+          "seal_yzzkz",
+          "TEXT"
+        ],
+        [
+          "seal_yzzkz_chs",
+          "TEXT"
+        ],
+        [
+          "seal_yzzkz_id",
+          "TEXT"
+        ],
+        [
+          "seal_bk",
+          "TEXT"
+        ],
+        [
+          "seal_bk_chs",
+          "TEXT"
+        ],
+        [
+          "seal_bkzkz",
+          "TEXT"
+        ],
+        [
+          "seal_bkzkz_chs",
+          "TEXT"
+        ],
+        [
+          "seal_bkzkz_id",
+          "TEXT"
+        ],
+        [
+          "as_book_id",
+          "TEXT"
+        ],
+        [
+          "related_book",
+          "TEXT"
+        ],
+        [
+          "seal_yt_url",
+          "TEXT"
+        ],
+        [
+          "seal_ytsw_url",
+          "TEXT"
+        ],
+        [
+          "seal_yzbk_url",
+          "TEXT"
+        ],
+        [
+          "seal_yzqt_url",
+          "TEXT"
+        ],
+        [
+          "seal_threed_url",
+          "TEXT"
+        ],
+        [
+          "seal_title",
+          "TEXT"
+        ],
+        [
+          "seal_title_chs",
+          "TEXT"
+        ],
+        [
+          "seal_org",
+          "TEXT"
+        ],
+        [
+          "seal_org_name",
+          "TEXT"
+        ],
+        [
+          "seal_cz",
+          "TEXT"
+        ],
+        [
+          "seal_cc",
+          "TEXT"
+        ],
+        [
+          "seal_ly",
+          "TEXT"
+        ],
+        [
+          "seal_yn",
+          "TEXT"
+        ],
+        [
+          "seal_yksj_lsjn",
+          "TEXT"
+        ],
+        [
+          "seal_yksj_lsjn_chs",
+          "TEXT"
+        ],
+        [
+          "seal_yksj_gyjn",
+          "TEXT"
+        ],
+        [
+          "audit_status",
+          "TEXT"
+        ],
+        [
+          "misc",
+          "TEXT"
+        ],
+        [
+          "raw_json",
+          "TEXT"
+        ],
+        [
+          "batch_id",
+          "TEXT"
+        ],
+        [
+          "updated_at",
+          "TEXT"
+        ]
+      ],
+      "seal_links": [
+        [
+          "id",
+          "INTEGER"
+        ],
+        [
+          "source_seal_id",
+          "TEXT"
+        ],
+        [
+          "link_kind",
+          "TEXT"
+        ],
+        [
+          "ref_id",
+          "TEXT"
+        ],
+        [
+          "ref_name",
+          "TEXT"
+        ],
+        [
+          "ref_name_chs",
+          "TEXT"
+        ],
+        [
+          "creator_type",
+          "TEXT"
+        ],
+        [
+          "bridge_item_id",
+          "TEXT"
+        ],
+        [
+          "source_face",
+          "TEXT"
+        ],
+        [
+          "seq",
+          "INTEGER"
+        ],
+        [
+          "batch_id",
+          "TEXT"
+        ]
+      ],
+      "seal_images": [
+        [
+          "seqid",
+          "TEXT"
+        ],
+        [
+          "kind",
+          "TEXT"
+        ],
+        [
+          "source_ref",
+          "TEXT"
+        ],
+        [
+          "source_url",
+          "TEXT"
+        ],
+        [
+          "local_path",
+          "TEXT"
+        ],
+        [
+          "bytes",
+          "INTEGER"
+        ],
+        [
+          "sha256",
+          "TEXT"
+        ],
+        [
+          "status",
+          "TEXT"
+        ],
+        [
+          "error",
+          "TEXT"
+        ],
+        [
+          "updated_at",
+          "TEXT"
+        ],
+        [
+          "tiff_path",
+          "TEXT"
+        ],
+        [
+          "tiff_sha256",
+          "TEXT"
+        ],
+        [
+          "tiff_bytes",
+          "INTEGER"
+        ],
+        [
+          "width",
+          "INTEGER"
+        ],
+        [
+          "height",
+          "INTEGER"
+        ],
+        [
+          "upscaled",
+          "INTEGER"
+        ],
+        [
+          "no_source_reason",
+          "TEXT"
+        ]
+      ],
+      "seal_import_batches": [
+        [
+          "batch_id",
+          "TEXT"
+        ],
+        [
+          "created_at",
+          "TEXT"
+        ],
+        [
+          "updated_at",
+          "TEXT"
+        ],
+        [
+          "status",
+          "TEXT"
+        ],
+        [
+          "source_total",
+          "INTEGER"
+        ],
+        [
+          "fetched",
+          "INTEGER"
+        ],
+        [
+          "seals_ok",
+          "INTEGER"
+        ],
+        [
+          "links_ok",
+          "INTEGER"
+        ],
+        [
+          "failed_count",
+          "INTEGER"
+        ],
+        [
+          "elapsed_s",
+          "REAL"
+        ],
+        [
+          "package_dir",
+          "TEXT"
+        ],
+        [
+          "report_path",
+          "TEXT"
+        ],
+        [
+          "content_fingerprint",
+          "TEXT"
+        ],
+        [
+          "params_json",
+          "TEXT"
+        ],
+        [
+          "notes",
+          "TEXT"
+        ],
+        [
+          "last_run_kind",
+          "TEXT"
+        ],
+        [
+          "last_run_fetched",
+          "INTEGER"
+        ],
+        [
+          "last_run_skipped",
+          "INTEGER"
+        ],
+        [
+          "last_run_elapsed_s",
+          "REAL"
+        ],
+        [
+          "last_run_at",
+          "TEXT"
+        ],
+        [
+          "images_ok",
+          "INTEGER"
+        ],
+        [
+          "images_failed",
+          "INTEGER"
+        ],
+        [
+          "images_no_source",
+          "INTEGER"
+        ]
+      ]
+    },
+    "backup": {
+      "path": "/Users/kevin/.hermes/profiles/zang/cache/scratch/seal-uploads-20261013/seal_ingest.backup-20261013.db",
+      "sha256": "da68aa8ae9a4e404c562bad7c386be44440cbb37f5202c2d368de26fedb737a8",
+      "rows_seals": 3679,
+      "integrity_check": "ok"
+    },
+    "dump_files_in_scratch": [
+      "/Users/kevin/.hermes/profiles/zang/cache/scratch/seal-uploads-20261013/seals_before.jsonl",
+      "/Users/kevin/.hermes/profiles/zang/cache/scratch/seal-uploads-20261013/links_before.jsonl",
+      "/Users/kevin/.hermes/profiles/zang/cache/scratch/seal-uploads-20261013/images_before.jsonl",
+      "/Users/kevin/.hermes/profiles/zang/cache/scratch/seal-uploads-20261013/batches_before.jsonl"
+    ]
+  },
+  "yinpu": {
+    "path": "/Users/kevin/bistro/xiai/data/yinpu.db",
+    "note": "解析线注记库，本单红线：一字不写。指纹取自 scratch 只读副本（db+wal+shm 三件齐拷）",
+    "stat_before": {
+      "": {
+        "size": 3182592,
+        "mtime_ns": 1791862472028118632
+      },
+      "-wal": {
+        "size": 0,
+        "mtime_ns": 1791862759698075283
+      },
+      "-shm": {
+        "size": 32768,
+        "mtime_ns": 1791872176961486667
+      }
+    },
+    "tables_present": [
+      "export_batches",
+      "export_records",
+      "images",
+      "job_pages",
+      "jobs",
+      "schema_migrations",
+      "seals",
+      "sqlite_sequence",
+      "stamps"
+    ],
+    "counts": {
+      "stamps": 8708,
+      "jobs": 12,
+      "job_pages": 1170
+    },
+    "stamps_dump_sha256": "cdcf45e130ef2da70ef1017932a40c4f871d25287c4c21977489cddf645ee5fb",
+    "stamps_cols": [
+      "id",
+      "pdf_name",
+      "page",
+      "idx",
+      "text",
+      "img_path",
+      "x1",
+      "y1",
+      "x2",
+      "y2",
+      "col",
+      "row",
+      "img_path_tiff",
+      "dup_kind",
+      "dup_of_id",
+      "dup_algo"
+    ]
+  },
+  "source_images": [
+    {
+      "seq": "01",
+      "source_filename": "image_6e9080.png",
+      "source_path": "/Users/kevin/Library/Application Support/Hermes/composer-images/image_6e9080.png",
+      "sha256": "1d9bfc48145f70a7da85612139d8557d1ca766bb0b116b1435791751cecfa961",
+      "bytes": 146630
+    },
+    {
+      "seq": "02",
+      "source_filename": "image_270063.png",
+      "source_path": "/Users/kevin/Library/Application Support/Hermes/composer-images/image_270063.png",
+      "sha256": "99b0321714842715352348799313a13e5db850b4ac15c8fc181d06200d0c7090",
+      "bytes": 156473
+    },
+    {
+      "seq": "03",
+      "source_filename": "image_064c98.png",
+      "source_path": "/Users/kevin/Library/Application Support/Hermes/composer-images/image_064c98.png",
+      "sha256": "1fd1a4ecf8c6187d822dc25001f862786a941cbe8acfe25ab007bd9f8afd7b72",
+      "bytes": 91897
+    },
+    {
+      "seq": "04",
+      "source_filename": "image_9e72d7.png",
+      "source_path": "/Users/kevin/Library/Application Support/Hermes/composer-images/image_9e72d7.png",
+      "sha256": "56f0656d9fe1204dad56a9f09ec278998010c7db21120c2d893e43637b43ea33",
+      "bytes": 134212
+    },
+    {
+      "seq": "05",
+      "source_filename": "image_f88298.png",
+      "source_path": "/Users/kevin/Library/Application Support/Hermes/composer-images/image_f88298.png",
+      "sha256": "a5edadfaab5123e2d43d5ade3a5f129fd015f17419da1f6b3a42a6b584176ad3",
+      "bytes": 84699
+    },
+    {
+      "seq": "06",
+      "source_filename": "image_8cd872.png",
+      "source_path": "/Users/kevin/Library/Application Support/Hermes/composer-images/image_8cd872.png",
+      "sha256": "08328094207c1f63ffef25424928615abc00343ff2eb3b3cf38399e4f11c7285",
+      "bytes": 65333
+    },
+    {
+      "seq": "07",
+      "source_filename": "image_2106f1.png",
+      "source_path": "/Users/kevin/Library/Application Support/Hermes/composer-images/image_2106f1.png",
+      "sha256": "8379cdd2de91350a0480bc5219a347332050c062723c48eddcc18424af49809c",
+      "bytes": 47131
+    },
+    {
+      "seq": "08",
+      "source_filename": "image_ce4f21.png",
+      "source_path": "/Users/kevin/Library/Application Support/Hermes/composer-images/image_ce4f21.png",
+      "sha256": "f012356c09ea50f86b7e6d1ab72a280131f13ec2bd963855d699377b67162421",
+      "bytes": 75030
+    },
+    {
+      "seq": "09",
+      "source_filename": "image_e344a2.png",
+      "source_path": "/Users/kevin/Library/Application Support/Hermes/composer-images/image_e344a2.png",
+      "sha256": "837ec449627912a838ff67980ad752319e2c2f9bd6d5fa411e5e762fbd2414fe",
+      "bytes": 97339
+    },
+    {
+      "seq": "10",
+      "source_filename": "image_e9185a.png",
+      "source_path": "/Users/kevin/Library/Application Support/Hermes/composer-images/image_e9185a.png",
+      "sha256": "3bf998e30aedc1d6b46aab71fa5553c533b88d555805744657e6437623967001",
+      "bytes": 183879
+    },
+    {
+      "seq": "11",
+      "source_filename": "image_21c243.png",
+      "source_path": "/Users/kevin/Library/Application Support/Hermes/composer-images/image_21c243.png",
+      "sha256": "96b976edd2ffb015ca668138fa84688f77b2073dbd1c9f9e1606988ffbe9ebcd",
+      "bytes": 60176
+    },
+    {
+      "seq": "12",
+      "source_filename": "image_1df10e.png",
+      "source_path": "/Users/kevin/Library/Application Support/Hermes/composer-images/image_1df10e.png",
+      "sha256": "2c907177226f2d8c0c1c1a6fd9491349171212ba86ada597a680bf63bcc9c02d",
+      "bytes": 152187
+    }
+  ]
+}

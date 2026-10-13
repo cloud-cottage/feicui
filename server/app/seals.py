@@ -575,7 +575,18 @@ SCHEMA_SQL = [
         seal_cz TEXT, seal_cc TEXT, seal_ly TEXT, seal_yn TEXT,
         seal_yksj_lsjn TEXT, seal_yksj_lsjn_chs TEXT, seal_yksj_gyjn TEXT,
         audit_status TEXT, misc TEXT, raw_json TEXT,
-        batch_id TEXT, updated_at TEXT
+        batch_id TEXT, updated_at TEXT,
+        dynasty TEXT, dynasty_source TEXT, author_name TEXT,
+        source_kind TEXT DEFAULT 'fudan_api'
+    )""",
+    # 本地上传印面导入（seal-uploads 线，2026-10-13）——台账表；写路径＝app.seal_uploads
+    """CREATE TABLE IF NOT EXISTS seal_uploads (
+        upload_id TEXT PRIMARY KEY,
+        source_path TEXT, filename TEXT, sha256 TEXT,
+        width INTEGER, height INTEGER,
+        o_path TEXT, canvas_path TEXT,
+        meta_json TEXT, batch_id TEXT, created_at TEXT,
+        seq INTEGER, source_seal_id TEXT
     )""",
     """CREATE TABLE IF NOT EXISTS seal_links (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -619,6 +630,15 @@ IMAGE_EXTRA_COLUMNS: list[tuple[str, str]] = [
     ("upscaled", "INTEGER"),
 ]
 
+# seals 增量列（本地上传导入线 seal-uploads，2026-10-13）——**只加法**，老库补列；
+# 既有 3679 行一字不改（`source_kind` 走列默认值＝'fudan_api'，即「不回填」口径）。
+SEALS_EXTRA_COLUMNS: list[tuple[str, str]] = [
+    ("dynasty", "TEXT"),
+    ("dynasty_source", "TEXT"),
+    ("author_name", "TEXT"),
+    ("source_kind", "TEXT DEFAULT 'fudan_api'"),
+]
+
 
 def _connect(db_path: Path | str) -> sqlite3.Connection:
     conn = sqlite3.connect(str(db_path), timeout=30.0)
@@ -647,6 +667,12 @@ def ensure_schema(db_path: Path | str) -> None:
         for name, decl in IMAGE_EXTRA_COLUMNS:
             if name not in have_img:
                 conn.execute(f"ALTER TABLE seal_images ADD COLUMN {name} {decl}")
+        have_seals = {r[1] for r in conn.execute("PRAGMA table_info(seals)")}
+        for name, decl in SEALS_EXTRA_COLUMNS:
+            if name not in have_seals:
+                conn.execute(f"ALTER TABLE seals ADD COLUMN {name} {decl}")
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_seal_uploads_batch ON seal_uploads(batch_id)")
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_seals_source_kind ON seals(source_kind)")
         conn.commit()
     finally:
         conn.close()
@@ -2471,6 +2497,7 @@ def list_seals(db_path: Path | str, *, page: int = 1, limit: int = 50, audit_sta
             f"""SELECT source_seal_id, seal_wen, seal_wen_chs, seal_ys_xz, seal_ys_label,
                        related_book, as_book_id, seal_yz_person_name, seal_yzzkz, seal_yzzkz_id,
                        seal_yt_url, seal_ytsw_url, seal_yzbk_url, audit_status,
+                       dynasty, dynasty_source, author_name, source_kind,
                        (SELECT COUNT(*) FROM seal_links l WHERE l.source_seal_id=seals.source_seal_id) AS link_count
                 FROM seals{where_sql}
                 ORDER BY as_book_id, source_seal_id

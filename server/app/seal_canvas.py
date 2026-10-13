@@ -14,6 +14,7 @@
 | 5 | 色彩校准（红色均匀度） | **默认不做**（与「冻结」冲突）——登记为**待裁**（若 Kevin 要，只可加极轻的 red 通道 gamma，会破冻结） | 无（`--red-gamma` 未实现，待裁） |
 | 6 | 构图：画布最长边 **1200 px**、纵横比沿用原片；主体缩放至画布最长边 **62%** 居中 | `画布 = 1200 ×(1200·短/长)` 取整；主体最长边＝`round(0.62·1200)=744`，按原比例取整，居中（整数偏移） | `CANVAS_LONG_SIDE=1200`、`SUBJECT_LONG_SIDE_RATIO=0.62` |
 | 7 | **「主体」的两种读法**（提示词歧义） | **A ＝印章本体紧致外接框内容**（掩膜闭合后的外接框；几何框内含框内白线）；**B ＝整幅原片**。两种都出 | `CALIBER_A`/`CALIBER_B` |
+| 8 | **背景两版**（Kevin 2026-10-13 追加：1200px 成品出两版） | `paper`＝程序化宣纸底纹（原口径）；`plain_white`＝纯白 `#FFFFFF` 画布（跳过纹理生成；62%/1200/本体零色彩/晕染规则**完全相同**）。批量/CLI 两版都出（`plain_white` 产物名加 `-white` 后缀） | `BACKGROUND_PAPER`/`BACKGROUND_PLAIN_WHITE`/`BACKGROUND_MODES`、`compose(background=…)`、`run_batch(backgrounds=…)`、CLI `--backgrounds` |
 
 ## 1. 分割：**复用既有掩膜**（不重写检测）
 
@@ -75,6 +76,10 @@ BG_CHROMA_SIGMA = 0.30           # 通道独立微色偏幅度
 CALIBER_A = "A"
 CALIBER_B = "B"
 CALIBERS = (CALIBER_A, CALIBER_B)
+# 背景（Kevin 2026-10-13 追加：1200px 成品出两版——宣纸纹理 / 纯白 #FFFFFF）
+BACKGROUND_PAPER = "paper"            # 宣纸底纹（原口径）
+BACKGROUND_PLAIN_WHITE = "plain_white"  # 纯白 #FFFFFF 画布（跳过纹理生成）
+BACKGROUND_MODES = (BACKGROUND_PAPER, BACKGROUND_PLAIN_WHITE)
 ALPHA_MODE_INK = "ink"
 ALPHA_MODE_RECT = "rect"
 ALPHA_MODES = (ALPHA_MODE_INK, ALPHA_MODE_RECT)
@@ -92,6 +97,7 @@ __all__ = [
     "HALO_BAND_PX", "HALO_ALPHA_MAX", "BG_SEED_DEFAULT", "BG_MIN_RGB", "BG_MAX_RGB",
     "BG_BASE_RGB", "BG_GRAIN_SIGMA", "BG_FIBER_SIGMA", "BG_FIBER_STRETCH_LONG",
     "BG_FIBER_STRETCH_SHORT", "BG_CHROMA_SIGMA", "CALIBER_A", "CALIBER_B", "CALIBERS",
+    "BACKGROUND_PAPER", "BACKGROUND_PLAIN_WHITE", "BACKGROUND_MODES",
     "ALPHA_MODE_INK", "ALPHA_MODE_RECT", "ALPHA_MODES",
     "HALO_POLICY_SEAL", "HALO_POLICY_PAPER", "HALO_POLICIES", "TIFF_PREDICTOR",
     # 分割 / 背景 / 构图
@@ -427,17 +433,22 @@ def compose(rgb, *, caliber: str = CALIBER_A, alpha_mode: str = ALPHA_MODE_INK,
             subject_ratio: float = SUBJECT_LONG_SIDE_RATIO, halo_band_px: int = HALO_BAND_PX,
             halo_alpha_max: float = HALO_ALPHA_MAX, close_px: int = CLOSE_KERNEL_PX,
             fringe_px: int = FRINGE_PX, fill_holes: bool = False,
-            halo: bool = True, halo_policy: str = HALO_POLICY_SEAL) -> Dict[str, Any]:
+            halo: bool = True, halo_policy: str = HALO_POLICY_SEAL,
+            background: str = BACKGROUND_PAPER) -> Dict[str, Any]:
     """**成品合成**（确定性：同输入同参数 ⇒ 逐像素相同）。
 
-    流程：分割 → 取主体（A＝掩膜外接框 / B＝整幅）→ Lanczos 到 62% → 居中贴到宣纸画布
-    → 掩膜外侧晕染 → 出读数。返回 dict：`canvas`（uint8 HxWx3）、`mask_canvas`、`halo`、`readings`、`meta`。
+    流程：分割 → 取主体（A＝掩膜外接框 / B＝整幅）→ Lanczos 到 62% → 居中贴到底
+    （`background="paper"`＝程序化宣纸底纹；`"plain_white"`＝纯白 `#FFFFFF`，跳过纹理生成，
+    其余——62% 居中、长边 1200、本体零色彩、晕染规则——完全相同）→ 掩膜外侧晕染 → 出读数。
+    返回 dict：`canvas`（uint8 HxWx3）、`mask_canvas`、`halo`、`readings`、`meta`、`seg`。
     """
     np_ = _np()
     if caliber not in CALIBERS:
         raise ValueError(f"caliber 只能是 {CALIBERS}，收到 {caliber!r}")
     if alpha_mode not in ALPHA_MODES:
         raise ValueError(f"alpha_mode 只能是 {ALPHA_MODES}，收到 {alpha_mode!r}")
+    if background not in BACKGROUND_MODES:
+        raise ValueError(f"background 只能是 {BACKGROUND_MODES}，收到 {background!r}")
     if halo_policy not in HALO_POLICIES:
         raise ValueError(f"halo_policy 只能是 {HALO_POLICIES}，收到 {halo_policy!r}")
     arr = np_.asarray(rgb)
@@ -472,9 +483,13 @@ def compose(rgb, *, caliber: str = CALIBER_A, alpha_mode: str = ALPHA_MODE_INK,
     seal_local = resize_mask_bool(seal_src, (tw, th))   # 真印章掩膜（画布尺度：② 判据用）
     ox, oy = (cw - tw) // 2, (ch - th) // 2
 
-    bg = paper_background(cw, ch, seed)
-    bg_again = paper_background(cw, ch, seed)          # ⑤ 同种子复算
-    bg_reproducible = bool(np_.array_equal(bg, bg_again))
+    if background == BACKGROUND_PLAIN_WHITE:
+        bg = np_.full((ch, cw, 3), 255, dtype=np_.uint8)   # 纯白 #FFFFFF（无纹理、无种子）
+        bg_reproducible = True
+    else:
+        bg = paper_background(cw, ch, seed)
+        bg_again = paper_background(cw, ch, seed)          # ⑤ 同种子复算
+        bg_reproducible = bool(np_.array_equal(bg, bg_again))
 
     canvas = bg.copy()
     region = canvas[oy:oy + th, ox:ox + tw]
@@ -591,11 +606,13 @@ def compose(rgb, *, caliber: str = CALIBER_A, alpha_mode: str = ALPHA_MODE_INK,
         },
         "reproducibility": {
             "claim": "同种子同输出（背景逐像素相同 ＋ 成品逐像素相同）",
+            "background_mode": background,
             "bg_seed": int(seed),
             "bg_reproducible_same_seed": bg_reproducible,
             "bg_sha256": sha256_array(bg),
             "canvas_sha256": sha256_array(canvas),
             "bg_stats": array_stats(bg),
+            "bg_is_pure_white": bool(int(np_.asarray(bg).min()) == 255 and int(np_.asarray(bg).max()) == 255),
             "bg_in_gamut": bool(
                 np_.asarray(bg).min(axis=(0, 1))[0] >= BG_MIN_RGB[0]
                 and np_.asarray(bg).min(axis=(0, 1))[1] >= BG_MIN_RGB[1]
@@ -614,7 +631,7 @@ def compose(rgb, *, caliber: str = CALIBER_A, alpha_mode: str = ALPHA_MODE_INK,
         },
     }
     meta = {
-        "caliber": caliber, "alpha_mode": alpha_mode,
+        "caliber": caliber, "alpha_mode": alpha_mode, "background": background,
         "caliber_reading": ("A＝印章本体紧致外接框内容（掩膜闭合后的外接框）" if caliber == CALIBER_A
                            else "B＝整幅原片"),
         "seed": int(seed), "source_size": [src_w, src_h],
@@ -677,9 +694,12 @@ def run_batch(inputs: Sequence[Dict[str, Any]], out_dir: Path, *, calibers: Sequ
               halo_band_px: int = HALO_BAND_PX, halo_alpha_max: float = HALO_ALPHA_MAX,
               close_px: int = CLOSE_KERNEL_PX, fringe_px: int = FRINGE_PX,
               fill_holes: bool = False, halo: bool = True, halo_policy: str = HALO_POLICY_SEAL,
-              compare_height: int = 744, write_compare: bool = True) -> Dict[str, Any]:
-    """批量成品化：每份输入 × 每口径 ⇒ `PNG（预览）＋ TIFF（无损）＋ 对照图`，并汇总读数。
+              compare_height: int = 744, write_compare: bool = True,
+              backgrounds: Sequence[str] = (BACKGROUND_PAPER, BACKGROUND_PLAIN_WHITE)) -> Dict[str, Any]:
+    """批量成品化：每份输入 × 每口径 × 每背景 ⇒ `PNG（预览）＋ TIFF（无损）＋ 对照图`，并汇总读数。
 
+    背景（Kevin 2026-10-13 追加）：`paper`（宣纸底纹）⇒ 产物名 `{name}-{cal}.png`；
+    `plain_white`（纯白 #FFFFFF）⇒ 产物名 `{name}-{cal}-white.png`。两版读数各自独立给出。
     `inputs` 项：`{"name": str, "path": str|Path, "meta": {...任意溯源字段...}}`（**只读** `path`）。
     """
     np_ = _np()
@@ -698,35 +718,37 @@ def run_batch(inputs: Sequence[Dict[str, Any]], out_dir: Path, *, calibers: Sequ
         arr = np_.asarray(Image.open(src).convert("RGB"))
         rec["source_size"] = [int(arr.shape[1]), int(arr.shape[0])]
         for cal in calibers:
-            try:
-                res = compose(arr, caliber=cal, alpha_mode=alpha_mode, seed=seed,
-                              canvas_long_side=canvas_long_side, subject_ratio=subject_ratio,
-                              halo_band_px=halo_band_px, halo_alpha_max=halo_alpha_max,
-                              close_px=close_px, fringe_px=fringe_px, fill_holes=fill_holes, halo=halo,
-                              halo_policy=halo_policy)
-            except Exception as exc:
-                rec.setdefault("outputs", []).append({"caliber": cal, "error": f"{type(exc).__name__}: {exc}"})
-                continue
-            stem = f"{name}-{cal}"
-            png = out_dir / f"{stem}.png"
-            tif = out_dir / f"{stem}.tiff"
-            cmp_png = out_dir / f"{stem}-compare.png"
-            Image.fromarray(res["canvas"]).save(png, format="PNG", optimize=False, compress_level=6)
-            tinfo = write_tiff_lossless(tif, res["canvas"])
-            cinfo = None
-            if write_compare:
-                cimg = comparison_image(arr, res["canvas"], height=compare_height,
-                                        left_label=f"O {arr.shape[1]}x{arr.shape[0]}",
-                                        right_label=f"OUT {cal} {res['meta']['canvas_long_side']}px")
-                cimg.save(cmp_png, format="PNG", optimize=False, compress_level=6)
-                cinfo = {"path": str(cmp_png), "bytes": int(cmp_png.stat().st_size)}
-            rec.setdefault("outputs", []).append({
-                "caliber": cal, "alpha_mode": alpha_mode,
-                "png": {"path": str(png), "bytes": int(png.stat().st_size)},
-                "tiff": tinfo, "compare": cinfo,
-                "png_sha256": hashlib.sha256(png.read_bytes()).hexdigest(),
-                "meta": res["meta"], "readings": res["readings"],
-            })
+            for bg_mode in backgrounds:
+                try:
+                    res = compose(arr, caliber=cal, alpha_mode=alpha_mode, seed=seed,
+                                  canvas_long_side=canvas_long_side, subject_ratio=subject_ratio,
+                                  halo_band_px=halo_band_px, halo_alpha_max=halo_alpha_max,
+                                  close_px=close_px, fringe_px=fringe_px, fill_holes=fill_holes, halo=halo,
+                                  halo_policy=halo_policy, background=bg_mode)
+                except Exception as exc:
+                    rec.setdefault("outputs", []).append(
+                        {"caliber": cal, "background": bg_mode, "error": f"{type(exc).__name__}: {exc}"})
+                    continue
+                stem = f"{name}-{cal}" if bg_mode == BACKGROUND_PAPER else f"{name}-{cal}-white"
+                png = out_dir / f"{stem}.png"
+                tif = out_dir / f"{stem}.tiff"
+                cmp_png = out_dir / f"{stem}-compare.png"
+                Image.fromarray(res["canvas"]).save(png, format="PNG", optimize=False, compress_level=6)
+                tinfo = write_tiff_lossless(tif, res["canvas"])
+                cinfo = None
+                if write_compare:
+                    cimg = comparison_image(arr, res["canvas"], height=compare_height,
+                                            left_label=f"O {arr.shape[1]}x{arr.shape[0]}",
+                                            right_label=f"OUT {cal}/{bg_mode} {res['meta']['canvas_long_side']}px")
+                    cimg.save(cmp_png, format="PNG", optimize=False, compress_level=6)
+                    cinfo = {"path": str(cmp_png), "bytes": int(cmp_png.stat().st_size)}
+                rec.setdefault("outputs", []).append({
+                    "caliber": cal, "alpha_mode": alpha_mode, "background": bg_mode,
+                    "png": {"path": str(png), "bytes": int(png.stat().st_size)},
+                    "tiff": tinfo, "compare": cinfo,
+                    "png_sha256": hashlib.sha256(png.read_bytes()).hexdigest(),
+                    "meta": res["meta"], "readings": res["readings"],
+                })
         samples.append(rec)
     summary = {
         "module": "server/app/seal_canvas.py",
@@ -736,6 +758,7 @@ def run_batch(inputs: Sequence[Dict[str, Any]], out_dir: Path, *, calibers: Sequ
             "halo_band_px": int(halo_band_px), "halo_alpha_max": float(halo_alpha_max),
             "close_kernel_px": int(close_px), "fringe_px": int(fringe_px),
             "fill_holes": bool(fill_holes), "halo": bool(halo), "halo_policy": halo_policy,
+            "backgrounds": list(backgrounds),
             "bg_seed": int(seed), "bg_min_rgb": list(BG_MIN_RGB), "bg_max_rgb": list(BG_MAX_RGB),
             "resample": RESAMPLE, "alpha_mode": alpha_mode, "calibers": list(calibers),
         },
@@ -763,6 +786,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     ap.add_argument("--out", required=True, help="产物目录（PNG/TIFF/对照图）")
     ap.add_argument("--summary", default=None, help="汇总 JSON 落点")
     ap.add_argument("--calibers", default="A,B", help="口径，逗号分隔（A/B）")
+    ap.add_argument("--backgrounds", default="paper,plain_white",
+                    help="背景，逗号分隔（paper=宣纸底纹 / plain_white=纯白 #FFFFFF；Kevin 2026-10-13 两版都出）")
     ap.add_argument("--alpha", default=ALPHA_MODE_INK, choices=list(ALPHA_MODES))
     ap.add_argument("--seed", type=int, default=BG_SEED_DEFAULT)
     ap.add_argument("--canvas-long-side", type=int, default=CANVAS_LONG_SIDE)
@@ -792,6 +817,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         halo_alpha_max=args.halo_alpha_max, close_px=args.close_px, fringe_px=args.fringe_px,
         fill_holes=args.fill_holes, halo=not args.no_halo, halo_policy=args.halo_policy,
         write_compare=not args.no_compare,
+        backgrounds=[b.strip() for b in args.backgrounds.split(",") if b.strip()],
     )
     if args.summary:
         sp = Path(args.summary)

@@ -9,6 +9,8 @@
   * `GET  /api/seals/batches` —— 批次列表（含回执读数）
   * `POST /api/seals/package` —— 从本库重建 xiai 就绪包（**不联网**；含 TIFF 影像内容寻址树）
   * `GET  /api/seals/{seqid}/image/{kind}` —— 读本地影像（kind ∈ yt|ytsw|yzbk）供页面缩略图
+  * `POST /api/seals/uploads` —— **本地上传印面导入**（multipart 多图 ＋ dynasty/author/…；
+    seal-uploads 线，Kevin 2026-10-13；落 `seal_uploads` ＋ `seals` 新行，只加法）
 
 纪律：
   * 本文件**不含任何 SQL**，一切读数走 `..seals`；
@@ -22,7 +24,9 @@ import logging
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from fastapi.responses import FileResponse
 
+from .. import seal_uploads
 from .. import seals
+from .. import multipart as multipart_lib
 from ..config import Settings, get_settings
 
 log = logging.getLogger("feicui.api.seals.router")
@@ -203,6 +207,91 @@ def sync(request: Request, payload: dict | None = None, st: Settings = Depends(_
     except seals.FetchError as exc:
         raise HTTPException(status_code=502, detail={"error": "SOURCE_UNREACHABLE", "detail": str(exc)})
     log.info("印章采集完成：%s", {k: summary[k] for k in ("batch_id", "seals_ok", "links_ok", "failed_count")})
+    return summary
+
+
+@router.post("/uploads")
+async def upload_seals(request: Request, st: Settings = Depends(_settings)) -> dict:
+    """`POST /api/seals/uploads` —— **本地上传印面导入**（seal-uploads 线，Kevin 2026-10-13）。
+
+    multipart/form-data：**多图**（文件段任意字段名、带 filename；同名多值保留）＋ 表单字段
+    `dynasty`（必填；枚举真源＝xiai 15 种，本侧不复制）、`author`（可选）、`transcription`
+    （可选，默认空＝释文留空）、`dynasty_source`（可选，谁指定的）、`batch_id`（可选，缺省自增）、
+    `source_note`（可选）。
+
+    行为：原始字节落 `var/seal_uploads/<batch_id>/` ＋ `seal_uploads` 台账 ＋ `seals` 新行
+    （`source_kind='local_upload'`、`audit_status='UNREVIEWED_PENDING_HUMAN_REVIEW'`，**只 INSERT**）。
+    **幂等**：同 batch 同 sha ⇒ skipped，不重写文件；`source_seal_id` 撞号（同日多批）⇒ 400（不覆盖）。
+    本端点**不产 O 件 / 成品**（批跑另做，见 ops/seal-uploads/）。
+    """
+    _reject_unsupported_query(request, frozenset())
+    ctype = request.headers.get("content-type", "")
+    if not multipart_lib.is_multipart(ctype):
+        raise HTTPException(status_code=400, detail={
+            "error": "UNSUPPORTED_MEDIA_TYPE",
+            "detail": f"Content-Type 必须 multipart/form-data：{ctype!r}"})
+    declared = request.headers.get("content-length")
+    if declared and declared.isdigit() and int(declared) > seal_uploads.MAX_TOTAL_BYTES:
+        raise HTTPException(status_code=413, detail={
+            "error": "PAYLOAD_TOO_LARGE", "detail": f"请求体超上限 {seal_uploads.MAX_TOTAL_BYTES} bytes"})
+    body = await request.body()
+    if not body:
+        raise HTTPException(status_code=400, detail={"error": "EMPTY_BODY", "detail": "请求体为空"})
+    if len(body) > seal_uploads.MAX_TOTAL_BYTES:
+        raise HTTPException(status_code=413, detail={
+            "error": "PAYLOAD_TOO_LARGE", "detail": f"请求体超上限 {seal_uploads.MAX_TOTAL_BYTES} bytes"})
+    try:
+        fields, _ = multipart_lib.parse_multipart(ctype, body)
+        file_parts = multipart_lib.iter_file_parts(ctype, body)
+    except multipart_lib.MultipartError as exc:
+        raise HTTPException(status_code=400, detail={"error": "BAD_MULTIPART", "detail": str(exc)})
+
+    dynasty = (fields.get("dynasty") or "").strip()
+    if not dynasty:
+        raise HTTPException(status_code=400, detail={
+            "error": "BAD_PARAM", "detail": "表单字段 dynasty 必填（朝代枚举真源＝xiai，如「戰國」）"})
+    author = (fields.get("author") or fields.get("author_name") or "").strip() or None
+    transcription = fields.get("transcription") or ""
+    dynasty_source = (fields.get("dynasty_source") or "").strip() or None
+    source_note = (fields.get("source_note") or "").strip() or None
+    batch_id = (fields.get("batch_id") or "").strip() or seal_uploads.next_batch_id(st.seals_db_path)
+
+    if not file_parts:
+        raise HTTPException(status_code=400, detail={
+            "error": "NO_FILES", "detail": "没有文件段（文件段须带 filename；字段名任意，如 files）"})
+    if len(file_parts) > seal_uploads.MAX_FILES:
+        raise HTTPException(status_code=400, detail={
+            "error": "TOO_MANY_FILES", "detail": f"单请求文件数上限 {seal_uploads.MAX_FILES}：{len(file_parts)}"})
+
+    seals.ensure_schema(st.seals_db_path)
+    seal_uploads.ensure_schema(st.seals_db_path)
+    uploads_root = st.seals_db_path.parent / "seal_uploads"
+    accepted: list[dict] = []
+    skipped: list[dict] = []
+    failed: list[dict] = []
+    seq = 1
+    for part in file_parts:
+        fname = part["filename"] or f"upload-{seq}.png"
+        try:
+            if len(part["content"]) > seal_uploads.MAX_FILE_BYTES:
+                raise seal_uploads.UploadError(
+                    f"单文件超上限 {seal_uploads.MAX_FILE_BYTES} bytes：{len(part['content'])}")
+            res = seal_uploads.record_upload(
+                st.seals_db_path, data=part["content"], filename=fname, batch_id=batch_id,
+                seq=seq, dynasty=dynasty, dynasty_source=dynasty_source, author_name=author,
+                transcription=transcription, uploads_root=uploads_root, source_note=source_note)
+        except seal_uploads.UploadError as exc:
+            failed.append({"filename": fname, "error": str(exc)})
+            continue
+        (skipped if res["status"] == "skipped" else accepted).append(res)
+        seq += 1
+    summary = {"batch_id": batch_id, "dynasty": dynasty, "author": author,
+               "transcription": transcription, "accepted": accepted, "skipped": skipped,
+               "failed": failed,
+               "counts": {"accepted": len(accepted), "skipped": len(skipped), "failed": len(failed)},
+               "_db_path": str(st.seals_db_path), "_uploads_root": str(uploads_root)}
+    log.info("印章本地上传导入：batch_id=%s accepted=%s skipped=%s failed=%s",
+             batch_id, len(accepted), len(skipped), len(failed))
     return summary
 
 

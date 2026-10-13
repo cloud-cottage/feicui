@@ -19,8 +19,9 @@ from __future__ import annotations
 import email
 import email.policy
 from email.message import Message
+from typing import Any
 
-__all__ = ["MultipartError", "parse_multipart", "is_multipart"]
+__all__ = ["MultipartError", "parse_multipart", "is_multipart", "iter_file_parts"]
 
 
 class MultipartError(ValueError):
@@ -87,3 +88,43 @@ def parse_multipart(content_type: str, body: bytes) -> tuple[dict[str, str], dic
         elif name not in files:
             files[name] = payload
     return fields, files
+
+
+def iter_file_parts(content_type: str, body: bytes) -> list[dict[str, Any]]:
+    """multipart **文件段**逐段展开（**同名多值保留**——`parse_multipart` 的 dict 形态
+    只保留首个同名值，多图上传用本函数）。
+
+    返回 `[{"name": 字段名, "filename": 文件名|None, "content": bytes}, ...]`（按出现序）。
+    判「文件段」＝带 filename；纯文本段（无 filename）不在此列。结构错误 ⇒ `MultipartError`。
+    """
+    if not is_multipart(content_type):
+        raise MultipartError(f"Content-Type 不是 multipart/form-data：{content_type!r}")
+    boundary = _boundary_of(content_type)
+    if not body:
+        raise MultipartError("请求体为空")
+    raw = (
+        b"Content-Type: "
+        + content_type.encode("utf-8", "replace")
+        + b"\r\nMIME-Version: 1.0\r\n\r\n"
+        + body
+    )
+    try:
+        msg = email.message_from_bytes(raw, policy=email.policy.default)
+        parts = list(msg.iter_parts())
+    except Exception as exc:  # noqa: BLE001
+        raise MultipartError(f"multipart 解析失败：{exc!r}") from exc
+    if not msg.is_multipart():
+        raise MultipartError(f"解析器未识别为 multipart（boundary={boundary!r}）")
+    out: list[dict[str, Any]] = []
+    for part in parts:
+        name = part.get_param("name", header="content-disposition")
+        filename = part.get_filename()
+        if not name and not filename:
+            continue
+        payload = part.get_payload(decode=True)
+        if payload is None:
+            raw_payload = part.get_payload()
+            payload = (raw_payload or "").encode("utf-8") if isinstance(raw_payload, str) else b""
+        out.append({"name": str(name or ""), "filename": None if filename is None else str(filename),
+                    "content": payload})
+    return [p for p in out if p["filename"] is not None]

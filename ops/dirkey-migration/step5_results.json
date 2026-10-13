@@ -1,0 +1,265 @@
+{
+ "naming_compliant": "8708/8708",
+ "naming_bad": [],
+ "o5_db_to_disk": "8708/8708 (缺 0)",
+ "o5_disk_to_db": "8708/8708 (孤儿 0)",
+ "sha256_recheck": "8708/8708 不匹配 0",
+ "dirs_after": [
+  "9787501007981",
+  "9787550847224",
+  "9787806350959",
+  "tmp.pdf",
+  "吴颐人篆刻作品展示",
+  "福庵印缀",
+  "黄牧甫印谱"
+ ],
+ "per_dir_disk": {
+  "9787501007981": 23,
+  "9787550847224": 7183,
+  "9787806350959": 35,
+  "tmp.pdf": 31,
+  "吴颐人篆刻作品展示": 22,
+  "福庵印缀": 1214,
+  "黄牧甫印谱": 200
+ },
+ "strays_after": [
+  "output/books/.DS_Store",
+  "output/books/9787501007981/.DS_Store",
+  "output/books/9787550847224/.DS_Store",
+  "output/books/tmp.pdf/.DS_Store"
+ ],
+ "per_dir_db": {
+  "tmp.pdf": 31,
+  "9787806350959": 35,
+  "9787501007981": 23,
+  "9787550847224": 7183,
+  "黄牧甫印谱": 200,
+  "福庵印缀": 1214,
+  "吴颐人篆刻作品展示": 22
+ },
+ "stamps_total": 8708,
+ "null_img_path_tiff": 0,
+ "fp_15col_equal": true,
+ "fp_15col_after": {
+  "id": "55aed113045cee2fda56590a39f07a4b79d9d00ca124e4e3f91943dd6be70538",
+  "pdf_name": "192c87f529debf1f67a7cc22fd14c8fca4b61505b5e6b3a0e88389ef34ac3430",
+  "page": "d3884cf418a27ba4cb676624febbeab09ec200e53eba6d4c143308a1f98c073b",
+  "idx": "2efdeafec470ebeffb2106370e3bdc0410eba86a29acec0fe7704beaf97e7016",
+  "text": "bb8184ba41e80b44e39b8d1ea55ce85b8ab6a11a1592e635b0df07645bee7e6f",
+  "img_path": "a5e9c51532a966317eea8a785a932257f5fbf8378b44ab812b0384bb2816de78",
+  "x1": "2affa54dabfbd0c64b98a12a76864d1ca2e8f47c263a01f281ec213d07ac64f3",
+  "y1": "2b30492d97b4dbcd5120320ed9789968423d235447765b0fca777d3e49814c5b",
+  "x2": "bdad8c8279e807400749cd88959281ce35b89fb7a74d12d369d54d3391bb3748",
+  "y2": "c54f702aa6e3d15c3a33229cb3c1fcb37622d5ab5b57d3262b4ecce91d9052fb",
+  "col": "d124c01f435d69fb3f06830cc2d53c2015d509272845dfc79e6006cfb0876b33",
+  "row": "c1c9c6f7023cc650a20caa5e9cd7bf213656b7786b9c450f8006ac49898311ad",
+  "dup_kind": "46b083a04277d7481470c2849dfd95495d38e54ff5c882b2601fb4097626798f",
+  "dup_of_id": "247c39b7d95cfaffa7ee77609b67fe40e1c71c4b0dd86745fcc99e1fa4032156",
+  "dup_algo": "f151b8c5928aef9029de0a57a0c63a6a861539a66354a4f22dce158dcb018d93"
+ },
+ "all16_before_after": [
+  "f86ce3b30d5def8232ae37b9a45cc72d7e8101c8778a94b71750f6fb73c89114",
+  "fe743f12ede2d9668b95707170d98386e825d65dfc9d0bd6ee11c8f1cdf8aa9b"
+ ],
+ "e3": {
+  "job-502016dd118a4bc6b7d73b5e0313d1b4": {
+   "pdf_name": "tmp.pdf",
+   "default": 30,
+   "dup": 31,
+   "same_as_before": true
+  },
+  "job-ccb79b59bd804520ba2cf5ab7df45e29": {
+   "pdf_name": "tmp.pdf",
+   "default": 30,
+   "dup": 31,
+   "same_as_before": true
+  },
+  "job-20e180ea0ffe493087a0770db0bb8264": {
+   "pdf_name": "tmp.pdf",
+   "default": 30,
+   "dup": 31,
+   "same_as_before": true
+  },
+  "job-f34120a8f1d6482db4fd55b33cd46f2f": {
+   "pdf_name": "秦汉印典 上海书画 金怀英  1997 ok.pdf",
+   "default": 35,
+   "dup": 35,
+   "same_as_before": true
+  },
+  "job-6e7471ff9c464695b9463cdad5122246": {
+   "pdf_name": "tmp.pdf",
+   "default": 30,
+   "dup": 31,
+   "same_as_before": true
+  },
+  "job-90344a7802954afdaad447d875f2e15b": {
+   "pdf_name": "秦印类编 检索版.pdf",
+   "default": 6952,
+   "dup": 7183,
+   "same_as_before": true
+  },
+  "job-13539d819b324480ad7f4324670dbc55": {
+   "pdf_name": "秦印类编 检索版.pdf",
+   "default": 101,
+   "dup": 105,
+   "same_as_before": true
+  },
+  "job-e9656892ddb64395b7812aef93f227ae": {
+   "pdf_name": "福庵印缀 原版 高清.pdf",
+   "default": 65,
+   "dup": 67,
+   "same_as_before": true
+  },
+  "job-2c3a36fe29c04af1ad1b80c5672c8ad4": {
+   "pdf_name": "吴颐人篆刻作品展示.pdf",
+   "default": 22,
+   "dup": 22,
+   "same_as_before": true
+  },
+  "job-64bd6bebd36240a7b338c02c813302da": {
+   "pdf_name": "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf",
+   "default": 194,
+   "dup": 200,
+   "same_as_before": true
+  },
+  "job-e919e55e979f4386908918a6f8136e85": {
+   "pdf_name": "吴颐人篆刻作品展示.pdf",
+   "default": 22,
+   "dup": 22,
+   "same_as_before": true
+  },
+  "job-e1723d3d7b7e4f03aa578b3d84f32518": {
+   "pdf_name": "福庵印缀 原版 高清.pdf",
+   "default": 1189,
+   "dup": 1214,
+   "same_as_before": true
+  }
+ },
+ "e5": {
+  "job-502016dd118a4bc6b7d73b5e0313d1b4": {
+   "pdf_name": "tmp.pdf",
+   "count": 0
+  },
+  "job-ccb79b59bd804520ba2cf5ab7df45e29": {
+   "pdf_name": "tmp.pdf",
+   "count": 0
+  },
+  "job-20e180ea0ffe493087a0770db0bb8264": {
+   "pdf_name": "tmp.pdf",
+   "count": 0
+  },
+  "job-f34120a8f1d6482db4fd55b33cd46f2f": {
+   "pdf_name": "秦汉印典 上海书画 金怀英  1997 ok.pdf",
+   "count": 0
+  },
+  "job-6e7471ff9c464695b9463cdad5122246": {
+   "pdf_name": "tmp.pdf",
+   "count": 0
+  },
+  "job-90344a7802954afdaad447d875f2e15b": {
+   "pdf_name": "秦印类编 检索版.pdf",
+   "count": 0
+  },
+  "job-13539d819b324480ad7f4324670dbc55": {
+   "pdf_name": "秦印类编 检索版.pdf",
+   "count": 0
+  },
+  "job-e9656892ddb64395b7812aef93f227ae": {
+   "pdf_name": "福庵印缀 原版 高清.pdf",
+   "count": 0
+  },
+  "job-2c3a36fe29c04af1ad1b80c5672c8ad4": {
+   "pdf_name": "吴颐人篆刻作品展示.pdf",
+   "count": 0
+  },
+  "job-64bd6bebd36240a7b338c02c813302da": {
+   "pdf_name": "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf",
+   "count": 0
+  },
+  "job-e919e55e979f4386908918a6f8136e85": {
+   "pdf_name": "吴颐人篆刻作品展示.pdf",
+   "count": 0
+  },
+  "job-e1723d3d7b7e4f03aa578b3d84f32518": {
+   "pdf_name": "福庵印缀 原版 高清.pdf",
+   "count": 0
+  }
+ },
+ "e6": {
+  "秦印类编 检索版.pdf": {
+   "job_id": "job-90344a7802954afdaad447d875f2e15b",
+   "page": 794,
+   "idx": 3,
+   "status": 200,
+   "content_type": "image/png",
+   "magic": "89504e47",
+   "bytes": 67876,
+   "img_path": "output/books/9787550847224/P794-C1-R4-O.tiff",
+   "in_new_dir": true
+  },
+  "秦汉印典 上海书画 金怀英  1997 ok.pdf": {
+   "job_id": "job-f34120a8f1d6482db4fd55b33cd46f2f",
+   "page": 8,
+   "idx": 7,
+   "status": 200,
+   "content_type": "image/png",
+   "magic": "89504e47",
+   "bytes": 31167,
+   "img_path": "output/books/9787806350959/P8-C2-R4-O.tiff",
+   "in_new_dir": true
+  },
+  "古玺汇编 文物出版社 罗福颐  ok.pdf": {
+   "skipped": "no job (E6 job 作用域；该行已由 O-5 对账覆盖)"
+  },
+  "福庵印缀 原版 高清.pdf": {
+   "job_id": "job-e1723d3d7b7e4f03aa578b3d84f32518",
+   "page": 230,
+   "idx": 2,
+   "status": 200,
+   "content_type": "image/png",
+   "magic": "89504e47",
+   "bytes": 101833,
+   "img_path": "output/books/福庵印缀/P230-C3-R1-O.tiff",
+   "in_new_dir": true
+  },
+  "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf": {
+   "job_id": "job-64bd6bebd36240a7b338c02c813302da",
+   "page": 50,
+   "idx": 6,
+   "status": 200,
+   "content_type": "image/png",
+   "magic": "89504e47",
+   "bytes": 49699,
+   "img_path": "output/books/黄牧甫印谱/P50-C5-R1-O.tiff",
+   "in_new_dir": true
+  },
+  "吴颐人篆刻作品展示.pdf": {
+   "job_id": "job-e919e55e979f4386908918a6f8136e85",
+   "page": 32,
+   "idx": 0,
+   "status": 200,
+   "content_type": "image/png",
+   "magic": "89504e47",
+   "bytes": 75352,
+   "img_path": "output/books/吴颐人篆刻作品展示/P32-C1-R1-O.tiff",
+   "in_new_dir": true
+  },
+  "tmp.pdf": {
+   "job_id": "job-502016dd118a4bc6b7d73b5e0313d1b4",
+   "page": 19,
+   "idx": 3,
+   "status": 200,
+   "content_type": "image/png",
+   "magic": "89504e47",
+   "bytes": 399,
+   "img_path": "output/books/tmp.pdf/P19-C3-R1-O.tiff",
+   "in_new_dir": true
+  }
+ },
+ "e3_101_105_pair": {
+  "pdf_name": "秦印类编 检索版.pdf",
+  "default": 101,
+  "dup": 105,
+  "same_as_before": true
+ }
+}

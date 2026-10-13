@@ -12,48 +12,98 @@
   },
   "books": {
     "秦汉印典 上海书画 金怀英  1997 ok.pdf": {
-      "dir_key": "7806350950",
+      "dir_key": "9787806350959",
       "dir_key_source": "ISBN",
       "isbn": "7806350950",
       "pdf_name": "秦汉印典 上海书画 金怀英  1997 ok.pdf",
-      "note": "ISBN 由 Kevin 2026-10-11 给定（docs/image-naming-draft-v0.1.md §6 第 2 问裁定）。"
+      "note": "ISBN-10「7-80635-095-0」由 PDF 文本层直读（第 2 页，anchor_near）；目录键一律 ISBN-13：978＋前 9 位＋重算校验位＝9787806350959（校验位已程序验算）。出版者前缀 80635＝上海书画出版社（OCR「上海节画」为识别噪声，双方证据留存于 biblio 批次）。35 行 img_path_tiff 前缀同步改写；切键经 Kevin 2026-10-11 明确授权（书籍目录键迁移单：切键＋一律 13 位＋福庵去缀；授权改写 stamps.img_path_tiff 既有列值）。",
+      "isbn13": "9787806350959",
+      "isbn_source": "text_layer",
+      "migrated_at": "2026-10-13T11:33:03+08:00"
     },
     "古玺汇编 文物出版社 罗福颐  ok.pdf": {
-      "dir_key": "7501007985",
+      "dir_key": "9787501007981",
       "dir_key_source": "ISBN",
       "isbn": "7501007985",
       "pdf_name": "古玺汇编 文物出版社 罗福颐  ok.pdf",
-      "note": "ISBN 由 Kevin 2026-10-11 给定（docs/image-naming-draft-v0.1.md §6 第 2 问裁定）。"
+      "note": "ISBN-10「7-5010-0798-5」由版权页 OCR（第 3 页，anchor_near）识别、校验位通过、前缀 5010＝文物出版社 自洽（ops/biblio-metadata/ accepted）⇒ 目录键一律 ISBN-13：9787501007981（校验位已程序验算）。23 行 img_path_tiff 前缀同步改写；切键经 Kevin 2026-10-11 明确授权（书籍目录键迁移单：切键＋一律 13 位＋福庵去缀；授权改写 stamps.img_path_tiff 既有列值）。",
+      "isbn13": "9787501007981",
+      "isbn_source": "local_ocr",
+      "migrated_at": "2026-10-13T11:33:03+08:00"
     },
     "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf": {
       "dir_key": "黄牧甫印谱",
       "dir_key_source": "chinese_title",
       "pdf_name": "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf",
-      "note": "中文书名＝「黄牧甫印谱」（书目来源缀 `_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk)` 为人肉可读性去除；口径件 §6 逐字枚举该书中文书名为「黄牧甫印谱」）。**单点可改**：若 Jing 裁「机械去扩展名规范化」，改为 `黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk)`（＝ normalize_book_name 的机械结果）。"
+      "note": "中文书名＝「黄牧甫印谱」（书目来源缀 `_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk)` 去除）。本轮目录键迁移核账时该键已处于目标态（本表 / output/books 目录名 / 库内 img_path_tiff dir 段三处一致），未再改名改库，仅补 migrated_at。",
+      "migrated_at": "2026-10-13T11:33:03+08:00"
     },
     "秦印类编 检索版.pdf": {
-      "dir_key": "秦印类编 检索版",
-      "dir_key_source": "chinese_title",
+      "dir_key": "9787550847224",
+      "dir_key_source": "ISBN",
       "pdf_name": "秦印类编 检索版.pdf",
-      "note": "中文书名＝「秦印类编 检索版」（＝去扩展名规范化；与 normalize_book_name 的机械结果逐字一致）。本单**样例产出**即落 output/books/秦印类编 检索版/。"
+      "note": "ISBN-13「978-7-5508-4722-4」由版权页 OCR（第 850 页，anchor_near）识别、校验位通过、出版者前缀 5508＝西泠印社出版社 自洽（ops/biblio-metadata/ 七本对照表 accepted）⇒ 目录键由中文书名「秦印类编 检索版」切为 ISBN-13；7183 行 img_path_tiff 前缀同步改写。切键与改写既有列值经 Kevin 2026-10-11 明确授权（书籍目录键迁移单：切键＋一律 13 位＋福庵去缀；授权改写 stamps.img_path_tiff 既有列值）。",
+      "isbn": "9787550847224",
+      "isbn13": "9787550847224",
+      "isbn_source": "local_ocr",
+      "migrated_at": "2026-10-13T11:33:03+08:00"
     },
     "tmp.pdf": {
       "dir_key": "tmp.pdf",
       "dir_key_source": "pdf_name_unconfirmed",
       "pdf_name": "tmp.pdf",
-      "note": "上传通道落盘的临时名，书本身份**未经人工确认**（config/book_codes.json 记为高置信推定＝黄牧甫印谱上传件，但未采信）⇒ 目录键回落 PDF 名并标记。人工确认后改 dir_key / dir_key_source（口径件 §6.2 R-h）。"
+      "note": "上传通道落盘的临时名，书本身份**未经人工确认**（config/book_codes.json 记为高置信推定＝黄牧甫印谱上传件，但未采信）⇒ 目录键回落 PDF 名并标记。人工确认后改 dir_key / dir_key_source（口径件 §6.2 R-h）。 目录键迁移轮（2026-10-13T11:33:03+08:00）核账：维持 pdf_name_unconfirmed 不变。",
+      "migrated_at": "2026-10-13T11:33:03+08:00"
     },
     "吴颐人篆刻作品展示.pdf": {
       "dir_key": "吴颐人篆刻作品展示",
       "dir_key_source": "chinese_title",
       "pdf_name": "吴颐人篆刻作品展示.pdf",
-      "note": "无 ISBN 可用 ⇒ 落中文书名。中文书名＝「吴颐人篆刻作品展示」（＝去扩展名规范化 normalize_book_name 的机械结果，逐字一致）。键＝PDF 文件名（逐字，与 config/templates.json 同源）。"
+      "note": "无 ISBN 可用 ⇒ 落中文书名。中文书名＝「吴颐人篆刻作品展示」（＝去扩展名规范化 normalize_book_name 的机械结果，逐字一致）。键＝PDF 文件名（逐字，与 config/templates.json 同源）。 目录键迁移轮（2026-10-13T11:33:03+08:00）核账：维持不变。",
+      "migrated_at": "2026-10-13T11:33:03+08:00"
     },
     "福庵印缀 原版 高清.pdf": {
-      "dir_key": "福庵印缀 原版 高清",
+      "dir_key": "福庵印缀",
       "dir_key_source": "chinese_title",
       "pdf_name": "福庵印缀 原版 高清.pdf",
-      "note": "无 ISBN 可用 ⇒ 落中文书名。中文书名＝「福庵印缀 原版 高清」（＝去扩展名规范化 normalize_book_name 的机械结果，逐字一致；其中「原版 高清」为扫描品质缀）。**单点可改**：若裁「去扫描品质缀」，改为 `福庵印缀`（一句话可改，与黄牧甫印谱去书目来源缀同理；不影响其余键）。"
+      "note": "中文书名＝「福庵印缀」——原键「福庵印缀 原版 高清」按 Kevin 2026-10-11 裁定去扫描品质缀（与黄牧甫印谱去书目来源缀同理；本书无 ISBN，biblio 扫描 unverified，维持 chinese_title）。1214 行 img_path_tiff 前缀同步改写。",
+      "migrated_at": "2026-10-13T11:33:03+08:00"
     }
+  },
+  "migration": {
+    "migrated_at": "2026-10-13T11:33:03+08:00",
+    "authorized_by": "Kevin 2026-10-11 明确授权（书籍目录键迁移单：切键＋一律 13 位＋福庵去缀；授权改写 stamps.img_path_tiff 既有列值）",
+    "rows_rewritten_img_path_tiff": 8455,
+    "books": {
+      "秦汉印典 上海书画 金怀英  1997 ok.pdf": {
+        "from": "9787806350959",
+        "to": "9787806350959"
+      },
+      "古玺汇编 文物出版社 罗福颐  ok.pdf": {
+        "from": "9787501007981",
+        "to": "9787501007981"
+      },
+      "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf": {
+        "from": "黄牧甫印谱",
+        "to": "黄牧甫印谱"
+      },
+      "秦印类编 检索版.pdf": {
+        "from": "9787550847224",
+        "to": "9787550847224"
+      },
+      "tmp.pdf": {
+        "from": "tmp.pdf",
+        "to": "tmp.pdf"
+      },
+      "吴颐人篆刻作品展示.pdf": {
+        "from": "吴颐人篆刻作品展示",
+        "to": "吴颐人篆刻作品展示"
+      },
+      "福庵印缀 原版 高清.pdf": {
+        "from": "福庵印缀",
+        "to": "福庵印缀"
+      }
+    },
+    "evidence": "ops/dirkey-migration/"
   }
 }

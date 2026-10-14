@@ -6,7 +6,7 @@
 
 用法（图像栈只在 `feicui/venv` ⇒ 须用 `./venv/bin/python` 跑）：
     cd /Users/kevin/bistro/xiai/feicui
-    ./venv/bin/python ops/pdf-registry/scan_pdf_registry.py                 # 扫 pdf_source_dir（默认【1】）
+    ./venv/bin/python ops/pdf-registry/scan_pdf_registry.py                 # 扫 pdf_source_dir（默认 output/1_Original_PDF）
     ./venv/bin/python ops/pdf-registry/scan_pdf_registry.py --root <DIR>    # 追加扫描根（可多次）
     ./venv/bin/python ops/pdf-registry/scan_pdf_registry.py --register-missing '秦汉印典 …' [--notes …]
     ./venv/bin/python ops/pdf-registry/scan_pdf_registry.py --include-small # 不跳过 <100KB 小件
@@ -92,7 +92,7 @@ def iter_pdfs(roots: list[Path], include_small: bool) -> tuple[list[Path], int]:
                 continue
             seen.add(p)
             if p.name.lower() == "tmp.pdf":
-                # 仓根临时副本（实测 sha ≡《黄牧甫印谱》）——物理迁入【1】但不重复入册，
+                # 仓根临时副本（实测 sha ≡《黄牧甫印谱》）——物理迁入 output/1_Original_PDF 但不重复入册，
                 # 避免「搬移仲裁」把在册行错指到 tmp 名下（去重口径见 docs/output-layout-v0.1.md）。
                 skipped += 1
                 continue

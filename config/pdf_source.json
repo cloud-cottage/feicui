@@ -1,5 +1,5 @@
 {
   "schema": "yinsuo.feicui.pdf_source.v1",
-  "pdf_source_dir": "output/【1_Original_PDF】",
-  "_doc": "PDF 取阅唯一真源目录（Kevin 约定 · output 四总目录落地）。读 PDF 的代码点（ops/biblio-metadata/scan_biblio.py、server/app/backfill_book_images.py）一律**先**找本目录，旧搜索面（inbox→仓根）作回落；~/Downloads 已移出默认搜索面（显式 --pdf-dir 仍可覆盖）。改路径只改本文件，不改代码。独立新文件，与 config/book_dir_keys.json（书级目录键，并行单维护）职责不同、互不读写。"
+  "pdf_source_dir": "output/1_Original_PDF",
+  "_doc": "PDF 取阅唯一真源目录（Kevin 约定 · output 四总目录落地）。**四总目录名不带括号**——Kevin 2026-10-14 指令：原 output/【1_Original_PDF】～【4_WebP】去全角括号为 1_Original_PDF / 2_HighRes_PDF / 3_Cropped_Tiff / 4_WebP（物理 mv，无副本）。读 PDF 的代码点（ops/biblio-metadata/scan_biblio.py、server/app/backfill_book_images.py）一律**先**找本目录，旧搜索面（inbox→仓根）作回落；~/Downloads 已移出默认搜索面（显式 --pdf-dir 仍可覆盖）。改路径只改本文件，不改代码。独立新文件，与 config/book_dir_keys.json（书级目录键，并行单维护）职责不同、互不读写。"
 }

@@ -2,16 +2,21 @@
 
 **状态**：已落地（Kong 实现单 · 2026-10-14）。**口径真源**＝本文件；目录内另有逐目录 README。
 
+**命名（Kevin 2026-10-14 指令）**：四总目录**命名不带括号**——原 `【1_Original_PDF】`／`【2_HighRes_PDF】`／
+`【3_Cropped_Tiff】`／`【4_WebP】` 已**物理 `mv`**（非 cp、无残留副本）为 `1_Original_PDF`／
+`2_HighRes_PDF`／`3_Cropped_Tiff`／`4_WebP`；代码/config/文档/符号链接与
+`var/pdf_registry.db::pdf_records.rel_path` 同步随动（同单，2026-10-14）。
+
 ## §1 四总目录语义
 
 | 目录 | 语义 | 现状（2026-10-14） |
 |---|---|---|
-| `output/【1_Original_PDF】/` | **PDF 唯一真源**：读 PDF 一律先取此处 | 项目 PDF 8 件（7 种内容，见 §2） |
-| `output/【2_HighRes_PDF】/` | 高清页图（原 book-pages） | `9787550847224/` 两版 48bit TIFF（3.81 GB）已迁入 |
-| `output/【3_Cropped_Tiff】/` | 件级裁片 TIFF（O 件终点） | **暂空**；O 件迁入 rides 下一重出轮（§5） |
-| `output/【4_WebP】/` | webp 缓存位 | **空置＝webp 已停产**（2026-10-11 口径，`retire_webp.py` 停线） |
+| `output/1_Original_PDF/` | **PDF 唯一真源**：读 PDF 一律先取此处 | 项目 PDF 8 件（7 种内容，见 §2） |
+| `output/2_HighRes_PDF/` | 高清页图（原 book-pages） | `9787550847224/` 两版 48bit TIFF（3.81 GB）已迁入 |
+| `output/3_Cropped_Tiff/` | 件级裁片 TIFF（O 件终点） | **暂空**；O 件迁入 rides 下一重出轮（§5） |
+| `output/4_WebP/` | webp 缓存位 | **空置＝webp 已停产**（2026-10-11 口径，`retire_webp.py` 停线） |
 
-## §2 【1】迁入清单（全部真 mv，含真 sha256 种子）
+## §2 1_Original_PDF 迁入清单（全部真 mv，含真 sha256 种子）
 
 | sha256（前 16） | 文件 | 大小 | 页数 | 来源 |
 |---|---|---|---|---|
@@ -32,11 +37,14 @@
 
 * registry 幂等键＝**sha256**（`pdf_records` 表 UNIQUE(sha256)）：同一内容只占一行。
 * **同名副本不搬不删**：`~/Downloads/` 仍留 5 份同名副本（秦印类编/福庵印缀/黄牧甫印谱/
-  古玺汇编/吴颐人）；入库按 sha 判重，只登记【1】内一份。
-* `tmp.pdf` ＝黄牧甫印谱逐字节副本：物理保留于【1】，扫描 CLI 按名跳过不入册
+  古玺汇编/吴颐人）；入库按 sha 判重，只登记 `1_Original_PDF` 内一份。
+* `tmp.pdf` ＝黄牧甫印谱逐字节副本：物理保留于 `1_Original_PDF`，扫描 CLI 按名跳过不入册
   （避免搬移仲裁把在册行错指到 tmp 名下）。
 * 搬移：sha 不变 ⇒ **原行原地更新 `rel_path`**（`moved` 动作）；本机制已真跑验证
-  （5 行 inbox→【1】原位改路径）。
+  （5 行 inbox→`1_Original_PDF` 原位改路径）。
+* **目录改名随动（2026-10-14）**：`【1_Original_PDF】`→`1_Original_PDF` 属**同盘 mv（sha 逐字节不变）**
+  ⇒ `pdf_records.rel_path` 7 行**逐行 UPDATE** 为新名路径；随后重跑扫描 CLI，**7/7 `noop`**
+  （sha 不变 ＋ rel_path 已是新名）＝零写入。
 
 ## §4 登记库与人工补填
 
@@ -51,6 +59,7 @@
   400 DYNASTY_INVALID；每次写 `updated_at`）。
 * web：前端「**PDF 资料**」页（`/feicui/pdf-records`，vite :5195）：列表＋筛选＋
   行内编辑（朝代下拉＝15 枚举、作者/备注文本）→ PATCH 保存，成功回显 `updated_at`。
+  （页面不写死目录名——路径一律取 API 的 `rel_path`，故改名无需改前端。）
 * 扫描 CLI：`./venv/bin/python ops/pdf-registry/scan_pdf_registry.py`
   （默认根＝`pdf_source_dir`；`--root` 追加；<100KB 假件与 `tmp.pdf` 跳过；
   幂等重跑零写入——已验证：二跑全 `noop`）。
@@ -58,33 +67,35 @@
 ## §5 取阅口改造（不再从 Downloads 主动读）
 
 * 配置：`config/pdf_source.json`（独立文件，与 `book_dir_keys.json` 职责不同互不读写）：
-  `pdf_source_dir`，默认 `output/【1_Original_PDF】`。
+  `pdf_source_dir`，默认 `output/1_Original_PDF`（**命名不带括号**，2026-10-14）。
 * `ops/biblio-metadata/scan_biblio.py`（`PDF_SEARCH_GLOBS`）：
-  **【1】/\*\* 最先** → `inbox/**`（旧面回落）→ 仓根 `*.pdf`（旧面回落）；
+  **`1_Original_PDF/**` 最先** → `inbox/**`（旧面回落）→ 仓根 `*.pdf`（旧面回落）；
   **`~/Downloads/*.pdf` 已移出默认搜索面**。
 * `server/app/backfill_book_images.py`（`search_dirs_for`/`resolve_pdf`）：
   显式 `--pdf-dir`（覆盖）→ `pdf_source_dir` → `--root`；递归兜底仍走 `REPO/inbox/**`；
   **~/Downloads 移出默认面**。
 
-## §6 book-pages 已迁【2】＋ shim
+## §6 book-pages 已迁 2_HighRes_PDF ＋ shim
 
 * `output/book-pages/9787550847224/P29-2400dpi-48bit{,-frozen}.tif` →
-  `output/【2_HighRes_PDF】/9787550847224/`（纯 mv，无库引用）。
-* 原路径留**同名符号链接**（兼容 shim）：`ops/book-page-2400/crop_c2r1.py`（裁切源）与
-  `render_page_2400.py`（OUT_REL）路径常量暂未改；下一重出轮改脚本后**拆除 shim**。
+  `output/2_HighRes_PDF/9787550847224/`（纯 mv，无库引用）。
+* 原路径留**同名符号链接**（兼容 shim）：改名单已把两枚 shim 的链接目标由
+  `../../【2_HighRes_PDF】/…` 重建为 **`../../2_HighRes_PDF/…`**（`readlink` 可核，`resolve()` 为真文件）；
+  `ops/book-page-2400/crop_c2r1.py`（裁切源）与 `render_page_2400.py`（OUT_REL）路径常量暂未改；
+  下一重出轮改脚本后**拆除 shim**。
 * 两枚 `P29-C*-R1-*-O.tiff`（件级裁片，其中 C2-R1 系并行单 2026-10-14 产出）**留 book-pages**。
 
 ## §7 下一重出轮（待办，本轮不做）
 
-1. **O 件迁【3_Cropped_Tiff】**：`output/books/` O 件（906 MB；库内 8455+ 行
-   `img_path_tiff` 指向）整体迁入【3】，**单事务**改写 `img_path_tiff`（搬移＋写库同事务，
+1. **O 件迁 `3_Cropped_Tiff`**：`output/books/` O 件（906 MB；库内 8455+ 行
+   `img_path_tiff` 指向）整体迁入 `3_Cropped_Tiff`，**单事务**改写 `img_path_tiff`（搬移＋写库同事务，
    杜绝悬空引用）；book-pages 的两枚 O 件同轮迁入。
-2. 拆【2】兼容 shim（改 `ops/book-page-2400/` 两脚本路径常量）。
+2. 拆 `2_HighRes_PDF` 兼容 shim（改 `ops/book-page-2400/` 两脚本路径常量）。
 3. `output/seals/`（Kevin 手工整理）、`faces/`、`pairs/`、`samples/` 暂留原位，待裁。
-4. 【4_WebP】保持空置；faces 既有 7354 件 webp 的删除与 E6 取图端点处置另立专单。
+4. `4_WebP` 保持空置；faces 既有 7354 件 webp 的删除与 E6 取图端点处置另立专单。
 
 ## §8 红线（本轮已遵守）
 
 不写 `data/yinpu.db`；不动 `output/books/` 与 `output/seals/`；不建 job；不删文件
-（同名副本不搬不删）；registry 是新库（var/ 不入仓）；API 改后重启＋自证
+（同名副本不搬不删、改名只 mv 不 cp）；registry 是新库（var/ 不入仓）；API 改后重启＋自证
 （新 pid lstart ≥ 文件 mtime）；只暂存自己文件、永不 `git add -A`。

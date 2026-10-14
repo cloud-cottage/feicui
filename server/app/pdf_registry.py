@@ -1,7 +1,8 @@
 """PDF 资料登记库（独立库 `var/pdf_registry.db`）—— Kong / output 四总目录落地单 · 2026-10-14。
 
 口径真源：`docs/output-layout-v0.1.md`（Kevin 约定：output 四总目录
-【1_Original_PDF】/【2_HighRes_PDF】/【3_Cropped_Tiff】/【4_WebP】；读 PDF 一律先取
+1_Original_PDF/2_HighRes_PDF/3_Cropped_Tiff/4_WebP——**目录名不带括号**，Kevin 2026-10-14 指令；
+读 PDF 一律先取
 `config/pdf_source.json` 的 `pdf_source_dir`）。
 
 纪律（与全仓红线一致）：
@@ -24,7 +25,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]          # <feicui>
 DB_PATH = REPO / "var" / "pdf_registry.db"
 CONFIG_PATH = REPO / "config" / "pdf_source.json"
-DEFAULT_PDF_SOURCE_DIR = "output/【1_Original_PDF】"
+DEFAULT_PDF_SOURCE_DIR = "output/1_Original_PDF"
 
 #: 朝代值域（**逐字同值于 xiai `VALUE_DOMAINS.DYNASTY_OPTIONS`**，真源在其 `src/data/seed.js`）
 DYNASTY_OPTIONS = (
@@ -96,7 +97,7 @@ def ensure_db(db_path: Path | None = None) -> sqlite3.Connection:
 
 
 def pdf_source_dir() -> str:
-    """取阅真源目录：`config/pdf_source.json.pdf_source_dir`（缺省【1_Original_PDF】）。
+    """取阅真源目录：`config/pdf_source.json.pdf_source_dir`（缺省 `output/1_Original_PDF`）。
 
     读失败（文件缺失/字段非法）一律回落默认值，**绝不抛异常**（取阅口不容配置炸掉）。
     """

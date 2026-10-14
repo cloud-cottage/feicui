@@ -359,8 +359,8 @@ def write_batch(db_path: Path, batch_id: str, summary: dict, notes: str) -> None
 # 主流程
 # ---------------------------------------------------------------------------
 
-#: PDF 搜索根（**顺序即优先级**）：**`pdf_source_dir`（取阅真源，默认【1_Original_PDF】，
-#: `config/pdf_source.json` 可配）** → `inbox/**`（旧面，回落）→ 仓根 `*.pdf`（旧面，回落）。
+#: PDF 搜索根（**顺序即优先级**）：**`pdf_source_dir`（取阅真源，默认 `output/1_Original_PDF`，
+#: `config/pdf_source.json` 可配；四总目录名不带括号，Kevin 2026-10-14 指令）** → `inbox/**`（旧面，回落）→ 仓根 `*.pdf`（旧面，回落）。
 #: ★ Kevin 约定（2026-10-14，output 四总目录落地）：**`~/Downloads` 已移出默认搜索面**
 #: ——不再从 Downloads 主动读 PDF；同名副本也不搬不删（sha 去重口径见 docs/output-layout-v0.1.md）。
 PDF_SEARCH_GLOBS = [

@@ -197,7 +197,7 @@ def _col_fingerprint(conn: sqlite3.Connection, cols=DB_COLS_10) -> tuple[str, in
 
 
 def resolve_pdf(pdf_name: str, search_dirs: list[Path]) -> Path | None:
-    """PDF 定位：显式 `--pdf-dir` → `pdf_source_dir`（默认【1_Original_PDF】）→ 仓内 `REPO` → `REPO/inbox/**` 递归。"""
+    """PDF 定位：显式 `--pdf-dir` → `pdf_source_dir`（默认 `output/1_Original_PDF`）→ 仓内 `REPO` → `REPO/inbox/**` 递归。"""
     for d in search_dirs:
         p = Path(d) / pdf_name
         if p.is_file():
@@ -212,7 +212,7 @@ def resolve_pdf(pdf_name: str, search_dirs: list[Path]) -> Path | None:
 
 def search_dirs_for(args) -> list[Path]:
     """PDF 搜索目录（**顺序即优先级**，去重保序）：显式 `--pdf-dir`（覆盖）→
-    `pdf_source_dir`（**取阅真源，默认【1_Original_PDF】**，`config/pdf_source.json` 可配）
+    `pdf_source_dir`（**取阅真源，默认 `output/1_Original_PDF`**，`config/pdf_source.json` 可配）
     → `--root`。
 
     ★ Kevin 约定（2026-10-14，output 四总目录落地）：**`~/Downloads` 已移出默认搜索面**

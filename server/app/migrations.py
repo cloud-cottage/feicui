@@ -116,6 +116,14 @@ MIGRATIONS: list[tuple[str, str, list[str]]] = [
             "CREATE INDEX IF NOT EXISTS idx_stamps_dup_kind ON stamps(dup_kind) WHERE dup_kind IS NOT NULL",
         ],
     ),
+    (
+        "1a-0005-jobs-print-size",
+        "jobs 加法新增列 print_size_1to1（「印刷尺寸即实物尺寸」勾选框落 job 记录；Kevin ② 2026-10）"
+        "——只加列，不改既有列、不改任何行；NULL＝请求未指定（读面回退 config/book_dir_keys.json）",
+        [
+            "ALTER TABLE jobs ADD COLUMN print_size_1to1 INTEGER",
+        ],
+    ),
 ]
 
 

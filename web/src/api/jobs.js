@@ -50,6 +50,13 @@ export function inboxGc(apply = false) {
   return request('/jobs/inbox/gc', { method: 'POST', body: { apply: !!apply } })
 }
 
+// ── 书目旗标表（**additive**，2026-10；规范未定义 ⇒ 同 E8 先例登记为规范缺口）
+// GET /api/jobs/book-flags → {books: {<pdf_name>: <print_size_1to1: bool>}}
+// 真源 config/book_dir_keys.json；前端打开表单时按书名**默认勾选**【印刷尺寸即实物尺寸】。
+export function bookFlags() {
+  return request('/jobs/book-flags')
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // 形状校验：只报「与 spec 写死的形状不符」，**不**替后端补值
 // ─────────────────────────────────────────────────────────────────────────────

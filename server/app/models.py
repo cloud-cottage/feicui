@@ -18,6 +18,12 @@ class JobCreateRequest(BaseModel):
     page_range: tuple[int, int] | None = Field(default=None, description="1-based 闭区间 [from,to]")
     chunk_size: int | None = Field(default=None, ge=1, description="chunk＝页区间（§2.1）")
     rerun: bool | None = Field(default=None, description="重跑语义（§2.1 / §2.4）")
+    # ---- additive（2026-10，Kevin ②；规范 §3.1 E1 字段集未含 ⇒ 登记为规范缺口，待 Jing 入册）----
+    print_size_1to1: bool | None = Field(
+        default=None,
+        description="「印刷尺寸即实物尺寸」：该书按原大 1:1 印刷，印面实物尺寸可由 bbox px ÷ 渲染 dpi 推算"
+                    "（mm = px/dpi×25.4）；true 时写 config/book_dir_keys.json 该书目条目 ＋ jobs 记录",
+    )
 
 
 class JobCreateResponse(BaseModel):
@@ -27,6 +33,9 @@ class JobCreateResponse(BaseModel):
     state: str
     total_pages: int
     created_at: str
+    # ---- additive（同上；生效值＝请求值，缺省时回读 config 的该书登记值；未指定且未登记 ⇒ false，
+    #      即响应恒为 bool，无 null 形态——与 routers/jobs.create_job 的 ps_effective 一致）----
+    print_size_1to1: bool | None = None
 
 
 class JobConflictResponse(BaseModel):

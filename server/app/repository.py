@@ -77,10 +77,13 @@ def create_job(
     chunk_size: int,
     rerun: bool,
     total_pages: int,
+    print_size_1to1: bool | None = None,
 ) -> dict[str, Any]:
     """一个事务内写 `jobs` + 全部 `job_pages(PENDING)`（§4.3 提交点 = chunk 边界的落库侧）。
 
     入库语义＝**入队**：`state='QUEUED'`；实际执行属 1b 的 worker 池（本单不做）。
+    `print_size_1to1`（additive，迁移 `1a-0005`）：列在库才写（向后兼容——正式库未跑
+    新迁移时**照常建 job**，该值由 config/book_dir_keys.json 兜底）。
     """
     job_id = new_job_id()
     now = db.now_iso()
@@ -90,24 +93,20 @@ def create_job(
     ]
     try:
         with db.tx(db_path) as conn:
+            cols: list[str] = [
+                "job_id", "pdf_path", "pdf_name", "page_from", "page_to", "chunk_size",
+                "total_pages", "state", "rerun", "created_at", "updated_at",
+            ]
+            vals: list[Any] = [
+                job_id, pdf_path, pdf_name, page_from, page_to, chunk_size,
+                total_pages, "QUEUED", 1 if rerun else 0, now, now,
+            ]
+            if print_size_1to1 is not None and _jobs_has_print_size(conn):
+                cols.append("print_size_1to1")
+                vals.append(1 if print_size_1to1 else 0)
             conn.execute(
-                """INSERT INTO jobs(
-                       job_id, pdf_path, pdf_name, page_from, page_to, chunk_size,
-                       total_pages, state, rerun, created_at, updated_at)
-                   VALUES (?,?,?,?,?,?,?,?,?,?,?)""",
-                (
-                    job_id,
-                    pdf_path,
-                    pdf_name,
-                    page_from,
-                    page_to,
-                    chunk_size,
-                    total_pages,
-                    "QUEUED",
-                    1 if rerun else 0,
-                    now,
-                    now,
-                ),
+                f"INSERT INTO jobs({', '.join(cols)}) VALUES ({', '.join('?' * len(cols))})",
+                tuple(vals),
             )
             conn.executemany(
                 """INSERT INTO job_pages(job_id, pdf_name, page, chunk_index, state, updated_at)
@@ -130,6 +129,20 @@ def get_job_row(conn, job_id: str) -> dict[str, Any]:
     if row is None:
         raise JobNotFound(job_id)
     return dict(row)
+
+
+def job_print_size_flag(conn, job_id: str) -> bool | None:
+    """该 job 的 `print_size_1to1`（加法列，迁移 `1a-0005`）。
+
+    列不在库 / 该行未指定（NULL）⇒ `None` —— 读面（E3 的 size_mm）据此**回退**
+    `config/book_dir_keys.json` 的该书登记值（`print_size.print_size_1to1_for`）。
+    """
+    if not _jobs_has_print_size(conn):
+        return None
+    row = db.query_one(conn, "SELECT print_size_1to1 AS v FROM jobs WHERE job_id = ?", (job_id,))
+    if row is None or row["v"] is None:
+        return None
+    return bool(row["v"])
 
 
 def recompute_progress(conn, job_id: str) -> dict[str, Any]:
@@ -720,6 +733,12 @@ def decode_cursor_e7(cursor: str) -> tuple[str, str]:
 def _stamps_has_dup_kind(conn) -> bool:
     """`stamps` 是否有加法列 `dup_kind`（迁移 `1a-0004`）——用于**向后兼容**的过滤闸。"""
     return any(r[1] == "dup_kind" for r in conn.execute("PRAGMA table_info(stamps)"))
+
+
+def _jobs_has_print_size(conn) -> bool:
+    """`jobs` 是否有加法列 `print_size_1to1`（迁移 `1a-0005`）——**向后兼容**写/读闸：
+    列不在库（正式库尚未跑新迁移）时照常建 job、该值由 config 兜底。"""
+    return any(r[1] == "print_size_1to1" for r in conn.execute("PRAGMA table_info(jobs)"))
 
 
 def stamps_page(

@@ -21,7 +21,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from urllib.parse import quote
 
-from .. import db, inbox_gc, pdfmeta, poolctl, preview, repository, uploader
+from .. import db, inbox_gc, pdfmeta, poolctl, preview, print_size, repository, uploader
 from ..config import Settings, get_settings
 from ..models import (
     PAGE_LIMIT_DEFAULT,
@@ -156,6 +156,20 @@ def create_job(payload: JobCreateRequest, st: Settings = Depends(_settings)) -> 
     chunk_size = int(payload.chunk_size or st.chunk_size)
     total_pages = hi - lo + 1
 
+    # ---- 「印刷尺寸即实物尺寸」（additive，Kevin ② 2026-10）----
+    # 生效值＝请求值；请求未给 ⇒ 回读 config/book_dir_keys.json 该书目登记值（UI 默认勾选同源）。
+    # 请求显式 true ⇒ **加法**写 config 对应书目条目（同名同义字段；失败不阻断 E1，jobs 行仍带值）。
+    ps_effective = (
+        bool(payload.print_size_1to1)
+        if payload.print_size_1to1 is not None
+        else print_size.print_size_1to1_for(pdf_name, st.dir_keys_path)
+    )
+    if payload.print_size_1to1 is True:
+        try:
+            print_size.set_print_size_1to1(pdf_name, True, dir_keys_path=st.dir_keys_path, source="e1_api")
+        except Exception as exc:  # pragma: no cover - 配置面异常不改变 E1 的 201
+            log.warning("print_size_1to1 配置写失败（不影响建 job；值仍落 jobs 行）：%r", exc)
+
     # 冲突判定（读路径）：活跃 job 已存在 ⇒ 409 + 既有 job_id
     with db.ro(st.db_path) as conn:
         existing = repository.find_active_job(conn, str(pdf_abs))
@@ -172,6 +186,7 @@ def create_job(payload: JobCreateRequest, st: Settings = Depends(_settings)) -> 
             chunk_size=chunk_size,
             rerun=bool(payload.rerun),
             total_pages=total_pages,
+            print_size_1to1=ps_effective,
         )
     except repository.ActiveJobExists as exc:  # 并发兜底
         return _conflict(exc.existing)
@@ -184,7 +199,19 @@ def create_job(payload: JobCreateRequest, st: Settings = Depends(_settings)) -> 
     except Exception as exc:  # pragma: no cover - 拉起侧任何异常都不得改变 E1 的返回
         log.warning("E1 后拉起池失败（不影响 job 入队）：job=%s err=%r", created["job_id"], exc)
 
-    return JobCreateResponse(**created)
+    return JobCreateResponse(**created, print_size_1to1=ps_effective)
+
+
+@router.get("/book-flags")
+def book_flags(st: Settings = Depends(_settings)) -> JSONResponse:
+    """**additive** `GET /api/jobs/book-flags` —— 书目旗标表（2026-10，Kevin ②）。
+
+    形状 `{books: {<pdf_name>: <print_size_1to1: bool>, ...}}`（真源
+    `config/book_dir_keys.json` 的 `books` 表，加法文件）。用途：前端打开
+    「新建 job」表单时，按已登记书名**默认勾选**【印刷尺寸即实物尺寸】。
+    规范 §3.1 未定义该端点 ⇒ 登记为规范缺口，待 Jing 入册（同 E8 先例）。
+    """
+    return JSONResponse(content={"books": print_size.book_flags(st.dir_keys_path)})
 
 
 def _conflict(existing: dict) -> Response:
@@ -486,7 +513,14 @@ def list_stamps(
 
     from ..records import build_items  # 延迟导入：本模块只做形状，形状层独立
 
-    items = build_items(st.db_path, res["rows"], root=st.root)
+    # ---- size_mm 判定（additive，Kevin ②「印刷尺寸即实物尺寸」下游闭环）----
+    # job 行显式值（jobs.print_size_1to1，迁移 1a-0005）优先；NULL/列缺失 ⇒ 回退 config 登记值。
+    with db.ro(st.db_path) as conn:
+        ps_flag = repository.job_print_size_flag(conn, job_id)
+    if ps_flag is None:
+        ps_flag = print_size.print_size_1to1_for(res["scope"]["pdf_name"], st.dir_keys_path)
+
+    items = build_items(st.db_path, res["rows"], root=st.root, print_size_1to1=ps_flag)
     response.headers["x-feicui-scope"] = _header_safe(
         f"pdf_name={res['scope']['pdf_name']};page_from={res['scope']['page_from']};"
         f"page_to={res['scope']['page_to']};job_id={res['scope']['job_id']}"

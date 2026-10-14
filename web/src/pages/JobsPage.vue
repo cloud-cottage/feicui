@@ -2,9 +2,9 @@
 // 印谱解析：① 新建 job（E1 POST /api/jobs）② job 列表
 // 约束：同书重复建 ⇒ 后端 409 + 既有 job_id **原样展示，不得吞**；
 //       列表接口 spec §3 未定义（README §4 G-2）⇒ 「后端尚未提供该接口」+ 另列本机记录。
-import { onMounted, computed, reactive, ref } from 'vue'
+import { onMounted, computed, reactive, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { createJob, extractExistingJobId, inboxGc, inboxSummary, listJobs } from '@/api/jobs'
+import { bookFlags, createJob, extractExistingJobId, inboxGc, inboxSummary, listJobs } from '@/api/jobs'
 import { describeFailure } from '@/api/client'
 import { uploadPdf } from '@/api/upload'
 import { useBackendStatus } from '@/composables/useBackendStatus'
@@ -21,11 +21,53 @@ import { nowStamp, rawBodyText } from '@/utils/format'
 const router = useRouter()
 const { markBackendDown } = useBackendStatus()
 
-const form = reactive({ pdf_path: '', page_from: '', page_to: '', chunk_size: '', rerun: false })
+const form = reactive({ pdf_path: '', page_from: '', page_to: '', chunk_size: '', rerun: false, print_size_1to1: false })
 const formErrors = ref([])
 const submitting = ref(false)
 const createResult = ref(null) // {kind:'ok'|'conflict'|'backend-down'|'error', ...}
 const locals = ref([])
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 【印刷尺寸即实物尺寸】勾选框（**additive**，Kevin ② 2026-10）：
+// 默认不勾；已登记书目（config/book_dir_keys.json 的 print_size_1to1: true，如秦印类编）
+// 在该书路径进入表单时**自动默认勾选**（真源 GET /api/jobs/book-flags）。
+// 勾选时提示：将以扫描 dpi 由像素推算实物尺寸（mm = px/dpi×25.4）。
+// ─────────────────────────────────────────────────────────────────────────────
+const bookFlagMap = ref({})
+
+async function loadBookFlags() {
+  try {
+    const res = await bookFlags()
+    if (res.status === 200 && res.body && res.body.books && typeof res.body.books === 'object') {
+      bookFlagMap.value = res.body.books
+      applyPrintSizeFlag() // 旗标到达时 pdf_path 可能已填（先到者不丢）
+    }
+    // 非 200 / 形状不符 ⇒ 静默保持 {}：勾选框退回「默认不勾」，不挡建 job 主链路
+  } catch {
+    /* 后端未启动等：同上，旗标缺失不影响表单其它字段 */
+  }
+}
+
+function pdfNameOf(path) {
+  const s = String(path || '').trim()
+  if (!s) return ''
+  try {
+    return decodeURIComponent(s.split('/').pop() || '')
+  } catch {
+    return s.split('/').pop() || ''
+  }
+}
+
+function applyPrintSizeFlag() {
+  if (bookFlagMap.value[pdfNameOf(form.pdf_path)] === true) {
+    form.print_size_1to1 = true
+  }
+}
+
+watch(
+  () => form.pdf_path,
+  () => applyPrintSizeFlag()
+)
 
 const jobsState = ref({ kind: 'loading', items: null, notes: [], status: null, raw: '', detail: '' })
 
@@ -65,6 +107,7 @@ function buildPayload() {
   if (from !== null && to !== null) payload.page_range = [from, to]
   if (cs !== null) payload.chunk_size = cs
   if (form.rerun) payload.rerun = true
+  if (form.print_size_1to1) payload.print_size_1to1 = true
   return payload
 }
 
@@ -409,6 +452,7 @@ onMounted(() => {
   loadLocals()
   loadJobs()
   loadInbox()
+  loadBookFlags()
 })
 
 const conflictLinkId = computed(() =>
@@ -524,6 +568,10 @@ const conflictLinkId = computed(() =>
           <label class="field field--check">
             <input v-model="form.rerun" type="checkbox" />
             <span>rerun（同书重跑，spec §2.4 幂等）</span>
+          </label>
+          <label class="field field--check">
+            <input v-model="form.print_size_1to1" type="checkbox" />
+            <span>印刷尺寸即实物尺寸（1:1 印刷 ⇒ mm = px÷dpi×25.4；已登记书目自动默认勾选）</span>
           </label>
         </div>
 

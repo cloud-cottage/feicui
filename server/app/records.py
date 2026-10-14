@@ -124,13 +124,25 @@ def _shell_record(row: dict[str, Any], *, file_exists: bool) -> dict[str, Any]:
     }
 
 
-def build_items(db_path: Path | str, rows: list[dict[str, Any]], *, root: Path) -> list[dict[str, Any]]:
+def build_items(
+    db_path: Path | str,
+    rows: list[dict[str, Any]],
+    *,
+    root: Path,
+    print_size_1to1: bool | None = None,
+    render_dpi: float | None = None,
+) -> list[dict[str, Any]]:
     """把 E3 的 `stamps` 行批量扩成记录对象（**两条路径**）：
 
     1. **有 `seals.record_json`** ⇒ 原样取用（F1 权威形态，含 `feicui.missingRequired`）；
     2. **无**（该行尚未导出）⇒ `_shell_record`：只回可直读的字段 + 逐项 `missing_required`。
 
     `os.path.exists` 只用于壳记录的 `assets[0].fileExists`（**只读**文件系统，不建不写）。
+
+    **`size_mm`（additive，2026-10，Kevin ②「印刷尺寸即实物尺寸」下游闭环）**：
+    `print_size_1to1=True` 时逐条挂**顶层** `size_mm = {width_mm, height_mm, dpi, basis}`
+    （bbox px ÷ 渲染 dpi × 25.4，`print_size.size_mm_for_bbox`；bbox 缺角 ⇒ 该条**不挂** `size_mm` 键）。
+    `print_size_1to1=None`（调用方未判定）或 False ⇒ 不挂该键（响应形状与既有完全一致）。
     """
     if not rows:
         return []
@@ -150,6 +162,16 @@ def build_items(db_path: Path | str, rows: list[dict[str, Any]], *, root: Path) 
                 for r in rows_:
                     by_id[int(r["stamp_id"])] = dict(r)
 
+    def _size_mm_for(row: dict[str, Any]) -> dict[str, Any] | None:
+        if not print_size_1to1:
+            return None
+        from . import print_size as _print_size  # 延迟导入：纯 stdlib，仅本开关用到才加载
+
+        return _print_size.size_mm_for_bbox(
+            row.get("x1"), row.get("y1"), row.get("x2"), row.get("y2"),
+            dpi=render_dpi if render_dpi is not None else _print_size.RENDER_DPI,
+        )
+
     items: list[dict[str, Any]] = []
     for row in rows:
         hit = by_id.get(int(row["id"]))
@@ -160,11 +182,14 @@ def build_items(db_path: Path | str, rows: list[dict[str, Any]], *, root: Path) 
             fed = item.get("feicui") or {}
             if "missing_required" not in item:
                 item["missing_required"] = _json_field(fed.get("missingRequired")) or []
-            items.append(item)
-            continue
-        if hit is not None and raw is None and hit.get("record_json"):
-            log.warning("seals.record_json 解析失败（stamp_id=%s）⇒ 回退壳记录", row["id"])
-        img_rel = row.get("img_path")
-        exists = bool(img_rel) and (Path(root) / str(img_rel)).is_file()
-        items.append(_shell_record(row, file_exists=exists))
+        else:
+            if hit is not None and raw is None and hit.get("record_json"):
+                log.warning("seals.record_json 解析失败（stamp_id=%s）⇒ 回退壳记录", row["id"])
+            img_rel = row.get("img_path")
+            exists = bool(img_rel) and (Path(root) / str(img_rel)).is_file()
+            item = _shell_record(row, file_exists=exists)
+        smm = _size_mm_for(row)
+        if smm is not None:
+            item["size_mm"] = smm
+        items.append(item)
     return items

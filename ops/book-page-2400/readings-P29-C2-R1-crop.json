@@ -1,0 +1,78 @@
+{
+  "schema": "feicui.book-page-2400.crop-c2r1.v1",
+  "task": "Kevin ③：《秦印类编》页 29「第一枚」改中文阅读序右上首枚 ⇒ 新裁件 C2-R1（C1-R1 保留）",
+  "source": {
+    "path": "/Users/kevin/bistro/xiai/feicui/output/book-pages/9787550847224/P29-2400dpi-48bit.tif",
+    "bytes": 1903843591,
+    "sha256": "9f238c756f754caa36b07418e097f2edc4e450fd3bcc9c965a4d9c19701afeaa",
+    "note": "主版（校准 0.35）；冻结版未另出裁件"
+  },
+  "bbox_300dpi": [
+    1422,
+    560,
+    1565,
+    820
+  ],
+  "upsample": "300 dpi → 2400 dpi（×8 整数上采样）",
+  "bbox_2400dpi": [
+    11376,
+    4480,
+    12520,
+    6560
+  ],
+  "artifact": {
+    "path": "/Users/kevin/bistro/xiai/feicui/output/book-pages/9787550847224/P29-C2-R1-无信息-戰國-佚名-O.tiff",
+    "bytes": 2154083,
+    "sha256": "c889fa7a601e4b47dc99778b4f7fdf8a583dfe7d0b9e297126c78346472c7ead",
+    "container": {
+      "shape": [
+        2080,
+        1144,
+        3
+      ],
+      "dtype": "uint8",
+      "compression": 8,
+      "predictor": 2,
+      "photometric": 2,
+      "rowsperstrip": 32,
+      "bigtiff": false,
+      "samples_per_pixel": 3,
+      "bits_per_sample": 8
+    }
+  },
+  "verify": {
+    "pixel_mismatch_vs_page_region": 0,
+    "max_abs_diff_u8": 0,
+    "region_px": [
+      1144,
+      2080
+    ],
+    "pixel_equal": true
+  },
+  "size": {
+    "px_2400dpi": [
+      1144,
+      2080
+    ],
+    "px_300dpi": [
+      143,
+      260
+    ],
+    "mm_via_2400dpi": [
+      12.107,
+      22.013
+    ],
+    "mm_via_300dpi": [
+      12.107,
+      22.013
+    ],
+    "mm_consistent": true
+  },
+  "kept_existing": {
+    "path": "/Users/kevin/bistro/xiai/feicui/output/book-pages/9787550847224/P29-C1-R1-无信息-戰國-佚名-O.tiff",
+    "exists": true,
+    "bytes": 4748586,
+    "sha256": "55adbcc212f7d84d050d502c2e1a7f5e50e672cbab4e8f42b025d3f7d4f69f20"
+  },
+  "elapsed_seconds": 3.18
+}

@@ -164,6 +164,10 @@ class Settings:
     inbox_gc_trash_retention_days: int = INBOX_GC_TRASH_RETENTION_DAYS_DEFAULT
     inbox_gc_startup_scan: bool = INBOX_GC_STARTUP_SCAN_DEFAULT
     inbox_gc_report_dir: Path = REPO_ROOT / "ops" / "job-upload"
+    # ---- 「印刷尺寸即实物尺寸」（print_size_1to1，additive 2026-10）----
+    # 配置真源＝`config/book_dir_keys.json`（与 naming.DEFAULT_DIR_KEYS_PATH 同一文件）；
+    # env `FEICUI_DIR_KEYS_PATH` 可重定向（自测用临时目录，**避免污染仓内配置**）。
+    dir_keys_path: Path = REPO_ROOT / "config" / "book_dir_keys.json"
 
     @property
     def is_prod_db(self) -> bool:
@@ -373,5 +377,11 @@ def get_settings() -> Settings:
             env.get("FEICUI_INBOX_GC_REPORT_DIR")
             or file_cfg.get("inbox_gc_report_dir")
             or str(REPO_ROOT / "ops" / "job-upload")
+        ).expanduser().resolve(),
+        # ---- 「印刷尺寸即实物尺寸」配置真源（print_size 模块读写；自测可重定向）----
+        dir_keys_path=Path(
+            env.get("FEICUI_DIR_KEYS_PATH")
+            or file_cfg.get("dir_keys_path")
+            or str(REPO_ROOT / "config" / "book_dir_keys.json")
         ).expanduser().resolve(),
     )

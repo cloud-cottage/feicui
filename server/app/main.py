@@ -24,6 +24,7 @@ from .routers import persons as persons_router
 from .routers import items as items_router
 from .routers import seals as seals_router
 from .routers import relations as relations_router
+from .routers import pdf_records as pdf_records_router
 
 log = logging.getLogger("feicui.api")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
@@ -85,6 +86,8 @@ def create_app() -> FastAPI:
     app.include_router(seals_router.router)
     # 关联面（三表联立）——additive 端点，不动 E1〜E7 与 persons/items/seals（规范 §3.18.6）
     app.include_router(relations_router.router)
+    # PDF 资料登记（output 四总目录落地单）——additive 端点；独立库 var/pdf_registry.db（不碰 yinpu.db）
+    app.include_router(pdf_records_router.router)
 
     # ---- 领域异常 → §3.4 错误体（**必须含 `detail`**；不得以 200 承载失败）----
     # `repository.JobNotFound` 由仓库层直抛（E3 / E4 / E6 都可能命中），在此统一落 404，

@@ -34,6 +34,8 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]           # <feicui>
 sys.path.insert(0, str(REPO))                        # 供 `import processor`（仅图像栈侧需要）
 
+from server.app.pdf_registry import pdf_source_dir  # noqa: E402  # PDF 取阅真源目录（stdlib-only 模块）
+
 
 def _load_module(name: str, path: Path):
     spec = importlib.util.spec_from_file_location(name, str(path))
@@ -357,11 +359,14 @@ def write_batch(db_path: Path, batch_id: str, summary: dict, notes: str) -> None
 # 主流程
 # ---------------------------------------------------------------------------
 
-#: PDF 搜索根（**顺序即优先级**）：`inbox/**` → 仓根 `*.pdf` → `~/Downloads`。
+#: PDF 搜索根（**顺序即优先级**）：**`pdf_source_dir`（取阅真源，默认【1_Original_PDF】，
+#: `config/pdf_source.json` 可配）** → `inbox/**`（旧面，回落）→ 仓根 `*.pdf`（旧面，回落）。
+#: ★ Kevin 约定（2026-10-14，output 四总目录落地）：**`~/Downloads` 已移出默认搜索面**
+#: ——不再从 Downloads 主动读 PDF；同名副本也不搬不删（sha 去重口径见 docs/output-layout-v0.1.md）。
 PDF_SEARCH_GLOBS = [
+    f"{pdf_source_dir()}/**/*.pdf",
     "inbox/**/*.pdf",
     "*.pdf",
-    "~/Downloads/*.pdf",
 ]
 
 

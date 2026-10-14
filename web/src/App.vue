@@ -25,6 +25,7 @@ const SPEC_MD5 = '4264927baf24bb7f48e12366cd861fe7'
         <RouterLink to="/persons">印人采集</RouterLink>
         <RouterLink to="/items">印谱采集</RouterLink>
         <RouterLink to="/seals">印章采集</RouterLink>
+        <RouterLink to="/pdf-records">PDF 资料</RouterLink>
       </nav>
       <RouterView />
     </main>

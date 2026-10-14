@@ -75,6 +75,7 @@ SERVER_DIR = REPO / "server"
 # 故把 `server/` 置于 sys.path 首位再 `from app import …`（接口层包名不被遮蔽）。
 sys.path.insert(0, str(SERVER_DIR))
 from app import naming, colorcal, migrations  # noqa: E402
+from app.pdf_registry import pdf_source_dir  # noqa: E402（PDF 取阅真源目录，config/pdf_source.json 可配）
 
 # 既有 10 列（红线：内容指纹 before ≡ after，本模块一字不改）
 DB_COLS_10 = ("id", "pdf_name", "page", "idx", "text", "img_path", "x1", "y1", "x2", "y2")
@@ -196,7 +197,7 @@ def _col_fingerprint(conn: sqlite3.Connection, cols=DB_COLS_10) -> tuple[str, in
 
 
 def resolve_pdf(pdf_name: str, search_dirs: list[Path]) -> Path | None:
-    """PDF 定位：显式 `--pdf-dir` 目录 → 仓内 `REPO` → `~/Downloads` → `REPO/inbox/**` 递归。"""
+    """PDF 定位：显式 `--pdf-dir` → `pdf_source_dir`（默认【1_Original_PDF】）→ 仓内 `REPO` → `REPO/inbox/**` 递归。"""
     for d in search_dirs:
         p = Path(d) / pdf_name
         if p.is_file():
@@ -210,10 +211,17 @@ def resolve_pdf(pdf_name: str, search_dirs: list[Path]) -> Path | None:
 
 
 def search_dirs_for(args) -> list[Path]:
-    """PDF 搜索目录：始终含 `--root` 与 `~/Downloads`，外加显式 `--pdf-dir`（去重保序）。"""
-    dirs: list[Path] = [Path(args.root).expanduser(), Path.home() / "Downloads"]
-    for d in args.pdf_dir:
-        dirs.append(Path(d).expanduser())
+    """PDF 搜索目录（**顺序即优先级**，去重保序）：显式 `--pdf-dir`（覆盖）→
+    `pdf_source_dir`（**取阅真源，默认【1_Original_PDF】**，`config/pdf_source.json` 可配）
+    → `--root`。
+
+    ★ Kevin 约定（2026-10-14，output 四总目录落地）：**`~/Downloads` 已移出默认搜索面**
+    （不再从 Downloads 主动读 PDF）；递归兜底仍由 `resolve_pdf` 的 `REPO/inbox/**` 承担，
+    旧顺序作回落。
+    """
+    dirs: list[Path] = [Path(d).expanduser() for d in args.pdf_dir]
+    dirs.append((REPO / pdf_source_dir()).resolve())
+    dirs.append(Path(args.root).expanduser())
     seen, out = set(), []
     for d in dirs:
         if d not in seen:

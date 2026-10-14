@@ -6,6 +6,7 @@ import MissingPage from '@/pages/MissingPage.vue'
 import PersonsPage from '@/pages/PersonsPage.vue'
 import ItemsPage from '@/pages/ItemsPage.vue'
 import SealsPage from '@/pages/SealsPage.vue'
+import PdfRecordsPage from '@/pages/PdfRecordsPage.vue'
 
 // 路由对应 spec §3 的页面职责：
 //   /                     印谱解析（E1）
@@ -27,6 +28,7 @@ export default createRouter({
     { path: '/persons', name: 'persons', component: PersonsPage },
     { path: '/items', name: 'items', component: ItemsPage },
     { path: '/seals', name: 'seals', component: SealsPage },
+    { path: '/pdf-records', name: 'pdf-records', component: PdfRecordsPage },
     { path: '/jobs/:job_id', name: 'job-detail', component: JobDetailPage },
     { path: '/jobs/:job_id/results', name: 'job-results', component: ResultsPage },
     { path: '/jobs/:job_id/missing', name: 'job-missing', component: MissingPage },

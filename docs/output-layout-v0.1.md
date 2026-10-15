@@ -52,7 +52,7 @@
   表 `pdf_records`：id / filename / rel_path / sha256 / size_bytes / page_count / page_mm /
   scan_dpi / dir_key / isbn / **dynasty** / **author** / notes / status / created_at / updated_at。
 * 朝代值域（15，逐字同值于 xiai `VALUE_DOMAINS.DYNASTY_OPTIONS`，NULL 合法）：
-  春秋/戰國/秦/漢/魏晉/隋唐/宋元/明早中期/晚明/清初/清中期/晚清/民國/新中國/當代。
+  商周暨春秋/戰國/秦/漢/魏晉/隋唐/宋元/明早中期/晚明/清初/清中期/晚清/民國/新中國/當代。
 * API（feicui-api :5196，additive）：
   `GET /api/pdf-records`（status/q 筛选＋offset 分页；未白名单参数 400）、
   `PATCH /api/pdf-records/{id}`（dynasty/author/notes，缺省键＝不改；朝代非枚举 ⇒

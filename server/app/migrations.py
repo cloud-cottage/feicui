@@ -11,14 +11,24 @@
   * **安全闸**：解析到的 DB 若是仓库内正式 `yinpu.db` ⇒ **默认拒绝执行**
     （除非 `FEICUI_ALLOW_PROD_MIGRATE=1`）。正式库是唯一真源，本单所有自测一律用临时副本。
 
+两条登记表（体例相同：version 去重 + `schema_migrations` 记账 + 已应用即跳过）：
+  * `MIGRATIONS`：静态 SQL 语句组（既有）。
+  * `DYNAMIC_MIGRATIONS`：须**现算 SQL** 的表重建类（既有表被 `CREATE TABLE IF NOT EXISTS`
+    烘死了旧值域时用；详见该段注释）。
+
 用法：
     FEICUI_DB=/tmp/feicui_copy.db ./.venv/bin/python -m app.migrations            # 迁移副本
     FEICUI_DB=/tmp/feicui_copy.db ./.venv/bin/python -m app.migrations --status   # 只读体检
+    FEICUI_DB=/tmp/feicui_copy.db ./.venv/bin/python -m app.migrations \
+        --only 1a-0006-dynasty-check-rebuild                                     # 只跑点名的那条
+    （`--only` 可逗号分隔多条；默认不传＝跑全部，语义与既有版本一字相同）
 """
 from __future__ import annotations
 
+import re
 import sqlite3
 import sys
+from typing import Callable, Sequence
 
 from . import db
 from .config import get_settings
@@ -127,6 +137,180 @@ MIGRATIONS: list[tuple[str, str, list[str]]] = [
 ]
 
 
+# ──────────────────────────────────────────────────────────────────────────────
+# 动态迁移（须**现算 SQL** 的「表重建」类）——体例与 `MIGRATIONS` 完全相同：
+#   同一份 `schema_migrations` 记账、同一趟事务（`db.tx`）、已应用即跳过 ⇒ 同样幂等。
+# 差异只在 SQL 没法写成静态字面量（须读现存建表语句、比对值域），故用可调用体。
+#
+# 背景（本单）：`pdf_registry._ddl()` 用**当次值域**拼出建表语句里的
+# `CHECK (dynasty IS NULL OR dynasty IN (…))`，而建表是 `CREATE TABLE IF NOT EXISTS`
+# ⇒ **已存在的库不会跟着改约束**。朝代首值 `春秋` 更名为 `商周暨春秋` 后，库内约束仍是旧
+# 值域：UI 写新值撞 `IntegrityError: CHECK constraint failed`，写旧值反而**仍然通过**
+# （校验层只收新值 ⇒ 两侧互撑死）。
+#
+# 处置：把这类表的约束重建到当前值域。值域真源**单向取自** `pdf_registry.DYNASTY_OPTIONS`
+# （本文件**不得**复制值域字面量——同一值域存两份正是本缺陷的成因）。
+_DYN_CHECK_RE = re.compile(
+    r"CHECK\s*\(\s*dynasty\s+IS\s+NULL\s+OR\s+dynasty\s+IN\s*\((?P<vals>[^)]*)\)\s*\)",
+    re.IGNORECASE,
+)
+#: 匹配 `CREATE TABLE <名>` 的表名（四种引号形态），用于把新表先建成临时名
+_CREATE_TABLE_RE = re.compile(
+    r"(?i)\bCREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?"
+    r'(?:"(?P<dq>[^"]+)"|\[(?P<bq>[^\]]+)\]|`(?P<btq>[^`]+)`|(?P<plain>[A-Za-z_][A-Za-z0-9_]*))'
+)
+_LITERAL_RE = re.compile(r"'((?:[^']|'')*)'")
+_REBUILD_SUFFIX = "__ckrebuild_new"
+
+
+def _q(name: str) -> str:
+    return '"' + str(name).replace('"', '""') + '"'
+
+
+def _lit(value: str) -> str:
+    return "'" + str(value).replace("'", "''") + "'"
+
+
+def dynasty_domain() -> tuple[str, ...]:
+    """朝代值域（斐萃侧单一真源）＝`app.pdf_registry.DYNASTY_OPTIONS`。
+
+    延迟导入：避免 `app` 包内模块级循环依赖（`pdf_registry` 只依赖标准库）。
+    """
+    from . import pdf_registry
+
+    return tuple(pdf_registry.DYNASTY_OPTIONS)
+
+
+def _dynasty_check_clause(values: Sequence[str]) -> str:
+    """按 `pdf_registry._ddl()` 的同款写法拼 CHECK 段（同一形状才好逐字替换）。"""
+    return "CHECK (dynasty IS NULL OR dynasty IN (" + ", ".join(_lit(v) for v in values) + "))"
+
+
+def _domain_of(clause: str) -> tuple[str, ...]:
+    """从 CHECK 段里逐字取出值域（按 `'…'` 字面量切，逗号/空格的书写差异不影响判读）。"""
+    m = _DYN_CHECK_RE.search(clause)
+    raw = m.group("vals") if m else clause
+    return tuple(v.replace("''", "'") for v in _LITERAL_RE.findall(raw))
+
+
+def _dynasty_check_tables(conn) -> list[tuple[str, str, str]]:
+    """库内所有带 `CHECK (dynasty …)` 的表 ⇒ (表名, 建表 SQL 原文, 现存 CHECK 段原文)。"""
+    out: list[tuple[str, str, str]] = []
+    for name, sql in conn.execute(
+        "SELECT name, sql FROM sqlite_master WHERE type='table' AND sql IS NOT NULL ORDER BY name"
+    ):
+        m = _DYN_CHECK_RE.search(sql)
+        if m is not None:
+            out.append((name, sql, m.group(0)))
+    return out
+
+
+def _table_columns(conn, table: str) -> list[str]:
+    return [r[1] for r in conn.execute("PRAGMA table_info(%s)" % _q(table))]
+
+
+def _incoming_fk(conn, table: str) -> list[str]:
+    """其它表指向本表的外键。有则本层**拒绝重建**（`PRAGMA foreign_keys=ON` 下拆父表不安全），
+    宁可显式报错也不静默改坏——本单目标表无入向外键。"""
+    refs: list[str] = []
+    for (other,) in conn.execute(
+        "SELECT name FROM sqlite_master WHERE type='table' AND sql IS NOT NULL ORDER BY name"
+    ).fetchall():
+        if other == table:
+            continue
+        for fk in conn.execute("PRAGMA foreign_key_list(%s)" % _q(other)):
+            if fk[2] == table:
+                refs.append(f"{other}.{fk[3]}→{table}.{fk[4]}")
+    return refs
+
+
+def _rebuild_one(conn, table: str, stored_sql: str, clause: str, want: tuple[str, ...]) -> str:
+    """SQLite 标准重建步骤：建新表 → 拷行 → 校验行集同值 → 删旧表 → 改名回原名 → 复原从属对象。
+    全程在调用方的同一事务内（不做 `DROP`/`COMMIT`，失败即整体回滚）。"""
+    if _incoming_fk(conn, table):
+        raise RuntimeError(f"拒绝重建 {table}：存在指向它的外键 {_incoming_fk(conn, table)}")
+    cols = _table_columns(conn, table)
+    if not cols:
+        raise RuntimeError(f"拒绝重建 {table}：取不到列清单（PRAGMA table_info 为空）")
+
+    tmp = table + _REBUILD_SUFFIX
+    # 从属对象（索引/触发器）与 `sqlite_sequence` 号位：DROP 旧表会连带删掉，故先取原文
+    aux = [
+        r[0]
+        for r in conn.execute(
+            "SELECT sql FROM sqlite_master WHERE tbl_name=? AND type IN ('index','trigger')"
+            " AND sql IS NOT NULL ORDER BY type, name",
+            (table,),
+        ).fetchall()
+    ]
+    seq = None
+    if db.table_exists(conn, "sqlite_sequence"):
+        row = conn.execute("SELECT seq FROM sqlite_sequence WHERE name=?", (table,)).fetchone()
+        seq = row[0] if row else None
+    before = conn.execute("SELECT count(*) FROM %s" % _q(table)).fetchone()[0]
+
+    new_sql = stored_sql.replace(clause, _dynasty_check_clause(want), 1)
+    m = _CREATE_TABLE_RE.search(new_sql)
+    if m is None:
+        raise RuntimeError(f"拒绝重建 {table}：建表 SQL 里解析不出表名")
+    tmp_sql = new_sql[: m.start()] + "CREATE TABLE " + _q(tmp) + new_sql[m.end():]
+
+    conn.execute("DROP TABLE IF EXISTS %s" % _q(tmp))
+    conn.execute(tmp_sql)
+    collist = ", ".join(_q(c) for c in cols)
+    conn.execute(f"INSERT INTO {_q(tmp)} ({collist}) SELECT {collist} FROM {_q(table)}")
+
+    # 拷行后逐行同值：两个方向的 EXCEPT 都必须为空（列序一致 ⇒ `SELECT *` 可直比）
+    miss = conn.execute(
+        f"SELECT count(*) FROM (SELECT * FROM {_q(table)} EXCEPT SELECT * FROM {_q(tmp)})"
+    ).fetchone()[0]
+    extra = conn.execute(
+        f"SELECT count(*) FROM (SELECT * FROM {_q(tmp)} EXCEPT SELECT * FROM {_q(table)})"
+    ).fetchone()[0]
+    if miss or extra:
+        raise RuntimeError(f"拒绝重建 {table}：拷行后行集不一致 missing={miss} extra={extra}")
+
+    conn.execute("DROP TABLE %s" % _q(table))
+    conn.execute("ALTER TABLE %s RENAME TO %s" % (_q(tmp), _q(table)))
+    for sql_aux in aux:
+        conn.execute(sql_aux)
+    if seq is not None:
+        conn.execute("UPDATE sqlite_sequence SET seq=? WHERE name=?", (seq, table))
+
+    after = conn.execute("SELECT count(*) FROM %s" % _q(table)).fetchone()[0]
+    if after != before:
+        raise RuntimeError(f"拒绝重建 {table}：重建后行数 {after} ≠ 迁移前 {before}")
+    return f"{table}: 值域 {len(_domain_of(clause))}→{len(want)} 值；行数 {before}→{after}；从属对象复原 {len(aux)}"
+
+
+def migrate_dynasty_check(conn) -> str:
+    """把库里凡 `dynasty` 约束**仍非当前值域**的表重建到当前值域；已是当前值域则逐表跳过。"""
+    want = dynasty_domain()
+    done: list[str] = []
+    skipped: list[str] = []
+    for table, stored_sql, clause in _dynasty_check_tables(conn):
+        if _domain_of(clause) == want:
+            skipped.append(table)
+            continue
+        done.append(_rebuild_one(conn, table, stored_sql, clause, want))
+    if not done:
+        who = ",".join(skipped) if skipped else "库内无 dynasty CHECK 表"
+        return f"无需重建（{who}：已是当前值域 / 无约束）"
+    tail = f"；跳过（已新）{','.join(skipped)}" if skipped else ""
+    return "已重建 " + "; ".join(done) + tail
+
+
+DYNAMIC_MIGRATIONS: list[tuple[str, str, Callable[[sqlite3.Connection], str]]] = [
+    (
+        "1a-0006-dynasty-check-rebuild",
+        "把库内烘焙了旧值域的 dynasty CHECK 约束重建为当前值域（朝代首值 春秋 ⇒ 商周暨春秋；"
+        "真源 app/pdf_registry.DYNASTY_OPTIONS）——标准重建 建新表→拷行→删旧表→改名，"
+        "列/行/id 与索引触发器全保；已是当前值域或无该约束则跳过",
+        migrate_dynasty_check,
+    ),
+]
+
+
 def _migration_table_sql() -> str:
     return """
         CREATE TABLE IF NOT EXISTS schema_migrations (
@@ -141,11 +325,23 @@ def _applied(conn) -> set[str]:
     return {r[0] for r in conn.execute("SELECT version FROM schema_migrations")}
 
 
-def run(skip_wal: bool = False) -> int:
+def run(skip_wal: bool = False, only: Sequence[str] | None = None) -> int:
     st = get_settings()
     if not st.db_path.is_file():
         print(f"✗ DB 不存在：{st.db_path}")
         return 2
+
+    # `only`：只跑点名的迁移（静态/动态皆可）——**默认行为一字不动**（不传＝全跑）。
+    # 用途：feicui 侧已是多库（pdf_registry / seal_ingest / person_ingest …），
+    # 非 yinpu schema 的库跑不动早期面向 `stamps` 的静态迁移（`no such table: main.stamps`），
+    # 此时按 version 点名执行，既不改既有语义、也不对别的库做任何事。
+    wanted = set(only or ())
+    if wanted:
+        known = {v for v, _n, _s in MIGRATIONS} | {v for v, _n, _f in DYNAMIC_MIGRATIONS}
+        unknown = sorted(wanted - known)
+        if unknown:
+            print(f"✗ 未知迁移 version：{','.join(unknown)}（可选：{','.join(sorted(known))}）")
+            return 4
 
     if st.is_prod_db and not st.allow_prod_migrate:
         print("✗ 拒绝：解析到的 DB 是仓库内正式库 yinpu.db（唯一真源，不得被本层写入）。")
@@ -160,6 +356,8 @@ def run(skip_wal: bool = False) -> int:
         applied = 0
         skipped = 0
         for version, note, statements in MIGRATIONS:
+            if wanted and version not in wanted:
+                continue
             if version in done:
                 skipped += 1
                 continue
@@ -177,6 +375,21 @@ def run(skip_wal: bool = False) -> int:
                 (version, db.now_iso(), note),
             )
             applied += 1
+        # 动态迁移：同一份记账、同一趟事务；`fn` 自带幂等判据（已新/无约束即免动）
+        for version, note, fn in DYNAMIC_MIGRATIONS:
+            if wanted and version not in wanted:
+                continue
+            if version in done:
+                skipped += 1
+                print(f"[{version}] skipped（已记账，未执行）")
+                continue
+            detail = fn(conn)
+            conn.execute(
+                "INSERT INTO schema_migrations(version, applied_at, note) VALUES (?,?,?)",
+                (version, db.now_iso(), note),
+            )
+            applied += 1
+            print(f"[{version}] {detail}")
         fingerprint = db.schema_fingerprint(conn)
 
     wal_result = None
@@ -191,6 +404,7 @@ def run(skip_wal: bool = False) -> int:
 
     print(f"db           = {st.db_path}")
     print(f"prod_db      = {st.is_prod_db}")
+    print(f"only         = {','.join(sorted(wanted)) if wanted else '(all)'}")
     print(f"applied      = {applied}")
     print(f"skipped      = {skipped}")
     print(f"journal_mode = {wal_result}")
@@ -229,6 +443,10 @@ def status() -> int:
         print(f"tables        = {','.join(tables)}")
         print(f"indexes       = {','.join(indexes)}")
         print(f"applied       = {','.join(applied) if applied else '(none)'}")
+        for table, _stored, clause in _dynasty_check_tables(conn):
+            cur = _domain_of(clause)
+            state = "已是当前值域" if cur == dynasty_domain() else "旧值域（需迁移）"
+            print(f"dynasty_check[{table}] = {state}（{len(cur)} 值）")
         for t in ("jobs", "job_pages"):
             if db.table_exists(conn, t):
                 print(f"count[{t}]    = {conn.execute(f'SELECT count(*) FROM {t}').fetchone()[0]}")
@@ -239,12 +457,29 @@ def status() -> int:
 
 def main(argv: list[str] | None = None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
+    only: list[str] = []
+    rest: list[str] = []
+    i = 0
+    while i < len(argv):
+        a = argv[i]
+        if a == "--only":
+            i += 1
+            if i >= len(argv):
+                print("✗ --only 需要一个 version 参数（可逗号分隔多个）")
+                return 4
+            only += [v.strip() for v in argv[i].split(",") if v.strip()]
+        elif a.startswith("--only="):
+            only += [v.strip() for v in a[len("--only="):].split(",") if v.strip()]
+        else:
+            rest.append(a)
+        i += 1
+    argv = rest
     if argv and argv[0] in {"--status", "status"}:
         return status()
     if argv and argv[0] in {"--help", "-h"}:
         print(__doc__)
         return 0
-    return run()
+    return run(only=only or None)
 
 
 if __name__ == "__main__":

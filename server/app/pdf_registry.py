@@ -29,7 +29,7 @@ DEFAULT_PDF_SOURCE_DIR = "output/1_Original_PDF"
 
 #: 朝代值域（**逐字同值于 xiai `VALUE_DOMAINS.DYNASTY_OPTIONS`**，真源在其 `src/data/seed.js`）
 DYNASTY_OPTIONS = (
-    "春秋", "戰國", "秦", "漢", "魏晉", "隋唐", "宋元", "明早中期", "晚明",
+    "商周暨春秋", "戰國", "秦", "漢", "魏晉", "隋唐", "宋元", "明早中期", "晚明",
     "清初", "清中期", "晚清", "民國", "新中國", "當代",
 )
 

@@ -8,7 +8,7 @@ import { describeFailure } from '@/api/client'
 
 // 朝代值域真源＝xiai VALUE_DOMAINS.DYNASTY_OPTIONS（15 值逐字同值；后端 PATCH 同口径校验）。
 const DYNASTY_OPTIONS = [
-  '春秋', '戰國', '秦', '漢', '魏晉', '隋唐', '宋元', '明早中期', '晚明',
+  '商周暨春秋', '戰國', '秦', '漢', '魏晉', '隋唐', '宋元', '明早中期', '晚明',
   '清初', '清中期', '晚清', '民國', '新中國', '當代',
 ]
 

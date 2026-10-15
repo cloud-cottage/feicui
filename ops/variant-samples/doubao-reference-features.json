@@ -1,0 +1,439 @@
+{
+  "schema": "feicui.doubao-reference-features.v1",
+  "generator": "ops/variant-samples/doubao_reference.py",
+  "role": "外部对标参照（豆包对话版输出图）；**只对标纸纹理/印泥色彩/晕染过渡**三项",
+  "hard_limit": "豆包图系生成式输出，已确认**重绘印文**（字形粘连/断裂/变形、笔画粗细不匀、边缘毛糙）⇒ 禁止对标其字形与线条锐度；我们守白字/字形冻结，该项**不学**",
+  "source": {
+    "path": "/Users/kevin/Library/Application Support/Hermes/composer-images/image_673b34.png",
+    "copied_into_repo": false,
+    "mode": "RGBA",
+    "size_px": [
+      1536,
+      1536
+    ],
+    "bytes": 3761903,
+    "sha256": "736b41340cbe8c1b92e4bc37a6f6fb40854c144cae630441b088db55b19aee25",
+    "note": "原件只读引用，不复制进仓（红线：样张只落 output/samples/）"
+  },
+  "ruler": {
+    "definition": "共同标尺＝**印面宽度**（不依赖实物尺寸假设）",
+    "W_d_px": 923,
+    "H_d_px": 898,
+    "seal_bbox_px": [
+      309,
+      328,
+      923,
+      898
+    ],
+    "seal_method": "colorcal.ink_mask → 最大 8 邻连通域 bbox",
+    "ours_2400dpi": {
+      "region": "P29-C1R1",
+      "W_o_px": 2120,
+      "W_o_mm": 22.437
+    },
+    "mm_per_px_equiv": 0.02430878,
+    "equiv_dpi": 1044.9,
+    "equiv_assumption": "假设豆包图印面实物宽 ＝ C1-R1 印面 22.437 mm（仅为把归一化尺度翻译成 mm 的显式假设）"
+  },
+  "paper_texture": {
+    "patches": [
+      {
+        "origin_px": [
+          16,
+          16
+        ],
+        "size": 300,
+        "ink_px_in_patch": 0,
+        "raw_std": 3.5365,
+        "readout": {
+          "n_bins": 160,
+          "low_freq_cut_wavelength_px": 92.3,
+          "psd_centroid_cyc_per_px": 0.062019,
+          "psd_peak_cyc_per_px": 0.011049,
+          "band": {
+            "coarse": {
+              "wavelength_px_range": [
+                18.46,
+                55.38
+              ],
+              "peak_wavelength_px": 41.141,
+              "energy_share": 0.39261
+            },
+            "fine": {
+              "wavelength_px_range": [
+                5.54,
+                18.46
+              ],
+              "peak_wavelength_px": 18.102,
+              "energy_share": 0.21513
+            },
+            "grain": {
+              "wavelength_px_range": [
+                1.85,
+                5.54
+              ],
+              "peak_wavelength_px": 5.324,
+              "energy_share": 0.08295
+            }
+          },
+          "psd_peak_wavelength_px": 90.506,
+          "psd_centroid_wavelength_px": 16.124,
+          "psd_centroid_cyc_per_mm": 2.551301
+        },
+        "band_rms": {
+          "coarse": 1.0594,
+          "fine": 1.4927,
+          "grain": 1.5799
+        },
+        "autocorr": {
+          "x_px": 1.301,
+          "y_px": 2.439
+        }
+      },
+      {
+        "origin_px": [
+          1220,
+          16
+        ],
+        "size": 300,
+        "ink_px_in_patch": 0,
+        "raw_std": 3.593,
+        "readout": {
+          "n_bins": 160,
+          "low_freq_cut_wavelength_px": 92.3,
+          "psd_centroid_cyc_per_px": 0.067881,
+          "psd_peak_cyc_per_px": 0.011049,
+          "band": {
+            "coarse": {
+              "wavelength_px_range": [
+                18.46,
+                55.38
+              ],
+              "peak_wavelength_px": 50.283,
+              "energy_share": 0.35966
+            },
+            "fine": {
+              "wavelength_px_range": [
+                5.54,
+                18.46
+              ],
+              "peak_wavelength_px": 15.605,
+              "energy_share": 0.25332
+            },
+            "grain": {
+              "wavelength_px_range": [
+                1.85,
+                5.54
+              ],
+              "peak_wavelength_px": 5.324,
+              "energy_share": 0.09542
+            }
+          },
+          "psd_peak_wavelength_px": 90.506,
+          "psd_centroid_wavelength_px": 14.732,
+          "psd_centroid_cyc_per_mm": 2.792448
+        },
+        "band_rms": {
+          "coarse": 1.0489,
+          "fine": 1.5756,
+          "grain": 1.6859
+        },
+        "autocorr": {
+          "x_px": 1.151,
+          "y_px": 2.228
+        }
+      },
+      {
+        "origin_px": [
+          16,
+          1220
+        ],
+        "size": 300,
+        "ink_px_in_patch": 0,
+        "raw_std": 4.0558,
+        "readout": {
+          "n_bins": 160,
+          "low_freq_cut_wavelength_px": 92.3,
+          "psd_centroid_cyc_per_px": 0.05939,
+          "psd_peak_cyc_per_px": 0.011049,
+          "band": {
+            "coarse": {
+              "wavelength_px_range": [
+                18.46,
+                55.38
+              ],
+              "peak_wavelength_px": 50.283,
+              "energy_share": 0.36279
+            },
+            "fine": {
+              "wavelength_px_range": [
+                5.54,
+                18.46
+              ],
+              "peak_wavelength_px": 16.761,
+              "energy_share": 0.19336
+            },
+            "grain": {
+              "wavelength_px_range": [
+                1.85,
+                5.54
+              ],
+              "peak_wavelength_px": 5.202,
+              "energy_share": 0.083
+            }
+          },
+          "psd_peak_wavelength_px": 90.506,
+          "psd_centroid_wavelength_px": 16.838,
+          "psd_centroid_cyc_per_mm": 2.443151
+        },
+        "band_rms": {
+          "coarse": 1.1364,
+          "fine": 1.6696,
+          "grain": 1.915
+        },
+        "autocorr": {
+          "x_px": 1.274,
+          "y_px": 1.895
+        }
+      }
+    ],
+    "patch_origins_px": [
+      [
+        16,
+        16
+      ],
+      [
+        1220,
+        16
+      ],
+      [
+        16,
+        1220
+      ]
+    ],
+    "patch_px": 300,
+    "band_definition_normalized_to_W_d": {
+      "coarse": [
+        0.02,
+        0.06
+      ],
+      "fine": [
+        0.006,
+        0.02
+      ],
+      "grain": [
+        0.002,
+        0.006
+      ]
+    },
+    "f_d_px": 50.283,
+    "f_d_over_W_d": 0.05447779,
+    "psd_peak_wavelength_px": 90.506,
+    "psd_peak_over_W_d": 0.09805634,
+    "psd_centroid_wavelength_px": 16.124,
+    "autocorr_half_decay_px": {
+      "x": 1.274,
+      "y": 2.228
+    },
+    "autocorr_half_decay_over_W_d": {
+      "x": 0.00138028,
+      "y": 0.00241387
+    },
+    "band_rms_median_0_255": {
+      "coarse": 1.0594,
+      "fine": 1.5756,
+      "grain": 1.6859
+    },
+    "band_peak_wavelength_px_median": {
+      "coarse": 50.283,
+      "fine": 16.761,
+      "grain": 5.324
+    },
+    "texture_rms_0_255_median": 3.593,
+    "texture_highpass_rms_0_255": 1.6859
+  },
+  "paper_color": {
+    "mask": "非印泥 ∧ V ≥ p90(非印泥)",
+    "px": 283119,
+    "mean_rgb": [
+      253.093,
+      248.896,
+      247.839
+    ],
+    "median_rgb": [
+      253.0,
+      252.0,
+      252.0
+    ],
+    "p5_p95_rgb": [
+      [
+        252.0,
+        224.0,
+        217.0
+      ],
+      [
+        255.0,
+        255.0,
+        255.0
+      ]
+    ],
+    "min_rgb": [
+      245,
+      194,
+      189
+    ],
+    "max_rgb": [
+      255,
+      255,
+      255
+    ],
+    "lum_deciles": [
+      220.033,
+      231.987,
+      243.328,
+      250.854,
+      252.0,
+      253.0,
+      254.071,
+      255.0,
+      255.0
+    ],
+    "lum_hist16": {
+      "bin_edges": [
+        0,
+        16,
+        32,
+        48,
+        64,
+        80,
+        96,
+        112,
+        128,
+        144,
+        160,
+        176,
+        192,
+        208,
+        224,
+        240,
+        256
+      ],
+      "counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        7109,
+        15325,
+        260685
+      ]
+    },
+    "hue_deg_mean": 12.066,
+    "sat_mean": 0.02076
+  },
+  "ink_color": {
+    "mask": "colorcal.ink_mask",
+    "ink_px": 304406,
+    "ink_ratio": 0.12902,
+    "core_definition": "colorcal.ink_core_centroid（掩膜内 S ≥ p75）",
+    "core_px": 76517,
+    "median_rgb": [
+      237.0,
+      84.0,
+      58.0
+    ],
+    "centroid_rgb": [
+      235.879,
+      83.84,
+      56.791
+    ],
+    "mask_all_median_rgb": [
+      240.0,
+      100.0,
+      74.0
+    ],
+    "hsv_median": [
+      8.7151,
+      0.7553,
+      0.9294
+    ],
+    "sat_p50": 0.7553,
+    "sat_p90": 0.7895,
+    "delta_e2000_median_rgb_to_target": 9.1261,
+    "delta_e2000_centroid_to_target": 8.7984,
+    "target": {
+      "hex": "#C95021",
+      "rgb": [
+        201,
+        80,
+        33
+      ]
+    },
+    "delta_e_impl": "colorcal.delta_e2000（单一真源）"
+  },
+  "halo_transition": {
+    "method": "掩膜外 redness 均值 / 掩膜内 p75，首个 ≤10% 的距离（px）",
+    "ref_redness_p75_inside": 163.0,
+    "profile_d1_to_d20": [
+      0.21351,
+      0.1646,
+      0.12834,
+      0.10114,
+      0.0795,
+      0.06205,
+      0.05088,
+      0.04366,
+      0.03806,
+      0.0331,
+      0.03092,
+      0.02901,
+      0.02672,
+      0.02549,
+      0.02394,
+      0.02154,
+      0.02044,
+      0.01991,
+      0.01831,
+      0.01699
+    ],
+    "transition_width_px": 4.053,
+    "transition_width_mm_equiv": 0.0985,
+    "half_decay_px": 4.053
+  },
+  "targets_for_us": {
+    "note": "把豆包读数换成**我们 2400dpi** 的标定值（目标纤维长度 ＝ W_o × (f_d/W_d)）",
+    "fiber_len_px_at_2400": 115.493,
+    "fiber_len_mm_equiv": 1.2223,
+    "fiber_len_source": "f_d ＝ 粗纤维带（0.020–0.060·W_d）峰值波长",
+    "psd_peak_len_px_at_2400": 207.879,
+    "psd_peak_len_mm_equiv": 2.2001,
+    "texture_rms_0_255": 3.593,
+    "band_rms_mm_bands": {
+      "coarse": 1.0594,
+      "fine": 1.5756,
+      "grain": 1.6859
+    },
+    "paper_mean_rgb": [
+      253.093,
+      248.896,
+      247.839
+    ],
+    "ink_median_rgb": [
+      237.0,
+      84.0,
+      58.0
+    ],
+    "ink_delta_e_to_target": 9.1261,
+    "halo_transition_px_at_2400": 9.309,
+    "halo_transition_mm_equiv": 0.0985
+  }
+}

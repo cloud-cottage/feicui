@@ -1,0 +1,272 @@
+{
+  "schema": "feicui.doubao-ink-reference-features.v1",
+  "generator": "ops/variant-samples/doubao_ink_reference.py",
+  "role": "第二张豆包参照图：**只看印泥质感**（Kevin 明确：不看纸纹理）",
+  "source": {
+    "path": "/Users/kevin/Library/Application Support/Hermes/composer-images/21791e391694111a3dbb1d317749662b_3f2a2d.jpg",
+    "copied_into_repo": false,
+    "mode": "RGB",
+    "size_px": [
+      1280,
+      3215
+    ],
+    "bytes": 393059,
+    "sha256": "317b985b5f471589dda331e5bc2d19d0ed9345529afc6e81eb85d10025ea800a"
+  },
+  "ruler": {
+    "definition": "共同标尺＝最大印泥连通域宽度（与图#1 同一套归一化思路）",
+    "W_d_px": 717,
+    "ours_2400dpi": {
+      "W_o_px": 2120,
+      "W_o_mm": 22.437
+    },
+    "mm_per_px_equiv": 0.03129289,
+    "equiv_dpi": 811.7,
+    "equiv_assumption": "假设豆包图印面实物宽 ＝ C1-R1 印面 22.437 mm（把归一化尺度翻成 mm 的显式假设）"
+  },
+  "features": {
+    "label": "豆包参照图#2（只取印泥质感）",
+    "size_px": [
+      1280,
+      3215
+    ],
+    "ink_px": 696719,
+    "ink_ratio": 0.1693,
+    "components": 10,
+    "largest_component": {
+      "bbox_px": [
+        274,
+        609,
+        717,
+        1996
+      ],
+      "area": 568395,
+      "fill_ratio": 0.3972,
+      "component_count_ge_1pct_main": 7
+    },
+    "ruler_W_d_px": 717,
+    "mm_per_px_equiv": 0.03129289,
+    "color": {
+      "core_definition": "colorcal.ink_core_centroid（掩膜内 S ≥ p75）",
+      "core_px": 175896,
+      "median_rgb": [
+        203.0,
+        47.0,
+        29.0
+      ],
+      "centroid_rgb": [
+        202.537,
+        45.929,
+        28.114
+      ],
+      "median_hsv": [
+        6.2069,
+        0.8571,
+        0.7961
+      ],
+      "mask_median_rgb": [
+        212.0,
+        62.0,
+        43.0
+      ],
+      "sat_p50": 0.7972,
+      "sat_p90": 0.8627,
+      "sat_p10": 0.5982,
+      "delta_e2000_median_to_target": 7.7396,
+      "delta_e2000_centroid_to_target": 7.856,
+      "target_hex": "#C95021",
+      "delta_e_impl": "colorcal.delta_e2000（单一真源）"
+    },
+    "semantic_lightness": {
+      "definition": "距离变换 d ＝ 到最近非印泥像素的距离（≈ 局部笔画半宽）；d_p90 归一",
+      "d_p50_px": 12.415,
+      "d_p90_px": 27.386,
+      "d_p50_over_W_d": 0.017315,
+      "d_p90_over_W_d": 0.038195,
+      "L_bins": [
+        {
+          "d_px_range": [
+            0.0,
+            4.56
+          ],
+          "d_over_d_p90": [
+            0.0,
+            0.167
+          ],
+          "px": 120319,
+          "L_mean": 60.318,
+          "S_mean": 0.5409
+        },
+        {
+          "d_px_range": [
+            4.56,
+            9.13
+          ],
+          "d_over_d_p90": [
+            0.167,
+            0.333
+          ],
+          "px": 136287,
+          "L_mean": 49.67,
+          "S_mean": 0.7851
+        },
+        {
+          "d_px_range": [
+            9.13,
+            13.69
+          ],
+          "d_over_d_p90": [
+            0.333,
+            0.5
+          ],
+          "px": 126198,
+          "L_mean": 48.826,
+          "S_mean": 0.8055
+        },
+        {
+          "d_px_range": [
+            13.69,
+            18.26
+          ],
+          "d_over_d_p90": [
+            0.5,
+            0.667
+          ],
+          "px": 109361,
+          "L_mean": 48.83,
+          "S_mean": 0.8104
+        },
+        {
+          "d_px_range": [
+            18.26,
+            22.82
+          ],
+          "d_over_d_p90": [
+            0.667,
+            0.833
+          ],
+          "px": 80008,
+          "L_mean": 48.853,
+          "S_mean": 0.8133
+        },
+        {
+          "d_px_range": [
+            22.82,
+            27.39
+          ],
+          "d_over_d_p90": [
+            0.833,
+            1.0
+          ],
+          "px": 55081,
+          "L_mean": 48.68,
+          "S_mean": 0.818
+        }
+      ],
+      "L_vs_dn_slope": -7.7454,
+      "L_wide_minus_thin": -9.989,
+      "L_p80dn_mean": 48.622,
+      "L_p20dn_mean": 58.611,
+      "sign_convention": "L* 越大＝越亮（越薄/越淡）；宽处浓 ⇒ L_wide − L_thin < 0"
+    },
+    "lstar": {
+      "mean": 50.94,
+      "std": 7.827,
+      "p10": 44.47,
+      "p50": 49.071,
+      "p90": 58.356,
+      "L_over_dn": "见 semantic_lightness"
+    },
+    "grain": {
+      "domain": "腐蚀 7×7 后的红墨区内部（避边）",
+      "px_eroded": 589460,
+      "lum_highpass_sigma_2px": 7.9735,
+      "sat_highpass_sigma_2px": 0.03198,
+      "L_highpass_p90_abs": 12.9245,
+      "peak_wavelength_px": 113.216,
+      "peak_wavelength_over_W_d": 0.157902
+    },
+    "translucency": {
+      "definition": "掩膜内 V ≥ p90(V of 非印泥)=0.9843 的像素占比（露白/半透）",
+      "share_light_inside": 0.01559,
+      "share_sat_lt_0.25_inside": 0.0,
+      "V_inside_p90": 0.902,
+      "V_inside_p50": 0.8314
+    },
+    "matte": {
+      "definition": "哑光＝无高光/光泽；指标＝掩膜内亮斑（V > p99 of 非印泥）占比与最大 V",
+      "highlight_share_V_gt_paperp99": 0.0,
+      "V_max_inside": 1.0,
+      "specular_added_by_us": null
+    },
+    "edge": {
+      "method": "饱和度水平集 0.75→0.25 过渡带宽（px）",
+      "transition_width_px_median": 1.91,
+      "transition_width_px_mean": 2.166,
+      "transition_width_px_p90": 3.694,
+      "boundary_roughness_proxy": {
+        "definition": "周长²/(4π·面积)（等周比；〉1 越大越毛糙）与 周长/(2(w+h))",
+        "isoperimetric_ratio": 34.2307,
+        "perimeter_over_bbox_perimeter": 2.8818,
+        "perimeter_px": 15636.4
+      }
+    },
+    "halo": {
+      "method": "掩膜外 redness 均值 / 掩膜内 p75，首个 ≤10% 的距离（px）",
+      "ref_redness_p75_inside": 166.0,
+      "profile_d0_to_d24": [
+        0.25762,
+        0.16233,
+        0.10252,
+        0.06627,
+        0.0531,
+        0.04982,
+        0.0494,
+        0.04819,
+        0.04462,
+        0.04058,
+        0.03704,
+        0.03408,
+        0.03202,
+        0.02989,
+        0.02794,
+        0.02666,
+        0.02564,
+        0.02428,
+        0.02282,
+        0.02147,
+        0.02023,
+        0.01894,
+        0.01726,
+        0.01629,
+        0.01555
+      ],
+      "transition_width_px": 2.07,
+      "transition_width_over_W_d": 0.002887,
+      "transition_width_mm_equiv": 0.06478,
+      "outer_band_of_overlap_mm_equiv": null,
+      "outer_band_of_overlap_px": 21.0
+    },
+    "hard_limit": "生成式输出，已重绘印文（字形粘连/断裂/变形、笔画粗细不匀、边缘毛糙）⇒ 只取**印泥质感**（语义浓淡/颗粒/半透/边缘/晕染）；**严禁**对标字形与线条锐度（我们守白字/字形冻结）"
+  },
+  "targets_for_us_px_at_2400": {
+    "note": "把豆包读数换成**我们 2400dpi** 的标定值（px@2400 ＝ 豆包 px × W_o/W_d）",
+    "grain_peak_wavelength": 334.753,
+    "grain_peak_wavelength_mm": 3.5429,
+    "edge_transition_width": 5.647,
+    "edge_transition_width_mm": 0.0598,
+    "halo_transition_width": 6.121,
+    "halo_transition_width_mm": 0.0648,
+    "semantic_L_wide_minus_thin": -9.989,
+    "semantic_slope_per_dn": -7.7454,
+    "grain_lum_highpass_std_0_255": 7.9735,
+    "translucency_share_light_inside": 0.01559,
+    "ink_median_rgb": [
+      203.0,
+      47.0,
+      29.0
+    ],
+    "ink_sat_p50": 0.7972,
+    "ink_delta_e_to_target": 7.7396
+  }
+}

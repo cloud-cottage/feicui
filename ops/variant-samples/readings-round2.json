@@ -1,0 +1,5954 @@
+{
+  "schema": "feicui.variant-samples.readings-round2.v1",
+  "generator": "ops/variant-samples/round2_samples.py",
+  "page": 29,
+  "intent": "C 修正版：①纹理改 mm 物理尺度＋多尺度带限噪声（豆包标定，3 候选×幅度档，600/2400 双对齐）②印泥改向 #C95021 靠（复用 colorcal V3、保 L*）③严格档/观感档两套（语义浓淡/颗粒/半透/毛糙）",
+  "doubao_calibration": {
+    "source_files": {
+      "paper": "ops/variant-samples/doubao-reference-features.json",
+      "ink": "ops/variant-samples/doubao-ink-reference-features.json",
+      "paper_sha256": "736b41340cbe8c1b92e4bc37a6f6fb40854c144cae630441b088db55b19aee25",
+      "ink_sha256": "317b985b5f471589dda331e5bc2d19d0ed9345529afc6e81eb85d10025ea800a"
+    },
+    "ruler": {
+      "paper_W_d_px": 923,
+      "ink_W_d_px": 717,
+      "ours_W_o_px": 2120,
+      "ours_W_o_mm": 22.437,
+      "formula": "目标尺度(mm) = W_o_mm × (f_d/W_d)；目标尺度(px@2400) = W_o_px × (f_d/W_d)"
+    },
+    "fiber_coarse_len_mm": 1.2223,
+    "fiber_fine_len_mm": 0.4074,
+    "grain_diam_mm": 0.1294,
+    "fiber_peak_mm_from_fd": 1.2223,
+    "aniso_ratio_measured": 1.7488,
+    "band_rms_coarse_fine_grain": [
+      1.0594,
+      1.5756,
+      1.6859
+    ],
+    "amp_unit_vector_mottle_coarse_fine_grain": [
+      0.20422,
+      0.40844,
+      0.60745,
+      0.64998
+    ],
+    "paper_total_rms_0_255_target": 3.593,
+    "paper_mean_rgb_target": [
+      253.093,
+      248.896,
+      247.839
+    ],
+    "paper_lum_deciles_target": [
+      220.033,
+      231.987,
+      243.328,
+      250.854,
+      252.0,
+      253.0,
+      254.071,
+      255.0,
+      255.0
+    ],
+    "ink_semantic_dn_centers": [
+      0.0835,
+      0.25,
+      0.4165,
+      0.5835,
+      0.75,
+      0.9165
+    ],
+    "ink_semantic_L_curve": [
+      60.318,
+      49.67,
+      48.826,
+      48.83,
+      48.853,
+      48.68
+    ],
+    "ink_semantic_S_curve": [
+      0.5409,
+      0.7851,
+      0.8055,
+      0.8104,
+      0.8133,
+      0.818
+    ],
+    "ink_semantic_L_wide_minus_thin": -9.989,
+    "ink_d_p90_over_W_d": 0.038195,
+    "ink_grain_lum_highpass_sigma_target": 7.9735,
+    "ink_grain_scale_mm": 0.0598,
+    "ink_edge_transition_mm": 0.0598,
+    "ink_halo_transition_mm": 0.0648,
+    "ink_halo_outer_band_mm": 0.6572,
+    "ink_translucency_share_light_inside": 0.01559,
+    "ink_median_rgb": [
+      203.0,
+      47.0,
+      29.0
+    ],
+    "ink_sat_p50": 0.7972,
+    "ink_delta_e_to_target": 7.7396,
+    "ink_L_std": 7.827,
+    "ink_grain_blur_sigma_px_at_equiv": 2.0,
+    "ink_grain_blur_mm": 0.062586,
+    "ink_equiv_dpi": 811.7,
+    "assumptions": [
+      "目标 mm 值成立的前提＝「豆包印面实物宽 ＝ C1-R1 的 22.437 mm」（显式假设，证据件已写死）",
+      "mottle（云斑）octave 幅度在参照图中不可测（其频段被 0.1·W_d 低切剔除）⇒ 取 coarse 的 0.5 倍（假设）",
+      "scale 梯度（CONS/OBV）在标定中心 ±15~18% 内微调；幅度档 ×1.0/×1.25 供对比"
+    ],
+    "ink_grain_blur_sigma_px_at_ours": 5.914
+  },
+  "source": {
+    "pdf": "output/1_Original_PDF/秦印类编 检索版.pdf",
+    "xref": 112,
+    "embedded_jpeg_md5": "4b45bfe1a899e69e0ecb3dbe1751b18a",
+    "matches_production_and_round1": true,
+    "size_px": [
+      2125,
+      3059
+    ],
+    "dpi": 300
+  },
+  "geometry": {
+    "compare_dpi": 600,
+    "prod_dpi": 2400,
+    "regions_300dpi": {
+      "P29-C1R1": [
+        473,
+        495,
+        858,
+        883
+      ],
+      "P29-C2R1": [
+        1362,
+        500,
+        1625,
+        880
+      ],
+      "P29-paper": [
+        1090,
+        260,
+        1390,
+        560
+      ]
+    },
+    "ours_ruler": {
+      "W_o_px": 2120,
+      "W_o_mm": 22.437
+    }
+  },
+  "target_hex_confirm": {
+    "TARGET_HEX": "#C95021",
+    "TARGET_RGB": [
+      201,
+      80,
+      33
+    ],
+    "hex_to_rgb_roundtrip": [
+      201,
+      80,
+      33
+    ],
+    "from": "server/app/colorcal.py（import，不复制）"
+  },
+  "dpi_alignment": {
+    "board": "/Users/kevin/bistro/xiai/feicui/output/samples/book-page-2400-variants/round2/tex-board-round2.png",
+    "visible_field_mm": 8.0,
+    "statistics_field_mm": 12.0,
+    "criterion": "同物理尺度纹理在 600/2400dpi 上 自相关半衰长度(mm)/谱质心(cyc/mm)/峰值波长(mm) 换算后相等（比值≈1）；另做 2400÷4 vs 600 逐像素对照",
+    "rows": {
+      "旧·像素常量(反例)": {
+        "candidate": null,
+        "amp_level": 1.0,
+        "readout_600": {
+          "dpi": 600,
+          "field_mm": 12.0,
+          "px": [
+            283,
+            283
+          ],
+          "px_per_mm": 23.622,
+          "psd_frequency_grid": {
+            "bin_cyc_per_mm": 0.2,
+            "band_cyc_per_mm": [
+              0.0417,
+              10.6
+            ],
+            "why_common_band": "上限＜600dpi Nyquist(11.81 cyc/mm) ⇒ 600/2400 同物理格可比"
+          },
+          "autocorr_half_decay_mm": {
+            "x": 0.2159,
+            "y": 0.03
+          },
+          "autocorr_half_decay_px": {
+            "x": 5.101,
+            "y": 0.708
+          },
+          "psd_centroid_cyc_per_mm": 1.63813,
+          "psd_peak_wavelength_mm": 1.3483,
+          "bands": {
+            "0.45-1.35mm": {
+              "peak_wavelength_mm": 1.3483,
+              "rms_0_255": 0.5685,
+              "energy_share": 0.41877
+            },
+            "0.134-0.449mm": {
+              "peak_wavelength_mm": 0.427,
+              "rms_0_255": 0.8933,
+              "energy_share": 0.16567
+            },
+            "0.045-0.134mm": {
+              "peak_wavelength_mm": 0.1326,
+              "rms_0_255": 0.4617,
+              "energy_share": 0.0375
+            }
+          },
+          "rms_0_255": 1.7083
+        },
+        "readout_2400": {
+          "dpi": 2400,
+          "field_mm": 12.0,
+          "px": [
+            1134,
+            1134
+          ],
+          "px_per_mm": 94.488,
+          "psd_frequency_grid": {
+            "bin_cyc_per_mm": 0.2,
+            "band_cyc_per_mm": [
+              0.0417,
+              10.6
+            ],
+            "why_common_band": "上限＜600dpi Nyquist(11.81 cyc/mm) ⇒ 600/2400 同物理格可比"
+          },
+          "autocorr_half_decay_mm": {
+            "x": 0.0543,
+            "y": 0.0077
+          },
+          "autocorr_half_decay_px": {
+            "x": 5.133,
+            "y": 0.726
+          },
+          "psd_centroid_cyc_per_mm": 2.69943,
+          "psd_peak_wavelength_mm": 1.3483,
+          "bands": {
+            "0.45-1.35mm": {
+              "peak_wavelength_mm": 1.3483,
+              "rms_0_255": 0.3197,
+              "energy_share": 0.38139
+            },
+            "0.134-0.449mm": {
+              "peak_wavelength_mm": 0.427,
+              "rms_0_255": 0.5759,
+              "energy_share": 0.3656
+            },
+            "0.045-0.134mm": {
+              "peak_wavelength_mm": 0.1292,
+              "rms_0_255": 0.6851,
+              "energy_share": 0.07092
+            }
+          },
+          "rms_0_255": 1.7061
+        },
+        "measured_600": {
+          "mean_rgb": [
+            252.405,
+            252.404,
+            250.41
+          ],
+          "std_rgb": [
+            1.694,
+            1.693,
+            1.969
+          ],
+          "rms_lum_0_255": 1.7083,
+          "lum_deciles": [
+            249.66,
+            249.66,
+            249.77,
+            250.77,
+            251.89,
+            253.77,
+            254.77,
+            254.89,
+            255.0
+          ],
+          "clip255_share": 0.16634,
+          "min_rgb": [
+            250,
+            250,
+            247
+          ],
+          "max_rgb": [
+            255,
+            255,
+            255
+          ]
+        },
+        "measured_2400": {
+          "mean_rgb": [
+            252.516,
+            252.516,
+            250.538
+          ],
+          "std_rgb": [
+            2.749,
+            2.749,
+            3.204
+          ],
+          "rms_lum_0_255": 1.7061,
+          "lum_deciles": [
+            249.66,
+            249.66,
+            249.77,
+            250.77,
+            252.36,
+            253.77,
+            254.77,
+            254.89,
+            255.0
+          ],
+          "clip255_share": 0.18224,
+          "min_rgb": [
+            250,
+            250,
+            247
+          ],
+          "max_rgb": [
+            255,
+            255,
+            255
+          ]
+        },
+        "cross_dpi_2400_div4_vs_600": {
+          "mean_abs_diff_lum": 1.6968,
+          "p99_abs_diff_lum": 4.5771,
+          "pearson_r_lum": -0.001663
+        },
+        "mm_consistency_2400_over_600": {
+          "autocorr_x": 0.2515,
+          "autocorr_y": 0.2567,
+          "psd_centroid": 1.6479,
+          "psd_peak_wavelength": 1.0
+        },
+        "octaves_600": null,
+        "octaves_2400": null
+      },
+      "C2·CONS×1": {
+        "candidate": "CONS",
+        "amp_level": 1.0,
+        "readout_600": {
+          "dpi": 600,
+          "field_mm": 12.0,
+          "px": [
+            283,
+            283
+          ],
+          "px_per_mm": 23.622,
+          "psd_frequency_grid": {
+            "bin_cyc_per_mm": 0.2,
+            "band_cyc_per_mm": [
+              0.0417,
+              10.6
+            ],
+            "why_common_band": "上限＜600dpi Nyquist(11.81 cyc/mm) ⇒ 600/2400 同物理格可比"
+          },
+          "autocorr_half_decay_mm": {
+            "x": 0.075,
+            "y": 0.0592
+          },
+          "autocorr_half_decay_px": {
+            "x": 1.773,
+            "y": 1.398
+          },
+          "psd_centroid_cyc_per_mm": 0.91209,
+          "psd_peak_wavelength_mm": 7.0588,
+          "bands": {
+            "0.45-1.35mm": {
+              "peak_wavelength_mm": 1.0619,
+              "rms_0_255": 0.4805,
+              "energy_share": 0.20021
+            },
+            "0.134-0.449mm": {
+              "peak_wavelength_mm": 0.427,
+              "rms_0_255": 0.6887,
+              "energy_share": 0.10866
+            },
+            "0.045-0.134mm": {
+              "peak_wavelength_mm": 0.1259,
+              "rms_0_255": 0.2845,
+              "energy_share": 0.01247
+            }
+          },
+          "rms_0_255": 1.3408
+        },
+        "readout_2400": {
+          "dpi": 2400,
+          "field_mm": 12.0,
+          "px": [
+            1134,
+            1134
+          ],
+          "px_per_mm": 94.488,
+          "psd_frequency_grid": {
+            "bin_cyc_per_mm": 0.2,
+            "band_cyc_per_mm": [
+              0.0417,
+              10.6
+            ],
+            "why_common_band": "上限＜600dpi Nyquist(11.81 cyc/mm) ⇒ 600/2400 同物理格可比"
+          },
+          "autocorr_half_decay_mm": {
+            "x": 0.0723,
+            "y": 0.0571
+          },
+          "autocorr_half_decay_px": {
+            "x": 6.833,
+            "y": 5.391
+          },
+          "psd_centroid_cyc_per_mm": 0.87201,
+          "psd_peak_wavelength_mm": 7.0588,
+          "bands": {
+            "0.45-1.35mm": {
+              "peak_wavelength_mm": 1.0619,
+              "rms_0_255": 0.4714,
+              "energy_share": 0.20621
+            },
+            "0.134-0.449mm": {
+              "peak_wavelength_mm": 0.427,
+              "rms_0_255": 0.5879,
+              "energy_share": 0.10706
+            },
+            "0.045-0.134mm": {
+              "peak_wavelength_mm": 0.1292,
+              "rms_0_255": 0.3456,
+              "energy_share": 0.00844
+            }
+          },
+          "rms_0_255": 1.3395
+        },
+        "measured_600": {
+          "mean_rgb": [
+            252.49,
+            252.491,
+            250.491
+          ],
+          "std_rgb": [
+            1.356,
+            1.354,
+            1.413
+          ],
+          "rms_lum_0_255": 1.3408,
+          "lum_deciles": [
+            249.66,
+            249.77,
+            250.77,
+            251.36,
+            252.18,
+            253.07,
+            253.77,
+            254.77,
+            254.89
+          ],
+          "clip255_share": 0.08762,
+          "min_rgb": [
+            250,
+            250,
+            247
+          ],
+          "max_rgb": [
+            255,
+            255,
+            255
+          ]
+        },
+        "measured_2400": {
+          "mean_rgb": [
+            252.484,
+            252.484,
+            250.484
+          ],
+          "std_rgb": [
+            2.728,
+            2.729,
+            3.297
+          ],
+          "rms_lum_0_255": 1.3395,
+          "lum_deciles": [
+            249.66,
+            249.77,
+            250.77,
+            251.36,
+            252.18,
+            253.07,
+            253.77,
+            254.77,
+            254.89
+          ],
+          "clip255_share": 0.08573,
+          "min_rgb": [
+            250,
+            250,
+            247
+          ],
+          "max_rgb": [
+            255,
+            255,
+            255
+          ]
+        },
+        "cross_dpi_2400_div4_vs_600": {
+          "mean_abs_diff_lum": 0.4449,
+          "p99_abs_diff_lum": 2.1436,
+          "pearson_r_lum": 0.880418
+        },
+        "mm_consistency_2400_over_600": {
+          "autocorr_x": 0.964,
+          "autocorr_y": 0.9645,
+          "psd_centroid": 0.9561,
+          "psd_peak_wavelength": 1.0
+        },
+        "octaves_600": [
+          {
+            "name": "mottle",
+            "long_mm": 9.35,
+            "short_mm": 9.35,
+            "salt": 71,
+            "amp": 0.275697,
+            "long_px": 220.866,
+            "short_px": 220.866,
+            "resolvable_2px": true
+          },
+          {
+            "name": "fiber_coarse",
+            "long_mm": 1.0389549999999999,
+            "short_mm": 0.594028016009148,
+            "salt": 113,
+            "amp": 0.551394,
+            "long_px": 24.542,
+            "short_px": 14.032,
+            "resolvable_2px": true
+          },
+          {
+            "name": "fiber_fine",
+            "long_mm": 0.34629,
+            "short_mm": 0.19799313893653514,
+            "salt": 157,
+            "amp": 0.8200575000000001,
+            "long_px": 8.18,
+            "short_px": 4.677,
+            "resolvable_2px": true
+          },
+          {
+            "name": "grain",
+            "long_mm": 0.1294,
+            "short_mm": 0.1294,
+            "salt": 199,
+            "amp": 0.8774730000000001,
+            "long_px": 3.057,
+            "short_px": 3.057,
+            "resolvable_2px": true
+          }
+        ],
+        "octaves_2400": [
+          {
+            "name": "mottle",
+            "long_mm": 9.35,
+            "short_mm": 9.35,
+            "salt": 71,
+            "amp": 0.275697,
+            "long_px": 883.465,
+            "short_px": 883.465,
+            "resolvable_2px": true
+          },
+          {
+            "name": "fiber_coarse",
+            "long_mm": 1.0389549999999999,
+            "short_mm": 0.594028016009148,
+            "salt": 113,
+            "amp": 0.551394,
+            "long_px": 98.169,
+            "short_px": 56.129,
+            "resolvable_2px": true
+          },
+          {
+            "name": "fiber_fine",
+            "long_mm": 0.34629,
+            "short_mm": 0.19799313893653514,
+            "salt": 157,
+            "amp": 0.8200575000000001,
+            "long_px": 32.72,
+            "short_px": 18.708,
+            "resolvable_2px": true
+          },
+          {
+            "name": "grain",
+            "long_mm": 0.1294,
+            "short_mm": 0.1294,
+            "salt": 199,
+            "amp": 0.8774730000000001,
+            "long_px": 12.227,
+            "short_px": 12.227,
+            "resolvable_2px": true
+          }
+        ]
+      },
+      "C2·CONS×1.25": {
+        "candidate": "CONS",
+        "amp_level": 1.25,
+        "readout_600": {
+          "dpi": 600,
+          "field_mm": 12.0,
+          "px": [
+            283,
+            283
+          ],
+          "px_per_mm": 23.622,
+          "psd_frequency_grid": {
+            "bin_cyc_per_mm": 0.2,
+            "band_cyc_per_mm": [
+              0.0417,
+              10.6
+            ],
+            "why_common_band": "上限＜600dpi Nyquist(11.81 cyc/mm) ⇒ 600/2400 同物理格可比"
+          },
+          "autocorr_half_decay_mm": {
+            "x": 0.0747,
+            "y": 0.0592
+          },
+          "autocorr_half_decay_px": {
+            "x": 1.765,
+            "y": 1.398
+          },
+          "psd_centroid_cyc_per_mm": 0.92943,
+          "psd_peak_wavelength_mm": 7.0588,
+          "bands": {
+            "0.45-1.35mm": {
+              "peak_wavelength_mm": 1.0619,
+              "rms_0_255": 0.5588,
+              "energy_share": 0.20291
+            },
+            "0.134-0.449mm": {
+              "peak_wavelength_mm": 0.427,
+              "rms_0_255": 0.8032,
+              "energy_share": 0.11256
+            },
+            "0.045-0.134mm": {
+              "peak_wavelength_mm": 0.1292,
+              "rms_0_255": 0.3282,
+              "energy_share": 0.01247
+            }
+          },
+          "rms_0_255": 1.5586
+        },
+        "readout_2400": {
+          "dpi": 2400,
+          "field_mm": 12.0,
+          "px": [
+            1134,
+            1134
+          ],
+          "px_per_mm": 94.488,
+          "psd_frequency_grid": {
+            "bin_cyc_per_mm": 0.2,
+            "band_cyc_per_mm": [
+              0.0417,
+              10.6
+            ],
+            "why_common_band": "上限＜600dpi Nyquist(11.81 cyc/mm) ⇒ 600/2400 同物理格可比"
+          },
+          "autocorr_half_decay_mm": {
+            "x": 0.072,
+            "y": 0.057
+          },
+          "autocorr_half_decay_px": {
+            "x": 6.804,
+            "y": 5.382
+          },
+          "psd_centroid_cyc_per_mm": 0.88691,
+          "psd_peak_wavelength_mm": 7.0588,
+          "bands": {
+            "0.45-1.35mm": {
+              "peak_wavelength_mm": 1.0619,
+              "rms_0_255": 0.5493,
+              "energy_share": 0.20895
+            },
+            "0.134-0.449mm": {
+              "peak_wavelength_mm": 0.427,
+              "rms_0_255": 0.6891,
+              "energy_share": 0.10948
+            },
+            "0.045-0.134mm": {
+              "peak_wavelength_mm": 0.1292,
+              "rms_0_255": 0.4012,
+              "energy_share": 0.00868
+            }
+          },
+          "rms_0_255": 1.5578
+        },
+        "measured_600": {
+          "mean_rgb": [
+            252.489,
+            252.489,
+            250.497
+          ],
+          "std_rgb": [
+            1.556,
+            1.557,
+            1.727
+          ],
+          "rms_lum_0_255": 1.5586,
+          "lum_deciles": [
+            249.66,
+            249.77,
+            249.77,
+            250.77,
+            252.18,
+            253.77,
+            254.77,
+            254.77,
+            254.89
+          ],
+          "clip255_share": 0.13948,
+          "min_rgb": [
+            250,
+            250,
+            247
+          ],
+          "max_rgb": [
+            255,
+            255,
+            255
+          ]
+        },
+        "measured_2400": {
+          "mean_rgb": [
+            252.482,
+            252.482,
+            250.487
+          ],
+          "std_rgb": [
+            2.782,
+            2.782,
+            3.365
+          ],
+          "rms_lum_0_255": 1.5578,
+          "lum_deciles": [
+            249.66,
+            249.77,
+            249.77,
+            250.77,
+            252.18,
+            253.77,
+            254.77,
+            254.77,
+            254.89
+          ],
+          "clip255_share": 0.13772,
+          "min_rgb": [
+            250,
+            250,
+            247
+          ],
+          "max_rgb": [
+            255,
+            255,
+            255
+          ]
+        },
+        "cross_dpi_2400_div4_vs_600": {
+          "mean_abs_diff_lum": 0.5137,
+          "p99_abs_diff_lum": 2.5222,
+          "pearson_r_lum": 0.883503
+        },
+        "mm_consistency_2400_over_600": {
+          "autocorr_x": 0.9639,
+          "autocorr_y": 0.9628,
+          "psd_centroid": 0.9543,
+          "psd_peak_wavelength": 1.0
+        },
+        "octaves_600": [
+          {
+            "name": "mottle",
+            "long_mm": 9.35,
+            "short_mm": 9.35,
+            "salt": 71,
+            "amp": 0.34462125000000005,
+            "long_px": 220.866,
+            "short_px": 220.866,
+            "resolvable_2px": true
+          },
+          {
+            "name": "fiber_coarse",
+            "long_mm": 1.0389549999999999,
+            "short_mm": 0.594028016009148,
+            "salt": 113,
+            "amp": 0.6892425000000001,
+            "long_px": 24.542,
+            "short_px": 14.032,
+            "resolvable_2px": true
+          },
+          {
+            "name": "fiber_fine",
+            "long_mm": 0.34629,
+            "short_mm": 0.19799313893653514,
+            "salt": 157,
+            "amp": 1.025071875,
+            "long_px": 8.18,
+            "short_px": 4.677,
+            "resolvable_2px": true
+          },
+          {
+            "name": "grain",
+            "long_mm": 0.1294,
+            "short_mm": 0.1294,
+            "salt": 199,
+            "amp": 1.09684125,
+            "long_px": 3.057,
+            "short_px": 3.057,
+            "resolvable_2px": true
+          }
+        ],
+        "octaves_2400": [
+          {
+            "name": "mottle",
+            "long_mm": 9.35,
+            "short_mm": 9.35,
+            "salt": 71,
+            "amp": 0.34462125000000005,
+            "long_px": 883.465,
+            "short_px": 883.465,
+            "resolvable_2px": true
+          },
+          {
+            "name": "fiber_coarse",
+            "long_mm": 1.0389549999999999,
+            "short_mm": 0.594028016009148,
+            "salt": 113,
+            "amp": 0.6892425000000001,
+            "long_px": 98.169,
+            "short_px": 56.129,
+            "resolvable_2px": true
+          },
+          {
+            "name": "fiber_fine",
+            "long_mm": 0.34629,
+            "short_mm": 0.19799313893653514,
+            "salt": 157,
+            "amp": 1.025071875,
+            "long_px": 32.72,
+            "short_px": 18.708,
+            "resolvable_2px": true
+          },
+          {
+            "name": "grain",
+            "long_mm": 0.1294,
+            "short_mm": 0.1294,
+            "salt": 199,
+            "amp": 1.09684125,
+            "long_px": 12.227,
+            "short_px": 12.227,
+            "resolvable_2px": true
+          }
+        ]
+      },
+      "C2·MID×1": {
+        "candidate": "MID",
+        "amp_level": 1.0,
+        "readout_600": {
+          "dpi": 600,
+          "field_mm": 12.0,
+          "px": [
+            283,
+            283
+          ],
+          "px_per_mm": 23.622,
+          "psd_frequency_grid": {
+            "bin_cyc_per_mm": 0.2,
+            "band_cyc_per_mm": [
+              0.0417,
+              10.6
+            ],
+            "why_common_band": "上限＜600dpi Nyquist(11.81 cyc/mm) ⇒ 600/2400 同物理格可比"
+          },
+          "autocorr_half_decay_mm": {
+            "x": 0.0757,
+            "y": 0.0626
+          },
+          "autocorr_half_decay_px": {
+            "x": 1.789,
+            "y": 1.478
+          },
+          "psd_centroid_cyc_per_mm": 0.79286,
+          "psd_peak_wavelength_mm": 7.0588,
+          "bands": {
+            "0.45-1.35mm": {
+              "peak_wavelength_mm": 1.3483,
+              "rms_0_255": 0.644,
+              "energy_share": 0.16667
+            },
+            "0.134-0.449mm": {
+              "peak_wavelength_mm": 0.427,
+              "rms_0_255": 0.9253,
+              "energy_share": 0.09288
+            },
+            "0.045-0.134mm": {
+              "peak_wavelength_mm": 0.1292,
+              "rms_0_255": 0.3798,
+              "energy_share": 0.01087
+            }
+          },
+          "rms_0_255": 1.8326
+        },
+        "readout_2400": {
+          "dpi": 2400,
+          "field_mm": 12.0,
+          "px": [
+            1134,
+            1134
+          ],
+          "px_per_mm": 94.488,
+          "psd_frequency_grid": {
+            "bin_cyc_per_mm": 0.2,
+            "band_cyc_per_mm": [
+              0.0417,
+              10.6
+            ],
+            "why_common_band": "上限＜600dpi Nyquist(11.81 cyc/mm) ⇒ 600/2400 同物理格可比"
+          },
+          "autocorr_half_decay_mm": {
+            "x": 0.0731,
+            "y": 0.0601
+          },
+          "autocorr_half_decay_px": {
+            "x": 6.911,
+            "y": 5.674
+          },
+          "psd_centroid_cyc_per_mm": 0.72613,
+          "psd_peak_wavelength_mm": 7.0588,
+          "bands": {
+            "0.45-1.35mm": {
+              "peak_wavelength_mm": 1.3483,
+              "rms_0_255": 0.6323,
+              "energy_share": 0.16264
+            },
+            "0.134-0.449mm": {
+              "peak_wavelength_mm": 0.427,
+              "rms_0_255": 0.7946,
+              "energy_share": 0.08566
+            },
+            "0.045-0.134mm": {
+              "peak_wavelength_mm": 0.1326,
+              "rms_0_255": 0.4648,
+              "energy_share": 0.00749
+            }
+          },
+          "rms_0_255": 1.8325
+        },
+        "measured_600": {
+          "mean_rgb": [
+            252.464,
+            252.463,
+            250.503
+          ],
+          "std_rgb": [
+            1.803,
+            1.802,
+            2.204
+          ],
+          "rms_lum_0_255": 1.8326,
+          "lum_deciles": [
+            249.66,
+            249.66,
+            249.66,
+            250.77,
+            252.07,
+            253.77,
+            254.89,
+            254.89,
+            255.0
+          ],
+          "clip255_share": 0.21025,
+          "min_rgb": [
+            250,
+            250,
+            247
+          ],
+          "max_rgb": [
+            255,
+            255,
+            255
+          ]
+        },
+        "measured_2400": {
+          "mean_rgb": [
+            252.458,
+            252.459,
+            250.495
+          ],
+          "std_rgb": [
+            2.728,
+            2.727,
+            3.173
+          ],
+          "rms_lum_0_255": 1.8325,
+          "lum_deciles": [
+            249.66,
+            249.66,
+            249.66,
+            250.77,
+            252.07,
+            253.77,
+            254.89,
+            254.89,
+            255.0
+          ],
+          "clip255_share": 0.20933,
+          "min_rgb": [
+            250,
+            250,
+            247
+          ],
+          "max_rgb": [
+            255,
+            255,
+            255
+          ]
+        },
+        "cross_dpi_2400_div4_vs_600": {
+          "mean_abs_diff_lum": 0.5767,
+          "p99_abs_diff_lum": 2.9825,
+          "pearson_r_lum": 0.893534
+        },
+        "mm_consistency_2400_over_600": {
+          "autocorr_x": 0.9657,
+          "autocorr_y": 0.9601,
+          "psd_centroid": 0.9158,
+          "psd_peak_wavelength": 1.0
+        },
+        "octaves_600": [
+          {
+            "name": "mottle",
+            "long_mm": 11.0,
+            "short_mm": 11.0,
+            "salt": 71,
+            "amp": 0.469706,
+            "long_px": 259.843,
+            "short_px": 259.843,
+            "resolvable_2px": true
+          },
+          {
+            "name": "fiber_coarse",
+            "long_mm": 1.2223,
+            "short_mm": 0.6988564894225271,
+            "salt": 113,
+            "amp": 0.939412,
+            "long_px": 28.873,
+            "short_px": 16.508,
+            "resolvable_2px": true
+          },
+          {
+            "name": "fiber_fine",
+            "long_mm": 0.4074,
+            "short_mm": 0.2329331046312178,
+            "salt": 157,
+            "amp": 1.397135,
+            "long_px": 9.624,
+            "short_px": 5.502,
+            "resolvable_2px": true
+          },
+          {
+            "name": "grain",
+            "long_mm": 0.1294,
+            "short_mm": 0.1294,
+            "salt": 199,
+            "amp": 1.494954,
+            "long_px": 3.057,
+            "short_px": 3.057,
+            "resolvable_2px": true
+          }
+        ],
+        "octaves_2400": [
+          {
+            "name": "mottle",
+            "long_mm": 11.0,
+            "short_mm": 11.0,
+            "salt": 71,
+            "amp": 0.469706,
+            "long_px": 1039.37,
+            "short_px": 1039.37,
+            "resolvable_2px": true
+          },
+          {
+            "name": "fiber_coarse",
+            "long_mm": 1.2223,
+            "short_mm": 0.6988564894225271,
+            "salt": 113,
+            "amp": 0.939412,
+            "long_px": 115.493,
+            "short_px": 66.034,
+            "resolvable_2px": true
+          },
+          {
+            "name": "fiber_fine",
+            "long_mm": 0.4074,
+            "short_mm": 0.2329331046312178,
+            "salt": 157,
+            "amp": 1.397135,
+            "long_px": 38.494,
+            "short_px": 22.009,
+            "resolvable_2px": true
+          },
+          {
+            "name": "grain",
+            "long_mm": 0.1294,
+            "short_mm": 0.1294,
+            "salt": 199,
+            "amp": 1.494954,
+            "long_px": 12.227,
+            "short_px": 12.227,
+            "resolvable_2px": true
+          }
+        ]
+      },
+      "C2·MID×1.25": {
+        "candidate": "MID",
+        "amp_level": 1.25,
+        "readout_600": {
+          "dpi": 600,
+          "field_mm": 12.0,
+          "px": [
+            283,
+            283
+          ],
+          "px_per_mm": 23.622,
+          "psd_frequency_grid": {
+            "bin_cyc_per_mm": 0.2,
+            "band_cyc_per_mm": [
+              0.0417,
+              10.6
+            ],
+            "why_common_band": "上限＜600dpi Nyquist(11.81 cyc/mm) ⇒ 600/2400 同物理格可比"
+          },
+          "autocorr_half_decay_mm": {
+            "x": 0.0735,
+            "y": 0.0613
+          },
+          "autocorr_half_decay_px": {
+            "x": 1.737,
+            "y": 1.448
+          },
+          "psd_centroid_cyc_per_mm": 0.8023,
+          "psd_peak_wavelength_mm": 7.0588,
+          "bands": {
+            "0.45-1.35mm": {
+              "peak_wavelength_mm": 1.3483,
+              "rms_0_255": 0.6946,
+              "energy_share": 0.16464
+            },
+            "0.134-0.449mm": {
+              "peak_wavelength_mm": 0.427,
+              "rms_0_255": 1.0147,
+              "energy_share": 0.09436
+            },
+            "0.045-0.134mm": {
+              "peak_wavelength_mm": 0.1326,
+              "rms_0_255": 0.4203,
+              "energy_share": 0.01146
+            }
+          },
+          "rms_0_255": 1.9943
+        },
+        "readout_2400": {
+          "dpi": 2400,
+          "field_mm": 12.0,
+          "px": [
+            1134,
+            1134
+          ],
+          "px_per_mm": 94.488,
+          "psd_frequency_grid": {
+            "bin_cyc_per_mm": 0.2,
+            "band_cyc_per_mm": [
+              0.0417,
+              10.6
+            ],
+            "why_common_band": "上限＜600dpi Nyquist(11.81 cyc/mm) ⇒ 600/2400 同物理格可比"
+          },
+          "autocorr_half_decay_mm": {
+            "x": 0.0705,
+            "y": 0.0586
+          },
+          "autocorr_half_decay_px": {
+            "x": 6.658,
+            "y": 5.534
+          },
+          "psd_centroid_cyc_per_mm": 0.74379,
+          "psd_peak_wavelength_mm": 7.0588,
+          "bands": {
+            "0.45-1.35mm": {
+              "peak_wavelength_mm": 1.3483,
+              "rms_0_255": 0.683,
+              "energy_share": 0.16312
+            },
+            "0.134-0.449mm": {
+              "peak_wavelength_mm": 0.427,
+              "rms_0_255": 0.8726,
+              "energy_share": 0.08845
+            },
+            "0.045-0.134mm": {
+              "peak_wavelength_mm": 0.1326,
+              "rms_0_255": 0.514,
+              "energy_share": 0.00811
+            }
+          },
+          "rms_0_255": 1.9952
+        },
+        "measured_600": {
+          "mean_rgb": [
+            252.461,
+            252.461,
+            250.539
+          ],
+          "std_rgb": [
+            1.942,
+            1.942,
+            2.527
+          ],
+          "rms_lum_0_255": 1.9943,
+          "lum_deciles": [
+            249.66,
+            249.66,
+            249.66,
+            249.89,
+            252.07,
+            254.18,
+            254.89,
+            255.0,
+            255.0
+          ],
+          "clip255_share": 0.25846,
+          "min_rgb": [
+            250,
+            250,
+            247
+          ],
+          "max_rgb": [
+            255,
+            255,
+            255
+          ]
+        },
+        "measured_2400": {
+          "mean_rgb": [
+            252.456,
+            252.456,
+            250.531
+          ],
+          "std_rgb": [
+            2.774,
+            2.773,
+            3.174
+          ],
+          "rms_lum_0_255": 1.9952,
+          "lum_deciles": [
+            249.66,
+            249.66,
+            249.66,
+            249.89,
+            252.07,
+            254.18,
+            254.89,
+            255.0,
+            255.0
+          ],
+          "clip255_share": 0.25767,
+          "min_rgb": [
+            250,
+            250,
+            247
+          ],
+          "max_rgb": [
+            255,
+            255,
+            255
+          ]
+        },
+        "cross_dpi_2400_div4_vs_600": {
+          "mean_abs_diff_lum": 0.6256,
+          "p99_abs_diff_lum": 3.3677,
+          "pearson_r_lum": 0.891527
+        },
+        "mm_consistency_2400_over_600": {
+          "autocorr_x": 0.9592,
+          "autocorr_y": 0.956,
+          "psd_centroid": 0.9271,
+          "psd_peak_wavelength": 1.0
+        },
+        "octaves_600": [
+          {
+            "name": "mottle",
+            "long_mm": 11.0,
+            "short_mm": 11.0,
+            "salt": 71,
+            "amp": 0.5871325000000001,
+            "long_px": 259.843,
+            "short_px": 259.843,
+            "resolvable_2px": true
+          },
+          {
+            "name": "fiber_coarse",
+            "long_mm": 1.2223,
+            "short_mm": 0.6988564894225271,
+            "salt": 113,
+            "amp": 1.1742650000000001,
+            "long_px": 28.873,
+            "short_px": 16.508,
+            "resolvable_2px": true
+          },
+          {
+            "name": "fiber_fine",
+            "long_mm": 0.4074,
+            "short_mm": 0.2329331046312178,
+            "salt": 157,
+            "amp": 1.7464187500000001,
+            "long_px": 9.624,
+            "short_px": 5.502,
+            "resolvable_2px": true
+          },
+          {
+            "name": "grain",
+            "long_mm": 0.1294,
+            "short_mm": 0.1294,
+            "salt": 199,
+            "amp": 1.8686925,
+            "long_px": 3.057,
+            "short_px": 3.057,
+            "resolvable_2px": true
+          }
+        ],
+        "octaves_2400": [
+          {
+            "name": "mottle",
+            "long_mm": 11.0,
+            "short_mm": 11.0,
+            "salt": 71,
+            "amp": 0.5871325000000001,
+            "long_px": 1039.37,
+            "short_px": 1039.37,
+            "resolvable_2px": true
+          },
+          {
+            "name": "fiber_coarse",
+            "long_mm": 1.2223,
+            "short_mm": 0.6988564894225271,
+            "salt": 113,
+            "amp": 1.1742650000000001,
+            "long_px": 115.493,
+            "short_px": 66.034,
+            "resolvable_2px": true
+          },
+          {
+            "name": "fiber_fine",
+            "long_mm": 0.4074,
+            "short_mm": 0.2329331046312178,
+            "salt": 157,
+            "amp": 1.7464187500000001,
+            "long_px": 38.494,
+            "short_px": 22.009,
+            "resolvable_2px": true
+          },
+          {
+            "name": "grain",
+            "long_mm": 0.1294,
+            "short_mm": 0.1294,
+            "salt": 199,
+            "amp": 1.8686925,
+            "long_px": 12.227,
+            "short_px": 12.227,
+            "resolvable_2px": true
+          }
+        ]
+      },
+      "C2·OBV×1": {
+        "candidate": "OBV",
+        "amp_level": 1.0,
+        "readout_600": {
+          "dpi": 600,
+          "field_mm": 12.0,
+          "px": [
+            283,
+            283
+          ],
+          "px_per_mm": 23.622,
+          "psd_frequency_grid": {
+            "bin_cyc_per_mm": 0.2,
+            "band_cyc_per_mm": [
+              0.0417,
+              10.6
+            ],
+            "why_common_band": "上限＜600dpi Nyquist(11.81 cyc/mm) ⇒ 600/2400 同物理格可比"
+          },
+          "autocorr_half_decay_mm": {
+            "x": 0.0727,
+            "y": 0.0633
+          },
+          "autocorr_half_decay_px": {
+            "x": 1.717,
+            "y": 1.496
+          },
+          "psd_centroid_cyc_per_mm": 1.26129,
+          "psd_peak_wavelength_mm": 7.0588,
+          "bands": {
+            "0.45-1.35mm": {
+              "peak_wavelength_mm": 1.3483,
+              "rms_0_255": 0.7565,
+              "energy_share": 0.30015
+            },
+            "0.134-0.449mm": {
+              "peak_wavelength_mm": 0.427,
+              "rms_0_255": 1.0615,
+              "energy_share": 0.14719
+            },
+            "0.045-0.134mm": {
+              "peak_wavelength_mm": 0.1326,
+              "rms_0_255": 0.4493,
+              "energy_share": 0.01916
+            }
+          },
+          "rms_0_255": 2.1197
+        },
+        "readout_2400": {
+          "dpi": 2400,
+          "field_mm": 12.0,
+          "px": [
+            1134,
+            1134
+          ],
+          "px_per_mm": 94.488,
+          "psd_frequency_grid": {
+            "bin_cyc_per_mm": 0.2,
+            "band_cyc_per_mm": [
+              0.0417,
+              10.6
+            ],
+            "why_common_band": "上限＜600dpi Nyquist(11.81 cyc/mm) ⇒ 600/2400 同物理格可比"
+          },
+          "autocorr_half_decay_mm": {
+            "x": 0.0692,
+            "y": 0.0599
+          },
+          "autocorr_half_decay_px": {
+            "x": 6.543,
+            "y": 5.662
+          },
+          "psd_centroid_cyc_per_mm": 1.16864,
+          "psd_peak_wavelength_mm": 7.0588,
+          "bands": {
+            "0.45-1.35mm": {
+              "peak_wavelength_mm": 1.3483,
+              "rms_0_255": 0.7437,
+              "energy_share": 0.29893
+            },
+            "0.134-0.449mm": {
+              "peak_wavelength_mm": 0.427,
+              "rms_0_255": 0.9055,
+              "energy_share": 0.13831
+            },
+            "0.045-0.134mm": {
+              "peak_wavelength_mm": 0.1326,
+              "rms_0_255": 0.5495,
+              "energy_share": 0.01388
+            }
+          },
+          "rms_0_255": 2.1189
+        },
+        "measured_600": {
+          "mean_rgb": [
+            252.409,
+            252.409,
+            250.508
+          ],
+          "std_rgb": [
+            2.049,
+            2.049,
+            2.782
+          ],
+          "rms_lum_0_255": 2.1197,
+          "lum_deciles": [
+            249.66,
+            249.66,
+            249.66,
+            249.77,
+            251.77,
+            254.77,
+            255.0,
+            255.0,
+            255.0
+          ],
+          "clip255_share": 0.28867,
+          "min_rgb": [
+            250,
+            250,
+            247
+          ],
+          "max_rgb": [
+            255,
+            255,
+            255
+          ]
+        },
+        "measured_2400": {
+          "mean_rgb": [
+            252.404,
+            252.404,
+            250.501
+          ],
+          "std_rgb": [
+            2.78,
+            2.78,
+            3.24
+          ],
+          "rms_lum_0_255": 2.1189,
+          "lum_deciles": [
+            249.66,
+            249.66,
+            249.66,
+            249.77,
+            251.77,
+            254.77,
+            255.0,
+            255.0,
+            255.0
+          ],
+          "clip255_share": 0.2878,
+          "min_rgb": [
+            250,
+            250,
+            247
+          ],
+          "max_rgb": [
+            255,
+            255,
+            255
+          ]
+        },
+        "cross_dpi_2400_div4_vs_600": {
+          "mean_abs_diff_lum": 0.6478,
+          "p99_abs_diff_lum": 3.6132,
+          "pearson_r_lum": 0.892613
+        },
+        "mm_consistency_2400_over_600": {
+          "autocorr_x": 0.9519,
+          "autocorr_y": 0.9463,
+          "psd_centroid": 0.9265,
+          "psd_peak_wavelength": 1.0
+        },
+        "octaves_600": [
+          {
+            "name": "mottle",
+            "long_mm": 12.979999999999999,
+            "short_mm": 12.979999999999999,
+            "salt": 71,
+            "amp": 0.73376246,
+            "long_px": 306.614,
+            "short_px": 306.614,
+            "resolvable_2px": true
+          },
+          {
+            "name": "fiber_coarse",
+            "long_mm": 1.4423139999999999,
+            "short_mm": 0.8246506575185819,
+            "salt": 113,
+            "amp": 1.46752492,
+            "long_px": 34.07,
+            "short_px": 19.48,
+            "resolvable_2px": true
+          },
+          {
+            "name": "fiber_fine",
+            "long_mm": 0.48073199999999994,
+            "short_mm": 0.274861063464837,
+            "salt": 157,
+            "amp": 2.1825678500000003,
+            "long_px": 11.356,
+            "short_px": 6.493,
+            "resolvable_2px": true
+          },
+          {
+            "name": "grain",
+            "long_mm": 0.1294,
+            "short_mm": 0.1294,
+            "salt": 199,
+            "amp": 2.33537814,
+            "long_px": 3.057,
+            "short_px": 3.057,
+            "resolvable_2px": true
+          }
+        ],
+        "octaves_2400": [
+          {
+            "name": "mottle",
+            "long_mm": 12.979999999999999,
+            "short_mm": 12.979999999999999,
+            "salt": 71,
+            "amp": 0.73376246,
+            "long_px": 1226.457,
+            "short_px": 1226.457,
+            "resolvable_2px": true
+          },
+          {
+            "name": "fiber_coarse",
+            "long_mm": 1.4423139999999999,
+            "short_mm": 0.8246506575185819,
+            "salt": 113,
+            "amp": 1.46752492,
+            "long_px": 136.282,
+            "short_px": 77.92,
+            "resolvable_2px": true
+          },
+          {
+            "name": "fiber_fine",
+            "long_mm": 0.48073199999999994,
+            "short_mm": 0.274861063464837,
+            "salt": 157,
+            "amp": 2.1825678500000003,
+            "long_px": 45.423,
+            "short_px": 25.971,
+            "resolvable_2px": true
+          },
+          {
+            "name": "grain",
+            "long_mm": 0.1294,
+            "short_mm": 0.1294,
+            "salt": 199,
+            "amp": 2.33537814,
+            "long_px": 12.227,
+            "short_px": 12.227,
+            "resolvable_2px": true
+          }
+        ]
+      },
+      "C2·OBV×1.25": {
+        "candidate": "OBV",
+        "amp_level": 1.25,
+        "readout_600": {
+          "dpi": 600,
+          "field_mm": 12.0,
+          "px": [
+            283,
+            283
+          ],
+          "px_per_mm": 23.622,
+          "psd_frequency_grid": {
+            "bin_cyc_per_mm": 0.2,
+            "band_cyc_per_mm": [
+              0.0417,
+              10.6
+            ],
+            "why_common_band": "上限＜600dpi Nyquist(11.81 cyc/mm) ⇒ 600/2400 同物理格可比"
+          },
+          "autocorr_half_decay_mm": {
+            "x": 0.0703,
+            "y": 0.0614
+          },
+          "autocorr_half_decay_px": {
+            "x": 1.661,
+            "y": 1.451
+          },
+          "psd_centroid_cyc_per_mm": 1.29385,
+          "psd_peak_wavelength_mm": 7.0588,
+          "bands": {
+            "0.45-1.35mm": {
+              "peak_wavelength_mm": 1.3483,
+              "rms_0_255": 0.7876,
+              "energy_share": 0.29987
+            },
+            "0.134-0.449mm": {
+              "peak_wavelength_mm": 0.427,
+              "rms_0_255": 1.1262,
+              "energy_share": 0.15149
+            },
+            "0.045-0.134mm": {
+              "peak_wavelength_mm": 0.1326,
+              "rms_0_255": 0.484,
+              "energy_share": 0.02059
+            }
+          },
+          "rms_0_255": 2.2301
+        },
+        "readout_2400": {
+          "dpi": 2400,
+          "field_mm": 12.0,
+          "px": [
+            1134,
+            1134
+          ],
+          "px_per_mm": 94.488,
+          "psd_frequency_grid": {
+            "bin_cyc_per_mm": 0.2,
+            "band_cyc_per_mm": [
+              0.0417,
+              10.6
+            ],
+            "why_common_band": "上限＜600dpi Nyquist(11.81 cyc/mm) ⇒ 600/2400 同物理格可比"
+          },
+          "autocorr_half_decay_mm": {
+            "x": 0.0662,
+            "y": 0.0578
+          },
+          "autocorr_half_decay_px": {
+            "x": 6.25,
+            "y": 5.465
+          },
+          "psd_centroid_cyc_per_mm": 1.19908,
+          "psd_peak_wavelength_mm": 7.0588,
+          "bands": {
+            "0.45-1.35mm": {
+              "peak_wavelength_mm": 1.3483,
+              "rms_0_255": 0.7743,
+              "energy_share": 0.29866
+            },
+            "0.134-0.449mm": {
+              "peak_wavelength_mm": 0.427,
+              "rms_0_255": 0.9606,
+              "energy_share": 0.14256
+            },
+            "0.045-0.134mm": {
+              "peak_wavelength_mm": 0.1326,
+              "rms_0_255": 0.5907,
+              "energy_share": 0.01513
+            }
+          },
+          "rms_0_255": 2.2304
+        },
+        "measured_600": {
+          "mean_rgb": [
+            252.407,
+            252.406,
+            250.554
+          ],
+          "std_rgb": [
+            2.14,
+            2.141,
+            3.025
+          ],
+          "rms_lum_0_255": 2.2301,
+          "lum_deciles": [
+            249.66,
+            249.66,
+            249.66,
+            249.66,
+            251.77,
+            254.77,
+            255.0,
+            255.0,
+            255.0
+          ],
+          "clip255_share": 0.32348,
+          "min_rgb": [
+            250,
+            250,
+            247
+          ],
+          "max_rgb": [
+            255,
+            255,
+            255
+          ]
+        },
+        "measured_2400": {
+          "mean_rgb": [
+            252.402,
+            252.402,
+            250.548
+          ],
+          "std_rgb": [
+            2.836,
+            2.836,
+            3.311
+          ],
+          "rms_lum_0_255": 2.2304,
+          "lum_deciles": [
+            249.66,
+            249.66,
+            249.66,
+            249.66,
+            251.77,
+            254.77,
+            255.0,
+            255.0,
+            255.0
+          ],
+          "clip255_share": 0.32369,
+          "min_rgb": [
+            250,
+            250,
+            247
+          ],
+          "max_rgb": [
+            255,
+            255,
+            255
+          ]
+        },
+        "cross_dpi_2400_div4_vs_600": {
+          "mean_abs_diff_lum": 0.6781,
+          "p99_abs_diff_lum": 3.9236,
+          "pearson_r_lum": 0.889186
+        },
+        "mm_consistency_2400_over_600": {
+          "autocorr_x": 0.9417,
+          "autocorr_y": 0.9414,
+          "psd_centroid": 0.9268,
+          "psd_peak_wavelength": 1.0
+        },
+        "octaves_600": [
+          {
+            "name": "mottle",
+            "long_mm": 12.979999999999999,
+            "short_mm": 12.979999999999999,
+            "salt": 71,
+            "amp": 0.9172030750000001,
+            "long_px": 306.614,
+            "short_px": 306.614,
+            "resolvable_2px": true
+          },
+          {
+            "name": "fiber_coarse",
+            "long_mm": 1.4423139999999999,
+            "short_mm": 0.8246506575185819,
+            "salt": 113,
+            "amp": 1.8344061500000002,
+            "long_px": 34.07,
+            "short_px": 19.48,
+            "resolvable_2px": true
+          },
+          {
+            "name": "fiber_fine",
+            "long_mm": 0.48073199999999994,
+            "short_mm": 0.274861063464837,
+            "salt": 157,
+            "amp": 2.7282098125000003,
+            "long_px": 11.356,
+            "short_px": 6.493,
+            "resolvable_2px": true
+          },
+          {
+            "name": "grain",
+            "long_mm": 0.1294,
+            "short_mm": 0.1294,
+            "salt": 199,
+            "amp": 2.919222675,
+            "long_px": 3.057,
+            "short_px": 3.057,
+            "resolvable_2px": true
+          }
+        ],
+        "octaves_2400": [
+          {
+            "name": "mottle",
+            "long_mm": 12.979999999999999,
+            "short_mm": 12.979999999999999,
+            "salt": 71,
+            "amp": 0.9172030750000001,
+            "long_px": 1226.457,
+            "short_px": 1226.457,
+            "resolvable_2px": true
+          },
+          {
+            "name": "fiber_coarse",
+            "long_mm": 1.4423139999999999,
+            "short_mm": 0.8246506575185819,
+            "salt": 113,
+            "amp": 1.8344061500000002,
+            "long_px": 136.282,
+            "short_px": 77.92,
+            "resolvable_2px": true
+          },
+          {
+            "name": "fiber_fine",
+            "long_mm": 0.48073199999999994,
+            "short_mm": 0.274861063464837,
+            "salt": 157,
+            "amp": 2.7282098125000003,
+            "long_px": 45.423,
+            "short_px": 25.971,
+            "resolvable_2px": true
+          },
+          {
+            "name": "grain",
+            "long_mm": 0.1294,
+            "short_mm": 0.1294,
+            "salt": 199,
+            "amp": 2.919222675,
+            "long_px": 12.227,
+            "short_px": 12.227,
+            "resolvable_2px": true
+          }
+        ]
+      }
+    }
+  },
+  "ink_color": {
+    "target": {
+      "hex": "#C95021",
+      "rgb": [
+        201,
+        80,
+        33
+      ],
+      "lab": [
+        49.8201,
+        45.9216,
+        49.7062
+      ],
+      "source_of_truth": "server/app/colorcal.py TARGET_RGB/TARGET_HEX（单一真源）"
+    },
+    "core_pixel_set": {
+      "pixels": 255207,
+      "definition": "colorcal.ink_core_centroid（源图）",
+      "centroid_rgb": [
+        240.706,
+        33.403,
+        30.985
+      ]
+    },
+    "delta_e_impl": "colorcal：Lab=colorcal._srgb_to_lab_arr；ΔE2000=colorcal.ciede2000_lab",
+    "per_version": {
+      "SRC": {
+        "delta_e_to_target": {
+          "pixels": 255207,
+          "sampled": 255207,
+          "stride": 1,
+          "median": 9.6261,
+          "p90": 11.1381,
+          "mean": 9.7665,
+          "leq5_rate": 0.00051,
+          "leq3_rate": 2e-05
+        },
+        "lab": {
+          "L_mean": 51.774,
+          "L_std": 2.326,
+          "L_p10": 49.404,
+          "L_p50": 52.041,
+          "L_p90": 53.961,
+          "a_std": 3.553,
+          "b_std": 4.024,
+          "a_mean": 73.028,
+          "b_mean": 54.918
+        },
+        "centroid_rgb": [
+          240.706,
+          33.403,
+          30.985
+        ],
+        "centroid_delta_e": 9.5325
+      },
+      "C_old": {
+        "delta_e_to_target": {
+          "pixels": 255207,
+          "sampled": 255207,
+          "stride": 1,
+          "median": 11.1266,
+          "p90": 12.2125,
+          "mean": 11.1981,
+          "leq5_rate": 0.0,
+          "leq3_rate": 0.0
+        },
+        "lab": {
+          "L_mean": 53.479,
+          "L_std": 1.806,
+          "L_p10": 51.953,
+          "L_p50": 53.573,
+          "L_p90": 54.964,
+          "a_std": 2.391,
+          "b_std": 3.372,
+          "a_mean": 70.697,
+          "b_mean": 47.732
+        },
+        "centroid_rgb": [
+          242.735,
+          49.09,
+          49.523
+        ],
+        "centroid_delta_e": 11.0912
+      },
+      "C2_strict": {
+        "delta_e_to_target": {
+          "pixels": 255207,
+          "sampled": 255207,
+          "stride": 1,
+          "median": 3.7774,
+          "p90": 4.7881,
+          "mean": 3.5101,
+          "leq5_rate": 0.95466,
+          "leq3_rate": 0.29261
+        },
+        "lab": {
+          "L_mean": 53.161,
+          "L_std": 2.165,
+          "L_p10": 51.211,
+          "L_p50": 53.632,
+          "L_p90": 54.68,
+          "a_std": 1.182,
+          "b_std": 1.362,
+          "a_mean": 45.889,
+          "b_mean": 49.666
+        },
+        "centroid_rgb": [
+          211.448,
+          88.827,
+          41.259
+        ],
+        "centroid_delta_e": 3.3211
+      },
+      "C2_aes": {
+        "delta_e_to_target": {
+          "pixels": 255207,
+          "sampled": 255207,
+          "stride": 1,
+          "median": 5.8152,
+          "p90": 8.5005,
+          "mean": 6.3451,
+          "leq5_rate": 0.20827,
+          "leq3_rate": 0.00648
+        },
+        "lab": {
+          "L_mean": 56.101,
+          "L_std": 2.66,
+          "L_p10": 54.331,
+          "L_p50": 55.681,
+          "L_p90": 58.274,
+          "a_std": 3.015,
+          "b_std": 3.349,
+          "a_mean": 42.441,
+          "b_mean": 45.814
+        },
+        "centroid_rgb": [
+          215.528,
+          100.286,
+          55.708
+        ],
+        "centroid_delta_e": 6.2457
+      }
+    },
+    "delta_e2000_public_vs_batch_max_abs_diff": 4.618527782440651e-14,
+    "doubao_ink_reference": {
+      "targets_from": "ops/variant-samples/doubao-ink-reference-features.json",
+      "median_rgb": [
+        203.0,
+        47.0,
+        29.0
+      ],
+      "sat_p50": 0.7972,
+      "delta_e_to_same_target": 7.7396,
+      "L_std": 7.827,
+      "note": "★ 参照图自身距 #C95021 就有 7.7 ΔE（其印泥比靶色更鲜）——我们的严格档应**明显小于**该值；豆包值仅作「参照物自身距离」登记"
+    }
+  },
+  "ink_grain_calibration": {
+    "doubao_target_sigma_0_255": 7.9735,
+    "source_at_600_sigma": 8.0672,
+    "added_sigma": 0.0,
+    "ours_blur_sigma_px_at_2400": 5.914,
+    "formula": "σ_add = sqrt(max(target² − current², 0))（先量后补，幅度对齐参照物）"
+  },
+  "masks_600dpi": {
+    "red_ink_px": 1016185,
+    "white_line_px": 45147,
+    "outside_px": 24940170,
+    "paper_rule_px": 24244892,
+    "mask_flip_rate_tolerance": 0.001,
+    "mask_flip_criterion": "掩膜翻转率 ≤ 容差（uint8 量化级）；**硬判据**是 freeze.assert_ok：白线区/掩膜外对观感基线逐像素差＝0",
+    "impl": "colorcal.ink_mask → seal_canvas.seal_mask → ×2 Lanczos(≥128)"
+  },
+  "params": {
+    "texture_mm": {
+      "mottle": 11.0,
+      "fiber_coarse": 1.2223,
+      "fiber_fine": 0.4074,
+      "grain": 0.1294,
+      "aniso_ratio": 1.749
+    },
+    "ink_mm": {
+      "grain": 0.0598,
+      "edge": 0.0598,
+      "halo_strong": 0.0648,
+      "halo_tail": 0.65
+    },
+    "smooth_levels": {
+      "0": 0.0,
+      "mid": 0.55,
+      "strong": 1.0
+    },
+    "guide_radius_mm": 0.33866666666666667,
+    "v3_fg_chroma_strength": 1.0,
+    "seed": 20261013
+  },
+  "variants": {
+    "C_old": {
+      "version": "C",
+      "light_field": {
+        "field_ref_p90": 250.72,
+        "gain_min": 0.9934,
+        "gain_max": 1.0689,
+        "gain_mean_paper": 1.01448
+      },
+      "tone_map": {
+        "wb_paper_rgb_before": [
+          253.31,
+          251.31,
+          240.71
+        ],
+        "wb_gains": [
+          1.01525,
+          1.03373,
+          1.13996
+        ],
+        "wb_clamped": false,
+        "s_curve_t": 0.15,
+        "micro_amount": 0.1,
+        "micro_sigma_px600": 6.0
+      },
+      "background": {
+        "mode": "double_layer_fiber_grain",
+        "zone": "paper_rule_prod(gray>=210,sat<=0.15,non-ink)",
+        "zone_px": 24244892,
+        "constants_from": "server/app/seal_canvas.py (BG_* 单一真源)"
+      },
+      "penetration": {
+        "alpha_max": 0.05,
+        "tau_px600": 6.0,
+        "band_px600": [
+          4,
+          24
+        ],
+        "px": 534396
+      },
+      "halo": {
+        "band_px600": 4,
+        "alpha_max": 0.08,
+        "alpha_inside_mask_max": 0.0,
+        "px": 350591,
+        "color_rgb": [
+          248.07,
+          64.83,
+          64.26
+        ]
+      },
+      "ink_ops": {
+        "guided": {
+          "radius_px600": 8,
+          "eps": 1500.0,
+          "guide": "luminance",
+          "order": "after_calib"
+        },
+        "calib": {
+          "strength": 0.35,
+          "chroma_mean": [
+            0.690103,
+            0.15326
+          ],
+          "skipped_invalid_domain_px": 292628,
+          "impl": "render_page_2400.color_uniformity（单一真源复用）"
+        },
+        "changed_px_vs_pre": 1016041
+      },
+      "elapsed_s": 13.45,
+      "mode": "C_old",
+      "label": "C旧（上轮 C，px 常量纹理＋向均色校准）",
+      "dpi": 600,
+      "bg_source": "old",
+      "tier": "legacy",
+      "ops": [],
+      "determinism_rerun_bit_equal": true,
+      "freeze": {
+        "rule": "结构算子只写红墨区；白线区（掩膜内白文印白线）/掩膜外 对观感基线逐像素差=0",
+        "white_line_px": 45147,
+        "white_line_mismatch_px": 0,
+        "outside_px": 24940170,
+        "outside_mismatch_px": 0,
+        "assert_ok": true,
+        "red_mask_vs_own_baseline_diff_px": 15801,
+        "red_mask_vs_own_baseline_diff_rate": 0.0006076957,
+        "red_mask_vs_own_baseline_unchanged": false,
+        "mask_note": "口径＝与**本版观感基线（ink_ops=False）**比；全局观感算子（光场/色调）两侧一致，故掩膜差异只可能来自结构算子。守卫按 float32 掩膜判定，uint8 量化可能翻转极少数边界像素（rate < 1e-4 视为逐像素不变）；C_old（上轮口径）无掩膜守卫 ⇒ 掩膜可变"
+      }
+    },
+    "C2_strict": {
+      "mode": "C2_strict",
+      "label": "严格档（靶色 #C95021，保 L*，平滑 0）",
+      "dpi": 600,
+      "bg_source": "MID",
+      "tier": "strict",
+      "ops": [],
+      "light_field": {
+        "sigma_mm": 1.0583,
+        "sigma_px": 25.0,
+        "gain_min_paper": 0.9934,
+        "gain_max_paper": 1.0689
+      },
+      "tone_map": {
+        "wb_gains": [
+          1.01525,
+          1.03373,
+          1.13996
+        ],
+        "wb_clamped": false,
+        "paper_rgb_before": [
+          253.309,
+          251.307,
+          240.71
+        ]
+      },
+      "penetration": {
+        "alpha_max": 0.05,
+        "tau_mm": 0.254,
+        "band_mm": [
+          0.0648,
+          1.016
+        ],
+        "px": 710785
+      },
+      "halo": {
+        "strong_mm": 0.0648,
+        "strong_alpha_max": 0.08,
+        "tail_mm": 0.65,
+        "tail_alpha_max": 0.02,
+        "doubao_halo_transition_mm": 0.0648,
+        "doubao_outer_band_mm": 0.6572,
+        "px": 670339
+      },
+      "ink_ops": {
+        "smooth_level": 0.0,
+        "tier": "strict",
+        "ops": [],
+        "dpi": 600,
+        "target_hex": "#C95021",
+        "chroma_strength": 1.0,
+        "chroma_impl": "colorcal.apply_foreground_chroma（V3）",
+        "fg_gamut_clip_rate": 7.2e-05,
+        "fg_chroma_reduced_rate": 1.0,
+        "fg_iou_raw": 0.977853,
+        "fg_mask_reverted_px": 22505,
+        "lstar_preservation": {
+          "definition": "本算子自身造成的 L* 逐像素变化（红墨区；不含全局色调算子）",
+          "L_mean_delta": -8.8e-05,
+          "L_mean_abs_delta": 0.056188,
+          "L_p90_abs_delta": 0.114965,
+          "L_max_abs_delta": 0.210056,
+          "L_std_before": 8.6475,
+          "L_std_after": 8.6475,
+          "verdict": "L* 逐像素保留（仅 uint8 量化级）"
+        }
+      },
+      "elapsed_s": 15.11,
+      "determinism_rerun_bit_equal": true,
+      "freeze": {
+        "rule": "结构算子只写红墨区；白线区（掩膜内白文印白线）/掩膜外 对观感基线逐像素差=0",
+        "white_line_px": 45147,
+        "white_line_mismatch_px": 0,
+        "outside_px": 24940170,
+        "outside_mismatch_px": 0,
+        "assert_ok": true,
+        "red_mask_vs_own_baseline_diff_px": 12026,
+        "red_mask_vs_own_baseline_diff_rate": 0.0004625118,
+        "red_mask_vs_own_baseline_unchanged": false,
+        "mask_note": "口径＝与**本版观感基线（ink_ops=False）**比；全局观感算子（光场/色调）两侧一致，故掩膜差异只可能来自结构算子。守卫按 float32 掩膜判定，uint8 量化可能翻转极少数边界像素（rate < 1e-4 视为逐像素不变）；C_old（上轮口径）无掩膜守卫 ⇒ 掩膜可变"
+      }
+    },
+    "C2_aes": {
+      "mode": "C2_aes",
+      "label": "观感档全开（语义＋颗粒＋半透＋毛糙）",
+      "dpi": 600,
+      "bg_source": "MID",
+      "tier": "aesthetic",
+      "ops": [
+        "semantic",
+        "grain",
+        "roughness"
+      ],
+      "light_field": {
+        "sigma_mm": 1.0583,
+        "sigma_px": 25.0,
+        "gain_min_paper": 0.9934,
+        "gain_max_paper": 1.0689
+      },
+      "tone_map": {
+        "wb_gains": [
+          1.01525,
+          1.03373,
+          1.13996
+        ],
+        "wb_clamped": false,
+        "paper_rgb_before": [
+          253.309,
+          251.307,
+          240.71
+        ]
+      },
+      "penetration": {
+        "alpha_max": 0.05,
+        "tau_mm": 0.254,
+        "band_mm": [
+          0.0648,
+          1.016
+        ],
+        "px": 710785
+      },
+      "halo": {
+        "strong_mm": 0.0648,
+        "strong_alpha_max": 0.08,
+        "tail_mm": 0.65,
+        "tail_alpha_max": 0.02,
+        "doubao_halo_transition_mm": 0.0648,
+        "doubao_outer_band_mm": 0.6572,
+        "px": 670339
+      },
+      "grain_target": {
+        "doubao_sigma_0_255": 7.9735,
+        "added_sigma_0_255": 0.0,
+        "calibrated_for_dpi": 2400,
+        "note": "σ_add 在 2400dpi 上标定；600dpi 下颗粒/毛糙自动停用（<2px 不可表示）"
+      },
+      "ink_ops": {
+        "smooth_level": 0.55,
+        "tier": "aesthetic",
+        "ops": [
+          "semantic"
+        ],
+        "dpi": 600,
+        "target_hex": "#C95021",
+        "chroma_strength": 1.0,
+        "chroma_impl": "colorcal.apply_foreground_chroma（V3）",
+        "dropped_underresolved_ops": {
+          "ops": [
+            "grain",
+            "roughness"
+          ],
+          "at_dpi": 600,
+          "min_dpi": 1200,
+          "scale_mm": 0.0598,
+          "px_at_dpi": 1.413,
+          "reason": "物理尺度 <2px 不可表示 ⇒ 停用（避免画与 dpi 不匹配的假纹理）"
+        },
+        "fg_gamut_clip_rate": 7.2e-05,
+        "fg_chroma_reduced_rate": 1.0,
+        "fg_iou_raw": 0.977853,
+        "fg_mask_reverted_px": 22505,
+        "semantic": {
+          "L_curve_dn": [
+            11.492,
+            0.844,
+            0.0,
+            0.004,
+            0.027,
+            -0.146
+          ],
+          "dL_wide_minus_thin_target": -9.989,
+          "chroma_scale_curve": [
+            0.6632,
+            0.9625,
+            0.9876,
+            0.9936,
+            0.9971,
+            1.0029
+          ],
+          "curve_source": "豆包参照图#2（doubao-ink-reference-features.json）",
+          "translucency_share_target": 0.01559,
+          "L_star_allowed_to_change": true
+        },
+        "mask_guard_dropped_and_reverted_px": 51990,
+        "lstar_preservation": {
+          "definition": "本算子自身造成的 L* 逐像素变化（红墨区；不含全局色调算子）",
+          "L_mean_delta": 3.237519,
+          "L_mean_abs_delta": 3.632646,
+          "L_p90_abs_delta": 10.265571,
+          "L_max_abs_delta": 24.29892,
+          "L_std_before": 8.6475,
+          "L_std_after": 9.1538,
+          "verdict": "L* 被有意调制（观感档）"
+        }
+      },
+      "elapsed_s": 19.24,
+      "determinism_rerun_bit_equal": true,
+      "freeze": {
+        "rule": "结构算子只写红墨区；白线区（掩膜内白文印白线）/掩膜外 对观感基线逐像素差=0",
+        "white_line_px": 45147,
+        "white_line_mismatch_px": 0,
+        "outside_px": 24940170,
+        "outside_mismatch_px": 0,
+        "assert_ok": true,
+        "red_mask_vs_own_baseline_diff_px": 13730,
+        "red_mask_vs_own_baseline_diff_rate": 0.0005280465,
+        "red_mask_vs_own_baseline_unchanged": false,
+        "mask_note": "口径＝与**本版观感基线（ink_ops=False）**比；全局观感算子（光场/色调）两侧一致，故掩膜差异只可能来自结构算子。守卫按 float32 掩膜判定，uint8 量化可能翻转极少数边界像素（rate < 1e-4 视为逐像素不变）；C_old（上轮口径）无掩膜守卫 ⇒ 掩膜可变"
+      }
+    }
+  },
+  "paper_candidate_metrics_600dpi": {
+    "old_px_const": {
+      "mean_rgb": [
+        252.514,
+        252.514,
+        250.537
+      ],
+      "std_rgb": [
+        3.006,
+        3.006,
+        3.782
+      ],
+      "rms_lum_0_255": 1.7061,
+      "lum_deciles": [
+        249.66,
+        249.66,
+        249.77,
+        250.77,
+        252.36,
+        253.77,
+        254.77,
+        254.89,
+        255.0
+      ],
+      "clip255_share": 0.18212,
+      "min_rgb": [
+        250,
+        250,
+        247
+      ],
+      "max_rgb": [
+        255,
+        255,
+        255
+      ]
+    },
+    "CONS": {
+      "mean_rgb": [
+        252.6,
+        252.6,
+        250.606
+      ],
+      "std_rgb": [
+        2.876,
+        2.876,
+        3.726
+      ],
+      "rms_lum_0_255": 1.3106,
+      "lum_deciles": [
+        249.77,
+        249.89,
+        250.77,
+        251.77,
+        252.66,
+        253.36,
+        253.89,
+        254.77,
+        254.89
+      ],
+      "clip255_share": 0.09398,
+      "min_rgb": [
+        250,
+        250,
+        247
+      ],
+      "max_rgb": [
+        255,
+        255,
+        255
+      ]
+    },
+    "MID": {
+      "mean_rgb": [
+        252.524,
+        252.523,
+        250.564
+      ],
+      "std_rgb": [
+        3.113,
+        3.113,
+        3.911
+      ],
+      "rms_lum_0_255": 1.81,
+      "lum_deciles": [
+        249.66,
+        249.66,
+        249.77,
+        250.77,
+        252.36,
+        253.77,
+        254.77,
+        254.89,
+        255.0
+      ],
+      "clip255_share": 0.21323,
+      "min_rgb": [
+        250,
+        250,
+        247
+      ],
+      "max_rgb": [
+        255,
+        255,
+        255
+      ]
+    },
+    "OBV": {
+      "mean_rgb": [
+        252.064,
+        252.064,
+        250.017
+      ],
+      "std_rgb": [
+        3.358,
+        3.358,
+        3.792
+      ],
+      "rms_lum_0_255": 2.0661,
+      "lum_deciles": [
+        249.66,
+        249.66,
+        249.66,
+        249.66,
+        251.66,
+        253.77,
+        254.89,
+        255.0,
+        255.0
+      ],
+      "clip255_share": 0.22335,
+      "min_rgb": [
+        250,
+        250,
+        247
+      ],
+      "max_rgb": [
+        255,
+        255,
+        255
+      ]
+    },
+    "note": "1:1 实测于 2400dpi 纸底区域（1300×1300px ≈13.8mm），口径与豆包参照图同（亮度直方图/总 RMS/255 截顶占比）"
+  },
+  "paper_generation_determinism_bit_equal": true,
+  "region_2400_1to1": {
+    "P29-C1R1": {
+      "window_px": [
+        1400,
+        1400
+      ],
+      "window_mm": 14.817,
+      "window_origin_px": [
+        8,
+        592
+      ],
+      "ink_readouts": {
+        "C_old": {
+          "label": "C旧（上轮 C，px 常量纹理＋向均色校准）",
+          "delta_e_to_target": {
+            "pixels": 297137,
+            "sampled": 297137,
+            "stride": 1,
+            "median": 10.1046,
+            "p90": 11.2667,
+            "mean": 10.1974,
+            "leq5_rate": 0.0,
+            "leq3_rate": 0.0
+          },
+          "lab": {
+            "L_mean": 52.731,
+            "L_std": 1.241,
+            "L_p10": 51.067,
+            "L_p50": 52.891,
+            "L_p90": 54.179,
+            "a_std": 2.404,
+            "b_std": 3.806,
+            "a_mean": 73.918,
+            "b_mean": 54.67
+          },
+          "features_vs_doubao": {
+            "label": "C_old",
+            "size_px": [
+              1400,
+              1400
+            ],
+            "ink_px": 1168355,
+            "ink_ratio": 0.5961,
+            "components": 13,
+            "largest_component": {
+              "bbox_px": [
+                123,
+                428,
+                849,
+                972
+              ],
+              "area": 497010,
+              "fill_ratio": 0.6023,
+              "component_count_ge_1pct_main": 11
+            },
+            "ruler_W_d_px": 2120,
+            "mm_per_px_equiv": 0.01058333,
+            "color": {
+              "core_definition": "colorcal.ink_core_centroid（掩膜内 S ≥ p75）",
+              "core_px": 293104,
+              "median_rgb": [
+                247.0,
+                35.0,
+                33.0
+              ],
+              "centroid_rgb": [
+                246.29,
+                34.218,
+                32.501
+              ],
+              "median_hsv": [
+                0.5607,
+                0.8664,
+                0.9686
+              ],
+              "mask_median_rgb": [
+                248.0,
+                49.0,
+                47.0
+              ],
+              "sat_p50": 0.8167,
+              "sat_p90": 0.874,
+              "sat_p10": 0.516,
+              "delta_e2000_median_to_target": 10.1582,
+              "delta_e2000_centroid_to_target": 10.0822,
+              "target_hex": "#C95021",
+              "delta_e_impl": "colorcal.delta_e2000（单一真源）"
+            },
+            "semantic_lightness": {
+              "definition": "距离变换 d ＝ 到最近非印泥像素的距离（≈ 局部笔画半宽）；d_p90 归一",
+              "d_p50_px": 21.01,
+              "d_p90_px": 53.402,
+              "d_p50_over_W_d": 0.00991,
+              "d_p90_over_W_d": 0.02519,
+              "L_bins": [
+                {
+                  "d_px_range": [
+                    0.0,
+                    8.9
+                  ],
+                  "d_over_d_p90": [
+                    0.0,
+                    0.167
+                  ],
+                  "px": 246818,
+                  "L_mean": 67.571,
+                  "S_mean": 0.5244
+                },
+                {
+                  "d_px_range": [
+                    8.9,
+                    17.8
+                  ],
+                  "d_over_d_p90": [
+                    0.167,
+                    0.333
+                  ],
+                  "px": 253357,
+                  "L_mean": 54.282,
+                  "S_mean": 0.7936
+                },
+                {
+                  "d_px_range": [
+                    17.8,
+                    26.7
+                  ],
+                  "d_over_d_p90": [
+                    0.333,
+                    0.5
+                  ],
+                  "px": 215473,
+                  "L_mean": 53.295,
+                  "S_mean": 0.8419
+                },
+                {
+                  "d_px_range": [
+                    26.7,
+                    35.6
+                  ],
+                  "d_over_d_p90": [
+                    0.5,
+                    0.667
+                  ],
+                  "px": 160285,
+                  "L_mean": 53.695,
+                  "S_mean": 0.8486
+                },
+                {
+                  "d_px_range": [
+                    35.6,
+                    44.5
+                  ],
+                  "d_over_d_p90": [
+                    0.667,
+                    0.833
+                  ],
+                  "px": 106255,
+                  "L_mean": 53.951,
+                  "S_mean": 0.844
+                },
+                {
+                  "d_px_range": [
+                    44.5,
+                    53.4
+                  ],
+                  "d_over_d_p90": [
+                    0.833,
+                    1.0
+                  ],
+                  "px": 69465,
+                  "L_mean": 54.413,
+                  "S_mean": 0.8336
+                }
+              ],
+              "L_vs_dn_slope": -7.21,
+              "L_wide_minus_thin": -12.853,
+              "L_p80dn_mean": 54.84,
+              "L_p20dn_mean": 67.693,
+              "sign_convention": "L* 越大＝越亮（越薄/越淡）；宽处浓 ⇒ L_wide − L_thin < 0"
+            },
+            "lstar": {
+              "mean": 56.922,
+              "std": 7.104,
+              "p10": 52.158,
+              "p50": 54.352,
+              "p90": 67.414,
+              "L_over_dn": "见 semantic_lightness"
+            },
+            "grain": {
+              "domain": "腐蚀 7×7 后的红墨区内部（避边）；高通高斯半径 5.914px",
+              "grain_blur_sigma_px": 5.914,
+              "px_eroded": 1069133,
+              "lum_highpass_sigma_2px": 6.389,
+              "sat_highpass_sigma_2px": 0.03376,
+              "L_highpass_p90_abs": 14.331,
+              "peak_wavelength_px": 113.204,
+              "peak_wavelength_over_W_d": 0.053398
+            },
+            "translucency": {
+              "definition": "掩膜内 V ≥ p90(V of 非印泥)=1.0 的像素占比（露白/半透）",
+              "share_light_inside": 0.06126,
+              "share_sat_lt_0.25_inside": 0.0,
+              "V_inside_p90": 0.9961,
+              "V_inside_p50": 0.9725
+            },
+            "matte": {
+              "definition": "哑光＝无高光/光泽；指标＝掩膜内亮斑（V > p99 of 非印泥）占比与最大 V",
+              "highlight_share_V_gt_paperp99": 0.0,
+              "V_max_inside": 1.0,
+              "specular_added_by_us": null
+            },
+            "edge": {
+              "method": "饱和度水平集 0.75→0.25 过渡带宽（px）",
+              "transition_width_px_median": 3.82,
+              "transition_width_px_mean": 4.065,
+              "transition_width_px_p90": 7.099,
+              "boundary_roughness_proxy": {
+                "definition": "周长²/(4π·面积)（等周比；〉1 越大越毛糙）与 周长/(2(w+h))",
+                "isoperimetric_ratio": 11.7409,
+                "perimeter_over_bbox_perimeter": 2.3512,
+                "perimeter_px": 8563.2
+              }
+            },
+            "halo": {
+              "method": "掩膜外 redness 均值 / 掩膜内 p75，首个 ≤10% 的距离（px）",
+              "ref_redness_p75_inside": 206.5,
+              "profile_d0_to_d24": [
+                0.21327,
+                0.15074,
+                0.10125,
+                0.0634,
+                0.04394,
+                0.03259,
+                0.02823,
+                0.02572,
+                0.02438,
+                0.02263,
+                0.02072,
+                0.01897,
+                0.01746,
+                0.01609,
+                0.0147,
+                0.01335,
+                0.0121,
+                0.01105,
+                0.0102,
+                0.00955,
+                0.00899,
+                0.00806,
+                0.00728,
+                0.00657,
+                0.00595
+              ],
+              "transition_width_px": 2.033,
+              "transition_width_over_W_d": 0.000959,
+              "transition_width_mm_equiv": 0.02152,
+              "outer_band_of_overlap_mm_equiv": null,
+              "outer_band_of_overlap_px": 11.0
+            }
+          },
+          "ink_ops": {
+            "guided": {
+              "radius_px600": 8,
+              "eps": 1500.0,
+              "guide": "luminance",
+              "order": "after_calib"
+            },
+            "calib": {
+              "strength": 0.35,
+              "chroma_mean": [
+                0.705538,
+                0.150489
+              ],
+              "skipped_invalid_domain_px": 430008,
+              "impl": "render_page_2400.color_uniformity（单一真源复用）"
+            },
+            "changed_px_vs_pre": 1175295
+          }
+        },
+        "C2_strict": {
+          "label": "严格档（靶色 #C95021，保 L*，平滑 0）",
+          "delta_e_to_target": {
+            "pixels": 297137,
+            "sampled": 297137,
+            "stride": 1,
+            "median": 3.447,
+            "p90": 4.4528,
+            "mean": 3.1193,
+            "leq5_rate": 0.99446,
+            "leq3_rate": 0.38693
+          },
+          "lab": {
+            "L_mean": 52.821,
+            "L_std": 1.539,
+            "L_p10": 50.861,
+            "L_p50": 53.291,
+            "L_p90": 54.331,
+            "a_std": 0.164,
+            "b_std": 0.159,
+            "a_mean": 45.921,
+            "b_mean": 49.706
+          },
+          "features_vs_doubao": {
+            "label": "C2_strict",
+            "size_px": [
+              1400,
+              1400
+            ],
+            "ink_px": 1168401,
+            "ink_ratio": 0.59612,
+            "components": 11,
+            "largest_component": {
+              "bbox_px": [
+                122,
+                427,
+                851,
+                973
+              ],
+              "area": 496767,
+              "fill_ratio": 0.5999,
+              "component_count_ge_1pct_main": 11
+            },
+            "ruler_W_d_px": 2120,
+            "mm_per_px_equiv": 0.01058333,
+            "color": {
+              "core_definition": "colorcal.ink_core_centroid（掩膜内 S ≥ p75）",
+              "core_px": 296844,
+              "median_rgb": [
+                207.0,
+                85.0,
+                38.0
+              ],
+              "centroid_rgb": [
+                205.525,
+                83.814,
+                36.528
+              ],
+              "median_hsv": [
+                16.6864,
+                0.8164,
+                0.8118
+              ],
+              "mask_median_rgb": [
+                214.0,
+                91.0,
+                44.0
+              ],
+              "sat_p50": 0.7963,
+              "sat_p90": 0.8204,
+              "sat_p10": 0.698,
+              "delta_e2000_median_to_target": 1.9085,
+              "delta_e2000_centroid_to_target": 1.4462,
+              "target_hex": "#C95021",
+              "delta_e_impl": "colorcal.delta_e2000（单一真源）"
+            },
+            "semantic_lightness": {
+              "definition": "距离变换 d ＝ 到最近非印泥像素的距离（≈ 局部笔画半宽）；d_p90 归一",
+              "d_p50_px": 20.125,
+              "d_p90_px": 51.57,
+              "d_p50_over_W_d": 0.009493,
+              "d_p90_over_W_d": 0.024326,
+              "L_bins": [
+                {
+                  "d_px_range": [
+                    0.0,
+                    8.6
+                  ],
+                  "d_over_d_p90": [
+                    0.0,
+                    0.167
+                  ],
+                  "px": 236226,
+                  "L_mean": 67.819,
+                  "S_mean": 0.6131
+                },
+                {
+                  "d_px_range": [
+                    8.6,
+                    17.19
+                  ],
+                  "d_over_d_p90": [
+                    0.167,
+                    0.333
+                  ],
+                  "px": 256665,
+                  "L_mean": 52.517,
+                  "S_mean": 0.8117
+                },
+                {
+                  "d_px_range": [
+                    17.19,
+                    25.79
+                  ],
+                  "d_over_d_p90": [
+                    0.333,
+                    0.5
+                  ],
+                  "px": 220483,
+                  "L_mean": 53.277,
+                  "S_mean": 0.8045
+                },
+                {
+                  "d_px_range": [
+                    25.79,
+                    34.38
+                  ],
+                  "d_over_d_p90": [
+                    0.5,
+                    0.667
+                  ],
+                  "px": 159755,
+                  "L_mean": 53.964,
+                  "S_mean": 0.7986
+                },
+                {
+                  "d_px_range": [
+                    34.38,
+                    42.98
+                  ],
+                  "d_over_d_p90": [
+                    0.667,
+                    0.833
+                  ],
+                  "px": 108173,
+                  "L_mean": 54.033,
+                  "S_mean": 0.7977
+                },
+                {
+                  "d_px_range": [
+                    42.98,
+                    51.57
+                  ],
+                  "d_over_d_p90": [
+                    0.833,
+                    1.0
+                  ],
+                  "px": 70854,
+                  "L_mean": 54.2,
+                  "S_mean": 0.7962
+                }
+              ],
+              "L_vs_dn_slope": -6.7225,
+              "L_wide_minus_thin": -13.35,
+              "L_p80dn_mean": 54.469,
+              "L_p20dn_mean": 67.819,
+              "sign_convention": "L* 越大＝越亮（越薄/越淡）；宽处浓 ⇒ L_wide − L_thin < 0"
+            },
+            "lstar": {
+              "mean": 56.423,
+              "std": 7.62,
+              "p10": 51.382,
+              "p50": 53.989,
+              "p90": 67.252,
+              "L_over_dn": "见 semantic_lightness"
+            },
+            "grain": {
+              "domain": "腐蚀 7×7 后的红墨区内部（避边）；高通高斯半径 5.914px",
+              "grain_blur_sigma_px": 5.914,
+              "px_eroded": 1066665,
+              "lum_highpass_sigma_2px": 8.1622,
+              "sat_highpass_sigma_2px": 0.04959,
+              "L_highpass_p90_abs": 17.646,
+              "peak_wavelength_px": 113.262,
+              "peak_wavelength_over_W_d": 0.053425
+            },
+            "translucency": {
+              "definition": "掩膜内 V ≥ p90(V of 非印泥)=1.0 的像素占比（露白/半透）",
+              "share_light_inside": 0.09286,
+              "share_sat_lt_0.25_inside": 0.0,
+              "V_inside_p90": 0.9882,
+              "V_inside_p50": 0.8392
+            },
+            "matte": {
+              "definition": "哑光＝无高光/光泽；指标＝掩膜内亮斑（V > p99 of 非印泥）占比与最大 V",
+              "highlight_share_V_gt_paperp99": 0.0,
+              "V_max_inside": 1.0,
+              "specular_added_by_us": null
+            },
+            "edge": {
+              "method": "饱和度水平集 0.75→0.25 过渡带宽（px）",
+              "transition_width_px_median": 2.324,
+              "transition_width_px_mean": 2.529,
+              "transition_width_px_p90": 4.234,
+              "boundary_roughness_proxy": {
+                "definition": "周长²/(4π·面积)（等周比；〉1 越大越毛糙）与 周长/(2(w+h))",
+                "isoperimetric_ratio": 12.4104,
+                "perimeter_over_bbox_perimeter": 2.4128,
+                "perimeter_px": 8801.9
+              }
+            },
+            "halo": {
+              "method": "掩膜外 redness 均值 / 掩膜内 p75，首个 ≤10% 的距离（px）",
+              "ref_redness_p75_inside": 147.5,
+              "profile_d0_to_d24": [
+                0.24602,
+                0.16829,
+                0.10998,
+                0.06237,
+                0.03363,
+                0.01838,
+                0.02197,
+                0.02466,
+                0.0276,
+                0.03112,
+                0.03377,
+                0.03508,
+                0.03541,
+                0.03527,
+                0.0353,
+                0.03517,
+                0.0349,
+                0.03453,
+                0.03406,
+                0.03356,
+                0.033,
+                0.03165,
+                0.03143,
+                0.03073,
+                0.03029
+              ],
+              "transition_width_px": 2.21,
+              "transition_width_over_W_d": 0.001042,
+              "transition_width_mm_equiv": 0.02339,
+              "outer_band_of_overlap_mm_equiv": null,
+              "outer_band_of_overlap_px": 40.0
+            }
+          },
+          "ink_ops": {
+            "smooth_level": 0.0,
+            "tier": "strict",
+            "ops": [],
+            "dpi": 2400,
+            "target_hex": "#C95021",
+            "chroma_strength": 1.0,
+            "chroma_impl": "colorcal.apply_foreground_chroma（V3）",
+            "fg_gamut_clip_rate": 0.000389,
+            "fg_chroma_reduced_rate": 1.0,
+            "fg_iou_raw": 0.976751,
+            "fg_mask_reverted_px": 27358,
+            "lstar_preservation": {
+              "definition": "本算子自身造成的 L* 逐像素变化（红墨区；不含全局色调算子）",
+              "L_mean_delta": -7e-06,
+              "L_mean_abs_delta": 0.056147,
+              "L_p90_abs_delta": 0.115196,
+              "L_max_abs_delta": 0.170728,
+              "L_std_before": 8.838,
+              "L_std_after": 8.838,
+              "verdict": "L* 逐像素保留（仅 uint8 量化级）"
+            }
+          }
+        },
+        "C2_smoothmid": {
+          "label": "靶色＋平滑中（规整扫描噪点）",
+          "delta_e_to_target": {
+            "pixels": 297137,
+            "sampled": 297137,
+            "stride": 1,
+            "median": 4.9174,
+            "p90": 6.2844,
+            "mean": 4.8495,
+            "leq5_rate": 0.52009,
+            "leq3_rate": 0.05902
+          },
+          "lab": {
+            "L_mean": 54.692,
+            "L_std": 1.217,
+            "L_p10": 53.168,
+            "L_p50": 54.769,
+            "L_p90": 56.142,
+            "a_std": 1.134,
+            "b_std": 1.265,
+            "a_mean": 44.143,
+            "b_mean": 47.724
+          },
+          "features_vs_doubao": {
+            "label": "C2_smoothmid",
+            "size_px": [
+              1400,
+              1400
+            ],
+            "ink_px": 1169966,
+            "ink_ratio": 0.59692,
+            "components": 12,
+            "largest_component": {
+              "bbox_px": [
+                123,
+                428,
+                849,
+                972
+              ],
+              "area": 497677,
+              "fill_ratio": 0.6031,
+              "component_count_ge_1pct_main": 11
+            },
+            "ruler_W_d_px": 2120,
+            "mm_per_px_equiv": 0.01058333,
+            "color": {
+              "core_definition": "colorcal.ink_core_centroid（掩膜内 S ≥ p75）",
+              "core_px": 300580,
+              "median_rgb": [
+                213.0,
+                92.0,
+                45.0
+              ],
+              "centroid_rgb": [
+                213.257,
+                91.568,
+                44.36
+              ],
+              "median_hsv": [
+                16.7857,
+                0.7887,
+                0.8353
+              ],
+              "mask_median_rgb": [
+                216.0,
+                97.0,
+                51.0
+              ],
+              "sat_p50": 0.765,
+              "sat_p90": 0.7925,
+              "sat_p10": 0.5958,
+              "delta_e2000_median_to_target": 4.1642,
+              "delta_e2000_centroid_to_target": 4.1162,
+              "target_hex": "#C95021",
+              "delta_e_impl": "colorcal.delta_e2000（单一真源）"
+            },
+            "semantic_lightness": {
+              "definition": "距离变换 d ＝ 到最近非印泥像素的距离（≈ 局部笔画半宽）；d_p90 归一",
+              "d_p50_px": 21.01,
+              "d_p90_px": 53.48,
+              "d_p50_over_W_d": 0.00991,
+              "d_p90_over_W_d": 0.025226,
+              "L_bins": [
+                {
+                  "d_px_range": [
+                    0.0,
+                    8.91
+                  ],
+                  "d_over_d_p90": [
+                    0.0,
+                    0.167
+                  ],
+                  "px": 248854,
+                  "L_mean": 67.886,
+                  "S_mean": 0.5615
+                },
+                {
+                  "d_px_range": [
+                    8.91,
+                    17.83
+                  ],
+                  "d_over_d_p90": [
+                    0.167,
+                    0.333
+                  ],
+                  "px": 256658,
+                  "L_mean": 55.426,
+                  "S_mean": 0.7568
+                },
+                {
+                  "d_px_range": [
+                    17.83,
+                    26.74
+                  ],
+                  "d_over_d_p90": [
+                    0.333,
+                    0.5
+                  ],
+                  "px": 211774,
+                  "L_mean": 55.381,
+                  "S_mean": 0.7631
+                },
+                {
+                  "d_px_range": [
+                    26.74,
+                    35.65
+                  ],
+                  "d_over_d_p90": [
+                    0.5,
+                    0.667
+                  ],
+                  "px": 160692,
+                  "L_mean": 55.201,
+                  "S_mean": 0.771
+                },
+                {
+                  "d_px_range": [
+                    35.65,
+                    44.57
+                  ],
+                  "d_over_d_p90": [
+                    0.667,
+                    0.833
+                  ],
+                  "px": 105511,
+                  "L_mean": 54.835,
+                  "S_mean": 0.7801
+                },
+                {
+                  "d_px_range": [
+                    44.57,
+                    53.48
+                  ],
+                  "d_over_d_p90": [
+                    0.833,
+                    1.0
+                  ],
+                  "px": 71676,
+                  "L_mean": 54.76,
+                  "S_mean": 0.7849
+                }
+              ],
+              "L_vs_dn_slope": -8.0434,
+              "L_wide_minus_thin": -13.191,
+              "L_p80dn_mean": 54.823,
+              "L_p20dn_mean": 68.014,
+              "sign_convention": "L* 越大＝越亮（越薄/越淡）；宽处浓 ⇒ L_wide − L_thin < 0"
+            },
+            "lstar": {
+              "mean": 57.891,
+              "std": 6.784,
+              "p10": 53.67,
+              "p50": 55.527,
+              "p90": 67.49,
+              "L_over_dn": "见 semantic_lightness"
+            },
+            "grain": {
+              "domain": "腐蚀 7×7 后的红墨区内部（避边）；高通高斯半径 5.914px",
+              "grain_blur_sigma_px": 5.914,
+              "px_eroded": 1069776,
+              "lum_highpass_sigma_2px": 6.7613,
+              "sat_highpass_sigma_2px": 0.04042,
+              "L_highpass_p90_abs": 14.9088,
+              "peak_wavelength_px": 113.204,
+              "peak_wavelength_over_W_d": 0.053398
+            },
+            "translucency": {
+              "definition": "掩膜内 V ≥ p90(V of 非印泥)=1.0 的像素占比（露白/半透）",
+              "share_light_inside": 0.00482,
+              "share_sat_lt_0.25_inside": 0.0,
+              "V_inside_p90": 0.9412,
+              "V_inside_p50": 0.8471
+            },
+            "matte": {
+              "definition": "哑光＝无高光/光泽；指标＝掩膜内亮斑（V > p99 of 非印泥）占比与最大 V",
+              "highlight_share_V_gt_paperp99": 0.0,
+              "V_max_inside": 1.0,
+              "specular_added_by_us": null
+            },
+            "edge": {
+              "method": "饱和度水平集 0.75→0.25 过渡带宽（px）",
+              "transition_width_px_median": 2.865,
+              "transition_width_px_mean": 3.048,
+              "transition_width_px_p90": 5.477,
+              "boundary_roughness_proxy": {
+                "definition": "周长²/(4π·面积)（等周比；〉1 越大越毛糙）与 周长/(2(w+h))",
+                "isoperimetric_ratio": 12.3231,
+                "perimeter_over_bbox_perimeter": 2.4105,
+                "perimeter_px": 8778.9
+              }
+            },
+            "halo": {
+              "method": "掩膜外 redness 均值 / 掩膜内 p75，首个 ≤10% 的距离（px）",
+              "ref_redness_p75_inside": 144.5,
+              "profile_d0_to_d24": [
+                0.2672,
+                0.1848,
+                0.12157,
+                0.06837,
+                0.03546,
+                0.01909,
+                0.0223,
+                0.02485,
+                0.02771,
+                0.03134,
+                0.0344,
+                0.03604,
+                0.03638,
+                0.03622,
+                0.03621,
+                0.03607,
+                0.03573,
+                0.03538,
+                0.0349,
+                0.03436,
+                0.03377,
+                0.03238,
+                0.0322,
+                0.03148,
+                0.03101
+              ],
+              "transition_width_px": 2.405,
+              "transition_width_over_W_d": 0.001134,
+              "transition_width_mm_equiv": 0.02545,
+              "outer_band_of_overlap_mm_equiv": null,
+              "outer_band_of_overlap_px": 40.0
+            }
+          },
+          "ink_ops": {
+            "smooth_level": 0.55,
+            "tier": "strict",
+            "ops": [],
+            "dpi": 2400,
+            "target_hex": "#C95021",
+            "chroma_strength": 1.0,
+            "chroma_impl": "colorcal.apply_foreground_chroma（V3）",
+            "fg_gamut_clip_rate": 0.000389,
+            "fg_chroma_reduced_rate": 1.0,
+            "fg_iou_raw": 0.976751,
+            "fg_mask_reverted_px": 27358,
+            "lstar_preservation": {
+              "definition": "本算子自身造成的 L* 逐像素变化（红墨区；不含全局色调算子）",
+              "L_mean_delta": 1.345418,
+              "L_mean_abs_delta": 1.837086,
+              "L_p90_abs_delta": 3.582044,
+              "L_max_abs_delta": 15.90344,
+              "L_std_before": 8.838,
+              "L_std_after": 7.6772,
+              "verdict": "L* 被有意调制（观感档）"
+            }
+          }
+        },
+        "C2_smoothstr": {
+          "label": "靶色＋平滑强",
+          "delta_e_to_target": {
+            "pixels": 297137,
+            "sampled": 297137,
+            "stride": 1,
+            "median": 6.3507,
+            "p90": 8.5956,
+            "mean": 6.4017,
+            "leq5_rate": 0.22473,
+            "leq3_rate": 0.00542
+          },
+          "lab": {
+            "L_mean": 56.26,
+            "L_std": 1.715,
+            "L_p10": 54.029,
+            "L_p50": 56.234,
+            "L_p90": 58.421,
+            "a_std": 2.047,
+            "b_std": 2.299,
+            "a_mean": 42.685,
+            "b_mean": 46.068
+          },
+          "features_vs_doubao": {
+            "label": "C2_smoothstr",
+            "size_px": [
+              1400,
+              1400
+            ],
+            "ink_px": 1172055,
+            "ink_ratio": 0.59799,
+            "components": 18,
+            "largest_component": {
+              "bbox_px": [
+                123,
+                428,
+                849,
+                972
+              ],
+              "area": 499032,
+              "fill_ratio": 0.6047,
+              "component_count_ge_1pct_main": 11
+            },
+            "ruler_W_d_px": 2120,
+            "mm_per_px_equiv": 0.01058333,
+            "color": {
+              "core_definition": "colorcal.ink_core_centroid（掩膜内 S ≥ p75）",
+              "core_px": 294137,
+              "median_rgb": [
+                216.0,
+                95.0,
+                47.0
+              ],
+              "centroid_rgb": [
+                215.859,
+                94.183,
+                47.009
+              ],
+              "median_hsv": [
+                17.0414,
+                0.7824,
+                0.8471
+              ],
+              "mask_median_rgb": [
+                218.0,
+                102.0,
+                58.0
+              ],
+              "sat_p50": 0.7352,
+              "sat_p90": 0.7844,
+              "sat_p10": 0.5129,
+              "delta_e2000_median_to_target": 5.1675,
+              "delta_e2000_centroid_to_target": 4.9968,
+              "target_hex": "#C95021",
+              "delta_e_impl": "colorcal.delta_e2000（单一真源）"
+            },
+            "semantic_lightness": {
+              "definition": "距离变换 d ＝ 到最近非印泥像素的距离（≈ 局部笔画半宽）；d_p90 归一",
+              "d_p50_px": 21.01,
+              "d_p90_px": 53.48,
+              "d_p50_over_W_d": 0.00991,
+              "d_p90_over_W_d": 0.025226,
+              "L_bins": [
+                {
+                  "d_px_range": [
+                    0.0,
+                    8.91
+                  ],
+                  "d_over_d_p90": [
+                    0.0,
+                    0.167
+                  ],
+                  "px": 247193,
+                  "L_mean": 68.893,
+                  "S_mean": 0.5065
+                },
+                {
+                  "d_px_range": [
+                    8.91,
+                    17.83
+                  ],
+                  "d_over_d_p90": [
+                    0.167,
+                    0.333
+                  ],
+                  "px": 254838,
+                  "L_mean": 57.976,
+                  "S_mean": 0.7126
+                },
+                {
+                  "d_px_range": [
+                    17.83,
+                    26.74
+                  ],
+                  "d_over_d_p90": [
+                    0.333,
+                    0.5
+                  ],
+                  "px": 211888,
+                  "L_mean": 57.022,
+                  "S_mean": 0.7314
+                },
+                {
+                  "d_px_range": [
+                    26.74,
+                    35.65
+                  ],
+                  "d_over_d_p90": [
+                    0.5,
+                    0.667
+                  ],
+                  "px": 162386,
+                  "L_mean": 56.226,
+                  "S_mean": 0.7487
+                },
+                {
+                  "d_px_range": [
+                    35.65,
+                    44.57
+                  ],
+                  "d_over_d_p90": [
+                    0.667,
+                    0.833
+                  ],
+                  "px": 107230,
+                  "L_mean": 55.464,
+                  "S_mean": 0.7662
+                },
+                {
+                  "d_px_range": [
+                    44.57,
+                    53.48
+                  ],
+                  "d_over_d_p90": [
+                    0.833,
+                    1.0
+                  ],
+                  "px": 72903,
+                  "L_mean": 55.012,
+                  "S_mean": 0.7785
+                }
+              ],
+              "L_vs_dn_slope": -9.356,
+              "L_wide_minus_thin": -14.002,
+              "L_p80dn_mean": 55.001,
+              "L_p20dn_mean": 69.002,
+              "sign_convention": "L* 越大＝越亮（越薄/越淡）；宽处浓 ⇒ L_wide − L_thin < 0"
+            },
+            "lstar": {
+              "mean": 59.143,
+              "std": 6.339,
+              "p10": 54.769,
+              "p50": 56.883,
+              "p90": 68.219,
+              "L_over_dn": "见 semantic_lightness"
+            },
+            "grain": {
+              "domain": "腐蚀 7×7 后的红墨区内部（避边）；高通高斯半径 5.914px",
+              "grain_blur_sigma_px": 5.914,
+              "px_eroded": 1073020,
+              "lum_highpass_sigma_2px": 5.6097,
+              "sat_highpass_sigma_2px": 0.0338,
+              "L_highpass_p90_abs": 12.6288,
+              "peak_wavelength_px": 113.204,
+              "peak_wavelength_over_W_d": 0.053398
+            },
+            "translucency": {
+              "definition": "掩膜内 V ≥ p90(V of 非印泥)=1.0 的像素占比（露白/半透）",
+              "share_light_inside": 0.00481,
+              "share_sat_lt_0.25_inside": 0.0,
+              "V_inside_p90": 0.902,
+              "V_inside_p50": 0.8549
+            },
+            "matte": {
+              "definition": "哑光＝无高光/光泽；指标＝掩膜内亮斑（V > p99 of 非印泥）占比与最大 V",
+              "highlight_share_V_gt_paperp99": 0.0,
+              "V_max_inside": 1.0,
+              "specular_added_by_us": null
+            },
+            "edge": {
+              "method": "饱和度水平集 0.75→0.25 过渡带宽（px）",
+              "transition_width_px_median": 3.694,
+              "transition_width_px_mean": 3.868,
+              "transition_width_px_p90": 6.685,
+              "boundary_roughness_proxy": {
+                "definition": "周长²/(4π·面积)（等周比；〉1 越大越毛糙）与 周长/(2(w+h))",
+                "isoperimetric_ratio": 11.8755,
+                "perimeter_over_bbox_perimeter": 2.3695,
+                "perimeter_px": 8629.7
+              }
+            },
+            "halo": {
+              "method": "掩膜外 redness 均值 / 掩膜内 p75，首个 ≤10% 的距离（px）",
+              "ref_redness_p75_inside": 142.5,
+              "profile_d0_to_d24": [
+                0.26725,
+                0.18629,
+                0.12179,
+                0.07018,
+                0.03716,
+                0.02012,
+                0.02317,
+                0.02545,
+                0.02848,
+                0.03172,
+                0.03483,
+                0.0367,
+                0.0373,
+                0.0371,
+                0.03709,
+                0.03682,
+                0.0365,
+                0.03609,
+                0.03557,
+                0.03501,
+                0.03437,
+                0.03295,
+                0.03279,
+                0.03205,
+                0.03154
+              ],
+              "transition_width_px": 2.422,
+              "transition_width_over_W_d": 0.001142,
+              "transition_width_mm_equiv": 0.02563,
+              "outer_band_of_overlap_mm_equiv": null,
+              "outer_band_of_overlap_px": 40.0
+            }
+          },
+          "ink_ops": {
+            "smooth_level": 1.0,
+            "tier": "strict",
+            "ops": [],
+            "dpi": 2400,
+            "target_hex": "#C95021",
+            "chroma_strength": 1.0,
+            "chroma_impl": "colorcal.apply_foreground_chroma（V3）",
+            "fg_gamut_clip_rate": 0.000389,
+            "fg_chroma_reduced_rate": 1.0,
+            "fg_iou_raw": 0.976751,
+            "fg_mask_reverted_px": 27358,
+            "lstar_preservation": {
+              "definition": "本算子自身造成的 L* 逐像素变化（红墨区；不含全局色调算子）",
+              "L_mean_delta": 2.501002,
+              "L_mean_abs_delta": 3.387534,
+              "L_p90_abs_delta": 6.60887,
+              "L_max_abs_delta": 28.107511,
+              "L_std_before": 8.838,
+              "L_std_after": 6.9797,
+              "verdict": "L* 被有意调制（观感档）"
+            }
+          }
+        },
+        "C2_semantic": {
+          "label": "＋语义浓淡（宽处浓/细处淡）",
+          "delta_e_to_target": {
+            "pixels": 297137,
+            "sampled": 297137,
+            "stride": 1,
+            "median": 5.1128,
+            "p90": 7.1219,
+            "mean": 5.3305,
+            "leq5_rate": 0.46791,
+            "leq3_rate": 0.04907
+          },
+          "lab": {
+            "L_mean": 55.142,
+            "L_std": 2.013,
+            "L_p10": 53.283,
+            "L_p50": 54.925,
+            "L_p90": 56.909,
+            "a_std": 2.451,
+            "b_std": 2.684,
+            "a_mean": 43.239,
+            "b_mean": 46.748
+          },
+          "features_vs_doubao": {
+            "label": "C2_semantic",
+            "size_px": [
+              1400,
+              1400
+            ],
+            "ink_px": 1169966,
+            "ink_ratio": 0.59692,
+            "components": 12,
+            "largest_component": {
+              "bbox_px": [
+                123,
+                428,
+                849,
+                972
+              ],
+              "area": 497677,
+              "fill_ratio": 0.6031,
+              "component_count_ge_1pct_main": 11
+            },
+            "ruler_W_d_px": 2120,
+            "mm_per_px_equiv": 0.01058333,
+            "color": {
+              "core_definition": "colorcal.ink_core_centroid（掩膜内 S ≥ p75）",
+              "core_px": 294043,
+              "median_rgb": [
+                214.0,
+                92.0,
+                45.0
+              ],
+              "centroid_rgb": [
+                214.066,
+                92.132,
+                44.833
+              ],
+              "median_hsv": [
+                16.6864,
+                0.7897,
+                0.8392
+              ],
+              "mask_median_rgb": [
+                216.0,
+                98.0,
+                53.0
+              ],
+              "sat_p50": 0.7535,
+              "sat_p90": 0.7915,
+              "sat_p10": 0.4269,
+              "delta_e2000_median_to_target": 4.3118,
+              "delta_e2000_centroid_to_target": 4.3427,
+              "target_hex": "#C95021",
+              "delta_e_impl": "colorcal.delta_e2000（单一真源）"
+            },
+            "semantic_lightness": {
+              "definition": "距离变换 d ＝ 到最近非印泥像素的距离（≈ 局部笔画半宽）；d_p90 归一",
+              "d_p50_px": 21.01,
+              "d_p90_px": 53.48,
+              "d_p50_over_W_d": 0.00991,
+              "d_p90_over_W_d": 0.025226,
+              "L_bins": [
+                {
+                  "d_px_range": [
+                    0.0,
+                    8.91
+                  ],
+                  "d_over_d_p90": [
+                    0.0,
+                    0.167
+                  ],
+                  "px": 248854,
+                  "L_mean": 74.991,
+                  "S_mean": 0.4369
+                },
+                {
+                  "d_px_range": [
+                    8.91,
+                    17.83
+                  ],
+                  "d_over_d_p90": [
+                    0.167,
+                    0.333
+                  ],
+                  "px": 256658,
+                  "L_mean": 57.534,
+                  "S_mean": 0.7073
+                },
+                {
+                  "d_px_range": [
+                    17.83,
+                    26.74
+                  ],
+                  "d_over_d_p90": [
+                    0.333,
+                    0.5
+                  ],
+                  "px": 211774,
+                  "L_mean": 55.496,
+                  "S_mean": 0.755
+                },
+                {
+                  "d_px_range": [
+                    26.74,
+                    35.65
+                  ],
+                  "d_over_d_p90": [
+                    0.5,
+                    0.667
+                  ],
+                  "px": 160692,
+                  "L_mean": 55.208,
+                  "S_mean": 0.7676
+                },
+                {
+                  "d_px_range": [
+                    35.65,
+                    44.57
+                  ],
+                  "d_over_d_p90": [
+                    0.667,
+                    0.833
+                  ],
+                  "px": 105511,
+                  "L_mean": 54.829,
+                  "S_mean": 0.779
+                },
+                {
+                  "d_px_range": [
+                    44.57,
+                    53.48
+                  ],
+                  "d_over_d_p90": [
+                    0.833,
+                    1.0
+                  ],
+                  "px": 71676,
+                  "L_mean": 54.636,
+                  "S_mean": 0.7871
+                }
+              ],
+              "L_vs_dn_slope": -12.8849,
+              "L_wide_minus_thin": -20.403,
+              "L_p80dn_mean": 54.729,
+              "L_p20dn_mean": 75.132,
+              "sign_convention": "L* 越大＝越亮（越薄/越淡）；宽处浓 ⇒ L_wide − L_thin < 0"
+            },
+            "lstar": {
+              "mean": 59.868,
+              "std": 8.841,
+              "p10": 53.838,
+              "p50": 55.786,
+              "p90": 76.738,
+              "L_over_dn": "见 semantic_lightness"
+            },
+            "grain": {
+              "domain": "腐蚀 7×7 后的红墨区内部（避边）；高通高斯半径 5.914px",
+              "grain_blur_sigma_px": 5.914,
+              "px_eroded": 1069776,
+              "lum_highpass_sigma_2px": 6.0548,
+              "sat_highpass_sigma_2px": 0.02938,
+              "L_highpass_p90_abs": 12.1636,
+              "peak_wavelength_px": 113.204,
+              "peak_wavelength_over_W_d": 0.053398
+            },
+            "translucency": {
+              "definition": "掩膜内 V ≥ p90(V of 非印泥)=1.0 的像素占比（露白/半透）",
+              "share_light_inside": 0.04202,
+              "share_sat_lt_0.25_inside": 0.0,
+              "V_inside_p90": 0.9647,
+              "V_inside_p50": 0.8471
+            },
+            "matte": {
+              "definition": "哑光＝无高光/光泽；指标＝掩膜内亮斑（V > p99 of 非印泥）占比与最大 V",
+              "highlight_share_V_gt_paperp99": 0.0,
+              "V_max_inside": 1.0,
+              "specular_added_by_us": null
+            },
+            "edge": {
+              "method": "饱和度水平集 0.75→0.25 过渡带宽（px）",
+              "transition_width_px_median": 4.775,
+              "transition_width_px_mean": 4.934,
+              "transition_width_px_p90": 8.595,
+              "boundary_roughness_proxy": {
+                "definition": "周长²/(4π·面积)（等周比；〉1 越大越毛糙）与 周长/(2(w+h))",
+                "isoperimetric_ratio": 12.3231,
+                "perimeter_over_bbox_perimeter": 2.4105,
+                "perimeter_px": 8778.9
+              }
+            },
+            "halo": {
+              "method": "掩膜外 redness 均值 / 掩膜内 p75，首个 ≤10% 的距离（px）",
+              "ref_redness_p75_inside": 143.5,
+              "profile_d0_to_d24": [
+                0.26907,
+                0.18609,
+                0.12241,
+                0.06884,
+                0.03571,
+                0.01922,
+                0.02246,
+                0.02503,
+                0.02791,
+                0.03156,
+                0.03464,
+                0.03629,
+                0.03664,
+                0.03648,
+                0.03646,
+                0.03632,
+                0.03598,
+                0.03563,
+                0.03514,
+                0.0346,
+                0.034,
+                0.0326,
+                0.03243,
+                0.0317,
+                0.03122
+              ],
+              "transition_width_px": 2.418,
+              "transition_width_over_W_d": 0.001141,
+              "transition_width_mm_equiv": 0.02559,
+              "outer_band_of_overlap_mm_equiv": null,
+              "outer_band_of_overlap_px": 40.0
+            }
+          },
+          "ink_ops": {
+            "smooth_level": 0.55,
+            "tier": "aesthetic",
+            "ops": [
+              "semantic"
+            ],
+            "dpi": 2400,
+            "target_hex": "#C95021",
+            "chroma_strength": 1.0,
+            "chroma_impl": "colorcal.apply_foreground_chroma（V3）",
+            "fg_gamut_clip_rate": 0.000389,
+            "fg_chroma_reduced_rate": 1.0,
+            "fg_iou_raw": 0.976751,
+            "fg_mask_reverted_px": 27358,
+            "semantic": {
+              "L_curve_dn": [
+                11.492,
+                0.844,
+                0.0,
+                0.004,
+                0.027,
+                -0.146
+              ],
+              "dL_wide_minus_thin_target": -9.989,
+              "chroma_scale_curve": [
+                0.6632,
+                0.9625,
+                0.9876,
+                0.9936,
+                0.9971,
+                1.0029
+              ],
+              "curve_source": "豆包参照图#2（doubao-ink-reference-features.json）",
+              "translucency_share_target": 0.01559,
+              "L_star_allowed_to_change": true
+            },
+            "mask_guard_dropped_and_reverted_px": 61978,
+            "lstar_preservation": {
+              "definition": "本算子自身造成的 L* 逐像素变化（红墨区；不含全局色调算子）",
+              "L_mean_delta": 3.311084,
+              "L_mean_abs_delta": 3.707243,
+              "L_p90_abs_delta": 10.517369,
+              "L_max_abs_delta": 19.491172,
+              "L_std_before": 8.838,
+              "L_std_after": 9.466,
+              "verdict": "L* 被有意调制（观感档）"
+            }
+          }
+        },
+        "C2_semgrain": {
+          "label": "＋语义浓淡＋颗粒",
+          "delta_e_to_target": {
+            "pixels": 297137,
+            "sampled": 297137,
+            "stride": 1,
+            "median": 5.1221,
+            "p90": 7.9833,
+            "mean": 5.318,
+            "leq5_rate": 0.47801,
+            "leq3_rate": 0.15177
+          },
+          "lab": {
+            "L_mean": 55.136,
+            "L_std": 2.509,
+            "L_p10": 52.276,
+            "L_p50": 54.925,
+            "L_p90": 57.919,
+            "a_std": 2.469,
+            "b_std": 2.704,
+            "a_mean": 43.24,
+            "b_mean": 46.747
+          },
+          "features_vs_doubao": {
+            "label": "C2_semgrain",
+            "size_px": [
+              1400,
+              1400
+            ],
+            "ink_px": 1169967,
+            "ink_ratio": 0.59692,
+            "components": 12,
+            "largest_component": {
+              "bbox_px": [
+                123,
+                428,
+                849,
+                972
+              ],
+              "area": 497677,
+              "fill_ratio": 0.6031,
+              "component_count_ge_1pct_main": 11
+            },
+            "ruler_W_d_px": 2120,
+            "mm_per_px_equiv": 0.01058333,
+            "color": {
+              "core_definition": "colorcal.ink_core_centroid（掩膜内 S ≥ p75）",
+              "core_px": 294027,
+              "median_rgb": [
+                211.0,
+                91.0,
+                44.0
+              ],
+              "centroid_rgb": [
+                211.382,
+                90.191,
+                43.18
+              ],
+              "median_hsv": [
+                16.8862,
+                0.7915,
+                0.8275
+              ],
+              "mask_median_rgb": [
+                217.0,
+                100.0,
+                54.0
+              ],
+              "sat_p50": 0.7512,
+              "sat_p90": 0.7972,
+              "sat_p10": 0.4269,
+              "delta_e2000_median_to_target": 3.679,
+              "delta_e2000_centroid_to_target": 3.5747,
+              "target_hex": "#C95021",
+              "delta_e_impl": "colorcal.delta_e2000（单一真源）"
+            },
+            "semantic_lightness": {
+              "definition": "距离变换 d ＝ 到最近非印泥像素的距离（≈ 局部笔画半宽）；d_p90 归一",
+              "d_p50_px": 21.01,
+              "d_p90_px": 53.48,
+              "d_p50_over_W_d": 0.00991,
+              "d_p90_over_W_d": 0.025226,
+              "L_bins": [
+                {
+                  "d_px_range": [
+                    0.0,
+                    8.91
+                  ],
+                  "d_over_d_p90": [
+                    0.0,
+                    0.167
+                  ],
+                  "px": 248845,
+                  "L_mean": 74.862,
+                  "S_mean": 0.4373
+                },
+                {
+                  "d_px_range": [
+                    8.91,
+                    17.83
+                  ],
+                  "d_over_d_p90": [
+                    0.167,
+                    0.333
+                  ],
+                  "px": 256660,
+                  "L_mean": 57.533,
+                  "S_mean": 0.7076
+                },
+                {
+                  "d_px_range": [
+                    17.83,
+                    26.74
+                  ],
+                  "d_over_d_p90": [
+                    0.333,
+                    0.5
+                  ],
+                  "px": 211776,
+                  "L_mean": 55.498,
+                  "S_mean": 0.7552
+                },
+                {
+                  "d_px_range": [
+                    26.74,
+                    35.65
+                  ],
+                  "d_over_d_p90": [
+                    0.5,
+                    0.667
+                  ],
+                  "px": 160692,
+                  "L_mean": 55.209,
+                  "S_mean": 0.7679
+                },
+                {
+                  "d_px_range": [
+                    35.65,
+                    44.57
+                  ],
+                  "d_over_d_p90": [
+                    0.667,
+                    0.833
+                  ],
+                  "px": 105517,
+                  "L_mean": 54.826,
+                  "S_mean": 0.7794
+                },
+                {
+                  "d_px_range": [
+                    44.57,
+                    53.48
+                  ],
+                  "d_over_d_p90": [
+                    0.833,
+                    1.0
+                  ],
+                  "px": 71676,
+                  "L_mean": 54.649,
+                  "S_mean": 0.7873
+                }
+              ],
+              "L_vs_dn_slope": -12.7935,
+              "L_wide_minus_thin": -20.267,
+              "L_p80dn_mean": 54.734,
+              "L_p20dn_mean": 75.001,
+              "sign_convention": "L* 越大＝越亮（越薄/越淡）；宽处浓 ⇒ L_wide − L_thin < 0"
+            },
+            "lstar": {
+              "mean": 59.842,
+              "std": 8.889,
+              "p10": 53.043,
+              "p50": 56.234,
+              "p90": 76.657,
+              "L_over_dn": "见 semantic_lightness"
+            },
+            "grain": {
+              "domain": "腐蚀 7×7 后的红墨区内部（避边）；高通高斯半径 5.914px",
+              "grain_blur_sigma_px": 5.914,
+              "px_eroded": 1069780,
+              "lum_highpass_sigma_2px": 7.2336,
+              "sat_highpass_sigma_2px": 0.03246,
+              "L_highpass_p90_abs": 13.2493,
+              "peak_wavelength_px": 113.204,
+              "peak_wavelength_over_W_d": 0.053398
+            },
+            "translucency": {
+              "definition": "掩膜内 V ≥ p90(V of 非印泥)=1.0 的像素占比（露白/半透）",
+              "share_light_inside": 0.03022,
+              "share_sat_lt_0.25_inside": 0.0,
+              "V_inside_p90": 0.9647,
+              "V_inside_p50": 0.851
+            },
+            "matte": {
+              "definition": "哑光＝无高光/光泽；指标＝掩膜内亮斑（V > p99 of 非印泥）占比与最大 V",
+              "highlight_share_V_gt_paperp99": 0.0,
+              "V_max_inside": 1.0,
+              "specular_added_by_us": null
+            },
+            "edge": {
+              "method": "饱和度水平集 0.75→0.25 过渡带宽（px）",
+              "transition_width_px_median": 4.775,
+              "transition_width_px_mean": 4.947,
+              "transition_width_px_p90": 8.595,
+              "boundary_roughness_proxy": {
+                "definition": "周长²/(4π·面积)（等周比；〉1 越大越毛糙）与 周长/(2(w+h))",
+                "isoperimetric_ratio": 12.3231,
+                "perimeter_over_bbox_perimeter": 2.4105,
+                "perimeter_px": 8778.9
+              }
+            },
+            "halo": {
+              "method": "掩膜外 redness 均值 / 掩膜内 p75，首个 ≤10% 的距离（px）",
+              "ref_redness_p75_inside": 143.5,
+              "profile_d0_to_d24": [
+                0.26906,
+                0.18609,
+                0.12241,
+                0.06884,
+                0.03571,
+                0.01922,
+                0.02246,
+                0.02503,
+                0.02791,
+                0.03156,
+                0.03464,
+                0.03629,
+                0.03664,
+                0.03648,
+                0.03646,
+                0.03632,
+                0.03598,
+                0.03563,
+                0.03514,
+                0.0346,
+                0.034,
+                0.0326,
+                0.03243,
+                0.0317,
+                0.03122
+              ],
+              "transition_width_px": 2.418,
+              "transition_width_over_W_d": 0.001141,
+              "transition_width_mm_equiv": 0.02559,
+              "outer_band_of_overlap_mm_equiv": null,
+              "outer_band_of_overlap_px": 40.0
+            }
+          },
+          "ink_ops": {
+            "smooth_level": 0.55,
+            "tier": "aesthetic",
+            "ops": [
+              "semantic",
+              "grain"
+            ],
+            "dpi": 2400,
+            "target_hex": "#C95021",
+            "chroma_strength": 1.0,
+            "chroma_impl": "colorcal.apply_foreground_chroma（V3）",
+            "fg_gamut_clip_rate": 0.000389,
+            "fg_chroma_reduced_rate": 1.0,
+            "fg_iou_raw": 0.976751,
+            "fg_mask_reverted_px": 27358,
+            "grain": {
+              "scale_mm": 0.0598,
+              "blur_sigma_mm": 0.06259,
+              "blur_sigma_px": 5.91,
+              "px_eroded": 1077870,
+              "doubao_target_sigma_0_255": 7.9735,
+              "current_sigma_after_smooth_0_255": 6.7712,
+              "sigma_added_0_255": 4.2104,
+              "expected_result_0_255": 7.9735,
+              "impl": "位置哈希噪声（mm 空间，零均值单位方差）×σ_add，加在 L* 域；掩膜守卫保证掉出 ink 掩膜的像素回退原值"
+            },
+            "semantic": {
+              "L_curve_dn": [
+                11.492,
+                0.844,
+                0.0,
+                0.004,
+                0.027,
+                -0.146
+              ],
+              "dL_wide_minus_thin_target": -9.989,
+              "chroma_scale_curve": [
+                0.6632,
+                0.9625,
+                0.9876,
+                0.9936,
+                0.9971,
+                1.0029
+              ],
+              "curve_source": "豆包参照图#2（doubao-ink-reference-features.json）",
+              "translucency_share_target": 0.01559,
+              "L_star_allowed_to_change": true
+            },
+            "mask_guard_dropped_and_reverted_px": 63708,
+            "lstar_preservation": {
+              "definition": "本算子自身造成的 L* 逐像素变化（红墨区；不含全局色调算子）",
+              "L_mean_delta": 3.285386,
+              "L_mean_abs_delta": 3.949615,
+              "L_p90_abs_delta": 10.450264,
+              "L_max_abs_delta": 21.707397,
+              "L_std_before": 8.838,
+              "L_std_after": 9.5113,
+              "verdict": "L* 被有意调制（观感档）"
+            }
+          }
+        },
+        "C2_aes": {
+          "label": "观感档全开（语义＋颗粒＋半透＋毛糙）",
+          "delta_e_to_target": {
+            "pixels": 297137,
+            "sampled": 297137,
+            "stride": 1,
+            "median": 5.1449,
+            "p90": 8.1735,
+            "mean": 5.4038,
+            "leq5_rate": 0.47309,
+            "leq3_rate": 0.1503
+          },
+          "lab": {
+            "L_mean": 55.222,
+            "L_std": 2.664,
+            "L_p10": 52.296,
+            "L_p50": 54.966,
+            "L_p90": 58.068,
+            "a_std": 2.73,
+            "b_std": 2.983,
+            "a_mean": 43.137,
+            "b_mean": 46.636
+          },
+          "features_vs_doubao": {
+            "label": "C2_aes",
+            "size_px": [
+              1400,
+              1400
+            ],
+            "ink_px": 1169967,
+            "ink_ratio": 0.59692,
+            "components": 12,
+            "largest_component": {
+              "bbox_px": [
+                123,
+                428,
+                849,
+                972
+              ],
+              "area": 497677,
+              "fill_ratio": 0.6031,
+              "component_count_ge_1pct_main": 11
+            },
+            "ruler_W_d_px": 2120,
+            "mm_per_px_equiv": 0.01058333,
+            "color": {
+              "core_definition": "colorcal.ink_core_centroid（掩膜内 S ≥ p75）",
+              "core_px": 293638,
+              "median_rgb": [
+                211.0,
+                91.0,
+                44.0
+              ],
+              "centroid_rgb": [
+                211.39,
+                90.191,
+                43.177
+              ],
+              "median_hsv": [
+                16.8862,
+                0.7915,
+                0.8275
+              ],
+              "mask_median_rgb": [
+                217.0,
+                100.0,
+                54.0
+              ],
+              "sat_p50": 0.7512,
+              "sat_p90": 0.7972,
+              "sat_p10": 0.4303,
+              "delta_e2000_median_to_target": 3.679,
+              "delta_e2000_centroid_to_target": 3.5758,
+              "target_hex": "#C95021",
+              "delta_e_impl": "colorcal.delta_e2000（单一真源）"
+            },
+            "semantic_lightness": {
+              "definition": "距离变换 d ＝ 到最近非印泥像素的距离（≈ 局部笔画半宽）；d_p90 归一",
+              "d_p50_px": 21.01,
+              "d_p90_px": 53.48,
+              "d_p50_over_W_d": 0.00991,
+              "d_p90_over_W_d": 0.025226,
+              "L_bins": [
+                {
+                  "d_px_range": [
+                    0.0,
+                    8.91
+                  ],
+                  "d_over_d_p90": [
+                    0.0,
+                    0.167
+                  ],
+                  "px": 248845,
+                  "L_mean": 74.625,
+                  "S_mean": 0.4417
+                },
+                {
+                  "d_px_range": [
+                    8.91,
+                    17.83
+                  ],
+                  "d_over_d_p90": [
+                    0.167,
+                    0.333
+                  ],
+                  "px": 256660,
+                  "L_mean": 57.893,
+                  "S_mean": 0.7005
+                },
+                {
+                  "d_px_range": [
+                    17.83,
+                    26.74
+                  ],
+                  "d_over_d_p90": [
+                    0.333,
+                    0.5
+                  ],
+                  "px": 211776,
+                  "L_mean": 55.534,
+                  "S_mean": 0.7546
+                },
+                {
+                  "d_px_range": [
+                    26.74,
+                    35.65
+                  ],
+                  "d_over_d_p90": [
+                    0.5,
+                    0.667
+                  ],
+                  "px": 160692,
+                  "L_mean": 55.21,
+                  "S_mean": 0.7679
+                },
+                {
+                  "d_px_range": [
+                    35.65,
+                    44.57
+                  ],
+                  "d_over_d_p90": [
+                    0.667,
+                    0.833
+                  ],
+                  "px": 105517,
+                  "L_mean": 54.819,
+                  "S_mean": 0.7794
+                },
+                {
+                  "d_px_range": [
+                    44.57,
+                    53.48
+                  ],
+                  "d_over_d_p90": [
+                    0.833,
+                    1.0
+                  ],
+                  "px": 71676,
+                  "L_mean": 54.656,
+                  "S_mean": 0.7871
+                }
+              ],
+              "L_vs_dn_slope": -12.7893,
+              "L_wide_minus_thin": -20.024,
+              "L_p80dn_mean": 54.737,
+              "L_p20dn_mean": 74.76,
+              "sign_convention": "L* 越大＝越亮（越薄/越淡）；宽处浓 ⇒ L_wide − L_thin < 0"
+            },
+            "lstar": {
+              "mean": 59.877,
+              "std": 8.863,
+              "p10": 53.052,
+              "p50": 56.273,
+              "p90": 76.406,
+              "L_over_dn": "见 semantic_lightness"
+            },
+            "grain": {
+              "domain": "腐蚀 7×7 后的红墨区内部（避边）；高通高斯半径 5.914px",
+              "grain_blur_sigma_px": 5.914,
+              "px_eroded": 1069780,
+              "lum_highpass_sigma_2px": 7.9013,
+              "sat_highpass_sigma_2px": 0.03885,
+              "L_highpass_p90_abs": 14.3051,
+              "peak_wavelength_px": 113.204,
+              "peak_wavelength_over_W_d": 0.053398
+            },
+            "translucency": {
+              "definition": "掩膜内 V ≥ p90(V of 非印泥)=1.0 的像素占比（露白/半透）",
+              "share_light_inside": 0.02975,
+              "share_sat_lt_0.25_inside": 0.0,
+              "V_inside_p90": 0.9647,
+              "V_inside_p50": 0.851
+            },
+            "matte": {
+              "definition": "哑光＝无高光/光泽；指标＝掩膜内亮斑（V > p99 of 非印泥）占比与最大 V",
+              "highlight_share_V_gt_paperp99": 0.0,
+              "V_max_inside": 1.0,
+              "specular_added_by_us": null
+            },
+            "edge": {
+              "method": "饱和度水平集 0.75→0.25 过渡带宽（px）",
+              "transition_width_px_median": 4.649,
+              "transition_width_px_mean": 4.661,
+              "transition_width_px_p90": 8.342,
+              "boundary_roughness_proxy": {
+                "definition": "周长²/(4π·面积)（等周比；〉1 越大越毛糙）与 周长/(2(w+h))",
+                "isoperimetric_ratio": 12.3231,
+                "perimeter_over_bbox_perimeter": 2.4105,
+                "perimeter_px": 8778.9
+              }
+            },
+            "halo": {
+              "method": "掩膜外 redness 均值 / 掩膜内 p75，首个 ≤10% 的距离（px）",
+              "ref_redness_p75_inside": 143.5,
+              "profile_d0_to_d24": [
+                0.26906,
+                0.18609,
+                0.12241,
+                0.06884,
+                0.03571,
+                0.01922,
+                0.02246,
+                0.02503,
+                0.02791,
+                0.03156,
+                0.03464,
+                0.03629,
+                0.03664,
+                0.03648,
+                0.03646,
+                0.03632,
+                0.03598,
+                0.03563,
+                0.03514,
+                0.0346,
+                0.034,
+                0.0326,
+                0.03243,
+                0.0317,
+                0.03122
+              ],
+              "transition_width_px": 2.418,
+              "transition_width_over_W_d": 0.001141,
+              "transition_width_mm_equiv": 0.02559,
+              "outer_band_of_overlap_mm_equiv": null,
+              "outer_band_of_overlap_px": 40.0
+            }
+          },
+          "ink_ops": {
+            "smooth_level": 0.55,
+            "tier": "aesthetic",
+            "ops": [
+              "semantic",
+              "grain",
+              "roughness"
+            ],
+            "dpi": 2400,
+            "target_hex": "#C95021",
+            "chroma_strength": 1.0,
+            "chroma_impl": "colorcal.apply_foreground_chroma（V3）",
+            "fg_gamut_clip_rate": 0.000389,
+            "fg_chroma_reduced_rate": 1.0,
+            "fg_iou_raw": 0.976751,
+            "fg_mask_reverted_px": 27358,
+            "roughness": {
+              "scale_mm": 0.0598,
+              "jitter_amplitude_mm": 0.1196,
+              "amp_in_dn_units": 0.21908,
+              "mask_moved": false,
+              "impl": "位置哈希噪声扰动距离场 ⇒ L* 等值线毛糙；**掩膜逐像素不动**"
+            },
+            "grain": {
+              "scale_mm": 0.0598,
+              "blur_sigma_mm": 0.06259,
+              "blur_sigma_px": 5.91,
+              "px_eroded": 1077870,
+              "doubao_target_sigma_0_255": 7.9735,
+              "current_sigma_after_smooth_0_255": 6.7712,
+              "sigma_added_0_255": 4.2104,
+              "expected_result_0_255": 7.9735,
+              "impl": "位置哈希噪声（mm 空间，零均值单位方差）×σ_add，加在 L* 域；掩膜守卫保证掉出 ink 掩膜的像素回退原值"
+            },
+            "semantic": {
+              "L_curve_dn": [
+                11.492,
+                0.844,
+                0.0,
+                0.004,
+                0.027,
+                -0.146
+              ],
+              "dL_wide_minus_thin_target": -9.989,
+              "chroma_scale_curve": [
+                0.6632,
+                0.9625,
+                0.9876,
+                0.9936,
+                0.9971,
+                1.0029
+              ],
+              "curve_source": "豆包参照图#2（doubao-ink-reference-features.json）",
+              "translucency_share_target": 0.01559,
+              "L_star_allowed_to_change": true
+            },
+            "mask_guard_dropped_and_reverted_px": 61666,
+            "lstar_preservation": {
+              "definition": "本算子自身造成的 L* 逐像素变化（红墨区；不含全局色调算子）",
+              "L_mean_delta": 3.320212,
+              "L_mean_abs_delta": 3.981168,
+              "L_p90_abs_delta": 10.640158,
+              "L_max_abs_delta": 21.24803,
+              "L_std_before": 8.838,
+              "L_std_after": 9.4866,
+              "verdict": "L* 被有意调制（观感档）"
+            }
+          }
+        }
+      },
+      "doubao_ink_reference": {
+        "label": "豆包参照图#2（只取印泥质感）",
+        "size_px": [
+          1280,
+          3215
+        ],
+        "ink_px": 696719,
+        "ink_ratio": 0.1693,
+        "components": 10,
+        "largest_component": {
+          "bbox_px": [
+            274,
+            609,
+            717,
+            1996
+          ],
+          "area": 568395,
+          "fill_ratio": 0.3972,
+          "component_count_ge_1pct_main": 7
+        },
+        "ruler_W_d_px": 717,
+        "mm_per_px_equiv": 0.03129289,
+        "color": {
+          "core_definition": "colorcal.ink_core_centroid（掩膜内 S ≥ p75）",
+          "core_px": 175896,
+          "median_rgb": [
+            203.0,
+            47.0,
+            29.0
+          ],
+          "centroid_rgb": [
+            202.537,
+            45.929,
+            28.114
+          ],
+          "median_hsv": [
+            6.2069,
+            0.8571,
+            0.7961
+          ],
+          "mask_median_rgb": [
+            212.0,
+            62.0,
+            43.0
+          ],
+          "sat_p50": 0.7972,
+          "sat_p90": 0.8627,
+          "sat_p10": 0.5982,
+          "delta_e2000_median_to_target": 7.7396,
+          "delta_e2000_centroid_to_target": 7.856,
+          "target_hex": "#C95021",
+          "delta_e_impl": "colorcal.delta_e2000（单一真源）"
+        },
+        "semantic_lightness": {
+          "definition": "距离变换 d ＝ 到最近非印泥像素的距离（≈ 局部笔画半宽）；d_p90 归一",
+          "d_p50_px": 12.415,
+          "d_p90_px": 27.386,
+          "d_p50_over_W_d": 0.017315,
+          "d_p90_over_W_d": 0.038195,
+          "L_bins": [
+            {
+              "d_px_range": [
+                0.0,
+                4.56
+              ],
+              "d_over_d_p90": [
+                0.0,
+                0.167
+              ],
+              "px": 120319,
+              "L_mean": 60.318,
+              "S_mean": 0.5409
+            },
+            {
+              "d_px_range": [
+                4.56,
+                9.13
+              ],
+              "d_over_d_p90": [
+                0.167,
+                0.333
+              ],
+              "px": 136287,
+              "L_mean": 49.67,
+              "S_mean": 0.7851
+            },
+            {
+              "d_px_range": [
+                9.13,
+                13.69
+              ],
+              "d_over_d_p90": [
+                0.333,
+                0.5
+              ],
+              "px": 126198,
+              "L_mean": 48.826,
+              "S_mean": 0.8055
+            },
+            {
+              "d_px_range": [
+                13.69,
+                18.26
+              ],
+              "d_over_d_p90": [
+                0.5,
+                0.667
+              ],
+              "px": 109361,
+              "L_mean": 48.83,
+              "S_mean": 0.8104
+            },
+            {
+              "d_px_range": [
+                18.26,
+                22.82
+              ],
+              "d_over_d_p90": [
+                0.667,
+                0.833
+              ],
+              "px": 80008,
+              "L_mean": 48.853,
+              "S_mean": 0.8133
+            },
+            {
+              "d_px_range": [
+                22.82,
+                27.39
+              ],
+              "d_over_d_p90": [
+                0.833,
+                1.0
+              ],
+              "px": 55081,
+              "L_mean": 48.68,
+              "S_mean": 0.818
+            }
+          ],
+          "L_vs_dn_slope": -7.7454,
+          "L_wide_minus_thin": -9.989,
+          "L_p80dn_mean": 48.622,
+          "L_p20dn_mean": 58.611,
+          "sign_convention": "L* 越大＝越亮（越薄/越淡）；宽处浓 ⇒ L_wide − L_thin < 0"
+        },
+        "lstar": {
+          "mean": 50.94,
+          "std": 7.827,
+          "p10": 44.47,
+          "p50": 49.071,
+          "p90": 58.356,
+          "L_over_dn": "见 semantic_lightness"
+        },
+        "grain": {
+          "domain": "腐蚀 7×7 后的红墨区内部（避边）",
+          "px_eroded": 589460,
+          "lum_highpass_sigma_2px": 7.9735,
+          "sat_highpass_sigma_2px": 0.03198,
+          "L_highpass_p90_abs": 12.9245,
+          "peak_wavelength_px": 113.216,
+          "peak_wavelength_over_W_d": 0.157902
+        },
+        "translucency": {
+          "definition": "掩膜内 V ≥ p90(V of 非印泥)=0.9843 的像素占比（露白/半透）",
+          "share_light_inside": 0.01559,
+          "share_sat_lt_0.25_inside": 0.0,
+          "V_inside_p90": 0.902,
+          "V_inside_p50": 0.8314
+        },
+        "matte": {
+          "definition": "哑光＝无高光/光泽；指标＝掩膜内亮斑（V > p99 of 非印泥）占比与最大 V",
+          "highlight_share_V_gt_paperp99": 0.0,
+          "V_max_inside": 1.0,
+          "specular_added_by_us": null
+        },
+        "edge": {
+          "method": "饱和度水平集 0.75→0.25 过渡带宽（px）",
+          "transition_width_px_median": 1.91,
+          "transition_width_px_mean": 2.166,
+          "transition_width_px_p90": 3.694,
+          "boundary_roughness_proxy": {
+            "definition": "周长²/(4π·面积)（等周比；〉1 越大越毛糙）与 周长/(2(w+h))",
+            "isoperimetric_ratio": 34.2307,
+            "perimeter_over_bbox_perimeter": 2.8818,
+            "perimeter_px": 15636.4
+          }
+        },
+        "halo": {
+          "method": "掩膜外 redness 均值 / 掩膜内 p75，首个 ≤10% 的距离（px）",
+          "ref_redness_p75_inside": 166.0,
+          "profile_d0_to_d24": [
+            0.25762,
+            0.16233,
+            0.10252,
+            0.06627,
+            0.0531,
+            0.04982,
+            0.0494,
+            0.04819,
+            0.04462,
+            0.04058,
+            0.03704,
+            0.03408,
+            0.03202,
+            0.02989,
+            0.02794,
+            0.02666,
+            0.02564,
+            0.02428,
+            0.02282,
+            0.02147,
+            0.02023,
+            0.01894,
+            0.01726,
+            0.01629,
+            0.01555
+          ],
+          "transition_width_px": 2.07,
+          "transition_width_over_W_d": 0.002887,
+          "transition_width_mm_equiv": 0.06478,
+          "outer_band_of_overlap_mm_equiv": null,
+          "outer_band_of_overlap_px": 21.0
+        },
+        "hard_limit": "生成式输出，已重绘印文（字形粘连/断裂/变形、笔画粗细不匀、边缘毛糙）⇒ 只取**印泥质感**（语义浓淡/颗粒/半透/边缘/晕染）；**严禁**对标字形与线条锐度（我们守白字/字形冻结）"
+      },
+      "elapsed_s": 45.0
+    },
+    "P29-C2R1": {
+      "window_px": [
+        1300,
+        1300
+      ],
+      "window_mm": 13.758,
+      "window_origin_px": [
+        12,
+        948
+      ],
+      "ink_readouts": {
+        "C_old": {
+          "label": "C旧（上轮 C，px 常量纹理＋向均色校准）",
+          "delta_e_to_target": {
+            "pixels": 238343,
+            "sampled": 238343,
+            "stride": 1,
+            "median": 10.7959,
+            "p90": 12.1724,
+            "mean": 10.9308,
+            "leq5_rate": 0.0,
+            "leq3_rate": 0.0
+          },
+          "lab": {
+            "L_mean": 53.913,
+            "L_std": 1.288,
+            "L_p10": 52.127,
+            "L_p50": 54.063,
+            "L_p90": 55.384,
+            "a_std": 2.822,
+            "b_std": 4.222,
+            "a_mean": 72.142,
+            "b_mean": 50.921
+          },
+          "features_vs_doubao": {
+            "label": "C_old",
+            "size_px": [
+              1124,
+              1124
+            ],
+            "ink_px": 939793,
+            "ink_ratio": 0.74387,
+            "components": 8,
+            "largest_component": {
+              "bbox_px": [
+                0,
+                0,
+                1124,
+                1124
+              ],
+              "area": 939758,
+              "fill_ratio": 0.7438,
+              "component_count_ge_1pct_main": 1
+            },
+            "ruler_W_d_px": 2120,
+            "mm_per_px_equiv": 0.01058333,
+            "color": {
+              "core_definition": "colorcal.ink_core_centroid（掩膜内 S ≥ p75）",
+              "core_px": 235221,
+              "median_rgb": [
+                249.0,
+                47.0,
+                45.0
+              ],
+              "centroid_rgb": [
+                247.339,
+                45.625,
+                43.468
+              ],
+              "median_hsv": [
+                0.5882,
+                0.8193,
+                0.9765
+              ],
+              "mask_median_rgb": [
+                250.0,
+                63.0,
+                60.0
+              ],
+              "sat_p50": 0.7631,
+              "sat_p90": 0.8313,
+              "sat_p10": 0.5159,
+              "delta_e2000_median_to_target": 11.1066,
+              "delta_e2000_centroid_to_target": 10.8301,
+              "target_hex": "#C95021",
+              "delta_e_impl": "colorcal.delta_e2000（单一真源）"
+            },
+            "semantic_lightness": {
+              "definition": "距离变换 d ＝ 到最近非印泥像素的距离（≈ 局部笔画半宽）；d_p90 归一",
+              "d_p50_px": 28.109,
+              "d_p90_px": 70.684,
+              "d_p50_over_W_d": 0.013259,
+              "d_p90_over_W_d": 0.033341,
+              "L_bins": [
+                {
+                  "d_px_range": [
+                    0.0,
+                    11.78
+                  ],
+                  "d_over_d_p90": [
+                    0.0,
+                    0.167
+                  ],
+                  "px": 189021,
+                  "L_mean": 67.866,
+                  "S_mean": 0.5173
+                },
+                {
+                  "d_px_range": [
+                    11.78,
+                    23.56
+                  ],
+                  "d_over_d_p90": [
+                    0.167,
+                    0.333
+                  ],
+                  "px": 204927,
+                  "L_mean": 55.646,
+                  "S_mean": 0.7567
+                },
+                {
+                  "d_px_range": [
+                    23.56,
+                    35.34
+                  ],
+                  "d_over_d_p90": [
+                    0.333,
+                    0.5
+                  ],
+                  "px": 184151,
+                  "L_mean": 54.903,
+                  "S_mean": 0.7964
+                },
+                {
+                  "d_px_range": [
+                    35.34,
+                    47.12
+                  ],
+                  "d_over_d_p90": [
+                    0.5,
+                    0.667
+                  ],
+                  "px": 127791,
+                  "L_mean": 55.504,
+                  "S_mean": 0.7911
+                },
+                {
+                  "d_px_range": [
+                    47.12,
+                    58.9
+                  ],
+                  "d_over_d_p90": [
+                    0.667,
+                    0.833
+                  ],
+                  "px": 82988,
+                  "L_mean": 55.838,
+                  "S_mean": 0.7812
+                },
+                {
+                  "d_px_range": [
+                    58.9,
+                    70.68
+                  ],
+                  "d_over_d_p90": [
+                    0.833,
+                    1.0
+                  ],
+                  "px": 56953,
+                  "L_mean": 56.442,
+                  "S_mean": 0.768
+                }
+              ],
+              "L_vs_dn_slope": -5.3435,
+              "L_wide_minus_thin": -10.534,
+              "L_p80dn_mean": 57.362,
+              "L_p20dn_mean": 67.896,
+              "sign_convention": "L* 越大＝越亮（越薄/越淡）；宽处浓 ⇒ L_wide − L_thin < 0"
+            },
+            "lstar": {
+              "mean": 58.288,
+              "std": 6.653,
+              "p10": 53.454,
+              "p50": 56.025,
+              "p90": 67.693,
+              "L_over_dn": "见 semantic_lightness"
+            },
+            "grain": {
+              "domain": "腐蚀 7×7 后的红墨区内部（避边）；高通高斯半径 5.914px",
+              "grain_blur_sigma_px": 5.914,
+              "px_eroded": 882202,
+              "lum_highpass_sigma_2px": 4.4956,
+              "sat_highpass_sigma_2px": 0.02347,
+              "L_highpass_p90_abs": 8.9196,
+              "peak_wavelength_px": 113.137,
+              "peak_wavelength_over_W_d": 0.053367
+            },
+            "translucency": {
+              "definition": "掩膜内 V ≥ p90(V of 非印泥)=1.0 的像素占比（露白/半透）",
+              "share_light_inside": 0.1278,
+              "share_sat_lt_0.25_inside": 0.0,
+              "V_inside_p90": 1.0,
+              "V_inside_p50": 0.9804
+            },
+            "matte": {
+              "definition": "哑光＝无高光/光泽；指标＝掩膜内亮斑（V > p99 of 非印泥）占比与最大 V",
+              "highlight_share_V_gt_paperp99": 0.0,
+              "V_max_inside": 1.0,
+              "specular_added_by_us": null
+            },
+            "edge": {
+              "method": "饱和度水平集 0.75→0.25 过渡带宽（px）",
+              "transition_width_px_median": 4.775,
+              "transition_width_px_mean": 5.309,
+              "transition_width_px_p90": 9.55,
+              "boundary_roughness_proxy": {
+                "definition": "周长²/(4π·面积)（等周比；〉1 越大越毛糙）与 周长/(2(w+h))",
+                "isoperimetric_ratio": 2.0316,
+                "perimeter_over_bbox_perimeter": 1.0894,
+                "perimeter_px": 4898.1
+              }
+            },
+            "halo": {
+              "method": "掩膜外 redness 均值 / 掩膜内 p75，首个 ≤10% 的距离（px）",
+              "ref_redness_p75_inside": 194.5,
+              "profile_d0_to_d24": [
+                0.25335,
+                0.19667,
+                0.14657,
+                0.10318,
+                0.07466,
+                0.05283,
+                0.03895,
+                0.03138,
+                0.0278,
+                0.02513,
+                0.02242,
+                0.02032,
+                0.01903,
+                0.0178,
+                0.01647,
+                0.01526,
+                0.01405,
+                0.01282,
+                0.01173,
+                0.0107,
+                0.00989,
+                0.00894,
+                0.00817,
+                0.00743,
+                0.00672
+              ],
+              "transition_width_px": 3.112,
+              "transition_width_over_W_d": 0.001468,
+              "transition_width_mm_equiv": 0.03294,
+              "outer_band_of_overlap_mm_equiv": null,
+              "outer_band_of_overlap_px": 12.0
+            }
+          },
+          "ink_ops": {
+            "guided": {
+              "radius_px600": 8,
+              "eps": 1500.0,
+              "guide": "luminance",
+              "order": "after_calib"
+            },
+            "calib": {
+              "strength": 0.35,
+              "chroma_mean": [
+                0.657657,
+                0.175009
+              ],
+              "skipped_invalid_domain_px": 357493,
+              "impl": "render_page_2400.color_uniformity（单一真源复用）"
+            },
+            "changed_px_vs_pre": 946465
+          }
+        },
+        "C2_strict": {
+          "label": "严格档（靶色 #C95021，保 L*，平滑 0）",
+          "delta_e_to_target": {
+            "pixels": 238343,
+            "sampled": 238343,
+            "stride": 1,
+            "median": 4.1261,
+            "p90": 5.2714,
+            "mean": 4.0025,
+            "leq5_rate": 0.83016,
+            "leq3_rate": 0.18047
+          },
+          "lab": {
+            "L_mean": 53.831,
+            "L_std": 1.381,
+            "L_p10": 52.081,
+            "L_p50": 53.989,
+            "L_p90": 55.188,
+            "a_std": 0.174,
+            "b_std": 0.15,
+            "a_mean": 45.921,
+            "b_mean": 49.706
+          },
+          "features_vs_doubao": {
+            "label": "C2_strict",
+            "size_px": [
+              1124,
+              1124
+            ],
+            "ink_px": 938452,
+            "ink_ratio": 0.74281,
+            "components": 2,
+            "largest_component": {
+              "bbox_px": [
+                0,
+                0,
+                1124,
+                1124
+              ],
+              "area": 938447,
+              "fill_ratio": 0.7428,
+              "component_count_ge_1pct_main": 1
+            },
+            "ruler_W_d_px": 2120,
+            "mm_per_px_equiv": 0.01058333,
+            "color": {
+              "core_definition": "colorcal.ink_core_centroid（掩膜内 S ≥ p75）",
+              "core_px": 236794,
+              "median_rgb": [
+                212.0,
+                89.0,
+                42.0
+              ],
+              "centroid_rgb": [
+                210.665,
+                88.088,
+                40.509
+              ],
+              "median_hsv": [
+                16.5882,
+                0.8019,
+                0.8314
+              ],
+              "mask_median_rgb": [
+                219.0,
+                95.0,
+                47.0
+              ],
+              "sat_p50": 0.7854,
+              "sat_p90": 0.8066,
+              "sat_p10": 0.6941,
+              "delta_e2000_median_to_target": 3.447,
+              "delta_e2000_centroid_to_target": 3.0612,
+              "target_hex": "#C95021",
+              "delta_e_impl": "colorcal.delta_e2000（单一真源）"
+            },
+            "semantic_lightness": {
+              "definition": "距离变换 d ＝ 到最近非印泥像素的距离（≈ 局部笔画半宽）；d_p90 归一",
+              "d_p50_px": 27.063,
+              "d_p90_px": 69.834,
+              "d_p50_over_W_d": 0.012766,
+              "d_p90_over_W_d": 0.032941,
+              "L_bins": [
+                {
+                  "d_px_range": [
+                    0.0,
+                    11.64
+                  ],
+                  "d_over_d_p90": [
+                    0.0,
+                    0.167
+                  ],
+                  "px": 197126,
+                  "L_mean": 67.041,
+                  "S_mean": 0.6275
+                },
+                {
+                  "d_px_range": [
+                    11.64,
+                    23.28
+                  ],
+                  "d_over_d_p90": [
+                    0.167,
+                    0.333
+                  ],
+                  "px": 206955,
+                  "L_mean": 54.135,
+                  "S_mean": 0.7972
+                },
+                {
+                  "d_px_range": [
+                    23.28,
+                    34.92
+                  ],
+                  "d_over_d_p90": [
+                    0.333,
+                    0.5
+                  ],
+                  "px": 180491,
+                  "L_mean": 54.855,
+                  "S_mean": 0.7907
+                },
+                {
+                  "d_px_range": [
+                    34.92,
+                    46.56
+                  ],
+                  "d_over_d_p90": [
+                    0.5,
+                    0.667
+                  ],
+                  "px": 125074,
+                  "L_mean": 55.44,
+                  "S_mean": 0.7851
+                },
+                {
+                  "d_px_range": [
+                    46.56,
+                    58.19
+                  ],
+                  "d_over_d_p90": [
+                    0.667,
+                    0.833
+                  ],
+                  "px": 79603,
+                  "L_mean": 55.636,
+                  "S_mean": 0.7839
+                },
+                {
+                  "d_px_range": [
+                    58.19,
+                    69.83
+                  ],
+                  "d_over_d_p90": [
+                    0.833,
+                    1.0
+                  ],
+                  "px": 55514,
+                  "L_mean": 55.93,
+                  "S_mean": 0.7812
+                }
+              ],
+              "L_vs_dn_slope": -5.6981,
+              "L_wide_minus_thin": -11.222,
+              "L_p80dn_mean": 56.36,
+              "L_p20dn_mean": 67.582,
+              "sign_convention": "L* 越大＝越亮（越薄/越淡）；宽处浓 ⇒ L_wide − L_thin < 0"
+            },
+            "lstar": {
+              "mean": 57.67,
+              "std": 7.152,
+              "p10": 52.941,
+              "p50": 55.537,
+              "p90": 67.263,
+              "L_over_dn": "见 semantic_lightness"
+            },
+            "grain": {
+              "domain": "腐蚀 7×7 后的红墨区内部（避边）；高通高斯半径 5.914px",
+              "grain_blur_sigma_px": 5.914,
+              "px_eroded": 878401,
+              "lum_highpass_sigma_2px": 6.1447,
+              "sat_highpass_sigma_2px": 0.03905,
+              "L_highpass_p90_abs": 12.2019,
+              "peak_wavelength_px": 113.137,
+              "peak_wavelength_over_W_d": 0.053367
+            },
+            "translucency": {
+              "definition": "掩膜内 V ≥ p90(V of 非印泥)=1.0 的像素占比（露白/半透）",
+              "share_light_inside": 0.0983,
+              "share_sat_lt_0.25_inside": 0.0,
+              "V_inside_p90": 0.9961,
+              "V_inside_p50": 0.8588
+            },
+            "matte": {
+              "definition": "哑光＝无高光/光泽；指标＝掩膜内亮斑（V > p99 of 非印泥）占比与最大 V",
+              "highlight_share_V_gt_paperp99": 0.0,
+              "V_max_inside": 1.0,
+              "specular_added_by_us": null
+            },
+            "edge": {
+              "method": "饱和度水平集 0.75→0.25 过渡带宽（px）",
+              "transition_width_px_median": 2.865,
+              "transition_width_px_mean": 3.132,
+              "transition_width_px_p90": 5.604,
+              "boundary_roughness_proxy": {
+                "definition": "周长²/(4π·面积)（等周比；〉1 越大越毛糙）与 周长/(2(w+h))",
+                "isoperimetric_ratio": 2.0603,
+                "perimeter_over_bbox_perimeter": 1.0963,
+                "perimeter_px": 4929.2
+              }
+            },
+            "halo": {
+              "method": "掩膜外 redness 均值 / 掩膜内 p75，首个 ≤10% 的距离（px）",
+              "ref_redness_p75_inside": 148.5,
+              "profile_d0_to_d24": [
+                0.27894,
+                0.21195,
+                0.1557,
+                0.10377,
+                0.06786,
+                0.04138,
+                0.02715,
+                0.02086,
+                0.02002,
+                0.02061,
+                0.02252,
+                0.02391,
+                0.0255,
+                0.02668,
+                0.02722,
+                0.02784,
+                0.02846,
+                0.02835,
+                0.02835,
+                0.02833,
+                0.02847,
+                0.02754,
+                0.02833,
+                0.02866,
+                0.02889
+              ],
+              "transition_width_px": 3.105,
+              "transition_width_over_W_d": 0.001465,
+              "transition_width_mm_equiv": 0.03286,
+              "outer_band_of_overlap_mm_equiv": null,
+              "outer_band_of_overlap_px": 40.0
+            }
+          },
+          "ink_ops": {
+            "smooth_level": 0.0,
+            "tier": "strict",
+            "ops": [],
+            "dpi": 2400,
+            "target_hex": "#C95021",
+            "chroma_strength": 1.0,
+            "chroma_impl": "colorcal.apply_foreground_chroma（V3）",
+            "fg_gamut_clip_rate": 5.3e-05,
+            "fg_chroma_reduced_rate": 1.0,
+            "fg_iou_raw": 0.97937,
+            "fg_mask_reverted_px": 19600,
+            "lstar_preservation": {
+              "definition": "本算子自身造成的 L* 逐像素变化（红墨区；不含全局色调算子）",
+              "L_mean_delta": -0.0001,
+              "L_mean_abs_delta": 0.056073,
+              "L_p90_abs_delta": 0.114408,
+              "L_max_abs_delta": 0.170741,
+              "L_std_before": 8.3184,
+              "L_std_after": 8.3185,
+              "verdict": "L* 逐像素保留（仅 uint8 量化级）"
+            }
+          }
+        },
+        "C2_aes": {
+          "label": "观感档全开（语义＋颗粒＋半透＋毛糙）",
+          "delta_e_to_target": {
+            "pixels": 238343,
+            "sampled": 238343,
+            "stride": 1,
+            "median": 6.1223,
+            "p90": 9.5972,
+            "mean": 6.2936,
+            "leq5_rate": 0.34145,
+            "leq3_rate": 0.11469
+          },
+          "lab": {
+            "L_mean": 56.209,
+            "L_std": 3.037,
+            "L_p10": 52.618,
+            "L_p50": 55.981,
+            "L_p90": 59.713,
+            "a_std": 2.731,
+            "b_std": 2.978,
+            "a_mean": 43.209,
+            "b_mean": 46.72
+          },
+          "features_vs_doubao": {
+            "label": "C2_aes",
+            "size_px": [
+              1124,
+              1124
+            ],
+            "ink_px": 943113,
+            "ink_ratio": 0.7465,
+            "components": 3,
+            "largest_component": {
+              "bbox_px": [
+                0,
+                0,
+                1124,
+                1124
+              ],
+              "area": 943106,
+              "fill_ratio": 0.7465,
+              "component_count_ge_1pct_main": 1
+            },
+            "ruler_W_d_px": 2120,
+            "mm_per_px_equiv": 0.01058333,
+            "color": {
+              "core_definition": "colorcal.ink_core_centroid（掩膜内 S ≥ p75）",
+              "core_px": 237119,
+              "median_rgb": [
+                213.0,
+                92.0,
+                45.0
+              ],
+              "centroid_rgb": [
+                213.355,
+                91.31,
+                43.957
+              ],
+              "median_hsv": [
+                16.7857,
+                0.7887,
+                0.8353
+              ],
+              "mask_median_rgb": [
+                222.0,
+                103.0,
+                56.0
+              ],
+              "sat_p50": 0.7467,
+              "sat_p90": 0.796,
+              "sat_p10": 0.4431,
+              "delta_e2000_median_to_target": 4.1642,
+              "delta_e2000_centroid_to_target": 4.0804,
+              "target_hex": "#C95021",
+              "delta_e_impl": "colorcal.delta_e2000（单一真源）"
+            },
+            "semantic_lightness": {
+              "definition": "距离变换 d ＝ 到最近非印泥像素的距离（≈ 局部笔画半宽）；d_p90 归一",
+              "d_p50_px": 28.053,
+              "d_p90_px": 70.67,
+              "d_p50_over_W_d": 0.013233,
+              "d_p90_over_W_d": 0.033335,
+              "L_bins": [
+                {
+                  "d_px_range": [
+                    0.0,
+                    11.78
+                  ],
+                  "d_over_d_p90": [
+                    0.0,
+                    0.167
+                  ],
+                  "px": 190854,
+                  "L_mean": 74.911,
+                  "S_mean": 0.4438
+                },
+                {
+                  "d_px_range": [
+                    11.78,
+                    23.56
+                  ],
+                  "d_over_d_p90": [
+                    0.167,
+                    0.333
+                  ],
+                  "px": 205384,
+                  "L_mean": 58.964,
+                  "S_mean": 0.6991
+                },
+                {
+                  "d_px_range": [
+                    23.56,
+                    35.34
+                  ],
+                  "d_over_d_p90": [
+                    0.333,
+                    0.5
+                  ],
+                  "px": 180496,
+                  "L_mean": 56.501,
+                  "S_mean": 0.7535
+                },
+                {
+                  "d_px_range": [
+                    35.34,
+                    47.11
+                  ],
+                  "d_over_d_p90": [
+                    0.5,
+                    0.667
+                  ],
+                  "px": 131862,
+                  "L_mean": 56.295,
+                  "S_mean": 0.7649
+                },
+                {
+                  "d_px_range": [
+                    47.11,
+                    58.89
+                  ],
+                  "d_over_d_p90": [
+                    0.667,
+                    0.833
+                  ],
+                  "px": 83236,
+                  "L_mean": 55.937,
+                  "S_mean": 0.7762
+                },
+                {
+                  "d_px_range": [
+                    58.89,
+                    70.67
+                  ],
+                  "d_over_d_p90": [
+                    0.833,
+                    1.0
+                  ],
+                  "px": 57096,
+                  "L_mean": 55.916,
+                  "S_mean": 0.7814
+                }
+              ],
+              "L_vs_dn_slope": -11.8612,
+              "L_wide_minus_thin": -18.606,
+              "L_p80dn_mean": 56.368,
+              "L_p20dn_mean": 74.974,
+              "sign_convention": "L* 越大＝越亮（越薄/越淡）；宽处浓 ⇒ L_wide − L_thin < 0"
+            },
+            "lstar": {
+              "mean": 60.685,
+              "std": 8.518,
+              "p10": 53.507,
+              "p50": 57.685,
+              "p90": 76.327,
+              "L_over_dn": "见 semantic_lightness"
+            },
+            "grain": {
+              "domain": "腐蚀 7×7 后的红墨区内部（避边）；高通高斯半径 5.914px",
+              "grain_blur_sigma_px": 5.914,
+              "px_eroded": 885108,
+              "lum_highpass_sigma_2px": 7.8601,
+              "sat_highpass_sigma_2px": 0.03428,
+              "L_highpass_p90_abs": 12.6054,
+              "peak_wavelength_px": 113.137,
+              "peak_wavelength_over_W_d": 0.053367
+            },
+            "translucency": {
+              "definition": "掩膜内 V ≥ p90(V of 非印泥)=1.0 的像素占比（露白/半透）",
+              "share_light_inside": 0.03284,
+              "share_sat_lt_0.25_inside": 0.0,
+              "V_inside_p90": 0.9686,
+              "V_inside_p50": 0.8706
+            },
+            "matte": {
+              "definition": "哑光＝无高光/光泽；指标＝掩膜内亮斑（V > p99 of 非印泥）占比与最大 V",
+              "highlight_share_V_gt_paperp99": 0.0,
+              "V_max_inside": 1.0,
+              "specular_added_by_us": null
+            },
+            "edge": {
+              "method": "饱和度水平集 0.75→0.25 过渡带宽（px）",
+              "transition_width_px_median": 5.604,
+              "transition_width_px_mean": 5.919,
+              "transition_width_px_p90": 10.666,
+              "boundary_roughness_proxy": {
+                "definition": "周长²/(4π·面积)（等周比；〉1 越大越毛糙）与 周长/(2(w+h))",
+                "isoperimetric_ratio": 2.0294,
+                "perimeter_over_bbox_perimeter": 1.0908,
+                "perimeter_px": 4904.2
+              }
+            },
+            "halo": {
+              "method": "掩膜外 redness 均值 / 掩膜内 p75，首个 ≤10% 的距离（px）",
+              "ref_redness_p75_inside": 145.5,
+              "profile_d0_to_d24": [
+                0.29991,
+                0.22508,
+                0.16154,
+                0.10318,
+                0.06482,
+                0.03726,
+                0.024,
+                0.01915,
+                0.01918,
+                0.02095,
+                0.02331,
+                0.02503,
+                0.02659,
+                0.0277,
+                0.02809,
+                0.02863,
+                0.02914,
+                0.02909,
+                0.02908,
+                0.02904,
+                0.02917,
+                0.02827,
+                0.02904,
+                0.02935,
+                0.02967
+              ],
+              "transition_width_px": 3.083,
+              "transition_width_over_W_d": 0.001454,
+              "transition_width_mm_equiv": 0.03263,
+              "outer_band_of_overlap_mm_equiv": null,
+              "outer_band_of_overlap_px": 40.0
+            }
+          },
+          "ink_ops": {
+            "smooth_level": 0.55,
+            "tier": "aesthetic",
+            "ops": [
+              "semantic",
+              "grain",
+              "roughness"
+            ],
+            "dpi": 2400,
+            "target_hex": "#C95021",
+            "chroma_strength": 1.0,
+            "chroma_impl": "colorcal.apply_foreground_chroma（V3）",
+            "fg_gamut_clip_rate": 5.3e-05,
+            "fg_chroma_reduced_rate": 1.0,
+            "fg_iou_raw": 0.97937,
+            "fg_mask_reverted_px": 19600,
+            "roughness": {
+              "scale_mm": 0.0598,
+              "jitter_amplitude_mm": 0.1196,
+              "amp_in_dn_units": 0.16053,
+              "mask_moved": false,
+              "impl": "位置哈希噪声扰动距离场 ⇒ L* 等值线毛糙；**掩膜逐像素不动**"
+            },
+            "grain": {
+              "scale_mm": 0.0598,
+              "blur_sigma_mm": 0.06259,
+              "blur_sigma_px": 5.91,
+              "px_eroded": 892905,
+              "doubao_target_sigma_0_255": 7.9735,
+              "current_sigma_after_smooth_0_255": 5.03,
+              "sigma_added_0_255": 6.1868,
+              "expected_result_0_255": 7.9735,
+              "impl": "位置哈希噪声（mm 空间，零均值单位方差）×σ_add，加在 L* 域；掩膜守卫保证掉出 ink 掩膜的像素回退原值"
+            },
+            "semantic": {
+              "L_curve_dn": [
+                11.492,
+                0.844,
+                0.0,
+                0.004,
+                0.027,
+                -0.146
+              ],
+              "dL_wide_minus_thin_target": -9.989,
+              "chroma_scale_curve": [
+                0.6632,
+                0.9625,
+                0.9876,
+                0.9936,
+                0.9971,
+                1.0029
+              ],
+              "curve_source": "豆包参照图#2（doubao-ink-reference-features.json）",
+              "translucency_share_target": 0.01559,
+              "L_star_allowed_to_change": true
+            },
+            "mask_guard_dropped_and_reverted_px": 47275,
+            "lstar_preservation": {
+              "definition": "本算子自身造成的 L* 逐像素变化（红墨区；不含全局色调算子）",
+              "L_mean_delta": 2.777121,
+              "L_mean_abs_delta": 3.948381,
+              "L_p90_abs_delta": 9.832171,
+              "L_max_abs_delta": 22.383991,
+              "L_std_before": 8.3184,
+              "L_std_after": 8.9637,
+              "verdict": "L* 被有意调制（观感档）"
+            }
+          }
+        }
+      },
+      "doubao_ink_reference": {
+        "label": "豆包参照图#2（只取印泥质感）",
+        "size_px": [
+          1280,
+          3215
+        ],
+        "ink_px": 696719,
+        "ink_ratio": 0.1693,
+        "components": 10,
+        "largest_component": {
+          "bbox_px": [
+            274,
+            609,
+            717,
+            1996
+          ],
+          "area": 568395,
+          "fill_ratio": 0.3972,
+          "component_count_ge_1pct_main": 7
+        },
+        "ruler_W_d_px": 717,
+        "mm_per_px_equiv": 0.03129289,
+        "color": {
+          "core_definition": "colorcal.ink_core_centroid（掩膜内 S ≥ p75）",
+          "core_px": 175896,
+          "median_rgb": [
+            203.0,
+            47.0,
+            29.0
+          ],
+          "centroid_rgb": [
+            202.537,
+            45.929,
+            28.114
+          ],
+          "median_hsv": [
+            6.2069,
+            0.8571,
+            0.7961
+          ],
+          "mask_median_rgb": [
+            212.0,
+            62.0,
+            43.0
+          ],
+          "sat_p50": 0.7972,
+          "sat_p90": 0.8627,
+          "sat_p10": 0.5982,
+          "delta_e2000_median_to_target": 7.7396,
+          "delta_e2000_centroid_to_target": 7.856,
+          "target_hex": "#C95021",
+          "delta_e_impl": "colorcal.delta_e2000（单一真源）"
+        },
+        "semantic_lightness": {
+          "definition": "距离变换 d ＝ 到最近非印泥像素的距离（≈ 局部笔画半宽）；d_p90 归一",
+          "d_p50_px": 12.415,
+          "d_p90_px": 27.386,
+          "d_p50_over_W_d": 0.017315,
+          "d_p90_over_W_d": 0.038195,
+          "L_bins": [
+            {
+              "d_px_range": [
+                0.0,
+                4.56
+              ],
+              "d_over_d_p90": [
+                0.0,
+                0.167
+              ],
+              "px": 120319,
+              "L_mean": 60.318,
+              "S_mean": 0.5409
+            },
+            {
+              "d_px_range": [
+                4.56,
+                9.13
+              ],
+              "d_over_d_p90": [
+                0.167,
+                0.333
+              ],
+              "px": 136287,
+              "L_mean": 49.67,
+              "S_mean": 0.7851
+            },
+            {
+              "d_px_range": [
+                9.13,
+                13.69
+              ],
+              "d_over_d_p90": [
+                0.333,
+                0.5
+              ],
+              "px": 126198,
+              "L_mean": 48.826,
+              "S_mean": 0.8055
+            },
+            {
+              "d_px_range": [
+                13.69,
+                18.26
+              ],
+              "d_over_d_p90": [
+                0.5,
+                0.667
+              ],
+              "px": 109361,
+              "L_mean": 48.83,
+              "S_mean": 0.8104
+            },
+            {
+              "d_px_range": [
+                18.26,
+                22.82
+              ],
+              "d_over_d_p90": [
+                0.667,
+                0.833
+              ],
+              "px": 80008,
+              "L_mean": 48.853,
+              "S_mean": 0.8133
+            },
+            {
+              "d_px_range": [
+                22.82,
+                27.39
+              ],
+              "d_over_d_p90": [
+                0.833,
+                1.0
+              ],
+              "px": 55081,
+              "L_mean": 48.68,
+              "S_mean": 0.818
+            }
+          ],
+          "L_vs_dn_slope": -7.7454,
+          "L_wide_minus_thin": -9.989,
+          "L_p80dn_mean": 48.622,
+          "L_p20dn_mean": 58.611,
+          "sign_convention": "L* 越大＝越亮（越薄/越淡）；宽处浓 ⇒ L_wide − L_thin < 0"
+        },
+        "lstar": {
+          "mean": 50.94,
+          "std": 7.827,
+          "p10": 44.47,
+          "p50": 49.071,
+          "p90": 58.356,
+          "L_over_dn": "见 semantic_lightness"
+        },
+        "grain": {
+          "domain": "腐蚀 7×7 后的红墨区内部（避边）",
+          "px_eroded": 589460,
+          "lum_highpass_sigma_2px": 7.9735,
+          "sat_highpass_sigma_2px": 0.03198,
+          "L_highpass_p90_abs": 12.9245,
+          "peak_wavelength_px": 113.216,
+          "peak_wavelength_over_W_d": 0.157902
+        },
+        "translucency": {
+          "definition": "掩膜内 V ≥ p90(V of 非印泥)=0.9843 的像素占比（露白/半透）",
+          "share_light_inside": 0.01559,
+          "share_sat_lt_0.25_inside": 0.0,
+          "V_inside_p90": 0.902,
+          "V_inside_p50": 0.8314
+        },
+        "matte": {
+          "definition": "哑光＝无高光/光泽；指标＝掩膜内亮斑（V > p99 of 非印泥）占比与最大 V",
+          "highlight_share_V_gt_paperp99": 0.0,
+          "V_max_inside": 1.0,
+          "specular_added_by_us": null
+        },
+        "edge": {
+          "method": "饱和度水平集 0.75→0.25 过渡带宽（px）",
+          "transition_width_px_median": 1.91,
+          "transition_width_px_mean": 2.166,
+          "transition_width_px_p90": 3.694,
+          "boundary_roughness_proxy": {
+            "definition": "周长²/(4π·面积)（等周比；〉1 越大越毛糙）与 周长/(2(w+h))",
+            "isoperimetric_ratio": 34.2307,
+            "perimeter_over_bbox_perimeter": 2.8818,
+            "perimeter_px": 15636.4
+          }
+        },
+        "halo": {
+          "method": "掩膜外 redness 均值 / 掩膜内 p75，首个 ≤10% 的距离（px）",
+          "ref_redness_p75_inside": 166.0,
+          "profile_d0_to_d24": [
+            0.25762,
+            0.16233,
+            0.10252,
+            0.06627,
+            0.0531,
+            0.04982,
+            0.0494,
+            0.04819,
+            0.04462,
+            0.04058,
+            0.03704,
+            0.03408,
+            0.03202,
+            0.02989,
+            0.02794,
+            0.02666,
+            0.02564,
+            0.02428,
+            0.02282,
+            0.02147,
+            0.02023,
+            0.01894,
+            0.01726,
+            0.01629,
+            0.01555
+          ],
+          "transition_width_px": 2.07,
+          "transition_width_over_W_d": 0.002887,
+          "transition_width_mm_equiv": 0.06478,
+          "outer_band_of_overlap_mm_equiv": null,
+          "outer_band_of_overlap_px": 21.0
+        },
+        "hard_limit": "生成式输出，已重绘印文（字形粘连/断裂/变形、笔画粗细不匀、边缘毛糙）⇒ 只取**印泥质感**（语义浓淡/颗粒/半透/边缘/晕染）；**严禁**对标字形与线条锐度（我们守白字/字形冻结）"
+      },
+      "elapsed_s": 13.7
+    }
+  },
+  "samples": {
+    "tex_board": {
+      "path": "/Users/kevin/bistro/xiai/feicui/output/samples/book-page-2400-variants/round2/tex-board-round2.png",
+      "bytes": 2792561,
+      "sha256": "4e117811725dfa7b1f3712060ab529064a164fbe124c921681b9442148024367",
+      "size_px": [
+        1374,
+        5384
+      ]
+    },
+    "P29-C1R1_2400_ladder": {
+      "path": "/Users/kevin/bistro/xiai/feicui/output/samples/book-page-2400-variants/round2/P29-C1R1-2400-1to1-ladder-round2.png",
+      "bytes": 10529855,
+      "sha256": "731794d31524f9ac7c1220ef45b2fa67c003fc1e62d61e08b85f39c75ff2ba86",
+      "size_px": [
+        5830,
+        2864
+      ]
+    },
+    "P29-C1R1_2400_tier": {
+      "path": "/Users/kevin/bistro/xiai/feicui/output/samples/book-page-2400-variants/round2/P29-C1R1-2400-1to1-tier-round2.png",
+      "bytes": 5474021,
+      "sha256": "6bbd3e9c742c24a7391bd9678ea21c18de4255bd908da05d1b91579d48f08922",
+      "size_px": [
+        5890,
+        1432
+      ]
+    },
+    "P29-C2R1_2400_1to1": {
+      "path": "/Users/kevin/bistro/xiai/feicui/output/samples/book-page-2400-variants/round2/P29-C2R1-2400-1to1-round2.png",
+      "bytes": 4172536,
+      "sha256": "ebbea1d024fe32d589479e6ab03e5f0e5802fd895ac69136ef41d5d974a86b81",
+      "size_px": [
+        4786,
+        1156
+      ]
+    },
+    "P29-paper_2400_1to1": {
+      "path": "/Users/kevin/bistro/xiai/feicui/output/samples/book-page-2400-variants/round2/P29-paper-2400-1to1-round2.png",
+      "bytes": 4369171,
+      "sha256": "111aeffac8ae1f49540f1e952932abd773e8f7b748df497b8b0016ef51601991",
+      "size_px": [
+        5410,
+        1332
+      ]
+    },
+    "P29-C1R1_fourpanel": {
+      "path": "/Users/kevin/bistro/xiai/feicui/output/samples/book-page-2400-variants/round2/P29-C1R1-fourpanel-round2.png",
+      "bytes": 2359528,
+      "sha256": "b3ca78308829e815e447df44f31c55cadee17b10259531dd50b0f588fb02bc57",
+      "size_px": [
+        3330,
+        808
+      ]
+    },
+    "P29-C2R1_fourpanel": {
+      "path": "/Users/kevin/bistro/xiai/feicui/output/samples/book-page-2400-variants/round2/P29-C2R1-fourpanel-round2.png",
+      "bytes": 1471432,
+      "sha256": "2e931479e6475d07395b4f7e6bed4970ffe5dfa316e07e15ded51db32dc733b9",
+      "size_px": [
+        2354,
+        792
+      ]
+    },
+    "thumb": {
+      "path": "/Users/kevin/bistro/xiai/feicui/output/samples/book-page-2400-variants/round2/P29-thumb-round2.png",
+      "bytes": 2928147,
+      "sha256": "70854298beb478a3ffdb04d34e6a8086bb2087cbe85dd909a429e7c39767a33f",
+      "size_px": [
+        3390,
+        1184
+      ]
+    }
+  },
+  "scale_table_md": "/Users/kevin/bistro/xiai/feicui/ops/variant-samples/scale-table-round2.md",
+  "elapsed_s": 226.8
+}

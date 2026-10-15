@@ -16,7 +16,7 @@
 ## 复跑
 
 ```bash
-cd /Users/kevin/bistro/xiai/feicui
+cd /Users/kevin/bistro/feicui
 ./venv/bin/python ops/seal-canvas/run_samples.py            # 默认读 scratch（缺失则按 DB 快照重取）
 ./venv/bin/python ops/seal-canvas/run_samples.py --refresh   # 强制从仓库 O 件重新拷贝到 scratch
 ```

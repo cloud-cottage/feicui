@@ -32,7 +32,7 @@
 `2_HighRes_PDF` 与 `output/books` 只读／样张只落 `output/samples/book-page-2400-variants/round3/`／
 可入库件只落 `ops/variant-samples/`。
 
-跑法：cd /Users/kevin/bistro/xiai/feicui && ./venv/bin/python ops/variant-samples/round3_samples.py
+跑法：cd /Users/kevin/bistro/feicui && ./venv/bin/python ops/variant-samples/round3_samples.py
 """
 from __future__ import annotations
 

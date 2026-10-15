@@ -14,7 +14,7 @@ import sqlite3
 import sys
 from pathlib import Path
 
-REPO = Path("/Users/kevin/bistro/xiai/feicui")
+REPO = Path("/Users/kevin/bistro/feicui")
 DB = REPO / "var" / "person_ingest.db"
 BASE = "https://yin.fudan.edu.cn/service_yinpu"
 

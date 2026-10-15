@@ -2,8 +2,8 @@
 """`app/colorcal.py` 自检 —— **V3 双色分层处理（默认口径）**（Kong 地基单 · V3）。
 
 跑法（**必须用 worker venv**，含 numpy/PIL）：
-    /Users/kevin/bistro/xiai/feicui/venv/bin/python \
-        /Users/kevin/bistro/xiai/feicui/ops/image-colorcal/selfcheck_colorcal_v3.py
+    /Users/kevin/bistro/feicui/venv/bin/python \
+        /Users/kevin/bistro/feicui/ops/image-colorcal/selfcheck_colorcal_v3.py
 
 覆盖：派单 ④ 的 V3 断言 ＋ **Kevin 2026-10-11 已裁的硬口径**（`other` 桶逐像素不变）：
   (0) **既有自检全过**：子进程跑 `selfcheck_colorcal.py`（V1a 双锚点仿射 ＋ V1b 白平衡 ＋ **原有断言**）须 `ALL PASS`；

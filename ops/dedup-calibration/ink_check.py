@@ -31,7 +31,7 @@ import pymupdf
 
 REPO = Path(__file__).resolve().parents[2]
 HERE = Path(__file__).resolve().parent
-DEFAULT_DB = Path("/Users/kevin/bistro/xiai/data/yinpu.db")
+DEFAULT_DB = Path("/Users/kevin/bistro/data/yinpu.db")
 
 AREA_SCALE = (400.0 / 144.0) ** 2          # 与 processor 同式（144dpi 基准 → 400dpi）
 DEFAULT_TPL = {"hsv_low": [0, 120, 70], "hsv_high": [10, 255, 255], "min_area": 800}

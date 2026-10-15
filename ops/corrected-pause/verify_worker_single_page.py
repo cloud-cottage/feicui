@@ -22,7 +22,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-REPO = Path("/Users/kevin/bistro/xiai/feicui")
+REPO = Path("/Users/kevin/bistro/feicui")
 
 
 def count_tiffs(d: Path) -> tuple[int, int]:

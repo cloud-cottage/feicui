@@ -47,7 +47,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
-DEFAULT_DB = Path("/Users/kevin/bistro/xiai/data/yinpu.db")
+DEFAULT_DB = Path("/Users/kevin/bistro/data/yinpu.db")
 
 # ---------------------------------------------------------------------------
 # ★ **生产单一实现**：规则的唯一真源＝`server/app/dedup.py`（方案 A 落地 2026-10-11）。

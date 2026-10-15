@@ -13,7 +13,7 @@
      顺带核 dry-run 不改盘（inbox 文件数 / 总字节前后一致）。
 
 跑法：
-    cd /Users/kevin/bistro/xiai/feicui
+    cd /Users/kevin/bistro/feicui
     ./server/.venv/bin/python ops/job-upload/17_inbox_gc_live_recheck.py
 """
 from __future__ import annotations
@@ -26,7 +26,7 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
-ROOT = Path("/Users/kevin/bistro/xiai/feicui")
+ROOT = Path("/Users/kevin/bistro/feicui")
 SRC = ROOT / "server" / "app" / "inbox_gc.py"
 API = "http://127.0.0.1:5196"
 PANEL = "http://localhost:5555"

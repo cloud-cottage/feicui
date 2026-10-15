@@ -44,7 +44,7 @@ from pathlib import Path
 from typing import Any
 
 # yinpu.db 真源常量：复用 `app.config.PROD_DB_PATH`（＝ `REPO_ROOT.parent/"data"/"yinpu.db"`，
-# 与 `ops/relation-ingest/03_guard.py::YINPU` 同口径同值 ⇒ `/Users/kevin/bistro/xiai/data/yinpu.db`）。
+# 与 `ops/relation-ingest/03_guard.py::YINPU` 同口径同值 ⇒ `/Users/kevin/bistro/data/yinpu.db`）。
 # **不得另立第二套解析**：guard 指针口径由此常量唯一给定。
 from .config import PROD_DB_PATH
 

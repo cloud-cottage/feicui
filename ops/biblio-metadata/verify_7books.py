@@ -10,7 +10,7 @@
 的纯后处理**；新旧抽取器的唯一差别＝形态/长度闸（把 `>13` 位整段拒掉）。故**对库里已存候选的 `raw`
 重放新闸**，恰等于新抽取器在同一文本上的输出。
 
-    cd /Users/kevin/bistro/xiai/feicui
+    cd /Users/kevin/bistro/feicui
     python3 ops/biblio-metadata/verify_7books.py
 """
 from __future__ import annotations

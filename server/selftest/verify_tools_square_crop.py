@@ -2,7 +2,7 @@
 """`POST /api/tools/square-crop` 自测（**真跑**，逐条留证）——Kong / 单「square-crop」。
 
 运行（**API 层解释器**，无需 cv2：所有图像编解码都借 worker 解释器）：
-    cd /Users/kevin/bistro/xiai/feicui/server
+    cd /Users/kevin/bistro/feicui/server
     ./.venv/bin/python selftest/verify_tools_square_crop.py --base-url http://127.0.0.1:5201
 
 六条自测（与派单逐条对应；全 PASS ⇒ exit 0，任一 FAIL ⇒ exit 1）：

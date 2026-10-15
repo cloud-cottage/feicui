@@ -13,8 +13,8 @@
 # 两臂都在**副本库**上跑；影像落 evidence 内，不动 output/。端口只用 5306。
 # =============================================================================
 set -u
-SRV=/Users/kevin/bistro/shu/feicui/server
-FE=/Users/kevin/bistro/shu/feicui
+SRV=/Users/kevin/bistro/feicui/server
+FE=/Users/kevin/bistro/feicui
 EVID=$SRV/selftest/evidence/1b_i_docflag
 RUN=$EVID/run
 PY="$SRV/.venv/bin/python"

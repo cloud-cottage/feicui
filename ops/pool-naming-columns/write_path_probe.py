@@ -9,12 +9,12 @@ import sqlite3
 import shutil
 from pathlib import Path
 
-REPO = Path("/Users/kevin/bistro/xiai/feicui")
+REPO = Path("/Users/kevin/bistro/feicui")
 sys.path.insert(0, str(REPO / "server"))
 from app import repository, db  # noqa: E402
 
 SCRATCH = Path(os.environ.get("TMPDIR", "/tmp"))
-PROD = Path("/Users/kevin/bistro/xiai/data/yinpu.db")
+PROD = Path("/Users/kevin/bistro/data/yinpu.db")
 COPY = SCRATCH / "p0_write_path_probe.db"
 if COPY.exists():
     COPY.unlink()

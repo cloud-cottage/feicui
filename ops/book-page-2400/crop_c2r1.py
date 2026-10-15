@@ -18,7 +18,7 @@ import time
 import numpy as np
 import tifffile
 
-REPO = pathlib.Path("/Users/kevin/bistro/xiai/feicui")
+REPO = pathlib.Path("/Users/kevin/bistro/feicui")
 PAGE_DIR = REPO / "output/book-pages/9787550847224"
 SRC = PAGE_DIR / "P29-2400dpi-48bit.tif"
 OUT = PAGE_DIR / "P29-C2-R1-无信息-戰國-佚名-O.tiff"

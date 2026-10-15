@@ -554,7 +554,7 @@ def main():
     out["failed"] = sum(1 for c in out["checks"] if not c["pass"])
     out["re_hydrations_of_page_helpers"] = hydrations["count"]
     print(f"\n=== passed={out['passed']} failed={out['failed']} ===", flush=True)
-    with open("/Users/kevin/bistro/xiai/feicui/ops/kong_xiai_k4_image_pipeline_raw.json", "w") as fh:
+    with open("/Users/kevin/bistro/feicui/ops/kong_xiai_k4_image_pipeline_raw.json", "w") as fh:
         json.dump(out, fh, ensure_ascii=False, indent=2)
     print(json.dumps(out, ensure_ascii=False, indent=2))
     sys.exit(0 if out["failed"] == 0 else 1)

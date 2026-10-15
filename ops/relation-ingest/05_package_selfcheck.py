@@ -20,7 +20,7 @@ import json
 import sqlite3
 from pathlib import Path
 
-REPO = Path("/Users/kevin/bistro/xiai/feicui")
+REPO = Path("/Users/kevin/bistro/feicui")
 PKG = REPO / "exports" / "relation_import_relation_20261010_01"
 ITEM = REPO / "var" / "item_ingest.db"
 SEAL = REPO / "var" / "seal_ingest.db"

@@ -34,8 +34,8 @@ import sqlite3
 import sys
 from pathlib import Path
 
-ROOT = Path("/Users/kevin/bistro/xiai/feicui")
-PROD_DB = "/Users/kevin/bistro/xiai/data/yinpu.db"
+ROOT = Path("/Users/kevin/bistro/feicui")
+PROD_DB = "/Users/kevin/bistro/data/yinpu.db"
 PDF = "/Users/kevin/Downloads/秦印类编 检索版.pdf"
 PDF_NAME = "秦印类编 检索版.pdf"
 BOOK = "_scratch"

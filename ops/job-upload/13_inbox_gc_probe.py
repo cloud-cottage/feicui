@@ -17,7 +17,7 @@
 持锁期间池不起 ⇒ **不动 stamps**。
 
 跑法：
-    cd /Users/kevin/bistro/xiai/feicui
+    cd /Users/kevin/bistro/feicui
     ./server/.venv/bin/python ops/job-upload/13_inbox_gc_probe.py        # 打 127.0.0.1:5196
 """
 from __future__ import annotations
@@ -31,9 +31,9 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
-ROOT = Path("/Users/kevin/bistro/xiai/feicui")
+ROOT = Path("/Users/kevin/bistro/feicui")
 SERVER = ROOT / "server"
-DB = Path("/Users/kevin/bistro/xiai/data/yinpu.db")
+DB = Path("/Users/kevin/bistro/data/yinpu.db")
 PROBE_PDF = ROOT / "inbox" / "20261011" / "zang_probe.pdf"
 LOCK = SERVER / ".run" / "pool.state.lock"
 API = "http://127.0.0.1:5196"

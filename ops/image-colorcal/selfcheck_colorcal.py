@@ -2,8 +2,8 @@
 """`app/colorcal.py` 自检（Kong 地基单 · **V2 双锚点仿射**口径）。
 
 跑法（**必须用 worker venv**，含 numpy/PIL）：
-    /Users/kevin/bistro/xiai/feicui/venv/bin/python \
-        /Users/kevin/bistro/xiai/feicui/ops/image-colorcal/selfcheck_colorcal.py
+    /Users/kevin/bistro/feicui/venv/bin/python \
+        /Users/kevin/bistro/feicui/ops/image-colorcal/selfcheck_colorcal.py
 
 断言（与派单 ＋ Zang/Kevin 追加裁定一一对应）：
   (a) **纸集排除印泥（★ v0.1 修订 3）**：在**高印泥占比（40%）**合成图上，默认口径（纸集＝

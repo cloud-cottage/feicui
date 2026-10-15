@@ -27,7 +27,7 @@
      命名正则、(C,R) 页内唯一、返回值新字段、**改造前后单页耗时对比**、**新增工作量**边际成本。
 
 须用图像栈解释器运行：
-    cd /Users/kevin/bistro/xiai/feicui
+    cd /Users/kevin/bistro/feicui
     ./venv/bin/python ops/worker-naming/verify_worker_naming.py
 """
 from __future__ import annotations

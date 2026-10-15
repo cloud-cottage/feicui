@@ -24,8 +24,8 @@ import subprocess
 import sys
 from pathlib import Path
 
-DB = os.environ.get("FEICUI_DB", "/Users/kevin/bistro/xiai/data/yinpu.db")
-ROOT = Path(os.environ.get("FEICUI_ROOT", "/Users/kevin/bistro/xiai/feicui"))
+DB = os.environ.get("FEICUI_DB", "/Users/kevin/bistro/data/yinpu.db")
+ROOT = Path(os.environ.get("FEICUI_ROOT", "/Users/kevin/bistro/feicui"))
 TABLES = ("stamps", "jobs", "job_pages")
 
 # 运行态 / 构建产物目录：本探针的「无新增临时文件」断言排除这些（它们本来就会变）

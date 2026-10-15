@@ -17,7 +17,7 @@ import sys
 from collections import Counter
 from pathlib import Path
 
-REPO = Path("/Users/kevin/bistro/xiai/feicui")
+REPO = Path("/Users/kevin/bistro/feicui")
 PKG = Path(sys.argv[1]) if len(sys.argv) > 1 else REPO / "exports" / "person_20261010_01"
 
 REQUIRED_CHS = ["name_full_chs", "courtesy_names_chs", "art_names_chs",

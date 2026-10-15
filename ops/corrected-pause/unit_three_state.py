@@ -24,7 +24,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-SERVER = "/Users/kevin/bistro/xiai/feicui/server"
+SERVER = "/Users/kevin/bistro/feicui/server"
 if SERVER not in sys.path:
     sys.path.insert(0, SERVER)
 import app.repository as repository  # noqa: E402

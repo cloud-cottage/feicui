@@ -22,7 +22,7 @@ output/samples/book-page-2400-variants/round2/／可入库件只落 ops/variant-
 生产常量与实现一律 import 复用（`render_page_2400`、`app.seal_canvas`、`app.colorcal`、
 `variants_samples`、`doubao_ink_reference`），不复制第二份。
 
-跑法：cd /Users/kevin/bistro/xiai/feicui && ./venv/bin/python ops/variant-samples/round2_samples.py
+跑法：cd /Users/kevin/bistro/feicui && ./venv/bin/python ops/variant-samples/round2_samples.py
 """
 from __future__ import annotations
 

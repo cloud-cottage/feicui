@@ -22,7 +22,7 @@ from pathlib import Path
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--db", default="/Users/kevin/bistro/xiai/feicui/var/item_ingest.db")
+    ap.add_argument("--db", default="/Users/kevin/bistro/feicui/var/item_ingest.db")
     ap.add_argument("--batch", default=None)
     ap.add_argument("--source-total", type=int, default=1742)
     ap.add_argument("--out", default=None)

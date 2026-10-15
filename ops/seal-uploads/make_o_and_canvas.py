@@ -28,7 +28,7 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 
-REPO = Path("/Users/kevin/bistro/xiai/feicui")
+REPO = Path("/Users/kevin/bistro/feicui")
 sys.path.insert(0, str(REPO / "server"))
 
 from app import seal_canvas  # noqa: E402  (seal_canvas: 纯函数，不写库)

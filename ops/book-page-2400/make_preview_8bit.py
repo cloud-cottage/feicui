@@ -31,7 +31,7 @@ import numpy as np
 import tifffile
 from PIL import Image
 
-REPO = pathlib.Path("/Users/kevin/bistro/xiai/feicui")
+REPO = pathlib.Path("/Users/kevin/bistro/feicui")
 PAGE_DIR = REPO / "output/2_HighRes_PDF/9787550847224"
 DEFAULT_SRCS = [
     PAGE_DIR / "P29-2400dpi-48bit.tif",

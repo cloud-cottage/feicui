@@ -5,7 +5,7 @@
 （本脚本只做「走盘 ＋ sha256 ＋ PyMuPDF 探测 ＋ 编排」，**不写 yinpu.db、不建 job、零联网**）。
 
 用法（图像栈只在 `feicui/venv` ⇒ 须用 `./venv/bin/python` 跑）：
-    cd /Users/kevin/bistro/xiai/feicui
+    cd /Users/kevin/bistro/feicui
     ./venv/bin/python ops/pdf-registry/scan_pdf_registry.py                 # 扫 pdf_source_dir（默认 output/1_Original_PDF）
     ./venv/bin/python ops/pdf-registry/scan_pdf_registry.py --root <DIR>    # 追加扫描根（可多次）
     ./venv/bin/python ops/pdf-registry/scan_pdf_registry.py --register-missing '秦汉印典 …' [--notes …]

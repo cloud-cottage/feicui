@@ -31,7 +31,7 @@ A 底＝**产线真产物** `output/2_HighRes_PDF/9787550847224/P29-2400dpi-48bi
 output/samples/book-page-2400-variants/／可入库件只落 ops/variant-samples/／
 render_page_2400.py 与 crop_c2r1.py 只读不改（import 复用）／生产常量只 import 不复制。
 
-跑法：cd /Users/kevin/bistro/xiai/feicui && ./venv/bin/python ops/variant-samples/variants_samples.py
+跑法：cd /Users/kevin/bistro/feicui && ./venv/bin/python ops/variant-samples/variants_samples.py
 """
 from __future__ import annotations
 

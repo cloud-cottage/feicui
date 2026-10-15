@@ -17,7 +17,7 @@ from pathlib import Path
 
 # server/app/config.py -> app -> server -> feicui
 SERVER_DIR = Path(__file__).resolve().parents[1]
-REPO_ROOT = SERVER_DIR.parent  # /Users/kevin/bistro/shu/feicui
+REPO_ROOT = SERVER_DIR.parent  # /Users/kevin/bistro/feicui
 PROD_DB_PATH = (REPO_ROOT.parent / "data" / "yinpu.db").resolve()  # 唯一真源（不得被本层写路径触碰）
 
 DEFAULT_CONFIG_FILE = SERVER_DIR / "config.json"

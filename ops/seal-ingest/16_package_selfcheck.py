@@ -12,7 +12,7 @@ import random
 import sqlite3
 from pathlib import Path
 
-REPO = Path("/Users/kevin/bistro/xiai/feicui")
+REPO = Path("/Users/kevin/bistro/feicui")
 PKG = REPO / "exports" / "seal_import_seal_20261010_01"
 DB = REPO / "var" / "seal_ingest.db"
 XIAI_STORED_MAX = 4 * 1024 * 1024

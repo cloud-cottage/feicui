@@ -25,7 +25,7 @@ import sqlite3
 import sys
 from pathlib import Path
 
-REPO = Path("/Users/kevin/bistro/xiai/feicui")
+REPO = Path("/Users/kevin/bistro/feicui")
 sys.path.insert(0, str(REPO / "server"))  # server/ 优先（仓根 app.py 遮蔽陷阱）
 
 from app import seal_uploads, seals  # noqa: E402

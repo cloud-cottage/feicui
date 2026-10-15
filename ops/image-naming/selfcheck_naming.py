@@ -5,7 +5,7 @@
 图像栈只在 `feicui/venv`（本脚本须用 `./venv/bin/python` 运行）。
 
 复跑：
-    cd /Users/kevin/bistro/xiai/feicui
+    cd /Users/kevin/bistro/feicui
     ./venv/bin/python ops/image-naming/selfcheck_naming.py
 """
 from __future__ import annotations

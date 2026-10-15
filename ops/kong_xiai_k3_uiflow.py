@@ -224,7 +224,7 @@ def main():
     out["passed"] = sum(1 for c in out["checks"] if c["pass"])
     out["failed"] = sum(1 for c in out["checks"] if not c["pass"])
     print(json.dumps(out, ensure_ascii=False, indent=2))
-    with open("/Users/kevin/bistro/xiai/feicui/ops/kong_xiai_k3_uiflow_raw.json", "w") as fh:
+    with open("/Users/kevin/bistro/feicui/ops/kong_xiai_k3_uiflow_raw.json", "w") as fh:
         json.dump(out, fh, ensure_ascii=False, indent=2)
     sys.exit(0 if out["failed"] == 0 else 1)
 

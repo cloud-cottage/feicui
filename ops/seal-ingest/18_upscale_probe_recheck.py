@@ -11,7 +11,7 @@ import json
 import urllib.request
 from pathlib import Path
 
-REPO = Path("/Users/kevin/bistro/xiai/feicui")
+REPO = Path("/Users/kevin/bistro/feicui")
 OUT = REPO / "ops" / "seal-ingest" / "09_upscale_probe.recheck.json"
 SCRATCH = Path("/Users/kevin/.hermes/profiles/zang/cache/scratch")
 SCRATCH.mkdir(parents=True, exist_ok=True)

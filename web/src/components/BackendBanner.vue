@@ -25,7 +25,7 @@ const { state, isDown, isUp, target } = useBackendStatus()
         <code>{{ state.detail || 'ECONNREFUSED' }}</code> ）。本页不展示任何示例或估算数据。
       </span>
       <span class="banner__hint">
-        启动提示：<code>cd /Users/kevin/bistro/xiai/feicui/server &amp;&amp; ./.venv/bin/python -m app.main</code>
+        启动提示：<code>cd /Users/kevin/bistro/feicui/server &amp;&amp; ./.venv/bin/python -m app.main</code>
       </span>
       <span class="banner__hint">最后探测时点：{{ state.lastCheck || '—' }}</span>
     </div>

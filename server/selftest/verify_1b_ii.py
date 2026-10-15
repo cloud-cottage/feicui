@@ -14,7 +14,7 @@
   * 性能读数一律标注「同机有并发任务、非受控基线」，不作判据。
 
 跑法：
-    cd /Users/kevin/bistro/shu/feicui/server && ./.venv/bin/python selftest/verify_1b_ii.py
+    cd /Users/kevin/bistro/feicui/server && ./.venv/bin/python selftest/verify_1b_ii.py
 证据落 `server/selftest/evidence/1b_ii/`（`/tmp` 只放临时库与临时导出根，不作证据）。
 """
 from __future__ import annotations

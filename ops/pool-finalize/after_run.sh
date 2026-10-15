@@ -1,7 +1,7 @@
 #!/bin/bash
 # AFTER 对照：起池 → 等它**自行退出**（期望一轮落终态后 drain 退出）→ 报退出码
 set -u
-REPO=/Users/kevin/bistro/xiai/feicui
+REPO=/Users/kevin/bistro/feicui
 S=/Users/kevin/.hermes/profiles/zang/cache/scratch/feicui_tpl_unusable
 LOG=$S/after.log
 : >"$LOG"

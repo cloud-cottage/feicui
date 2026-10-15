@@ -14,7 +14,7 @@
   * `finally` 清理：停自己的池与 worker（精确 PID）＋ 删临时工作区。
 
 跑法：
-    cd /Users/kevin/bistro/shu/feicui/server && ./.venv/bin/python selftest/probe_ac03_kill50.py
+    cd /Users/kevin/bistro/feicui/server && ./.venv/bin/python selftest/probe_ac03_kill50.py
 """
 from __future__ import annotations
 

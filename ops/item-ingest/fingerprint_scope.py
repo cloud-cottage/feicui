@@ -22,8 +22,8 @@ import sqlite3
 import tempfile
 from pathlib import Path
 
-REPO = Path("/Users/kevin/bistro/xiai/feicui")
-YINPU_DB = Path("/Users/kevin/bistro/xiai/data/yinpu.db")
+REPO = Path("/Users/kevin/bistro/feicui")
+YINPU_DB = Path("/Users/kevin/bistro/data/yinpu.db")
 PERSON_DB = REPO / "var" / "person_ingest.db"
 EXPORTS = REPO / "exports"
 _TMP_DIRS: list[Path] = []

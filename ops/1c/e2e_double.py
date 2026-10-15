@@ -24,9 +24,9 @@ import urllib.request
 from datetime import datetime
 
 BASE = "http://localhost:5164/feicui/api"
-DB = "/Users/kevin/bistro/shu/feicui/yinpu.db"
-SERVER_DIR = "/Users/kevin/bistro/shu/feicui/server"
-LAUNCH_LOG = "/Users/kevin/bistro/shu/feicui/server/.run/pool-launch.log"
+DB = "/Users/kevin/bistro/feicui/yinpu.db"
+SERVER_DIR = "/Users/kevin/bistro/feicui/server"
+LAUNCH_LOG = "/Users/kevin/bistro/feicui/server/.run/pool-launch.log"
 
 
 def _req(method: str, path: str, body: dict | None = None) -> tuple[int, dict | str]:

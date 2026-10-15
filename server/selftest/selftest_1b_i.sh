@@ -18,8 +18,8 @@
 # =============================================================================
 set -u
 
-SRV=/Users/kevin/bistro/shu/feicui/server
-FE=/Users/kevin/bistro/shu/feicui
+SRV=/Users/kevin/bistro/feicui/server
+FE=/Users/kevin/bistro/feicui
 EVID=$SRV/selftest/evidence/1b_i
 RUN=$EVID/run
 PY="$SRV/.venv/bin/python"

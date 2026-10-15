@@ -28,7 +28,7 @@ import pymupdf
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
-DEFAULT_DB = Path("/Users/kevin/bistro/xiai/data/yinpu.db")
+DEFAULT_DB = Path("/Users/kevin/bistro/data/yinpu.db")
 
 
 def _load(path: Path, name: str):

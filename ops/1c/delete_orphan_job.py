@@ -14,7 +14,7 @@
   4. 打印删除后的计数（`jobs` / `job_pages` 应为 0；`stamps` 应与步骤 2 相同）
 
 用法：
-    cd /Users/kevin/bistro/shu/feicui
+    cd /Users/kevin/bistro/feicui
     ./server/.venv/bin/python ops/1c/delete_orphan_job.py \
         --db yinpu.db --job-id job-3d697531fe834dbcb8c7ce5d3857077d --yes
 """

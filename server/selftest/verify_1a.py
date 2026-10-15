@@ -20,7 +20,7 @@ from pathlib import Path
 
 EV = Path(sys.argv[1])
 JOB1 = sys.argv[2]
-ROOT = Path("/Users/kevin/bistro/shu/feicui")  # §4.2：影像相对路径的解析根
+ROOT = Path("/Users/kevin/bistro/feicui")  # §4.2：影像相对路径的解析根
 
 FAILS: list[str] = []
 

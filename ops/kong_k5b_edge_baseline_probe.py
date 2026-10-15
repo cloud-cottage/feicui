@@ -10,14 +10,14 @@ import sys
 import time
 import hashlib
 
-sys.path.insert(0, "/Users/kevin/bistro/xiai/feicui/ops")
+sys.path.insert(0, "/Users/kevin/bistro/feicui/ops")
 from kong_k5b_edge_selftest import (BASE, PORT, ADMIN, CODE, SEAL, BLOCK_SCAN,  # noqa: E402
                                     new_target, ensure_chrome, Tab)
 
 VIEW = "/Users/kevin/bistro/xiai/src/views/SealDetailView.vue"
 FIXED_COND = 'v-if="canReplaceFaceImage && !face.isEdge"'
 BASE_COND = 'v-if="canReplaceFaceImage"'
-OUT = "/Users/kevin/bistro/xiai/feicui/ops/kong_k5b_edge_baseline_raw.json"
+OUT = "/Users/kevin/bistro/feicui/ops/kong_k5b_edge_baseline_raw.json"
 
 
 def md5(path):

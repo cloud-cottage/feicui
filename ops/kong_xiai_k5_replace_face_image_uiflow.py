@@ -31,8 +31,8 @@ NORMAL = "13800000001"  # 旧管理员号，现已是普通用户
 CODE = "1234"
 SEAL = "XAI-0001"
 FACE = "fc-0001-f1"
-OUT_JSON = "/Users/kevin/bistro/xiai/feicui/ops/kong_xiai_k5_replace_face_image_uiflow_raw.json"
-OUT_TXT = "/Users/kevin/bistro/xiai/feicui/ops/kong_xiai_k5_replace_face_image_uiflow_raw.txt"
+OUT_JSON = "/Users/kevin/bistro/feicui/ops/kong_xiai_k5_replace_face_image_uiflow_raw.json"
+OUT_TXT = "/Users/kevin/bistro/feicui/ops/kong_xiai_k5_replace_face_image_uiflow_raw.txt"
 
 # 页内造一张 **3000 × 1200** 的非方形图（canvas → JPEG），全程本机、不访问外部地址
 MAKE_IMAGE = """

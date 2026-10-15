@@ -5,7 +5,7 @@
 2400 dpi 像素 / 48bit 体积 / 观测到的微小偏差）。
 
 跑法：
-    cd /Users/kevin/bistro/xiai/feicui
+    cd /Users/kevin/bistro/feicui
     ./venv/bin/python ops/book-page-2400/geometry_report.py
 """
 from __future__ import annotations

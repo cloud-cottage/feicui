@@ -2,8 +2,8 @@
 """`app/colorcal.py` 语料实测读数 —— **V2 双锚点仿射 vs V1 对角增益 对照**（Kong 地基单 · 派单 ③）。
 
 跑法（**只读**，用 worker venv）：
-    /Users/kevin/bistro/xiai/feicui/venv/bin/python \
-        /Users/kevin/bistro/xiai/feicui/ops/image-colorcal/corpus_readings_affine.py
+    /Users/kevin/bistro/feicui/venv/bin/python \
+        /Users/kevin/bistro/feicui/ops/image-colorcal/corpus_readings_affine.py
 
 抽样方式（**确定性、可复现、与上单同口径**）：对 `var/seal_images_tiff/**/*.tiff` 全 N 件
 **按路径排序**后取 **等距系统抽样** `idx_i = round(i·N/n)`（`i=0..n-1`，`n=120`）。

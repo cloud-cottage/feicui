@@ -14,8 +14,8 @@
 # =============================================================================
 set -uo pipefail
 
-SERVER_DIR="/Users/kevin/bistro/shu/feicui/server"
-FEICUI_DIR="/Users/kevin/bistro/shu/feicui"
+SERVER_DIR="/Users/kevin/bistro/feicui/server"
+FEICUI_DIR="/Users/kevin/bistro/feicui"
 PROD_DB="$FEICUI_DIR/yinpu.db"
 EV="$SERVER_DIR/selftest/evidence"
 PY="$SERVER_DIR/.venv/bin/python"

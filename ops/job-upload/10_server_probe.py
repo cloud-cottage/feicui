@@ -3,7 +3,7 @@
 """拖曳上传端点 `POST /api/jobs/upload` · 服务端自测（可复跑）——Kong。
 
 跑法（**用 feicui/venv 的解释器**：要 pymupdf 造 fixture；不需要 fastapi）：
-    cd /Users/kevin/bistro/xiai/feicui
+    cd /Users/kevin/bistro/feicui
     ./venv/bin/python ops/job-upload/10_server_probe.py            # 打 5196
     ./venv/bin/python ops/job-upload/10_server_probe.py 127.0.0.1:5196
 
@@ -36,7 +36,7 @@ SERVER = REPO / "server"
 DAY = time.strftime("%Y%m%d")
 INBOX_DAY = REPO / "inbox" / DAY
 CONFIG_JSON = SERVER / "config.json"
-DB_PATH = Path("/Users/kevin/bistro/xiai/data/yinpu.db")
+DB_PATH = Path("/Users/kevin/bistro/data/yinpu.db")
 OPS = Path(__file__).resolve().parent
 FIXTURES = OPS / "fixtures"
 

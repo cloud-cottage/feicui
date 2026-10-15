@@ -15,7 +15,7 @@ import sys
 import time
 from pathlib import Path
 
-REPO = Path("/Users/kevin/bistro/xiai/feicui")
+REPO = Path("/Users/kevin/bistro/feicui")
 sys.path.insert(0, str(REPO / "server"))
 from app import persons as P  # noqa: E402
 

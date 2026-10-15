@@ -8,7 +8,7 @@ import subprocess
 import time
 from pathlib import Path
 
-REPO = Path("/Users/kevin/bistro/xiai/feicui")
+REPO = Path("/Users/kevin/bistro/feicui")
 OUT = REPO / "ops" / "corrected-pause" / "summary.json"
 BOOKS = REPO / "output" / "books"
 JOB = "job-90344a7802954afdaad447d875f2e15b"

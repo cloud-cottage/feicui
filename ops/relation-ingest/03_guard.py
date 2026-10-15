@@ -12,7 +12,7 @@ import sqlite3
 import sys
 from pathlib import Path
 
-REPO = Path("/Users/kevin/bistro/xiai/feicui")
+REPO = Path("/Users/kevin/bistro/feicui")
 YINPU = REPO.parent / "data" / "yinpu.db"          # xiai/data/yinpu.db
 DBS = {
     "yinpu.db": YINPU,

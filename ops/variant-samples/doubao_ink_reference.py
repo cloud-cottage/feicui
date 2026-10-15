@@ -10,7 +10,7 @@
 对标范围（硬口径）：**只取印泥质感三件事** —— 语义浓淡（L* 随距边距离的结构）、颗粒、边缘/半透/晕染；
 **严禁**对标字形与线条锐度（豆包图为生成式输出，已重绘印文）。
 
-跑法：cd /Users/kevin/bistro/xiai/feicui && ./venv/bin/python ops/variant-samples/doubao_ink_reference.py
+跑法：cd /Users/kevin/bistro/feicui && ./venv/bin/python ops/variant-samples/doubao_ink_reference.py
 """
 from __future__ import annotations
 

@@ -22,7 +22,7 @@
   ⇒ 淘汰到极限后剩 5000 B > 4800 B ⇒ **缺口 = 200 B**。
 
 跑法：
-    cd /Users/kevin/bistro/xiai/feicui
+    cd /Users/kevin/bistro/feicui
     ./server/.venv/bin/python ops/job-upload/16_inbox_gc_cli_gap_probe.py
 """
 from __future__ import annotations
@@ -38,10 +38,10 @@ import urllib.request
 from datetime import datetime, timedelta
 from pathlib import Path
 
-ROOT = Path("/Users/kevin/bistro/xiai/feicui")
+ROOT = Path("/Users/kevin/bistro/feicui")
 SERVER = ROOT / "server"
 PY = SERVER / ".venv" / "bin" / "python"
-PROD_DB = Path("/Users/kevin/bistro/xiai/data/yinpu.db")
+PROD_DB = Path("/Users/kevin/bistro/data/yinpu.db")
 SCRATCH = Path("/Users/kevin/.hermes/profiles/zang/cache/scratch/inbox_gc_obs_20261011")
 OUT = ROOT / "ops" / "job-upload" / "16_inbox_gc_cli_gap_probe_raw.json"
 

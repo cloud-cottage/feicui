@@ -29,7 +29,7 @@
   ⇒ 正解＝让 tifffile 独占「切 strip + predictor + deflate」这一段，本脚本只供**原始 uint16 像素**。
 
 跑法：
-    cd /Users/kevin/bistro/xiai/feicui
+    cd /Users/kevin/bistro/feicui
     ./venv/bin/python ops/book-page-2400/render_page_2400.py            # 全页（>7 min，务必后台）
     ./venv/bin/python ops/book-page-2400/render_page_2400.py --smoke    # 小合成页自检
     ./venv/bin/python ops/book-page-2400/render_page_2400.py --verify-only   # 只验证既有产物

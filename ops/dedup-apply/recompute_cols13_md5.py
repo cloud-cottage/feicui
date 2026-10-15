@@ -41,7 +41,7 @@ digest = hashlib.md5("".join(parts).encode("utf-8")).hexdigest()      # ★ 行�
     # 典型：before = 写入前备份，after = 现行 prod 库
     ./venv/bin/python ops/dedup-apply/recompute_cols13_md5.py \
         /Users/kevin/.hermes/profiles/zang/cache/scratch/dedup-apply/yinpu.db.prebak \
-        /Users/kevin/bistro/xiai/data/yinpu.db
+        /Users/kevin/bistro/data/yinpu.db
 """
 from __future__ import annotations
 

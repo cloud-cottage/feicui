@@ -159,7 +159,7 @@ def _resolve_db(db_arg: str | None) -> Path:
         from app.config import get_settings  # type: ignore
         return Path(get_settings().db_path)
     except Exception:
-        return Path("/Users/kevin/bistro/xiai/data/yinpu.db")
+        return Path("/Users/kevin/bistro/data/yinpu.db")
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -175,7 +175,7 @@ def main(argv: list[str] | None = None) -> int:
 
     db_path = _resolve_db(args.db)
     import os
-    prod = db_path == Path("/Users/kevin/bistro/xiai/data/yinpu.db").resolve()
+    prod = db_path == Path("/Users/kevin/bistro/data/yinpu.db").resolve()
     if args.apply and prod and os.environ.get("FEICUI_ALLOW_PROD_MIGRATE") != "1":
         print("✗ 拒绝：目标是仓库内正式库 yinpu.db（唯一真源）。")
         print("  若确需写入，请显式设 FEICUI_ALLOW_PROD_MIGRATE=1（须 Kevin/Zang 明示）；自测用副本。")

@@ -11,7 +11,7 @@
      不动库**）；同一 apply 语义再走 **`POST /api/jobs/inbox/gc {"apply":true}`**（临时 API 实例 :5197）复证。
 
 跑法：
-    cd /Users/kevin/bistro/xiai/feicui
+    cd /Users/kevin/bistro/feicui
     python3 ops/job-upload/14_inbox_gc_scenarios.py
 """
 from __future__ import annotations
@@ -27,10 +27,10 @@ import urllib.request
 from datetime import datetime, timedelta
 from pathlib import Path
 
-ROOT = Path("/Users/kevin/bistro/xiai/feicui")
+ROOT = Path("/Users/kevin/bistro/feicui")
 SERVER = ROOT / "server"
 PY = SERVER / ".venv" / "bin" / "python"
-PROD_DB = Path("/Users/kevin/bistro/xiai/data/yinpu.db")
+PROD_DB = Path("/Users/kevin/bistro/data/yinpu.db")
 SCRATCH = Path("/Users/kevin/.hermes/profiles/zang/cache/scratch/inbox_gc_scenarios")
 OUT = ROOT / "ops" / "job-upload" / "14_inbox_gc_scenarios_raw.json"
 

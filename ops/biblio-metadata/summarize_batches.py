@@ -8,7 +8,7 @@ Zang 的「逐书各起一进程」跑法为**每本书**生成**一条**批次�
 **只写 `var/biblio_ingest.db`（`biblio_import_batches` 一行）**；不写 `yinpu.db`、不改 `book_biblio` 列值、
 不切目录键、不建 job。同时落 `ops/biblio-metadata/batch_summary.json` / `batch_summary.md`。
 
-    cd /Users/kevin/bistro/xiai/feicui
+    cd /Users/kevin/bistro/feicui
     python3 ops/biblio-metadata/summarize_batches.py
 """
 from __future__ import annotations

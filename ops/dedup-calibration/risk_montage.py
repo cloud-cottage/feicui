@@ -24,7 +24,7 @@ import numpy as np
 import pymupdf
 
 REPO = Path(__file__).resolve().parents[2]
-DEFAULT_DB = Path("/Users/kevin/bistro/xiai/data/yinpu.db")
+DEFAULT_DB = Path("/Users/kevin/bistro/data/yinpu.db")
 HERE = Path(__file__).resolve().parent
 
 RENDER_DPI = 400.0

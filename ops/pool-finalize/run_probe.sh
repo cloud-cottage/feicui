@@ -3,7 +3,7 @@
 # 用法： run_probe.sh <before|after>
 set -u
 PHASE="${1:?before|after}"
-REPO=/Users/kevin/bistro/xiai/feicui
+REPO=/Users/kevin/bistro/feicui
 S=/Users/kevin/.hermes/profiles/zang/cache/scratch/feicui_tpl_unusable
 DB=$S/test.db
 LOG=$S/${PHASE}.log

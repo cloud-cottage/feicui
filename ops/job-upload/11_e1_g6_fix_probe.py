@@ -18,7 +18,7 @@
 `job_pages` / `jobs` 行），并把三表行数复位读数打出来；**不删任何非本脚本所建的行**。
 
 跑法（feicui/venv 有 pymupdf 造 fixture）：
-    cd /Users/kevin/bistro/xiai/feicui
+    cd /Users/kevin/bistro/feicui
     ./venv/bin/python ops/job-upload/11_e1_g6_fix_probe.py            # 打 127.0.0.1:5196
 """
 from __future__ import annotations
@@ -34,7 +34,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 OPS = Path(__file__).resolve().parent
 FIXTURES = OPS / "fixtures"
-DB_PATH = Path("/Users/kevin/bistro/xiai/data/yinpu.db")
+DB_PATH = Path("/Users/kevin/bistro/data/yinpu.db")
 BACKUP_DIR = Path("/Users/kevin/.hermes/profiles/zang/cache/scratch")
 
 TARGET = sys.argv[1] if len(sys.argv) > 1 else "127.0.0.1:5196"

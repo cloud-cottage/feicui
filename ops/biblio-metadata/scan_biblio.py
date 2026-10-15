@@ -13,7 +13,7 @@
 * 抓不到 ⇒ 如实标 `unverified`，**不得伪造**。
 
 复跑：
-    cd /Users/kevin/bistro/xiai/feicui
+    cd /Users/kevin/bistro/feicui
     ./venv/bin/python ops/biblio-metadata/scan_biblio.py            # 全量（已登记书）
     ./venv/bin/python ops/biblio-metadata/scan_biblio.py --only 秦印类编
 """

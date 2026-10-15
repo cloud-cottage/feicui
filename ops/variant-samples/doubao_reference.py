@@ -13,7 +13,7 @@
 边缘毛糙）⇒ 只对标它的**纸纹理 / 印泥色彩 / 晕染过渡**三项；**严禁**对标字形与线条锐度
 （我们守白字/字形冻结，该项不学）。
 
-跑法：cd /Users/kevin/bistro/xiai/feicui && ./venv/bin/python ops/variant-samples/doubao_reference.py
+跑法：cd /Users/kevin/bistro/feicui && ./venv/bin/python ops/variant-samples/doubao_reference.py
 """
 from __future__ import annotations
 

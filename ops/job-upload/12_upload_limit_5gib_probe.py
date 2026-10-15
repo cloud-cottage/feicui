@@ -14,7 +14,7 @@
 脚本自名的文件并自行回收；**不动** inbox 里任何别的文件。
 
 跑法：
-    cd /Users/kevin/bistro/xiai/feicui
+    cd /Users/kevin/bistro/feicui
     ./venv/bin/python ops/job-upload/12_upload_limit_5gib_probe.py        # 打 127.0.0.1:5196
 """
 from __future__ import annotations

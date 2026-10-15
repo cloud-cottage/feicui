@@ -9,7 +9,7 @@ import json
 import sqlite3
 from pathlib import Path
 
-REPO = Path("/Users/kevin/bistro/xiai/feicui")
+REPO = Path("/Users/kevin/bistro/feicui")
 PERSON = REPO / "var" / "person_ingest.db"
 ITEM = REPO / "var" / "item_ingest.db"
 SEAL = REPO / "var" / "seal_ingest.db"

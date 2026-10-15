@@ -8,7 +8,7 @@
 只读；产物 `first_seal_probe.json` ＋ `recon_p29_mask.png`（掩膜调试图，供人核对）。
 
 跑法：
-    cd /Users/kevin/bistro/xiai/feicui
+    cd /Users/kevin/bistro/feicui
     ./venv/bin/python ops/book-page-2400/first_seal_probe.py
 """
 from __future__ import annotations

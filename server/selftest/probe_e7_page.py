@@ -16,7 +16,7 @@
   * 循环**硬上界**（`总页数 + 2`，上限 50），游标不推进即 break。
 
 跑法：
-    cd /Users/kevin/bistro/shu/feicui/server && ./.venv/bin/python selftest/probe_e7_page.py [--out 文件.json]
+    cd /Users/kevin/bistro/feicui/server && ./.venv/bin/python selftest/probe_e7_page.py [--out 文件.json]
 """
 from __future__ import annotations
 

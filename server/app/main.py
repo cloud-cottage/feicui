@@ -4,7 +4,7 @@
 —— 本层无进程内业务状态，重启后 E2 读数与库内复算逐字一致）、§3.2 S-4。
 
 启动（详见 server/README.md §8）：
-    cd /Users/kevin/bistro/shu/feicui/server
+    cd /Users/kevin/bistro/feicui/server
     FEICUI_DB=<db> ./.venv/bin/python -m app.main          # 等价于 uvicorn 起 app.main:app
 """
 from __future__ import annotations

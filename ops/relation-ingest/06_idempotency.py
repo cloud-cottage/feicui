@@ -11,7 +11,7 @@ import json
 import subprocess
 from pathlib import Path
 
-REPO = Path("/Users/kevin/bistro/xiai/feicui")
+REPO = Path("/Users/kevin/bistro/feicui")
 SERVER = REPO / "server"
 PKG = REPO / "exports" / "relation_import_relation_20261010_01"
 BATCH = "relation_20261010_01"

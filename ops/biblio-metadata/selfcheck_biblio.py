@@ -2,7 +2,7 @@
 """`server/app/biblio.py` 单测 ＋ 静态纪律自检（Kong / biblio-metadata 单 · 2026-10-11）。
 
 **纯标准库**（无图像栈依赖）⇒ 任意解释器可跑：
-    cd /Users/kevin/bistro/xiai/feicui
+    cd /Users/kevin/bistro/feicui
     python3 ops/biblio-metadata/selfcheck_biblio.py
 
 覆盖：口径件 §8 的验收候选 BM-1 〜 BM-6（**阶段 1 可机械判负的那部分**）＋ 抓取面常量

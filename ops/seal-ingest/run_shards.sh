@@ -5,7 +5,7 @@
 # 终止：ok + source_no_image（终态）达到 6765，或连续 2 片零进展，或达到 30 片上限。
 # 只写 ops/seal-ingest/** 与 var/**；不提交、不 push。
 set -u
-ROOT=/Users/kevin/bistro/xiai/feicui
+ROOT=/Users/kevin/bistro/feicui
 cd "$ROOT/server" || exit 1
 PY="$ROOT/server/.venv/bin/python"
 DB="$ROOT/var/seal_ingest.db"

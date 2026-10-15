@@ -33,7 +33,7 @@ NORMAL = "13800000001"
 CODE = "1234"
 SEAL = "XAI-0001"
 EDGE_SEALS = ["XAI-0001", "XAI-0004", "XAI-0005", "XAI-0007"]
-OUT_PREFIX = "/Users/kevin/bistro/xiai/feicui/ops/kong_k5b_edge_"
+OUT_PREFIX = "/Users/kevin/bistro/feicui/ops/kong_k5b_edge_"
 OUT_JSON = OUT_PREFIX + "selftest_raw.json"
 OUT_TXT = OUT_PREFIX + "selftest_raw.txt"
 

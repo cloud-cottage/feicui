@@ -55,7 +55,7 @@ WAL 只允许**一个写者**：N 个 worker 各自直连 `yinpu.db` 并发 `INS
 | `FEICUI_WORKER_PYTHON` | `<feicui>/venv/bin/python` | worker 解释器（§6.5 解释器矩阵） |
 
 用法：
-    cd /Users/kevin/bistro/shu/feicui/server
+    cd /Users/kevin/bistro/feicui/server
     FEICUI_DB=<db> ./.venv/bin/python -m app.pool --workers 4           # 常驻
     FEICUI_DB=<db> ./.venv/bin/python -m app.pool --workers 1 --drain   # 串行基线臂（跑完即退）
 """

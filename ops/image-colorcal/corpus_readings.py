@@ -2,8 +2,8 @@
 """`app/colorcal.py` 语料实测读数（Kong 地基单 · 派单 ③）。
 
 跑法（**只读**，用 worker venv）：
-    /Users/kevin/bistro/xiai/feicui/venv/bin/python \
-        /Users/kevin/bistro/xiai/feicui/ops/image-colorcal/corpus_readings.py
+    /Users/kevin/bistro/feicui/venv/bin/python \
+        /Users/kevin/bistro/feicui/ops/image-colorcal/corpus_readings.py
 
 抽样方式（**确定性、可复现**）：对 `var/seal_images_tiff/**/*.tiff` 全 6347 件**按路径排序**后，
 取 **等距系统抽样** `idx_i = round(i·N/n)`（`i=0..n-1`，`n=120`）——覆盖首尾、跨 256 个 sha 前缀目录。

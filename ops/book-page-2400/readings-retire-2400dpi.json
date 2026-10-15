@@ -1,0 +1,106 @@
+{
+  "schema": "feicui.book-page-2400.retire-2400dpi.v1",
+  "order": "Kevin 2026-10-16 指令 ①：HighRes dpi 2400 → 1200；指令 ②：删掉已输出的 2400dpi 产物",
+  "dir": "/Users/kevin/bistro/feicui/output/2_HighRes_PDF/9787550847224",
+  "listing_before": [
+    ".DS_Store",
+    "P29-2400dpi-48bit-frozen-preview300-8bit.png",
+    "P29-2400dpi-48bit-frozen-preview300-8bit.tiff",
+    "P29-2400dpi-48bit-frozen.tif",
+    "P29-2400dpi-48bit-preview300-8bit.png",
+    "P29-2400dpi-48bit-preview300-8bit.tiff",
+    "P29-2400dpi-48bit.tif"
+  ],
+  "listing_after": [
+    ".DS_Store"
+  ],
+  "targets": [
+    {
+      "path": "/Users/kevin/bistro/feicui/output/2_HighRes_PDF/9787550847224/P29-2400dpi-48bit.tif",
+      "rel": "output/2_HighRes_PDF/9787550847224/P29-2400dpi-48bit.tif",
+      "name": "P29-2400dpi-48bit.tif",
+      "bytes": 1903843591,
+      "bytes_gib": 1.7731,
+      "mtime": 1791896281.8751667,
+      "mtime_iso": "2026-10-13T20:58:01",
+      "magic_hex": "49 49 2b 00",
+      "sha256": "9f238c756f754caa36b07418e097f2edc4e450fd3bcc9c965a4d9c19701afeaa",
+      "deleted": true,
+      "exists_after": false
+    },
+    {
+      "path": "/Users/kevin/bistro/feicui/output/2_HighRes_PDF/9787550847224/P29-2400dpi-48bit-frozen.tif",
+      "rel": "output/2_HighRes_PDF/9787550847224/P29-2400dpi-48bit-frozen.tif",
+      "name": "P29-2400dpi-48bit-frozen.tif",
+      "bytes": 1906199278,
+      "bytes_gib": 1.7753,
+      "mtime": 1791896528.8183901,
+      "mtime_iso": "2026-10-13T21:02:08",
+      "magic_hex": "49 49 2b 00",
+      "sha256": "d5585c188cd75e62ea4ef5a4ad9a4d4d8c65228de807bde5b18bc3b43afb5008",
+      "deleted": true,
+      "exists_after": false
+    },
+    {
+      "path": "/Users/kevin/bistro/feicui/output/2_HighRes_PDF/9787550847224/P29-2400dpi-48bit-preview300-8bit.tiff",
+      "rel": "output/2_HighRes_PDF/9787550847224/P29-2400dpi-48bit-preview300-8bit.tiff",
+      "name": "P29-2400dpi-48bit-preview300-8bit.tiff",
+      "bytes": 3924570,
+      "bytes_gib": 0.0037,
+      "mtime": 1792039663.0759718,
+      "mtime_iso": "2026-10-15T12:47:43",
+      "magic_hex": "49 49 2a 00",
+      "sha256": "a8ea8e93a359a0a6f6e3209d27343a870f9891096a18db7f4469c63ec00a0f9b",
+      "deleted": true,
+      "exists_after": false
+    },
+    {
+      "path": "/Users/kevin/bistro/feicui/output/2_HighRes_PDF/9787550847224/P29-2400dpi-48bit-preview300-8bit.png",
+      "rel": "output/2_HighRes_PDF/9787550847224/P29-2400dpi-48bit-preview300-8bit.png",
+      "name": "P29-2400dpi-48bit-preview300-8bit.png",
+      "bytes": 4047115,
+      "bytes_gib": 0.0038,
+      "mtime": 1792039663.5516405,
+      "mtime_iso": "2026-10-15T12:47:43",
+      "magic_hex": "89 50 4e 47",
+      "sha256": "b2cc9ca38a5d4f6b7dce0de62aec88f659a9309cf79e72da6aa82a6e470a619a",
+      "deleted": true,
+      "exists_after": false
+    },
+    {
+      "path": "/Users/kevin/bistro/feicui/output/2_HighRes_PDF/9787550847224/P29-2400dpi-48bit-frozen-preview300-8bit.tiff",
+      "rel": "output/2_HighRes_PDF/9787550847224/P29-2400dpi-48bit-frozen-preview300-8bit.tiff",
+      "name": "P29-2400dpi-48bit-frozen-preview300-8bit.tiff",
+      "bytes": 3937317,
+      "bytes_gib": 0.0037,
+      "mtime": 1792039680.6536684,
+      "mtime_iso": "2026-10-15T12:48:00",
+      "magic_hex": "49 49 2a 00",
+      "sha256": "b235eb1d2b4f9abe9d0c9c0ef91d52a2c6e6ba0e554ef8b68ea2a90c5f1a4278",
+      "deleted": true,
+      "exists_after": false
+    },
+    {
+      "path": "/Users/kevin/bistro/feicui/output/2_HighRes_PDF/9787550847224/P29-2400dpi-48bit-frozen-preview300-8bit.png",
+      "rel": "output/2_HighRes_PDF/9787550847224/P29-2400dpi-48bit-frozen-preview300-8bit.png",
+      "name": "P29-2400dpi-48bit-frozen-preview300-8bit.png",
+      "bytes": 4053970,
+      "bytes_gib": 0.0038,
+      "mtime": 1792039681.1388693,
+      "mtime_iso": "2026-10-15T12:48:01",
+      "magic_hex": "89 50 4e 47",
+      "sha256": "d896abd29f6942945ab157c43d847f7cb55b7744179a048ecefc4efc550172a1",
+      "deleted": true,
+      "exists_after": false
+    }
+  ],
+  "count": 6,
+  "freed_bytes": 3826005841,
+  "freed_gib": 3.563,
+  "kept": [
+    ".DS_Store"
+  ],
+  "kept_note": ".DS_Store 一类 macOS strays 与目录本身保留（非 HighRes 产物）",
+  "deleted_all": true,
+  "remaining_2400dpi_entries": []
+}

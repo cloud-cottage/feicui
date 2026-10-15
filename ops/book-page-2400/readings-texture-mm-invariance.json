@@ -1,0 +1,289 @@
+{
+  "schema": "feicui.book-page-2400.texture-mm-invariance.v3",
+  "task": "Kong：纹理按 mm 物理尺度定义、随目标 dpi 换算（Kevin 2026-10-16）",
+  "generator": "ops/book-page-2400/probe_texture_mm_invariance.py",
+  "impl_source": "ops/book-page-2400/render_page_2400.py（_fiber_lattice，同一份实现，不复制）",
+  "method": "两 dpi 一律在**同一物理栅格**上求值（物理 mm ⇒ 该 dpi 的虚拟像素索引，消掉半像素取样相位）⇒ 逐点比较 / 同栅格自相关 / 共带谱质心",
+  "window_mm": 20.0,
+  "n_samples": 2048,
+  "grid_mm": 2.0,
+  "grid_n": 256,
+  "dpi_pair": [
+    1200,
+    2400
+  ],
+  "tolerances": {
+    "mm_scale_rel": 0.02,
+    "centroid_rel": 0.05,
+    "min_pearson_r": 0.9999,
+    "centroid_band_cyc_per_mm": [
+      0.5,
+      20.0
+    ]
+  },
+  "geometry": {
+    "coarse_1200": {
+      "fiber_cell_px": [
+        33.0,
+        3.5
+      ],
+      "fiber_cell_mm": [
+        0.6984999999999999,
+        0.07408333333333332
+      ],
+      "halo_band_out_px": 8,
+      "halo_band_mm": 0.16933333333333334,
+      "upsample_factor": 4,
+      "out_px": [
+        8500,
+        12236
+      ],
+      "target_dpi": 1200
+    },
+    "fine_2400": {
+      "fiber_cell_px": [
+        66.0,
+        7.0
+      ],
+      "fiber_cell_mm": [
+        0.6984999999999999,
+        0.07408333333333332
+      ],
+      "halo_band_out_px": 16,
+      "halo_band_mm": 0.16933333333333334,
+      "upsample_factor": 8,
+      "out_px": [
+        17000,
+        24472
+      ],
+      "target_dpi": 2400
+    }
+  },
+  "phys_same_place": {
+    "lattice_2d": {
+      "n": 65536,
+      "pearson_r": 1.0,
+      "rms_diff": 0.0,
+      "max_abs_diff": 0.0,
+      "rms_of_reference": 0.211237
+    },
+    "x_line": {
+      "n": 2048,
+      "pearson_r": 1.0,
+      "rms_diff": 0.0,
+      "max_abs_diff": 0.0,
+      "rms_of_reference": 0.18389
+    },
+    "y_line": {
+      "n": 2048,
+      "pearson_r": 1.0,
+      "rms_diff": 0.0,
+      "max_abs_diff": 0.0,
+      "rms_of_reference": 0.194462
+    }
+  },
+  "acf": {
+    "x": {
+      "mm_defined": {
+        "coarse_1200": {
+          "half_decay_mm": 0.157504,
+          "corr_len_mm": 0.166363,
+          "z0_mm": 0.342225
+        },
+        "fine_2400": {
+          "half_decay_mm": 0.157504,
+          "corr_len_mm": 0.166363,
+          "z0_mm": 0.342225
+        }
+      },
+      "old_pixel_constants_coarse_1200": {
+        "half_decay_mm": 0.428218,
+        "corr_len_mm": 0.577504,
+        "z0_mm": 1.926293
+      }
+    },
+    "y": {
+      "mm_defined": {
+        "coarse_1200": {
+          "half_decay_mm": 0.022093,
+          "corr_len_mm": 0.028207,
+          "z0_mm": 0.05473
+        },
+        "fine_2400": {
+          "half_decay_mm": 0.022093,
+          "corr_len_mm": 0.028207,
+          "z0_mm": 0.05473
+        }
+      },
+      "old_pixel_constants_coarse_1200": {
+        "half_decay_mm": 0.053082,
+        "corr_len_mm": 0.062914,
+        "z0_mm": 0.252875
+      }
+    }
+  },
+  "spectrum": {
+    "x": {
+      "mm_defined": {
+        "coarse_1200": {
+          "band_cyc_per_mm": [
+            0.5,
+            20.0
+          ],
+          "centroid_cyc_per_mm": 1.713832,
+          "centroid_wavelength_mm": 0.583488,
+          "half_power_cyc_per_mm": 0.55,
+          "half_power_wavelength_mm": 1.818182
+        },
+        "fine_2400": {
+          "band_cyc_per_mm": [
+            0.5,
+            20.0
+          ],
+          "centroid_cyc_per_mm": 1.713832,
+          "centroid_wavelength_mm": 0.583488,
+          "half_power_cyc_per_mm": 0.55,
+          "half_power_wavelength_mm": 1.818182
+        }
+      },
+      "old_pixel_constants_coarse_1200": {
+        "band_cyc_per_mm": [
+          0.5,
+          20.0
+        ],
+        "centroid_cyc_per_mm": 1.393354,
+        "centroid_wavelength_mm": 0.717693,
+        "half_power_cyc_per_mm": 0.55,
+        "half_power_wavelength_mm": 1.818182
+      }
+    },
+    "y": {
+      "mm_defined": {
+        "coarse_1200": {
+          "band_cyc_per_mm": [
+            0.5,
+            20.0
+          ],
+          "centroid_cyc_per_mm": 6.338115,
+          "centroid_wavelength_mm": 0.157776,
+          "half_power_cyc_per_mm": 0.55,
+          "half_power_wavelength_mm": 1.818182
+        },
+        "fine_2400": {
+          "band_cyc_per_mm": [
+            0.5,
+            20.0
+          ],
+          "centroid_cyc_per_mm": 6.338115,
+          "centroid_wavelength_mm": 0.157776,
+          "half_power_cyc_per_mm": 0.55,
+          "half_power_wavelength_mm": 1.818182
+        }
+      },
+      "old_pixel_constants_coarse_1200": {
+        "band_cyc_per_mm": [
+          0.5,
+          20.0
+        ],
+        "centroid_cyc_per_mm": 3.36187,
+        "centroid_wavelength_mm": 0.297453,
+        "half_power_cyc_per_mm": 0.5,
+        "half_power_wavelength_mm": 2.0
+      }
+    }
+  },
+  "checks": {
+    "phys_same_place_lattice_corr_ge_0.9999": {
+      "pearson_r": 1.0,
+      "threshold": 0.9999,
+      "rms_diff": 0.0,
+      "pass": true
+    },
+    "acf_x_half_decay_mm_equal": {
+      "1200": 0.157504,
+      "2400": 0.157504,
+      "rel_diff": 0.0,
+      "pass": true
+    },
+    "acf_x_corr_len_mm_equal": {
+      "1200": 0.166363,
+      "2400": 0.166363,
+      "rel_diff": 0.0,
+      "pass": true
+    },
+    "spectral_centroid_x_cyc_per_mm_equal": {
+      "1200": 1.713832,
+      "2400": 1.713832,
+      "rel_diff": 0.0,
+      "pass": true
+    },
+    "acf_y_half_decay_mm_equal": {
+      "1200": 0.022093,
+      "2400": 0.022093,
+      "rel_diff": 0.0,
+      "pass": true
+    },
+    "acf_y_corr_len_mm_equal": {
+      "1200": 0.028207,
+      "2400": 0.028207,
+      "rel_diff": 0.0,
+      "pass": true
+    },
+    "spectral_centroid_y_cyc_per_mm_equal": {
+      "1200": 6.338115,
+      "2400": 6.338115,
+      "rel_diff": 0.0,
+      "pass": true
+    }
+  },
+  "counterexample_old_pixel_constants": {
+    "note": "旧实现把晶格写死成像素常量（长轴 66 px / 短轴 7 px，与 dpi 无关）—— 在 1200 dpi 的网格上直接沿用 ⇒ **同一物理位置的值**与**同一物理尺度**两处都不成立",
+    "old_px_constants": {
+      "long": 66,
+      "short": 7
+    },
+    "phys_same_place_vs_2400": {
+      "lattice_2d": {
+        "n": 65536,
+        "pearson_r": 0.04209613,
+        "rms_diff": 0.298683028,
+        "max_abs_diff": 0.878322814,
+        "rms_of_reference": 0.211237
+      },
+      "x_line": {
+        "n": 2048,
+        "pearson_r": 0.18094723,
+        "rms_diff": 0.2414574,
+        "max_abs_diff": 0.778074862,
+        "rms_of_reference": 0.18389
+      },
+      "y_line": {
+        "n": 2048,
+        "pearson_r": -0.00177542,
+        "rms_diff": 0.278938993,
+        "max_abs_diff": 0.804573879,
+        "rms_of_reference": 0.194462
+      }
+    },
+    "mm_scale_old": {
+      "1200": {
+        "long_mm": 1.397,
+        "short_mm": 0.148167
+      },
+      "2400": {
+        "long_mm": 0.6985,
+        "short_mm": 0.074083
+      }
+    },
+    "mm_scale_rel_diff_long": 1.0,
+    "mm_scale_rel_diff_short": 1.0,
+    "judged_negative": true
+  },
+  "all_ok": true,
+  "observations": {
+    "grain": "细颗粒是**逐像素**位置哈希白噪（σ=0.85），不是 mm 定义的纹理 ⇒ 两个 dpi 下都是约 1 px，其 mm 尺度必然随 dpi 变（「按像素定义」的固有属性，非本单改动对象；本轮**未改**）",
+    "halo": "晕染环带同样 mm 化（HALO_BAND_MM=0.169333 mm ⇒ 1200dpi 8 px / 2400dpi 16 px）",
+    "render_grid_acf": "按各自渲染像素栅格直接量自相关（不做物理坐标对齐）会带取样相位/栅格效应，长轴换算成 mm 后差 5–7% —— 那是取样效应，故判据取同物理栅格口径"
+  },
+  "elapsed_seconds": 0.14
+}

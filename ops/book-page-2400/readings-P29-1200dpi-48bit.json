@@ -1,0 +1,591 @@
+{
+  "schema": "feicui.book-page-2400.readings.v3",
+  "generator": "ops/book-page-2400/render_page_2400.py",
+  "page": 29,
+  "dir_key": "9787550847224",
+  "out_path": "/Users/kevin/bistro/feicui/output/2_HighRes_PDF/9787550847224/P29-1200dpi-48bit.tif",
+  "out_rel": "output/2_HighRes_PDF/9787550847224/P29-1200dpi-48bit.tif",
+  "source": {
+    "pdf": "/Users/kevin/bistro/feicui/output/1_Original_PDF/秦印类编 检索版.pdf",
+    "page": 29,
+    "xref": 112,
+    "page_pt": [
+      510.0,
+      734.16
+    ],
+    "page_mm": [
+      179.917,
+      258.995
+    ],
+    "scan_dpi": 300.0,
+    "src_px": [
+      2125,
+      3059
+    ],
+    "embedded_jpeg_md5": "4b45bfe1a899e69e0ecb3dbe1751b18a",
+    "text_layer": "无（纯图版页）",
+    "dpi": 300,
+    "size_px": [
+      2125,
+      3059
+    ]
+  },
+  "geometry": {
+    "target_dpi": 1200,
+    "scan_dpi": 300,
+    "upsample_factor": 4,
+    "src_px": [
+      2125,
+      3059
+    ],
+    "out_px": [
+      8500,
+      12236
+    ],
+    "strip_out_rows": 256,
+    "fiber_cell_px": [
+      33.0,
+      3.5
+    ],
+    "fiber_cell_mm": [
+      0.6985,
+      0.074083
+    ],
+    "halo_band_out_px": 8,
+    "halo_band_mm": 0.169333,
+    "raw_uncompressed_bytes": 624036000
+  },
+  "params": {
+    "scan_dpi": 300,
+    "target_dpi": 1200,
+    "upsample_factor": 4,
+    "source_px": [
+      2125,
+      3059
+    ],
+    "output_px": [
+      8500,
+      12236
+    ],
+    "bit_depth": 48,
+    "samples_per_pixel": 3,
+    "bits_per_sample": 16,
+    "container": {
+      "compression_tag": 8,
+      "predictor": 2,
+      "photometric": "rgb",
+      "planarconfig": "contig",
+      "bigtiff": true
+    },
+    "encoder": "tifffile 自带 deflate+predictor（本脚本只供原始 uint16 像素）",
+    "strip_out_rows": 256,
+    "margin_src_rows": 8,
+    "paper_rule": {
+      "min_gray": 210.0,
+      "max_sat": 0.15
+    },
+    "paper_texture": {
+      "seed": 20261013,
+      "colour_range_rgb": [
+        [
+          250,
+          250,
+          247
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ],
+      "base_rgb": [
+        252.5,
+        252.5,
+        250.5
+      ],
+      "grain_sigma": 0.85,
+      "fiber_sigma": 1.45,
+      "chroma_sigma": 0.3,
+      "fiber_cell_px": [
+        32.99999999999999,
+        3.4999999999999996
+      ],
+      "fiber_cell_mm": [
+        0.6984999999999999,
+        0.07408333333333332
+      ],
+      "scale_rule": "纹理一律 **mm 物理尺度**定义、按目标 dpi 换算 px （Kevin 2026-10-16：旧的像素常量会让低 dpi 过密 / 高 dpi 过稀）",
+      "fiber_std_probe": 0.214293,
+      "noise": "numpy uint64 splitmix64 位置哈希（与分块顺序无关）"
+    },
+    "halo": {
+      "band_out_px": 8,
+      "band_mm": 0.16933333333333334,
+      "alpha_max": 0.08,
+      "colour_rgb": [
+        239.42,
+        66.7,
+        62.968
+      ],
+      "restricted_to_paper": true
+    },
+    "color_calib": {
+      "strength": 0.35,
+      "mode": "归一化色度向全页印泥均值收敛（保 R+G+B 不变）",
+      "chroma_mean": [
+        0.669961,
+        0.169944
+      ],
+      "conflict": "与『内容零色彩改动』冲突 ⇒ 待裁；--color-calib 0 即完全冻结"
+    },
+    "crop": "（缺省不出裁件；须显式 --crop --crop-out）"
+  },
+  "render": {
+    "out_path": "/Users/kevin/bistro/feicui/output/2_HighRes_PDF/9787550847224/P29-1200dpi-48bit.tif",
+    "out_bytes": 479392073,
+    "shape": [
+      12236,
+      8500,
+      3
+    ],
+    "dtype": "uint16",
+    "bits_per_pixel": 48,
+    "rowsperstrip": 256,
+    "strips": 48,
+    "strip_stats": [
+      {
+        "strip": 0,
+        "y0": 0,
+        "y1": 256,
+        "seconds": 0.442
+      },
+      {
+        "strip": 1,
+        "y0": 256,
+        "y1": 512,
+        "seconds": 0.417
+      },
+      {
+        "strip": 2,
+        "y0": 512,
+        "y1": 768,
+        "seconds": 0.41
+      },
+      {
+        "strip": 3,
+        "y0": 768,
+        "y1": 1024,
+        "seconds": 0.425
+      },
+      {
+        "strip": 4,
+        "y0": 1024,
+        "y1": 1280,
+        "seconds": 0.461
+      },
+      {
+        "strip": 5,
+        "y0": 1280,
+        "y1": 1536,
+        "seconds": 0.411
+      },
+      {
+        "strip": 6,
+        "y0": 1536,
+        "y1": 1792,
+        "seconds": 0.43
+      },
+      {
+        "strip": 7,
+        "y0": 1792,
+        "y1": 2048,
+        "seconds": 0.425
+      },
+      {
+        "strip": 8,
+        "y0": 2048,
+        "y1": 2304,
+        "seconds": 0.492
+      },
+      {
+        "strip": 9,
+        "y0": 2304,
+        "y1": 2560,
+        "seconds": 0.489
+      },
+      {
+        "strip": 10,
+        "y0": 2560,
+        "y1": 2816,
+        "seconds": 0.489
+      },
+      {
+        "strip": 11,
+        "y0": 2816,
+        "y1": 3072,
+        "seconds": 0.514
+      },
+      {
+        "strip": 12,
+        "y0": 3072,
+        "y1": 3328,
+        "seconds": 0.491
+      },
+      {
+        "strip": 13,
+        "y0": 3328,
+        "y1": 3584,
+        "seconds": 0.421
+      },
+      {
+        "strip": 14,
+        "y0": 3584,
+        "y1": 3840,
+        "seconds": 0.42
+      },
+      {
+        "strip": 15,
+        "y0": 3840,
+        "y1": 4096,
+        "seconds": 0.413
+      },
+      {
+        "strip": 16,
+        "y0": 4096,
+        "y1": 4352,
+        "seconds": 0.463
+      },
+      {
+        "strip": 17,
+        "y0": 4352,
+        "y1": 4608,
+        "seconds": 0.455
+      },
+      {
+        "strip": 18,
+        "y0": 4608,
+        "y1": 4864,
+        "seconds": 0.462
+      },
+      {
+        "strip": 19,
+        "y0": 4864,
+        "y1": 5120,
+        "seconds": 0.459
+      },
+      {
+        "strip": 20,
+        "y0": 5120,
+        "y1": 5376,
+        "seconds": 0.486
+      },
+      {
+        "strip": 21,
+        "y0": 5376,
+        "y1": 5632,
+        "seconds": 0.476
+      },
+      {
+        "strip": 22,
+        "y0": 5632,
+        "y1": 5888,
+        "seconds": 0.499
+      },
+      {
+        "strip": 23,
+        "y0": 5888,
+        "y1": 6144,
+        "seconds": 0.495
+      },
+      {
+        "strip": 24,
+        "y0": 6144,
+        "y1": 6400,
+        "seconds": 0.504
+      },
+      {
+        "strip": 25,
+        "y0": 6400,
+        "y1": 6656,
+        "seconds": 0.486
+      },
+      {
+        "strip": 26,
+        "y0": 6656,
+        "y1": 6912,
+        "seconds": 0.415
+      },
+      {
+        "strip": 27,
+        "y0": 6912,
+        "y1": 7168,
+        "seconds": 0.418
+      },
+      {
+        "strip": 28,
+        "y0": 7168,
+        "y1": 7424,
+        "seconds": 0.41
+      },
+      {
+        "strip": 29,
+        "y0": 7424,
+        "y1": 7680,
+        "seconds": 0.448
+      },
+      {
+        "strip": 30,
+        "y0": 7680,
+        "y1": 7936,
+        "seconds": 0.476
+      },
+      {
+        "strip": 31,
+        "y0": 7936,
+        "y1": 8192,
+        "seconds": 0.459
+      },
+      {
+        "strip": 32,
+        "y0": 8192,
+        "y1": 8448,
+        "seconds": 0.447
+      },
+      {
+        "strip": 33,
+        "y0": 8448,
+        "y1": 8704,
+        "seconds": 0.459
+      },
+      {
+        "strip": 34,
+        "y0": 8704,
+        "y1": 8960,
+        "seconds": 0.478
+      },
+      {
+        "strip": 35,
+        "y0": 8960,
+        "y1": 9216,
+        "seconds": 0.493
+      },
+      {
+        "strip": 36,
+        "y0": 9216,
+        "y1": 9472,
+        "seconds": 0.489
+      },
+      {
+        "strip": 37,
+        "y0": 9472,
+        "y1": 9728,
+        "seconds": 0.489
+      },
+      {
+        "strip": 38,
+        "y0": 9728,
+        "y1": 9984,
+        "seconds": 0.483
+      },
+      {
+        "strip": 39,
+        "y0": 9984,
+        "y1": 10240,
+        "seconds": 0.447
+      },
+      {
+        "strip": 40,
+        "y0": 10240,
+        "y1": 10496,
+        "seconds": 0.495
+      },
+      {
+        "strip": 41,
+        "y0": 10496,
+        "y1": 10752,
+        "seconds": 0.414
+      },
+      {
+        "strip": 42,
+        "y0": 10752,
+        "y1": 11008,
+        "seconds": 0.46
+      },
+      {
+        "strip": 43,
+        "y0": 11008,
+        "y1": 11264,
+        "seconds": 0.411
+      },
+      {
+        "strip": 44,
+        "y0": 11264,
+        "y1": 11520,
+        "seconds": 0.415
+      },
+      {
+        "strip": 45,
+        "y0": 11520,
+        "y1": 11776,
+        "seconds": 0.417
+      },
+      {
+        "strip": 46,
+        "y0": 11776,
+        "y1": 12032,
+        "seconds": 0.412
+      },
+      {
+        "strip": 47,
+        "y0": 12032,
+        "y1": 12236,
+        "seconds": 0.311
+      }
+    ],
+    "processing_seconds": 21.94,
+    "write_seconds": 7.21,
+    "elapsed_s": 29.22,
+    "peak_rss_bytes": 1415282688,
+    "peak_rss_bytes_before_write": 630571008,
+    "scratch": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/p29-2400-oo6xw63t"
+  },
+  "verification": {
+    "container": {
+      "shape": [
+        12236,
+        8500,
+        3
+      ],
+      "dtype": "uint16",
+      "bits_per_sample": 16,
+      "bits_per_pixel": 48,
+      "samples_per_pixel": 3,
+      "compression": 8,
+      "predictor": 2,
+      "photometric": 2,
+      "planarconfig": 1,
+      "rowsperstrip": 256,
+      "tiled": false,
+      "strips": 48,
+      "bigtiff": false,
+      "software": "feicui ops/book-page-2400 render_page_2400.py",
+      "description": "feicui Qin Yin Lei Bian p29 1200dpi 48bit RGB (ops/book-page-2400 render_page_2400.py v3)",
+      "x_resolution": [
+        1200,
+        1
+      ],
+      "resolution_unit": 2,
+      "page_count": 1
+    },
+    "out_bytes": 479392073,
+    "out_gib": 0.446,
+    "sha256": "1c594a1a4a9d0d54d313c445d8948ebf9edb2ae342c76721c3dab1471a4fbfde",
+    "strips_checked": 48,
+    "strips_total": 48,
+    "rows_checked": 12236,
+    "pixels_checked": 104006000,
+    "roundtrip": {
+      "decode_vs_recompute_mismatch_px": 0,
+      "max_abs_diff_u16": 0
+    },
+    "freeze": {
+      "rule": "非纸底 ∧ 非印泥（含印刷黑字/图形）⇒ 逐像素 == clip(8× Lanczos)",
+      "pixels": 2845086,
+      "mismatch_px": 0,
+      "max_abs_diff_u16": 0,
+      "lanczos_ringing": {
+        "pixels_float_out_of_8bit_range": 3034781,
+        "max_overshoot_8bit_units": 54.793,
+        "note": "8× Lanczos 在源 8bit 饱和处产生振铃越界（>255 或 <0）⇒ 量化进 16bit （v = round(c·257)）时按通道裁剪；属『Lanczos + 量化』固有，非额外处理"
+      }
+    },
+    "ink_colorcalib": {
+      "rule": "仅印泥像素、归一化色度向全页均值收敛、逐像素有界强度；⑤ 与 ①「内容零色彩改动」冲突 · 登记为待裁",
+      "strength_requested": 0.35,
+      "pixels": 4064972,
+      "changed_px": 3952633,
+      "max_abs_diff_u16": 16117,
+      "max_abs_diff_8bit_equiv": 62.71,
+      "max_abs_sum_RGB_jump_float": 6.103515625e-05,
+      "sum_invariant_tolerance_float": 0.001,
+      "skipped_invalid_domain_px": 112286,
+      "skipped_invalid_domain_note": "Lanczos 振铃越界像素（任一通道 >255 或 <0，Σ 可 ≤0）不参与色度换算 ⇒ 归一化不是良定义；这些像素 t=0、逐像素原样保留",
+      "max_abs_sum_RGB_jump_u16_store": 2,
+      "sum_jump_u16_note": "store 域 Σ 差只出现在『Lanczos 振铃越界被裁剪』的像素上：裁剪后 R 已顶 65535/G,B 已触 0，再叠加校准必然改变 Σ —— 浮点域 Σ 在有效域像素上代数恒成立（|Δ| ≤ tol，残差＝float32 末位）",
+      "px_over_abs_diff_u16": {
+        "257": 3785284,
+        "1285": 2421345,
+        "2570": 1210706,
+        "5140": 204784,
+        "10280": 7100
+      },
+      "realized_strength": {
+        "mean": 0.30917,
+        "max": 0.35,
+        "px_at_cap": 3360212,
+        "note": "逐像素 t ≤ strength；t 取『不使任一通道越出 [0,255]』的最大可行值"
+      }
+    },
+    "paper_background": {
+      "declared_range_rgb": [
+        [
+          250,
+          250,
+          247
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ],
+      "observed_min_u16": [
+        255,
+        255,
+        255
+      ],
+      "observed_max_u16": [
+        65535,
+        65535,
+        65535
+      ],
+      "observed_min_u8_round": [
+        1,
+        1,
+        1
+      ],
+      "observed_max_u8_round": [
+        255,
+        255,
+        255
+      ],
+      "pixels": 97095942,
+      "outside_declared_range_px": 971135,
+      "outside_declared_range_and_outside_halo_px": 0,
+      "note": "晕染环带（外缘 16 px、α≤8%、向印泥均色收敛）内的纸底像素**按设计**可越出 #FAFAF7–#FFFFFF 下限"
+    }
+  },
+  "measured": {
+    "out_bytes": 479392073,
+    "out_gib": 0.446,
+    "out_sha256": "1c594a1a4a9d0d54d313c445d8948ebf9edb2ae342c76721c3dab1471a4fbfde",
+    "raw_uncompressed_bytes": 624036000,
+    "paper_px_share": 0.933561,
+    "ink_px_share": 0.039084,
+    "cpu_seconds": 81.66
+  },
+  "checks": {
+    "shape_ok": true,
+    "bits_ok": true,
+    "compression_ok": true,
+    "bigtiff_auto_ok": true,
+    "classic_tiff_for_1200_ok": true,
+    "resolution_tag_ok": true,
+    "description_dpi_ok": true,
+    "roundtrip_ok": true,
+    "freeze_ok": true,
+    "halo_out_of_range_ok": true,
+    "ink_sum_preserved_ok": true,
+    "ink_strength_bounded_ok": true
+  }
+}

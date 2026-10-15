@@ -22,6 +22,18 @@ import {
   templateSourceBadge,
 } from '@/api/jobsPreview'
 import { ACTIVE_STATES, E2_CURSOR_KEYS, STATE_LABELS } from '@/config/constants'
+// 页级「生成 HighRes」（Kevin 2026-10-16）：路径常量与口径全在 `@/api/jobsHighres`（一处收口）
+import {
+  HIGHRES_DPI_DEFAULT,
+  HIGHRES_DPI_WHITELIST,
+  HIGHRES_SCOPE_NOTE,
+  estimateText,
+  fetchHighresStatus,
+  formatBytes,
+  generateHighres,
+  highresErrorText,
+  wholeBookText,
+} from '@/api/jobsHighres'
 import { useBackendStatus } from '@/composables/useBackendStatus'
 import { usePolling } from '@/composables/usePolling'
 import { isNil, nilDash, nowStamp, rawBodyText } from '@/utils/format'
@@ -309,7 +321,151 @@ function onPreviewKeydown(e) {
   else previewNext()
 }
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// 页级「生成 HighRes」卡（Kevin 2026-10-16）
+//   口径：整页渲染 dpi 参数化（**缺省 1200**）、**页级**、幂等、**失败必可见**；
+//   **禁无限制整本生成**（整本算账在卡面明示，后端也拒收区间字段）。不新增页签 ⇒ 不动 AC-23。
+//   GET（估读，一次性子进程 ≈1–3 s）／ POST（真生成，1200dpi 单页 ≈27 s、2400dpi ≈108 s）。
+// ═══════════════════════════════════════════════════════════════════════════════
+const hrPage = ref(1) // 1-based（↔ stamps.page）
+const hrDpi = ref(HIGHRES_DPI_DEFAULT)
+const hrForce = ref(false)
+const hrEstimate = ref(null) // 最近一次 GET 估读（**后端原值**）
+const hrEstimateAt = ref(null)
+const hrStatus = ref({ kind: 'idle', statusCode: '', code: '', detail: '', raw: '' })
+const hrRun = ref({ state: 'idle', startedAt: null, elapsed: 0, at: null })
+const hrResult = ref(null) // 最近一次 POST 结果（**后端原值**）
+let hrTimer = null
+
+const hrEstimateText = computed(() => estimateText(hrEstimate.value && hrEstimate.value.estimate))
+const hrWholeBookText = computed(() => wholeBookText(hrEstimate.value && hrEstimate.value.estimate))
+const hrExistsText = computed(() => {
+  const e = hrEstimate.value
+  if (!e || e.exists === undefined || e.exists === null) return '—'
+  return e.exists ? `是（幂等：不重写；${formatBytes(e.out_bytes)}）` : '否'
+})
+const hrOutPath = computed(
+  () => (hrResult.value && (hrResult.value.out_rel || hrResult.value.out_path)) || '—'
+)
+const hrElapsedText = computed(
+  () => (hrRun.value.startedAt ? `${Number(hrRun.value.elapsed).toFixed(1)} s` : '—')
+)
+const hrContainerText = computed(() => {
+  const c = hrResult.value && hrResult.value.container
+  if (!c || c.error) return '—'
+  const res = Array.isArray(c.x_resolution) ? c.x_resolution.join('/') : '—'
+  return (
+    `${c.bits_per_sample}bit×${c.samples_per_pixel}ch · compression ${c.compression} · ` +
+    `predictor ${c.predictor} · bigtiff ${c.bigtiff} · ${res} dpi`
+  )
+})
+const hrSecondsText = computed(() => {
+  const s = hrResult.value && hrResult.value.seconds
+  if (!s) return '—'
+  return `处理 ${s.processing} s ＋ 写 ${s.write} s ＝ ${s.total} s`
+})
+
+/** GET 估读（不渲染）。失败一律把**后端真实码族**留在卡面（不静默）。 */
+async function loadHighresEstimate() {
+  if (!jobId.value || !hrPage.value) return
+  hrStatus.value = { kind: 'loading', statusCode: '', code: '', detail: '', raw: '' }
+  const res = await fetchHighresStatus(jobId.value, hrPage.value, hrDpi.value)
+  if (res.state === 'ok') {
+    hrEstimate.value = res.body
+    hrEstimateAt.value = nowStamp()
+    hrStatus.value = { kind: 'ok', statusCode: res.status, code: '', detail: '', raw: res.raw }
+  } else {
+    hrEstimate.value = null
+    hrStatus.value = {
+      kind: res.state === 'unknown' ? 'backend-down' : 'error',
+      statusCode: res.status || '',
+      code: res.code || '',
+      detail: res.detail || `HTTP ${res.status || '—'}`,
+      raw: res.raw || '',
+    }
+  }
+}
+
+/** POST 真生成（长跑）：进度用本地计时器显示**已用秒数**（不臆造百分比）。 */
+async function generateHighresNow() {
+  if (!jobId.value || !hrPage.value) return
+  hrResult.value = null
+  hrStatus.value = { kind: 'running', statusCode: '', code: '', detail: '', raw: '' }
+  hrRun.value = { state: 'running', startedAt: Date.now(), elapsed: 0, at: null }
+  if (hrTimer) window.clearInterval(hrTimer)
+  hrTimer = window.setInterval(() => {
+    if (hrRun.value.startedAt) {
+      hrRun.value = { ...hrRun.value, elapsed: (Date.now() - hrRun.value.startedAt) / 1000 }
+    }
+  }, 500)
+  try {
+    const res = await generateHighres(jobId.value, hrPage.value, hrDpi.value, hrForce.value)
+    if (res.state === 'ok') {
+      hrResult.value = res.body
+      hrStatus.value = { kind: 'ok', statusCode: res.status, code: '', detail: '', raw: res.raw }
+      hrRun.value = { ...hrRun.value, state: 'done', at: nowStamp() }
+      await loadHighresEstimate() // 生成后刷新存在性/体积
+    } else {
+      hrStatus.value = {
+        kind: res.state === 'unknown' ? 'backend-down' : 'error',
+        statusCode: res.status || '',
+        code: res.code || '',
+        detail: res.detail || `HTTP ${res.status || '—'}`,
+        raw: res.raw || '',
+      }
+      hrRun.value = { ...hrRun.value, state: 'failed', at: nowStamp() }
+    }
+  } catch (e) {
+    hrStatus.value = { kind: 'error', statusCode: '', code: '', detail: String((e && e.message) || e), raw: '' }
+    hrRun.value = { ...hrRun.value, state: 'failed', at: nowStamp() }
+  } finally {
+    if (hrTimer) {
+      window.clearInterval(hrTimer)
+      hrTimer = null
+    }
+    if (hrRun.value.startedAt) {
+      hrRun.value = { ...hrRun.value, elapsed: (Date.now() - hrRun.value.startedAt) / 1000 }
+    }
+  }
+}
+
+function normalizeHrPage() {
+  const n = Math.floor(Number(hrPage.value))
+  hrPage.value = Number.isFinite(n) && n >= 1 ? n : 1
+}
+
+// job 切换：HighRes 卡本地态归零（**不自动起子进程**；估读由用户点或快照到手后触发一次）
+watch(
+  jobId,
+  () => {
+    hrPage.value = 1
+    hrEstimate.value = null
+    hrEstimateAt.value = null
+    hrResult.value = null
+    hrRun.value = { state: 'idle', startedAt: null, elapsed: 0, at: null }
+    hrStatus.value = { kind: 'idle', statusCode: '', code: '', detail: '', raw: '' }
+  },
+  { immediate: true }
+)
+
+// 换页 / 换 dpi ⇒ 重新估读（估读＝一次性子进程，故仅在参数真变时触发）
+watch([hrPage, hrDpi], () => {
+  if (jobId.value && hrPage.value) loadHighresEstimate()
+})
+
+// E2 快照首次到手 ⇒ 自动估读一次（让「预估体积/时间」在点按钮前就可见）
+watch(snapshot, (s) => {
+  if (s && jobId.value && hrEstimateAt.value === null && hrStatus.value.kind === 'idle') {
+    loadHighresEstimate()
+  }
+})
+
+onBeforeUnmount(() => {
+  if (hrTimer) window.clearInterval(hrTimer)
+})
+
 onMounted(() => window.addEventListener('keydown', onPreviewKeydown))
+
 onBeforeUnmount(() => window.removeEventListener('keydown', onPreviewKeydown))
 </script>
 
@@ -578,6 +734,88 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onPreviewKeydown))
         </ul>
       </div>
 
+      <!-- ═══════════════════════════════════════════════════════════════════════
+           页级「生成 HighRes」卡（Kevin 2026-10-16）：整页 dpi 参数化（缺省 1200）、**页级**、
+           幂等（已存在不重写，除非勾 force）、**失败必可见**；**禁无限制整本生成**（算账在卡面）。
+           与预览卡同 job ＋ 同页码上下文 ⇒ 放在预览卡之后、相关页面前。不新增页签 ⇒ 不动 AC-23。
+           ═══════════════════════════════════════════════════════════════════════ -->
+      <div class="card card--highres">
+        <div class="card__head">
+          <h3>生成 HighRes（整页大图 · 页级）</h3>
+          <button class="ghost" type="button" @click="loadHighresEstimate">估读（不渲染）</button>
+        </div>
+        <p class="muted">
+          落点 ⇒ <code>output/2_HighRes_PDF/&lt;目录键&gt;/P&lt;页&gt;-&lt;dpi&gt;dpi-48bit.tif</code>
+          （48bit RGB · Deflate+Predictor2 · <strong>经典 TIFF</strong>：仅未压缩 &gt; 4 GiB 才写 BigTIFF）·
+          API ＝ <code>GET/POST /api/jobs/{job_id}/pages/{page}/highres</code>
+        </p>
+        <p class="warnline">⚠ {{ HIGHRES_SCOPE_NOTE }} —— {{ hrWholeBookText }}</p>
+
+        <div class="field-row">
+          <label class="field field--sm">
+            <span class="field__label">页码 page（1-based）</span>
+            <input v-model.number="hrPage" type="number" min="1" @change="normalizeHrPage" />
+          </label>
+          <label class="field field--sm">
+            <span class="field__label">dpi（白名单）</span>
+            <select v-model.number="hrDpi">
+              <option v-for="d in HIGHRES_DPI_WHITELIST" :key="d" :value="d">{{ d }}</option>
+            </select>
+          </label>
+          <label class="field field--sm">
+            <span class="field__label">覆盖既有产物（force）</span>
+            <input v-model="hrForce" type="checkbox" />
+          </label>
+          <button class="ghost" type="button" @click="hrPage = previewPage">用预览页 {{ previewPage }}</button>
+          <button
+            class="ghost hr-go"
+            type="button"
+            :disabled="hrRun.state === 'running' || !jobId"
+            @click="generateHighresNow"
+          >
+            {{ hrRun.state === 'running' ? '生成中…' : '生成 HighRes' }}
+          </button>
+        </div>
+
+        <p class="muted">
+          预估：{{ hrEstimateText }} · 已存在：{{ hrExistsText }} · 估读时点 {{ hrEstimateAt || '—' }}
+        </p>
+        <p v-if="hrRun.state === 'running'" class="muted">
+          ⏳ 生成中… 已用 {{ hrElapsedText }}（实测单页 1200dpi ≈27 s / 2400dpi ≈108 s；本请求同步等待）
+        </p>
+        <p v-else-if="hrRun.state === 'done'" class="muted">✅ 请求返回于 {{ hrRun.at }} · 用时 {{ hrElapsedText }}</p>
+        <p v-else-if="hrRun.state === 'failed'" class="hr-err">✗ 生成失败（原因见下，**不静默**）</p>
+
+        <div v-if="hrStatus.kind === 'error' || hrStatus.kind === 'backend-down'" class="hr-err">
+          <strong>失败（必须可见）：</strong>
+          <code>{{ hrStatus.code || '（后端未给原因码）' }}</code>
+          <span>{{ highresErrorText(hrStatus.code) }}</span>
+          <div class="muted">{{ hrStatus.detail }}</div>
+          <details>
+            <summary>原始响应体（未改写）</summary>
+            <pre>{{ hrStatus.raw }}</pre>
+          </details>
+        </div>
+
+        <table v-if="hrResult" class="kv">
+          <tbody>
+            <tr><th>落点</th><td><code>{{ hrOutPath }}</code></td></tr>
+            <tr><th>是否写入</th><td>{{ hrResult.written ? '已写入（新产物）' : '未写入（已存在，幂等）' }}</td></tr>
+            <tr><th>体积</th><td>{{ formatBytes(hrResult.out_bytes) }}（{{ hrResult.out_gib }} GiB）</td></tr>
+            <tr>
+              <th>几何 / dpi</th>
+              <td>{{ hrResult.geometry ? hrResult.geometry.out_px.join('×') + 'px' : '—' }} · {{ hrResult.dpi }} dpi</td>
+            </tr>
+            <tr><th>耗时</th><td>{{ hrSecondsText }}</td></tr>
+            <tr><th>容器自证</th><td>{{ hrContainerText }}</td></tr>
+          </tbody>
+        </table>
+        <details v-if="hrStatus.kind === 'ok' && hrStatus.raw">
+          <summary>原始响应体（GET 估读，未改写）</summary>
+          <pre>{{ hrStatus.raw }}</pre>
+        </details>
+      </div>
+
       <div class="card">
         <h3>相关页面</h3>
         <p>
@@ -667,5 +905,17 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onPreviewKeydown))
 }
 .pv-bad {
   color: var(--danger);
+}
+/* ── 页级「生成 HighRes」卡（同上：只走既有 token）── */
+.hr-err {
+  margin: 6px 0;
+  color: var(--danger);
+  font-size: 12.5px;
+}
+.hr-err pre {
+  color: var(--fg-dim);
+}
+.hr-go {
+  font-weight: 600;
 }
 </style>

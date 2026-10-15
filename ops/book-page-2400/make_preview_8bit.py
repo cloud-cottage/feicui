@@ -33,17 +33,26 @@ from PIL import Image
 
 REPO = pathlib.Path("/Users/kevin/bistro/feicui")
 PAGE_DIR = REPO / "output/2_HighRes_PDF/9787550847224"
-DEFAULT_SRCS = [
-    PAGE_DIR / "P29-2400dpi-48bit.tif",
-    PAGE_DIR / "P29-2400dpi-48bit-frozen.tif",
-]
+# 缺省＝把本目录下所有 48bit 页图各出一份预览件（1200dpi 与 2400dpi 两版并存时都会覆盖到）
+DEFAULT_SRCS = sorted(PAGE_DIR.glob("*-48bit.tif"))
 READINGS = REPO / "ops/book-page-2400/readings-previews-8bit.json"
 SCRATCH = pathlib.Path(
     os.environ.get("FEICUI_PREVIEW_SCRATCH", "/Users/kevin/.hermes/profiles/zang/cache/scratch")
 ) / "preview-8bit-memmap"
 
-UP = 8  # 2400 dpi → 300 dpi
 PREVIEW_DPI = 300
+# 降采样因子：由源的 `XResolution` tag 派生（2400dpi → ÷8、1200dpi → ÷4）⇒ 预览恒为 300 dpi。
+# 旧版把 UP 写死 8（只对 2400dpi 源成立；1200dpi 源 12236 行不能被 8 整除 ⇒ 会直接断言失败）。
+UP = 8
+
+
+def factor_for(res_dpi: int, preview_dpi: int = PREVIEW_DPI) -> int:
+    """源 dpi / 预览 dpi ⇒ 整数降采样因子（白名单 3/4/8；非整数比一律拒绝，不猜）。"""
+    f = int(round(float(res_dpi) / float(preview_dpi)))
+    if not (2 <= f <= 16) or abs(f - float(res_dpi) / float(preview_dpi)) > 1e-6:
+        raise SystemExit(f"源 dpi {res_dpi} 与预览 dpi {preview_dpi} 之比不是整数（{f}）⇒ 拒绝")
+    return f
+
 
 
 def q8(u16: np.ndarray) -> np.ndarray:
@@ -84,6 +93,7 @@ def magic_bytes(p: pathlib.Path) -> str:
 
 
 def build_preview(src: pathlib.Path, scratch: pathlib.Path) -> dict:
+    global UP
     t0 = time.time()
     st = src.stat()
     stem = src.name[: -len("".join(src.suffixes))] if src.suffixes else src.stem
@@ -102,7 +112,9 @@ def build_preview(src: pathlib.Path, scratch: pathlib.Path) -> dict:
             "resolution_unit": str(page.tags["ResolutionUnit"].value),
         }
         ph, pw = int(page.shape[0]), int(page.shape[1])
-        assert ph % UP == 0 and pw % UP == 0, (ph, pw)
+        src_res_dpi = int(page.tags["XResolution"].value[0])
+        UP = factor_for(src_res_dpi)                 # ★ 按源 tag 派生（2400⇒8、1200⇒4）
+        assert ph % UP == 0 and pw % UP == 0, (ph, pw, UP)
         oh, ow = ph // UP, pw // UP
         rps = int(page.rowsperstrip)
         assert rps > 0 and not page.is_tiled
@@ -197,8 +209,8 @@ def build_preview(src: pathlib.Path, scratch: pathlib.Path) -> dict:
         "geometry": {
             "src_px": [pw, ph], "preview_px": [ow, oh], "factor": UP,
             "exact_division": bool(ow * UP == pw and oh * UP == ph),
-            "src_dpi": 2400, "preview_dpi": PREVIEW_DPI,
-            "mm_at_src_dpi": [round(pw / 2400 * 25.4, 3), round(ph / 2400 * 25.4, 3)],
+            "src_dpi": src_res_dpi, "preview_dpi": PREVIEW_DPI,
+            "mm_at_src_dpi": [round(pw / src_res_dpi * 25.4, 3), round(ph / src_res_dpi * 25.4, 3)],
             "mm_at_preview_dpi": [round(ow / PREVIEW_DPI * 25.4, 3), round(oh / PREVIEW_DPI * 25.4, 3)],
         },
         "geometry_check": geom_check,

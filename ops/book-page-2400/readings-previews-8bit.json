@@ -10,17 +10,17 @@
   "items": [
     {
       "source": {
-        "path": "/Users/kevin/bistro/xiai/feicui/output/2_HighRes_PDF/9787550847224/P29-2400dpi-48bit.tif",
-        "bytes": 1903843591,
-        "sha256": "9f238c756f754caa36b07418e097f2edc4e450fd3bcc9c965a4d9c19701afeaa",
-        "mtime": 1791896281.8751667,
+        "path": "/Users/kevin/bistro/feicui/output/2_HighRes_PDF/9787550847224/P29-1200dpi-48bit.tif",
+        "bytes": 479392073,
+        "sha256": "1c594a1a4a9d0d54d313c445d8948ebf9edb2ae342c76721c3dab1471a4fbfde",
+        "mtime": 1792105027.2172787,
         "mtime_unchanged": true,
-        "strips_decoded": 96,
+        "strips_decoded": 48,
         "container": {
-          "bigtiff": true,
+          "bigtiff": false,
           "shape": [
-            24472,
-            17000,
+            12236,
+            8500,
             3
           ],
           "dtype": "uint16",
@@ -32,7 +32,7 @@
           "rows_per_strip": 256,
           "is_tiled": false,
           "resolution": [
-            2400,
+            1200,
             1
           ],
           "resolution_unit": "2"
@@ -41,9 +41,9 @@
       },
       "previews": [
         {
-          "path": "/Users/kevin/bistro/xiai/feicui/output/2_HighRes_PDF/9787550847224/P29-2400dpi-48bit-preview300-8bit.tiff",
-          "bytes": 3924570,
-          "sha256": "a8ea8e93a359a0a6f6e3209d27343a870f9891096a18db7f4469c63ec00a0f9b",
+          "path": "/Users/kevin/bistro/feicui/output/2_HighRes_PDF/9787550847224/P29-1200dpi-48bit-preview300-8bit.tiff",
+          "bytes": 4536931,
+          "sha256": "8864b2170a01475bf7dfda1d4ad18af5764157ad3921855256f2d29a7e6ccb85",
           "magic_hex": "49 49 2a 00",
           "container": {
             "bigtiff": false,
@@ -68,9 +68,9 @@
           "roundtrip_pixel_equal": true
         },
         {
-          "path": "/Users/kevin/bistro/xiai/feicui/output/2_HighRes_PDF/9787550847224/P29-2400dpi-48bit-preview300-8bit.png",
-          "bytes": 4047115,
-          "sha256": "b2cc9ca38a5d4f6b7dce0de62aec88f659a9309cf79e72da6aa82a6e470a619a",
+          "path": "/Users/kevin/bistro/feicui/output/2_HighRes_PDF/9787550847224/P29-1200dpi-48bit-preview300-8bit.png",
+          "bytes": 4688863,
+          "sha256": "496fdfbc0d2ad2d275449c0788964896ace672987e8376143fa2518b0465d50d",
           "magic_hex": "89 50 4e 47",
           "container": {
             "mode": "RGB",
@@ -88,16 +88,16 @@
       ],
       "geometry": {
         "src_px": [
-          17000,
-          24472
+          8500,
+          12236
         ],
         "preview_px": [
           2125,
           3059
         ],
-        "factor": 8,
+        "factor": 4,
         "exact_division": true,
-        "src_dpi": 2400,
+        "src_dpi": 1200,
         "preview_dpi": 300,
         "mm_at_src_dpi": [
           179.917,
@@ -116,14 +116,13 @@
           32
         ],
         "region_src_px": [
-          8000,
-          3200,
-          256,
-          256
+          4000,
+          1600,
+          128,
+          128
         ],
         "strips": [
-          12,
-          13
+          6
         ],
         "pixel_mismatch": 0,
         "max_abs_diff_u8": 0,
@@ -131,222 +130,13 @@
         "consistent": true
       },
       "intermediate": {
-        "memmap_path": "/Users/kevin/.hermes/profiles/zang/cache/scratch/preview-8bit-memmap/P29-2400dpi-48bit.u8.mmap",
+        "memmap_path": "/Users/kevin/.hermes/profiles/zang/cache/scratch/preview-8bit-memmap/P29-1200dpi-48bit.u8.mmap",
         "memmap_removed": true,
-        "u8_full_bytes": 1248072000,
+        "u8_full_bytes": 312018000,
         "peak_hint": "逐 strip q8 写盘 memmap，未整页 float/asarray"
       },
-      "elapsed_seconds": 16.33
-    },
-    {
-      "source": {
-        "path": "/Users/kevin/bistro/xiai/feicui/output/2_HighRes_PDF/9787550847224/P29-2400dpi-48bit-frozen.tif",
-        "bytes": 1906199278,
-        "sha256": "d5585c188cd75e62ea4ef5a4ad9a4d4d8c65228de807bde5b18bc3b43afb5008",
-        "mtime": 1791896528.8183901,
-        "mtime_unchanged": true,
-        "strips_decoded": 96,
-        "container": {
-          "bigtiff": true,
-          "shape": [
-            24472,
-            17000,
-            3
-          ],
-          "dtype": "uint16",
-          "compression": 8,
-          "predictor": 2,
-          "bits_per_sample": 16,
-          "samples_per_pixel": 3,
-          "photometric": 2,
-          "rows_per_strip": 256,
-          "is_tiled": false,
-          "resolution": [
-            2400,
-            1
-          ],
-          "resolution_unit": "2"
-        },
-        "note": "只读：仅 open('rb')，未改动 mtime"
-      },
-      "previews": [
-        {
-          "path": "/Users/kevin/bistro/xiai/feicui/output/2_HighRes_PDF/9787550847224/P29-2400dpi-48bit-frozen-preview300-8bit.tiff",
-          "bytes": 3937317,
-          "sha256": "b235eb1d2b4f9abe9d0c9c0ef91d52a2c6e6ba0e554ef8b68ea2a90c5f1a4278",
-          "magic_hex": "49 49 2a 00",
-          "container": {
-            "bigtiff": false,
-            "shape": [
-              3059,
-              2125,
-              3
-            ],
-            "dtype": "uint8",
-            "compression": 8,
-            "predictor": 2,
-            "bits_per_sample": 8,
-            "samples_per_pixel": 3,
-            "photometric": 2,
-            "rows_per_strip": 32,
-            "resolution": [
-              300,
-              1
-            ],
-            "resolution_unit": "2"
-          },
-          "roundtrip_pixel_equal": true
-        },
-        {
-          "path": "/Users/kevin/bistro/xiai/feicui/output/2_HighRes_PDF/9787550847224/P29-2400dpi-48bit-frozen-preview300-8bit.png",
-          "bytes": 4053970,
-          "sha256": "d896abd29f6942945ab157c43d847f7cb55b7744179a048ecefc4efc550172a1",
-          "magic_hex": "89 50 4e 47",
-          "container": {
-            "mode": "RGB",
-            "size": [
-              2125,
-              3059
-            ],
-            "dpi": [
-              299.999,
-              299.999
-            ]
-          },
-          "roundtrip_pixel_equal": true
-        }
-      ],
-      "geometry": {
-        "src_px": [
-          17000,
-          24472
-        ],
-        "preview_px": [
-          2125,
-          3059
-        ],
-        "factor": 8,
-        "exact_division": true,
-        "src_dpi": 2400,
-        "preview_dpi": 300,
-        "mm_at_src_dpi": [
-          179.917,
-          258.995
-        ],
-        "mm_at_preview_dpi": [
-          179.917,
-          258.995
-        ]
-      },
-      "geometry_check": {
-        "region_out_px": [
-          1000,
-          400,
-          32,
-          32
-        ],
-        "region_src_px": [
-          8000,
-          3200,
-          256,
-          256
-        ],
-        "strips": [
-          12,
-          13
-        ],
-        "pixel_mismatch": 0,
-        "max_abs_diff_u8": 0,
-        "mean_abs_diff_u8": 0.0,
-        "consistent": true
-      },
-      "intermediate": {
-        "memmap_path": "/Users/kevin/.hermes/profiles/zang/cache/scratch/preview-8bit-memmap/P29-2400dpi-48bit-frozen.u8.mmap",
-        "memmap_removed": true,
-        "u8_full_bytes": 1248072000,
-        "peak_hint": "逐 strip q8 写盘 memmap，未整页 float/asarray"
-      },
-      "elapsed_seconds": 17.57
+      "elapsed_seconds": 4.46
     }
   ],
-  "elapsed_seconds": 33.9,
-  "macos_acceptance": {
-    "date": "2026-10-15",
-    "host": "macOS 15.7.4 本机",
-    "sips": {
-      "cmd": "sips -g pixelWidth -g pixelHeight -g space -g bitsPerSample -g dpiWidth",
-      "previews": {
-        "P29-2400dpi-48bit-preview300-8bit.tiff": {
-          "pixelWidth": 2125,
-          "pixelHeight": 3059,
-          "space": "RGB",
-          "bitsPerSample": 8,
-          "dpiWidth": 300.0
-        },
-        "P29-2400dpi-48bit-frozen-preview300-8bit.tiff": {
-          "pixelWidth": 2125,
-          "pixelHeight": 3059,
-          "space": "RGB",
-          "bitsPerSample": 8,
-          "dpiWidth": 300.0
-        },
-        "P29-2400dpi-48bit-preview300-8bit.png": {
-          "pixelWidth": 2125,
-          "pixelHeight": 3059,
-          "space": "RGB",
-          "bitsPerSample": 8,
-          "dpiWidth": 300.0
-        },
-        "P29-2400dpi-48bit-frozen-preview300-8bit.png": {
-          "pixelWidth": 2125,
-          "pixelHeight": 3059,
-          "space": "RGB",
-          "bitsPerSample": 8,
-          "dpiWidth": 300.0
-        }
-      },
-      "control_originals": {
-        "P29-2400dpi-48bit.tif": {
-          "pixelWidth": null,
-          "pixelHeight": null,
-          "space": null,
-          "note": "<nil>，0.017s 返回"
-        },
-        "P29-2400dpi-48bit-frozen.tif": {
-          "pixelWidth": null,
-          "note": "<nil>"
-        }
-      }
-    },
-    "qlmanage": {
-      "cmd": "qlmanage -t -s 512 -o <scratch> <file>",
-      "previews": {
-        "files": 4,
-        "produced_thumbnails": 4,
-        "wall_seconds": 0.189,
-        "thumbs_bytes": {
-          "P29-2400dpi-48bit-preview300-8bit.tiff.png": 207100,
-          "P29-2400dpi-48bit-preview300-8bit.png.png": 210731,
-          "P29-2400dpi-48bit-frozen-preview300-8bit.tiff.png": 207517,
-          "P29-2400dpi-48bit-frozen-preview300-8bit.png.png": 210908
-        },
-        "all_ok": true
-      },
-      "control_originals": {
-        "P29-2400dpi-48bit.tif": "20s 后仍运行 → SIGKILL（无缩略图）",
-        "P29-2400dpi-48bit-frozen.tif": "20s 后仍运行 → SIGKILL（无缩略图）"
-      }
-    },
-    "source_readonly": {
-      "P29-2400dpi-48bit.tif": {
-        "mtime": 1791896281,
-        "unchanged": true
-      },
-      "P29-2400dpi-48bit-frozen.tif": {
-        "mtime": 1791896528,
-        "unchanged": true
-      }
-    },
-    "outputs_not_in_git": true
-  }
+  "elapsed_seconds": 4.46
 }

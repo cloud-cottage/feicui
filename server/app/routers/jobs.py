@@ -21,7 +21,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from urllib.parse import quote
 
-from .. import db, inbox_gc, pdfmeta, poolctl, preview, print_size, repository, uploader
+from .. import db, highres, inbox_gc, pdfmeta, poolctl, preview, print_size, repository, uploader
 from ..config import Settings, get_settings
 from ..models import (
     PAGE_LIMIT_DEFAULT,
@@ -49,10 +49,39 @@ def _settings() -> Settings:
 
 
 def _resolve_pdf_path(raw: str, st: Settings) -> Path:
+    """job 的 `pdf_path` 解析（只读）——含**迁移兼容层**。
+
+    ① 原路径（绝对，或相对 `st.root`）在盘 ⇒ 直返；
+    ② 否则按**同一 basename** 在 PDF 取阅真源目录找（`config/pdf_source.json: pdf_source_dir`，
+       缺省 `output/1_Original_PDF`，经 `pdf_registry.pdf_source_dir()` 单一真源）⇒ 命中即返。
+       理由（2026-10-16）：历史 `jobs.pdf_path` 记着迁移前的 `inbox/` 或旧工程根
+       （`bistro/xiai/feicui` / `bistro/shu/feicui`），而 PDF 已按四总目录口径集中到真源目录；
+       这是**同一本书的路径修正**，**不是**「用别的书顶替」（只按 basename 匹配）；
+    ③ 再回落 `REPO` 与 `REPO/inbox/**`（与 `backfill_book_images._locate_pdf` 同序）；
+    ④ 全未命中 ⇒ **返回原路径**（上游照旧 404 `PDF_MISSING`，语义与文案一字不变）。
+    """
+    from ..pdf_registry import pdf_source_dir  # 单一真源；延迟 import 避免路由模块加载期耦合
+
     p = Path(raw).expanduser()
     if not p.is_absolute():
         p = st.root / p
-    return p.resolve()
+    p = p.resolve()
+    if p.is_file():
+        return p
+    name = p.name
+    if not name:
+        return p
+    cand = (Path(st.root) / pdf_source_dir()).resolve() / name
+    if cand.is_file():
+        return cand
+    if (Path(st.root) / name).is_file():
+        return (Path(st.root) / name).resolve()
+    inbox = Path(st.root) / "inbox"
+    if inbox.is_dir():
+        hits = sorted(inbox.glob(f"**/{name}"))
+        if hits:
+            return hits[0].resolve()
+    return p
 
 
 def _e1_error(status_code: int, error: str, detail: dict) -> JSONResponse:
@@ -1012,3 +1041,144 @@ def page_boxes(
         "notes": list(out.get("notes") or []) + range_notes,
     }
     return JSONResponse(content=body)
+
+
+# ===================================================================== 页级「生成 HighRes」（dpi 参数化）
+# 口径（Kevin 2026-10-16）：整页渲染 dpi 参数化、**缺省 1200**；**页级、幂等、可见反馈**。
+#   * 形态照 E9/E10：一次性子进程（`app/highres.py` → `highres_runner.py`，FEICUI_HIGHRES= 标记行）；
+#   * **禁无限制整本生成**：两端点**只接受单页**（`{page}` 路径参数）；区间字段会被 runner 拒收
+#     （FastAPI 亦不解析未知查询参数 ⇒ 传 `page_to` 之类不会触发批量）；
+#   * **幂等**：产物已在盘 ⇒ 不重写、如实报 `exists/existed: true`；`force=true` 才重写；
+#   * 事实算账（写进响应）：1200dpi 48bit 整页未压缩 8500×12236×6 B = 624 MB（deflate ≈475 MB）
+#     ⇒ 851 页 ≈ 404 GB / 单页 ≈27 s ⇒ **≈6.4 h**；
+#   * 红线：**零 DB 写、不建 job**；只落 `output/2_HighRes_PDF/<目录键>/`。
+HIGHRES_DPI_QUERY = "目标 dpi，白名单 {1200,2400}，默认 1200（Kevin 2026-10-16：2400 → 1200）"
+
+
+def _highres_params(page_raw: str, dpi_raw: str | None) -> tuple[dict | None, JSONResponse | None]:
+    """`{page}`（1-based 正整数）与 `dpi`（白名单 {1200,2400}，默认 1200）——不合法即 400，不起子进程。"""
+    try:
+        page_i = int(str(page_raw).strip())
+    except (TypeError, ValueError):
+        return None, _preview_error(400, "BAD_PARAM", f"page 必须为正整数（1-based）：{page_raw!r}")
+    if page_i < 1:
+        return None, _preview_error(400, "BAD_PARAM", f"page 必须为正整数（1-based）：{page_i}")
+    if dpi_raw is None or str(dpi_raw).strip() == "":
+        dpi_i = highres.DPI_DEFAULT
+    else:
+        try:
+            dpi_i = int(str(dpi_raw).strip())
+        except (TypeError, ValueError):
+            return None, _preview_error(400, "BAD_PARAM", f"dpi 必须为整数：{dpi_raw!r}")
+        if dpi_i not in highres.DPI_WHITELIST:
+            return None, _preview_error(
+                400, "BAD_PARAM", f"dpi 不在白名单 {list(highres.DPI_WHITELIST)} 内：{dpi_i}"
+            )
+    return {"page": page_i, "dpi": dpi_i}, None
+
+
+def _highres_runner_failure(out: dict) -> JSONResponse:
+    """worker 侧结构化失败 → 本线错误面。
+
+    码族：`BAD_REQUEST`→400 `BAD_PARAM`；`PDF_MISSING`/`PAGE_OUT_OF_PDF`/`PDF_NO_IMAGE`→404 原码；
+    `RENDER_FAILED`→500；`DISK_INSUFFICIENT`→**507**（容量闸，UI 必须可见）；未知码→500 `RUNNER_BAD_OUTPUT`。
+    """
+    code = str(out.get("error") or "")
+    detail = str(out.get("detail") or "")
+    if code == "BAD_REQUEST":
+        return _preview_error(400, "BAD_PARAM", detail)
+    if code in {"PDF_MISSING", "PAGE_OUT_OF_PDF", "PDF_NO_IMAGE"}:
+        return _preview_error(404, code, detail)
+    if code == "RENDER_FAILED":
+        return _preview_error(500, "RENDER_FAILED", detail)
+    if code == "DISK_INSUFFICIENT":
+        return _preview_error(507, "DISK_INSUFFICIENT", detail)
+    return _preview_error(500, "RUNNER_BAD_OUTPUT", f"worker 回报未知错误码 {code!r}：{detail}")
+
+
+def _highres_body(job: dict, params: dict, out: dict, *, job_id: str) -> dict:
+    """把 runner 结果折成响应体（**job 上下文 ＋ 落点 ＋ 预估 ＋ 实际**）；字段名如实、不美化。"""
+    body = {
+        "job_id": str(job["job_id"]),
+        "page": params["page"],
+        "dpi": params["dpi"],
+        "pdf_name": job["pdf_name"],
+        "dir_key": out.get("dir_key"),
+        "out_path": out.get("out_path"),
+        "out_rel": out.get("out_rel"),
+        "exists": bool(out.get("existed")),
+        "written": bool(out.get("written")),
+        "out_bytes": out.get("out_bytes"),
+        "out_gib": out.get("out_gib"),
+        "geometry": out.get("geometry"),
+        "estimate": out.get("estimate"),
+        "container": out.get("container"),
+        "seconds": out.get("seconds"),
+        "source": out.get("source"),
+        "force": bool(out.get("force")),
+        "notes": [
+            "本端点**只做页级**：整本不可行（1200dpi 48bit 整页 ≈475 MB deflate ⇒ 851 页 ≈ 404 GB / ≈6.4 h）",
+            "幂等：产物已在盘则不重写；要重出请显式 force=true",
+        ],
+    }
+    if out.get("estimate_only"):
+        body["estimate_only"] = True
+    return body
+
+
+@router.get("/{job_id}/pages/{page}/highres")
+def page_highres_status(
+    job_id: str,
+    page: str,
+    dpi: str | None = Query(default=None, description=HIGHRES_DPI_QUERY),
+    st: Settings = Depends(_settings),
+) -> JSONResponse:
+    """**估读 + 存在性**（不渲染）：该页在 `dpi` 下的目标像素 / 预估体积 / 预估耗时 / 是否已在盘。"""
+    params, err = _highres_params(page, dpi)
+    if err is not None:
+        return err
+    job, err = _preview_job(st, job_id)
+    if err is not None:
+        return err
+    try:
+        out = highres.run_highres(st, pdf_path=job["_pdf_abs"], page=params["page"],
+                                  dpi=params["dpi"], force=False, estimate_only=True)
+    except highres.RunnerError as exc:
+        log.error("HighRes 估读失败：job=%s page=%s %s", job_id, params["page"], exc)
+        return _preview_error(500, exc.code, exc.detail)
+    if not out.get("ok"):
+        return _highres_runner_failure(out)
+    return JSONResponse(content=_highres_body(job, params, out, job_id=job_id))
+
+
+@router.post("/{job_id}/pages/{page}/highres")
+def page_highres_generate(
+    job_id: str,
+    page: str,
+    dpi: str | None = Query(default=None, description=HIGHRES_DPI_QUERY),
+    force: bool = Query(default=False, description="产物已存在时是否重写（默认 false ⇒ 幂等不重写）"),
+    st: Settings = Depends(_settings),
+) -> JSONResponse:
+    """**生成该页 HighRes 整页图**（页级；`POST`）。长跑：1200dpi 单页 ≈27 s、2400dpi ≈108 s（实测）。
+
+    * 产物 ⇒ `output/2_HighRes_PDF/<目录键>/P<页>-<dpi>dpi-48bit.tif`（48bit RGB BigTIFF，Deflate+Predictor2）；
+    * 幂等：已在盘且未 `force` ⇒ `written:false / exists:true`（**不重写**）；
+    * **禁无限制整本生成**：只接受单页 `{page}`；区间字段会被拒（400）；
+    * 失败**必须可见**：错误一律结构化 `{error, detail}`（顶层），前端不得静默。
+    """
+    params, err = _highres_params(page, dpi)
+    if err is not None:
+        return err
+    job, err = _preview_job(st, job_id)
+    if err is not None:
+        return err
+    try:
+        out = highres.run_highres(st, pdf_path=job["_pdf_abs"], page=params["page"], dpi=params["dpi"],
+                                  force=bool(force), estimate_only=False)
+    except highres.RunnerError as exc:
+        log.error("HighRes 生成失败：job=%s page=%s %s", job_id, params["page"], exc)
+        return _preview_error(500, exc.code, exc.detail)
+    if not out.get("ok"):
+        return _highres_runner_failure(out)
+    return JSONResponse(status_code=200, content=_highres_body(job, params, out, job_id=job_id))
+

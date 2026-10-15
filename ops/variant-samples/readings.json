@@ -1,0 +1,841 @@
+{
+  "schema": "feicui.variant-samples.readings.v1",
+  "generator": "ops/variant-samples/variants_samples.py",
+  "page": 29,
+  "source": {
+    "pdf": "output/1_Original_PDF/秦印类编 检索版.pdf",
+    "xref": 112,
+    "embedded_jpeg_md5": "4b45bfe1a899e69e0ecb3dbe1751b18a",
+    "embedded_jpeg_md5_matches_production": true,
+    "size_px": [
+      2125,
+      3059
+    ],
+    "dpi": 300
+  },
+  "geometry": {
+    "compare_dpi": 600,
+    "src_render_600": "内嵌 JPEG 300dpi 原生 ×2 Lanczos（与产线 2400dpi=×8 同一重采样链）",
+    "a_base": "P29-2400dpi-48bit.tif（主版，校准0.35）÷4 cv2.INTER_AREA → q8",
+    "regions_300dpi": {
+      "P29-C1R1": [
+        473,
+        495,
+        858,
+        883
+      ],
+      "P29-C2R1": [
+        1362,
+        500,
+        1625,
+        880
+      ],
+      "P29-paper": [
+        1090,
+        260,
+        1390,
+        560
+      ]
+    },
+    "pymupdf600_vs_lanczos2_observation": {
+      "P29-C1R1": {
+        "mean_abs_diff": 1.678,
+        "max_abs_diff": 37
+      },
+      "P29-C2R1": {
+        "mean_abs_diff": 1.258,
+        "max_abs_diff": 29
+      },
+      "P29-paper": {
+        "mean_abs_diff": 0.576,
+        "max_abs_diff": 4
+      }
+    }
+  },
+  "a_note": "A＝产线真产物复刻：底图直接取自 output/2_HighRes_PDF/9787550847224/P29-2400dpi-48bit.tif（render_page_2400.py 主版：宣纸换底＋晕染＋色度校准0.35），非重实现；区域抽检 strip 级独立裁取 ÷4 与整页流式 ÷4 逐像素一致=True；★生产脚本 render_page_2400.py 的 PDF 常量仍指向 inbox/20261011/（已不存在，四总目录迁移后源件在 output/1_Original_PDF/）——本次以内嵌 JPEG md5 与产线读数记录一致证同源，脚本未改。",
+  "a_spotcheck_strip_crop_equal": true,
+  "masks_600dpi": {
+    "red_ink_px": 1016185,
+    "white_line_px": 45147,
+    "outside_px": 24940170,
+    "paper_rule_px": 24244892,
+    "d_purified_zone_px": 24205733,
+    "impl": "colorcal.ink_mask（单一真源）→ seal_canvas.seal_mask 闭运算/孔洞 → ×2 Lanczos≥128"
+  },
+  "params": {
+    "calib_strength": 0.35,
+    "guided": [
+      8,
+      1500.0
+    ],
+    "field_sigma600": 25.0,
+    "s_curve_t": 0.15,
+    "halo_band600": 4,
+    "relief": [
+      12,
+      0.15,
+      1.8
+    ],
+    "seed": 20261013
+  },
+  "variants": {
+    "B": {
+      "version": "B",
+      "background": {
+        "mode": "single_layer_seal_canvas",
+        "zone": "paper_rule_prod(gray>=210,sat<=0.15,non-ink)",
+        "zone_px": 24244892,
+        "constants_from": "server/app/seal_canvas.py (BG_* 单一真源)"
+      },
+      "halo": {
+        "band_px600": 4,
+        "alpha_max": 0.08,
+        "alpha_inside_mask_max": 0.0,
+        "px": 350591,
+        "color_rgb": [
+          239.45,
+          67.16,
+          63.43
+        ]
+      },
+      "ink_ops": {
+        "guided": {
+          "radius_px600": 8,
+          "eps": 1500.0,
+          "guide": "luminance",
+          "order": "after_calib"
+        },
+        "calib": {
+          "strength": 0.35,
+          "chroma_mean": [
+            0.6697,
+            0.169881
+          ],
+          "skipped_invalid_domain_px": 29411,
+          "impl": "render_page_2400.color_uniformity（单一真源复用）"
+        },
+        "changed_px_vs_pre": 1016030
+      },
+      "elapsed_s": 3.88,
+      "determinism_rerun_bit_equal": true,
+      "freeze": {
+        "rule": "白线区/掩膜外 对 本版观感基线（ink_ops=False）逐像素差=0",
+        "white_line_px": 45147,
+        "white_line_mismatch_px": 0,
+        "outside_px": 24940170,
+        "outside_mismatch_px": 0,
+        "assert_ok": true,
+        "note": "白线区/掩膜外允许被全局观感算子（光场/色调，提示词②）作用；冻结断言针对结构算子（平滑/校准/重质感）——其只写红墨区、不得外泄"
+      },
+      "paper_extract_readout": {
+        "mean_rgb": [
+          252.73,
+          252.73,
+          250.3
+        ],
+        "std_rgb": [
+          1.58,
+          1.58,
+          1.71
+        ],
+        "min_rgb": [
+          250,
+          250,
+          247
+        ],
+        "max_rgb": [
+          255,
+          255,
+          255
+        ],
+        "highpass_std": 1.568,
+        "clip255_share": 0.0871
+      },
+      "page_scale_background": {
+        "px": 24212698,
+        "mean_rgb": [
+          177.38,
+          177.38,
+          177.38
+        ],
+        "std_rgb": [
+          75.34,
+          75.34,
+          75.34
+        ],
+        "share_gray_lt_248": 0.0106,
+        "share_sat_gt_0.10": 0.002,
+        "not_replaced_px": 77299,
+        "not_replaced_share": 0.0032,
+        "not_replaced_mean_rgb": [
+          228.64,
+          195.57,
+          188.27
+        ]
+      }
+    },
+    "C": {
+      "version": "C",
+      "light_field": {
+        "field_ref_p90": 250.72,
+        "gain_min": 0.9934,
+        "gain_max": 1.0689,
+        "gain_mean_paper": 1.01448
+      },
+      "tone_map": {
+        "wb_paper_rgb_before": [
+          253.31,
+          251.31,
+          240.71
+        ],
+        "wb_gains": [
+          1.01525,
+          1.03373,
+          1.13996
+        ],
+        "wb_clamped": false,
+        "s_curve_t": 0.15,
+        "micro_amount": 0.1,
+        "micro_sigma_px600": 6.0
+      },
+      "background": {
+        "mode": "double_layer_fiber_grain",
+        "zone": "paper_rule_prod(gray>=210,sat<=0.15,non-ink)",
+        "zone_px": 24244892,
+        "constants_from": "server/app/seal_canvas.py (BG_* 单一真源)"
+      },
+      "penetration": {
+        "alpha_max": 0.05,
+        "tau_px600": 6.0,
+        "band_px600": [
+          4,
+          24
+        ],
+        "px": 534396
+      },
+      "halo": {
+        "band_px600": 4,
+        "alpha_max": 0.08,
+        "alpha_inside_mask_max": 0.0,
+        "px": 350591,
+        "color_rgb": [
+          248.07,
+          64.83,
+          64.26
+        ]
+      },
+      "ink_ops": {
+        "guided": {
+          "radius_px600": 8,
+          "eps": 1500.0,
+          "guide": "luminance",
+          "order": "after_calib"
+        },
+        "calib": {
+          "strength": 0.35,
+          "chroma_mean": [
+            0.690103,
+            0.15326
+          ],
+          "skipped_invalid_domain_px": 292628,
+          "impl": "render_page_2400.color_uniformity（单一真源复用）"
+        },
+        "changed_px_vs_pre": 1016041
+      },
+      "elapsed_s": 12.03,
+      "determinism_rerun_bit_equal": true,
+      "freeze": {
+        "rule": "白线区/掩膜外 对 本版观感基线（ink_ops=False）逐像素差=0",
+        "white_line_px": 45147,
+        "white_line_mismatch_px": 0,
+        "outside_px": 24940170,
+        "outside_mismatch_px": 0,
+        "assert_ok": true,
+        "note": "白线区/掩膜外允许被全局观感算子（光场/色调，提示词②）作用；冻结断言针对结构算子（平滑/校准/重质感）——其只写红墨区、不得外泄"
+      },
+      "paper_extract_readout": {
+        "mean_rgb": [
+          252.68,
+          252.67,
+          250.39
+        ],
+        "std_rgb": [
+          1.7,
+          1.7,
+          1.97
+        ],
+        "min_rgb": [
+          250,
+          250,
+          246
+        ],
+        "max_rgb": [
+          255,
+          255,
+          255
+        ],
+        "highpass_std": 1.649,
+        "clip255_share": 0.1188
+      },
+      "page_scale_background": {
+        "px": 24212698,
+        "mean_rgb": [
+          177.38,
+          177.38,
+          177.38
+        ],
+        "std_rgb": [
+          75.34,
+          75.34,
+          75.34
+        ],
+        "share_gray_lt_248": 0.0073,
+        "share_sat_gt_0.10": 0.0015,
+        "not_replaced_px": 77299,
+        "not_replaced_share": 0.0032,
+        "not_replaced_mean_rgb": [
+          236.27,
+          210.28,
+          211.31
+        ]
+      }
+    },
+    "D": {
+      "version": "D",
+      "light_field": {
+        "field_ref_p90": 250.72,
+        "gain_min": 0.9934,
+        "gain_max": 1.0689,
+        "gain_mean_paper": 1.01448
+      },
+      "tone_map": {
+        "wb_paper_rgb_before": [
+          253.31,
+          251.31,
+          240.71
+        ],
+        "wb_gains": [
+          1.01525,
+          1.03373,
+          1.13996
+        ],
+        "wb_clamped": false,
+        "s_curve_t": 0.15,
+        "micro_amount": 0.1,
+        "micro_sigma_px600": 6.0
+      },
+      "background": {
+        "mode": "double_layer_fiber_grain",
+        "zone": "purified(gray>=165,sat<=0.3,~text_protect)",
+        "zone_px": 24205733,
+        "constants_from": "server/app/seal_canvas.py (BG_* 单一真源)"
+      },
+      "penetration": {
+        "alpha_max": 0.05,
+        "tau_px600": 6.0,
+        "band_px600": [
+          4,
+          24
+        ],
+        "px": 527001
+      },
+      "halo": {
+        "band_px600": 4,
+        "alpha_max": 0.08,
+        "alpha_inside_mask_max": 0.0,
+        "px": 350591,
+        "color_rgb": [
+          248.07,
+          64.83,
+          64.26
+        ]
+      },
+      "ink_ops": {
+        "guided": {
+          "radius_px600": 8,
+          "eps": 1500.0,
+          "guide": "luminance",
+          "order": "after_calib"
+        },
+        "calib": {
+          "strength": 0.35,
+          "chroma_mean": [
+            0.690103,
+            0.15326
+          ],
+          "skipped_invalid_domain_px": 292628,
+          "impl": "render_page_2400.color_uniformity（单一真源复用）"
+        },
+        "relief": {
+          "distance_field": "dist_to_non_ink(L2)",
+          "d0_px600": 12,
+          "strength": 0.15,
+          "noise_amp": 1.8,
+          "noise_impl": "render_page_2400 位置哈希（seed 固定）",
+          "edge_darken_mean_pct": 6.717
+        },
+        "changed_px_vs_pre": 1016020
+      },
+      "elapsed_s": 13.36,
+      "determinism_rerun_bit_equal": true,
+      "freeze": {
+        "rule": "白线区/掩膜外 对 本版观感基线（ink_ops=False）逐像素差=0",
+        "white_line_px": 45147,
+        "white_line_mismatch_px": 0,
+        "outside_px": 24940170,
+        "outside_mismatch_px": 0,
+        "assert_ok": true,
+        "note": "白线区/掩膜外允许被全局观感算子（光场/色调，提示词②）作用；冻结断言针对结构算子（平滑/校准/重质感）——其只写红墨区、不得外泄"
+      },
+      "paper_extract_readout": {
+        "mean_rgb": [
+          252.68,
+          252.67,
+          250.39
+        ],
+        "std_rgb": [
+          1.7,
+          1.7,
+          1.97
+        ],
+        "min_rgb": [
+          250,
+          250,
+          246
+        ],
+        "max_rgb": [
+          255,
+          255,
+          255
+        ],
+        "highpass_std": 1.649,
+        "clip255_share": 0.1189
+      },
+      "page_scale_background": {
+        "px": 24212698,
+        "mean_rgb": [
+          177.38,
+          177.38,
+          177.38
+        ],
+        "std_rgb": [
+          75.34,
+          75.34,
+          75.34
+        ],
+        "share_gray_lt_248": 0.0052,
+        "share_sat_gt_0.10": 0.0003,
+        "not_replaced_px": 6965,
+        "not_replaced_share": 0.0003,
+        "not_replaced_mean_rgb": [
+          247.98,
+          172.38,
+          173.61
+        ]
+      }
+    }
+  },
+  "paper_extract_readout": {
+    "SRC": {
+      "mean_rgb": [
+        249.34,
+        247.62,
+        237.0
+      ],
+      "std_rgb": [
+        3.07,
+        2.64,
+        1.99
+      ],
+      "min_rgb": [
+        230,
+        227,
+        218
+      ],
+      "max_rgb": [
+        255,
+        255,
+        247
+      ],
+      "highpass_std": 1.509,
+      "clip255_share": 0.0023
+    },
+    "A_prod": {
+      "mean_rgb": [
+        252.98,
+        252.98,
+        250.15
+      ],
+      "std_rgb": [
+        1.26,
+        1.26,
+        1.31
+      ],
+      "min_rgb": [
+        250,
+        250,
+        247
+      ],
+      "max_rgb": [
+        255,
+        255,
+        254
+      ],
+      "highpass_std": 1.146,
+      "clip255_share": 0.0199
+    },
+    "B": {
+      "mean_rgb": [
+        252.73,
+        252.73,
+        250.3
+      ],
+      "std_rgb": [
+        1.58,
+        1.58,
+        1.71
+      ],
+      "min_rgb": [
+        250,
+        250,
+        247
+      ],
+      "max_rgb": [
+        255,
+        255,
+        255
+      ],
+      "highpass_std": 1.568,
+      "clip255_share": 0.0871
+    },
+    "C": {
+      "mean_rgb": [
+        252.68,
+        252.67,
+        250.39
+      ],
+      "std_rgb": [
+        1.7,
+        1.7,
+        1.97
+      ],
+      "min_rgb": [
+        250,
+        250,
+        246
+      ],
+      "max_rgb": [
+        255,
+        255,
+        255
+      ],
+      "highpass_std": 1.649,
+      "clip255_share": 0.1188
+    },
+    "D": {
+      "mean_rgb": [
+        252.68,
+        252.67,
+        250.39
+      ],
+      "std_rgb": [
+        1.7,
+        1.7,
+        1.97
+      ],
+      "min_rgb": [
+        250,
+        250,
+        246
+      ],
+      "max_rgb": [
+        255,
+        255,
+        255
+      ],
+      "highpass_std": 1.649,
+      "clip255_share": 0.1189
+    }
+  },
+  "page_scale_background": {
+    "SRC": {
+      "px": 24212698,
+      "mean_rgb": [
+        177.38,
+        177.38,
+        177.38
+      ],
+      "std_rgb": [
+        75.34,
+        75.34,
+        54.45
+      ],
+      "share_gray_lt_248": 0.8069,
+      "share_sat_gt_0.10": 0.0039
+    },
+    "A_prod": {
+      "px": 24212698,
+      "mean_rgb": [
+        177.38,
+        177.38,
+        177.38
+      ],
+      "std_rgb": [
+        75.34,
+        75.34,
+        75.34
+      ],
+      "share_gray_lt_248": 0.0089,
+      "share_sat_gt_0.10": 0.0021
+    },
+    "B": {
+      "px": 24212698,
+      "mean_rgb": [
+        177.38,
+        177.38,
+        177.38
+      ],
+      "std_rgb": [
+        75.34,
+        75.34,
+        75.34
+      ],
+      "share_gray_lt_248": 0.0106,
+      "share_sat_gt_0.10": 0.002,
+      "not_replaced_px": 77299,
+      "not_replaced_share": 0.0032,
+      "not_replaced_mean_rgb": [
+        228.64,
+        195.57,
+        188.27
+      ]
+    },
+    "C": {
+      "px": 24212698,
+      "mean_rgb": [
+        177.38,
+        177.38,
+        177.38
+      ],
+      "std_rgb": [
+        75.34,
+        75.34,
+        75.34
+      ],
+      "share_gray_lt_248": 0.0073,
+      "share_sat_gt_0.10": 0.0015,
+      "not_replaced_px": 77299,
+      "not_replaced_share": 0.0032,
+      "not_replaced_mean_rgb": [
+        236.27,
+        210.28,
+        211.31
+      ]
+    },
+    "D": {
+      "px": 24212698,
+      "mean_rgb": [
+        177.38,
+        177.38,
+        177.38
+      ],
+      "std_rgb": [
+        75.34,
+        75.34,
+        75.34
+      ],
+      "share_gray_lt_248": 0.0052,
+      "share_sat_gt_0.10": 0.0003,
+      "not_replaced_px": 6965,
+      "not_replaced_share": 0.0003,
+      "not_replaced_mean_rgb": [
+        247.98,
+        172.38,
+        173.61
+      ]
+    }
+  },
+  "samples": {
+    "P29-C1R1": {
+      "crop300dpi": [
+        473,
+        495,
+        858,
+        883
+      ],
+      "crop600dpi": [
+        770,
+        776
+      ],
+      "ink_px": 157503,
+      "ink_lab_before_after": {
+        "before_src600": {
+          "l_mean": 142.593,
+          "l_std": 21.185,
+          "a_std": 15.788,
+          "b_std": 13.943
+        },
+        "A_prod": {
+          "l_mean": 139.929,
+          "l_std": 22.621,
+          "a_std": 12.386,
+          "b_std": 10.752
+        },
+        "B_even": {
+          "l_mean": 144.452,
+          "l_std": 19.17,
+          "a_std": 12.088,
+          "b_std": 10.384
+        },
+        "C_photo": {
+          "l_mean": 147.233,
+          "l_std": 20.968,
+          "a_std": 14.307,
+          "b_std": 12.649
+        },
+        "D_texture": {
+          "l_mean": 135.543,
+          "l_std": 16.512,
+          "a_std": 14.541,
+          "b_std": 12.544
+        }
+      },
+      "panel": {
+        "path": "/Users/kevin/bistro/xiai/feicui/output/samples/book-page-2400-variants/P29-C1R1-fivepanel.png",
+        "bytes": 3016218,
+        "sha256": "aae75def4ac347bf9a07bf25c1c6dbacdc3d7555a987d6ab90b0aa483f77e33a",
+        "size_px": [
+          3882,
+          798
+        ]
+      },
+      "dark_text_core_px": 9,
+      "seal_body_px": 162576,
+      "white_line_px": 5073
+    },
+    "P29-C2R1": {
+      "crop300dpi": [
+        1362,
+        500,
+        1625,
+        880
+      ],
+      "crop600dpi": [
+        526,
+        760
+      ],
+      "ink_px": 105447,
+      "ink_lab_before_after": {
+        "before_src600": {
+          "l_mean": 143.015,
+          "l_std": 18.414,
+          "a_std": 13.663,
+          "b_std": 11.771
+        },
+        "A_prod": {
+          "l_mean": 142.22,
+          "l_std": 19.127,
+          "a_std": 10.533,
+          "b_std": 9.082
+        },
+        "B_even": {
+          "l_mean": 145.183,
+          "l_std": 15.469,
+          "a_std": 9.969,
+          "b_std": 8.565
+        },
+        "C_photo": {
+          "l_mean": 149.917,
+          "l_std": 17.248,
+          "a_std": 12.289,
+          "b_std": 10.629
+        },
+        "D_texture": {
+          "l_mean": 140.89,
+          "l_std": 12.912,
+          "a_std": 13.075,
+          "b_std": 10.94
+        }
+      },
+      "panel": {
+        "path": "/Users/kevin/bistro/xiai/feicui/output/samples/book-page-2400-variants/P29-C2R1-fivepanel.png",
+        "bytes": 1865080,
+        "sha256": "5bc32f0d83eeabbb258212280bc17960085fad8ebf86b6d8284a674db652ba4b",
+        "size_px": [
+          2662,
+          782
+        ]
+      },
+      "dark_text_core_px": 1,
+      "seal_body_px": 110884,
+      "white_line_px": 5437
+    },
+    "P29-paper": {
+      "crop300dpi": [
+        1090,
+        260,
+        1390,
+        560
+      ],
+      "crop600dpi": [
+        600,
+        600
+      ],
+      "ink_px": 0,
+      "ink_lab_before_after": {
+        "before_src600": {
+          "l_mean": null,
+          "l_std": null,
+          "a_std": null,
+          "b_std": null
+        },
+        "A_prod": {
+          "l_mean": null,
+          "l_std": null,
+          "a_std": null,
+          "b_std": null
+        },
+        "B_even": {
+          "l_mean": null,
+          "l_std": null,
+          "a_std": null,
+          "b_std": null
+        },
+        "C_photo": {
+          "l_mean": null,
+          "l_std": null,
+          "a_std": null,
+          "b_std": null
+        },
+        "D_texture": {
+          "l_mean": null,
+          "l_std": null,
+          "a_std": null,
+          "b_std": null
+        }
+      },
+      "panel": {
+        "path": "/Users/kevin/bistro/xiai/feicui/output/samples/book-page-2400-variants/P29-paper-fivepanel.png",
+        "bytes": 1097208,
+        "sha256": "5aa0508fe346eb7714e071aa8c5d5e6ee61a5918f12ff3bf8967a90b186a8b88",
+        "size_px": [
+          3032,
+          622
+        ]
+      },
+      "dark_text_core_px": 0,
+      "seal_body_px": 0,
+      "white_line_px": 0
+    }
+  },
+  "thumb_panel": {
+    "path": "/Users/kevin/bistro/xiai/feicui/output/samples/book-page-2400-variants/P29-thumb-fivepanel.png",
+    "bytes": 3559035,
+    "sha256": "d5fd51fe66aac9460cd08241c626bfafd51ad3cc3c7f63ccae97106bab91ef2b",
+    "size_px": [
+      4032,
+      1174
+    ]
+  },
+  "elapsed_s": 116.0
+}

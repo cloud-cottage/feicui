@@ -300,6 +300,81 @@ def migrate_dynasty_check(conn) -> str:
     return "已重建 " + "; ".join(done) + tail
 
 
+# ──────────────────────────────────────────────────────────────────────────────
+# 动态迁移（**值域收敛**类：只改既有行的某个枚举列，不改表结构）——体例与上面完全相同：
+# 同一份 `schema_migrations` 记账、同一趟 `db.tx` 事务、已应用即跳过 ⇒ 同样幂等。
+#
+# 背景（本单，规范 §3.53.5）：真库 `seals.dynasty` 里混着历史批次的旧写法
+# （`战国` 23 行 / `秦汉` 26 行），与云侧已收敛的繁体口径不一致。处置：把该列**收敛**到
+# 当前值域——点名的一条旧写法映射到新值；**其余非空且 ∉ 值域者一律清 NULL（未著錄）**，
+# 绝不猜「秦汉 该算 秦 还是 漢」这类史料口径。值域真源**单向取自**同一处
+# `pdf_registry.DYNASTY_OPTIONS`（本文件**不得**复制 15 类字面量）。
+#: 点名映射表：**只登记有明示口径的旧写法**（§3.53.5 点名 `战国` ⇒ `戰國`）。
+#: 不在此表的旧值**不得臆测**映射到某个新值——那是改写史料口径，不是归一化；
+#: 一律走「清 NULL（未著錄）」这一条，且逐值报出被清行数。
+_DYNASTY_RENAMES: dict[str, str] = {
+    "战国": "戰國",
+}
+
+
+def converge_seals_dynasty(conn: sqlite3.Connection) -> str:
+    """把 `seals.dynasty` 收敛到当前值域（**只改这一列**，`record_json`/`dynasty_source`/其它列一字不动）。
+
+    规则（顺序即优先级）：
+      1. `dynasty IS NULL` ⇒ 不动（未著錄本就合法）；
+      2. `dynasty ∈ 值域`（`pdf_registry.DYNASTY_OPTIONS`）⇒ 不动（已是目标态）；
+      3. `dynasty ∈ _DYNASTY_RENAMES`（点名旧写法）⇒ 改为映射的新值；
+      4. 其余非空且 ∉ 值域 ⇒ 清 `NULL`（逐值报出行数）。
+    幂等判据：无第 3/4 类值即「无需改动」（重跑 changed=0）。
+    护栏（任一不成立 ⇒ 抛错 ⇒ 调用方 `db.tx` **整体回滚**，库保持原样）：
+      * `seals` 表或 `dynasty` 列取不到；
+      * 映射目标本身不在值域内（真源与映射表打架）；
+      * 某值的实改行数 ≠ 迁移前按该值点出的行数（意外多行影响）。
+    """
+    want = dynasty_domain()
+    if not db.table_exists(conn, "seals"):
+        raise RuntimeError("拒绝 1a-0007：库内取不到 seals 表（本迁移只作用于 yinpu schema）")
+    cols = _table_columns(conn, "seals")
+    if "dynasty" not in cols:
+        raise RuntimeError("拒绝 1a-0007：seals 取不到 dynasty 列（PRAGMA table_info 里没有）")
+
+    total = conn.execute("SELECT count(*) FROM seals").fetchone()[0]
+    rows = conn.execute(
+        "SELECT dynasty, count(*) FROM seals WHERE dynasty IS NOT NULL GROUP BY dynasty ORDER BY dynasty"
+    ).fetchall()
+    plan = [(v, n) for v, n in rows if v not in want]
+    if not plan:
+        return f"无需改动（seals.dynasty 全为当前值域或 NULL；{total} 行）"
+
+    detail: list[str] = []
+    changed = 0
+    for value, n in plan:
+        target = _DYNASTY_RENAMES.get(value)  # 未登记 ⇒ None ⇒ 清 NULL
+        if target is not None and target not in want:
+            raise RuntimeError(
+                f"拒绝 1a-0007：映射 {value!r}→{target!r} 的目标不在值域内（真源 DYNASTY_OPTIONS）"
+            )
+        cur = conn.execute("UPDATE seals SET dynasty=? WHERE dynasty=?", (target, value))
+        got = cur.rowcount
+        if got != n:
+            raise RuntimeError(
+                f"拒绝 1a-0007：值 {value!r} 迁移前为 {n} 行、实改 {got} 行（意外多行影响）"
+            )
+        changed += got
+        label = repr(target) if target is not None else "NULL"
+        detail.append(f"{value!r}⇒{label} {got} 行")
+
+    after = conn.execute("SELECT count(*) FROM seals").fetchone()[0]
+    left = conn.execute(
+        "SELECT count(*) FROM seals WHERE dynasty IS NOT NULL AND dynasty NOT IN (%s)"
+        % ", ".join("?" * len(want)),
+        want,
+    ).fetchone()[0]
+    if after != total or left:
+        raise RuntimeError(f"拒绝 1a-0007：收敛后自检不过（行数 {total}→{after}；残余越域非空 {left} 行）")
+    return f"changed={changed}（{'；'.join(detail)}）；seals 共 {total} 行，收敛后越域非空 0 行"
+
+
 DYNAMIC_MIGRATIONS: list[tuple[str, str, Callable[[sqlite3.Connection], str]]] = [
     (
         "1a-0006-dynasty-check-rebuild",
@@ -307,6 +382,13 @@ DYNAMIC_MIGRATIONS: list[tuple[str, str, Callable[[sqlite3.Connection], str]]] =
         "真源 app/pdf_registry.DYNASTY_OPTIONS）——标准重建 建新表→拷行→删旧表→改名，"
         "列/行/id 与索引触发器全保；已是当前值域或无该约束则跳过",
         migrate_dynasty_check,
+    ),
+    (
+        "1a-0007-yinpu-dynasty-convergence",
+        "seals.dynasty 收敛到当前值域（规范 §3.53.5）：点名 战国⇒戰國；其余非空且 ∉ 值域"
+        "（如 秦汉）一律清 NULL（未著錄）——只改 dynasty 一列，record_json/dynasty_source 等一字不动；"
+        "真源 app/pdf_registry.DYNASTY_OPTIONS；逐值报行数、护栏不成立即整体回滚；重跑 changed=0",
+        converge_seals_dynasty,
     ),
 ]
 

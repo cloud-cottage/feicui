@@ -34,12 +34,22 @@ import uuid
 from datetime import datetime, timedelta
 from pathlib import Path
 
-WEBUI_DIR = Path(__file__).resolve().parent
-REPO_ROOT = WEBUI_DIR.parent
+# ── 源码态 / 打包态（PyInstaller）路径解析 ───────────────────────────────────────────
+# 打包态由 `webui/build/pack_main.py` 在**导入本模块之前**设好两个环境变量：
+#   FEICUI_WEBUI_DIR  包内**资源根**（MEIPASS：ui/ src/ assets/ ops/ server/app/ config/）
+#   FEICUI_DATA_DIR   用户机**可写目录**（日志 / var / .env / .session.json）
+# 源码态两者都不设 ⇒ 行为与此前逐字一致（同目录、仓根父级）。见 `webui/build/README.md` §1/§5。
+WEBUI_DIR = Path(os.environ.get("FEICUI_WEBUI_DIR") or Path(__file__).resolve().parent)
+REPO_ROOT = Path(os.environ.get("FEICUI_PACK_ROOT") or WEBUI_DIR.parent)
+DATA_DIR = Path(os.environ.get("FEICUI_DATA_DIR") or WEBUI_DIR)
+ENV_FILE = DATA_DIR / ".env"
 UI_DIR = WEBUI_DIR / "ui"
-VAR_DIR = WEBUI_DIR / "var"
+VAR_DIR = DATA_DIR / "var"
 JOBS_DIR = VAR_DIR / "jobs"
-SESSION_FILE = WEBUI_DIR / ".session.json"
+SESSION_FILE = DATA_DIR / ".session.json"
+#: 打包态专用：`sys.executable` 是 PyInstaller 引导器（不是 python）⇒ 子进程必须带此标志，
+#: 由 `pack_main.py` 识别后**在同包内**执行引擎脚本（见 README §2「子进程解释器」实测）。
+ENGINE_RUN_FLAG = "--engine-run"
 ENGINE_SCRIPT = REPO_ROOT / "ops" / "book-page-2400" / "render_page_2400.py"
 VENV_PYTHON = REPO_ROOT / "venv" / "bin" / "python"
 
@@ -67,7 +77,7 @@ _DEFAULT_USERS: dict[str, dict] = {
 def _load_env() -> dict:
     """读 `webui/.env`（不依赖 python-dotenv，缺库也能起）。"""
     env: dict[str, str] = {}
-    p = WEBUI_DIR / ".env"
+    p = ENV_FILE
     if p.exists():
         try:
             for line in p.read_text(encoding="utf-8").splitlines():
@@ -100,7 +110,7 @@ def _users() -> dict[str, dict]:
 
 def _write_env_key(key: str, value: str) -> None:
     """把 `FEICUI_ROOT` 回写 `.env`（与旧 Streamlit 行为一致：下次启动免选目录）。"""
-    p = WEBUI_DIR / ".env"
+    p = ENV_FILE
     lines: list[str] = []
     if p.exists():
         lines = p.read_text(encoding="utf-8").splitlines()
@@ -170,12 +180,24 @@ class JobRunner:
         self._lock = threading.Lock()
         self._push = None            # callable(dict) —— 由 app.py 注入（evaluate_js）
         self._python = str(VENV_PYTHON) if VENV_PYTHON.exists() else sys.executable
+        #: 打包态（PyInstaller）：`self._python` ＝ **引导器**（不是 python）⇒ 引擎调用必须加
+        #: `ENGINE_RUN_FLAG` 让引导器把参数转给 `pack_main.py`，在同包解释器内执行引擎脚本。
+        self._frozen = bool(getattr(sys, "frozen", False))
+        self._engine_mode = "frozen-bootloader-reentry" if self._frozen else (
+            "repo-venv" if VENV_PYTHON.exists() else "sys.executable")
 
     def attach_pusher(self, fn) -> None:
         self._push = fn
 
     def engine_python(self) -> str:
         return self._python
+
+    def engine_prefix(self) -> list[str]:
+        """引擎命令前缀（**单点**）：源码态＝`[venv/bin/python]`；打包态＝`[引导器, --engine-run]`。"""
+        return [self._python, ENGINE_RUN_FLAG] if self._frozen else [self._python]
+
+    def engine_mode(self) -> str:
+        return self._engine_mode
 
     def create(self, pdf: Path, page: int, dpi: int, out_path: Path, dir_key: str) -> Job:
         job = Job(pdf, page, dpi, out_path, dir_key)
@@ -223,8 +245,8 @@ class JobRunner:
     def engine_cmd(self, pdf: Path, page: int, dpi: int, out_path: Path,
                    progress_path: Path, readings_path: Path) -> list[str]:
         """引擎命令行（**单点构造**，便于不跑渲染就断言参数面：见 `selftest.py`）。"""
-        return [
-            self._python, str(ENGINE_SCRIPT),
+        return self.engine_prefix() + [
+            str(ENGINE_SCRIPT),
             "--pdf", str(pdf), "--page", str(page), "--dpi", str(dpi),
             "--out", str(out_path),
             "--progress", str(progress_path),
@@ -317,6 +339,9 @@ class FeicuiApi:
         return {
             "ok": True, "app": APP_NAME, "version": APP_VERSION,
             "engine_python": self.jobs.engine_python(),
+            "engine_mode": self.jobs.engine_mode(),
+            "engine_prefix": self.jobs.engine_prefix(),
+            "data_dir": str(DATA_DIR), "var_dir": str(VAR_DIR),
             "engine_script": str(ENGINE_SCRIPT), "engine_script_exists": ENGINE_SCRIPT.exists(),
             "repo_root": str(REPO_ROOT), "ui_dir": str(UI_DIR),
             "dpi_whitelist": list(DPI_WHITELIST), "dpi_default": DPI_DEFAULT,

@@ -1,0 +1,65 @@
+{
+  "app": "斐萃-s1.app",
+  "du_mb": 209.1,
+  "unique_mb": 218.7,
+  "stacks": {
+    "<other>": 54.1,
+    "opencv 附属媒体库(ffmpeg 等)": 49.4,
+    "pymupdf": 49.0,
+    "opencv(python 绑定)": 44.4,
+    "pyobjc / 系统框架(macOS 壳)": 14.1,
+    "numpy": 6.7,
+    "tifffile+PIL": 1.0,
+    "webview": 0.1
+  },
+  "other_top": [
+    {
+      "mb": 8.64,
+      "path": "Contents/MacOS/斐萃-s1"
+    },
+    {
+      "mb": 4.93,
+      "path": "Contents/Resources/Python"
+    },
+    {
+      "mb": 4.89,
+      "path": "Contents/Resources/libcrypto.3.dylib"
+    },
+    {
+      "mb": 3.29,
+      "path": "Contents/Resources/librav1e.0.6.6.dylib"
+    },
+    {
+      "mb": 2.7,
+      "path": "Contents/Resources/libtesseract.5.dylib"
+    },
+    {
+      "mb": 2.15,
+      "path": "Contents/Resources/libleptonica.6.dylib"
+    },
+    {
+      "mb": 1.87,
+      "path": "Contents/Resources/libgnutls.30.dylib"
+    },
+    {
+      "mb": 1.73,
+      "path": "Contents/Resources/libunistring.5.dylib"
+    },
+    {
+      "mb": 1.62,
+      "path": "Contents/Resources/libjxl.0.8.2.dylib"
+    },
+    {
+      "mb": 1.45,
+      "path": "Contents/Resources/libp11-kit.0.dylib"
+    },
+    {
+      "mb": 1.44,
+      "path": "Contents/Resources/base_library.zip"
+    },
+    {
+      "mb": 1.18,
+      "path": "Contents/Frameworks/python3__dot__11/lib-dynload/unicodedata.cpython-311-darwin.so"
+    }
+  ]
+}

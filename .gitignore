@@ -64,6 +64,8 @@ webui/.claude/
 # PyInstaller 打包产物（webui/build/ 下；本单未打包，先占位规则。`dist/` 已被上方通用规则覆盖）
 webui/build/build/
 webui/build/*.app/
+webui/build/.venv-build/
+webui/build/build-s*.log
 
 # ── 杂项 ──
 .DS_Store

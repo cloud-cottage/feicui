@@ -14,6 +14,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import random
 from dataclasses import dataclass
@@ -41,7 +42,10 @@ DYNASTY_OPTIONS = (
 META_SCHEMA = "feicui.webui.pdf_meta.v1"
 
 #: 侧车默认落点（webui/var/ 已被仓根 `.gitignore` 的 `var/` 规则忽略）
-DEFAULT_META_PATH = Path(__file__).resolve().parents[1] / "var" / "pdf_meta.json"
+#: 打包态（PyInstaller）下资源根在 `.app` 内、**不可写** ⇒ 由入口设 `FEICUI_DATA_DIR`
+#: 指到用户目录（`~/Library/Application Support/斐萃/var/pdf_meta.json`）；源码态不设 ⇒ 逐字不变。
+_DATA_DIR = Path(os.environ.get("FEICUI_DATA_DIR") or Path(__file__).resolve().parents[1])
+DEFAULT_META_PATH = _DATA_DIR / "var" / "pdf_meta.json"
 
 
 # ============================================================

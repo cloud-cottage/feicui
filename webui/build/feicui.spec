@@ -30,6 +30,17 @@ WITH_OCR = STAGE in ("2", "3")
 WITH_PADDLE = STAGE == "3"
 SUFFIX = {"1": "-s1", "2": "-s2", "3": "-s3-paddle"}[STAGE]
 
+# ── `.app` 图标（**用户可见的那个**）──────────────────────────────────────────
+# 来源：`webui/assets/feicui.png`（480×480 RGBA，旧 Streamlit 版就有的现成资产）。
+# 生成（macOS 自带工具，**无新 Python 依赖**；本机实测 2026-10-17）：
+#   sips -z N N webui/assets/feicui.png --out feicui.iconset/icon_<s>x<s>[@2x].png   # 16…512 ＋ @2x
+#   iconutil -c icns feicui.iconset -o webui/build/feicui.icns
+# ⇒ `feicui.icns`（1 206 114 B）**随仓提交**（spec 的构建输入；`webui/build/dist/**` 才是产物）。
+# ⚠ 源图只有 480×480 ⇒ `icon_512x512`／`icon_512x512@2x`（1024）是 sips 放大，非原生分辨率。
+ICON = os.path.join(WEBUI, "build", "feicui.icns")
+if not os.path.exists(ICON):
+    raise SystemExit(f"缺 .app 图标：{ICON}（用 sips＋iconutil 从 webui/assets/feicui.png 生成）")
+
 APP_NAME = "斐萃"
 EXE_NAME = "斐萃" + SUFFIX
 BUNDLE_NAME = "斐萃" + SUFFIX
@@ -139,7 +150,7 @@ coll = COLLECT(
 app = BUNDLE(
     coll,
     name=f"{BUNDLE_NAME}.app",
-    icon=None,
+    icon=ICON,
     bundle_identifier="com.cloudcottage.feicui.local",
     info_plist={
         "CFBundleDisplayName": APP_NAME,

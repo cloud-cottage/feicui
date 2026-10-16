@@ -31,15 +31,21 @@ WITH_PADDLE = STAGE == "3"
 SUFFIX = {"1": "-s1", "2": "-s2", "3": "-s3-paddle"}[STAGE]
 
 # ── `.app` 图标（**用户可见的那个**）──────────────────────────────────────────
-# 来源：`webui/assets/feicui.png`（480×480 RGBA，旧 Streamlit 版就有的现成资产）。
-# 生成（macOS 自带工具，**无新 Python 依赖**；本机实测 2026-10-17）：
-#   sips -z N N webui/assets/feicui.png --out feicui.iconset/icon_<s>x<s>[@2x].png   # 16…512 ＋ @2x
+# 来源：**`webui/assets/feicui.svg`**（矢量，viewBox 0 0 480 480；与 480×480 的 `feicui.png` 同一设计）。
+# 生成：`bash webui/build/make-icns.sh`（只用 macOS 自带 qlmanage / sips / iconutil，**无新 Python 依赖**）
+#   qlmanage -t -s 1024 -o <dir> webui/assets/feicui.svg      # ⇒ 1024×1024 原生母图（矢量重渲染）
+#   sips -z N N <母图> --out feicui.iconset/icon_<s>x<s>[@2x].png   # 16…512 ＋ @2x 共 9 槽
+#   cp <母图> feicui.iconset/icon_512x512@2x.png              # ★ 1024 槽＝母图原样，不重采样
 #   iconutil -c icns feicui.iconset -o webui/build/feicui.icns
-# ⇒ `feicui.icns`（1 206 114 B）**随仓提交**（spec 的构建输入；`webui/build/dist/**` 才是产物）。
-# ⚠ 源图只有 480×480 ⇒ `icon_512x512`／`icon_512x512@2x`（1024）是 sips 放大，非原生分辨率。
+# ⇒ `feicui.icns`（10 图像槽 ＋ info；2026-10-17 重生成后 1 013 361 B）**随仓提交**（spec 的构建输入；
+#   `webui/build/dist/**` 才是产物）。母图留档 `webui/build/feicui-1024.png`。
+# ⚠ 旧版 icns 的 1024 槽是 sips 从 480×480 PNG **放大**（边缘能量 3.539）；现为 SVG **原生重渲染**
+#   （边缘能量 5.394，且 `ic10` 解码像素与母图**逐像素一致**/max diff 0）⇒ ≥1024 槽不再是放大。
+#   取图工具比选与失败原样留档见 `webui/build/readings-theme.md` §4.1（PyMuPDF 渲染全黑、
+#   ImageMagick 报 `vector graphics nested too deeply`，只有 qlmanage 可用）。
 ICON = os.path.join(WEBUI, "build", "feicui.icns")
 if not os.path.exists(ICON):
-    raise SystemExit(f"缺 .app 图标：{ICON}（用 sips＋iconutil 从 webui/assets/feicui.png 生成）")
+    raise SystemExit(f"缺 .app 图标：{ICON}（用 `bash webui/build/make-icns.sh` 从 webui/assets/feicui.svg 生成）")
 
 APP_NAME = "斐萃"
 EXE_NAME = "斐萃" + SUFFIX

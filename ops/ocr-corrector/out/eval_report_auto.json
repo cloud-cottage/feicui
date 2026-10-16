@@ -1,0 +1,951 @@
+{
+  "generated_by": "ops/ocr-corrector/eval_corrector.py",
+  "disclaimer": "★ 无真值 ⇒ 本报告**不含任何准确率 / 准确率提升**读数；`labeling/labels.csv` 的 text_correct 为空，量化准确率的解锁条件见 README。",
+  "config": {
+    "map": "webui/data/guxi_variant_map.json",
+    "map_summary": {
+      "schema": "guxi_variant_map/v1",
+      "version": "0.2.0-draft",
+      "updated_at": "2026-10-16",
+      "last_reviewed_by": null,
+      "review_status": "unreviewed",
+      "n_entries": 55,
+      "n_verified": 1,
+      "n_unverified": 54,
+      "by_source": {
+        "measured_truth": 1,
+        "cross_engine": 6,
+        "font_glyph_shape": 48
+      }
+    },
+    "mode": "auto",
+    "min_freq": 3,
+    "freq_pool_size": 493
+  },
+  "pool": {
+    "n_samples": 496,
+    "n_relabeled_stems": 248,
+    "n_outputs_empty": 294,
+    "note": "496 样本 = 248 枚 × 2 配置（pipeline / rec_only），与 ops/ocr-rapid/raw 一致",
+    "per_config": {
+      "pipeline": {
+        "n": 248,
+        "empty": 195,
+        "empty_rate": 0.7863,
+        "hit": 22,
+        "outdomain": 24,
+        "applied": 0
+      },
+      "rec_only": {
+        "n": 248,
+        "empty": 99,
+        "empty_rate": 0.3992,
+        "hit": 50,
+        "outdomain": 54,
+        "applied": 0
+      }
+    }
+  },
+  "trigger": {
+    "n_samples_with_any_rule_hit": 72,
+    "rate_any_rule_hit": 0.1452,
+    "n_samples_with_verified_rule_hit": 0,
+    "n_samples_with_candidate_only_hit": 72,
+    "n_samples_with_outdomain_char": 78,
+    "rate_outdomain_char": 0.1573,
+    "n_applied_total_in_this_mode": 0,
+    "mode_semantics": "suggest ⇒ n_applied 恒 0（只给候选）；auto ⇒ 只有 verified=true 条目会被改写，本池出现的字里没有 verified 源字时为 0"
+  },
+  "hit_distribution": [
+    {
+      "from": "團",
+      "to": "图",
+      "source": "cross_engine",
+      "verified": false,
+      "count": 8
+    },
+    {
+      "from": "团",
+      "to": "图",
+      "source": "cross_engine",
+      "verified": false,
+      "count": 5
+    },
+    {
+      "from": "圈",
+      "to": "图",
+      "source": "cross_engine",
+      "verified": false,
+      "count": 3
+    },
+    {
+      "from": "街",
+      "to": "衛",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 3
+    },
+    {
+      "from": "干",
+      "to": "千",
+      "source": "cross_engine",
+      "verified": false,
+      "count": 2
+    },
+    {
+      "from": "歌",
+      "to": "欣",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 2
+    },
+    {
+      "from": "衡",
+      "to": "衛",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 2
+    },
+    {
+      "from": "創",
+      "to": "制",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 2
+    },
+    {
+      "from": "摩",
+      "to": "庫",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 2
+    },
+    {
+      "from": "宏",
+      "to": "宋",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 2
+    },
+    {
+      "from": "做",
+      "to": "侯",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 2
+    },
+    {
+      "from": "鲜",
+      "to": "鮮",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 2
+    },
+    {
+      "from": "牌",
+      "to": "將",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 2
+    },
+    {
+      "from": "社",
+      "to": "杜",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 1
+    },
+    {
+      "from": "业",
+      "to": "此",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 1
+    },
+    {
+      "from": "场",
+      "to": "揭",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 1
+    },
+    {
+      "from": "号",
+      "to": "吴",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 1
+    },
+    {
+      "from": "神",
+      "to": "林",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 1
+    },
+    {
+      "from": "體",
+      "to": "讙",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 1
+    },
+    {
+      "from": "鱼",
+      "to": "室",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 1
+    },
+    {
+      "from": "因",
+      "to": "国",
+      "source": "cross_engine",
+      "verified": false,
+      "count": 1
+    },
+    {
+      "from": "养",
+      "to": "美",
+      "source": "cross_engine",
+      "verified": false,
+      "count": 1
+    },
+    {
+      "from": "鼎",
+      "to": "雲",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 1
+    },
+    {
+      "from": "良",
+      "to": "白",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 1
+    },
+    {
+      "from": "旦",
+      "to": "里",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 1
+    },
+    {
+      "from": "超",
+      "to": "趙",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 1
+    },
+    {
+      "from": "届",
+      "to": "居",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 1
+    },
+    {
+      "from": "鑫",
+      "to": "書",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 1
+    },
+    {
+      "from": "附",
+      "to": "限",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 1
+    },
+    {
+      "from": "座",
+      "to": "廬",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 1
+    },
+    {
+      "from": "盟",
+      "to": "孟",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 1
+    },
+    {
+      "from": "爱",
+      "to": "发",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 1
+    },
+    {
+      "from": "封",
+      "to": "邦",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 1
+    },
+    {
+      "from": "橱",
+      "to": "提",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 1
+    },
+    {
+      "from": "州",
+      "to": "川",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 1
+    },
+    {
+      "from": "复",
+      "to": "寫",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 1
+    },
+    {
+      "from": "顾",
+      "to": "頭",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 1
+    },
+    {
+      "from": "送",
+      "to": "道",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 1
+    },
+    {
+      "from": "阿",
+      "to": "限",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 1
+    },
+    {
+      "from": "旺",
+      "to": "吧",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 1
+    },
+    {
+      "from": "饰",
+      "to": "蟫",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 1
+    },
+    {
+      "from": "茶",
+      "to": "東",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 1
+    },
+    {
+      "from": "想",
+      "to": "記",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 1
+    },
+    {
+      "from": "雷",
+      "to": "雲",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 1
+    },
+    {
+      "from": "期",
+      "to": "朝",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 1
+    },
+    {
+      "from": "联",
+      "to": "耿",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 1
+    },
+    {
+      "from": "吃",
+      "to": "吧",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 1
+    },
+    {
+      "from": "例",
+      "to": "调",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 1
+    },
+    {
+      "from": "弗",
+      "to": "典",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 1
+    },
+    {
+      "from": "圓",
+      "to": "圖",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 1
+    },
+    {
+      "from": "曜",
+      "to": "限",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 1
+    },
+    {
+      "from": "岛",
+      "to": "高",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 1
+    },
+    {
+      "from": "通",
+      "to": "遇",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 1
+    },
+    {
+      "from": "厨",
+      "to": "尉",
+      "source": "font_glyph_shape",
+      "verified": false,
+      "count": 1
+    }
+  ],
+  "top_outdomain_chars": [
+    {
+      "char": "團",
+      "count": 8
+    },
+    {
+      "char": "团",
+      "count": 5
+    },
+    {
+      "char": "圈",
+      "count": 3
+    },
+    {
+      "char": "街",
+      "count": 3
+    },
+    {
+      "char": "干",
+      "count": 2
+    },
+    {
+      "char": "区",
+      "count": 2
+    },
+    {
+      "char": "歌",
+      "count": 2
+    },
+    {
+      "char": "衡",
+      "count": 2
+    },
+    {
+      "char": "創",
+      "count": 2
+    },
+    {
+      "char": "摩",
+      "count": 2
+    },
+    {
+      "char": "宏",
+      "count": 2
+    },
+    {
+      "char": "做",
+      "count": 2
+    },
+    {
+      "char": "鲜",
+      "count": 2
+    },
+    {
+      "char": "牌",
+      "count": 2
+    },
+    {
+      "char": "社",
+      "count": 1
+    },
+    {
+      "char": "业",
+      "count": 1
+    },
+    {
+      "char": "场",
+      "count": 1
+    },
+    {
+      "char": "号",
+      "count": 1
+    },
+    {
+      "char": "神",
+      "count": 1
+    },
+    {
+      "char": "體",
+      "count": 1
+    },
+    {
+      "char": "鱼",
+      "count": 1
+    },
+    {
+      "char": "因",
+      "count": 1
+    },
+    {
+      "char": "养",
+      "count": 1
+    },
+    {
+      "char": "勘",
+      "count": 1
+    },
+    {
+      "char": "鼎",
+      "count": 1
+    },
+    {
+      "char": "良",
+      "count": 1
+    },
+    {
+      "char": "旦",
+      "count": 1
+    },
+    {
+      "char": "超",
+      "count": 1
+    },
+    {
+      "char": "届",
+      "count": 1
+    },
+    {
+      "char": "鑫",
+      "count": 1
+    }
+  ],
+  "top_unmapped_chars": [
+    {
+      "char": "國",
+      "count": 21
+    },
+    {
+      "char": "国",
+      "count": 10
+    },
+    {
+      "char": "图",
+      "count": 8
+    },
+    {
+      "char": "4",
+      "count": 8
+    },
+    {
+      "char": "1",
+      "count": 7
+    },
+    {
+      "char": "福",
+      "count": 7
+    },
+    {
+      "char": "園",
+      "count": 6
+    },
+    {
+      "char": "周",
+      "count": 5
+    },
+    {
+      "char": "7",
+      "count": 5
+    },
+    {
+      "char": "园",
+      "count": 5
+    },
+    {
+      "char": "2",
+      "count": 4
+    },
+    {
+      "char": "0",
+      "count": 4
+    },
+    {
+      "char": "后",
+      "count": 3
+    },
+    {
+      "char": "新",
+      "count": 3
+    },
+    {
+      "char": "6",
+      "count": 3
+    },
+    {
+      "char": "5",
+      "count": 3
+    },
+    {
+      "char": "限",
+      "count": 3
+    },
+    {
+      "char": "金",
+      "count": 2
+    },
+    {
+      "char": "同",
+      "count": 2
+    },
+    {
+      "char": "区",
+      "count": 2
+    },
+    {
+      "char": "王",
+      "count": 2
+    },
+    {
+      "char": "全",
+      "count": 2
+    },
+    {
+      "char": "9",
+      "count": 2
+    },
+    {
+      "char": "合",
+      "count": 2
+    },
+    {
+      "char": "公",
+      "count": 2
+    },
+    {
+      "char": "画",
+      "count": 2
+    },
+    {
+      "char": "3",
+      "count": 2
+    },
+    {
+      "char": "天",
+      "count": 2
+    },
+    {
+      "char": "司",
+      "count": 1
+    },
+    {
+      "char": "音",
+      "count": 1
+    }
+  ],
+  "top_cross_engine_confusions": [
+    {
+      "engine_a": "rapid:rec_only",
+      "char_a": "团",
+      "engine_b": "paddle:A",
+      "char_b": "图",
+      "count": 4
+    },
+    {
+      "engine_a": "rapid:rec_only",
+      "char_a": "國",
+      "engine_b": "paddle:A",
+      "char_b": "酒",
+      "count": 2
+    },
+    {
+      "engine_a": "rapid:rec_only",
+      "char_a": "國",
+      "engine_b": "paddle:C",
+      "char_b": "0",
+      "count": 2
+    },
+    {
+      "engine_a": "rapid:rec_only",
+      "char_a": "國",
+      "engine_b": "paddle:A",
+      "char_b": "F",
+      "count": 1
+    },
+    {
+      "engine_a": "rapid:rec_only",
+      "char_a": "國",
+      "engine_b": "paddle:C",
+      "char_b": "8",
+      "count": 1
+    },
+    {
+      "engine_a": "rapid:pipeline",
+      "char_a": "同",
+      "engine_b": "paddle:B",
+      "char_b": "司",
+      "count": 1
+    },
+    {
+      "engine_a": "rapid:pipeline",
+      "char_a": "号",
+      "engine_b": "paddle:B",
+      "char_b": "曰",
+      "count": 1
+    },
+    {
+      "engine_a": "rapid:rec_only",
+      "char_a": "0",
+      "engine_b": "paddle:B",
+      "char_b": "年",
+      "count": 1
+    },
+    {
+      "engine_a": "rapid:pipeline",
+      "char_a": "图",
+      "engine_b": "paddle:A",
+      "char_b": "面",
+      "count": 1
+    },
+    {
+      "engine_a": "rapid:pipeline",
+      "char_a": "图",
+      "engine_b": "paddle:B",
+      "char_b": "园",
+      "count": 1
+    },
+    {
+      "engine_a": "rapid:pipeline",
+      "char_a": "图",
+      "engine_b": "paddle:C",
+      "char_b": "园",
+      "count": 1
+    },
+    {
+      "engine_a": "rapid:rec_only",
+      "char_a": "园",
+      "engine_b": "paddle:A",
+      "char_b": "面",
+      "count": 1
+    },
+    {
+      "engine_a": "rapid:pipeline",
+      "char_a": "出",
+      "engine_b": "paddle:B",
+      "char_b": "士",
+      "count": 1
+    },
+    {
+      "engine_a": "rapid:rec_only",
+      "char_a": "图",
+      "engine_b": "paddle:B",
+      "char_b": "容",
+      "count": 1
+    },
+    {
+      "engine_a": "rapid:rec_only",
+      "char_a": "鑫",
+      "engine_b": "paddle:A",
+      "char_b": "部",
+      "count": 1
+    },
+    {
+      "engine_a": "rapid:rec_only",
+      "char_a": "鑫",
+      "engine_b": "paddle:B",
+      "char_b": "萧",
+      "count": 1
+    },
+    {
+      "engine_a": "rapid:rec_only",
+      "char_a": "鑫",
+      "engine_b": "paddle:C",
+      "char_b": "萧",
+      "count": 1
+    },
+    {
+      "engine_a": "rapid:rec_only",
+      "char_a": "谷",
+      "engine_b": "paddle:A",
+      "char_b": "哆",
+      "count": 1
+    },
+    {
+      "engine_a": "rapid:rec_only",
+      "char_a": "谷",
+      "engine_b": "paddle:B",
+      "char_b": "图",
+      "count": 1
+    },
+    {
+      "engine_a": "rapid:rec_only",
+      "char_a": "谷",
+      "engine_b": "paddle:C",
+      "char_b": "6",
+      "count": 1
+    },
+    {
+      "engine_a": "rapid:pipeline",
+      "char_a": "后",
+      "engine_b": "paddle:A",
+      "char_b": "四",
+      "count": 1
+    },
+    {
+      "engine_a": "rapid:pipeline",
+      "char_a": "后",
+      "engine_b": "paddle:B",
+      "char_b": "行",
+      "count": 1
+    },
+    {
+      "engine_a": "rapid:pipeline",
+      "char_a": "后",
+      "engine_b": "paddle:C",
+      "char_b": "行",
+      "count": 1
+    },
+    {
+      "engine_a": "rapid:rec_only",
+      "char_a": "后",
+      "engine_b": "paddle:A",
+      "char_b": "四",
+      "count": 1
+    },
+    {
+      "engine_a": "rapid:rec_only",
+      "char_a": "后",
+      "engine_b": "paddle:B",
+      "char_b": "行",
+      "count": 1
+    },
+    {
+      "engine_a": "rapid:rec_only",
+      "char_a": "后",
+      "engine_b": "paddle:C",
+      "char_b": "行",
+      "count": 1
+    },
+    {
+      "engine_a": "rapid:pipeline",
+      "char_a": "因",
+      "engine_b": "paddle:B",
+      "char_b": "国",
+      "count": 1
+    },
+    {
+      "engine_a": "rapid:pipeline",
+      "char_a": "因",
+      "engine_b": "paddle:C",
+      "char_b": "2",
+      "count": 1
+    },
+    {
+      "engine_a": "rapid:rec_only",
+      "char_a": "国",
+      "engine_b": "paddle:C",
+      "char_b": "2",
+      "count": 1
+    },
+    {
+      "engine_a": "rapid:rec_only",
+      "char_a": "國",
+      "engine_b": "paddle:C",
+      "char_b": "欧",
+      "count": 1
+    }
+  ],
+  "seed_calibration": {
+    "pair": "錄→鈢",
+    "source": "measured_truth（Kevin 样本「左軍丞鈢」：两引擎一致误读为「左軍丞錄」）",
+    "glyph_sim": 0.5128,
+    "glyph_font": "Heiti TC Light",
+    "best_corpus_candidate": {
+      "char": "禄",
+      "glyph_sim": 0.4134
+    },
+    "hypothetical_rank_in_corpus_pool": 1,
+    "corpus_pool_size": 493,
+    "truth_char_in_corpus_pool": false,
+    "truth_char_corpus_count": 0,
+    "reading": "字形代理把**真值字**排在语料池全部候选之前（sim 高于池内最高者） ⇒ 排序启发式站得住；但**真值字本身不在语料池里** ⇒ 候选生成本质上不可能提出它 —— 瓶颈是**语料覆盖**，不是排序。"
+  },
+  "smoke_known_truth_sample": {
+    "suggest": {
+      "raw": "左軍丞錄",
+      "corrected": "左軍丞錄",
+      "n_applied": 0,
+      "top1_candidate": "鈢",
+      "hits": [
+        {
+          "pos": 3,
+          "from": "錄",
+          "to": "鈢",
+          "rule_id": "gx-0001",
+          "source": "measured_truth",
+          "confidence": 0.9,
+          "verified": true,
+          "applied": false
+        }
+      ]
+    },
+    "auto": {
+      "raw": "左軍丞錄",
+      "corrected": "左軍丞鈢",
+      "n_applied": 1,
+      "top1_candidate": "鈢",
+      "hits": [
+        {
+          "pos": 3,
+          "from": "錄",
+          "to": "鈢",
+          "rule_id": "gx-0001",
+          "source": "measured_truth",
+          "confidence": 0.9,
+          "verified": true,
+          "applied": true
+        }
+      ]
+    },
+    "expected": "左軍丞鈢",
+    "auto_reaches_truth": true
+  },
+  "changed_samples": []
+}

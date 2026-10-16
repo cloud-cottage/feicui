@@ -1,0 +1,244 @@
+{
+  "source": {
+    "db": "/Users/kevin/bistro/data/yinpu.db",
+    "db_sha256_16": "5b20415b58c94251",
+    "mode": "read_only",
+    "rows_with_nonempty_text": 2655
+  },
+  "ppocr_rec_dict": {
+    "available": true,
+    "path": "venv/lib/python3.11/site-packages/rapidocr/models/PP-OCRv6_rec_small.onnx",
+    "sha256_16": "6f327246b50388f3",
+    "n_chars": 18708,
+    "keys": [
+      "character"
+    ]
+  },
+  "totals": {
+    "chars_occurrences": 10712,
+    "chars_unique": 1590,
+    "han_unique": 1511,
+    "by_category": {
+      "han": 6296,
+      "latin": 655,
+      "digit": 3574,
+      "punct": 187
+    },
+    "han_not_in_rec_dict": 0,
+    "han_hapax": 734
+  },
+  "top_han": [
+    {
+      "char": "印",
+      "count": 200
+    },
+    {
+      "char": "鐘",
+      "count": 115
+    },
+    {
+      "char": "福",
+      "count": 91
+    },
+    {
+      "char": "王",
+      "count": 89
+    },
+    {
+      "char": "庵",
+      "count": 86
+    },
+    {
+      "char": "綴",
+      "count": 74
+    },
+    {
+      "char": "珍",
+      "count": 49
+    },
+    {
+      "char": "敬",
+      "count": 47
+    },
+    {
+      "char": "風",
+      "count": 45
+    },
+    {
+      "char": "金",
+      "count": 42
+    },
+    {
+      "char": "陝",
+      "count": 41
+    },
+    {
+      "char": "全",
+      "count": 40
+    },
+    {
+      "char": "一",
+      "count": 39
+    },
+    {
+      "char": "四",
+      "count": 39
+    },
+    {
+      "char": "張",
+      "count": 39
+    },
+    {
+      "char": "李",
+      "count": 39
+    },
+    {
+      "char": "二",
+      "count": 38
+    },
+    {
+      "char": "司",
+      "count": 38
+    },
+    {
+      "char": "閑",
+      "count": 37
+    },
+    {
+      "char": "不",
+      "count": 36
+    },
+    {
+      "char": "藏",
+      "count": 36
+    },
+    {
+      "char": "名",
+      "count": 35
+    },
+    {
+      "char": "楊",
+      "count": 34
+    },
+    {
+      "char": "匋",
+      "count": 33
+    },
+    {
+      "char": "房",
+      "count": 33
+    },
+    {
+      "char": "日",
+      "count": 33
+    },
+    {
+      "char": "雙",
+      "count": 33
+    },
+    {
+      "char": "思",
+      "count": 32
+    },
+    {
+      "char": "趙",
+      "count": 32
+    },
+    {
+      "char": "创",
+      "count": 31
+    },
+    {
+      "char": "之",
+      "count": 30
+    },
+    {
+      "char": "句",
+      "count": 29
+    },
+    {
+      "char": "人",
+      "count": 28
+    },
+    {
+      "char": "粹",
+      "count": 28
+    },
+    {
+      "char": "齋",
+      "count": 28
+    },
+    {
+      "char": "私",
+      "count": 26
+    },
+    {
+      "char": "行",
+      "count": 26
+    },
+    {
+      "char": "三",
+      "count": 25
+    },
+    {
+      "char": "毋",
+      "count": 25
+    },
+    {
+      "char": "郭",
+      "count": 25
+    },
+    {
+      "char": "知",
+      "count": 24
+    },
+    {
+      "char": "款",
+      "count": 23
+    },
+    {
+      "char": "纘",
+      "count": 23
+    },
+    {
+      "char": "官",
+      "count": 22
+    },
+    {
+      "char": "事",
+      "count": 21
+    },
+    {
+      "char": "和",
+      "count": 21
+    },
+    {
+      "char": "家",
+      "count": 21
+    },
+    {
+      "char": "文",
+      "count": 21
+    },
+    {
+      "char": "書",
+      "count": 21
+    },
+    {
+      "char": "氏",
+      "count": 21
+    }
+  ],
+  "books": {
+    "秦印类编 检索版.pdf": 7517,
+    "福庵印缀 原版 高清.pdf": 3145,
+    "黄牧甫印谱_(西泠印社)_(z-library.sk,_1lib.sk,_z-lib.sk).pdf": 38,
+    "秦汉印典 上海书画 金怀英  1997 ok.pdf": 11,
+    "tmp.pdf": 1
+  },
+  "notes": [
+    "count 含数字/拉丁/标点噪声；分析古玺用字请先按 category=='han' 过滤（本表 han 行已单列）。",
+    "in_ppocr_rec_dict=False ⇒ CTC 解码头结构上无法输出该字（强含义）；True 不代表能读对。",
+    "本表是**统计事实**，不是「异体字映射」——映射另见 webui/data/guxi_variant_map.json（每条带 source/confidence/verified）。"
+  ]
+}

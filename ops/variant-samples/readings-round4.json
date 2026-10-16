@@ -1,0 +1,1681 @@
+{
+  "schema": "feicui.texture-mimic-round4.v1",
+  "generator": "ops/variant-samples/round4_texture_mimic.py",
+  "seed": 20261016,
+  "scale_rule": "mm 物理定义×输出 dpi 换算 px；r2.vnoise_mm 位置哈希（跨 dpi 同一场）",
+  "windows": {
+    "show_mm": [
+      40.0,
+      26.0
+    ],
+    "show_origin_mm": [
+      20.0,
+      30.0
+    ],
+    "dual_dpi_mm": [
+      24.0,
+      16.0
+    ],
+    "page_dpi": 600,
+    "page_mm": [
+      179.9,
+      259.0
+    ],
+    "note": "样张窗口为纯纸场（不含印文/文字；本单只做纸纹理），窗口锚点任取"
+  },
+  "material_adequacy": {
+    "schema": "feicui.texture-mimic-round4.adequacy.v1",
+    "generator": "ops/variant-samples/round4_material_adequacy.py",
+    "role": "① 素材充足性评估（豆包纸底用于 1200dpi 整页示例纹理合成）",
+    "source": {
+      "path": "/Users/kevin/Library/Application Support/Hermes/composer-images/image_673b34.png",
+      "copied_into_repo": false,
+      "size_px": [
+        1536,
+        1536
+      ],
+      "sha256": "736b41340cbe8c1b92e4bc37a6f6fb40854c144cae630441b088db55b19aee25",
+      "read_only": true
+    },
+    "scale": {
+      "ruler": "共同标尺＝印面宽 W_d（doubao_reference.py 同源）",
+      "W_d_px": 923,
+      "W_o_mm": 22.437,
+      "mm_per_px": 0.024308775731310944,
+      "equiv_dpi": 1044.9,
+      "equiv_assumption": "假设豆包印面实物宽 ＝ C1-R1 印面 22.437 mm"
+    },
+    "target": {
+      "dpi": 1200,
+      "px": [
+        8500,
+        12236
+      ],
+      "mm": [
+        179.92,
+        259.0
+      ],
+      "area_mm2": 46597.6,
+      "mpx": 104.0
+    },
+    "masks": {
+      "ink_px": 304406,
+      "dark_px": 989,
+      "dark_rule": "非印泥 ∧ V < 0.75（文字/水印/暗角）",
+      "bleed_rule": "redness = R−0.5(G+B) > 12 ⇒ 溅红/渗色像素剔除",
+      "bleed_px": 513174,
+      "border_trim_px": 6,
+      "halo_exclusion_mm": 0.4,
+      "halo_rule": "到印泥掩膜距离 ≥ 0.4mm（豆包晕宽 0.0985mm + 余量）",
+      "pool_px": 1531429,
+      "pool_mm2": 904.9,
+      "pool_fraction_of_image": 0.6491
+    },
+    "components": [
+      {
+        "label": 1,
+        "bbox_px": [
+          6,
+          6,
+          1524,
+          1524
+        ],
+        "area_px": 1462767,
+        "bbox_mm": [
+          37.05,
+          37.05
+        ]
+      }
+    ],
+    "patch_inventory": {
+      "3mm": {
+        "side_px": 123,
+        "grid_half_overlap": {
+          "n_patches": 215,
+          "total_area_px": 3252735,
+          "total_area_mm2": 1922.1
+        },
+        "disjoint": {
+          "n_patches": 39,
+          "total_area_px": 590031,
+          "total_area_mm2": 348.7
+        }
+      },
+      "4mm": {
+        "side_px": 165,
+        "grid_half_overlap": {
+          "n_patches": 62,
+          "total_area_px": 1687950,
+          "total_area_mm2": 997.4
+        },
+        "disjoint": {
+          "n_patches": 13,
+          "total_area_px": 353925,
+          "total_area_mm2": 209.1
+        }
+      },
+      "5mm": {
+        "side_px": 206,
+        "grid_half_overlap": {
+          "n_patches": 15,
+          "total_area_px": 636540,
+          "total_area_mm2": 376.1
+        },
+        "disjoint": {
+          "n_patches": 1,
+          "total_area_px": 42436,
+          "total_area_mm2": 25.1
+        }
+      },
+      "6mm": {
+        "side_px": 247,
+        "grid_half_overlap": {
+          "n_patches": 0,
+          "total_area_px": 0,
+          "total_area_mm2": 0.0
+        },
+        "disjoint": {
+          "n_patches": 0,
+          "total_area_px": 0,
+          "total_area_mm2": 0.0
+        }
+      }
+    },
+    "patch_counting": "grid_half_overlap＝步长边长/2（位置数）；disjoint＝步长＝边长（不重叠块数）",
+    "illum_gradient": {
+      "rule": "非池像素填池均值后低通；池内缩 3mm 取值（防印泥暗部泄漏）",
+      "lp3mm_p1_p99": 5.171,
+      "lp3mm_std": 1.409,
+      "lp8mm_p1_p99": 4.006,
+      "lp8mm_std": 1.309
+    },
+    "dark_components": [
+      {
+        "bbox_px": [
+          1417,
+          1497,
+          43,
+          7
+        ],
+        "area_px": 50
+      },
+      {
+        "bbox_px": [
+          1470,
+          1489,
+          26,
+          17
+        ],
+        "area_px": 42
+      },
+      {
+        "bbox_px": [
+          1322,
+          1460,
+          23,
+          19
+        ],
+        "area_px": 41
+      },
+      {
+        "bbox_px": [
+          1415,
+          1470,
+          19,
+          10
+        ],
+        "area_px": 36
+      },
+      {
+        "bbox_px": [
+          1317,
+          1467,
+          20,
+          15
+        ],
+        "area_px": 35
+      },
+      {
+        "bbox_px": [
+          1417,
+          1486,
+          17,
+          11
+        ],
+        "area_px": 27
+      },
+      {
+        "bbox_px": [
+          1396,
+          1456,
+          2,
+          24
+        ],
+        "area_px": 25
+      },
+      {
+        "bbox_px": [
+          1441,
+          1470,
+          15,
+          9
+        ],
+        "area_px": 24
+      },
+      {
+        "bbox_px": [
+          1276,
+          1472,
+          16,
+          4
+        ],
+        "area_px": 22
+      },
+      {
+        "bbox_px": [
+          1295,
+          1496,
+          10,
+          8
+        ],
+        "area_px": 22
+      }
+    ],
+    "texture": {
+      "patch_side_mm": 4.0,
+      "n_patches_measured": 12,
+      "per_patch": [
+        {
+          "origin_px": [
+            165,
+            165
+          ],
+          "side_mm": 4.0,
+          "lum_std": 3.6336,
+          "band_rms": {
+            "cloud": 0.5455,
+            "coarse": 1.0887,
+            "fine": 1.5638,
+            "grain": 1.7287
+          },
+          "half_decay_mm": 0.027,
+          "peak_wavelength_mm": {
+            "cloud": 2.767,
+            "coarse": 0.9223,
+            "fine": 0.3739,
+            "grain": 0.1143
+          },
+          "energy_share": {
+            "cloud": 0.151136,
+            "coarse": 0.340216,
+            "fine": 0.179509,
+            "grain": 0.076593
+          }
+        },
+        {
+          "origin_px": [
+            1320,
+            165
+          ],
+          "side_mm": 4.0,
+          "lum_std": 3.74,
+          "band_rms": {
+            "cloud": 0.5869,
+            "coarse": 1.1093,
+            "fine": 1.6005,
+            "grain": 1.7626
+          },
+          "half_decay_mm": 0.0276,
+          "peak_wavelength_mm": {
+            "cloud": 2.767,
+            "coarse": 1.2577,
+            "fine": 0.3547,
+            "grain": 0.1224
+          },
+          "energy_share": {
+            "cloud": 0.226735,
+            "coarse": 0.201082,
+            "fine": 0.137085,
+            "grain": 0.055538
+          }
+        },
+        {
+          "origin_px": [
+            1320,
+            330
+          ],
+          "side_mm": 4.0,
+          "lum_std": 4.0804,
+          "band_rms": {
+            "cloud": 0.646,
+            "coarse": 1.2263,
+            "fine": 1.7409,
+            "grain": 2.0019
+          },
+          "half_decay_mm": 0.0251,
+          "peak_wavelength_mm": {
+            "cloud": 1.5372,
+            "coarse": 1.2577,
+            "fine": 0.3547,
+            "grain": 0.1203
+          },
+          "energy_share": {
+            "cloud": 0.180695,
+            "coarse": 0.381821,
+            "fine": 0.270086,
+            "grain": 0.114182
+          }
+        },
+        {
+          "origin_px": [
+            1320,
+            660
+          ],
+          "side_mm": 4.0,
+          "lum_std": 4.2483,
+          "band_rms": {
+            "cloud": 0.6806,
+            "coarse": 1.1174,
+            "fine": 1.784,
+            "grain": 2.2121
+          },
+          "half_decay_mm": 0.0233,
+          "peak_wavelength_mm": {
+            "cloud": 2.767,
+            "coarse": 1.0642,
+            "fine": 0.3953,
+            "grain": 0.1182
+          },
+          "energy_share": {
+            "cloud": 0.300946,
+            "coarse": 0.260998,
+            "fine": 0.229902,
+            "grain": 0.1035
+          }
+        },
+        {
+          "origin_px": [
+            1320,
+            825
+          ],
+          "side_mm": 4.0,
+          "lum_std": 4.3678,
+          "band_rms": {
+            "cloud": 0.7162,
+            "coarse": 1.178,
+            "fine": 1.8245,
+            "grain": 2.1777
+          },
+          "half_decay_mm": 0.0254,
+          "peak_wavelength_mm": {
+            "cloud": 2.767,
+            "coarse": 1.2577,
+            "fine": 0.3953,
+            "grain": 0.1343
+          },
+          "energy_share": {
+            "cloud": 0.241915,
+            "coarse": 0.264128,
+            "fine": 0.266268,
+            "grain": 0.126739
+          }
+        },
+        {
+          "origin_px": [
+            1320,
+            990
+          ],
+          "side_mm": 4.0,
+          "lum_std": 4.4329,
+          "band_rms": {
+            "cloud": 0.7892,
+            "coarse": 1.2119,
+            "fine": 1.7843,
+            "grain": 2.2094
+          },
+          "half_decay_mm": 0.0267,
+          "peak_wavelength_mm": {
+            "cloud": 1.9764,
+            "coarse": 1.2577,
+            "fine": 0.3953,
+            "grain": 0.1343
+          },
+          "energy_share": {
+            "cloud": 0.242194,
+            "coarse": 0.343617,
+            "fine": 0.134017,
+            "grain": 0.070236
+          }
+        },
+        {
+          "origin_px": [
+            1320,
+            1155
+          ],
+          "side_mm": 4.0,
+          "lum_std": 3.8287,
+          "band_rms": {
+            "cloud": 0.5711,
+            "coarse": 1.0693,
+            "fine": 1.6384,
+            "grain": 1.9443
+          },
+          "half_decay_mm": 0.0243,
+          "peak_wavelength_mm": {
+            "cloud": 1.9764,
+            "coarse": 1.2577,
+            "fine": 0.4463,
+            "grain": 0.1343
+          },
+          "energy_share": {
+            "cloud": 0.170127,
+            "coarse": 0.430183,
+            "fine": 0.237636,
+            "grain": 0.104449
+          }
+        },
+        {
+          "origin_px": [
+            165,
+            1320
+          ],
+          "side_mm": 4.0,
+          "lum_std": 3.79,
+          "band_rms": {
+            "cloud": 0.5622,
+            "coarse": 0.9934,
+            "fine": 1.6015,
+            "grain": 1.9104
+          },
+          "half_decay_mm": 0.0259,
+          "peak_wavelength_mm": {
+            "cloud": 2.767,
+            "coarse": 1.0642,
+            "fine": 0.3953,
+            "grain": 0.1203
+          },
+          "energy_share": {
+            "cloud": 0.311987,
+            "coarse": 0.183304,
+            "fine": 0.173619,
+            "grain": 0.086471
+          }
+        },
+        {
+          "origin_px": [
+            330,
+            1320
+          ],
+          "side_mm": 4.0,
+          "lum_std": 3.9766,
+          "band_rms": {
+            "cloud": 0.5974,
+            "coarse": 1.1386,
+            "fine": 1.6659,
+            "grain": 1.9452
+          },
+          "half_decay_mm": 0.0275,
+          "peak_wavelength_mm": {
+            "cloud": 2.767,
+            "coarse": 1.2577,
+            "fine": 0.3547,
+            "grain": 0.1343
+          },
+          "energy_share": {
+            "cloud": 0.241287,
+            "coarse": 0.090867,
+            "fine": 0.074985,
+            "grain": 0.036299
+          }
+        },
+        {
+          "origin_px": [
+            495,
+            1320
+          ],
+          "side_mm": 4.0,
+          "lum_std": 3.8523,
+          "band_rms": {
+            "cloud": 0.5638,
+            "coarse": 1.0435,
+            "fine": 1.6274,
+            "grain": 1.898
+          },
+          "half_decay_mm": 0.0262,
+          "peak_wavelength_mm": {
+            "cloud": 2.767,
+            "coarse": 1.2577,
+            "fine": 0.4192,
+            "grain": 0.1125
+          },
+          "energy_share": {
+            "cloud": 0.274571,
+            "coarse": 0.177852,
+            "fine": 0.175208,
+            "grain": 0.076394
+          }
+        },
+        {
+          "origin_px": [
+            660,
+            1320
+          ],
+          "side_mm": 4.0,
+          "lum_std": 3.8694,
+          "band_rms": {
+            "cloud": 0.6095,
+            "coarse": 1.1657,
+            "fine": 1.6328,
+            "grain": 1.934
+          },
+          "half_decay_mm": 0.0256,
+          "peak_wavelength_mm": {
+            "cloud": 1.9764,
+            "coarse": 1.2577,
+            "fine": 0.4463,
+            "grain": 0.1343
+          },
+          "energy_share": {
+            "cloud": 0.178973,
+            "coarse": 0.474444,
+            "fine": 0.211994,
+            "grain": 0.084384
+          }
+        },
+        {
+          "origin_px": [
+            825,
+            1320
+          ],
+          "side_mm": 4.0,
+          "lum_std": 3.9502,
+          "band_rms": {
+            "cloud": 0.726,
+            "coarse": 1.2251,
+            "fine": 1.6256,
+            "grain": 1.8945
+          },
+          "half_decay_mm": 0.0284,
+          "peak_wavelength_mm": {
+            "cloud": 2.767,
+            "coarse": 0.7282,
+            "fine": 0.3953,
+            "grain": 0.1343
+          },
+          "energy_share": {
+            "cloud": 0.372978,
+            "coarse": 0.251123,
+            "fine": 0.142959,
+            "grain": 0.065394
+          }
+        }
+      ],
+      "lum_std_0_255_median": 3.9098,
+      "band_rms_0_255_mm_bands_median": {
+        "cloud": 0.6035,
+        "coarse": 1.128,
+        "fine": 1.6356,
+        "grain": 1.9391
+      },
+      "band_shares_median": {
+        "cloud": 0.241601,
+        "coarse": 0.262563,
+        "fine": 0.177359,
+        "grain": 0.080488
+      },
+      "band_peak_wavelength_mm_median": {
+        "cloud": 2.767,
+        "coarse": 1.2577,
+        "fine": 0.3953,
+        "grain": 0.1283
+      },
+      "half_decay_mm_median": 0.0261,
+      "bands_mm": {
+        "cloud": [
+          1.3463,
+          3.0
+        ],
+        "coarse": [
+          0.4487,
+          1.3463
+        ],
+        "fine": [
+          0.1346,
+          0.4487
+        ],
+        "grain": [
+          0.0449,
+          0.1346
+        ]
+      },
+      "bands_note": "与 doubao_reference.BAND_FRAC×W_d 一致；cloud 上限 3.0mm（素材最大纯纸补丁 ~5.3mm，>3mm 波长不可测，标注测量上限）"
+    },
+    "uniformity": {
+      "components": [
+        {
+          "component": 1,
+          "bbox_px": [
+            6,
+            6,
+            1524,
+            1524
+          ],
+          "area_px": 1462767,
+          "mean_rgb": [
+            248.57,
+            248.21,
+            246.64
+          ],
+          "lum_std": 4.562,
+          "grad3mm_p1_p99_leakfree": 5.171
+        }
+      ]
+    },
+    "paper_color": {
+      "mean_rgb": [
+        248.878,
+        248.418,
+        246.78
+      ],
+      "std_rgb": [
+        4.9333,
+        5.0467,
+        5.4365
+      ]
+    },
+    "adequacy": {
+      "effective_material_mm2": 904.9,
+      "effective_material_px": 1531429,
+      "avg_reuse_factor_area_ratio": 51.49,
+      "texture_unit_wavelength_mm": 1.2577,
+      "independent_units_material": 572.1,
+      "independent_units_page_needed": 29458.4,
+      "reuse_factor_units": 51.5,
+      "visual_repeat_scale_mm": 10.5,
+      "visual_cells_material": 8.21,
+      "visual_cells_page": 422.7,
+      "visual_cells_reuse_factor": 51.5,
+      "patch_inventory_biggest": {
+        "side_px": 165,
+        "grid_half_overlap": {
+          "n_patches": 62,
+          "total_area_px": 1687950,
+          "total_area_mm2": 997.4
+        },
+        "disjoint": {
+          "n_patches": 13,
+          "total_area_px": 353925,
+          "total_area_mm2": 209.1
+        }
+      },
+      "criteria_note": "(a) 平均复用 R ＝ 页面积/有效素材面积（与尺度无关）；(b) 独立单元数 ＝ 面积/单元λ²；(c) 视觉可辨重复尺度取 10.5mm（30cm 观读、2° 视角）"
+    }
+  },
+  "reference_doubao": {
+    "n_patches": 13,
+    "patch_side_mm": 4.0,
+    "patch_origins_px": [
+      [
+        165,
+        165
+      ],
+      [
+        1320,
+        165
+      ],
+      [
+        1320,
+        330
+      ],
+      [
+        1320,
+        660
+      ],
+      [
+        1320,
+        825
+      ],
+      [
+        1320,
+        990
+      ],
+      [
+        1320,
+        1155
+      ],
+      [
+        165,
+        1320
+      ],
+      [
+        330,
+        1320
+      ],
+      [
+        495,
+        1320
+      ],
+      [
+        660,
+        1320
+      ],
+      [
+        825,
+        1320
+      ],
+      [
+        990,
+        1320
+      ]
+    ],
+    "texture_rms_0_255": 3.9502,
+    "band_rms_0_255": {
+      "cloud": 0.6095,
+      "coarse": 1.1386,
+      "fine": 1.6384,
+      "grain": 1.9424
+    },
+    "band_energy_share": {
+      "cloud": 0.241287,
+      "coarse": 0.260998,
+      "fine": 0.175208,
+      "grain": 0.076593
+    },
+    "peak_wavelength_mm": {
+      "cloud": 2.767,
+      "coarse": 1.2577,
+      "fine": 0.3953,
+      "grain": 0.1246
+    },
+    "half_decay_x_mm": 0.0306,
+    "half_decay_y_mm": 0.081,
+    "lum_quantiles_median": {
+      "p1": 235.071,
+      "p5": 238.772,
+      "p25": 242.772,
+      "p50": 245.131,
+      "p75": 248.0,
+      "p90": 250.0,
+      "p95": 251.772,
+      "p99": 254.0
+    },
+    "per_channel_residual_sigma": [
+      3.8614,
+      3.9722,
+      4.6368
+    ],
+    "interchannel_corr_mean": 0.9676,
+    "paper_mean_rgb": [
+      248.878,
+      248.418,
+      246.78
+    ],
+    "paper_base_rgb": [
+      246.0,
+      245.0,
+      244.0
+    ],
+    "paper_base_note": "基色＝13 patch 各自中位 RGB 的中位（对齐明度分位 p50；池均值含 255 截顶偏置）",
+    "anisotropy_y_over_x": 2.647
+  },
+  "versions": {
+    "R1": {
+      "name": "R1 频谱匹配合成",
+      "method": "mm 带 octave（r2.vnoise_mm 位置哈希，跨 dpi 同一场）＋逐 octave 隔离幅度标定（12mm 试验片）",
+      "octaves": [
+        {
+          "name": "cloud",
+          "long_mm": 1.3835,
+          "short_mm": 1.3835,
+          "salt": 4071,
+          "amp": 0.6095
+        },
+        {
+          "name": "coarse",
+          "long_mm": 0.386518,
+          "short_mm": 1.023114,
+          "salt": 4113,
+          "amp": 1.1386
+        },
+        {
+          "name": "fine",
+          "long_mm": 0.121484,
+          "short_mm": 0.321569,
+          "salt": 4157,
+          "amp": 1.6384
+        },
+        {
+          "name": "grain",
+          "long_mm": 0.0623,
+          "short_mm": 0.0623,
+          "salt": 4199,
+          "amp": 1.9424
+        }
+      ],
+      "calibration": {
+        "tile_mm": 12.0,
+        "method": "per-octave isolated（单 octave 场测带 RMS→factor）＋joint record",
+        "factors": {
+          "cloud": 2.926454,
+          "coarse": 2.191279,
+          "fine": 1.75201,
+          "grain": 2.418476
+        },
+        "isolated": [
+          {
+            "name": "cloud",
+            "band_rms_measured": 0.2083,
+            "target": 0.6095,
+            "factor": 2.926454
+          },
+          {
+            "name": "coarse",
+            "band_rms_measured": 0.5196,
+            "target": 1.1386,
+            "factor": 2.191279
+          },
+          {
+            "name": "fine",
+            "band_rms_measured": 0.9352,
+            "target": 1.6384,
+            "factor": 1.75201
+          },
+          {
+            "name": "grain",
+            "band_rms_measured": 0.8032,
+            "target": 1.9424,
+            "factor": 2.418476
+          }
+        ],
+        "joint_band_rms_after": {
+          "cloud": 1.0534,
+          "coarse": 1.7697,
+          "fine": 3.3052,
+          "grain": 2.0629
+        }
+      },
+      "texture_readings_1200dpi": {
+        "lum_std": 3.9472,
+        "band_rms_0_255": {
+          "cloud": 0.6825,
+          "coarse": 1.0937,
+          "fine": 1.579,
+          "grain": 2.0289
+        },
+        "band_energy_share": {
+          "cloud": 0.232452,
+          "coarse": 0.226074,
+          "fine": 0.122206,
+          "grain": 0.059931
+        },
+        "peak_wavelength_mm": {
+          "cloud": 2.3947,
+          "coarse": 1.3304,
+          "fine": 0.4435,
+          "grain": 0.1345
+        },
+        "half_decay_x_mm": 0.0359,
+        "half_decay_y_mm": 0.0449,
+        "lum_quantiles": {
+          "p1": 236.296,
+          "p5": 238.672,
+          "p25": 242.409,
+          "p50": 245.167,
+          "p75": 247.93,
+          "p90": 250.317,
+          "p95": 251.665,
+          "p99": 254.027
+        }
+      },
+      "vs_doubao": {
+        "band_energy_share_L1": 0.113423,
+        "band_rms_0_255": {
+          "cloud": {
+            "syn": 0.6825,
+            "ref": 0.6095,
+            "rel_diff": 0.1198
+          },
+          "coarse": {
+            "syn": 1.0937,
+            "ref": 1.1386,
+            "rel_diff": 0.0394
+          },
+          "fine": {
+            "syn": 1.579,
+            "ref": 1.6384,
+            "rel_diff": 0.0363
+          },
+          "grain": {
+            "syn": 2.0289,
+            "ref": 1.9424,
+            "rel_diff": 0.0445
+          }
+        },
+        "lum_std": {
+          "syn": 3.9472,
+          "ref": 3.9502
+        },
+        "half_decay_mm": {
+          "syn": [
+            0.0359,
+            0.0449
+          ],
+          "ref": [
+            0.0306,
+            0.081
+          ]
+        },
+        "peak_wavelength_mm": {
+          "cloud": {
+            "syn": 2.3947,
+            "ref": 2.767
+          },
+          "coarse": {
+            "syn": 1.3304,
+            "ref": 1.2577
+          },
+          "fine": {
+            "syn": 0.4435,
+            "ref": 0.3953
+          },
+          "grain": {
+            "syn": 0.1345,
+            "ref": 0.1246
+          }
+        }
+      },
+      "determinism_same_seed_bits_equal": true,
+      "dual_dpi": {
+        "a_1200dpi": {
+          "lum_std": 3.946,
+          "band_rms_0_255": {
+            "cloud": 0.6617,
+            "coarse": 1.0953,
+            "fine": 1.588,
+            "grain": 2.0403
+          },
+          "band_energy_share": {
+            "cloud": 0.232705,
+            "coarse": 0.2785,
+            "fine": 0.144186,
+            "grain": 0.069837
+          },
+          "peak_wavelength_mm": {
+            "cloud": 2.3947,
+            "coarse": 1.3304,
+            "fine": 0.4435,
+            "grain": 0.1345
+          },
+          "half_decay_x_mm": 0.0353,
+          "half_decay_y_mm": 0.0425,
+          "lum_quantiles": {
+            "p1": 236.233,
+            "p5": 238.597,
+            "p25": 242.327,
+            "p50": 245.079,
+            "p75": 247.838,
+            "p90": 250.239,
+            "p95": 251.591,
+            "p99": 253.962
+          }
+        },
+        "b_2400dpi_downsampled": {
+          "lum_std": 3.6228,
+          "band_rms_0_255": {
+            "cloud": 0.6621,
+            "coarse": 1.0852,
+            "fine": 1.5137,
+            "grain": 1.649
+          },
+          "band_energy_share": {
+            "cloud": 0.241264,
+            "coarse": 0.284706,
+            "fine": 0.140458,
+            "grain": 0.054647
+          },
+          "peak_wavelength_mm": {
+            "cloud": 2.3947,
+            "coarse": 1.3304,
+            "fine": 0.4435,
+            "grain": 0.1345
+          },
+          "half_decay_x_mm": 0.0398,
+          "half_decay_y_mm": 0.057,
+          "lum_quantiles": {
+            "p1": 236.867,
+            "p5": 239.123,
+            "p25": 242.583,
+            "p50": 245.077,
+            "p75": 247.574,
+            "p90": 249.783,
+            "p95": 251.065,
+            "p99": 253.369
+          }
+        },
+        "rel_diff": {
+          "lum_std": 0.08191,
+          "half_decay_x_mm": 0.12748,
+          "half_decay_y_mm": 0.34118
+        },
+        "rel_diff_band_rms": {
+          "cloud": 0.0006,
+          "coarse": 0.00922,
+          "fine": 0.04679,
+          "grain": 0.19179
+        },
+        "max_rel_diff": 0.34118
+      },
+      "repeat_page600": {
+        "method": "整页 600dpi 场 2D 自相关（FFT，ac[0,0]=1）；x/y 各取 1D 剖面找峰",
+        "min_lag_mm": 3.0,
+        "far_lag_mm": 20.0,
+        "peaks_x": [
+          {
+            "lag_mm": 23.83,
+            "ac": 0.00186
+          },
+          {
+            "lag_mm": 23.96,
+            "ac": 0.00174
+          },
+          {
+            "lag_mm": 16.04,
+            "ac": 0.00158
+          },
+          {
+            "lag_mm": 56.01,
+            "ac": 0.00141
+          },
+          {
+            "lag_mm": 16.3,
+            "ac": 0.00136
+          }
+        ],
+        "peaks_y": [
+          {
+            "lag_mm": 97.87,
+            "ac": 0.00159
+          },
+          {
+            "lag_mm": 97.75,
+            "ac": 0.00158
+          },
+          {
+            "lag_mm": 126.87,
+            "ac": 0.00147
+          },
+          {
+            "lag_mm": 42.93,
+            "ac": 0.00146
+          },
+          {
+            "lag_mm": 30.99,
+            "ac": 0.00128
+          }
+        ],
+        "max_ac_beyond_20mm": 0.00186,
+        "max_ac_beyond_20mm_lag_mm": 23.83,
+        "max_ac_beyond_20mm_axis": "x",
+        "ac_at_far_edge_x": -0.00059,
+        "ac_at_far_edge_y": 0.00118
+      }
+    },
+    "R2": {
+      "name": "R2 patch quilting",
+      "method": "4.0mm patch 最小误差边界（重叠 0.68mm SSD＋top8 随机）＋羽化＋全局基色对齐＋抖动网格（步长 0.62–0.95×格距，散格距周期峰）；镜像变体（×3 池）实测更差（远距 ac 0.64 vs 0.37）已弃",
+      "patch_pool": {
+        "600dpi": 61,
+        "1200dpi": 74,
+        "2400dpi": 60
+      },
+      "patch_mm": 4.0,
+      "overlap_mm": 0.68,
+      "texture_readings_1200dpi": {
+        "lum_std": 3.3974,
+        "band_rms_0_255": {
+          "cloud": 0.5537,
+          "coarse": 0.9837,
+          "fine": 1.4439,
+          "grain": 1.5074
+        },
+        "band_energy_share": {
+          "cloud": 0.133878,
+          "coarse": 0.169751,
+          "fine": 0.096801,
+          "grain": 0.039331
+        },
+        "peak_wavelength_mm": {
+          "cloud": 2.3947,
+          "coarse": 1.3304,
+          "fine": 0.3862,
+          "grain": 0.1345
+        },
+        "half_decay_x_mm": 0.0322,
+        "half_decay_y_mm": 0.0832,
+        "lum_quantiles": {
+          "p1": 234.985,
+          "p5": 238.052,
+          "p25": 241.733,
+          "p50": 244.007,
+          "p75": 246.192,
+          "p90": 248.079,
+          "p95": 249.134,
+          "p99": 250.937
+        }
+      },
+      "vs_doubao": {
+        "band_energy_share_L1": 0.314325,
+        "band_rms_0_255": {
+          "cloud": {
+            "syn": 0.5537,
+            "ref": 0.6095,
+            "rel_diff": 0.0916
+          },
+          "coarse": {
+            "syn": 0.9837,
+            "ref": 1.1386,
+            "rel_diff": 0.136
+          },
+          "fine": {
+            "syn": 1.4439,
+            "ref": 1.6384,
+            "rel_diff": 0.1187
+          },
+          "grain": {
+            "syn": 1.5074,
+            "ref": 1.9424,
+            "rel_diff": 0.2239
+          }
+        },
+        "lum_std": {
+          "syn": 3.3974,
+          "ref": 3.9502
+        },
+        "half_decay_mm": {
+          "syn": [
+            0.0322,
+            0.0832
+          ],
+          "ref": [
+            0.0306,
+            0.081
+          ]
+        },
+        "peak_wavelength_mm": {
+          "cloud": {
+            "syn": 2.3947,
+            "ref": 2.767
+          },
+          "coarse": {
+            "syn": 1.3304,
+            "ref": 1.2577
+          },
+          "fine": {
+            "syn": 0.3862,
+            "ref": 0.3953
+          },
+          "grain": {
+            "syn": 0.1345,
+            "ref": 0.1246
+          }
+        }
+      },
+      "determinism_same_seed_bits_equal": true,
+      "dual_dpi": {
+        "a_1200dpi": {
+          "lum_std": 3.406,
+          "band_rms_0_255": {
+            "cloud": 0.5552,
+            "coarse": 0.9836,
+            "fine": 1.4496,
+            "grain": 1.5158
+          },
+          "band_energy_share": {
+            "cloud": 0.092904,
+            "coarse": 0.185538,
+            "fine": 0.106209,
+            "grain": 0.042124
+          },
+          "peak_wavelength_mm": {
+            "cloud": 2.3947,
+            "coarse": 1.3304,
+            "fine": 0.4435,
+            "grain": 0.1345
+          },
+          "half_decay_x_mm": 0.032,
+          "half_decay_y_mm": 0.0824,
+          "lum_quantiles": {
+            "p1": 235.535,
+            "p5": 238.631,
+            "p25": 242.327,
+            "p50": 244.615,
+            "p75": 246.811,
+            "p90": 248.693,
+            "p95": 249.763,
+            "p99": 251.405
+          }
+        },
+        "b_2400dpi_downsampled": {
+          "lum_std": 3.2799,
+          "band_rms_0_255": {
+            "cloud": 0.5612,
+            "coarse": 0.9923,
+            "fine": 1.4055,
+            "grain": 1.3399
+          },
+          "band_energy_share": {
+            "cloud": 0.130018,
+            "coarse": 0.17531,
+            "fine": 0.10117,
+            "grain": 0.035093
+          },
+          "peak_wavelength_mm": {
+            "cloud": 2.3947,
+            "coarse": 1.3304,
+            "fine": 0.4435,
+            "grain": 0.1316
+          },
+          "half_decay_x_mm": 0.0348,
+          "half_decay_y_mm": 0.0913,
+          "lum_quantiles": {
+            "p1": 236.131,
+            "p5": 239.12,
+            "p25": 242.689,
+            "p50": 244.9,
+            "p75": 247.033,
+            "p90": 248.831,
+            "p95": 249.83,
+            "p99": 251.416
+          }
+        },
+        "rel_diff": {
+          "lum_std": 0.03702,
+          "half_decay_x_mm": 0.0875,
+          "half_decay_y_mm": 0.10801
+        },
+        "rel_diff_band_rms": {
+          "cloud": 0.01081,
+          "coarse": 0.00885,
+          "fine": 0.03042,
+          "grain": 0.11604
+        },
+        "max_rel_diff": 0.11604
+      },
+      "repeat_page600": {
+        "method": "整页 600dpi 场 2D 自相关（FFT，ac[0,0]=1）；x/y 各取 1D 剖面找峰",
+        "min_lag_mm": 3.0,
+        "far_lag_mm": 20.0,
+        "peaks_x": [
+          {
+            "lag_mm": 3.09,
+            "ac": 0.47276
+          },
+          {
+            "lag_mm": 4.23,
+            "ac": 0.45677
+          },
+          {
+            "lag_mm": 4.32,
+            "ac": 0.45646
+          },
+          {
+            "lag_mm": 4.49,
+            "ac": 0.45584
+          },
+          {
+            "lag_mm": 4.7,
+            "ac": 0.45458
+          }
+        ],
+        "peaks_y": [
+          {
+            "lag_mm": 4.28,
+            "ac": 0.47222
+          },
+          {
+            "lag_mm": 4.15,
+            "ac": 0.47203
+          },
+          {
+            "lag_mm": 4.53,
+            "ac": 0.47099
+          },
+          {
+            "lag_mm": 5.08,
+            "ac": 0.47018
+          },
+          {
+            "lag_mm": 4.91,
+            "ac": 0.4697
+          }
+        ],
+        "max_ac_beyond_20mm": 0.36723,
+        "max_ac_beyond_20mm_lag_mm": 19.98,
+        "max_ac_beyond_20mm_axis": "y",
+        "ac_at_far_edge_x": 0.03159,
+        "ac_at_far_edge_y": -0.10408
+      }
+    },
+    "R3": {
+      "name": "R3 混合",
+      "method": "低频（云斑 1.35–3mm）＝豆包条带（池内 4.5mm 高）行高 3.5–6.5mm 抖动拼铺＋1.5mm 羽化；高频（≤1.35mm）＝R1 机制",
+      "cloud_strips": [
+        {
+          "kind": "col(rot90)",
+          "bbox_px": [
+            1246,
+            725,
+            284,
+            727
+          ],
+          "mm": [
+            17.67,
+            6.9
+          ]
+        },
+        {
+          "kind": "col(rot90)",
+          "bbox_px": [
+            6,
+            833,
+            290,
+            697
+          ],
+          "mm": [
+            16.94,
+            7.05
+          ]
+        },
+        {
+          "kind": "row",
+          "bbox_px": [
+            6,
+            6,
+            594,
+            308
+          ],
+          "mm": [
+            14.44,
+            7.49
+          ]
+        },
+        {
+          "kind": "col(rot90)",
+          "bbox_px": [
+            6,
+            6,
+            290,
+            574
+          ],
+          "mm": [
+            13.95,
+            7.05
+          ]
+        },
+        {
+          "kind": "row",
+          "bbox_px": [
+            1019,
+            6,
+            511,
+            308
+          ],
+          "mm": [
+            12.42,
+            7.49
+          ]
+        },
+        {
+          "kind": "row",
+          "bbox_px": [
+            6,
+            1242,
+            558,
+            254
+          ],
+          "mm": [
+            13.56,
+            6.17
+          ]
+        },
+        {
+          "kind": "col(rot90)",
+          "bbox_px": [
+            1246,
+            6,
+            284,
+            450
+          ],
+          "mm": [
+            10.94,
+            6.9
+          ]
+        }
+      ],
+      "low_gain_calibration": {
+        "target_cloud_rms": 0.6095,
+        "measured_tiled_rms": 0.5839,
+        "gain": 1.579653,
+        "sl_high_field_600": 6.0752,
+        "sigma_lum": 4.0148,
+        "rule": "gain＝tgt·sl/(meas·Σwσ)：render_field 低频按 sig/sl 进通道，亮度增益 Σwσ/sl 预补偿 ⇒ 终图云斑带 RMS＝tgt"
+      },
+      "texture_readings_1200dpi": {
+        "lum_std": 3.9936,
+        "band_rms_0_255": {
+          "cloud": 0.6228,
+          "coarse": 1.1112,
+          "fine": 1.6404,
+          "grain": 2.1187
+        },
+        "band_energy_share": {
+          "cloud": 0.219223,
+          "coarse": 0.328893,
+          "fine": 0.182181,
+          "grain": 0.091112
+        },
+        "peak_wavelength_mm": {
+          "cloud": 1.7105,
+          "coarse": 1.3304,
+          "fine": 0.4435,
+          "grain": 0.1345
+        },
+        "half_decay_x_mm": 0.0328,
+        "half_decay_y_mm": 0.0394,
+        "lum_quantiles": {
+          "p1": 236.042,
+          "p5": 238.401,
+          "p25": 242.166,
+          "p50": 244.971,
+          "p75": 247.783,
+          "p90": 250.192,
+          "p95": 251.55,
+          "p99": 253.897
+        }
+      },
+      "vs_doubao": {
+        "band_energy_share_L1": 0.111451,
+        "band_rms_0_255": {
+          "cloud": {
+            "syn": 0.6228,
+            "ref": 0.6095,
+            "rel_diff": 0.0218
+          },
+          "coarse": {
+            "syn": 1.1112,
+            "ref": 1.1386,
+            "rel_diff": 0.0241
+          },
+          "fine": {
+            "syn": 1.6404,
+            "ref": 1.6384,
+            "rel_diff": 0.0012
+          },
+          "grain": {
+            "syn": 2.1187,
+            "ref": 1.9424,
+            "rel_diff": 0.0908
+          }
+        },
+        "lum_std": {
+          "syn": 3.9936,
+          "ref": 3.9502
+        },
+        "half_decay_mm": {
+          "syn": [
+            0.0328,
+            0.0394
+          ],
+          "ref": [
+            0.0306,
+            0.081
+          ]
+        },
+        "peak_wavelength_mm": {
+          "cloud": {
+            "syn": 1.7105,
+            "ref": 2.767
+          },
+          "coarse": {
+            "syn": 1.3304,
+            "ref": 1.2577
+          },
+          "fine": {
+            "syn": 0.4435,
+            "ref": 0.3953
+          },
+          "grain": {
+            "syn": 0.1345,
+            "ref": 0.1246
+          }
+        }
+      },
+      "determinism_same_seed_bits_equal": true,
+      "dual_dpi": {
+        "a_1200dpi": {
+          "lum_std": 3.9989,
+          "band_rms_0_255": {
+            "cloud": 0.6117,
+            "coarse": 1.1156,
+            "fine": 1.6459,
+            "grain": 2.1253
+          },
+          "band_energy_share": {
+            "cloud": 0.181395,
+            "coarse": 0.375737,
+            "fine": 0.203673,
+            "grain": 0.100075
+          },
+          "peak_wavelength_mm": {
+            "cloud": 2.3947,
+            "coarse": 1.3304,
+            "fine": 0.4435,
+            "grain": 0.1345
+          },
+          "half_decay_x_mm": 0.0326,
+          "half_decay_y_mm": 0.0392,
+          "lum_quantiles": {
+            "p1": 235.976,
+            "p5": 238.339,
+            "p25": 242.112,
+            "p50": 244.91,
+            "p75": 247.722,
+            "p90": 250.143,
+            "p95": 251.507,
+            "p99": 253.865
+          }
+        },
+        "b_2400dpi_downsampled": {
+          "lum_std": 3.6512,
+          "band_rms_0_255": {
+            "cloud": 0.6116,
+            "coarse": 1.1046,
+            "fine": 1.5678,
+            "grain": 1.7174
+          },
+          "band_energy_share": {
+            "cloud": 0.189775,
+            "coarse": 0.39021,
+            "fine": 0.201527,
+            "grain": 0.079703
+          },
+          "peak_wavelength_mm": {
+            "cloud": 2.3947,
+            "coarse": 1.3304,
+            "fine": 0.4435,
+            "grain": 0.1345
+          },
+          "half_decay_x_mm": 0.037,
+          "half_decay_y_mm": 0.048,
+          "lum_quantiles": {
+            "p1": 236.652,
+            "p5": 238.911,
+            "p25": 242.389,
+            "p50": 244.908,
+            "p75": 247.436,
+            "p90": 249.658,
+            "p95": 250.948,
+            "p99": 253.251
+          }
+        },
+        "rel_diff": {
+          "lum_std": 0.08695,
+          "half_decay_x_mm": 0.13497,
+          "half_decay_y_mm": 0.22449
+        },
+        "rel_diff_band_rms": {
+          "cloud": 0.00016,
+          "coarse": 0.00986,
+          "fine": 0.04745,
+          "grain": 0.19193
+        },
+        "max_rel_diff": 0.22449
+      },
+      "repeat_page600": {
+        "method": "整页 600dpi 场 2D 自相关（FFT，ac[0,0]=1）；x/y 各取 1D 剖面找峰",
+        "min_lag_mm": 3.0,
+        "far_lag_mm": 20.0,
+        "peaks_x": [
+          {
+            "lag_mm": 35.39,
+            "ac": 0.00585
+          },
+          {
+            "lag_mm": 34.12,
+            "ac": 0.00574
+          },
+          {
+            "lag_mm": 35.31,
+            "ac": 0.00565
+          },
+          {
+            "lag_mm": 33.99,
+            "ac": 0.00561
+          },
+          {
+            "lag_mm": 33.91,
+            "ac": 0.00541
+          }
+        ],
+        "peaks_y": [
+          {
+            "lag_mm": 126.87,
+            "ac": 0.00131
+          },
+          {
+            "lag_mm": 87.0,
+            "ac": 0.00123
+          },
+          {
+            "lag_mm": 100.16,
+            "ac": 0.00122
+          },
+          {
+            "lag_mm": 105.33,
+            "ac": 0.00117
+          },
+          {
+            "lag_mm": 99.82,
+            "ac": 0.00112
+          }
+        ],
+        "max_ac_beyond_20mm": 0.00585,
+        "max_ac_beyond_20mm_lag_mm": 35.39,
+        "max_ac_beyond_20mm_axis": "x",
+        "ac_at_far_edge_x": 0.00071,
+        "ac_at_far_edge_y": 0.00032
+      }
+    }
+  },
+  "files": {
+    "R1": {
+      "window_1200dpi": "/Users/kevin/bistro/feicui/output/samples/book-page-2400-variants/round4-texture-mimic/R1-spectral-1200dpi-1to1-40x26mm.png",
+      "window_600dpi": "/Users/kevin/bistro/feicui/output/samples/book-page-2400-variants/round4-texture-mimic/R1-spectral-600dpi-1to1-40x26mm.png",
+      "page_thumb_800px": "/Users/kevin/bistro/feicui/output/samples/book-page-2400-variants/round4-texture-mimic/R1-spectral-page600dpi-thumb800px.png",
+      "window_2400dpi_dualdpi": "/Users/kevin/bistro/feicui/output/samples/book-page-2400-variants/round4-texture-mimic/R1-spectral-2400dpi-1to1-24x16mm.png",
+      "window_1200dpi_dualdpi_downsampled": "/Users/kevin/bistro/feicui/output/samples/book-page-2400-variants/round4-texture-mimic/R1-spectral-1200dpi-1to1-24x16mm-dualdpi.png",
+      "vs_doubao_600dpi": "/Users/kevin/bistro/feicui/output/samples/book-page-2400-variants/round4-texture-mimic/R1-spectral-vs-doubao-600dpi-1to1.png",
+      "vs_doubao_1200dpi": "/Users/kevin/bistro/feicui/output/samples/book-page-2400-variants/round4-texture-mimic/R1-spectral-vs-doubao-1200dpi-1to1.png"
+    },
+    "R2": {
+      "window_1200dpi": "/Users/kevin/bistro/feicui/output/samples/book-page-2400-variants/round4-texture-mimic/R2-patch-quilt-1200dpi-1to1-40x26mm.png",
+      "window_600dpi": "/Users/kevin/bistro/feicui/output/samples/book-page-2400-variants/round4-texture-mimic/R2-patch-quilt-600dpi-1to1-40x26mm.png",
+      "page_thumb_800px": "/Users/kevin/bistro/feicui/output/samples/book-page-2400-variants/round4-texture-mimic/R2-patch-quilt-page600dpi-thumb800px.png",
+      "window_2400dpi_dualdpi": "/Users/kevin/bistro/feicui/output/samples/book-page-2400-variants/round4-texture-mimic/R2-patch-quilt-2400dpi-1to1-24x16mm.png",
+      "window_1200dpi_dualdpi_downsampled": "/Users/kevin/bistro/feicui/output/samples/book-page-2400-variants/round4-texture-mimic/R2-patch-quilt-1200dpi-1to1-24x16mm-dualdpi.png",
+      "vs_doubao_600dpi": "/Users/kevin/bistro/feicui/output/samples/book-page-2400-variants/round4-texture-mimic/R2-patch-quilt-vs-doubao-600dpi-1to1.png",
+      "vs_doubao_1200dpi": "/Users/kevin/bistro/feicui/output/samples/book-page-2400-variants/round4-texture-mimic/R2-patch-quilt-vs-doubao-1200dpi-1to1.png"
+    },
+    "R3": {
+      "window_1200dpi": "/Users/kevin/bistro/feicui/output/samples/book-page-2400-variants/round4-texture-mimic/R3-hybrid-1200dpi-1to1-40x26mm.png",
+      "window_600dpi": "/Users/kevin/bistro/feicui/output/samples/book-page-2400-variants/round4-texture-mimic/R3-hybrid-600dpi-1to1-40x26mm.png",
+      "page_thumb_800px": "/Users/kevin/bistro/feicui/output/samples/book-page-2400-variants/round4-texture-mimic/R3-hybrid-page600dpi-thumb800px.png",
+      "window_2400dpi_dualdpi": "/Users/kevin/bistro/feicui/output/samples/book-page-2400-variants/round4-texture-mimic/R3-hybrid-2400dpi-1to1-24x16mm.png",
+      "window_1200dpi_dualdpi_downsampled": "/Users/kevin/bistro/feicui/output/samples/book-page-2400-variants/round4-texture-mimic/R3-hybrid-1200dpi-1to1-24x16mm-dualdpi.png",
+      "vs_doubao_600dpi": "/Users/kevin/bistro/feicui/output/samples/book-page-2400-variants/round4-texture-mimic/R3-hybrid-vs-doubao-600dpi-1to1.png",
+      "vs_doubao_1200dpi": "/Users/kevin/bistro/feicui/output/samples/book-page-2400-variants/round4-texture-mimic/R3-hybrid-vs-doubao-1200dpi-1to1.png"
+    }
+  },
+  "board_all": "/Users/kevin/bistro/feicui/output/samples/book-page-2400-variants/round4-texture-mimic/all-versions-vs-doubao-600dpi-1to1.png",
+  "wall_seconds": 272.4
+}

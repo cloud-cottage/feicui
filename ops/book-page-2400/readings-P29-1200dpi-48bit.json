@@ -142,7 +142,7 @@
   },
   "render": {
     "out_path": "/Users/kevin/bistro/feicui/output/2_HighRes_PDF/9787550847224/P29-1200dpi-48bit.tif",
-    "out_bytes": 479392073,
+    "out_bytes": 479392009,
     "shape": [
       12236,
       8500,
@@ -157,297 +157,297 @@
         "strip": 0,
         "y0": 0,
         "y1": 256,
-        "seconds": 0.442
+        "seconds": 0.453
       },
       {
         "strip": 1,
         "y0": 256,
         "y1": 512,
-        "seconds": 0.417
+        "seconds": 0.414
       },
       {
         "strip": 2,
         "y0": 512,
         "y1": 768,
-        "seconds": 0.41
+        "seconds": 0.417
       },
       {
         "strip": 3,
         "y0": 768,
         "y1": 1024,
-        "seconds": 0.425
+        "seconds": 0.414
       },
       {
         "strip": 4,
         "y0": 1024,
         "y1": 1280,
-        "seconds": 0.461
+        "seconds": 0.467
       },
       {
         "strip": 5,
         "y0": 1280,
         "y1": 1536,
-        "seconds": 0.411
+        "seconds": 0.429
       },
       {
         "strip": 6,
         "y0": 1536,
         "y1": 1792,
-        "seconds": 0.43
+        "seconds": 0.42
       },
       {
         "strip": 7,
         "y0": 1792,
         "y1": 2048,
-        "seconds": 0.425
+        "seconds": 0.427
       },
       {
         "strip": 8,
         "y0": 2048,
         "y1": 2304,
-        "seconds": 0.492
+        "seconds": 0.489
       },
       {
         "strip": 9,
         "y0": 2304,
         "y1": 2560,
-        "seconds": 0.489
+        "seconds": 0.496
       },
       {
         "strip": 10,
         "y0": 2560,
         "y1": 2816,
-        "seconds": 0.489
+        "seconds": 0.504
       },
       {
         "strip": 11,
         "y0": 2816,
         "y1": 3072,
-        "seconds": 0.514
+        "seconds": 0.519
       },
       {
         "strip": 12,
         "y0": 3072,
         "y1": 3328,
-        "seconds": 0.491
+        "seconds": 0.497
       },
       {
         "strip": 13,
         "y0": 3328,
         "y1": 3584,
-        "seconds": 0.421
+        "seconds": 0.48
       },
       {
         "strip": 14,
         "y0": 3584,
         "y1": 3840,
-        "seconds": 0.42
+        "seconds": 0.452
       },
       {
         "strip": 15,
         "y0": 3840,
         "y1": 4096,
-        "seconds": 0.413
+        "seconds": 0.427
       },
       {
         "strip": 16,
         "y0": 4096,
         "y1": 4352,
-        "seconds": 0.463
+        "seconds": 0.475
       },
       {
         "strip": 17,
         "y0": 4352,
         "y1": 4608,
-        "seconds": 0.455
+        "seconds": 0.478
       },
       {
         "strip": 18,
         "y0": 4608,
         "y1": 4864,
-        "seconds": 0.462
+        "seconds": 0.471
       },
       {
         "strip": 19,
         "y0": 4864,
         "y1": 5120,
-        "seconds": 0.459
+        "seconds": 0.473
       },
       {
         "strip": 20,
         "y0": 5120,
         "y1": 5376,
-        "seconds": 0.486
+        "seconds": 0.422
       },
       {
         "strip": 21,
         "y0": 5376,
         "y1": 5632,
-        "seconds": 0.476
+        "seconds": 0.485
       },
       {
         "strip": 22,
         "y0": 5632,
         "y1": 5888,
-        "seconds": 0.499
+        "seconds": 0.518
       },
       {
         "strip": 23,
         "y0": 5888,
         "y1": 6144,
-        "seconds": 0.495
+        "seconds": 0.511
       },
       {
         "strip": 24,
         "y0": 6144,
         "y1": 6400,
-        "seconds": 0.504
+        "seconds": 0.512
       },
       {
         "strip": 25,
         "y0": 6400,
         "y1": 6656,
-        "seconds": 0.486
+        "seconds": 0.499
       },
       {
         "strip": 26,
         "y0": 6656,
         "y1": 6912,
-        "seconds": 0.415
+        "seconds": 0.422
       },
       {
         "strip": 27,
         "y0": 6912,
         "y1": 7168,
-        "seconds": 0.418
+        "seconds": 0.425
       },
       {
         "strip": 28,
         "y0": 7168,
         "y1": 7424,
-        "seconds": 0.41
+        "seconds": 0.421
       },
       {
         "strip": 29,
         "y0": 7424,
         "y1": 7680,
-        "seconds": 0.448
+        "seconds": 0.474
       },
       {
         "strip": 30,
         "y0": 7680,
         "y1": 7936,
-        "seconds": 0.476
+        "seconds": 0.467
       },
       {
         "strip": 31,
         "y0": 7936,
         "y1": 8192,
-        "seconds": 0.459
+        "seconds": 0.467
       },
       {
         "strip": 32,
         "y0": 8192,
         "y1": 8448,
-        "seconds": 0.447
+        "seconds": 0.473
       },
       {
         "strip": 33,
         "y0": 8448,
         "y1": 8704,
-        "seconds": 0.459
+        "seconds": 0.47
       },
       {
         "strip": 34,
         "y0": 8704,
         "y1": 8960,
-        "seconds": 0.478
+        "seconds": 0.483
       },
       {
         "strip": 35,
         "y0": 8960,
         "y1": 9216,
-        "seconds": 0.493
+        "seconds": 0.503
       },
       {
         "strip": 36,
         "y0": 9216,
         "y1": 9472,
-        "seconds": 0.489
+        "seconds": 0.5
       },
       {
         "strip": 37,
         "y0": 9472,
         "y1": 9728,
-        "seconds": 0.489
+        "seconds": 0.519
       },
       {
         "strip": 38,
         "y0": 9728,
         "y1": 9984,
-        "seconds": 0.483
+        "seconds": 0.507
       },
       {
         "strip": 39,
         "y0": 9984,
         "y1": 10240,
-        "seconds": 0.447
+        "seconds": 0.468
       },
       {
         "strip": 40,
         "y0": 10240,
         "y1": 10496,
-        "seconds": 0.495
+        "seconds": 0.53
       },
       {
         "strip": 41,
         "y0": 10496,
         "y1": 10752,
-        "seconds": 0.414
+        "seconds": 0.42
       },
       {
         "strip": 42,
         "y0": 10752,
         "y1": 11008,
-        "seconds": 0.46
+        "seconds": 0.469
       },
       {
         "strip": 43,
         "y0": 11008,
         "y1": 11264,
-        "seconds": 0.411
+        "seconds": 0.42
       },
       {
         "strip": 44,
         "y0": 11264,
         "y1": 11520,
-        "seconds": 0.415
+        "seconds": 0.427
       },
       {
         "strip": 45,
         "y0": 11520,
         "y1": 11776,
-        "seconds": 0.417
+        "seconds": 0.42
       },
       {
         "strip": 46,
         "y0": 11776,
         "y1": 12032,
-        "seconds": 0.412
+        "seconds": 0.423
       },
       {
         "strip": 47,
         "y0": 12032,
         "y1": 12236,
-        "seconds": 0.311
+        "seconds": 0.34
       }
     ],
-    "processing_seconds": 21.94,
-    "write_seconds": 7.21,
-    "elapsed_s": 29.22,
-    "peak_rss_bytes": 1415282688,
-    "peak_rss_bytes_before_write": 630571008,
-    "scratch": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/p29-2400-oo6xw63t"
+    "processing_seconds": 22.49,
+    "write_seconds": 7.06,
+    "elapsed_s": 29.62,
+    "peak_rss_bytes": 1332658176,
+    "peak_rss_bytes_before_write": 573243392,
+    "scratch": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/p29-2400-88330njn"
   },
   "verification": {
     "container": {
@@ -477,9 +477,9 @@
       "resolution_unit": 2,
       "page_count": 1
     },
-    "out_bytes": 479392073,
+    "out_bytes": 479392009,
     "out_gib": 0.446,
-    "sha256": "1c594a1a4a9d0d54d313c445d8948ebf9edb2ae342c76721c3dab1471a4fbfde",
+    "sha256": "cdf622ea50e1d35d200c5390fdb58a0bb6528ef9bd51eb5ad6e82c08f2647ceb",
     "strips_checked": 48,
     "strips_total": 48,
     "rows_checked": 12236,
@@ -566,13 +566,13 @@
     }
   },
   "measured": {
-    "out_bytes": 479392073,
+    "out_bytes": 479392009,
     "out_gib": 0.446,
-    "out_sha256": "1c594a1a4a9d0d54d313c445d8948ebf9edb2ae342c76721c3dab1471a4fbfde",
+    "out_sha256": "cdf622ea50e1d35d200c5390fdb58a0bb6528ef9bd51eb5ad6e82c08f2647ceb",
     "raw_uncompressed_bytes": 624036000,
     "paper_px_share": 0.933561,
     "ink_px_share": 0.039084,
-    "cpu_seconds": 81.66
+    "cpu_seconds": 82.14
   },
   "checks": {
     "shape_ok": true,

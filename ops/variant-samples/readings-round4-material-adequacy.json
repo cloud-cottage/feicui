@@ -1,0 +1,648 @@
+{
+  "schema": "feicui.texture-mimic-round4.adequacy.v1",
+  "generator": "ops/variant-samples/round4_material_adequacy.py",
+  "role": "① 素材充足性评估（豆包纸底用于 1200dpi 整页示例纹理合成）",
+  "source": {
+    "path": "/Users/kevin/Library/Application Support/Hermes/composer-images/image_673b34.png",
+    "copied_into_repo": false,
+    "size_px": [
+      1536,
+      1536
+    ],
+    "sha256": "736b41340cbe8c1b92e4bc37a6f6fb40854c144cae630441b088db55b19aee25",
+    "read_only": true
+  },
+  "scale": {
+    "ruler": "共同标尺＝印面宽 W_d（doubao_reference.py 同源）",
+    "W_d_px": 923,
+    "W_o_mm": 22.437,
+    "mm_per_px": 0.024308775731310944,
+    "equiv_dpi": 1044.9,
+    "equiv_assumption": "假设豆包印面实物宽 ＝ C1-R1 印面 22.437 mm"
+  },
+  "target": {
+    "dpi": 1200,
+    "px": [
+      8500,
+      12236
+    ],
+    "mm": [
+      179.92,
+      259.0
+    ],
+    "area_mm2": 46597.6,
+    "mpx": 104.0
+  },
+  "masks": {
+    "ink_px": 304406,
+    "dark_px": 989,
+    "dark_rule": "非印泥 ∧ V < 0.75（文字/水印/暗角）",
+    "bleed_rule": "redness = R−0.5(G+B) > 12 ⇒ 溅红/渗色像素剔除",
+    "bleed_px": 513174,
+    "border_trim_px": 6,
+    "halo_exclusion_mm": 0.4,
+    "halo_rule": "到印泥掩膜距离 ≥ 0.4mm（豆包晕宽 0.0985mm + 余量）",
+    "pool_px": 1531429,
+    "pool_mm2": 904.9,
+    "pool_fraction_of_image": 0.6491
+  },
+  "components": [
+    {
+      "label": 1,
+      "bbox_px": [
+        6,
+        6,
+        1524,
+        1524
+      ],
+      "area_px": 1462767,
+      "bbox_mm": [
+        37.05,
+        37.05
+      ]
+    }
+  ],
+  "patch_inventory": {
+    "3mm": {
+      "side_px": 123,
+      "grid_half_overlap": {
+        "n_patches": 215,
+        "total_area_px": 3252735,
+        "total_area_mm2": 1922.1
+      },
+      "disjoint": {
+        "n_patches": 39,
+        "total_area_px": 590031,
+        "total_area_mm2": 348.7
+      }
+    },
+    "4mm": {
+      "side_px": 165,
+      "grid_half_overlap": {
+        "n_patches": 62,
+        "total_area_px": 1687950,
+        "total_area_mm2": 997.4
+      },
+      "disjoint": {
+        "n_patches": 13,
+        "total_area_px": 353925,
+        "total_area_mm2": 209.1
+      }
+    },
+    "5mm": {
+      "side_px": 206,
+      "grid_half_overlap": {
+        "n_patches": 15,
+        "total_area_px": 636540,
+        "total_area_mm2": 376.1
+      },
+      "disjoint": {
+        "n_patches": 1,
+        "total_area_px": 42436,
+        "total_area_mm2": 25.1
+      }
+    },
+    "6mm": {
+      "side_px": 247,
+      "grid_half_overlap": {
+        "n_patches": 0,
+        "total_area_px": 0,
+        "total_area_mm2": 0.0
+      },
+      "disjoint": {
+        "n_patches": 0,
+        "total_area_px": 0,
+        "total_area_mm2": 0.0
+      }
+    }
+  },
+  "patch_counting": "grid_half_overlap＝步长边长/2（位置数）；disjoint＝步长＝边长（不重叠块数）",
+  "illum_gradient": {
+    "rule": "非池像素填池均值后低通；池内缩 3mm 取值（防印泥暗部泄漏）",
+    "lp3mm_p1_p99": 5.171,
+    "lp3mm_std": 1.409,
+    "lp8mm_p1_p99": 4.006,
+    "lp8mm_std": 1.309
+  },
+  "dark_components": [
+    {
+      "bbox_px": [
+        1417,
+        1497,
+        43,
+        7
+      ],
+      "area_px": 50
+    },
+    {
+      "bbox_px": [
+        1470,
+        1489,
+        26,
+        17
+      ],
+      "area_px": 42
+    },
+    {
+      "bbox_px": [
+        1322,
+        1460,
+        23,
+        19
+      ],
+      "area_px": 41
+    },
+    {
+      "bbox_px": [
+        1415,
+        1470,
+        19,
+        10
+      ],
+      "area_px": 36
+    },
+    {
+      "bbox_px": [
+        1317,
+        1467,
+        20,
+        15
+      ],
+      "area_px": 35
+    },
+    {
+      "bbox_px": [
+        1417,
+        1486,
+        17,
+        11
+      ],
+      "area_px": 27
+    },
+    {
+      "bbox_px": [
+        1396,
+        1456,
+        2,
+        24
+      ],
+      "area_px": 25
+    },
+    {
+      "bbox_px": [
+        1441,
+        1470,
+        15,
+        9
+      ],
+      "area_px": 24
+    },
+    {
+      "bbox_px": [
+        1276,
+        1472,
+        16,
+        4
+      ],
+      "area_px": 22
+    },
+    {
+      "bbox_px": [
+        1295,
+        1496,
+        10,
+        8
+      ],
+      "area_px": 22
+    }
+  ],
+  "texture": {
+    "patch_side_mm": 4.0,
+    "n_patches_measured": 12,
+    "per_patch": [
+      {
+        "origin_px": [
+          165,
+          165
+        ],
+        "side_mm": 4.0,
+        "lum_std": 3.6336,
+        "band_rms": {
+          "cloud": 0.5455,
+          "coarse": 1.0887,
+          "fine": 1.5638,
+          "grain": 1.7287
+        },
+        "half_decay_mm": 0.027,
+        "peak_wavelength_mm": {
+          "cloud": 2.767,
+          "coarse": 0.9223,
+          "fine": 0.3739,
+          "grain": 0.1143
+        },
+        "energy_share": {
+          "cloud": 0.151136,
+          "coarse": 0.340216,
+          "fine": 0.179509,
+          "grain": 0.076593
+        }
+      },
+      {
+        "origin_px": [
+          1320,
+          165
+        ],
+        "side_mm": 4.0,
+        "lum_std": 3.74,
+        "band_rms": {
+          "cloud": 0.5869,
+          "coarse": 1.1093,
+          "fine": 1.6005,
+          "grain": 1.7626
+        },
+        "half_decay_mm": 0.0276,
+        "peak_wavelength_mm": {
+          "cloud": 2.767,
+          "coarse": 1.2577,
+          "fine": 0.3547,
+          "grain": 0.1224
+        },
+        "energy_share": {
+          "cloud": 0.226735,
+          "coarse": 0.201082,
+          "fine": 0.137085,
+          "grain": 0.055538
+        }
+      },
+      {
+        "origin_px": [
+          1320,
+          330
+        ],
+        "side_mm": 4.0,
+        "lum_std": 4.0804,
+        "band_rms": {
+          "cloud": 0.646,
+          "coarse": 1.2263,
+          "fine": 1.7409,
+          "grain": 2.0019
+        },
+        "half_decay_mm": 0.0251,
+        "peak_wavelength_mm": {
+          "cloud": 1.5372,
+          "coarse": 1.2577,
+          "fine": 0.3547,
+          "grain": 0.1203
+        },
+        "energy_share": {
+          "cloud": 0.180695,
+          "coarse": 0.381821,
+          "fine": 0.270086,
+          "grain": 0.114182
+        }
+      },
+      {
+        "origin_px": [
+          1320,
+          660
+        ],
+        "side_mm": 4.0,
+        "lum_std": 4.2483,
+        "band_rms": {
+          "cloud": 0.6806,
+          "coarse": 1.1174,
+          "fine": 1.784,
+          "grain": 2.2121
+        },
+        "half_decay_mm": 0.0233,
+        "peak_wavelength_mm": {
+          "cloud": 2.767,
+          "coarse": 1.0642,
+          "fine": 0.3953,
+          "grain": 0.1182
+        },
+        "energy_share": {
+          "cloud": 0.300946,
+          "coarse": 0.260998,
+          "fine": 0.229902,
+          "grain": 0.1035
+        }
+      },
+      {
+        "origin_px": [
+          1320,
+          825
+        ],
+        "side_mm": 4.0,
+        "lum_std": 4.3678,
+        "band_rms": {
+          "cloud": 0.7162,
+          "coarse": 1.178,
+          "fine": 1.8245,
+          "grain": 2.1777
+        },
+        "half_decay_mm": 0.0254,
+        "peak_wavelength_mm": {
+          "cloud": 2.767,
+          "coarse": 1.2577,
+          "fine": 0.3953,
+          "grain": 0.1343
+        },
+        "energy_share": {
+          "cloud": 0.241915,
+          "coarse": 0.264128,
+          "fine": 0.266268,
+          "grain": 0.126739
+        }
+      },
+      {
+        "origin_px": [
+          1320,
+          990
+        ],
+        "side_mm": 4.0,
+        "lum_std": 4.4329,
+        "band_rms": {
+          "cloud": 0.7892,
+          "coarse": 1.2119,
+          "fine": 1.7843,
+          "grain": 2.2094
+        },
+        "half_decay_mm": 0.0267,
+        "peak_wavelength_mm": {
+          "cloud": 1.9764,
+          "coarse": 1.2577,
+          "fine": 0.3953,
+          "grain": 0.1343
+        },
+        "energy_share": {
+          "cloud": 0.242194,
+          "coarse": 0.343617,
+          "fine": 0.134017,
+          "grain": 0.070236
+        }
+      },
+      {
+        "origin_px": [
+          1320,
+          1155
+        ],
+        "side_mm": 4.0,
+        "lum_std": 3.8287,
+        "band_rms": {
+          "cloud": 0.5711,
+          "coarse": 1.0693,
+          "fine": 1.6384,
+          "grain": 1.9443
+        },
+        "half_decay_mm": 0.0243,
+        "peak_wavelength_mm": {
+          "cloud": 1.9764,
+          "coarse": 1.2577,
+          "fine": 0.4463,
+          "grain": 0.1343
+        },
+        "energy_share": {
+          "cloud": 0.170127,
+          "coarse": 0.430183,
+          "fine": 0.237636,
+          "grain": 0.104449
+        }
+      },
+      {
+        "origin_px": [
+          165,
+          1320
+        ],
+        "side_mm": 4.0,
+        "lum_std": 3.79,
+        "band_rms": {
+          "cloud": 0.5622,
+          "coarse": 0.9934,
+          "fine": 1.6015,
+          "grain": 1.9104
+        },
+        "half_decay_mm": 0.0259,
+        "peak_wavelength_mm": {
+          "cloud": 2.767,
+          "coarse": 1.0642,
+          "fine": 0.3953,
+          "grain": 0.1203
+        },
+        "energy_share": {
+          "cloud": 0.311987,
+          "coarse": 0.183304,
+          "fine": 0.173619,
+          "grain": 0.086471
+        }
+      },
+      {
+        "origin_px": [
+          330,
+          1320
+        ],
+        "side_mm": 4.0,
+        "lum_std": 3.9766,
+        "band_rms": {
+          "cloud": 0.5974,
+          "coarse": 1.1386,
+          "fine": 1.6659,
+          "grain": 1.9452
+        },
+        "half_decay_mm": 0.0275,
+        "peak_wavelength_mm": {
+          "cloud": 2.767,
+          "coarse": 1.2577,
+          "fine": 0.3547,
+          "grain": 0.1343
+        },
+        "energy_share": {
+          "cloud": 0.241287,
+          "coarse": 0.090867,
+          "fine": 0.074985,
+          "grain": 0.036299
+        }
+      },
+      {
+        "origin_px": [
+          495,
+          1320
+        ],
+        "side_mm": 4.0,
+        "lum_std": 3.8523,
+        "band_rms": {
+          "cloud": 0.5638,
+          "coarse": 1.0435,
+          "fine": 1.6274,
+          "grain": 1.898
+        },
+        "half_decay_mm": 0.0262,
+        "peak_wavelength_mm": {
+          "cloud": 2.767,
+          "coarse": 1.2577,
+          "fine": 0.4192,
+          "grain": 0.1125
+        },
+        "energy_share": {
+          "cloud": 0.274571,
+          "coarse": 0.177852,
+          "fine": 0.175208,
+          "grain": 0.076394
+        }
+      },
+      {
+        "origin_px": [
+          660,
+          1320
+        ],
+        "side_mm": 4.0,
+        "lum_std": 3.8694,
+        "band_rms": {
+          "cloud": 0.6095,
+          "coarse": 1.1657,
+          "fine": 1.6328,
+          "grain": 1.934
+        },
+        "half_decay_mm": 0.0256,
+        "peak_wavelength_mm": {
+          "cloud": 1.9764,
+          "coarse": 1.2577,
+          "fine": 0.4463,
+          "grain": 0.1343
+        },
+        "energy_share": {
+          "cloud": 0.178973,
+          "coarse": 0.474444,
+          "fine": 0.211994,
+          "grain": 0.084384
+        }
+      },
+      {
+        "origin_px": [
+          825,
+          1320
+        ],
+        "side_mm": 4.0,
+        "lum_std": 3.9502,
+        "band_rms": {
+          "cloud": 0.726,
+          "coarse": 1.2251,
+          "fine": 1.6256,
+          "grain": 1.8945
+        },
+        "half_decay_mm": 0.0284,
+        "peak_wavelength_mm": {
+          "cloud": 2.767,
+          "coarse": 0.7282,
+          "fine": 0.3953,
+          "grain": 0.1343
+        },
+        "energy_share": {
+          "cloud": 0.372978,
+          "coarse": 0.251123,
+          "fine": 0.142959,
+          "grain": 0.065394
+        }
+      }
+    ],
+    "lum_std_0_255_median": 3.9098,
+    "band_rms_0_255_mm_bands_median": {
+      "cloud": 0.6035,
+      "coarse": 1.128,
+      "fine": 1.6356,
+      "grain": 1.9391
+    },
+    "band_shares_median": {
+      "cloud": 0.241601,
+      "coarse": 0.262563,
+      "fine": 0.177359,
+      "grain": 0.080488
+    },
+    "band_peak_wavelength_mm_median": {
+      "cloud": 2.767,
+      "coarse": 1.2577,
+      "fine": 0.3953,
+      "grain": 0.1283
+    },
+    "half_decay_mm_median": 0.0261,
+    "bands_mm": {
+      "cloud": [
+        1.3463,
+        3.0
+      ],
+      "coarse": [
+        0.4487,
+        1.3463
+      ],
+      "fine": [
+        0.1346,
+        0.4487
+      ],
+      "grain": [
+        0.0449,
+        0.1346
+      ]
+    },
+    "bands_note": "与 doubao_reference.BAND_FRAC×W_d 一致；cloud 上限 3.0mm（素材最大纯纸补丁 ~5.3mm，>3mm 波长不可测，标注测量上限）"
+  },
+  "uniformity": {
+    "components": [
+      {
+        "component": 1,
+        "bbox_px": [
+          6,
+          6,
+          1524,
+          1524
+        ],
+        "area_px": 1462767,
+        "mean_rgb": [
+          248.57,
+          248.21,
+          246.64
+        ],
+        "lum_std": 4.562,
+        "grad3mm_p1_p99_leakfree": 5.171
+      }
+    ]
+  },
+  "paper_color": {
+    "mean_rgb": [
+      248.878,
+      248.418,
+      246.78
+    ],
+    "std_rgb": [
+      4.9333,
+      5.0467,
+      5.4365
+    ]
+  },
+  "adequacy": {
+    "effective_material_mm2": 904.9,
+    "effective_material_px": 1531429,
+    "avg_reuse_factor_area_ratio": 51.49,
+    "texture_unit_wavelength_mm": 1.2577,
+    "independent_units_material": 572.1,
+    "independent_units_page_needed": 29458.4,
+    "reuse_factor_units": 51.5,
+    "visual_repeat_scale_mm": 10.5,
+    "visual_cells_material": 8.21,
+    "visual_cells_page": 422.7,
+    "visual_cells_reuse_factor": 51.5,
+    "patch_inventory_biggest": {
+      "side_px": 165,
+      "grid_half_overlap": {
+        "n_patches": 62,
+        "total_area_px": 1687950,
+        "total_area_mm2": 997.4
+      },
+      "disjoint": {
+        "n_patches": 13,
+        "total_area_px": 353925,
+        "total_area_mm2": 209.1
+      }
+    },
+    "criteria_note": "(a) 平均复用 R ＝ 页面积/有效素材面积（与尺度无关）；(b) 独立单元数 ＝ 面积/单元λ²；(c) 视觉可辨重复尺度取 10.5mm（30cm 观读、2° 视角）"
+  }
+}

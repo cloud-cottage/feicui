@@ -520,6 +520,12 @@ def write_tiff(arr: np.ndarray, path: Path, *, rowsperstrip: int, description: s
     `未压缩字节 > 4 GiB`（经典 TIFF 的 4 GiB 上限）才用 BigTIFF，否则写**经典 TIFF**。
     为什么在意：BigTIFF 在 macOS Finder/Preview **一律不认**（旧版无故把 1200dpi 也写成 BigTIFF），
     而经典 TIFF 至少能被 `sips`/`qlmanage` 读到几何 —— 1200dpi 产物体积只有 ~0.45 GiB，远不需要 BigTIFF。
+
+    **`shaped=False`**（Kevin 2026-10-16，**TiffWriter 构造参数**）：tifffile 默认把
+    `{"shape": ...}` JSON 写进 `ImageDescription`(270)，与 `description=` 撞同一条 270
+    （实测本库 2026.3.3：description 被 shape JSON 顶掉，产物 270 只剩 shape JSON）⇒
+    macOS sips/Quick Look 读不到（`pixelWidth <nil>`，104 Mpx 48bit 产物无法预览）。
+    构造时 `shaped=False` ⇒ 270 只剩 description 一条 ⇒ sips/Quick Look 正常读几何。
     """
     resolution_dpi = int(TARGET_DPI if resolution_dpi is None else resolution_dpi)
     if bigtiff is None:
@@ -529,7 +535,7 @@ def write_tiff(arr: np.ndarray, path: Path, *, rowsperstrip: int, description: s
     if part.exists():
         part.unlink()
     t0 = time.time()
-    with tifffile.TiffWriter(part, bigtiff=bool(bigtiff)) as tw:
+    with tifffile.TiffWriter(part, bigtiff=bool(bigtiff), shaped=False) as tw:
         tw.write(arr, shape=arr.shape, dtype=arr.dtype, photometric="rgb", planarconfig="contig",
                  compression=TIFF_COMPRESSION_TAG, predictor=predictor, rowsperstrip=rowsperstrip,
                  resolution=((resolution_dpi, 1), (resolution_dpi, 1)), resolutionunit="INCH",

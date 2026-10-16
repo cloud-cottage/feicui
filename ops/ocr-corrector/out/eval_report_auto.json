@@ -5,17 +5,17 @@
     "map": "webui/data/guxi_variant_map.json",
     "map_summary": {
       "schema": "guxi_variant_map/v1",
-      "version": "0.2.0-draft",
+      "version": "0.3.0-draft",
       "updated_at": "2026-10-16",
-      "last_reviewed_by": null,
-      "review_status": "unreviewed",
-      "n_entries": 55,
-      "n_verified": 1,
-      "n_unverified": 54,
+      "last_reviewed_by": "Kevin",
+      "review_status": "partially_reviewed",
+      "n_entries": 52,
+      "n_verified": 2,
+      "n_unverified": 50,
       "by_source": {
-        "measured_truth": 1,
-        "cross_engine": 6,
-        "font_glyph_shape": 48
+        "measured_truth": 2,
+        "cross_engine": 5,
+        "font_glyph_shape": 45
       }
     },
     "mode": "auto",
@@ -32,28 +32,28 @@
         "n": 248,
         "empty": 195,
         "empty_rate": 0.7863,
-        "hit": 22,
+        "hit": 21,
         "outdomain": 24,
-        "applied": 0
+        "applied": 1
       },
       "rec_only": {
         "n": 248,
         "empty": 99,
         "empty_rate": 0.3992,
-        "hit": 50,
+        "hit": 47,
         "outdomain": 54,
-        "applied": 0
+        "applied": 1
       }
     }
   },
   "trigger": {
-    "n_samples_with_any_rule_hit": 72,
-    "rate_any_rule_hit": 0.1452,
-    "n_samples_with_verified_rule_hit": 0,
-    "n_samples_with_candidate_only_hit": 72,
+    "n_samples_with_any_rule_hit": 68,
+    "rate_any_rule_hit": 0.1371,
+    "n_samples_with_verified_rule_hit": 2,
+    "n_samples_with_candidate_only_hit": 66,
     "n_samples_with_outdomain_char": 78,
     "rate_outdomain_char": 0.1573,
-    "n_applied_total_in_this_mode": 0,
+    "n_applied_total_in_this_mode": 2,
     "mode_semantics": "suggest ⇒ n_applied 恒 0（只给候选）；auto ⇒ 只有 verified=true 条目会被改写，本池出现的字里没有 verified 源字时为 0"
   },
   "hit_distribution": [
@@ -77,20 +77,6 @@
       "source": "cross_engine",
       "verified": false,
       "count": 3
-    },
-    {
-      "from": "街",
-      "to": "衛",
-      "source": "font_glyph_shape",
-      "verified": false,
-      "count": 3
-    },
-    {
-      "from": "干",
-      "to": "千",
-      "source": "cross_engine",
-      "verified": false,
-      "count": 2
     },
     {
       "from": "歌",
@@ -137,8 +123,8 @@
     {
       "from": "鲜",
       "to": "鮮",
-      "source": "font_glyph_shape",
-      "verified": false,
+      "source": "measured_truth",
+      "verified": true,
       "count": 2
     },
     {
@@ -401,13 +387,6 @@
       "count": 1
     },
     {
-      "from": "圓",
-      "to": "圖",
-      "source": "font_glyph_shape",
-      "verified": false,
-      "count": 1
-    },
-    {
       "from": "曜",
       "to": "限",
       "source": "font_glyph_shape",
@@ -624,6 +603,10 @@
       "count": 3
     },
     {
+      "char": "街",
+      "count": 3
+    },
+    {
       "char": "限",
       "count": 3
     },
@@ -633,6 +616,10 @@
     },
     {
       "char": "同",
+      "count": 2
+    },
+    {
+      "char": "干",
       "count": 2
     },
     {
@@ -670,14 +657,6 @@
     {
       "char": "天",
       "count": 2
-    },
-    {
-      "char": "司",
-      "count": 1
-    },
-    {
-      "char": "音",
-      "count": 1
     }
   ],
   "top_cross_engine_confusions": [
@@ -947,5 +926,46 @@
     "expected": "左軍丞鈢",
     "auto_reaches_truth": true
   },
-  "changed_samples": []
+  "changed_samples": [
+    {
+      "stem": "p302_4",
+      "config": "pipeline",
+      "raw": "做鲜",
+      "corrected": "做鮮",
+      "hits": [
+        {
+          "pos": 1,
+          "from": "鲜",
+          "to": "鮮",
+          "rule_id": "gx-cand-0027",
+          "source": "measured_truth",
+          "confidence": 0.9,
+          "verified": true,
+          "applied": true,
+          "skip_reason": "",
+          "note": "人工核验通过（Kevin 2026-10-16 逐条裁定第 1 条，「鲜→鮮」判**对**）：鲜=简体、鮮=繁体，古玺释文应以繁体「鮮」为正 ⇒ 升为 verified。★ 留痕：本条原为 `font_glyph_shape` 候选（gx-cand-0027，黑体字形代理分 0.6320），本次改判的依据是**人工核验**、**不是** OCR 实测样本；表内没有该对的「引擎输出 vs 人工真值」观测，故 evidence.kind=human_adjudication，与 gx-0001（两引擎一致实测误读）**证据强度不同，不得混读**。旁证（仅为分布事实、非真值）：`stamps.text` 里「鮮」出现 3 次、「鲜」为 hapax（1 次）。"
+        }
+      ]
+    },
+    {
+      "stem": "p302_4",
+      "config": "rec_only",
+      "raw": "做鲜",
+      "corrected": "做鮮",
+      "hits": [
+        {
+          "pos": 1,
+          "from": "鲜",
+          "to": "鮮",
+          "rule_id": "gx-cand-0027",
+          "source": "measured_truth",
+          "confidence": 0.9,
+          "verified": true,
+          "applied": true,
+          "skip_reason": "",
+          "note": "人工核验通过（Kevin 2026-10-16 逐条裁定第 1 条，「鲜→鮮」判**对**）：鲜=简体、鮮=繁体，古玺释文应以繁体「鮮」为正 ⇒ 升为 verified。★ 留痕：本条原为 `font_glyph_shape` 候选（gx-cand-0027，黑体字形代理分 0.6320），本次改判的依据是**人工核验**、**不是** OCR 实测样本；表内没有该对的「引擎输出 vs 人工真值」观测，故 evidence.kind=human_adjudication，与 gx-0001（两引擎一致实测误读）**证据强度不同，不得混读**。旁证（仅为分布事实、非真值）：`stamps.text` 里「鮮」出现 3 次、「鲜」为 hapax（1 次）。"
+        }
+      ]
+    }
+  ]
 }

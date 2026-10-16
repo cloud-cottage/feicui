@@ -2,15 +2,23 @@
 
 > ★ 无真值 ⇒ 本报告**不含任何准确率 / 准确率提升**读数；`labeling/labels.csv` 的 text_correct 为空，量化准确率的解锁条件见 README。
 
-- 字表：`webui/data/guxi_variant_map.json` v0.2.0-draft（条目 55，verified 1）
+- 字表：`webui/data/guxi_variant_map.json` v0.3.0-draft（条目 52，verified 2）
 - 模式：`auto`；语料域内字池（`stamps.text` 出现 ≥3 次）= 493 字
+- 本版字表来源分布：{'measured_truth': 2, 'cross_engine': 5, 'font_glyph_shape': 45}（`last_reviewed_by`=Kevin，`review_status`=partially_reviewed）
+
+## ★ 负读数（人工抽检证伪）：`font_glyph_shape` 的分数**不得**作为推荐依据
+
+> 人工抽检 4 条中判错 3 条，**含全表最高**字形代理分 **0.7454** 的 `干→千`（判错）⇒ 「黑体栅格字形代理分」作为「映射正确」的判据**已被证伪**。
+> 处置：`source='font_glyph_shape'` 的候选**一律不得作为推荐**（降为仅存证/待审）；`cross_engine` 已核样本 N=1 且判错，样本太小不足以定论，保留待审、同样不得推荐。
+> 未审条目**只降推荐级、不删**（口径见字表 `notes`/`policy`/`rejected[]` 与 `ops/ocr-corrector/README.md`）。
+> 下面所有 `source=font_glyph_shape` 的命中行都按「未验证证据」读，**不得**读成改对/改错率。
 
 ## 触发率（**不是准确率**）
 - 样本：496（248 枚 × 2 配置；空输出 294）
-- 命中任一规则（候选即可）的样本：72 = **14.5%**
-- 其中命中 `verified=true` 规则：0；仅命中未验证候选：72
+- 命中任一规则（候选即可）的样本：68 = **13.7%**
+- 其中命中 `verified=true` 规则：2；仅命中未验证候选：66
 - 含「域外字」（该字不在 `stamps.text` 释文用字域）的样本：78 = **15.7%**
-- 本次自动改写处数：0
+- 本次自动改写处数：2
 
 ## 映射命中分布（Top 15）
 | from | to | source | verified | count |
@@ -18,18 +26,18 @@
 | 團 | 图 | cross_engine | False | 8 |
 | 团 | 图 | cross_engine | False | 5 |
 | 圈 | 图 | cross_engine | False | 3 |
-| 街 | 衛 | font_glyph_shape | False | 3 |
-| 干 | 千 | cross_engine | False | 2 |
 | 歌 | 欣 | font_glyph_shape | False | 2 |
 | 衡 | 衛 | font_glyph_shape | False | 2 |
 | 創 | 制 | font_glyph_shape | False | 2 |
 | 摩 | 庫 | font_glyph_shape | False | 2 |
 | 宏 | 宋 | font_glyph_shape | False | 2 |
 | 做 | 侯 | font_glyph_shape | False | 2 |
-| 鲜 | 鮮 | font_glyph_shape | False | 2 |
+| 鲜 | 鮮 | measured_truth | True | 2 |
 | 牌 | 將 | font_glyph_shape | False | 2 |
 | 社 | 杜 | font_glyph_shape | False | 1 |
 | 业 | 此 | font_glyph_shape | False | 1 |
+| 场 | 揭 | font_glyph_shape | False | 1 |
+| 号 | 吴 | font_glyph_shape | False | 1 |
 
 ## 域外字（OCR 报出、但不在释文用字域）Top 15
 

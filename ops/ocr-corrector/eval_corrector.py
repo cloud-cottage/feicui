@@ -228,6 +228,18 @@ def _write_md(rep: dict, path: Path) -> None:
         f"verified {rep['config']['map_summary']['n_verified']}）",
         f"- 模式：`{rep['config']['mode']}`；语料域内字池（`stamps.text` 出现 ≥"
         f"{rep['config']['min_freq']} 次）= {rep['config']['freq_pool_size']} 字",
+        f"- 本版字表来源分布：{rep['config']['map_summary'].get('by_source')}"
+        f"（`last_reviewed_by`={rep['config']['map_summary'].get('last_reviewed_by')}，"
+        f"`review_status`={rep['config']['map_summary'].get('review_status')}）",
+        "",
+        "## ★ 负读数（人工抽检证伪）：`font_glyph_shape` 的分数**不得**作为推荐依据",
+        "",
+        "> 人工抽检 4 条中判错 3 条，**含全表最高**字形代理分 **0.7454** 的 `干→千`（判错）"
+        "⇒ 「黑体栅格字形代理分」作为「映射正确」的判据**已被证伪**。",
+        "> 处置：`source='font_glyph_shape'` 的候选**一律不得作为推荐**（降为仅存证/待审）；"
+        "`cross_engine` 已核样本 N=1 且判错，样本太小不足以定论，保留待审、同样不得推荐。",
+        "> 未审条目**只降推荐级、不删**（口径见字表 `notes`/`policy`/`rejected[]` 与 `ops/ocr-corrector/README.md`）。",
+        "> 下面所有 `source=font_glyph_shape` 的命中行都按「未验证证据」读，**不得**读成改对/改错率。",
         "",
         "## 触发率（**不是准确率**）",
         f"- 样本：{rep['pool']['n_samples']}（248 枚 × 2 配置；空输出 {rep['pool']['n_outputs_empty']}）",

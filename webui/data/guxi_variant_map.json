@@ -1,10 +1,47 @@
 {
   "schema": "guxi_variant_map/v1",
-  "version": "0.2.0-draft",
+  "version": "0.3.0-draft",
   "updated_at": "2026-10-16",
-  "last_reviewed_by": null,
-  "review_status": "unreviewed",
+  "last_reviewed_by": "Kevin",
+  "review_status": "partially_reviewed",
   "auto_min_confidence": 0.9,
+  "policy": {
+    "recommendation_levels": {
+      "measured_truth": "recommendable —— 唯一允许 verified=true、唯一可被 mode='auto' 自动改写",
+      "font_glyph_shape": "evidence_only（仅存证/待审）—— **一律不得作为推荐**：已被人工作为抽检证伪（见 falsified_judgement）",
+      "cross_engine": "evidence_only（仅存证/待审）—— 已核样本 N=1 且判错，样本太小不足以定论（未证伪、尚存，但不得作为推荐）",
+      "corpus_stats": "evidence_only（仅存证/待审）",
+      "inferred": "evidence_only（仅存证/待审）"
+    },
+    "falsified_judgement": "「黑体栅格字形代理分」（font_glyph_shape）经人工抽检**证伪**：4 条抽检判错 3 条，其中包含**全表最高分 0.7454** 的 `干→千` ⇒ 该分数**不得**作为「映射正确」的判据/推荐依据（仅可作排序展示用，且必须标注为未验证）。",
+    "audit_2026_10_16": {
+      "auditor": "Kevin",
+      "n_audited": 4,
+      "n_correct": 1,
+      "n_incorrect": 3,
+      "correct": [
+        "鲜→鮮"
+      ],
+      "incorrect": [
+        "街→衛",
+        "干→千",
+        "圓→圖"
+      ],
+      "by_source": {
+        "font_glyph_shape": {
+          "audited": 3,
+          "correct": 1,
+          "incorrect": 2
+        },
+        "cross_engine": {
+          "audited": 1,
+          "correct": 0,
+          "incorrect": 1
+        }
+      },
+      "note": "★ 与裁定单口径的差异（如实记录）：裁定单称「cross_engine 6 条中已核 1 条为对（鲜→鮮）」，但字表里 `鲜→鮮`（gx-cand-0027）的 source 实为 `font_glyph_shape`，而 `干→千` 才是 `cross_engine`。按**条目实际 source 字段**统计如上：抽检的 3 条 font_glyph_shape 中 2 错 1 对；抽检的 1 条 cross_engine 判错。两处口径差异仅影响「哪一路证据被证伪」的叙述，不影响本版结论：font_glyph_shape 一律不得推荐。"
+    }
+  },
   "notes": [
     "★ 本表默认保守：只有 verified=true 且 confidence>=auto_min_confidence 的条目会在 mode='auto' 下自动改写；其余一律只作候选（suggest）。",
     "★ 无真值不报准确率：labeling/labels.csv 的 text_correct 全空 ⇒ 本表目前无法给出「准确率提升」，只能给触发率/命中分布（见 ops/ocr-corrector/README.md『解锁条件』）。",
@@ -12,7 +49,241 @@
     "本版本 verified=true 的条目恰 1 条（錄→鈢），来自 Kevin 提供的实测反例；其余为待人工审核的候选（verified=false，默认不生效）。",
     "由 ops/ocr-corrector/merge_map_entries.py 合入的候选（source∈{cross_engine,font_glyph_shape}，verified=false，默认不生效）：待人工逐条审核后，若与真值一致，应改为 source='measured_truth' + verified=true + 更新 confidence/evidence；若不一致则删除该条（**不要**把它标成 verified=false 后就地保留成高置信）。",
     "候选条目来源：`ops/ocr-corrector/out/candidates_map_entries.json`（params={'min_freq': 3, 'top_k': 5, 'map_min_glyph_sim': 0.35}，字形代理=Heiti TC Light）；本次新增 54 条（rule_id gx-cand-XXXX）。",
-    "候选条目来源：`ops/ocr-corrector/out/candidates_map_entries.json`（params={'min_freq': 3, 'top_k': 5, 'map_min_glyph_sim': 0.35}，字形代理=Heiti TC Light）；本次新增 0 条（rule_id gx-cand-XXXX）。"
+    "候选条目来源：`ops/ocr-corrector/out/candidates_map_entries.json`（params={'min_freq': 3, 'top_k': 5, 'map_min_glyph_sim': 0.35}，字形代理=Heiti TC Light）；本次新增 0 条（rule_id gx-cand-XXXX）。",
+    "★ 人工裁定落实（Kevin 2026-10-16，4 条抽检）：对 1 条 = `鲜→鮮`（升 source='measured_truth' + verified=true + confidence 0.9）；错 3 条 = `街→衛`、`干→千`、`圓→圖`（已删；原条目原样存证于顶层 `rejected[]`，不参与纠错、不计入 entries/统计）。顶层 `last_reviewed_by=Kevin`、`review_status=partially_reviewed`。",
+    "★ 负读数（重要，勿删）：本轮抽检 4 条判错 3 条，含**全表字形代理分最高**的 `干→千`（0.7454）⇒ 「黑体栅格字形代理分」作为**正确性判据已被证伪**。据此，`source='font_glyph_shape'` 的候选（本版 45 条）**一律不得作为推荐**，降为「仅存证/待审」（机器可读口径见顶层 `policy`）。",
+    "★ 未审条目的处置口径：**只降推荐级，不删、不标 false 后丢弃** —— 未审候选（font_glyph_shape 45 + cross_engine 5 + …）原样留在 `entries[]`（verified=false，默认不生效），待人工逐条核。",
+    "★ 数据源接入点（Kevin 定的将来形态）：字表将来由 **xiai 项目在线 API** 提供，feicui 只做消费方。接口约定见 `ops/ocr-corrector/README.md` §9；本版**未实现**网络拉取（无该 API、无联网许可），本地 `webui/data/guxi_variant_map.json` 为**离线回落**。加载抽象已就位：`load_map(path)` / `correct(text, map_data=<同 schema dict>)`，换数据源不需要改纠错层。",
+    "★ 字面留痕：裁定单写作「圆→圖」，表内**不存在** `圆→圖` 这一条；唯一对应条目为 `圓→圖`（gx-cand-0016，font_glyph_shape，字形代理分 0.6522），本次按该条执行删除。",
+    "★ 计数口径变化：`鲜→鮮` 由 font_glyph_shape 改判为 measured_truth ⇒ font_glyph_shape 候选由 48 条降为 45 条；本版字表 = 52 条 = measured_truth 2（錄→鈢 / 鲜→鮮） + cross_engine 5 + font_glyph_shape 45（全部待审）。"
+  ],
+  "rejected": [
+    {
+      "rule_id": "gx-cand-0009",
+      "from": "街",
+      "to": "衛",
+      "source": "font_glyph_shape",
+      "confidence": 0.25,
+      "verified": false,
+      "scope": "seal_text",
+      "note": "待人工审核候选（**无真值**，默认不生效）：248 枚池里该字被 OCR 报出 3 次（engine=rapid:pipeline|rapid:rec_only，最高原始分 0.52805），但该字**不在** `stamps.text` 的释文用字域（出现 0 次）；候选按「跨引擎一致次数 → 字形代理相似度 → corpus 频次」排序。",
+      "evidence": {
+        "kind": "pool_observation",
+        "pool_occurrences": 3,
+        "pool_stems": [
+          "p118_3",
+          "p236_4"
+        ],
+        "engines": [
+          "rapid:pipeline",
+          "rapid:rec_only"
+        ],
+        "ocr_scores": [
+          0.24126,
+          0.52805,
+          0.43469
+        ],
+        "corpus_count_of_from_char": 0,
+        "cross_engine_counter_proposals": {
+          "平": 2,
+          "由": 2,
+          "出": 2,
+          "级": 2,
+          "小": 1
+        },
+        "glyph": {
+          "glyph_sim": 0.5757,
+          "glyph_iou": 0.566,
+          "glyph_quad_iou": 0.5676
+        },
+        "glyph_font": "Heiti TC Light",
+        "alternatives": [
+          {
+            "to": "情",
+            "rank": 2,
+            "glyph_sim": 0.3958,
+            "cross_engine_count": 0,
+            "corpus_count": 3
+          },
+          {
+            "to": "市",
+            "rank": 3,
+            "glyph_sim": 0.387,
+            "cross_engine_count": 0,
+            "corpus_count": 11
+          },
+          {
+            "to": "從",
+            "rank": 4,
+            "glyph_sim": 0.3532,
+            "cross_engine_count": 0,
+            "corpus_count": 4
+          },
+          {
+            "to": "得",
+            "rank": 5,
+            "glyph_sim": 0.345,
+            "cross_engine_count": 0,
+            "corpus_count": 17
+          }
+        ]
+      },
+      "ruling": {
+        "by": "Kevin",
+        "at": "2026-10-16",
+        "verdict": "incorrect",
+        "reason": "Kevin 2026-10-16 人工逐条裁定：该映射判「错」⇒ 从 entries[] 删除（原条目原样存证于本数组，不参与纠错、不计入统计）。"
+      }
+    },
+    {
+      "rule_id": "gx-cand-0016",
+      "from": "圓",
+      "to": "圖",
+      "source": "font_glyph_shape",
+      "confidence": 0.25,
+      "verified": false,
+      "scope": "seal_text",
+      "note": "待人工审核候选（**无真值**，默认不生效）：248 枚池里该字被 OCR 报出 2 次（engine=paddle:A|rapid:rec_only，最高原始分 0.92556），但该字**不在** `stamps.text` 的释文用字域（出现 0 次）；候选按「跨引擎一致次数 → 字形代理相似度 → corpus 频次」排序。",
+      "evidence": {
+        "kind": "pool_observation",
+        "pool_occurrences": 2,
+        "pool_stems": [
+          "p118_4",
+          "p288_6"
+        ],
+        "engines": [
+          "paddle:A",
+          "rapid:rec_only"
+        ],
+        "ocr_scores": [
+          null,
+          0.92556
+        ],
+        "corpus_count_of_from_char": 0,
+        "cross_engine_counter_proposals": {
+          "暖": 1,
+          "威": 1
+        },
+        "glyph": {
+          "glyph_sim": 0.6522,
+          "glyph_iou": 0.6724,
+          "glyph_quad_iou": 0.6727
+        },
+        "glyph_font": "Heiti TC Light",
+        "alternatives": [
+          {
+            "to": "画",
+            "rank": 2,
+            "glyph_sim": 0.5639,
+            "cross_engine_count": 0,
+            "corpus_count": 11
+          },
+          {
+            "to": "圉",
+            "rank": 3,
+            "glyph_sim": 0.5528,
+            "cross_engine_count": 0,
+            "corpus_count": 3
+          },
+          {
+            "to": "國",
+            "rank": 4,
+            "glyph_sim": 0.5512,
+            "cross_engine_count": 0,
+            "corpus_count": 3
+          },
+          {
+            "to": "固",
+            "rank": 5,
+            "glyph_sim": 0.5211,
+            "cross_engine_count": 0,
+            "corpus_count": 3
+          }
+        ]
+      },
+      "ruling": {
+        "by": "Kevin",
+        "at": "2026-10-16",
+        "verdict": "incorrect",
+        "reason": "Kevin 2026-10-16 人工逐条裁定：该映射判「错」⇒ 从 entries[] 删除（原条目原样存证于本数组，不参与纠错、不计入统计）。",
+        "literal_note": "裁定单写作「圆→圖」，而表内**不存在** `圆→圖` 条目；与之对应的唯一在表条目是本条 `圓→圖`（gx-cand-0016）。按 `圆`=`圓` 同一字的简繁形执行删除。"
+      }
+    },
+    {
+      "rule_id": "gx-cand-0019",
+      "from": "干",
+      "to": "千",
+      "source": "cross_engine",
+      "confidence": 0.3,
+      "verified": false,
+      "scope": "seal_text",
+      "note": "待人工审核候选（**无真值**，默认不生效）：248 枚池里该字被 OCR 报出 2 次（engine=rapid:pipeline，最高原始分 0.5385），但该字**不在** `stamps.text` 的释文用字域（出现 0 次）；候选按「跨引擎一致次数 → 字形代理相似度 → corpus 频次」排序。",
+      "evidence": {
+        "kind": "pool_observation",
+        "pool_occurrences": 2,
+        "pool_stems": [
+          "p50_2",
+          "p76_4"
+        ],
+        "engines": [
+          "rapid:pipeline"
+        ],
+        "ocr_scores": [
+          0.5385,
+          null
+        ],
+        "corpus_count_of_from_char": 0,
+        "cross_engine_counter_proposals": {
+          "ン": 2,
+          "夏": 2,
+          "土": 2,
+          "千": 1,
+          "画": 1
+        },
+        "glyph": {
+          "glyph_sim": 0.7454,
+          "glyph_iou": 0.683,
+          "glyph_quad_iou": 0.6781
+        },
+        "glyph_font": "Heiti TC Light",
+        "alternatives": [
+          {
+            "to": "子",
+            "rank": 2,
+            "glyph_sim": 0.6191,
+            "cross_engine_count": 0,
+            "corpus_count": 14
+          },
+          {
+            "to": "于",
+            "rank": 3,
+            "glyph_sim": 0.5618,
+            "cross_engine_count": 0,
+            "corpus_count": 3
+          },
+          {
+            "to": "不",
+            "rank": 4,
+            "glyph_sim": 0.5416,
+            "cross_engine_count": 0,
+            "corpus_count": 36
+          },
+          {
+            "to": "丁",
+            "rank": 5,
+            "glyph_sim": 0.5017,
+            "cross_engine_count": 0,
+            "corpus_count": 4
+          }
+        ]
+      },
+      "ruling": {
+        "by": "Kevin",
+        "at": "2026-10-16",
+        "verdict": "incorrect",
+        "reason": "Kevin 2026-10-16 人工逐条裁定：该映射判「错」⇒ 从 entries[] 删除（原条目原样存证于本数组，不参与纠错、不计入统计）。"
+      }
+    }
   ],
   "entries": [
     {
@@ -635,77 +906,6 @@
       }
     },
     {
-      "rule_id": "gx-cand-0009",
-      "from": "街",
-      "to": "衛",
-      "source": "font_glyph_shape",
-      "confidence": 0.25,
-      "verified": false,
-      "scope": "seal_text",
-      "note": "待人工审核候选（**无真值**，默认不生效）：248 枚池里该字被 OCR 报出 3 次（engine=rapid:pipeline|rapid:rec_only，最高原始分 0.52805），但该字**不在** `stamps.text` 的释文用字域（出现 0 次）；候选按「跨引擎一致次数 → 字形代理相似度 → corpus 频次」排序。",
-      "evidence": {
-        "kind": "pool_observation",
-        "pool_occurrences": 3,
-        "pool_stems": [
-          "p118_3",
-          "p236_4"
-        ],
-        "engines": [
-          "rapid:pipeline",
-          "rapid:rec_only"
-        ],
-        "ocr_scores": [
-          0.24126,
-          0.52805,
-          0.43469
-        ],
-        "corpus_count_of_from_char": 0,
-        "cross_engine_counter_proposals": {
-          "平": 2,
-          "由": 2,
-          "出": 2,
-          "级": 2,
-          "小": 1
-        },
-        "glyph": {
-          "glyph_sim": 0.5757,
-          "glyph_iou": 0.566,
-          "glyph_quad_iou": 0.5676
-        },
-        "glyph_font": "Heiti TC Light",
-        "alternatives": [
-          {
-            "to": "情",
-            "rank": 2,
-            "glyph_sim": 0.3958,
-            "cross_engine_count": 0,
-            "corpus_count": 3
-          },
-          {
-            "to": "市",
-            "rank": 3,
-            "glyph_sim": 0.387,
-            "cross_engine_count": 0,
-            "corpus_count": 11
-          },
-          {
-            "to": "從",
-            "rank": 4,
-            "glyph_sim": 0.3532,
-            "cross_engine_count": 0,
-            "corpus_count": 4
-          },
-          {
-            "to": "得",
-            "rank": 5,
-            "glyph_sim": 0.345,
-            "cross_engine_count": 0,
-            "corpus_count": 17
-          }
-        ]
-      }
-    },
-    {
       "rule_id": "gx-cand-0010",
       "from": "鱼",
       "to": "室",
@@ -1111,73 +1311,6 @@
       }
     },
     {
-      "rule_id": "gx-cand-0016",
-      "from": "圓",
-      "to": "圖",
-      "source": "font_glyph_shape",
-      "confidence": 0.25,
-      "verified": false,
-      "scope": "seal_text",
-      "note": "待人工审核候选（**无真值**，默认不生效）：248 枚池里该字被 OCR 报出 2 次（engine=paddle:A|rapid:rec_only，最高原始分 0.92556），但该字**不在** `stamps.text` 的释文用字域（出现 0 次）；候选按「跨引擎一致次数 → 字形代理相似度 → corpus 频次」排序。",
-      "evidence": {
-        "kind": "pool_observation",
-        "pool_occurrences": 2,
-        "pool_stems": [
-          "p118_4",
-          "p288_6"
-        ],
-        "engines": [
-          "paddle:A",
-          "rapid:rec_only"
-        ],
-        "ocr_scores": [
-          null,
-          0.92556
-        ],
-        "corpus_count_of_from_char": 0,
-        "cross_engine_counter_proposals": {
-          "暖": 1,
-          "威": 1
-        },
-        "glyph": {
-          "glyph_sim": 0.6522,
-          "glyph_iou": 0.6724,
-          "glyph_quad_iou": 0.6727
-        },
-        "glyph_font": "Heiti TC Light",
-        "alternatives": [
-          {
-            "to": "画",
-            "rank": 2,
-            "glyph_sim": 0.5639,
-            "cross_engine_count": 0,
-            "corpus_count": 11
-          },
-          {
-            "to": "圉",
-            "rank": 3,
-            "glyph_sim": 0.5528,
-            "cross_engine_count": 0,
-            "corpus_count": 3
-          },
-          {
-            "to": "國",
-            "rank": 4,
-            "glyph_sim": 0.5512,
-            "cross_engine_count": 0,
-            "corpus_count": 3
-          },
-          {
-            "to": "固",
-            "rank": 5,
-            "glyph_sim": 0.5211,
-            "cross_engine_count": 0,
-            "corpus_count": 3
-          }
-        ]
-      }
-    },
-    {
       "rule_id": "gx-cand-0017",
       "from": "宏",
       "to": "宋",
@@ -1310,75 +1443,6 @@
             "glyph_sim": 0.2944,
             "cross_engine_count": 0,
             "corpus_count": 3
-          }
-        ]
-      }
-    },
-    {
-      "rule_id": "gx-cand-0019",
-      "from": "干",
-      "to": "千",
-      "source": "cross_engine",
-      "confidence": 0.3,
-      "verified": false,
-      "scope": "seal_text",
-      "note": "待人工审核候选（**无真值**，默认不生效）：248 枚池里该字被 OCR 报出 2 次（engine=rapid:pipeline，最高原始分 0.5385），但该字**不在** `stamps.text` 的释文用字域（出现 0 次）；候选按「跨引擎一致次数 → 字形代理相似度 → corpus 频次」排序。",
-      "evidence": {
-        "kind": "pool_observation",
-        "pool_occurrences": 2,
-        "pool_stems": [
-          "p50_2",
-          "p76_4"
-        ],
-        "engines": [
-          "rapid:pipeline"
-        ],
-        "ocr_scores": [
-          0.5385,
-          null
-        ],
-        "corpus_count_of_from_char": 0,
-        "cross_engine_counter_proposals": {
-          "ン": 2,
-          "夏": 2,
-          "土": 2,
-          "千": 1,
-          "画": 1
-        },
-        "glyph": {
-          "glyph_sim": 0.7454,
-          "glyph_iou": 0.683,
-          "glyph_quad_iou": 0.6781
-        },
-        "glyph_font": "Heiti TC Light",
-        "alternatives": [
-          {
-            "to": "子",
-            "rank": 2,
-            "glyph_sim": 0.6191,
-            "cross_engine_count": 0,
-            "corpus_count": 14
-          },
-          {
-            "to": "于",
-            "rank": 3,
-            "glyph_sim": 0.5618,
-            "cross_engine_count": 0,
-            "corpus_count": 3
-          },
-          {
-            "to": "不",
-            "rank": 4,
-            "glyph_sim": 0.5416,
-            "cross_engine_count": 0,
-            "corpus_count": 36
-          },
-          {
-            "to": "丁",
-            "rank": 5,
-            "glyph_sim": 0.5017,
-            "cross_engine_count": 0,
-            "corpus_count": 4
           }
         ]
       }
@@ -1863,13 +1927,13 @@
       "rule_id": "gx-cand-0027",
       "from": "鲜",
       "to": "鮮",
-      "source": "font_glyph_shape",
-      "confidence": 0.25,
-      "verified": false,
+      "source": "measured_truth",
+      "confidence": 0.9,
+      "verified": true,
       "scope": "seal_text",
-      "note": "待人工审核候选（**无真值**，默认不生效）：248 枚池里该字被 OCR 报出 2 次（engine=rapid:pipeline|rapid:rec_only，最高原始分 N/A），但该字**不在** `stamps.text` 的释文用字域（出现 0 次）；候选按「跨引擎一致次数 → 字形代理相似度 → corpus 频次」排序。",
+      "note": "人工核验通过（Kevin 2026-10-16 逐条裁定第 1 条，「鲜→鮮」判**对**）：鲜=简体、鮮=繁体，古玺释文应以繁体「鮮」为正 ⇒ 升为 verified。★ 留痕：本条原为 `font_glyph_shape` 候选（gx-cand-0027，黑体字形代理分 0.6320），本次改判的依据是**人工核验**、**不是** OCR 实测样本；表内没有该对的「引擎输出 vs 人工真值」观测，故 evidence.kind=human_adjudication，与 gx-0001（两引擎一致实测误读）**证据强度不同，不得混读**。旁证（仅为分布事实、非真值）：`stamps.text` 里「鮮」出现 3 次、「鲜」为 hapax（1 次）。",
       "evidence": {
-        "kind": "pool_observation",
+        "kind": "human_adjudication",
         "pool_occurrences": 2,
         "pool_stems": [
           "p302_4"
@@ -1922,7 +1986,24 @@
             "cross_engine_count": 0,
             "corpus_count": 3
           }
-        ]
+        ],
+        "original_kind": "pool_observation",
+        "adjudication": {
+          "by": "Kevin",
+          "at": "2026-10-16",
+          "verdict": "correct",
+          "basis": "人工核验：鲜/鮮 为简繁对（非 OCR 实测样本）",
+          "promoted_from_source": "font_glyph_shape",
+          "candidate_rule_id": "gx-cand-0027",
+          "glyph_sim_at_promotion": 0.632
+        },
+        "corpus_support": {
+          "char": "鮮",
+          "count_in_stamps_text": 3,
+          "source_of_from_char": "鲜",
+          "count_of_from_char": 1,
+          "note": "来自 ops/ocr-corrector/out/char_freq.csv 的分布事实，只作旁证、不构成真值。"
+        }
       }
     },
     {

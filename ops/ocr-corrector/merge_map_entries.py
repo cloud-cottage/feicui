@@ -43,9 +43,15 @@ def main() -> int:
     cand = json.loads(Path(a.entries).read_text(encoding="utf-8"))
     have = {e["from"] for e in data["entries"]}
     have_ids = {e.get("rule_id") for e in data["entries"]}
+    # ★ 人工裁定删除的条目（字表顶层 `rejected[]`）：**不得**被脚本重新合入
+    rejected = {r.get("from") for r in data.get("rejected", [])}
+    rejected_ids = {r.get("rule_id") for r in data.get("rejected", [])}
 
-    added, skipped_from, skipped_id = [], [], []
+    added, skipped_from, skipped_id, skipped_rejected = [], [], [], []
     for e in cand["entries"]:
+        if e.get("rule_id") in rejected_ids or e["from"] in rejected:
+            skipped_rejected.append(e["from"])
+            continue
         if e.get("rule_id") in have_ids:
             skipped_id.append(e["rule_id"])
             continue
@@ -58,6 +64,9 @@ def main() -> int:
 
     print(f"[merge] 现表 {len(data['entries'])} 条 → 新增 {len(added)} 条"
           f"（跳过 same-from {len(skipped_from)} / same-rule_id {len(skipped_id)}）")
+    if skipped_rejected:
+        print(f"[merge] 因人工裁定删除（`rejected[]`）而跳过的源字：{''.join(skipped_rejected)}"
+              " —— 裁定判错，**不得**重新合入；如需复活请先改字表 `rejected[]` 与 `notes`")
     if skipped_from:
         print(f"[merge] 因同 from 已存在而跳过的源字：{''.join(skipped_from)}")
     if not added:
@@ -69,9 +78,11 @@ def main() -> int:
     new_entries = data["entries"] + added
     out = dict(data)
     out["entries"] = new_entries
-    out["version"] = "0.2.0-draft"
-    out["updated_at"] = "2026-10-16"
-    out["review_status"] = "unreviewed"
+    # ★ 不得回退人工审核状态：本脚本只「合入候选」，不重新审核。
+    #   （曾经把 version/review_status 定死成 0.2.0-draft/unreviewed，会把人工裁定留痕抹掉。）
+    out["version"] = data.get("version") or "0.2.0-draft"
+    out["updated_at"] = data.get("updated_at") or "2026-10-16"
+    out["review_status"] = data.get("review_status") or "unreviewed"
     notes = list(data.get("notes", []))
     if MERGE_NOTE not in notes:
         notes.append(MERGE_NOTE)

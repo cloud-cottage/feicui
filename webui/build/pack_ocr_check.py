@@ -45,7 +45,12 @@ def main() -> int:
 
     # ── ① 包内渲染（pymupdf 随包）──────────────────────────────────────────────
     import pymupdf
-    sys.path.insert(0, str(Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parents[1]))))
+    # ⚠ 只能**补一次**：`_MEIPASS` 已在 `sys.path` 时再 insert 会造成重复项，进而让
+    # opencv 的 `bootstrap()` 重入（`importlib.import_module("cv2")` 命中包目录而非
+    # `cv2.abi3.so`）⇒ `ImportError: recursion is detected during loading of "cv2"`（本单实测）。
+    _root = str(Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parents[1])))
+    if _root not in sys.path:
+        sys.path.insert(0, _root)
     from src import ocr_rapid  # noqa: E402
 
     rows = []

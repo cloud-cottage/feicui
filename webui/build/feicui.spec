@@ -56,7 +56,6 @@ datas = [
     (os.path.join(WEBUI, "ui"), "ui"),
     (os.path.join(WEBUI, "assets"), "assets"),
     (os.path.join(WEBUI, "data"), "data"),
-    (os.path.join(WEBUI, "src"), "src"),                  # 立即可文件级 run（`--engine-run src/ocr_rapid.py`）
     (os.path.join(WEBUI, "app.py"), "."),                 # 壳：**按文件路径**加载（见 pack_main.py ①）
     (os.path.join(ROOT, "ops", "book-page-2400", "render_page_2400.py"), "ops/book-page-2400"),
     (os.path.join(ROOT, "server", "app", "__init__.py"), "server/app"),
@@ -66,6 +65,24 @@ datas = [
     (os.path.join(ROOT, "config", "book_dir_keys.json"), "config"),
 ]
 binaries = []
+
+# ── `src/` **精确到文件**（禁止再收整目录）────────────────────────────────────────
+# ⚠ 历史坑（2026-10-17 修复）：此处原为 `(WEBUI/src, "src")` **整目录 data** ⇒ 把退役的
+#   Streamlit 页 `webui/src/webui.py`（内含旧色 `#FF6700` 等）连同只被它引用的
+#   `tencent_doc_api.py` / `baidu_disk_api.py`、以及 `src/__pycache__/` 一并塞进产物。
+#   ⇒ **`excludes` 拦不住 data 目录**：excludes 只作用于 import 分析（PYZ），对 datas 无效；
+#     必须在这里逐文件列出。仓内源文件**一律保留**（`webui.py` 是需求真源，见
+#     `webui/selftest.py` 红线段），只是**不进包**。
+#   运行时真源（照 `webui/api.py` 顶层 import 面）：
+#     `src/__init__.py`（包身份）＋ `src/pdf_library.py`（tab1/tab3 盘点/探针/侧车）
+#     ＋ `src/validator.py`（文件名解析/新名预览，单一真源）。
+#   OCR 两件**仅阶段 2/3** 需要（`--engine-run src/ocr_rapid.py` 走文件级执行；
+#   `src/ocr_corrector.py` 是它的字表链路）——阶段 1 收进去也跑不了（无 rapidocr）。
+SRC_FILES = ["__init__.py", "pdf_library.py", "validator.py"]        # 全阶段必需
+if WITH_OCR:
+    SRC_FILES += ["ocr_rapid.py", "ocr_corrector.py"]
+for _src_name in SRC_FILES:
+    datas.append((os.path.join(WEBUI, "src", _src_name), "src"))
 
 # ── 隐藏导入 ────────────────────────────────────────────────────────────────────
 # ⚠ **本单实测的头号坑**：`webui/app.py`（壳）与 `ops/book-page-2400/render_page_2400.py`（引擎）
@@ -98,6 +115,7 @@ if WITH_OCR:
 excludes = [
     "app", "app.naming", "app.colorcal", "app.seal_canvas",   # ⚠ 与 server/app 撞名 ⇒ 只允许走源码文件
     "streamlit", "webui", "main",                             # 退役 Streamlit 壳（webui/main.py / src/webui.py）
+    "src.webui", "src.tencent_doc_api", "src.baidu_disk_api",  # 退役页 ＋ 只被它引用的两个云端 API（不进包，源文件保留）
     "matplotlib", "tkinter", "IPython", "pytest", "PyQt5", "PySide6", "pandas", "scipy",
 ]
 

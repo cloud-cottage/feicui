@@ -57,7 +57,7 @@ h3 { margin: 0 0 10px; font-size: 15px; }
 p { margin: 6px 0; }
 
 .shell { max-width: 1180px; margin: 0 auto; padding: 0 20px 60px; }
-/* 固定页眉（品牌【斐萃】＋ 标题【印谱解析任务台】）。
+/* 固定页眉（品牌【「斐萃」】＋ 标题【玺印解析任务台】）。
    选 sticky 而非 fixed：元素仍留在文档流内、自身占位，滚动时**无需**
    再给内容区补上边距（fixed 要额外补偿高度，容易漏补/补错），从根上
    保证内容不被页眉盖住；同时 sticky 相对视口 sticky，等于吸顶。

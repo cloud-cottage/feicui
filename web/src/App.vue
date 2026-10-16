@@ -12,8 +12,8 @@ const SPEC_MD5 = '4264927baf24bb7f48e12366cd861fe7'
   <div class="shell">
     <header class="shell__head">
       <div class="brand">
-        <strong>斐萃</strong>
-        <span class="muted">印谱解析任务台</span>
+        <strong>「斐萃」</strong>
+        <span class="muted">玺印解析任务台</span>
       </div>
     </header>
 

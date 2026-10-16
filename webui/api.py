@@ -12,6 +12,11 @@
                 `venv/bin/python ops/book-page-2400/render_page_2400.py --pdf … --page … --dpi 1200`
                 （单页 1200dpi ≈ 64 s ⇒ 必须异步线程 + 进度推送 + 可取消）
       - tab3  → `src/pdf_library.py`（子目录 / tiff 列表 / 测试 tiff）
+                ＋ 本文件：缩略图网格数据（`sips -Z 150` → 内联 base64，三级引擎回退）、
+                大图预览（`-Z 400`）、文件名解析/新名预览/校验（`src/validator.py` 单一真源）、
+                重命名（同目录同名 ⇒ 拒）＋ **本地**操作记录（`webui/var/rename_log.jsonl`）。
+                腾讯文档日志 / 百度网盘云盘锁 **未接入**：接口返回值一律带
+                `cloud_log=not_connected` / `cloud_lock=not_connected`，UI 上明标。
       - 文件名模板 → `src/validator.py`
   * 所有方法**只返回 JSON 可序列化对象**且**永不抛**（本地用户机器上任何异常都要变成
     `{"ok": false, "msg": …}`，不能让桥断掉）。
@@ -24,6 +29,8 @@
 """
 from __future__ import annotations
 
+import base64
+import hashlib
 import json
 import os
 import subprocess
@@ -62,9 +69,38 @@ from src import validator  # noqa: E402
 
 APP_NAME = "斐萃 · 本地电脑版"
 APP_VERSION = "0.3.0-pywebview"
+#: ── 标题/副标题 **单一真源**（改文案只改这两行；`app.py` 的窗口标题与 `ui/` 均从
+#:    `app_info()` 取，HTML 里只留一份同值兜底）────────────────────────────────────
+#: 口径（Kevin 2026-10-16）：**PyWebView 本地版带后缀** ⇒ `「斐萃」玺印解析任务台 · 本地电脑版`
+#: （注意「· 本地电脑版」前有空格）；主标题沿用旧版 `webui/src/webui.py` L42 的
+#: `APP_TITLE_IN_PAGE`（「斐萃」玺印解析任务台）＋ 本地版后缀。**其它页面不加后缀**。
+APP_TITLE = "「斐萃」玺印解析任务台 · 本地电脑版"
+APP_SLOGAN = "数字玺印生成工具"
+
 SESSION_EXPIRE_DAYS = 7
 DPI_WHITELIST = (1200, 2400)
 DPI_DEFAULT = 1200
+
+# ── tab3：3_Cropped_Tiff 视图/缩略图/本地记录口径（数值取自旧版 `webui/src/webui.py`）───
+#: 四档视图（**逐字照旧** `webui.py` L560–565 的 view_cfg：large 5×20 / medium 10×50 /
+#: small 20×100 / list 1×30）——分页与列数都在这里，UI 不自造。
+TAB3_VIEW_CFG: dict[str, dict[str, int]] = {
+    "large":  {"cols": 5,  "per_page": 20},
+    "medium": {"cols": 10, "per_page": 50},
+    "small":  {"cols": 20, "per_page": 100},
+    "list":   {"cols": 1,  "per_page": 30},
+}
+TAB3_VIEW_DEFAULT = "medium"
+#: 缩略图 / 大图预览长边（旧版 **逐字**：网格 `sips -Z 150`、大图 `sips -Z 400`）
+TIFF_THUMB_MAX = 150
+TIFF_PREVIEW_MAX = 400
+#: 缩略图缓存（`webui/var/**` 不入库）＋ 本地操作记录（jsonl）
+THUMBS_DIR = VAR_DIR / "thumbs"
+RENAME_LOG = VAR_DIR / "rename_log.jsonl"
+#: 外部依赖状态（**必须如实上报**：腾讯文档日志 / 百度网盘云盘锁 本壳尚未接入）
+CLOUD_LOG_STATUS = "not_connected"
+CLOUD_LOCK_STATUS = "not_connected"
+CLOUD_NOTE = "日志同步（腾讯文档）/ 云盘锁暂未接入：本壳只写本地记录 webui/var/rename_log.jsonl"
 
 # ── 用户表（**仅后端**；可被 .env 的 FEICUI_USERS 覆盖，格式 `user:pwd:admin|user,...`）──
 _DEFAULT_USERS: dict[str, dict] = {
@@ -336,8 +372,10 @@ class FeicuiApi:
     # ---------------- 应用信息 ----------------
     def app_info(self, _req: dict | None = None) -> dict:
         env = _load_env()
+        name, is_admin = self._session_user()
         return {
             "ok": True, "app": APP_NAME, "version": APP_VERSION,
+            "title": APP_TITLE, "slogan": APP_SLOGAN,
             "engine_python": self.jobs.engine_python(),
             "engine_mode": self.jobs.engine_mode(),
             "engine_prefix": self.jobs.engine_prefix(),
@@ -346,7 +384,11 @@ class FeicuiApi:
             "repo_root": str(REPO_ROOT), "ui_dir": str(UI_DIR),
             "dpi_whitelist": list(DPI_WHITELIST), "dpi_default": DPI_DEFAULT,
             "feicui_root_env": env.get("FEICUI_ROOT", ""),
-            "log_note": "腾讯文档日志：本壳未接入（见 webui/build/README.md「未实现」）",
+            "username": name, "is_admin": is_admin,
+            "tab3_view_cfg": TAB3_VIEW_CFG, "tab3_view_default": TAB3_VIEW_DEFAULT,
+            "tab3_thumb_max": TIFF_THUMB_MAX, "tab3_preview_max": TIFF_PREVIEW_MAX,
+            "cloud_log": CLOUD_LOG_STATUS, "cloud_lock": CLOUD_LOCK_STATUS,
+            "log_note": CLOUD_NOTE,
         }
 
     # ---------------- 登录 / 会话（口令仅在后端） ----------------
@@ -635,15 +677,26 @@ class FeicuiApi:
                 "author": parsed[2] if parsed else "",
                 "path": str(f),
             })
+        name, is_admin = self._session_user()
         return {"ok": True, "root": str(root), "tab": lib.TIFF_DIR, "subdirs": subs,
                 "current": cur, "files": files,
-                "template": f"{validator.PREFIX}释文-朝代-作者{validator.SUFFIX}"}
+                "count": len(files), "template": f"{validator.PREFIX}释文-朝代-作者{validator.SUFFIX}",
+                "view_cfg": TAB3_VIEW_CFG, "view_default": TAB3_VIEW_DEFAULT,
+                "thumb_max": TIFF_THUMB_MAX, "preview_max": TIFF_PREVIEW_MAX,
+                "limits": {"shiwen_max": validator.SHIWEN_MAX, "author_max": validator.AUTHOR_MAX},
+                "operator": name, "is_admin": bool(is_admin),
+                "cloud_log": CLOUD_LOG_STATUS, "cloud_lock": CLOUD_LOCK_STATUS, "note": CLOUD_NOTE}
 
     def tab3_generate_test(self, req: dict | None = None) -> dict:
         miss = self._need_root()
         if miss:
             return miss
         req = req or {}
+        # 旧版是「仅管理员渲染按钮」（UI 层门禁）；本壳保留该口径，并在**后端**加一道：
+        # 只有「已登录且非管理员」才拒（未登录的纯逻辑测试不受影响 ⇒ selftest 仍可直调）。
+        sess_user, is_admin = self._session_user()
+        if sess_user and not is_admin:
+            return {"ok": False, "msg": "仅管理员可生成测试 TIFF"}
         sub = str(req.get("subdir", "")).strip()
         if not sub:
             return {"ok": False, "msg": "未选择子目录"}
@@ -657,6 +710,334 @@ class FeicuiApi:
         if not name:
             return {"ok": False, "msg": "生成失败（占位图不可读）"}
         return {"ok": True, "msg": f"已生成：{name}", "name": name}
+
+    # ---- tab3 辅助：会话 / 路径护栏 / **真出图** / 命名构造 / 本地记录 ----
+    def _session_user(self) -> tuple[str, bool]:
+        """当前会话 (operator, is_admin)；未登录 ⇒ ("", False)。口令与会话只存在后端。"""
+        try:
+            name, is_admin, _root = self._load_session()
+            return (name or ""), bool(is_admin)
+        except Exception:
+            return "", False
+
+    @staticmethod
+    def _safe_seg(s: str) -> str:
+        """压成**单段**名（丢掉路径分隔符）⇒ 请求里的 subdir/name 无法穿越出 3_Cropped_Tiff。"""
+        return Path(str(s if s is not None else "").replace("\\", "/")).name.strip()
+
+    def _subdir_guard(self, sub: str) -> dict | None:
+        subs = lib.list_subdirs(self._root_path())
+        if self._safe_seg(sub) not in subs:
+            return {"ok": False, "msg": f"子目录不存在：{sub or '（空）'}", "subdirs": subs}
+        return None
+
+    def _tiff_src(self, sub: str, name: str) -> Path:
+        return self._root_path() / lib.TIFF_DIR / self._safe_seg(sub) / self._safe_seg(name)
+
+    # -- 出图引擎（三级回退；旧版只有 sips 一级）--
+    def _png_sips(self, src: Path, dst: Path, max_edge: int) -> bool:
+        """旧版同款引擎：`sips -s format png -Z <max_edge> <src> --out <dst>`（macOS 自带）。"""
+        r = subprocess.run(["sips", "-s", "format", "png", "-Z", str(max_edge),
+                            str(src), "--out", str(dst)], capture_output=True, timeout=90)
+        return r.returncode == 0
+
+    def _png_pillow(self, src: Path, dst: Path, max_edge: int) -> bool:
+        from PIL import Image  # 可选依赖（打包态内置）
+        with Image.open(str(src)) as im:
+            im = im.convert("RGB")
+            im.thumbnail((max_edge, max_edge))
+            im.save(str(dst), "PNG")
+        return True
+
+    def _png_pymupdf(self, src: Path, dst: Path, max_edge: int) -> bool:
+        try:
+            import pymupdf as mu
+        except Exception:
+            import fitz as mu  # 旧名回退
+        pm = mu.Pixmap(str(src))
+        if pm.alpha or pm.n not in (1, 3):
+            pm = mu.Pixmap(mu.csRGB, pm)
+        if max(pm.width, pm.height) > max_edge:
+            raw = pm.tobytes("png")
+            import io
+            from PIL import Image
+            with Image.open(io.BytesIO(raw)) as im:
+                im = im.convert("RGB")
+                im.thumbnail((max_edge, max_edge))
+                im.save(str(dst), "PNG")
+        else:
+            pm.save(str(dst))
+        return True
+
+    def _make_png(self, src: Path, dst: Path, max_edge: int) -> tuple[bool, str, str]:
+        """TIFF → PNG（长边 = max_edge）。只有 PNG **落盘且非空**才算「真出图」。"""
+        err = "未尝试"
+        for engine, fn in (("sips", self._png_sips), ("pillow", self._png_pillow),
+                           ("pymupdf", self._png_pymupdf)):
+            try:
+                if fn(src, dst, max_edge) and dst.exists() and dst.stat().st_size > 0:
+                    return True, engine, ""
+                err = f"{engine}: 返回失败/空文件"
+            except Exception as exc:
+                err = f"{engine}: {exc.__class__.__name__}: {exc}"
+            if dst.exists():
+                try:
+                    dst.unlink()
+                except Exception:
+                    pass
+        return False, "", f"三级引擎均失败（末次 {err}）"
+
+    def _thumb_file(self, src: Path, sub: str, max_edge: int) -> tuple[Path | None, str, str]:
+        """缩略图/预览 PNG（带 mtime 缓存，落在 `webui/var/thumbs/`，不入库）。"""
+        tag = f"thumb{max_edge}" if max_edge <= TIFF_THUMB_MAX else f"prev{max_edge}"
+        dst = THUMBS_DIR / tag / self._safe_seg(sub) / f"{src.stem}.png"
+        try:
+            if dst.exists() and dst.stat().st_size > 0 and dst.stat().st_mtime >= src.stat().st_mtime:
+                return dst, "cache", ""
+            dst.parent.mkdir(parents=True, exist_ok=True)
+        except Exception as exc:
+            return None, "", f"缩略图缓存不可用：{exc.__class__.__name__}: {exc}"
+        ok, engine, msg = self._make_png(src, dst, max_edge)
+        return (dst if ok else None), engine, msg
+
+    @staticmethod
+    def _data_uri(png: Path) -> str:
+        return "data:image/png;base64," + base64.b64encode(png.read_bytes()).decode("ascii")
+
+    def tab3_thumbs(self, req: dict | None = None) -> dict:
+        """当前页缩略图（**base64 data URI** 直给前端）。
+
+        为什么不用 `<img src=file://…>`：3_Cropped_Tiff 是**用户选定的仓外目录**，不在
+        `ui/` 静态根下（pywebview 内建 http server 只服务 ui/），WKWebView 取不到 ⇒ 与旧版
+        Streamlit 一致走内联 base64（旧版 `sips -Z 150` → `<img src="data:image/png;base64,…">`）。
+        """
+        miss = self._need_root()
+        if miss:
+            return miss
+        req = req or {}
+        sub = self._safe_seg(str(req.get("subdir", "")))
+        bad = self._subdir_guard(sub)
+        if bad:
+            return bad
+        raw_names = req.get("names") or []
+        if not isinstance(raw_names, list):
+            return {"ok": False, "msg": "names 必须是文件名数组"}
+        names = [self._safe_seg(str(n)) for n in raw_names][:200]
+        try:
+            size = int(req.get("size") or TIFF_THUMB_MAX)
+        except Exception:
+            size = TIFF_THUMB_MAX
+        size = max(48, min(512, size))
+        thumbs: dict[str, str] = {}
+        engines: dict[str, str] = {}
+        failed: dict[str, str] = {}
+        for n in names:
+            if not n:
+                continue
+            src = self._tiff_src(sub, n)
+            if not src.is_file():
+                failed[n] = "文件不存在"
+                continue
+            png, engine, msg = self._thumb_file(src, sub, size)
+            if png is None:
+                failed[n] = msg or "出图失败"
+                continue
+            try:
+                thumbs[n] = self._data_uri(png)
+                engines[n] = engine
+            except Exception as exc:
+                failed[n] = f"读图失败：{exc.__class__.__name__}: {exc}"
+        return {"ok": True, "subdir": sub, "size": size, "count": len(thumbs),
+                "thumbs": thumbs, "engines": engines, "failed": failed,
+                "cache_dir": str(THUMBS_DIR / (f"thumb{size}" if size <= TIFF_THUMB_MAX else f"prev{size}"))}
+
+    def tab3_preview(self, req: dict | None = None) -> dict:
+        """右栏大图预览（旧版口径 `sips -Z 400`，同样内联 base64）。"""
+        miss = self._need_root()
+        if miss:
+            return miss
+        req = req or {}
+        sub = self._safe_seg(str(req.get("subdir", "")))
+        bad = self._subdir_guard(sub)
+        if bad:
+            return bad
+        name = self._safe_seg(str(req.get("name", "")))
+        src = self._tiff_src(sub, name)
+        if not name or not src.is_file():
+            return {"ok": False, "msg": f"文件不存在：{name or '（空）'}"}
+        try:
+            size = int(req.get("size") or TIFF_PREVIEW_MAX)
+        except Exception:
+            size = TIFF_PREVIEW_MAX
+        size = max(120, min(1600, size))
+        png, engine, msg = self._thumb_file(src, sub, size)
+        if png is None:
+            return {"ok": False, "msg": msg or "出图失败"}
+        return {"ok": True, "name": name, "size": size, "engine": engine,
+                "bytes": png.stat().st_size, "data_uri": self._data_uri(png)}
+
+    def tab3_parse(self, req: dict | None = None) -> dict:
+        """文件名解析（`validator.parse_filename` 单一真源）⇒ 回填 P/C/R 与三字段。
+
+        非标准模板 ⇒ 三字段留空、前缀留空（与旧版 `webui.py` L808–816 同口径），并给出提示。
+        """
+        req = req or {}
+        name = self._safe_seg(str(req.get("name", "")))
+        parsed = validator.parse_filename(name)
+        fields = {"shiwen": parsed[3], "dynasty": parsed[4], "author": parsed[5]} if parsed \
+            else {"shiwen": "", "dynasty": "", "author": ""}
+        return {"ok": True, "name": name, "standard": bool(parsed), "fields": fields,
+                "page": int(parsed[0]) if parsed else None,
+                "col": int(parsed[1]) if parsed else None,
+                "row": int(parsed[2]) if parsed else None,
+                "prefix": f"P{parsed[0]}-C{parsed[1]}-R{parsed[2]}-" if parsed else "",
+                "limits": {"shiwen_max": validator.SHIWEN_MAX, "author_max": validator.AUTHOR_MAX},
+                "note": "" if parsed else "文件名非标准模板 ⇒ 前缀留空，请手动填写（与旧版一致）"}
+
+    def _compose_new_name(self, old_name: str, shiwen: str, dynasty: str,
+                          author: str) -> dict:
+        """新文件名 = `{旧文件名解析出的 P/C/R 前缀}{释文}-{朝代}-{作者}.tiff`。
+
+        与旧版 `webui.py` L811/L829 **同一构造**：前缀来自 `parse_filename` 的回填
+        （非标准模板 ⇒ 前缀留空，提示手填）；校验一律走 `validator.validate_fields`。
+        """
+        parsed = validator.parse_filename(old_name)
+        prefix = f"P{parsed[0]}-C{parsed[1]}-R{parsed[2]}-" if parsed else ""
+        valid, msg = validator.validate_fields(shiwen, dynasty, author)
+        return {
+            "prefix": prefix, "standard": bool(parsed), "valid": bool(valid), "msg": msg,
+            "new_name": f"{prefix}{shiwen}-{dynasty}-{author}{validator.SUFFIX}",
+            "counts": {"shiwen": validator.count_chinese(shiwen),
+                       "author": validator.count_chinese(author)},
+            "limits": {"shiwen_max": validator.SHIWEN_MAX, "author_max": validator.AUTHOR_MAX},
+        }
+
+    def tab3_check(self, req: dict | None = None) -> dict:
+        """**纯校验 + 新名预览**（无副作用）：UI 据此置灰按钮并展示错误原文。"""
+        miss = self._need_root()
+        if miss:
+            return miss
+        req = req or {}
+        sub = self._safe_seg(str(req.get("subdir", "")))
+        bad = self._subdir_guard(sub)
+        if bad:
+            return bad
+        old = self._safe_seg(str(req.get("name", "")))
+        src = self._tiff_src(sub, old)
+        if not old or not src.is_file():
+            return {"ok": False, "msg": f"文件不存在：{old or '（空）'}"}
+        comp = self._compose_new_name(old, str(req.get("shiwen", "")),
+                                      str(req.get("dynasty", "")), str(req.get("author", "")))
+        same = comp["new_name"] == old
+        conflict = (not same) and (src.parent / comp["new_name"]).exists()
+        if not comp["valid"]:
+            reason = comp["msg"]
+        elif same:
+            reason = "文件名未变化"
+        elif conflict:
+            reason = f"同目录已存在：{comp['new_name']}"
+        else:
+            reason = ""
+        out = {"ok": True, "subdir": sub, "old_name": old, "same": same,
+               "conflict": bool(conflict), "can_rename": (reason == ""), "reason": reason,
+               "cloud_log": CLOUD_LOG_STATUS, "cloud_lock": CLOUD_LOCK_STATUS, "note": CLOUD_NOTE}
+        out.update(comp)
+        return out
+
+    @staticmethod
+    def _append_rename_log(record: dict) -> tuple[bool, str]:
+        """本地记录落盘（jsonl 追加）。**不碰任何云 API**。"""
+        try:
+            RENAME_LOG.parent.mkdir(parents=True, exist_ok=True)
+            with open(RENAME_LOG, "a", encoding="utf-8") as fh:
+                fh.write(json.dumps(record, ensure_ascii=False) + "\n")
+            return True, str(RENAME_LOG)
+        except Exception as exc:
+            return False, f"{exc.__class__.__name__}: {exc}"
+
+    def tab3_rename(self, req: dict | None = None) -> dict:
+        """执行重命名（**同目录同名 ⇒ 拒**）＋ 写本地记录。
+
+        外部依赖如实标注：腾讯文档日志 `cloud_log=not_connected`；百度网盘云盘锁
+        `cloud_lock=not_connected`（旧版的 lock_file/unlock_file/append_log_record 未接入本壳）。
+        """
+        miss = self._need_root()
+        if miss:
+            return miss
+        req = req or {}
+        sub = self._safe_seg(str(req.get("subdir", "")))
+        bad = self._subdir_guard(sub)
+        if bad:
+            return bad
+        old = self._safe_seg(str(req.get("name", "")))
+        src = self._tiff_src(sub, old)
+        if not old or not src.is_file():
+            return {"ok": False, "msg": f"文件不存在：{old or '（空）'}", "code": "missing"}
+        shiwen = str(req.get("shiwen", ""))
+        dynasty = str(req.get("dynasty", ""))
+        author = str(req.get("author", ""))
+        comp = self._compose_new_name(old, shiwen, dynasty, author)
+        if not comp["valid"]:
+            return {"ok": False, "msg": comp["msg"], "code": "invalid", **comp}
+        if comp["new_name"] == old:
+            return {"ok": False, "msg": "文件名未变化", "code": "noop", **comp}
+        dst = src.parent / comp["new_name"]
+        if dst.exists():
+            return {"ok": False, "msg": f"同目录已存在：{comp['new_name']}", "code": "conflict",
+                    "conflict_path": str(dst), **comp}
+        operator = str(req.get("operator", "")).strip() or self._session_user()[0] or "unknown"
+        try:
+            src.rename(dst)                    # 已先验存在性 ⇒ 绝不覆盖同名文件
+        except Exception as exc:
+            return {"ok": False, "msg": f"重命名失败：{exc.__class__.__name__}: {exc}",
+                    "code": "rename_failed"}
+        md5 = ""
+        try:
+            md5 = hashlib.md5(dst.read_bytes()).hexdigest()
+        except Exception:
+            pass
+        record = {
+            "timestamp": datetime.now().isoformat(timespec="seconds"),
+            "subdir": sub,
+            "original_path": str(src),
+            "old_filename": old,
+            "new_filename": comp["new_name"],
+            "印面释文": shiwen, "朝代": dynasty, "作者": author,
+            "file_md5": md5,
+            "operator": operator,
+            "status": "success",
+            "log_target": "local",                 # 本次记录只落本地
+            "cloud_log": CLOUD_LOG_STATUS,         # 腾讯文档日志：未接入（**不得假装已同步**）
+            "cloud_lock": CLOUD_LOCK_STATUS,       # 百度网盘云盘锁：未接入
+        }
+        log_ok, log_msg = self._append_rename_log(record)
+        return {"ok": True, "old_name": old, "new_name": comp["new_name"], "new_path": str(dst),
+                "record": record, "log_ok": log_ok, "log_msg": log_msg, "log_path": str(RENAME_LOG),
+                "cloud_log": CLOUD_LOG_STATUS, "cloud_lock": CLOUD_LOCK_STATUS,
+                "msg": ("✅ 改名完成，本地记录已写入" if log_ok
+                        else f"⚠️ 文件已改名，但本地记录写入失败：{log_msg}")}
+
+    def tab3_log(self, req: dict | None = None) -> dict:
+        """本地操作记录（尾部 N 条，只读本地 jsonl）。"""
+        req = req or {}
+        try:
+            limit = max(1, min(200, int(req.get("limit") or 20)))
+        except Exception:
+            limit = 20
+        rows: list[dict] = []
+        try:
+            if RENAME_LOG.exists():
+                lines = [ln for ln in RENAME_LOG.read_text(encoding="utf-8", errors="replace")
+                         .splitlines() if ln.strip()]
+                for ln in lines[-limit:]:
+                    try:
+                        rows.append(json.loads(ln))
+                    except Exception:
+                        rows.append({"raw": ln, "status": "unparsable"})
+        except Exception as exc:
+            return {"ok": False, "msg": f"读取本地记录失败：{exc.__class__.__name__}: {exc}"}
+        return {"ok": True, "rows": rows, "count": len(rows), "path": str(RENAME_LOG),
+                "cloud_log": CLOUD_LOG_STATUS, "cloud_lock": CLOUD_LOCK_STATUS, "note": CLOUD_NOTE}
 
     def shutdown(self, _req: dict | None = None) -> dict:
         """关闭窗口（native 形态专用）。"""

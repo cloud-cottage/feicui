@@ -17,25 +17,45 @@
     ./venv/bin/python webui/selftest.py --no-e2e        # 跳过真渲染（秒回）
     ./venv/bin/python webui/selftest.py --with-gui      # 另加短超时窗口试起
 
-注意：脚本会临时改写 `webui/.env` 的 `FEICUI_ROOT` 与 `webui/.session.json` 做夹具验证，
-       **结束时原样还原**（两个文件本就不入库）。
+隔离（不污染仓库与使用者数据）：
+  * 脚本在 import `api` **之前**把 `FEICUI_DATA_DIR` 指到临时目录 ⇒ `.env` / `.session.json` /
+    `var/**`（本地 rename_log.jsonl、缩略图缓存、tab2 任务日志）**全落临时目录**；
+  * `feicui` 夹具根目录同样是临时目录（`tempfile.mkdtemp`），跑完删除 ⇒ 仓内 `webui/var/**`、
+    `webui/.env`、`webui/.session.json` 一概**不写不动**。
+
+跑法：
+    ./venv/bin/python webui/selftest.py                 # 逻辑面 ＋ 一页端到端
+    ./venv/bin/python webui/selftest.py --no-e2e        # 跳过真渲染（秒回）
+    ./venv/bin/python webui/selftest.py --with-dom      # 另加「渲染后 DOM 断言」（起真窗口，≈2 min）
+    ./venv/bin/python webui/selftest.py --with-gui      # 另加短超时窗口试起
 """
 from __future__ import annotations
 
 import argparse
+import ast
+import base64
+import hashlib
+import io
 import json
+import os
 import shutil
 import subprocess
 import sys
 import tempfile
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 WEBUI_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(WEBUI_DIR))
 
-from api import APP_VERSION, ENGINE_SCRIPT, VENV_PYTHON, FeicuiApi  # noqa: E402
+#: ⚠️ **隔离**：在 import `api` **之前**把可写目录（`.env` / `.session.json` / `var/**`：本地
+#: rename_log.jsonl、缩略图缓存、tab2 任务日志）挪到临时目录 ⇒ 跑自检**不再写仓内 webui/var**、
+#: 也不动仓内 `.env` / `.session.json`。（`FEICUI_DATA_DIR` 是 `api.py` 已有的打包态开关。）
+_SELFTEST_DATA = Path(tempfile.mkdtemp(prefix="feicui-selftest-data-"))
+os.environ["FEICUI_DATA_DIR"] = str(_SELFTEST_DATA)
+
+from api import APP_VERSION, DATA_DIR, ENGINE_SCRIPT, SESSION_FILE, VENV_PYTHON, FeicuiApi  # noqa: E402
 from src import pdf_library as lib  # noqa: E402
 from src import validator  # noqa: E402
 
@@ -64,6 +84,8 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--no-e2e", action="store_true", help="跳过一页真渲染")
     ap.add_argument("--with-gui", action="store_true", help="另加短超时窗口试起")
+    ap.add_argument("--with-dom", action="store_true",
+                    help="另跑 webui/domtest.py：渲染后 DOM 断言（evaluate_js，真窗口）")
     ap.add_argument("--gui-seconds", type=float, default=12.0)
     ap.add_argument("--e2e-timeout", type=float, default=420.0)
     args = ap.parse_args(argv)
@@ -136,6 +158,219 @@ def main(argv: list[str] | None = None) -> int:
         bad3 = api.tab3_list({"subdir": "不存在的子目录"})
         expect("tab3/unknown_subdir_fallback", bool(bad3.get("ok")) and bad3.get("current") == "测试子目录",
                f"current={bad3.get('current')}")
+
+        # ── ③b tab3 补全面（**逻辑层直测**）：缩略图真出图 / 解析回填 / 三字段边界 /
+        #        重命名幂等与冲突拒止 / 本地记录落盘 / 云依赖如实上报 ──
+        PLACEHOLDER = WEBUI_DIR / "assets" / "test_seal.tiff"
+        sub = "测试子目录"
+        subdir_path = root / lib.TIFF_DIR / sub
+        # 嵌套子目录（旧版口径：3_Cropped_Tiff 只允许一级；列举须忽略目录）
+        (subdir_path / "嵌套子").mkdir(parents=True, exist_ok=True)
+        (subdir_path / "嵌套子" / "inner.tiff").write_bytes(PLACEHOLDER.read_bytes())
+        # 真 TIFF 夹具：2 个合规名 + 1 个非合规名 + 1 个 .tif 后缀
+        fixture_names = {
+            "合规一": "P001-C2-R3-长乐未央-汉-陈巨来.tiff",
+            "合规二": "P002-C4-R5-吉祥如意-唐-吴昌硕.tiff",
+            "非合规": "未命名副本.tiff",
+            "tif后缀": "P003-C6-R7-清心-宋-齐白石.tif",
+        }
+        for key, nm in fixture_names.items():
+            (subdir_path / nm).write_bytes(PLACEHOLDER.read_bytes())
+        t3 = api.tab3_list({"subdir": sub})
+        names = [f["name"] for f in t3.get("files", [])]
+        expect("tab3b/list_counts_files_only",
+               all(nm in names for nm in fixture_names.values()) and "inner.tiff" not in names,
+               f"files={len(names)} names={names}")
+        expect("tab3b/standard_flag",
+               any(f["name"] == fixture_names["合规一"] and f["standard"] for f in t3["files"])
+               and any(f["name"] == fixture_names["非合规"] and not f["standard"] for f in t3["files"]),
+               f"standard 面：{[(f['name'][:12], f['standard']) for f in t3['files']]}")
+        expect("tab3b/view_cfg_matches_old",
+               t3.get("view_cfg") == {"large": {"cols": 5, "per_page": 20},
+                                      "medium": {"cols": 10, "per_page": 50},
+                                      "small": {"cols": 20, "per_page": 100},
+                                      "list": {"cols": 1, "per_page": 30}},
+               f"view_cfg={t3.get('view_cfg')} limits={t3.get('limits')}")
+        expect("tab3b/cloud_flags_not_connected",
+               t3.get("cloud_log") == "not_connected" and t3.get("cloud_lock") == "not_connected",
+               f"cloud_log={t3.get('cloud_log')} cloud_lock={t3.get('cloud_lock')}")
+
+        # 解析回填
+        p1 = api.tab3_parse({"name": fixture_names["合规一"]})
+        expect("tab3b/parse_backfill",
+               bool(p1.get("ok")) and p1.get("fields") == {"shiwen": "长乐未央", "dynasty": "汉",
+                                                           "author": "陈巨来"}
+               and p1.get("prefix") == "P001-C2-R3-" and (p1.get("page"), p1.get("col"), p1.get("row")) == (1, 2, 3),
+               f"fields={p1.get('fields')} prefix={p1.get('prefix')} "
+               f"page/col/row={p1.get('page')}/{p1.get('col')}/{p1.get('row')}")
+        p2 = api.tab3_parse({"name": fixture_names["非合规"]})
+        expect("tab3b/parse_nonstandard_empty_prefix",
+               bool(p2.get("ok")) and p2.get("standard") is False and p2.get("prefix") == ""
+               and p2.get("fields") == {"shiwen": "", "dynasty": "", "author": ""},
+               f"standard={p2.get('standard')} prefix={p2.get('prefix')!r} note={p2.get('note')}")
+
+        # 新名预览 + 三字段边界（**不产生副作用**）
+        ck = api.tab3_check({"subdir": sub, "name": fixture_names["合规一"],
+                             "shiwen": "长乐未央", "dynasty": "汉", "author": "陈巨来"})
+        expect("tab3b/check_same_name_noop",
+               bool(ck.get("ok")) and ck.get("can_rename") is False and ck.get("reason") == "文件名未变化",
+               f"new_name={ck.get('new_name')} reason={ck.get('reason')}")
+        ck = api.tab3_check({"subdir": sub, "name": fixture_names["非合规"],
+                             "shiwen": "清心", "dynasty": "宋", "author": "齐白石"})
+        expect("tab3b/check_preview_prefix_from_old_name",
+               ck.get("new_name") == "P003-C6-R7-清心-宋-齐白石.tiff" or ck.get("new_name") == "清心-宋-齐白石.tiff",
+               f"new_name={ck.get('new_name')}（非合规 ⇒ 前缀留空，与旧版一致）")
+        over = api.tab3_check({"subdir": sub, "name": fixture_names["合规一"],
+                               "shiwen": "一二三四五六七八九十十", "dynasty": "汉", "author": "陈巨来"})
+        expect("tab3b/reject_shiwen_over_limit",
+               over.get("can_rename") is False and "最多 10 个汉字" in (over.get("reason") or ""),
+               f"reason={over.get('reason')} counts={over.get('counts')}")
+        empty = api.tab3_check({"subdir": sub, "name": fixture_names["合规一"],
+                                "shiwen": "", "dynasty": "汉", "author": "陈巨来"})
+        expect("tab3b/reject_empty_shiwen",
+               empty.get("can_rename") is False and empty.get("reason") == "印面释文不能为空",
+               f"reason={empty.get('reason')}")
+        au = api.tab3_check({"subdir": sub, "name": fixture_names["合规一"],
+                             "shiwen": "长乐", "dynasty": "汉", "author": "一二三四五"})
+        expect("tab3b/reject_author_over_limit",
+               au.get("can_rename") is False and "最多 4 个汉字" in (au.get("reason") or ""),
+               f"reason={au.get('reason')}")
+        inval = api.tab3_check({"subdir": sub, "name": fixture_names["合规一"],
+                                "shiwen": "长乐:未央", "dynasty": "汉", "author": "陈巨来"})
+        expect("tab3b/reject_invalid_char",
+               inval.get("can_rename") is False and "非法字符" in (inval.get("reason") or ""),
+               f"reason={inval.get('reason')}")
+        # 非汉字输入：现有 validator **不校验字符类别**（只限长度 + 非法字符）⇒ 如实记录现状
+        latin = api.tab3_check({"subdir": sub, "name": fixture_names["合规一"],
+                                "shiwen": "abc", "dynasty": "Han", "author": "CHEN"})
+        record("tab3b/non_chinese_input_behavior",
+               "PASS" if latin.get("can_rename") is True else "FAIL",
+               f"can_rename={latin.get('can_rename')} counts={latin.get('counts')} "
+               f"⚠️ 现状：validator 只查长度/非法字符，**不校验非汉字**（旧版同此口径）")
+
+        # 缩略图 / 大图：**真出图**（PNG 魔数 + 尺寸 + 引擎）
+        th = api.tab3_thumbs({"subdir": sub, "names": [fixture_names["合规一"],
+                                                       fixture_names["非合规"]], "size": 150})
+        png_ok, dims = {}, {}
+        for nm, uri in (th.get("thumbs") or {}).items():
+            raw = base64.b64decode(uri.split(",", 1)[1])
+            png_ok[nm] = raw[:8] == b"\x89PNG\r\n\x1a\n"
+            try:
+                from PIL import Image
+                with Image.open(io.BytesIO(raw)) as im:
+                    dims[nm] = im.size
+            except Exception as exc:
+                dims[nm] = f"PIL:{exc.__class__.__name__}"
+        expect("tab3b/thumbs_real_png",
+               bool(th.get("ok")) and len(png_ok) == 2 and all(png_ok.values())
+               and all(isinstance(v, tuple) and max(v) <= 150 and min(v) > 0 for v in dims.values()),
+               f"count={th.get('count')} engines={th.get('engines')} dims={dims} png={png_ok} "
+               f"failed={th.get('failed')}")
+        pv = api.tab3_preview({"subdir": sub, "name": fixture_names["合规一"], "size": 400})
+        pv_dims = None
+        if pv.get("ok"):
+            try:
+                from PIL import Image
+                with Image.open(io.BytesIO(base64.b64decode(pv["data_uri"].split(",", 1)[1]))) as im:
+                    pv_dims = im.size
+            except Exception as exc:
+                pv_dims = f"PIL:{exc.__class__.__name__}"
+        expect("tab3b/preview_400_max",
+               bool(pv.get("ok")) and isinstance(pv_dims, tuple) and max(pv_dims) <= 400,
+               f"size={pv.get('size')} bytes={pv.get('bytes')} engine={pv.get('engine')} dims={pv_dims}")
+        miss_pv = api.tab3_preview({"subdir": sub, "name": "不存在.tiff"})
+        expect("tab3b/preview_missing_file", not miss_pv.get("ok"), str(miss_pv.get("msg")))
+        trav = api.tab3_preview({"subdir": sub, "name": "../../assets/test_seal.tiff"})
+        expect("tab3b/path_traversal_blocked", not trav.get("ok"),
+               f"msg={trav.get('msg')}（_safe_seg 压成单段名 ⇒ 出不了 3_Cropped_Tiff）")
+
+        # 重命名：幂等 / 冲突拒止 / 记录落盘
+        rec_before = len(api.tab3_log({"limit": 200}).get("rows", []))
+        rn = api.tab3_rename({"subdir": sub, "name": fixture_names["非合规"],
+                              "shiwen": "清心", "dynasty": "宋", "author": "齐白石",
+                              "operator": "selftest"})
+        newp = subdir_path / "清心-宋-齐白石.tiff"
+        md5_src = hashlib.md5(PLACEHOLDER.read_bytes()).hexdigest()
+        expect("tab3b/rename_ok_and_file_moved",
+               bool(rn.get("ok")) and newp.is_file() and not (subdir_path / fixture_names["非合规"]).exists(),
+               f"msg={rn.get('msg')} new={rn.get('new_name')} md5_record={bool(rn.get('record', {}).get('file_md5'))}")
+        expect("tab3b/rename_record_md5_matches",
+               (rn.get("record") or {}).get("file_md5") == md5_src and (rn.get("record") or {}).get("status") == "success",
+               f"file_md5={(rn.get('record') or {}).get('file_md5')} == 占位图 md5 {md5_src}")
+        recs = api.tab3_log({"limit": 200})
+        last = (recs.get("rows") or [{}])[-1]
+        expect("tab3b/local_log_written",
+               len(recs.get("rows", [])) == rec_before + 1 and last.get("old_filename") == fixture_names["非合规"]
+               and last.get("new_filename") == "清心-宋-齐白石.tiff" and last.get("operator") == "selftest"
+               and last.get("印面释文") == "清心" and last.get("cloud_log") == "not_connected"
+               and last.get("cloud_lock") == "not_connected",
+               f"rows={len(recs.get('rows', []))} last={ {k: last.get(k) for k in ('old_filename','new_filename','operator','印面释文','cloud_log','cloud_lock')} }")
+        rn2 = api.tab3_rename({"subdir": sub, "name": newp.name, "shiwen": "清心",
+                               "dynasty": "宋", "author": "齐白石"})
+        expect("tab3b/rename_idempotent_noop",
+               (not rn2.get("ok")) and rn2.get("code") == "noop", f"code={rn2.get('code')} msg={rn2.get('msg')}")
+        # 冲突：目标名已存在 ⇒ 拒（且原文件不动）
+        # 注意：新名前缀来自**被改名文件自身**的 P/C/R ⇒ 冲突件必须同前缀
+        src_for_conflict = "P010-C1-R2-翰墨-元-赵之谦.tiff"
+        conflict_target = "P010-C1-R2-得自在-明-邓石如.tiff"
+        (subdir_path / conflict_target).write_bytes(PLACEHOLDER.read_bytes())
+        (subdir_path / src_for_conflict).write_bytes(PLACEHOLDER.read_bytes())
+        rn3 = api.tab3_rename({"subdir": sub, "name": src_for_conflict, "shiwen": "得自在",
+                               "dynasty": "明", "author": "邓石如"})
+        expect("tab3b/rename_conflict_rejected",
+               (not rn3.get("ok")) and rn3.get("code") == "conflict"
+               and (subdir_path / src_for_conflict).is_file()
+               and (subdir_path / conflict_target).read_bytes() == PLACEHOLDER.read_bytes(),
+               f"code={rn3.get('code')} msg={rn3.get('msg')} 原文件仍在={ (subdir_path / src_for_conflict).is_file() }")
+        rn4 = api.tab3_rename({"subdir": sub, "name": src_for_conflict, "shiwen": "一二三四五六七八九十十",
+                               "dynasty": "明", "author": "邓石如"})
+        expect("tab3b/rename_invalid_rejected",
+               (not rn4.get("ok")) and rn4.get("code") == "invalid", f"code={rn4.get('code')} msg={rn4.get('msg')}")
+        rn5 = api.tab3_rename({"subdir": sub, "name": "不存在.tiff", "shiwen": "长乐",
+                               "dynasty": "汉", "author": "陈巨来"})
+        expect("tab3b/rename_missing_rejected",
+               (not rn5.get("ok")) and rn5.get("code") == "missing", f"code={rn5.get('code')}")
+        rn6 = api.tab3_rename({"subdir": "不存在子目录", "name": src_for_conflict, "shiwen": "长乐",
+                               "dynasty": "汉", "author": "陈巨来"})
+        expect("tab3b/rename_bad_subdir_rejected", not rn6.get("ok"), str(rn6.get("msg")))
+        # 管理员门禁：会话为非管理员 ⇒ 生成测试件被拒
+        sess_backup = SESSION_FILE.read_text(encoding="utf-8") if SESSION_FILE.exists() else None
+        try:
+            SESSION_FILE.write_text(json.dumps({
+                "username": "pan", "expire": (datetime.now() + timedelta(days=1)).isoformat(),
+                "feicui_root": str(root.resolve())}), encoding="utf-8")
+            api._users = dict(api._users)          # 保持用户表
+            named = [u for u, v in api._users.items() if not v["is_admin"]]
+            expect("tab3b/admin_guard_active",
+                   bool(named) and not api.tab3_generate_test({"subdir": sub}).get("ok"),
+                   f"非管理员会话（{named[:1]}）⇒ {api.tab3_generate_test({'subdir': sub}).get('msg')}")
+        finally:
+            if sess_backup is None:
+                SESSION_FILE.unlink(missing_ok=True)
+            else:
+                SESSION_FILE.write_text(sess_backup, encoding="utf-8")
+        # 红线：api.py / src/*.py（**不含**保留的旧 Streamlit 页面 src/webui.py）不得 import
+        # webview/streamlit；且 api.py 不得 import 旧页面（**AST 判定**，非 grep）
+        offenders = []
+        scan = [WEBUI_DIR / "api.py"] + [p for p in sorted((WEBUI_DIR / "src").glob("*.py"))
+                                         if p.name != "webui.py"]
+        for pf in scan:
+            tree = ast.parse(pf.read_text(encoding="utf-8"))
+            for node in ast.walk(tree):
+                mods = ([al.name for al in node.names] if isinstance(node, ast.Import)
+                        else [node.module or ""] if isinstance(node, ast.ImportFrom) else [])
+                for m in mods:
+                    head = m.split(".")[0]
+                    if head in ("webview", "streamlit"):
+                        offenders.append(f"{pf.name}:{m}")
+                    if pf.name == "api.py" and head == "webui":
+                        offenders.append(f"{pf.name}:{m}（不得引用旧 Streamlit 页面）")
+        expect("tab3b/no_gui_import_in_logic_layer", not offenders,
+               f"扫描 {[p.name for p in scan]}；offenders={offenders}")
+        legacy = (WEBUI_DIR / "src" / "webui.py").read_text(encoding="utf-8")
+        expect("tab3b/legacy_streamlit_page_retained",
+               "DEPRECATED" in legacy and "def generate_test_tiff" in legacy,
+               "旧版 Streamlit 页 webui.py 仍在仓（需求真源，保留）")
 
         # ── ④ tab2：产物列表 ＋ 生成入口（参数面 / 预检 / 引擎命令行）──
         t2 = api.tab2_list({})
@@ -259,6 +494,37 @@ def main(argv: list[str] | None = None) -> int:
         expect("guard/no_root_blocks_tab1",
                (not guard.get("ok")) and bool(guard.get("need_dir")), str(guard.get("msg")))
 
+        # ── ⑧b 渲染后 DOM 断言（真窗口；由 webui/domtest.py 自己起窗/关窗）──
+        if args.with_dom:
+            dom_json = Path(tempfile.mkdtemp(prefix="feicui-dom-")) / "dom.json"
+            cmd = [str(VENV_PYTHON), str(WEBUI_DIR / "domtest.py"), "--out", str(dom_json)]
+            t0 = time.time()
+            try:
+                p = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
+                rc, out, err = p.returncode, p.stdout, p.stderr
+            except subprocess.TimeoutExpired as exc:
+                rc, out, err = "TIMEOUT", exc.stdout or "", exc.stderr or ""
+            secs = round(time.time() - t0, 1)
+            dom = {}
+            try:
+                dom = json.loads(dom_json.read_text(encoding="utf-8"))
+            except Exception:
+                dom = {}
+            dc = dom.get("counts") or {}
+            dom_ok = (rc == 0 and dc.get("PASS", 0) >= 15 and not dc.get("FAIL"))
+            record("dom/rendered_dom_assertions",
+                   "PASS" if dom_ok else "FAIL",
+                   f"rc={rc} {secs}s checks={dc} probe_error={dom.get('probe_error')} "
+                   f"js_errors={len(dom.get('js_errors') or [])}",
+                   {"dom_readings": str(dom_json), "stdout_tail": (out or "")[-1200:],
+                    "stderr_tail": (err or "")[-800:]})
+            for c in (dom.get("checks") or []):
+                if c["status"] == "FAIL":
+                    record(f"dom/{c['check']}", False, c["detail"][:300])
+        else:
+            record("dom/rendered_dom_assertions", "NOT_MEASURED",
+                   "未加 --with-dom（渲染后 DOM 断言需真窗口）")
+
         # ── ⑧ GUI 短超时试起（只报「已启动/异常退出」）──
         if args.with_gui:
             cmd = [str(VENV_PYTHON), str(WEBUI_DIR / "app.py"),
@@ -299,6 +565,7 @@ def main(argv: list[str] | None = None) -> int:
         "python": sys.executable,
         "engine_python": str(VENV_PYTHON),
         "engine_script": str(ENGINE_SCRIPT),
+        "data_dir": str(DATA_DIR),          # 临时目录（隔离；不再写仓内 webui/var）
         "counts": {s: sum(1 for r in ROWS if r["status"] == s)
                    for s in ("PASS", "FAIL", "NOT_MEASURED")},
         "elapsed_s": round(time.time() - started, 1),

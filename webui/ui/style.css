@@ -26,6 +26,9 @@ hr { border: none; border-top: 1px solid var(--line); margin: 12px 0; }
 .card { background: var(--card); border-radius: 14px; padding: 22px; box-shadow: 0 2px 12px rgba(0,0,0,.06); }
 .login-card { width: 420px; }
 .brand { font-size: 24px; font-weight: 600; }
+.brand-head { display: flex; align-items: center; gap: 12px; }
+.brand-logo { width: 56px; height: 56px; border-radius: 12px; flex: 0 0 56px; }
+.logo-img { width: 20px; height: 20px; border-radius: 5px; vertical-align: -4px; margin-right: 6px; }
 .brand-sub { display: block; font-size: 12px; font-weight: 400; color: var(--muted); margin-top: 4px; }
 h2 { font-size: 16px; font-weight: 600; }
 h3 { font-size: 13px; font-weight: 600; margin-bottom: 8px; }
@@ -118,3 +121,65 @@ input:focus, select:focus, textarea:focus { outline: 2px solid #ffd9bf; border-c
   background: #333; color: #fff; padding: 8px 16px; border-radius: 8px; font-size: 12px;
   opacity: 0; transition: opacity .25s; pointer-events: none; }
 .toast.show { opacity: .95; }
+
+/* ═══════════ tab3：3_Cropped_Tiff（左≈1.5 : 右≈1）═══════════ */
+[hidden] { display: none !important; }
+.tab3-col { grid-template-columns: 1.5fr 1fr; align-items: start; }
+.caption { font-size: 12px; color: var(--muted); margin: 8px 0; }
+
+/* 子目录标签页（沿用旧版「文件夹按钮标签页」形态）*/
+.subdir-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+.subdir-tabs button { border: 1px solid var(--line); background: #fff; border-radius: 8px;
+  padding: 5px 10px; font-size: 12px; cursor: pointer; font-family: inherit; max-width: 100%;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.subdir-tabs button:hover { background: #faf0e8; }
+.subdir-tabs button.active { background: var(--orange); border-color: var(--orange); color: #fff;
+  font-weight: 600; }
+
+/* 视图切换按钮（当前档位高亮）*/
+.view-btn.active { background: var(--orange); border-color: var(--orange); color: #fff; font-weight: 600; }
+
+/* 分页条 */
+.pager { display: flex; align-items: center; gap: 8px; margin: 6px 0 8px; }
+
+/* 缩略图网格：四档视图的列数＝旧版 view_cfg（5/10/20/1）——**必须真出图** */
+.thumb-grid { display: grid; gap: 8px; padding: 6px; border: 1px solid var(--line);
+  border-radius: 10px; background: #fcfcfc; max-height: 52vh; overflow: auto; }
+#tab3-grid[data-view="large"] { grid-template-columns: repeat(5, 1fr); }
+#tab3-grid[data-view="medium"] { grid-template-columns: repeat(10, 1fr); }
+#tab3-grid[data-view="small"] { grid-template-columns: repeat(20, 1fr); }
+#tab3-grid[data-view="list"] { grid-template-columns: 1fr; }
+.thumb-item { border: 1px solid var(--line); border-radius: 8px; background: #fff;
+  padding: 3px; cursor: pointer; text-align: center; overflow: hidden; }
+.thumb-item:hover { background: #fcf7f2; }
+.thumb-item.selected { outline: 3px solid var(--orange); outline-offset: -2px;
+  border-color: var(--orange); background: #fff5ec; }
+.thumb-item .thumb-box { display: flex; align-items: center; justify-content: center;
+  background: #fafafa; border-radius: 5px; overflow: hidden; }
+.thumb-item img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.thumb-item .ph { color: #bbb; font-size: 16px; }
+.thumb-item .name { font-size: 10px; color: var(--muted); margin-top: 3px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#tab3-grid[data-view="large"] .thumb-box { height: 120px; }
+#tab3-grid[data-view="medium"] .thumb-box { height: 64px; }
+#tab3-grid[data-view="small"] .thumb-box { height: 36px; }
+#tab3-grid[data-view="small"] .name, #tab3-grid[data-view="small"] .ph { display: none; }
+/* 列表视图：小缩略图 + 文件名左对齐（旧版列表档口径）*/
+#tab3-grid[data-view="list"] .thumb-item { display: flex; align-items: center; gap: 8px;
+  text-align: left; padding: 4px 6px; }
+#tab3-grid[data-view="list"] .thumb-box { width: 48px; height: 48px; flex: 0 0 48px; }
+#tab3-grid[data-view="list"] .name { flex: 1; font-size: 12px; color: var(--text);
+  margin-top: 0; white-space: nowrap; text-overflow: ellipsis; }
+#tab3-grid[data-view="list"] .name.bad { color: #b06a00; }
+
+/* 右栏：大图预览 / 新名预览 / 未接入标注 */
+.preview-wrap { display: flex; justify-content: center; margin-bottom: 8px; }
+.preview-wrap img { width: 300px; height: 300px; object-fit: contain; border: 1px solid var(--line);
+  border-radius: 8px; background: #fafafa; }
+.newname { font-size: 12px; margin: 6px 0; word-break: break-all; }
+.notice { margin-top: 8px; font-size: 11px; color: #8a5a00; background: #fff7e6;
+  border: 1px dashed #e0b070; border-radius: 8px; padding: 6px 8px; }
+.badge-warn { font-size: 11px; font-weight: 400; color: #8a5a00; background: #fff7e6;
+  border: 1px solid #e0b070; border-radius: 999px; padding: 2px 8px; margin-left: 6px; }
+.op-log { margin-top: 12px; }
+.op-log .log-scroll { max-height: 30vh; }

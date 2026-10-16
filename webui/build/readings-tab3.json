@@ -1,0 +1,357 @@
+{
+  "schema": "feicui.webui.tab3.evidence.v1",
+  "at": "2026-10-17T07:14:42",
+  "logic_layer": {
+    "suite": "webui/selftest.py --no-e2e",
+    "data_dir": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-selftest-data-pq5qdvpk",
+    "counts": {
+      "PASS": 59,
+      "FAIL": 0,
+      "NOT_MEASURED": 3
+    },
+    "tab3_checks": [
+      {
+        "check": "tab3/generate_test_tiff",
+        "status": "PASS",
+        "detail": "已生成：P001-C9-R4-长乐未央-秦-赵之谦.tiff"
+      },
+      {
+        "check": "tab3/list_ok",
+        "status": "PASS",
+        "detail": "subdirs=['测试子目录'] files=1"
+      },
+      {
+        "check": "tab3/filename_template",
+        "status": "PASS",
+        "detail": "name=P001-C9-R4-长乐未央-秦-赵之谦.tiff standard=True"
+      },
+      {
+        "check": "tab3/unknown_subdir_fallback",
+        "status": "PASS",
+        "detail": "current=测试子目录"
+      },
+      {
+        "check": "tab3b/list_counts_files_only",
+        "status": "PASS",
+        "detail": "files=5 names=['P001-C2-R3-长乐未央-汉-陈巨来.tiff', 'P001-C9-R4-长乐未央-秦-赵之谦.tiff', 'P002-C4-R5-吉祥如意-唐-吴昌硕.tiff', 'P003-C6-R7-清心-宋-齐白石.tif', '未命名副本.tiff']"
+      },
+      {
+        "check": "tab3b/standard_flag",
+        "status": "PASS",
+        "detail": "standard 面：[('P001-C2-R3-长', True), ('P001-C9-R4-长', True), ('P002-C4-R5-吉', True), ('P003-C6-R7-清', False), ('未命名副本.tiff', False)]"
+      },
+      {
+        "check": "tab3b/view_cfg_matches_old",
+        "status": "PASS",
+        "detail": "view_cfg={'large': {'cols': 5, 'per_page': 20}, 'medium': {'cols': 10, 'per_page': 50}, 'small': {'cols': 20, 'per_page': 100}, 'list': {'cols': 1, 'per_page': 30}} limits={'shiwen_max': 10, 'author_max': 4}"
+      },
+      {
+        "check": "tab3b/cloud_flags_not_connected",
+        "status": "PASS",
+        "detail": "cloud_log=not_connected cloud_lock=not_connected"
+      },
+      {
+        "check": "tab3b/parse_backfill",
+        "status": "PASS",
+        "detail": "fields={'shiwen': '长乐未央', 'dynasty': '汉', 'author': '陈巨来'} prefix=P001-C2-R3- page/col/row=1/2/3"
+      },
+      {
+        "check": "tab3b/parse_nonstandard_empty_prefix",
+        "status": "PASS",
+        "detail": "standard=False prefix='' note=文件名非标准模板 ⇒ 前缀留空，请手动填写（与旧版一致）"
+      },
+      {
+        "check": "tab3b/check_same_name_noop",
+        "status": "PASS",
+        "detail": "new_name=P001-C2-R3-长乐未央-汉-陈巨来.tiff reason=文件名未变化"
+      },
+      {
+        "check": "tab3b/check_preview_prefix_from_old_name",
+        "status": "PASS",
+        "detail": "new_name=清心-宋-齐白石.tiff（非合规 ⇒ 前缀留空，与旧版一致）"
+      },
+      {
+        "check": "tab3b/reject_shiwen_over_limit",
+        "status": "PASS",
+        "detail": "reason=印面释文最多 10 个汉字，当前 11 counts={'shiwen': 11, 'author': 3}"
+      },
+      {
+        "check": "tab3b/reject_empty_shiwen",
+        "status": "PASS",
+        "detail": "reason=印面释文不能为空"
+      },
+      {
+        "check": "tab3b/reject_author_over_limit",
+        "status": "PASS",
+        "detail": "reason=作者最多 4 个汉字，当前 5"
+      },
+      {
+        "check": "tab3b/reject_invalid_char",
+        "status": "PASS",
+        "detail": "reason=字段包含非法字符：\\/:*?\"<>|"
+      },
+      {
+        "check": "tab3b/non_chinese_input_behavior",
+        "status": "PASS",
+        "detail": "can_rename=True counts={'shiwen': 0, 'author': 0} ⚠️ 现状：validator 只查长度/非法字符，**不校验非汉字**（旧版同此口径）"
+      },
+      {
+        "check": "tab3b/thumbs_real_png",
+        "status": "PASS",
+        "detail": "count=2 engines={'P001-C2-R3-长乐未央-汉-陈巨来.tiff': 'sips', '未命名副本.tiff': 'sips'} dims={'P001-C2-R3-长乐未央-汉-陈巨来.tiff': (150, 150), '未命名副本.tiff': (150, 150)} png={'P001-C2-R3-长乐未央-汉-陈巨来.tiff': True, '未命名副本.tiff': True} failed={}"
+      },
+      {
+        "check": "tab3b/preview_400_max",
+        "status": "PASS",
+        "detail": "size=400 bytes=36568 engine=sips dims=(400, 400)"
+      },
+      {
+        "check": "tab3b/preview_missing_file",
+        "status": "PASS",
+        "detail": "文件不存在：不存在.tiff"
+      },
+      {
+        "check": "tab3b/path_traversal_blocked",
+        "status": "PASS",
+        "detail": "msg=文件不存在：test_seal.tiff（_safe_seg 压成单段名 ⇒ 出不了 3_Cropped_Tiff）"
+      },
+      {
+        "check": "tab3b/rename_ok_and_file_moved",
+        "status": "PASS",
+        "detail": "msg=✅ 改名完成，本地记录已写入 new=清心-宋-齐白石.tiff md5_record=True"
+      },
+      {
+        "check": "tab3b/rename_record_md5_matches",
+        "status": "PASS",
+        "detail": "file_md5=2e658cf3eade4d35a21d1752249d7779 == 占位图 md5 2e658cf3eade4d35a21d1752249d7779"
+      },
+      {
+        "check": "tab3b/local_log_written",
+        "status": "PASS",
+        "detail": "rows=1 last={'old_filename': '未命名副本.tiff', 'new_filename': '清心-宋-齐白石.tiff', 'operator': 'selftest', '印面释文': '清心', 'cloud_log': 'not_connected', 'cloud_lock': 'not_connected'}"
+      },
+      {
+        "check": "tab3b/rename_idempotent_noop",
+        "status": "PASS",
+        "detail": "code=noop msg="
+      },
+      {
+        "check": "tab3b/rename_conflict_rejected",
+        "status": "PASS",
+        "detail": "code=conflict msg= 原文件仍在=True"
+      },
+      {
+        "check": "tab3b/rename_invalid_rejected",
+        "status": "PASS",
+        "detail": "code=invalid msg=印面释文最多 10 个汉字，当前 11"
+      },
+      {
+        "check": "tab3b/rename_missing_rejected",
+        "status": "PASS",
+        "detail": "code=missing"
+      },
+      {
+        "check": "tab3b/rename_bad_subdir_rejected",
+        "status": "PASS",
+        "detail": "子目录不存在：不存在子目录"
+      },
+      {
+        "check": "tab3b/admin_guard_active",
+        "status": "PASS",
+        "detail": "非管理员会话（['pan']）⇒ 仅管理员可生成测试 TIFF"
+      },
+      {
+        "check": "tab3b/no_gui_import_in_logic_layer",
+        "status": "PASS",
+        "detail": "扫描 ['api.py', '__init__.py', 'baidu_disk_api.py', 'ocr_corrector.py', 'ocr_rapid.py', 'pdf_library.py', 'tencent_doc_api.py', 'validator.py']；offenders=[]"
+      },
+      {
+        "check": "tab3b/legacy_streamlit_page_retained",
+        "status": "PASS",
+        "detail": "旧版 Streamlit 页 webui.py 仍在仓（需求真源，保留）"
+      },
+      {
+        "check": "dom/rendered_dom_assertions",
+        "status": "NOT_MEASURED",
+        "detail": "未加 --with-dom（渲染后 DOM 断言需真窗口）"
+      }
+    ]
+  },
+  "rendered_dom": {
+    "probe": "webui/domtest.py（真窗口 pywebview + evaluate_js）",
+    "counts": {
+      "PASS": 25,
+      "FAIL": 0
+    },
+    "run_at": "2026-10-17T07:08:16",
+    "window_title": "「斐萃」玺印解析任务台 · 本地电脑版",
+    "fixture": {
+      "scratch": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-7clbtljt",
+      "fixture": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-7clbtljt/feicui",
+      "data_dir": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-7clbtljt/data",
+      "files": 29,
+      "admin": "ji",
+      "login_ok": true,
+      "verify_msg": "目录校验通过"
+    },
+    "disk_post_check": {
+      "renamed_exists": true,
+      "old_gone": true,
+      "conflict_pair_intact": true,
+      "log_exists": true,
+      "log_lines": 1,
+      "log_last": {
+        "old_filename": "未命名副本.tiff",
+        "new_filename": "清心-宋-齐白石.tiff",
+        "operator": "ji",
+        "印面释文": "清心",
+        "朝代": "宋",
+        "作者": "齐白石",
+        "file_md5": "2e658cf3eade4d35a21d1752249d7779",
+        "status": "success",
+        "cloud_log": "not_connected",
+        "cloud_lock": "not_connected"
+      },
+      "generated_files": [
+        "P001-C2-R3-长乐未央-汉-陈巨来.tiff",
+        "P002-C1-R5-清心-唐-陈巨来.tiff",
+        "P005-C1-R1-乙-汉-丙.tiff",
+        "P005-C1-R1-待定-汉-丙.tiff",
+        "清心-宋-齐白石.tiff"
+      ]
+    },
+    "js_errors": null,
+    "checks": [
+      {
+        "check": "dom/loaded_title_and_brand",
+        "status": "PASS",
+        "detail": "document.title='「斐萃」玺印解析任务台 · 本地电脑版' brand='「斐萃」玺印解析任务台 · 本地电脑版 | 「斐萃」玺印解析任务台 · 本地电脑版'（真源 api.APP_TITLE）"
+      },
+      {
+        "check": "dom/three_tabs_rendered",
+        "status": "PASS",
+        "detail": "tabs=['1_Original_PDF', '2_HighRes_PDF', '3_Cropped_Tiff'] main_active=True bridge=True"
+      },
+      {
+        "check": "dom/tab3_nodes_present",
+        "status": "PASS",
+        "detail": "nodes={'grid': True, 'subdirs': True, 'view_btns': 4, 'pageinfo': True, 'pager': True, 'edit_pane': True, 'inputs': 3, 'counts': True, 'newname': True, 'rename_btn': True, 'preview': True, 'log_body': True, 'log_badge': True}"
+      },
+      {
+        "check": "dom/cloud_api_note_visible",
+        "status": "PASS",
+        "detail": "编辑区提示='⚠️ 日志同步（腾讯文档）／云盘锁 暂未接入：本次只写本地记录\\n            webui/var/rename' 日志徽标='日志同步（腾讯文档）/ 云盘锁暂未接入'"
+      },
+      {
+        "check": "dom/brand_logo_really_loaded",
+        "status": "PASS",
+        "detail": "品牌区 img: complete=True naturalWidth×Height=480×480 真实盒=56×56px（display=block，量完已还原视图） src='feicui.png' currentSrc='http://127.0.0.1:56690/feicui.png'；顶栏 img: 480×480 盒=20×20px"
+      },
+      {
+        "check": "dom/icon_links_and_server_root",
+        "status": "PASS",
+        "detail": "rel=icon href='feicui.png' abs='http://127.0.0.1:56690/feicui.png' svg link=True apple-touch=True page_url='http://127.0.0.1:56690/index.html' ⇒ server 根＝ui/"
+      },
+      {
+        "check": "dom/out_of_root_path_unreachable",
+        "status": "PASS",
+        "detail": "`../assets/feicui.png` 探针结果='error(404/不可达)'（故图标**复制**进 ui/，与「assets 用复制不用软链」口径一致）"
+      },
+      {
+        "check": "dom/tab3_thumb_grid_rendered",
+        "status": "PASS",
+        "detail": "子目录 ['📁 A特例*', '📁 分页B'] items=4 imgs=4 loaded=4 dims=['96x96', '96x96', '96x96']"
+      },
+      {
+        "check": "dom/thumbs_are_inline_png_datauri",
+        "status": "PASS",
+        "detail": "img.src 头=data:image/png;base64,iV…（3_Cropped_Tiff 在 ui/ 静态根外 ⇒ 走 base64，与旧版一致）"
+      },
+      {
+        "check": "dom/grid_view_cfg_shown",
+        "status": "PASS",
+        "detail": "pageinfo='共 4 个文件 · 第 1/1 页 · 视图 medium（10×50）· ↑↓←→ 切换选中' 网格列数=10"
+      },
+      {
+        "check": "dom/four_views_cols",
+        "status": "PASS",
+        "detail": "四档实测 cols/items/loaded={\"large\": {\"cols\": 5, \"items\": 4, \"loaded\": 4, \"view\": \"large\", \"pageno\": \"1 / 1\", \"src_ok\": true}, \"medium\": {\"cols\": 10, \"items\": 4, \"loaded\": 4, \"view\": \"medium\", \"pageno\": \"1 / 1\", \"src_ok\": true}, \"small\": {\"cols\": 20, \"items\": 4, \"loaded\": 4, \"view\": \"small\", \"pageno\": \"1 / 1\", \"src_ok\": true}, \"list\": {\"cols\": 1, \"items\": 4, \"loaded\": 4, \"view\": \"list\", \"pageno\": \"1 / 1\", \"src_ok\": true}}"
+      },
+      {
+        "check": "dom/select_file_shows_panel_prefilled",
+        "status": "PASS",
+        "detail": "edit 显示=True 三输入框='长乐未央'/'汉'/'陈巨来' 解析提示='已自动解析：第 1 页 · 第 2 列 · 第 3 行（前缀 P001-C2-R3-）'"
+      },
+      {
+        "check": "dom/big_preview_rendered",
+        "status": "PASS",
+        "detail": "大图 dims=400x400 src 头=data:image/png;base64,iV…"
+      },
+      {
+        "check": "dom/noop_name_greys_button",
+        "status": "PASS",
+        "detail": "新名='P001-C2-R3-长乐未央-汉-陈巨来.tiff' 按钮禁用=True 理由='文件名未变化'"
+      },
+      {
+        "check": "dom/over_limit_blocks_rename",
+        "status": "PASS",
+        "detail": "计数='释文 11/10\\u3000作者 3/4' 错误原文='印面释文最多 10 个汉字，当前 11' 新名='P001-C2-R3-一二三四五六七八九十十-汉-陈巨来.tiff'"
+      },
+      {
+        "check": "dom/conflict_rejected_in_ui",
+        "status": "PASS",
+        "detail": "新名='P005-C1-R1-乙-汉-丙.tiff' 错误原文='同目录已存在：P005-C1-R1-乙-汉-丙.tiff' 按钮禁用=True"
+      },
+      {
+        "check": "dom/valid_state_enables_button",
+        "status": "PASS",
+        "detail": "新名预览='清心-宋-齐白石.tiff' 按钮可点=True 计数='释文 2/10\\u3000作者 3/4'"
+      },
+      {
+        "check": "dom/rename_via_button_refreshed_grid",
+        "status": "PASS",
+        "detail": "选中='清心-宋-齐白石.tiff' names=['P001-C2-R3-长乐未央-汉-陈巨来.tiff', 'P005-C1-R1-乙-汉-丙.tiff', 'P005-C1-R1-待定-汉-丙.tiff', '清心-宋-齐白石.tiff'] 缩略图 loaded=4"
+      },
+      {
+        "check": "dom/rename_msg_marks_cloud_not_connected",
+        "status": "PASS",
+        "detail": "rename 提示（抓到的原文）='✅ 改名完成，本地记录已写入\\u3000[cloud_log=not_connected / cloud_lock=not_connected：外部同步未接入]'"
+      },
+      {
+        "check": "dom/local_log_row_visible",
+        "status": "PASS",
+        "detail": "行数=1 首行=['2026-10-17T07:08:00', '未命名副本.tiff', '清心-宋-齐白石.tiff', '清心', '宋', '齐白石', 'ji', 'success'] 路径='本地记录：/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-7clbtljt/data/var/ren'"
+      },
+      {
+        "check": "dom/pagination_20_per_page",
+        "status": "PASS",
+        "detail": "第1页 items=20 pageno=1 / 2 / 第2页 items=5 pageno=2 / 2 next禁用=True"
+      },
+      {
+        "check": "dom/keyboard_nav_moves_selection",
+        "status": "PASS",
+        "detail": "起点='P001-C1-R2-长乐-汉-陈巨来.tiff'（idx 0）→→ 'P002-C1-R2-长乐-汉-陈巨来.tiff'（idx 1，右=+1） →↓ 'P007-C1-R2-长乐-汉-陈巨来.tiff'（idx 6，large 档列数 5 ⇒ +5；list 档列数 1 ⇒ 等价旧版 ±1）"
+      },
+      {
+        "check": "dom/generate_test_tiff_button",
+        "status": "PASS",
+        "detail": "管理员按钮 disabled=False items 4→5 msg='共 5 个 tiff（子目录：A特例）'"
+      },
+      {
+        "check": "disk/renamed_and_logged",
+        "status": "PASS",
+        "detail": "改名后文件存在=True 旧名已消失=True 本地记录=1 条 末条={'old_filename': '未命名副本.tiff', 'new_filename': '清心-宋-齐白石.tiff', 'operator': 'ji', '印面释文': '清心', '朝代': '宋', '作者': '齐白石', 'file_md5': '2e658cf3eade4d35a21d1752249d7779', 'status': 'success', 'cloud_log': 'not_connected', 'cloud_lock': 'not_connected'}"
+      },
+      {
+        "check": "disk/conflict_left_both_files",
+        "status": "PASS",
+        "detail": "A特例 现有文件=['P001-C2-R3-长乐未央-汉-陈巨来.tiff', 'P002-C1-R5-清心-唐-陈巨来.tiff', 'P005-C1-R1-乙-汉-丙.tiff', 'P005-C1-R1-待定-汉-丙.tiff', '清心-宋-齐白石.tiff']"
+      }
+    ]
+  },
+  "not_measured": [
+    "e2e/render_one_page_1200dpi（--no-e2e 跳过）",
+    "gui/window_launch（未加 --with-gui）",
+    "GUI 画面本身未目视验收（只做渲染后 DOM 断言）"
+  ]
+}

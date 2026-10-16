@@ -3,7 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>斐萃 · 本地电脑版</title>
+<!-- 标题文案的**单一真源**＝`webui/api.py` 的 APP_TITLE / APP_SLOGAN（经 app_info 推给本页）；
+     这里留一份同值静态兜底，仅改文案时改 api.py 即可 -->
+<title>「斐萃」玺印解析任务台 · 本地电脑版</title>
+<!-- ⚠️ 路径坑（实测）：本页由 PyWebView 内建 http server 供给，**server 根＝`ui/` 目录**
+     （url 形如 http://127.0.0.1:<port>/index.html）⇒ `../assets/feicui.png` 会 404。
+     故图标按仓内「assets 用复制不用软链」口径**复制**一份进 `ui/`（`feicui.png` / `feicui.svg`
+     与 `webui/assets/` 逐字节相同）；`rel=icon` 与品牌区 img 都用同目录相对路径。 -->
+<link rel="icon" type="image/png" href="feicui.png">
+<link rel="alternate icon" type="image/svg+xml" href="feicui.svg">
+<link rel="apple-touch-icon" href="feicui.png">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,7 +20,13 @@
 <!-- ═══════════ 视图 1：登录 ═══════════ -->
 <section id="view-login" class="view active">
   <div class="card login-card">
-    <h1 class="brand">斐萃 <span class="brand-sub">数字玺印生成工具 · 本地电脑版</span></h1>
+    <div class="brand-head">
+      <img id="brand-logo" class="brand-logo" src="feicui.png" width="56" height="56" alt="斐萃 logo" title="斐萃">
+      <div>
+        <h1 class="brand" id="brand-title">「斐萃」玺印解析任务台 · 本地电脑版</h1>
+        <p class="brand-sub" id="brand-slogan">数字玺印生成工具</p>
+      </div>
+    </div>
     <p class="muted">请登录后使用（口令由后端校验，前端不持有）</p>
     <label class="field">
       <span>账号</span>
@@ -60,7 +75,8 @@
 <section id="view-main" class="view">
   <header class="topbar">
     <div class="topbar-left">
-      <span class="logo">斐萃</span>
+      <span class="logo" id="topbar-title"><img id="topbar-logo" class="logo-img" src="feicui.png"
+        alt="斐萃 logo" title="斐萃"><span id="topbar-title-text">「斐萃」玺印解析任务台 · 本地电脑版</span></span>
       <nav id="tabs" class="tabs">
         <button class="tab active" data-tab="1_Original_PDF">1_Original_PDF</button>
         <button class="tab" data-tab="2_HighRes_PDF">2_HighRes_PDF</button>
@@ -159,29 +175,70 @@
   <!-- ── tab3：3_Cropped_Tiff ── -->
   <div class="panel" data-panel="3_Cropped_Tiff">
     <div class="panel-head">
-      <h2>3_Cropped_Tiff · 印面切片</h2>
+      <h2>3_Cropped_Tiff · 印面切片（选件 / 解析 / 重命名）</h2>
       <div class="row">
         <button id="btn-tab3-refresh" class="btn" data-action="tab3-refresh">🔄 刷新</button>
-        <button id="btn-tab3-test" class="btn" data-action="tab3-test">🎲 生成测试 TIFF（管理员）</button>
+        <button id="btn-tab3-test" class="btn" data-action="tab3-test">🎲 在此目录生成测试 TIFF（管理员）</button>
       </div>
     </div>
-    <div class="two-col main-col">
-      <div class="pane side small-col">
-        <h3>一级子目录</h3>
-        <ul id="tab3-subdirs" class="list scroll"></ul>
-      </div>
+    <div class="two-col tab3-col">
+      <!-- ── 左栏（≈1.5）：子目录标签页 + 缩略图网格（四档视图 + 分页 + 键盘导航）── -->
       <div class="pane">
-        <h3 id="tab3-title">文件</h3>
-        <div class="table-wrap scroll">
-          <table class="grid">
-            <thead><tr><th>文件名</th><th>大小(MB)</th><th>释文</th><th>朝代</th><th>作者</th>
-              <th>模板合规</th><th>改时间</th></tr></thead>
-            <tbody id="tab3-files"></tbody>
-          </table>
+        <h3>一级子目录</h3>
+        <div id="tab3-subdirs" class="subdir-tabs"></div>
+        <div class="row" id="tab3-views">
+          <button class="btn small view-btn" data-view="large" data-action="tab3-view">🖼️ 大图标</button>
+          <button class="btn small view-btn" data-view="medium" data-action="tab3-view">📋 中等图标</button>
+          <button class="btn small view-btn" data-view="small" data-action="tab3-view">📄 小图标</button>
+          <button class="btn small view-btn" data-view="list" data-action="tab3-view">📃 列表</button>
         </div>
+        <div class="caption" id="tab3-pageinfo">共 0 个文件 · 第 1/1 页 · ↑↓←→ 切换选中</div>
+        <div class="pager">
+          <button id="btn-tab3-prev" class="btn small" data-action="tab3-prev" disabled>⬅️ 上一页</button>
+          <span id="tab3-pageno" class="muted">1 / 1</span>
+          <button id="btn-tab3-next" class="btn small" data-action="tab3-next" disabled>下一页 ➡️</button>
+        </div>
+        <div id="tab3-grid" class="thumb-grid" data-view="medium" tabindex="0"></div>
         <p class="muted">命名模板：<code id="tab3-template">—</code></p>
         <div id="tab3-msg" class="msg"></div>
       </div>
+      <!-- ── 右栏（≈1）：大图预览 + 文件名解析 + 三输入框 + 新名预览 + 执行 ── -->
+      <div class="pane side">
+        <div id="tab3-noselect" class="muted">请在左侧点击选择一个 tiff 文件</div>
+        <div id="tab3-edit" hidden>
+          <h3>大图预览</h3>
+          <div class="preview-wrap"><img id="tab3-preview" alt="大图预览"></div>
+          <div class="cur" id="tab3-current">—</div>
+          <div id="tab3-parsed" class="msg"></div>
+          <label class="field"><span id="tab3-shiwen-label">印面释文（最多 10 个汉字）</span>
+            <input id="tab3-shiwen" type="text" placeholder="如：长乐未央"></label>
+          <label class="field"><span>朝代</span>
+            <input id="tab3-dynasty" type="text" placeholder="如：汉"></label>
+          <label class="field"><span id="tab3-author-label">作者（最多 4 个汉字）</span>
+            <input id="tab3-author" type="text" placeholder="如：陈巨来"></label>
+          <div class="caption" id="tab3-counts">释文 0/10　作者 0/4</div>
+          <div class="newname">预览新文件名：<code id="tab3-newname">—</code></div>
+          <div id="tab3-valid" class="msg"></div>
+          <button id="btn-tab3-rename" class="btn primary block" data-action="tab3-rename"
+                  disabled>执行重命名 + 写入本地记录</button>
+          <div id="tab3-rename-msg" class="msg"></div>
+          <div class="notice">⚠️ 日志同步（腾讯文档）／云盘锁 <b>暂未接入</b>：本次只写本地记录
+            <code>webui/var/rename_log.jsonl</code>（不写云日志、不取云锁）</div>
+        </div>
+      </div>
+    </div>
+    <!-- ── 操作日志（本地记录；云同步未接入 ⇒ 明标）── -->
+    <div class="pane op-log">
+      <h3>操作日志（本地记录）
+        <span class="badge-warn" id="tab3-log-badge">日志同步（腾讯文档）/ 云盘锁暂未接入</span></h3>
+      <div class="table-wrap scroll log-scroll">
+        <table class="grid">
+          <thead><tr><th>时间</th><th>原文件名</th><th>新文件名</th><th>释文</th><th>朝代</th>
+            <th>作者</th><th>操作人</th><th>状态</th></tr></thead>
+          <tbody id="tab3-log-body"></tbody>
+        </table>
+      </div>
+      <p class="muted" id="tab3-log-path">—</p>
     </div>
   </div>
 </section>

@@ -7,10 +7,15 @@
   'use strict';
 
   var ST = {                     // 页面状态（单页应用的手写小 store）
-    user: null, root: '', navPath: '', curSubdir: '',
+    user: null, root: '', navPath: '',
     tab1: { rows: [], items: [], selected: null, options: [] },
     tab2: { sources: [], job: null, lastPath: '' },
-    tab3: { subdirs: [], files: [] }
+    // tab3：curSubdir / files / view(四档) / page(分页) / selected / 解析回填与本地记录
+    tab3: {
+      subdirs: [], files: [], curSubdir: '', view: '', page: 0, selected: '',
+      cfg: null, limits: null, isAdmin: false, els: {}, pageNames: [],
+      thumbStat: null, previewStat: null, lastCheck: null, versions: 0
+    }
   };
 
   // ───────────── 桥：就绪检测 + 调用 ─────────────
@@ -128,10 +133,21 @@
   // ───────────── 主界面 ─────────────
   function enterMain() {
     $('root-pill').textContent = '📁 ' + (ST.root || '—');
-    call('app_info').then(function (r) {
-      if (r && r.ok) { $('app-version').textContent = 'v' + r.version; }
-    });
+    call('app_info').then(function (r) { if (r && r.ok) { applyBrand(r); } });
     loadTab1();
+  }
+
+  // 标题/副标题：**单一真源**在后端（`api.APP_TITLE` / `APP_SLOGAN`），此处只做应用
+  function applyBrand(info) {
+    if (info.title) {
+      document.title = info.title;
+      // 注意：topbar 标题在 **内层 span**（外层还有 logo <img>，不能直接覆写 textContent）
+      ['brand-title', 'topbar-title-text'].forEach(function (id) {
+        if ($(id)) { $(id).textContent = info.title; }
+      });
+    }
+    if (info.slogan && $('brand-slogan')) { $('brand-slogan').textContent = info.slogan; }
+    if (info.version) { $('app-version').textContent = 'v' + info.version; }
   }
   function bindTabs() {
     Array.prototype.forEach.call(document.querySelectorAll('#tabs .tab'), function (btn) {
@@ -289,37 +305,290 @@
     });
   }
 
-  // ── tab3 ──
+  // ── tab3：3_Cropped_Tiff —— 缩略图网格（四档视图/分页/键盘导航）+ 选件解析 + 重命名 ──
+  // 口径来源：旧版 `webui/src/webui.py` L528–881（view_cfg：large 5×20 / medium 10×50 /
+  // small 20×100 / list 1×30；`-Z 150` 缩略图、`-Z 400` 大图、P/C/R 前缀 + 三字段新名预览）。
+  function t3cfg() {
+    var all = ST.tab3.cfg || {
+      large: { cols: 5, per_page: 20 }, medium: { cols: 10, per_page: 50 },
+      small: { cols: 20, per_page: 100 }, list: { cols: 1, per_page: 30 }
+    };
+    return all[ST.tab3.view] || all.medium;
+  }
+
   function loadTab3(subdir) {
-    call('tab3_list', { subdir: subdir || ST.curSubdir || '' }).then(function (r) {
+    setMsg('tab3-msg', '加载中…');
+    call('tab3_list', { subdir: subdir || ST.tab3.curSubdir || '' }).then(function (r) {
       if (!r || !r.ok) { setMsg('tab3-msg', (r && r.msg) || '加载失败', 'err'); return; }
-      ST.tab3.subdirs = r.subdirs || []; ST.curSubdir = r.current || '';
+      ST.tab3.subdirs = r.subdirs || [];
+      ST.tab3.files = r.files || [];
+      ST.tab3.curSubdir = r.current || '';
+      ST.tab3.cfg = r.view_cfg || ST.tab3.cfg;
+      ST.tab3.limits = r.limits || ST.tab3.limits || { shiwen_max: 10, author_max: 4 };
+      ST.tab3.isAdmin = !!r.is_admin;
+      ST.tab3.view = ST.tab3.view || r.view_default || 'medium';
+      ST.tab3.page = 0;
       $('tab3-template').textContent = r.template || '—';
-      var ul = $('tab3-subdirs'); ul.innerHTML = '';
-      if (!ST.tab3.subdirs.length) { ul.innerHTML = '<li class="muted">（3_Cropped_Tiff 下无子目录）</li>'; }
-      ST.tab3.subdirs.forEach(function (d) {
-        var li = document.createElement('li');
-        li.textContent = '📁 ' + d;
-        li.classList.toggle('active', d === ST.curSubdir);
-        li.addEventListener('click', function () { loadTab3(d); });
-        ul.appendChild(li);
-      });
-      $('tab3-title').textContent = '文件（' + ST.curSubdir + '，' + (r.files || []).length + ' 个）';
-      var tb = $('tab3-files'); tb.innerHTML = '';
-      (r.files || []).forEach(function (f) {
-        var tr = document.createElement('tr');
-        [f.name, f.size_mb, f.shiwen, f.dynasty, f.author, f.standard ? '✔' : '✘', f.mtime]
-          .forEach(function (v) { var td = document.createElement('td'); td.textContent = v; tr.appendChild(td); });
-        tb.appendChild(tr);
-      });
-      setMsg('tab3-msg', '');
+      $('btn-tab3-test').disabled = !ST.tab3.isAdmin;
+      $('btn-tab3-test').title = ST.tab3.isAdmin ? '' : '仅管理员可生成测试 TIFF';
+      $('tab3-shiwen-label').textContent = '印面释文（最多 ' + ST.tab3.limits.shiwen_max + ' 个汉字）';
+      $('tab3-author-label').textContent = '作者（最多 ' + ST.tab3.limits.author_max + ' 个汉字）';
+      var gone = ST.tab3.selected &&
+        !ST.tab3.files.some(function (f) { return f.name === ST.tab3.selected; });
+      if (gone) { ST.tab3.selected = ''; ST.tab3.previewStat = null; }
+      renderSubdirTabs();
+      renderGrid();
+      if (ST.tab3.selected) { selectFile(ST.tab3.selected, true); }
+      else if (gone) { $('tab3-noselect').hidden = false; $('tab3-edit').hidden = true; }
+      setMsg('tab3-msg', '共 ' + ST.tab3.files.length + ' 个 tiff（子目录：' + (ST.tab3.curSubdir || '—') + '）', 'ok');
+      renderLog();
     });
   }
+
+  function renderSubdirTabs() {
+    var box = $('tab3-subdirs');
+    box.innerHTML = '';
+    if (!ST.tab3.subdirs.length) {
+      box.innerHTML = '<span class="muted">（3_Cropped_Tiff 下无子目录）</span>';
+      return;
+    }
+    ST.tab3.subdirs.forEach(function (d) {
+      var b = document.createElement('button');
+      b.textContent = '📁 ' + d;
+      b.title = d;
+      b.classList.toggle('active', d === ST.tab3.curSubdir);
+      b.disabled = (d === ST.tab3.curSubdir);
+      b.addEventListener('click', function () { ST.tab3.selected = ''; loadTab3(d); });
+      box.appendChild(b);
+    });
+  }
+
+  function setView(v) {
+    if (!v) { return; }
+    ST.tab3.view = v; ST.tab3.page = 0;
+    renderGrid();
+  }
+
+  function renderGrid() {
+    var cfg = t3cfg();
+    var grid = $('tab3-grid');
+    grid.dataset.view = ST.tab3.view;
+    Array.prototype.forEach.call(document.querySelectorAll('#tab3-views .view-btn'), function (b) {
+      b.classList.toggle('active', b.dataset.view === ST.tab3.view);
+      b.disabled = (b.dataset.view === ST.tab3.view);
+    });
+    var per = cfg.per_page || 50, total = ST.tab3.files.length;
+    var pages = Math.max(1, Math.ceil(total / per));
+    if (ST.tab3.page > pages - 1) { ST.tab3.page = pages - 1; }
+    if (ST.tab3.page < 0) { ST.tab3.page = 0; }
+    var pageFiles = ST.tab3.files.slice(ST.tab3.page * per, ST.tab3.page * per + per);
+    ST.tab3.pageNames = pageFiles.map(function (f) { return f.name; });
+    ST.tab3.els = {};
+    grid.innerHTML = '';
+    if (!total) { grid.innerHTML = '<div class="muted">（该子目录下没有 tiff 文件）</div>'; }
+    pageFiles.forEach(function (f) {
+      var d = document.createElement('div');
+      d.className = 'thumb-item' + (f.name === ST.tab3.selected ? ' selected' : '');
+      d.dataset.name = f.name;
+      d.title = f.name + (f.standard ? '' : '（命名不合模板）');
+      var box = document.createElement('div');
+      box.className = 'thumb-box';
+      var ph = document.createElement('span');
+      ph.className = 'ph'; ph.textContent = '⏳';
+      box.appendChild(ph);
+      var nm = document.createElement('div');
+      nm.className = 'name' + (f.standard ? '' : ' bad');
+      nm.textContent = f.name.length > 22 ? f.name.slice(0, 22) + '…' : f.name;
+      d.appendChild(box); d.appendChild(nm);
+      d.addEventListener('click', function () { selectFile(f.name); });
+      grid.appendChild(d);
+      ST.tab3.els[f.name] = d;
+    });
+    $('tab3-pageinfo').textContent = '共 ' + total + ' 个文件 · 第 ' + (ST.tab3.page + 1) + '/' + pages +
+      ' 页 · 视图 ' + ST.tab3.view + '（' + cfg.cols + '×' + per + '）· ↑↓←→ 切换选中';
+    $('tab3-pageno').textContent = (ST.tab3.page + 1) + ' / ' + pages;
+    $('btn-tab3-prev').disabled = (ST.tab3.page === 0);
+    $('btn-tab3-next').disabled = (ST.tab3.page >= pages - 1);
+    loadThumbs();
+  }
+
+  function loadThumbs() {
+    var names = ST.tab3.pageNames || [];
+    if (!names.length || !ST.tab3.curSubdir) { return; }
+    var size = (ST.tab3.view === 'large') ? 150 : 96;
+    call('tab3_thumbs', { subdir: ST.tab3.curSubdir, names: names, size: size }).then(function (r) {
+      if (!r || !r.ok) { setMsg('tab3-msg', (r && r.msg) || '缩略图加载失败', 'err'); return; }
+      var got = 0;
+      names.forEach(function (n) {
+        var item = ST.tab3.els[n];
+        if (!item) { return; }
+        var uri = (r.thumbs || {})[n];
+        var box = item.querySelector('.thumb-box');
+        if (!uri) { box.innerHTML = '<span class="ph">🗎</span>'; return; }
+        var img = document.createElement('img');
+        img.alt = n; img.src = uri;
+        box.innerHTML = ''; box.appendChild(img);
+        got += 1;
+      });
+      ST.tab3.thumbStat = { asked: names.length, got: got,
+        failed: Object.keys(r.failed || {}).length, engine: r.engines || {}, size: r.size };
+      if (got < names.length) {
+        setMsg('tab3-msg', '缩略图：' + got + '/' + names.length + ' 出图（失败：' +
+          JSON.stringify(r.failed || {}) + '）', 'err');
+      }
+    });
+  }
+
+  function selectFile(name, silent) {
+    var f = null;
+    ST.tab3.files.forEach(function (x) { if (x.name === name) { f = x; } });
+    if (!f) { setMsg('tab3-msg', '文件不在当前列表：' + name, 'err'); return; }
+    ST.tab3.selected = name;
+    ST.tab3.versions += 1;
+    var ver = ST.tab3.versions;
+    Array.prototype.forEach.call(document.querySelectorAll('#tab3-grid .thumb-item'), function (el) {
+      el.classList.toggle('selected', el.dataset.name === name);
+    });
+    var el = ST.tab3.els[name];
+    if (el && el.scrollIntoView) { try { el.scrollIntoView({ block: 'nearest' }); } catch (e) { } }
+    $('tab3-noselect').hidden = true;
+    $('tab3-edit').hidden = false;
+    $('tab3-current').textContent = '当前文件：' + name + '（' + f.size_mb + ' MB · ' + f.mtime + '）';
+    if (!silent) { setMsg('tab3-rename-msg', ''); }   // 改完名后的自动刷新（silent）**不清**结果提示
+    var pv = $('tab3-preview');
+    pv.removeAttribute('src');
+    call('tab3_preview', { subdir: ST.tab3.curSubdir, name: name }).then(function (r) {
+      if (ver !== ST.tab3.versions) { return; }
+      if (r && r.ok) {
+        pv.src = r.data_uri;
+        ST.tab3.previewStat = { ok: true, size: r.size, bytes: r.bytes, engine: r.engine };
+      } else {
+        ST.tab3.previewStat = { ok: false, msg: (r && r.msg) || '预览失败' };
+      }
+    });
+    call('tab3_parse', { subdir: ST.tab3.curSubdir, name: name }).then(function (r) {
+      if (ver !== ST.tab3.versions || !r || !r.ok) { return; }
+      var fl = r.fields || {};
+      $('tab3-shiwen').value = fl.shiwen || '';
+      $('tab3-dynasty').value = fl.dynasty || '';
+      $('tab3-author').value = fl.author || '';
+      setMsg('tab3-parsed', r.standard
+        ? ('已自动解析：第 ' + r.page + ' 页 · 第 ' + r.col + ' 列 · 第 ' + r.row + ' 行（前缀 ' + r.prefix + '）')
+        : (r.note || '文件名非标准模板，请手动填写'), r.standard ? 'ok' : 'err');
+      doCheck();
+    });
+    if (!silent) { $('tab3-msg').textContent = '已选中：' + name; }
+  }
+
+  var t3Timer = null;
+  function checkFields() {                    // 输入即校验（120 ms 去抖，避免桥被打爆）
+    if (t3Timer) { clearTimeout(t3Timer); }
+    t3Timer = setTimeout(doCheck, 120);
+  }
+
+  function doCheck() {
+    var name = ST.tab3.selected;
+    if (!name) { return; }
+    call('tab3_check', {
+      subdir: ST.tab3.curSubdir, name: name,
+      shiwen: $('tab3-shiwen').value, dynasty: $('tab3-dynasty').value,
+      author: $('tab3-author').value
+    }).then(function (r) {
+      if (!r || !r.ok) {
+        $('tab3-newname').textContent = '—';
+        $('btn-tab3-rename').disabled = true;
+        setMsg('tab3-valid', (r && r.msg) || '校验失败', 'err');
+        return;
+      }
+      var lim = r.limits || ST.tab3.limits || { shiwen_max: 10, author_max: 4 };
+      $('tab3-counts').textContent = '释文 ' + r.counts.shiwen + '/' + lim.shiwen_max +
+        '　作者 ' + r.counts.author + '/' + lim.author_max;
+      $('tab3-newname').textContent = r.new_name || '—';
+      $('btn-tab3-rename').disabled = !r.can_rename;
+      setMsg('tab3-valid', r.can_rename ? '' : r.reason, r.can_rename ? 'ok' : 'err');
+      ST.tab3.lastCheck = r;
+    });
+  }
+
+  function doRenameTab3() {
+    var name = ST.tab3.selected;
+    if (!name) { setMsg('tab3-rename-msg', '请先选择文件', 'err'); return; }
+    $('btn-tab3-rename').disabled = true;
+    setMsg('tab3-rename-msg', '正在重命名…');
+    call('tab3_rename', {
+      subdir: ST.tab3.curSubdir, name: name,
+      shiwen: $('tab3-shiwen').value, dynasty: $('tab3-dynasty').value,
+      author: $('tab3-author').value
+    }).then(function (r) {
+      if (r && r.ok) {
+        ST.tab3.selected = r.new_name;                 // 刷新后仍指向改名后的文件
+        setMsg('tab3-rename-msg', (r.msg || '') + '　[cloud_log=' + r.cloud_log +
+          ' / cloud_lock=' + r.cloud_lock + '：外部同步未接入]', 'ok');
+        toast('已重命名：' + r.new_name);
+        loadTab3(ST.tab3.curSubdir);                   // 刷新列表 + 选中 + 本地记录
+      } else {
+        setMsg('tab3-rename-msg', (r && r.msg) || '重命名失败', 'err');
+        doCheck();
+      }
+    });
+  }
+
+  function renderLog() {
+    call('tab3_log', { limit: 20 }).then(function (r) {
+      var tb = $('tab3-log-body');
+      tb.innerHTML = '';
+      if (!r || !r.ok) { $('tab3-log-path').textContent = (r && r.msg) || '本地记录读取失败'; return; }
+      var rows = (r.rows || []).slice().reverse();
+      rows.forEach(function (rec) {
+        var tr = document.createElement('tr');
+        [rec.timestamp, rec.old_filename, rec.new_filename, rec['印面释文'], rec['朝代'],
+          rec['作者'], rec.operator, rec.status].forEach(function (v) {
+            var td = document.createElement('td');
+            td.textContent = (v === undefined || v === null) ? '' : String(v);
+            tr.appendChild(td);
+          });
+        tb.appendChild(tr);
+      });
+      if (!rows.length) { tb.innerHTML = '<tr><td colspan="8" class="muted">（本地暂无记录）</td></tr>'; }
+      $('tab3-log-path').textContent = '本地记录：' + r.path + '（' + r.count +
+        ' 条）·日志同步（腾讯文档）=' + r.cloud_log + ' · 云盘锁=' + r.cloud_lock;
+      $('tab3-log-badge').textContent = '日志同步（腾讯文档）：' +
+        (r.cloud_log === 'not_connected' ? '暂未接入' : r.cloud_log) + ' ／ 云盘锁：' +
+        (r.cloud_lock === 'not_connected' ? '暂未接入' : r.cloud_lock);
+    });
+  }
+
+  // 键盘导航（旧版四键均 ±1；新版按视图列数做**几何**导航：list 档列数=1 ⇒ 与旧版等价）
+  function tab3Keydown(e) {
+    if (!document.querySelector('.panel.active[data-panel="3_Cropped_Tiff"]')) { return; }
+    var tag = (document.activeElement && document.activeElement.tagName || '').toLowerCase();
+    if (tag === 'input' || tag === 'textarea' || tag === 'select') { return; }  // 输入框里不抢键
+    var cfg = t3cfg();
+    var n = ST.tab3.files.length;
+    if (!n) { return; }
+    var step;
+    if (e.key === 'ArrowRight') { step = 1; }
+    else if (e.key === 'ArrowLeft') { step = -1; }
+    else if (e.key === 'ArrowDown') { step = (cfg.cols > 1 ? cfg.cols : 1); }
+    else if (e.key === 'ArrowUp') { step = (cfg.cols > 1 ? -cfg.cols : -1); }
+    else { return; }
+    var idx = -1;
+    ST.tab3.files.forEach(function (f, i) { if (f.name === ST.tab3.selected) { idx = i; } });
+    var next = (idx < 0) ? 0 : idx + step;
+    if (next < 0) { next = 0; }
+    if (next > n - 1) { next = n - 1; }
+    e.preventDefault();
+    var wantPage = Math.floor(next / (cfg.per_page || 50));
+    if (wantPage !== ST.tab3.page) { ST.tab3.page = wantPage; renderGrid(); }   // 选中项跟随翻页
+    selectFile(ST.tab3.files[next].name);
+  }
+
   function genTestTab3() {
-    if (!ST.curSubdir) { setMsg('tab3-msg', '请先选择子目录', 'err'); return; }
-    call('tab3_generate_test', { subdir: ST.curSubdir }).then(function (r) {
+    if (!ST.tab3.curSubdir) { setMsg('tab3-msg', '请先选择子目录', 'err'); return; }
+    if (!ST.tab3.isAdmin) { setMsg('tab3-msg', '仅管理员可生成测试 TIFF', 'err'); return; }
+    call('tab3_generate_test', { subdir: ST.tab3.curSubdir }).then(function (r) {
       setMsg('tab3-msg', (r && r.msg) || '', r && r.ok ? 'ok' : 'err');
-      if (r && r.ok) loadTab3(ST.curSubdir);
+      if (r && r.ok) { loadTab3(ST.tab3.curSubdir); }
     });
   }
 
@@ -336,8 +605,21 @@
     $('btn-tab2-generate').addEventListener('click', generateTab2);
     $('btn-tab2-cancel').addEventListener('click', cancelTab2);
     $('btn-tab2-open').addEventListener('click', openInFinder);
-    $('btn-tab3-refresh').addEventListener('click', function () { loadTab3(ST.curSubdir); });
+    $('btn-tab3-refresh').addEventListener('click', function () { loadTab3(ST.tab3.curSubdir); });
     $('btn-tab3-test').addEventListener('click', genTestTab3);
+    // tab3：视图四档 / 分页 / 三输入框即时校验 / 执行重命名 / 本地记录
+    Array.prototype.forEach.call(document.querySelectorAll('#tab3-views .view-btn'), function (b) {
+      b.addEventListener('click', function () { setView(b.dataset.view); });
+    });
+    $('btn-tab3-prev').addEventListener('click', function () {
+      if (ST.tab3.page > 0) { ST.tab3.page -= 1; renderGrid(); }
+    });
+    $('btn-tab3-next').addEventListener('click', function () { ST.tab3.page += 1; renderGrid(); });
+    ['tab3-shiwen', 'tab3-dynasty', 'tab3-author'].forEach(function (id) {
+      $(id).addEventListener('input', checkFields);
+    });
+    $('btn-tab3-rename').addEventListener('click', doRenameTab3);
+    document.addEventListener('keydown', tab3Keydown);
     Array.prototype.forEach.call(document.querySelectorAll('[data-action="logout"]'), function (b) {
       b.addEventListener('click', function () {
         call('logout').then(function () { ST.user = null; ST.root = ''; show('view-login'); });

@@ -1,0 +1,861 @@
+{
+  "schema": "feicui.webui.domtest.v1",
+  "at": "2026-10-17T07:08:16",
+  "python": "/Users/kevin/bistro/feicui/venv/bin/python",
+  "window_title": "「斐萃」玺印解析任务台 · 本地电脑版",
+  "app_title": "「斐萃」玺印解析任务台 · 本地电脑版",
+  "counts": {
+    "PASS": 25,
+    "FAIL": 0
+  },
+  "fixture": {
+    "scratch": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-7clbtljt",
+    "fixture": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-7clbtljt/feicui",
+    "data_dir": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-7clbtljt/data",
+    "files": 29,
+    "admin": "ji",
+    "login_ok": true,
+    "verify_msg": "目录校验通过"
+  },
+  "checks": [
+    {
+      "check": "dom/loaded_title_and_brand",
+      "status": "PASS",
+      "detail": "document.title='「斐萃」玺印解析任务台 · 本地电脑版' brand='「斐萃」玺印解析任务台 · 本地电脑版 | 「斐萃」玺印解析任务台 · 本地电脑版'（真源 api.APP_TITLE）"
+    },
+    {
+      "check": "dom/three_tabs_rendered",
+      "status": "PASS",
+      "detail": "tabs=['1_Original_PDF', '2_HighRes_PDF', '3_Cropped_Tiff'] main_active=True bridge=True"
+    },
+    {
+      "check": "dom/tab3_nodes_present",
+      "status": "PASS",
+      "detail": "nodes={'grid': True, 'subdirs': True, 'view_btns': 4, 'pageinfo': True, 'pager': True, 'edit_pane': True, 'inputs': 3, 'counts': True, 'newname': True, 'rename_btn': True, 'preview': True, 'log_body': True, 'log_badge': True}"
+    },
+    {
+      "check": "dom/cloud_api_note_visible",
+      "status": "PASS",
+      "detail": "编辑区提示='⚠️ 日志同步（腾讯文档）／云盘锁 暂未接入：本次只写本地记录\\n            webui/var/rename' 日志徽标='日志同步（腾讯文档）/ 云盘锁暂未接入'"
+    },
+    {
+      "check": "dom/brand_logo_really_loaded",
+      "status": "PASS",
+      "detail": "品牌区 img: complete=True naturalWidth×Height=480×480 真实盒=56×56px（display=block，量完已还原视图） src='feicui.png' currentSrc='http://127.0.0.1:56690/feicui.png'；顶栏 img: 480×480 盒=20×20px"
+    },
+    {
+      "check": "dom/icon_links_and_server_root",
+      "status": "PASS",
+      "detail": "rel=icon href='feicui.png' abs='http://127.0.0.1:56690/feicui.png' svg link=True apple-touch=True page_url='http://127.0.0.1:56690/index.html' ⇒ server 根＝ui/"
+    },
+    {
+      "check": "dom/out_of_root_path_unreachable",
+      "status": "PASS",
+      "detail": "`../assets/feicui.png` 探针结果='error(404/不可达)'（故图标**复制**进 ui/，与「assets 用复制不用软链」口径一致）"
+    },
+    {
+      "check": "dom/tab3_thumb_grid_rendered",
+      "status": "PASS",
+      "detail": "子目录 ['📁 A特例*', '📁 分页B'] items=4 imgs=4 loaded=4 dims=['96x96', '96x96', '96x96']"
+    },
+    {
+      "check": "dom/thumbs_are_inline_png_datauri",
+      "status": "PASS",
+      "detail": "img.src 头=data:image/png;base64,iV…（3_Cropped_Tiff 在 ui/ 静态根外 ⇒ 走 base64，与旧版一致）"
+    },
+    {
+      "check": "dom/grid_view_cfg_shown",
+      "status": "PASS",
+      "detail": "pageinfo='共 4 个文件 · 第 1/1 页 · 视图 medium（10×50）· ↑↓←→ 切换选中' 网格列数=10"
+    },
+    {
+      "check": "dom/four_views_cols",
+      "status": "PASS",
+      "detail": "四档实测 cols/items/loaded={\"large\": {\"cols\": 5, \"items\": 4, \"loaded\": 4, \"view\": \"large\", \"pageno\": \"1 / 1\", \"src_ok\": true}, \"medium\": {\"cols\": 10, \"items\": 4, \"loaded\": 4, \"view\": \"medium\", \"pageno\": \"1 / 1\", \"src_ok\": true}, \"small\": {\"cols\": 20, \"items\": 4, \"loaded\": 4, \"view\": \"small\", \"pageno\": \"1 / 1\", \"src_ok\": true}, \"list\": {\"cols\": 1, \"items\": 4, \"loaded\": 4, \"view\": \"list\", \"pageno\": \"1 / 1\", \"src_ok\": true}}"
+    },
+    {
+      "check": "dom/select_file_shows_panel_prefilled",
+      "status": "PASS",
+      "detail": "edit 显示=True 三输入框='长乐未央'/'汉'/'陈巨来' 解析提示='已自动解析：第 1 页 · 第 2 列 · 第 3 行（前缀 P001-C2-R3-）'"
+    },
+    {
+      "check": "dom/big_preview_rendered",
+      "status": "PASS",
+      "detail": "大图 dims=400x400 src 头=data:image/png;base64,iV…"
+    },
+    {
+      "check": "dom/noop_name_greys_button",
+      "status": "PASS",
+      "detail": "新名='P001-C2-R3-长乐未央-汉-陈巨来.tiff' 按钮禁用=True 理由='文件名未变化'"
+    },
+    {
+      "check": "dom/over_limit_blocks_rename",
+      "status": "PASS",
+      "detail": "计数='释文 11/10\\u3000作者 3/4' 错误原文='印面释文最多 10 个汉字，当前 11' 新名='P001-C2-R3-一二三四五六七八九十十-汉-陈巨来.tiff'"
+    },
+    {
+      "check": "dom/conflict_rejected_in_ui",
+      "status": "PASS",
+      "detail": "新名='P005-C1-R1-乙-汉-丙.tiff' 错误原文='同目录已存在：P005-C1-R1-乙-汉-丙.tiff' 按钮禁用=True"
+    },
+    {
+      "check": "dom/valid_state_enables_button",
+      "status": "PASS",
+      "detail": "新名预览='清心-宋-齐白石.tiff' 按钮可点=True 计数='释文 2/10\\u3000作者 3/4'"
+    },
+    {
+      "check": "dom/rename_via_button_refreshed_grid",
+      "status": "PASS",
+      "detail": "选中='清心-宋-齐白石.tiff' names=['P001-C2-R3-长乐未央-汉-陈巨来.tiff', 'P005-C1-R1-乙-汉-丙.tiff', 'P005-C1-R1-待定-汉-丙.tiff', '清心-宋-齐白石.tiff'] 缩略图 loaded=4"
+    },
+    {
+      "check": "dom/rename_msg_marks_cloud_not_connected",
+      "status": "PASS",
+      "detail": "rename 提示（抓到的原文）='✅ 改名完成，本地记录已写入\\u3000[cloud_log=not_connected / cloud_lock=not_connected：外部同步未接入]'"
+    },
+    {
+      "check": "dom/local_log_row_visible",
+      "status": "PASS",
+      "detail": "行数=1 首行=['2026-10-17T07:08:00', '未命名副本.tiff', '清心-宋-齐白石.tiff', '清心', '宋', '齐白石', 'ji', 'success'] 路径='本地记录：/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-7clbtljt/data/var/ren'"
+    },
+    {
+      "check": "dom/pagination_20_per_page",
+      "status": "PASS",
+      "detail": "第1页 items=20 pageno=1 / 2 / 第2页 items=5 pageno=2 / 2 next禁用=True"
+    },
+    {
+      "check": "dom/keyboard_nav_moves_selection",
+      "status": "PASS",
+      "detail": "起点='P001-C1-R2-长乐-汉-陈巨来.tiff'（idx 0）→→ 'P002-C1-R2-长乐-汉-陈巨来.tiff'（idx 1，右=+1） →↓ 'P007-C1-R2-长乐-汉-陈巨来.tiff'（idx 6，large 档列数 5 ⇒ +5；list 档列数 1 ⇒ 等价旧版 ±1）"
+    },
+    {
+      "check": "dom/generate_test_tiff_button",
+      "status": "PASS",
+      "detail": "管理员按钮 disabled=False items 4→5 msg='共 5 个 tiff（子目录：A特例）'"
+    },
+    {
+      "check": "disk/renamed_and_logged",
+      "status": "PASS",
+      "detail": "改名后文件存在=True 旧名已消失=True 本地记录=1 条 末条={'old_filename': '未命名副本.tiff', 'new_filename': '清心-宋-齐白石.tiff', 'operator': 'ji', '印面释文': '清心', '朝代': '宋', '作者': '齐白石', 'file_md5': '2e658cf3eade4d35a21d1752249d7779', 'status': 'success', 'cloud_log': 'not_connected', 'cloud_lock': 'not_connected'}"
+    },
+    {
+      "check": "disk/conflict_left_both_files",
+      "status": "PASS",
+      "detail": "A特例 现有文件=['P001-C2-R3-长乐未央-汉-陈巨来.tiff', 'P002-C1-R5-清心-唐-陈巨来.tiff', 'P005-C1-R1-乙-汉-丙.tiff', 'P005-C1-R1-待定-汉-丙.tiff', '清心-宋-齐白石.tiff']"
+    }
+  ],
+  "dom": {
+    "01_initial": {
+      "ready": "complete",
+      "bridge": true,
+      "title": "「斐萃」玺印解析任务台 · 本地电脑版",
+      "main_active": true,
+      "tabs": [
+        "1_Original_PDF",
+        "2_HighRes_PDF",
+        "3_Cropped_Tiff"
+      ],
+      "brand": "「斐萃」玺印解析任务台 · 本地电脑版 | 「斐萃」玺印解析任务台 · 本地电脑版",
+      "nodes": {
+        "grid": true,
+        "subdirs": true,
+        "view_btns": 4,
+        "pageinfo": true,
+        "pager": true,
+        "edit_pane": true,
+        "inputs": 3,
+        "counts": true,
+        "newname": true,
+        "rename_btn": true,
+        "preview": true,
+        "log_body": true,
+        "log_badge": true
+      },
+      "notice_in_edit": "⚠️ 日志同步（腾讯文档）／云盘锁 暂未接入：本次只写本地记录\n            webui/var/rename_log.jsonl（不写云日志、不取云锁）",
+      "badge_text": "日志同步（腾讯文档）/ 云盘锁暂未接入",
+      "body_len": 516,
+      "grid_items": 0,
+      "grid_imgs_loaded": 0
+    },
+    "00_logo": {
+      "brand_logo": {
+        "complete": true,
+        "nw": 480,
+        "nh": 480,
+        "src": "feicui.png",
+        "cur_src": "http://127.0.0.1:56690/feicui.png"
+      },
+      "topbar_logo": {
+        "complete": true,
+        "nw": 480,
+        "nh": 480,
+        "src": "feicui.png",
+        "cur_src": "http://127.0.0.1:56690/feicui.png"
+      },
+      "brand_logo_visible": false,
+      "icon_link_href": "feicui.png",
+      "icon_link_abs": "http://127.0.0.1:56690/feicui.png",
+      "svg_icon_link": true,
+      "apple_touch_link": true,
+      "page_url": "http://127.0.0.1:56690/index.html",
+      "out_of_root_probe": "error(404/不可达)"
+    },
+    "00b_brand_logo_box": {
+      "w": 56,
+      "h": 56,
+      "display": "block",
+      "view_login_active_after": false
+    },
+    "00c_topbar_logo_box": {
+      "w": 20,
+      "h": 20
+    },
+    "02_grid_default": {
+      "view": "medium",
+      "cols": 10,
+      "view_btns": [
+        "large",
+        "medium*",
+        "small",
+        "list"
+      ],
+      "items": 4,
+      "names": [
+        "P001-C2-R3-长乐未央-汉-陈巨来.tiff",
+        "P005-C1-R1-乙-汉-丙.tiff",
+        "P005-C1-R1-待定-汉-丙.tiff",
+        "未命名副本.tiff"
+      ],
+      "imgs": 4,
+      "imgs_loaded": 4,
+      "img_src_head": "data:image/png;base64,iV",
+      "img_dims": [
+        "96x96",
+        "96x96",
+        "96x96"
+      ],
+      "selected": "",
+      "pageinfo": "共 4 个文件 · 第 1/1 页 · 视图 medium（10×50）· ↑↓←→ 切换选中",
+      "pageno": "1 / 1",
+      "prev_disabled": true,
+      "next_disabled": true,
+      "subdir_buttons": [
+        "📁 A特例*",
+        "📁 分页B"
+      ],
+      "msg": "共 4 个 tiff（子目录：A特例）"
+    },
+    "03_view_large": {
+      "view": "large",
+      "cols": 5,
+      "view_btns": [
+        "large*",
+        "medium",
+        "small",
+        "list"
+      ],
+      "items": 4,
+      "names": [
+        "P001-C2-R3-长乐未央-汉-陈巨来.tiff",
+        "P005-C1-R1-乙-汉-丙.tiff",
+        "P005-C1-R1-待定-汉-丙.tiff",
+        "未命名副本.tiff"
+      ],
+      "imgs": 4,
+      "imgs_loaded": 4,
+      "img_src_head": "data:image/png;base64,iV",
+      "img_dims": [
+        "150x150",
+        "150x150",
+        "150x150"
+      ],
+      "selected": "",
+      "pageinfo": "共 4 个文件 · 第 1/1 页 · 视图 large（5×20）· ↑↓←→ 切换选中",
+      "pageno": "1 / 1",
+      "prev_disabled": true,
+      "next_disabled": true,
+      "subdir_buttons": [
+        "📁 A特例*",
+        "📁 分页B"
+      ],
+      "msg": "共 4 个 tiff（子目录：A特例）"
+    },
+    "03_view_medium": {
+      "view": "medium",
+      "cols": 10,
+      "view_btns": [
+        "large",
+        "medium*",
+        "small",
+        "list"
+      ],
+      "items": 4,
+      "names": [
+        "P001-C2-R3-长乐未央-汉-陈巨来.tiff",
+        "P005-C1-R1-乙-汉-丙.tiff",
+        "P005-C1-R1-待定-汉-丙.tiff",
+        "未命名副本.tiff"
+      ],
+      "imgs": 4,
+      "imgs_loaded": 4,
+      "img_src_head": "data:image/png;base64,iV",
+      "img_dims": [
+        "96x96",
+        "96x96",
+        "96x96"
+      ],
+      "selected": "",
+      "pageinfo": "共 4 个文件 · 第 1/1 页 · 视图 medium（10×50）· ↑↓←→ 切换选中",
+      "pageno": "1 / 1",
+      "prev_disabled": true,
+      "next_disabled": true,
+      "subdir_buttons": [
+        "📁 A特例*",
+        "📁 分页B"
+      ],
+      "msg": "共 4 个 tiff（子目录：A特例）"
+    },
+    "03_view_small": {
+      "view": "small",
+      "cols": 20,
+      "view_btns": [
+        "large",
+        "medium",
+        "small*",
+        "list"
+      ],
+      "items": 4,
+      "names": [
+        "P001-C2-R3-长乐未央-汉-陈巨来.tiff",
+        "P005-C1-R1-乙-汉-丙.tiff",
+        "P005-C1-R1-待定-汉-丙.tiff",
+        "未命名副本.tiff"
+      ],
+      "imgs": 4,
+      "imgs_loaded": 4,
+      "img_src_head": "data:image/png;base64,iV",
+      "img_dims": [
+        "96x96",
+        "96x96",
+        "96x96"
+      ],
+      "selected": "",
+      "pageinfo": "共 4 个文件 · 第 1/1 页 · 视图 small（20×100）· ↑↓←→ 切换选中",
+      "pageno": "1 / 1",
+      "prev_disabled": true,
+      "next_disabled": true,
+      "subdir_buttons": [
+        "📁 A特例*",
+        "📁 分页B"
+      ],
+      "msg": "共 4 个 tiff（子目录：A特例）"
+    },
+    "03_view_list": {
+      "view": "list",
+      "cols": 1,
+      "view_btns": [
+        "large",
+        "medium",
+        "small",
+        "list*"
+      ],
+      "items": 4,
+      "names": [
+        "P001-C2-R3-长乐未央-汉-陈巨来.tiff",
+        "P005-C1-R1-乙-汉-丙.tiff",
+        "P005-C1-R1-待定-汉-丙.tiff",
+        "未命名副本.tiff"
+      ],
+      "imgs": 4,
+      "imgs_loaded": 4,
+      "img_src_head": "data:image/png;base64,iV",
+      "img_dims": [
+        "96x96",
+        "96x96",
+        "96x96"
+      ],
+      "selected": "",
+      "pageinfo": "共 4 个文件 · 第 1/1 页 · 视图 list（1×30）· ↑↓←→ 切换选中",
+      "pageno": "1 / 1",
+      "prev_disabled": true,
+      "next_disabled": true,
+      "subdir_buttons": [
+        "📁 A特例*",
+        "📁 分页B"
+      ],
+      "msg": "共 4 个 tiff（子目录：A特例）"
+    },
+    "04_after_select": {
+      "edit_hidden": false,
+      "noselect_hidden": true,
+      "current": "当前文件：P001-C2-R3-长乐未央-汉-陈巨来.tiff（0.25 MB · 2026-10-17 07:07）",
+      "shiwen": "长乐未央",
+      "dynasty": "汉",
+      "author": "陈巨来",
+      "counts": "释文 4/10　作者 3/4",
+      "newname": "P001-C2-R3-长乐未央-汉-陈巨来.tiff",
+      "valid": "文件名未变化",
+      "rename_disabled": true,
+      "parsed": "已自动解析：第 1 页 · 第 2 列 · 第 3 行（前缀 P001-C2-R3-）",
+      "preview_src_head": "data:image/png;base64,iV",
+      "preview_loaded": true,
+      "preview_dims": "400x400",
+      "rename_msg": ""
+    },
+    "05_over_limit": {
+      "edit_hidden": false,
+      "noselect_hidden": true,
+      "current": "当前文件：P001-C2-R3-长乐未央-汉-陈巨来.tiff（0.25 MB · 2026-10-17 07:07）",
+      "shiwen": "一二三四五六七八九十十",
+      "dynasty": "汉",
+      "author": "陈巨来",
+      "counts": "释文 11/10　作者 3/4",
+      "newname": "P001-C2-R3-一二三四五六七八九十十-汉-陈巨来.tiff",
+      "valid": "印面释文最多 10 个汉字，当前 11",
+      "rename_disabled": true,
+      "parsed": "已自动解析：第 1 页 · 第 2 列 · 第 3 行（前缀 P001-C2-R3-）",
+      "preview_src_head": "data:image/png;base64,iV",
+      "preview_loaded": true,
+      "preview_dims": "400x400",
+      "rename_msg": ""
+    },
+    "06_conflict": {
+      "edit_hidden": false,
+      "noselect_hidden": true,
+      "current": "当前文件：P005-C1-R1-待定-汉-丙.tiff（0.25 MB · 2026-10-17 07:07）",
+      "shiwen": "乙",
+      "dynasty": "汉",
+      "author": "丙",
+      "counts": "释文 1/10　作者 1/4",
+      "newname": "P005-C1-R1-乙-汉-丙.tiff",
+      "valid": "同目录已存在：P005-C1-R1-乙-汉-丙.tiff",
+      "rename_disabled": true,
+      "parsed": "已自动解析：第 5 页 · 第 1 列 · 第 1 行（前缀 P005-C1-R1-）",
+      "preview_src_head": "data:image/png;base64,iV",
+      "preview_loaded": true,
+      "preview_dims": "400x400",
+      "rename_msg": ""
+    },
+    "07_ready_to_rename": {
+      "edit_hidden": false,
+      "noselect_hidden": true,
+      "current": "当前文件：未命名副本.tiff（0.25 MB · 2026-10-17 07:07）",
+      "shiwen": "清心",
+      "dynasty": "宋",
+      "author": "齐白石",
+      "counts": "释文 2/10　作者 3/4",
+      "newname": "清心-宋-齐白石.tiff",
+      "valid": "",
+      "rename_disabled": false,
+      "parsed": "文件名非标准模板 ⇒ 前缀留空，请手动填写（与旧版一致）",
+      "preview_src_head": "data:image/png;base64,iV",
+      "preview_loaded": true,
+      "preview_dims": "400x400",
+      "rename_msg": ""
+    },
+    "08_after_rename_grid": {
+      "view": "list",
+      "cols": 1,
+      "view_btns": [
+        "large",
+        "medium",
+        "small",
+        "list*"
+      ],
+      "items": 4,
+      "names": [
+        "P001-C2-R3-长乐未央-汉-陈巨来.tiff",
+        "P005-C1-R1-乙-汉-丙.tiff",
+        "P005-C1-R1-待定-汉-丙.tiff",
+        "清心-宋-齐白石.tiff"
+      ],
+      "imgs": 4,
+      "imgs_loaded": 4,
+      "img_src_head": "data:image/png;base64,iV",
+      "img_dims": [
+        "96x96",
+        "96x96",
+        "96x96"
+      ],
+      "selected": "清心-宋-齐白石.tiff",
+      "pageinfo": "共 4 个文件 · 第 1/1 页 · 视图 list（1×30）· ↑↓←→ 切换选中",
+      "pageno": "1 / 1",
+      "prev_disabled": true,
+      "next_disabled": true,
+      "subdir_buttons": [
+        "📁 A特例*",
+        "📁 分页B"
+      ],
+      "msg": "共 4 个 tiff（子目录：A特例）"
+    },
+    "09_after_rename_panel": {
+      "edit_hidden": false,
+      "noselect_hidden": true,
+      "current": "当前文件：清心-宋-齐白石.tiff（0.25 MB · 2026-10-17 07:07）",
+      "shiwen": "",
+      "dynasty": "",
+      "author": "",
+      "counts": "释文 0/10　作者 0/4",
+      "newname": "--.tiff",
+      "valid": "印面释文不能为空",
+      "rename_disabled": true,
+      "parsed": "文件名非标准模板 ⇒ 前缀留空，请手动填写（与旧版一致）",
+      "preview_src_head": "data:image/png;base64,iV",
+      "preview_loaded": true,
+      "preview_dims": "400x400",
+      "rename_msg": "✅ 改名完成，本地记录已写入　[cloud_log=not_connected / cloud_lock=not_connected：外部同步未接入]"
+    },
+    "10_local_log": {
+      "rows": 1,
+      "first": [
+        "2026-10-17T07:08:00",
+        "未命名副本.tiff",
+        "清心-宋-齐白石.tiff",
+        "清心",
+        "宋",
+        "齐白石",
+        "ji",
+        "success"
+      ],
+      "path": "本地记录：/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-7clbtljt/data/var/rename_log.jsonl（1 条）·日志同步（腾讯文档）=not_connected · 云盘锁=not_connected",
+      "badge": "日志同步（腾讯文档）：暂未接入 ／ 云盘锁：暂未接入"
+    },
+    "11_page1": {
+      "view": "large",
+      "cols": 5,
+      "view_btns": [
+        "large*",
+        "medium",
+        "small",
+        "list"
+      ],
+      "items": 20,
+      "names": [
+        "P001-C1-R2-长乐-汉-陈巨来.tiff",
+        "P002-C1-R2-长乐-汉-陈巨来.tiff",
+        "P003-C1-R2-长乐-汉-陈巨来.tiff",
+        "P004-C1-R2-长乐-汉-陈巨来.tiff",
+        "P005-C1-R2-长乐-汉-陈巨来.tiff",
+        "P006-C1-R2-长乐-汉-陈巨来.tiff",
+        "P007-C1-R2-长乐-汉-陈巨来.tiff",
+        "P008-C1-R2-长乐-汉-陈巨来.tiff",
+        "P009-C1-R2-长乐-汉-陈巨来.tiff",
+        "P010-C1-R2-长乐-汉-陈巨来.tiff",
+        "P011-C1-R2-长乐-汉-陈巨来.tiff",
+        "P012-C1-R2-长乐-汉-陈巨来.tiff",
+        "P013-C1-R2-长乐-汉-陈巨来.tiff",
+        "P014-C1-R2-长乐-汉-陈巨来.tiff",
+        "P015-C1-R2-长乐-汉-陈巨来.tiff",
+        "P016-C1-R2-长乐-汉-陈巨来.tiff",
+        "P017-C1-R2-长乐-汉-陈巨来.tiff",
+        "P018-C1-R2-长乐-汉-陈巨来.tiff",
+        "P019-C1-R2-长乐-汉-陈巨来.tiff",
+        "P020-C1-R2-长乐-汉-陈巨来.tiff"
+      ],
+      "imgs": 20,
+      "imgs_loaded": 20,
+      "img_src_head": "data:image/png;base64,iV",
+      "img_dims": [
+        "150x150",
+        "150x150",
+        "150x150"
+      ],
+      "selected": "",
+      "pageinfo": "共 25 个文件 · 第 1/2 页 · 视图 large（5×20）· ↑↓←→ 切换选中",
+      "pageno": "1 / 2",
+      "prev_disabled": true,
+      "next_disabled": false,
+      "subdir_buttons": [
+        "📁 A特例",
+        "📁 分页B*"
+      ],
+      "msg": "缩略图：20/25 出图（失败：{}）"
+    },
+    "12_page2": {
+      "view": "large",
+      "cols": 5,
+      "view_btns": [
+        "large*",
+        "medium",
+        "small",
+        "list"
+      ],
+      "items": 5,
+      "names": [
+        "P021-C1-R2-长乐-汉-陈巨来.tiff",
+        "P022-C1-R2-长乐-汉-陈巨来.tiff",
+        "P023-C1-R2-长乐-汉-陈巨来.tiff",
+        "P024-C1-R2-长乐-汉-陈巨来.tiff",
+        "P025-C1-R2-长乐-汉-陈巨来.tiff"
+      ],
+      "imgs": 5,
+      "imgs_loaded": 5,
+      "img_src_head": "data:image/png;base64,iV",
+      "img_dims": [
+        "150x150",
+        "150x150",
+        "150x150"
+      ],
+      "selected": "",
+      "pageinfo": "共 25 个文件 · 第 2/2 页 · 视图 large（5×20）· ↑↓←→ 切换选中",
+      "pageno": "2 / 2",
+      "prev_disabled": false,
+      "next_disabled": true,
+      "subdir_buttons": [
+        "📁 A特例",
+        "📁 分页B*"
+      ],
+      "msg": "缩略图：20/25 出图（失败：{}）"
+    },
+    "13_kbd_before": {
+      "view": "large",
+      "cols": 5,
+      "view_btns": [
+        "large*",
+        "medium",
+        "small",
+        "list"
+      ],
+      "items": 20,
+      "names": [
+        "P001-C1-R2-长乐-汉-陈巨来.tiff",
+        "P002-C1-R2-长乐-汉-陈巨来.tiff",
+        "P003-C1-R2-长乐-汉-陈巨来.tiff",
+        "P004-C1-R2-长乐-汉-陈巨来.tiff",
+        "P005-C1-R2-长乐-汉-陈巨来.tiff",
+        "P006-C1-R2-长乐-汉-陈巨来.tiff",
+        "P007-C1-R2-长乐-汉-陈巨来.tiff",
+        "P008-C1-R2-长乐-汉-陈巨来.tiff",
+        "P009-C1-R2-长乐-汉-陈巨来.tiff",
+        "P010-C1-R2-长乐-汉-陈巨来.tiff",
+        "P011-C1-R2-长乐-汉-陈巨来.tiff",
+        "P012-C1-R2-长乐-汉-陈巨来.tiff",
+        "P013-C1-R2-长乐-汉-陈巨来.tiff",
+        "P014-C1-R2-长乐-汉-陈巨来.tiff",
+        "P015-C1-R2-长乐-汉-陈巨来.tiff",
+        "P016-C1-R2-长乐-汉-陈巨来.tiff",
+        "P017-C1-R2-长乐-汉-陈巨来.tiff",
+        "P018-C1-R2-长乐-汉-陈巨来.tiff",
+        "P019-C1-R2-长乐-汉-陈巨来.tiff",
+        "P020-C1-R2-长乐-汉-陈巨来.tiff"
+      ],
+      "imgs": 20,
+      "imgs_loaded": 20,
+      "img_src_head": "data:image/png;base64,iV",
+      "img_dims": [
+        "150x150",
+        "150x150",
+        "150x150"
+      ],
+      "selected": "P001-C1-R2-长乐-汉-陈巨来.tiff",
+      "pageinfo": "共 25 个文件 · 第 1/2 页 · 视图 large（5×20）· ↑↓←→ 切换选中",
+      "pageno": "1 / 2",
+      "prev_disabled": true,
+      "next_disabled": false,
+      "subdir_buttons": [
+        "📁 A特例",
+        "📁 分页B*"
+      ],
+      "msg": "已选中：P001-C1-R2-长乐-汉-陈巨来.tiff"
+    },
+    "14_kbd_right": {
+      "view": "large",
+      "cols": 5,
+      "view_btns": [
+        "large*",
+        "medium",
+        "small",
+        "list"
+      ],
+      "items": 20,
+      "names": [
+        "P001-C1-R2-长乐-汉-陈巨来.tiff",
+        "P002-C1-R2-长乐-汉-陈巨来.tiff",
+        "P003-C1-R2-长乐-汉-陈巨来.tiff",
+        "P004-C1-R2-长乐-汉-陈巨来.tiff",
+        "P005-C1-R2-长乐-汉-陈巨来.tiff",
+        "P006-C1-R2-长乐-汉-陈巨来.tiff",
+        "P007-C1-R2-长乐-汉-陈巨来.tiff",
+        "P008-C1-R2-长乐-汉-陈巨来.tiff",
+        "P009-C1-R2-长乐-汉-陈巨来.tiff",
+        "P010-C1-R2-长乐-汉-陈巨来.tiff",
+        "P011-C1-R2-长乐-汉-陈巨来.tiff",
+        "P012-C1-R2-长乐-汉-陈巨来.tiff",
+        "P013-C1-R2-长乐-汉-陈巨来.tiff",
+        "P014-C1-R2-长乐-汉-陈巨来.tiff",
+        "P015-C1-R2-长乐-汉-陈巨来.tiff",
+        "P016-C1-R2-长乐-汉-陈巨来.tiff",
+        "P017-C1-R2-长乐-汉-陈巨来.tiff",
+        "P018-C1-R2-长乐-汉-陈巨来.tiff",
+        "P019-C1-R2-长乐-汉-陈巨来.tiff",
+        "P020-C1-R2-长乐-汉-陈巨来.tiff"
+      ],
+      "imgs": 20,
+      "imgs_loaded": 20,
+      "img_src_head": "data:image/png;base64,iV",
+      "img_dims": [
+        "150x150",
+        "150x150",
+        "150x150"
+      ],
+      "selected": "P002-C1-R2-长乐-汉-陈巨来.tiff",
+      "pageinfo": "共 25 个文件 · 第 1/2 页 · 视图 large（5×20）· ↑↓←→ 切换选中",
+      "pageno": "1 / 2",
+      "prev_disabled": true,
+      "next_disabled": false,
+      "subdir_buttons": [
+        "📁 A特例",
+        "📁 分页B*"
+      ],
+      "msg": "已选中：P002-C1-R2-长乐-汉-陈巨来.tiff"
+    },
+    "15_kbd_down": {
+      "view": "large",
+      "cols": 5,
+      "view_btns": [
+        "large*",
+        "medium",
+        "small",
+        "list"
+      ],
+      "items": 20,
+      "names": [
+        "P001-C1-R2-长乐-汉-陈巨来.tiff",
+        "P002-C1-R2-长乐-汉-陈巨来.tiff",
+        "P003-C1-R2-长乐-汉-陈巨来.tiff",
+        "P004-C1-R2-长乐-汉-陈巨来.tiff",
+        "P005-C1-R2-长乐-汉-陈巨来.tiff",
+        "P006-C1-R2-长乐-汉-陈巨来.tiff",
+        "P007-C1-R2-长乐-汉-陈巨来.tiff",
+        "P008-C1-R2-长乐-汉-陈巨来.tiff",
+        "P009-C1-R2-长乐-汉-陈巨来.tiff",
+        "P010-C1-R2-长乐-汉-陈巨来.tiff",
+        "P011-C1-R2-长乐-汉-陈巨来.tiff",
+        "P012-C1-R2-长乐-汉-陈巨来.tiff",
+        "P013-C1-R2-长乐-汉-陈巨来.tiff",
+        "P014-C1-R2-长乐-汉-陈巨来.tiff",
+        "P015-C1-R2-长乐-汉-陈巨来.tiff",
+        "P016-C1-R2-长乐-汉-陈巨来.tiff",
+        "P017-C1-R2-长乐-汉-陈巨来.tiff",
+        "P018-C1-R2-长乐-汉-陈巨来.tiff",
+        "P019-C1-R2-长乐-汉-陈巨来.tiff",
+        "P020-C1-R2-长乐-汉-陈巨来.tiff"
+      ],
+      "imgs": 20,
+      "imgs_loaded": 20,
+      "img_src_head": "data:image/png;base64,iV",
+      "img_dims": [
+        "150x150",
+        "150x150",
+        "150x150"
+      ],
+      "selected": "P007-C1-R2-长乐-汉-陈巨来.tiff",
+      "pageinfo": "共 25 个文件 · 第 1/2 页 · 视图 large（5×20）· ↑↓←→ 切换选中",
+      "pageno": "1 / 2",
+      "prev_disabled": true,
+      "next_disabled": false,
+      "subdir_buttons": [
+        "📁 A特例",
+        "📁 分页B*"
+      ],
+      "msg": "已选中：P007-C1-R2-长乐-汉-陈巨来.tiff"
+    },
+    "16_before_generate": {
+      "view": "large",
+      "cols": 5,
+      "view_btns": [
+        "large*",
+        "medium",
+        "small",
+        "list"
+      ],
+      "items": 4,
+      "names": [
+        "P001-C2-R3-长乐未央-汉-陈巨来.tiff",
+        "P005-C1-R1-乙-汉-丙.tiff",
+        "P005-C1-R1-待定-汉-丙.tiff",
+        "清心-宋-齐白石.tiff"
+      ],
+      "imgs": 4,
+      "imgs_loaded": 4,
+      "img_src_head": "data:image/png;base64,iV",
+      "img_dims": [
+        "150x150",
+        "150x150",
+        "150x150"
+      ],
+      "selected": "",
+      "pageinfo": "共 4 个文件 · 第 1/1 页 · 视图 large（5×20）· ↑↓←→ 切换选中",
+      "pageno": "1 / 1",
+      "prev_disabled": true,
+      "next_disabled": true,
+      "subdir_buttons": [
+        "📁 A特例*",
+        "📁 分页B"
+      ],
+      "msg": "共 4 个 tiff（子目录：A特例）"
+    },
+    "17_after_generate": {
+      "view": "large",
+      "cols": 5,
+      "view_btns": [
+        "large*",
+        "medium",
+        "small",
+        "list"
+      ],
+      "items": 5,
+      "names": [
+        "P001-C2-R3-长乐未央-汉-陈巨来.tiff",
+        "P002-C1-R5-清心-唐-陈巨来.tiff",
+        "P005-C1-R1-乙-汉-丙.tiff",
+        "P005-C1-R1-待定-汉-丙.tiff",
+        "清心-宋-齐白石.tiff"
+      ],
+      "imgs": 5,
+      "imgs_loaded": 5,
+      "img_src_head": "data:image/png;base64,iV",
+      "img_dims": [
+        "150x150",
+        "150x150",
+        "150x150"
+      ],
+      "selected": "",
+      "pageinfo": "共 5 个文件 · 第 1/1 页 · 视图 large（5×20）· ↑↓←→ 切换选中",
+      "pageno": "1 / 1",
+      "prev_disabled": true,
+      "next_disabled": true,
+      "subdir_buttons": [
+        "📁 A特例*",
+        "📁 分页B"
+      ],
+      "msg": "共 5 个 tiff（子目录：A特例）"
+    }
+  },
+  "post": {
+    "renamed_exists": true,
+    "old_gone": true,
+    "conflict_pair_intact": true,
+    "log_exists": true,
+    "log_lines": 1,
+    "log_last": {
+      "old_filename": "未命名副本.tiff",
+      "new_filename": "清心-宋-齐白石.tiff",
+      "operator": "ji",
+      "印面释文": "清心",
+      "朝代": "宋",
+      "作者": "齐白石",
+      "file_md5": "2e658cf3eade4d35a21d1752249d7779",
+      "status": "success",
+      "cloud_log": "not_connected",
+      "cloud_lock": "not_connected"
+    },
+    "generated_files": [
+      "P001-C2-R3-长乐未央-汉-陈巨来.tiff",
+      "P002-C1-R5-清心-唐-陈巨来.tiff",
+      "P005-C1-R1-乙-汉-丙.tiff",
+      "P005-C1-R1-待定-汉-丙.tiff",
+      "清心-宋-齐白石.tiff"
+    ]
+  }
+}

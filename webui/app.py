@@ -27,9 +27,10 @@ WEBUI_DIR = Path(__file__).resolve().parent
 if str(WEBUI_DIR) not in sys.path:
     sys.path.insert(0, str(WEBUI_DIR))
 
-from api import APP_NAME, APP_VERSION, UI_DIR, FeicuiApi  # noqa: E402
+from api import APP_NAME, APP_TITLE, APP_VERSION, UI_DIR, FeicuiApi  # noqa: E402
 
-WINDOW_TITLE = f"{APP_NAME} v{APP_VERSION}"
+#: 窗口标题＝**单一真源** `api.APP_TITLE`（＝「斐萃」玺印解析任务台 · 本地电脑版，带本地版后缀）
+WINDOW_TITLE = APP_TITLE
 INDEX = UI_DIR / "index.html"
 
 

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>斐萃 · 本地电脑版</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ═══════════ 视图 1：登录 ═══════════ -->
+<section id="view-login" class="view active">
+  <div class="card login-card">
+    <h1 class="brand">斐萃 <span class="brand-sub">数字玺印生成工具 · 本地电脑版</span></h1>
+    <p class="muted">请登录后使用（口令由后端校验，前端不持有）</p>
+    <label class="field">
+      <span>账号</span>
+      <input id="login-user" type="text" autocomplete="username" placeholder="账号">
+    </label>
+    <label class="field">
+      <span>密码</span>
+      <input id="login-pwd" type="password" autocomplete="current-password" placeholder="密码">
+    </label>
+    <button id="btn-login" class="btn primary block" data-action="login">登录</button>
+    <div id="login-msg" class="msg"></div>
+    <div class="mode-line">运行形态：<b id="mode-label">检测中…</b> <span id="app-version" class="muted"></span></div>
+  </div>
+</section>
+
+<!-- ═══════════ 视图 2：目录选择 / 校验 ═══════════ -->
+<section id="view-dir" class="view">
+  <div class="card">
+    <h2>目录初始化</h2>
+    <p class="muted">请选择本地名为 <code>feicui</code> 的同步目录。结构必须为
+      <code>1_Original_PDF</code> / <code>2_HighRes_PDF</code> /
+      <code>3_Cropped_Tiff</code>（仅一级子目录）。</p>
+    <div class="row">
+      <button id="btn-home" class="btn" data-action="browse-home">🏠 家目录</button>
+      <button id="btn-up" class="btn" data-action="browse-up">⬆️ 上一级</button>
+      <button id="btn-ensure" class="btn" data-action="ensure-subdirs">🛠 创建标准子目录</button>
+    </div>
+    <div class="path-line">当前位置：<code id="dir-path">—</code></div>
+    <div class="two-col">
+      <ul id="dir-entries" class="list scroll"></ul>
+      <div class="hint-col">
+        <p class="muted">逐级进入，直到目录名为 <code>feicui</code>，再点「校验目录并进入」。</p>
+        <button id="btn-verify" class="btn primary block" data-action="verify">✅ 校验目录并进入</button>
+        <div id="dir-msg" class="msg"></div>
+      </div>
+    </div>
+    <hr>
+    <div class="row">
+      <span class="muted">已登录：<b id="dir-user">—</b></span>
+      <button id="btn-logout-dir" class="btn small" data-action="logout">🚪 退出登录</button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 视图 3：主界面（三 tab） ═══════════ -->
+<section id="view-main" class="view">
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="logo">斐萃</span>
+      <nav id="tabs" class="tabs">
+        <button class="tab active" data-tab="1_Original_PDF">1_Original_PDF</button>
+        <button class="tab" data-tab="2_HighRes_PDF">2_HighRes_PDF</button>
+        <button class="tab" data-tab="3_Cropped_Tiff">3_Cropped_Tiff</button>
+      </nav>
+    </div>
+    <div class="topbar-right">
+      <span class="pill" id="user-pill">👤 —</span>
+      <span class="pill" id="root-pill">📁 —</span>
+      <button class="btn small" data-action="change-dir">🔄 目录</button>
+      <button class="btn small" data-action="logout">🚪 退出</button>
+    </div>
+  </header>
+
+  <!-- ── tab1：1_Original_PDF ── -->
+  <div class="panel active" data-panel="1_Original_PDF">
+    <div class="panel-head">
+      <h2>1_Original_PDF · 原件盘点与元数据</h2>
+      <div class="row">
+        <label class="inline"><input id="tab1-force" type="checkbox"> 强制重探（页数/尺寸/dpi）</label>
+        <button id="btn-tab1-rescan" class="btn primary" data-action="tab1-rescan">🔍 扫描 / 刷新</button>
+      </div>
+    </div>
+    <div id="tab1-stats" class="stats"></div>
+    <div class="two-col main-col">
+      <div class="pane">
+        <h3>本地 PDF（<span id="tab1-count">0</span>）</h3>
+        <div class="table-wrap scroll">
+          <table id="tab1-table" class="grid">
+            <thead><tr><th>文件名</th><th>大小(MB)</th><th>页数</th><th>页面尺寸</th>
+              <th>扫描dpi(估)</th><th>朝代</th><th>作者</th><th>改时间</th></tr></thead>
+            <tbody id="tab1-body"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="pane side">
+        <h3>元数据补填</h3>
+        <p class="muted">选中左侧一行后编辑；仅写入本地侧车 <code>webui/var/pdf_meta.json</code>。</p>
+        <div class="field-block">
+          <div class="cur" id="tab1-selected">未选择文件</div>
+          <label class="field"><span>朝代</span>
+            <select id="tab1-dynasty"></select></label>
+          <label class="field"><span>作者</span>
+            <input id="tab1-author" type="text" maxlength="12" placeholder="如：陈巨来"></label>
+          <label class="field"><span>备注</span>
+            <textarea id="tab1-notes" rows="3" placeholder="自由备注"></textarea></label>
+          <button id="btn-tab1-save" class="btn primary block" data-action="tab1-save">💾 保存元数据</button>
+          <div id="tab1-msg" class="msg"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── tab2：2_HighRes_PDF ── -->
+  <div class="panel" data-panel="2_HighRes_PDF">
+    <div class="panel-head">
+      <h2>2_HighRes_PDF · 整页高分辨率（1200 dpi · 48bit TIFF）</h2>
+      <div class="row">
+        <button id="btn-tab2-refresh" class="btn" data-action="tab2-refresh">🔄 刷新</button>
+        <button id="btn-tab2-open" class="btn" data-action="open-in-finder">📂 访达定位</button>
+      </div>
+    </div>
+    <p class="muted">整页渲染单页 ≈64 s（1200 dpi 48bit ⇒ 8500×12236）；**整本禁止**（851 页 ≈6.4 h）。
+      渲染走老工程引擎子进程，异步 + 进度 + 可取消。</p>
+    <div class="two-col main-col">
+      <div class="pane">
+        <h3>产物（<code>2_HighRes_PDF/&lt;目录键&gt;/</code>）</h3>
+        <div id="tab2-products" class="tree scroll"></div>
+      </div>
+      <div class="pane side">
+        <h3>生成入口</h3>
+        <label class="field"><span>源 PDF</span>
+          <select id="tab2-source"></select></label>
+        <label class="field"><span>页号（1-based）</span>
+          <input id="tab2-page" type="number" min="1" value="1"></label>
+        <label class="field"><span>目标 dpi</span>
+          <select id="tab2-dpi">
+            <option value="1200" selected>1200（缺省）</option>
+            <option value="2400">2400（旧产线，≈108 s/页）</option>
+          </select></label>
+        <label class="inline"><input id="tab2-overwrite" type="checkbox"> 覆盖已有产物</label>
+        <label class="inline"><input id="tab2-force" type="checkbox"> 强制提交（跳过 dpi 整数倍预检）</label>
+        <button id="btn-tab2-generate" class="btn primary block" data-action="tab2-generate">⚙️ 开始生成 HighRes（异步）</button>
+        <button id="btn-tab2-cancel" class="btn block" data-action="tab2-cancel" disabled>✖ 取消当前任务</button>
+        <div class="progress-wrap">
+          <div class="progress"><div id="tab2-progress-bar" class="bar" style="width:0%"></div></div>
+          <div id="tab2-progress-msg" class="muted">空闲</div>
+        </div>
+        <details class="logbox"><summary>任务日志（尾部）</summary>
+          <pre id="tab2-log" class="scroll"></pre></details>
+        <div id="tab2-msg" class="msg"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── tab3：3_Cropped_Tiff ── -->
+  <div class="panel" data-panel="3_Cropped_Tiff">
+    <div class="panel-head">
+      <h2>3_Cropped_Tiff · 印面切片</h2>
+      <div class="row">
+        <button id="btn-tab3-refresh" class="btn" data-action="tab3-refresh">🔄 刷新</button>
+        <button id="btn-tab3-test" class="btn" data-action="tab3-test">🎲 生成测试 TIFF（管理员）</button>
+      </div>
+    </div>
+    <div class="two-col main-col">
+      <div class="pane side small-col">
+        <h3>一级子目录</h3>
+        <ul id="tab3-subdirs" class="list scroll"></ul>
+      </div>
+      <div class="pane">
+        <h3 id="tab3-title">文件</h3>
+        <div class="table-wrap scroll">
+          <table class="grid">
+            <thead><tr><th>文件名</th><th>大小(MB)</th><th>释文</th><th>朝代</th><th>作者</th>
+              <th>模板合规</th><th>改时间</th></tr></thead>
+            <tbody id="tab3-files"></tbody>
+          </table>
+        </div>
+        <p class="muted">命名模板：<code id="tab3-template">—</code></p>
+        <div id="tab3-msg" class="msg"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div id="toast" class="toast"></div>
+<script src="app.js"></script>
+</body>
+</html>

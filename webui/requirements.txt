@@ -1,0 +1,12 @@
+# 「斐萃」本地电脑版 · 依赖（PyWebView 壳，2026-10-16）
+# 壳 / 桥：原生窗口 + 内建 http server（本地文件供给 UI）
+pywebview>=5.0
+# 既有逻辑层用到
+requests>=2.31.0
+python-dotenv>=1.0.0
+# ⚠ 已退役：Streamlit 壳（`main.py` / `src/webui.py` 保留但 DEPRECATED，不再维护、不起 8502）
+#   history: streamlit>=1.35.0
+#
+# 说明：HighRes 引擎（`ops/book-page-2400/render_page_2400.py`）跑在老工程 `venv`
+#   （pymupdf / cv2 / numpy / tifffile / PIL，均已装）；不再需要 Streamlit。
+# OCR 未接入本壳；若将来要打包 OCR，读 `build/README.md` §3 / §4（体积与篆书可行性）。

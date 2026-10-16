@@ -48,6 +48,23 @@ spike-ocr/
 /f2_stamps_before.json
 /f2_stamps_after.json
 
+# ── 「斐萃」本地电脑版（webui/，Streamlit；2026-10-16 并入本仓）──
+# 敏感 / 机器本地件（**不得入库**）：
+#   .env          真实凭据（百度网盘企业版 token、腾讯文档 secret）+ 用户机器上的 FEICUI_ROOT
+#   .session.json 登录态（用户名 + 7 天有效期 + 用户目录绝对路径）
+#   .agents/ .claude/  豆包 agent 的私有 skill 配置（非产品代码；实盘为空目录，规则为将来兜底）
+#   var/          ← 已被上方 `var/` 规则覆盖（tab1 元数据侧车 webui/var/pdf_meta.json 落此）
+#   __pycache__/  ← 已被上方规则覆盖
+# 入库件：webui/src/*.py、webui/index.html、webui/main.py、webui/requirements.txt、
+#         webui/.env.example（占位模板，无真实凭据）、webui/assets/**（logo、占位 tiff）
+webui/.env
+webui/.session.json
+webui/.agents/
+webui/.claude/
+# PyInstaller 打包产物（webui/build/ 下；本单未打包，先占位规则。`dist/` 已被上方通用规则覆盖）
+webui/build/build/
+webui/build/*.app/
+
 # ── 杂项 ──
 .DS_Store
 *.local

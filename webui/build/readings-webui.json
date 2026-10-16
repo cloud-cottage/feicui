@@ -1,0 +1,216 @@
+{
+  "schema": "feicui.webui.selftest.v1",
+  "app_version": "0.3.0-pywebview",
+  "at": "2026-10-16T19:49:02",
+  "python": "/Users/kevin/bistro/feicui/venv/bin/python",
+  "engine_python": "/Users/kevin/bistro/feicui/venv/bin/python",
+  "engine_script": "/Users/kevin/bistro/feicui/ops/book-page-2400/render_page_2400.py",
+  "counts": {
+    "PASS": 38,
+    "FAIL": 0,
+    "NOT_MEASURED": 0
+  },
+  "elapsed_s": 93.6,
+  "checks": [
+    {
+      "check": "fixture",
+      "status": "PASS",
+      "detail": "夹具 /var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-selftest-hgdmy4ea/feicui（含 2 份真 PDF：吴颐人篆刻作品展示.pdf 2098940 B / tmp.pdf 39722457 B）"
+    },
+    {
+      "check": "dir/verify_reject_wrong_name",
+      "status": "PASS",
+      "detail": "目录名称必须是 `feicui`，当前为 `not_feicui`"
+    },
+    {
+      "check": "dir/verify_accept_fixture",
+      "status": "PASS",
+      "detail": "目录校验通过"
+    },
+    {
+      "check": "api/verify_dir",
+      "status": "PASS",
+      "detail": "目录校验通过"
+    },
+    {
+      "check": "api/root_bound_to_fixture",
+      "status": "PASS",
+      "detail": "_root=/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-selftest-hgdmy4ea/feicui"
+    },
+    {
+      "check": "api/verify_dir_missing",
+      "status": "PASS",
+      "detail": "目录不存在"
+    },
+    {
+      "check": "tab1/list_ok",
+      "status": "PASS",
+      "detail": "rows=2"
+    },
+    {
+      "check": "tab1/row_count",
+      "status": "PASS",
+      "detail": "count=2"
+    },
+    {
+      "check": "tab1/probe_pages",
+      "status": "PASS",
+      "detail": "page_count=132 page_mm=? scan_dpi=300"
+    },
+    {
+      "check": "tab1/dynasty_options",
+      "status": "PASS",
+      "detail": "n=15"
+    },
+    {
+      "check": "tab1/reject_bad_dynasty",
+      "status": "PASS",
+      "detail": "朝代必须是以下之一：商周暨春秋 / 戰國 / 秦 / 漢 / 魏晉 / 隋唐 / 宋元 / 明早中期 / 晚明 / 清初 / 清中期 / 晚清 / 民國 / 新中國 / 當代（当前「不是朝代」）"
+    },
+    {
+      "check": "tab1/save_meta",
+      "status": "PASS",
+      "detail": "元数据已保存"
+    },
+    {
+      "check": "tab1/meta_persisted",
+      "status": "PASS",
+      "detail": "dynasty=漢 author=吴颐人"
+    },
+    {
+      "check": "tab3/generate_test_tiff",
+      "status": "PASS",
+      "detail": "已生成：P001-C7-R2-翰墨-唐-陈巨来.tiff"
+    },
+    {
+      "check": "tab3/list_ok",
+      "status": "PASS",
+      "detail": "subdirs=['测试子目录'] files=1"
+    },
+    {
+      "check": "tab3/filename_template",
+      "status": "PASS",
+      "detail": "name=P001-C7-R2-翰墨-唐-陈巨来.tiff standard=True"
+    },
+    {
+      "check": "tab3/unknown_subdir_fallback",
+      "status": "PASS",
+      "detail": "current=测试子目录"
+    },
+    {
+      "check": "tab2/list_ok",
+      "status": "PASS",
+      "detail": "sources=2 dirs=0"
+    },
+    {
+      "check": "tab2/dir_key_resolved",
+      "status": "PASS",
+      "detail": "dir_key=tmp.pdf（复用 server/app/naming.py）"
+    },
+    {
+      "check": "tab2/e2e_source_present",
+      "status": "PASS",
+      "detail": "tmp.pdf dir_key=tmp.pdf"
+    },
+    {
+      "check": "tab2/reject_missing_pdf",
+      "status": "PASS",
+      "detail": "源 PDF 不存在：/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-selftest-hgdmy4ea/feicui/1_Original_PDF/不存在.pdf"
+    },
+    {
+      "check": "tab2/reject_bad_dpi",
+      "status": "PASS",
+      "detail": "dpi 只支持 [1200, 2400]"
+    },
+    {
+      "check": "tab2/reject_bad_page",
+      "status": "PASS",
+      "detail": "页号从 1 开始"
+    },
+    {
+      "check": "tab2/engine_script_present",
+      "status": "PASS",
+      "detail": "/Users/kevin/bistro/feicui/ops/book-page-2400/render_page_2400.py exists=True"
+    },
+    {
+      "check": "tab2/engine_cmd_shape",
+      "status": "PASS",
+      "detail": "argv[0]=/Users/kevin/bistro/feicui/venv/bin/python len=16"
+    },
+    {
+      "check": "tab2/engine_cmd_python_exists",
+      "status": "PASS",
+      "detail": "/Users/kevin/bistro/feicui/venv/bin/python"
+    },
+    {
+      "check": "tab2/precheck_dpi_multiple",
+      "status": "PASS",
+      "detail": "scan_dpi=122 msg=目标 dpi 1200 不是扫描 dpi（tab1 探针估 122）的整数倍：引擎只做整数倍上采样（硬断言）。请改选 dpi / 换页后重扫探针；确要强行提交可传 force=tr"
+    },
+    {
+      "check": "tab2/reject_existing_output",
+      "status": "PASS",
+      "detail": "产物已存在（不会覆盖）：P1-1200dpi-48bit.tif"
+    },
+    {
+      "check": "tab2/force_bypasses_precheck",
+      "status": "PASS",
+      "detail": "已开始渲染（异步）"
+    },
+    {
+      "check": "tab2/force_then_engine_asserts",
+      "status": "PASS",
+      "detail": "state=error err=引擎退出码 1（引擎对非整数倍 dpi 的硬断言，与预检一致）"
+    },
+    {
+      "check": "e2e/submit_job",
+      "status": "PASS",
+      "detail": "已开始渲染（异步）"
+    },
+    {
+      "check": "e2e/render_one_page_1200dpi",
+      "status": "PASS",
+      "detail": "78.3s state=done out=P1-1200dpi-48bit.tif size=469.7 MB",
+      "seconds": 78.3,
+      "out": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-selftest-hgdmy4ea/feicui/2_HighRes_PDF/tmp.pdf/P1-1200dpi-48bit.tif",
+      "size_mb": 469.7,
+      "progress_pushes": 52,
+      "max_percent": 100,
+      "log_tail": "      1\n    ],\n    \"observed_max_u8_round\": [\n      255,\n      255,\n      255\n    ],\n    \"outside_declared_range_px\": 1296,\n    \"outside_declared_range_and_outside_halo_px\": 0\n  },\n  \"crop\": null\n}"
+    },
+    {
+      "check": "e2e/tiff_magic",
+      "status": "PASS",
+      "detail": "magic=b'II*\\x00'"
+    },
+    {
+      "check": "e2e/progress_pushed",
+      "status": "PASS",
+      "detail": "pushes=52（native 下同一路径＝window.evaluate_js）"
+    },
+    {
+      "check": "tab2/cancel_requested",
+      "status": "PASS",
+      "detail": "已请求取消"
+    },
+    {
+      "check": "tab2/cancel_effect",
+      "status": "PASS",
+      "detail": "state=cancelled rc=-15 out_exists=False"
+    },
+    {
+      "check": "guard/no_root_blocks_tab1",
+      "status": "PASS",
+      "detail": "尚未选择并校验 feicui 目录"
+    },
+    {
+      "check": "gui/window_launch",
+      "status": "PASS",
+      "detail": "rc=0 12.1s（**只证「已启动并可关窗」，不证画面渲染**）",
+      "rc": 0,
+      "seconds": 12.1,
+      "stdout": "WEBUI_START mode=native ui=/Users/kevin/bistro/feicui/webui/ui/index.html engine_python=/Users/kevin/bistro/feicui/venv/bin/python\nWINDOW_TEST: 窗口存活 12.0s（自动关窗）\n",
+      "stderr": ""
+    }
+  ]
+}

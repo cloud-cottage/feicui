@@ -9,7 +9,7 @@
 
 覆盖两个页面：
   ① 本地版 UI `webui/ui/index.html`（含 `style.css`）；
-  ② 公网引导页 `webui/index.html`（内联 `<style>`，同 token 组）—— 用 `load_url` 在同一窗口二次加载后复测。
+  ② 公网引导页 `site/index.html`（内联 `<style>`，同 token 组）—— 用 `load_url` 在同一窗口二次加载后复测。
 
 隔离：import `api` 之前把 `FEICUI_DATA_DIR` 指到临时目录（`.env`/`.session.json`/`var/**` 全落临时目录）；
 夹具根目录亦为临时目录，TIFF 拷贝自 `webui/assets/test_seal.tiff`（真图），另用 pymupdf 合成 1 页 PDF
@@ -49,7 +49,7 @@ _webui_app = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(_webui_app)
 build_window = _webui_app.build_window
 
-GUIDE = WEBUI_DIR / "index.html"
+GUIDE = WEBUI_DIR.parent / "site" / "index.html"   # ★ 2026-10-17 引导页迁出 webui/：唯一真源＝仓根 site/（Vercel Root Directory = site）
 PLACEHOLDER = WEBUI_DIR / "assets" / "test_seal.tiff"
 READINGS = WEBUI_DIR / "build" / "readings-theme.json"
 

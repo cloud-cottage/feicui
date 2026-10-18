@@ -1,6 +1,6 @@
 {
   "schema": "feicui.yinyuan.domtest.v1",
-  "generated_at": "2026-10-18T08:16:09",
+  "generated_at": "2026-10-18T08:20:42",
   "counts": {
     "PASS": 11,
     "FAIL": 0
@@ -34,7 +34,7 @@
     {
       "check": "dom/key_file_600",
       "status": "PASS",
-      "detail": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-yy-dom-pt_e90pn/yy/yinyuan.json mode=0o600"
+      "detail": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-yy-dom-m206q15q/yy/yinyuan.json mode=0o600"
     },
     {
       "check": "dom/tab1_dynasty_from_yinyuan_cache",
@@ -130,9 +130,9 @@
     }
   },
   "fixture": {
-    "root": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-yy-dom-pt_e90pn/feicui",
-    "data_dir": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-yy-dom-pt_e90pn/data",
-    "yy_dir": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-yy-dom-pt_e90pn/yy",
+    "root": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-yy-dom-m206q15q/feicui",
+    "data_dir": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-yy-dom-m206q15q/data",
+    "yy_dir": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-yy-dom-m206q15q/yy",
     "seeded": {
       "dynasty_values": [
         "远1",

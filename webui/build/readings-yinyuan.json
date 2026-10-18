@@ -1,7 +1,7 @@
 {
   "schema": "feicui.yinyuan.selftest.v1",
-  "generated_at": "2026-10-18T08:10:23",
-  "scratch": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-yinyuan-selftest-w4bnoorm",
+  "generated_at": "2026-10-18T08:20:39",
+  "scratch": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-yinyuan-selftest-2df78icv",
   "counts": {
     "PASS": 38,
     "FAIL": 0
@@ -129,7 +129,7 @@
     {
       "check": "cache/dynasty_file_written",
       "status": "PASS",
-      "detail": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-yinyuan-selftest-w4bnoorm/c4/cache/dynasties.json mode=0o600",
+      "detail": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-yinyuan-selftest-2df78icv/c4/cache/dynasties.json mode=0o600",
       "extra": {}
     },
     {

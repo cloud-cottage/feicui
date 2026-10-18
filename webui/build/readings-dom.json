@@ -1,6 +1,6 @@
 {
   "schema": "feicui.webui.domtest.v1",
-  "at": "2026-10-17T07:08:16",
+  "at": "2026-10-18T08:26:20",
   "python": "/Users/kevin/bistro/feicui/venv/bin/python",
   "window_title": "「斐萃」玺印解析任务台 · 本地电脑版",
   "app_title": "「斐萃」玺印解析任务台 · 本地电脑版",
@@ -9,9 +9,9 @@
     "FAIL": 0
   },
   "fixture": {
-    "scratch": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-7clbtljt",
-    "fixture": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-7clbtljt/feicui",
-    "data_dir": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-7clbtljt/data",
+    "scratch": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-3fk5e5sc",
+    "fixture": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-3fk5e5sc/feicui",
+    "data_dir": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-3fk5e5sc/data",
     "files": 29,
     "admin": "ji",
     "login_ok": true,
@@ -41,12 +41,12 @@
     {
       "check": "dom/brand_logo_really_loaded",
       "status": "PASS",
-      "detail": "品牌区 img: complete=True naturalWidth×Height=480×480 真实盒=56×56px（display=block，量完已还原视图） src='feicui.png' currentSrc='http://127.0.0.1:56690/feicui.png'；顶栏 img: 480×480 盒=20×20px"
+      "detail": "品牌区 img: complete=True naturalWidth×Height=480×480 真实盒=56×56px（display=block，量完已还原视图） src='feicui.png' currentSrc='http://127.0.0.1:20372/feicui.png'；顶栏 img: 480×480 盒=20×20px"
     },
     {
       "check": "dom/icon_links_and_server_root",
       "status": "PASS",
-      "detail": "rel=icon href='feicui.png' abs='http://127.0.0.1:56690/feicui.png' svg link=True apple-touch=True page_url='http://127.0.0.1:56690/index.html' ⇒ server 根＝ui/"
+      "detail": "rel=icon href='feicui.png' abs='http://127.0.0.1:20372/feicui.png' svg link=True apple-touch=True page_url='http://127.0.0.1:20372/index.html' ⇒ server 根＝ui/"
     },
     {
       "check": "dom/out_of_root_path_unreachable",
@@ -116,7 +116,7 @@
     {
       "check": "dom/local_log_row_visible",
       "status": "PASS",
-      "detail": "行数=1 首行=['2026-10-17T07:08:00', '未命名副本.tiff', '清心-宋-齐白石.tiff', '清心', '宋', '齐白石', 'ji', 'success'] 路径='本地记录：/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-7clbtljt/data/var/ren'"
+      "detail": "行数=1 首行=['2026-10-18T08:26:04', '未命名副本.tiff', '清心-宋-齐白石.tiff', '清心', '宋', '齐白石', 'ji', 'success'] 路径='本地记录：/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-3fk5e5sc/data/var/ren'"
     },
     {
       "check": "dom/pagination_20_per_page",
@@ -141,7 +141,7 @@
     {
       "check": "disk/conflict_left_both_files",
       "status": "PASS",
-      "detail": "A特例 现有文件=['P001-C2-R3-长乐未央-汉-陈巨来.tiff', 'P002-C1-R5-清心-唐-陈巨来.tiff', 'P005-C1-R1-乙-汉-丙.tiff', 'P005-C1-R1-待定-汉-丙.tiff', '清心-宋-齐白石.tiff']"
+      "detail": "A特例 现有文件=['P001-C2-R3-长乐未央-汉-陈巨来.tiff', 'P002-C7-R8-翰墨-秦-吴昌硕.tiff', 'P005-C1-R1-乙-汉-丙.tiff', 'P005-C1-R1-待定-汉-丙.tiff', '清心-宋-齐白石.tiff']"
     }
   ],
   "dom": {
@@ -173,7 +173,7 @@
       },
       "notice_in_edit": "⚠️ 日志同步（腾讯文档）／云盘锁 暂未接入：本次只写本地记录\n            webui/var/rename_log.jsonl（不写云日志、不取云锁）",
       "badge_text": "日志同步（腾讯文档）/ 云盘锁暂未接入",
-      "body_len": 516,
+      "body_len": 530,
       "grid_items": 0,
       "grid_imgs_loaded": 0
     },
@@ -183,21 +183,21 @@
         "nw": 480,
         "nh": 480,
         "src": "feicui.png",
-        "cur_src": "http://127.0.0.1:56690/feicui.png"
+        "cur_src": "http://127.0.0.1:20372/feicui.png"
       },
       "topbar_logo": {
         "complete": true,
         "nw": 480,
         "nh": 480,
         "src": "feicui.png",
-        "cur_src": "http://127.0.0.1:56690/feicui.png"
+        "cur_src": "http://127.0.0.1:20372/feicui.png"
       },
       "brand_logo_visible": false,
       "icon_link_href": "feicui.png",
-      "icon_link_abs": "http://127.0.0.1:56690/feicui.png",
+      "icon_link_abs": "http://127.0.0.1:20372/feicui.png",
       "svg_icon_link": true,
       "apple_touch_link": true,
-      "page_url": "http://127.0.0.1:56690/index.html",
+      "page_url": "http://127.0.0.1:20372/index.html",
       "out_of_root_probe": "error(404/不可达)"
     },
     "00b_brand_logo_box": {
@@ -388,7 +388,7 @@
     "04_after_select": {
       "edit_hidden": false,
       "noselect_hidden": true,
-      "current": "当前文件：P001-C2-R3-长乐未央-汉-陈巨来.tiff（0.25 MB · 2026-10-17 07:07）",
+      "current": "当前文件：P001-C2-R3-长乐未央-汉-陈巨来.tiff（0.25 MB · 2026-10-18 08:25）",
       "shiwen": "长乐未央",
       "dynasty": "汉",
       "author": "陈巨来",
@@ -405,7 +405,7 @@
     "05_over_limit": {
       "edit_hidden": false,
       "noselect_hidden": true,
-      "current": "当前文件：P001-C2-R3-长乐未央-汉-陈巨来.tiff（0.25 MB · 2026-10-17 07:07）",
+      "current": "当前文件：P001-C2-R3-长乐未央-汉-陈巨来.tiff（0.25 MB · 2026-10-18 08:25）",
       "shiwen": "一二三四五六七八九十十",
       "dynasty": "汉",
       "author": "陈巨来",
@@ -422,7 +422,7 @@
     "06_conflict": {
       "edit_hidden": false,
       "noselect_hidden": true,
-      "current": "当前文件：P005-C1-R1-待定-汉-丙.tiff（0.25 MB · 2026-10-17 07:07）",
+      "current": "当前文件：P005-C1-R1-待定-汉-丙.tiff（0.25 MB · 2026-10-18 08:25）",
       "shiwen": "乙",
       "dynasty": "汉",
       "author": "丙",
@@ -439,7 +439,7 @@
     "07_ready_to_rename": {
       "edit_hidden": false,
       "noselect_hidden": true,
-      "current": "当前文件：未命名副本.tiff（0.25 MB · 2026-10-17 07:07）",
+      "current": "当前文件：未命名副本.tiff（0.25 MB · 2026-10-18 08:25）",
       "shiwen": "清心",
       "dynasty": "宋",
       "author": "齐白石",
@@ -491,7 +491,7 @@
     "09_after_rename_panel": {
       "edit_hidden": false,
       "noselect_hidden": true,
-      "current": "当前文件：清心-宋-齐白石.tiff（0.25 MB · 2026-10-17 07:07）",
+      "current": "当前文件：清心-宋-齐白石.tiff（0.25 MB · 2026-10-18 08:25）",
       "shiwen": "",
       "dynasty": "",
       "author": "",
@@ -508,7 +508,7 @@
     "10_local_log": {
       "rows": 1,
       "first": [
-        "2026-10-17T07:08:00",
+        "2026-10-18T08:26:04",
         "未命名副本.tiff",
         "清心-宋-齐白石.tiff",
         "清心",
@@ -517,7 +517,7 @@
         "ji",
         "success"
       ],
-      "path": "本地记录：/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-7clbtljt/data/var/rename_log.jsonl（1 条）·日志同步（腾讯文档）=not_connected · 云盘锁=not_connected",
+      "path": "本地记录：/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-3fk5e5sc/data/var/rename_log.jsonl（1 条）·日志同步（腾讯文档）=not_connected · 云盘锁=not_connected",
       "badge": "日志同步（腾讯文档）：暂未接入 ／ 云盘锁：暂未接入"
     },
     "11_page1": {
@@ -569,7 +569,7 @@
         "📁 A特例",
         "📁 分页B*"
       ],
-      "msg": "缩略图：20/25 出图（失败：{}）"
+      "msg": "共 25 个 tiff（子目录：分页B）"
     },
     "12_page2": {
       "view": "large",
@@ -605,7 +605,7 @@
         "📁 A特例",
         "📁 分页B*"
       ],
-      "msg": "缩略图：20/25 出图（失败：{}）"
+      "msg": "共 25 个 tiff（子目录：分页B）"
     },
     "13_kbd_before": {
       "view": "large",
@@ -807,7 +807,7 @@
       "items": 5,
       "names": [
         "P001-C2-R3-长乐未央-汉-陈巨来.tiff",
-        "P002-C1-R5-清心-唐-陈巨来.tiff",
+        "P002-C7-R8-翰墨-秦-吴昌硕.tiff",
         "P005-C1-R1-乙-汉-丙.tiff",
         "P005-C1-R1-待定-汉-丙.tiff",
         "清心-宋-齐白石.tiff"
@@ -852,7 +852,7 @@
     },
     "generated_files": [
       "P001-C2-R3-长乐未央-汉-陈巨来.tiff",
-      "P002-C1-R5-清心-唐-陈巨来.tiff",
+      "P002-C7-R8-翰墨-秦-吴昌硕.tiff",
       "P005-C1-R1-乙-汉-丙.tiff",
       "P005-C1-R1-待定-汉-丙.tiff",
       "清心-宋-齐白石.tiff"

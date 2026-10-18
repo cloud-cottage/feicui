@@ -317,3 +317,39 @@ hdiutil verify webui/build/dist/斐萃-s1.dmg
 - **正式分发**：需人类提供 **Developer ID Application 证书** ＋ **App Store Connect 凭据**，
   然后 `codesign --force --deep --options runtime --timestamp` ＋ `xcrun notarytool submit --wait` ＋ `xcrun stapler staple`；
 - **ad-hoc 不是正式签名**（`TeamIdentifier=not set`），不可当作已签名的对外说法。
+
+### 8.5 退出路径：关窗后进程必须落地（2026-10-18 修）
+
+**症状**：包内 `--test-exit-after 12` 已打 `WINDOW_TEST: 窗口存活 12.0s（自动关窗）`、窗口肉眼消失，
+但进程仍存活（STAT=S、RSS 107/122 MB）⇒ **挂载中的 DMG 被它持有 ⇒ `hdiutil detach` 报 busy**（要 `-force`）。
+
+**根因**（读 `pywebview 6.2.1` 源码 ＋ 实测）：`window.destroy()` 在 cocoa 后端**已经**是
+`AppHelper.callAfter(self.window.close)`（转投主线程，**不是**「非主线程乱操作」）；窗口确实关掉了
+（`windowWillClose_` ⇒ `del instances[uid]`、`i.closed.set()`、`app.stop_`）。**卡的是之后的收尾**：
+`app.run()` 返回后 `webview.start()` 的解释器/pywebview 清理**不保证收敛**，实测同一包 `open -n`
+起 15 次里 1 次「窗口消失 → 进程消失」= **42.7 s**（父级另见 ≥90 s 挂死）。
+所以：问题**不只**在 Timer 测试路径 —— 红点/Cmd-Q/UI「关闭窗口」按钮都汇到同一个 `windowWillClose_`
+⇒ 同一个收尾阶段，只是测试路径最容易复现。
+
+**修法**（`webui/app.py`，**不用 `sys.exit()`**：它只抛 SystemExit，卡在 runloop 里的主线程回不来）：
+
+1. `build_window()` 注册 `window.events.closed` ⇒ 打 trace、启 **daemon 看门狗**，0.4 s 后 `os._exit(0)`；
+   这是**唯一汇点**，所有关窗形态共用一条兜底。
+2. `--test-exit-after` 的 `_bye()`：`destroy()` 前先挂 2 s 看门狗（`destroy` 不会返回时也保证 ≤2 s 落地），
+   并把 `threading.Timer` 显式 `daemon=True`（Timer 默认继承主线程的非 daemon 属性）。
+3. `webview.start()` 返回后直接 `_hard_exit("start-returned")`，不进解释器收尾。
+4. 诊断开关 `FEICUI_EXIT_TRACE=1`：打印 `events.closed` / `hard_exit` 的时间戳＋线程名。
+
+**验收读数**（2026-10-18，s1/s2 重打后）：
+
+| 路径 | 次数 | 窗口消失 → 进程消失 |
+|---|---|---|
+| `open -n` ＋ `--test-exit-after 4/8`（s1） | 8 + 10 | max **0.0 s**（修前同命令实测 42.7 s） |
+| `open -n` ＋ `--test-exit-after 12`（s2） | 6 | max **0.0 s** |
+| 源码态 `webui/app.py --test-exit-after 3` | 8 | max **0.03 s** |
+| 用户级关闭（AppleScript `quit` ⇒ `windowWillClose_` → `events.closed`） | 1 | **0.11 s** |
+| 挂载 DMG → 跑 `--test-exit-after 8` → `hdiutil detach`（**无 `-force`**） | s1/s2 各 1 | `DETACH_RC=0`，残留进程 0 |
+
+红点物理点击**未实测**（`System Events` 无辅助功能授权，`-1712`）⇒ 人工步骤：
+`open -n webui/build/dist/斐萃-s1.app` → 6 s 后点红点 → `pgrep -f 斐萃-s1`（应 ≤3 s 内空）。
+

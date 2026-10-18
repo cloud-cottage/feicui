@@ -215,3 +215,74 @@ du -sh unpacked/* ; find unpacked -name '*.onnx' -exec du -h {} \;
 - **没有**接入任何 OCR（`webui/` 内**零 OCR 调用**；`api.py` 的 `app_info().log_note` 与
   `tab2` 说明里明确标注「OCR 未接入」）。
 - **没有**验证 Paddle 打包后的 SIGSEGV 是否复现（只引用了本仓历史实测）。
+
+> §7 是 2026-10-16「只出要点」那一单的状态，**已过期**：2026-10-17 起已实际打包（产物在
+> `webui/build/dist/**`，gitignore）；打包/验证/DMG 的现役跑法见 §8。
+
+---
+
+## 8. 现役打包跑法（2026-10-18 实测：重打 ＋ 包内验证 ＋ 未签名 DMG）
+
+### 8.1 重打两阶段
+
+```bash
+cd /Users/kevin/bistro/feicui
+for S in 1 2; do
+  PYTHONPATH=$PWD/venv/lib/python3.11/site-packages FEICUI_PACK_STAGE=$S \
+  webui/build/.venv-build/bin/python -m PyInstaller --noconfirm --clean \
+    --distpath webui/build/dist --workpath webui/build/build webui/build/feicui.spec
+done
+```
+
+实测（Apple Silicon / macOS 15.7.4，含 B4 `src/yinyuan_client.py`）：**s1 22.8 s / 210 MB（220 397 568 B）**、
+**s2 30.3 s / 329 MB（345 235 456 B）**，两次 `EXIT=0`。
+
+### 8.2 包内验证（**打包态的坑只能在包里验**，源码态看不出来）
+
+```bash
+A=webui/build/dist/斐萃-s1.app
+ls -1 "$A/Contents/Frameworks/src"        # ← PyInstaller 6：_MEIPASS=Contents/Frameworks（数据/源码在此，非 Resources）
+PROBE_STAGE=s1 "$A/Contents/MacOS/斐萃-s1" --engine-run /path/to/probe.py   # 见下
+open -n "$A" --args --test-exit-after 12  # 起窗 12 s 自关；日志 ~/Library/Logs/斐萃/pack-<yyyymmdd>.log
+```
+
+`--engine-run <脚本>` 是**唯一**能在包内解释器里跑自定义代码的入口（`pack_main.py` 的 `run_engine`）；
+脚本自己的 `print` 会被 `_boot()` 接到日志文件 ⇒ **探针结果要写文件**，别指望 stdout。
+
+2026-10-18 读数（两阶段一致）：
+- `Contents/Frameworks/src/`：s1 = `__init__.py, pdf_library.py, validator.py, yinyuan_client.py`；
+  s2 另含 `ocr_rapid.py`、`ocr_corrector.py`；
+- `from src import yinyuan_client, pdf_library, validator` ⇒ `import_ok=True`（`__file__` 均指向包内 `Contents/Frameworks/src/`）；
+- `YinyuanClient(data_dir=<空目录>).status()` ⇒ 结构化 dict 12 键（`ok/connected=False/key_file_exists=False/
+  prefix=""/local_dynasty_count=15/base_url/cache…`），**不抛**；
+- `.dynasty_values(allow_network=False)` ⇒ `source=fallback_local, reason=NO_KEY, total=15`，且
+  **逐字等于 `pdf_library.DYNASTY_OPTIONS`（15 项）**；两阶段均无网络、无凭据；
+- 启动实测：`WEBUI_START mode=native` ⇒ `WINDOW_TEST: 窗口存活 12.0s（自动关窗）`，日志 0 处 `Traceback`；
+- 敏感件扫描：两包内 `.env` / `.session.json` / `yinyuan.json` **各 0 个**（真 key 绝不进包）。
+
+### 8.3 未签名 DMG（**ad-hoc，非正式签名**）
+
+本机 `security find-identity -v -p codesigning` = **0 valid identities** ⇒ 只能 ad-hoc：
+
+```bash
+STAGE=$(mktemp -d)/dmg && mkdir -p "$STAGE"
+ditto webui/build/dist/斐萃-s1.app "$STAGE/斐萃-s1.app"
+ln -s /Applications "$STAGE/Applications"
+codesign --force --deep -s - "$STAGE/斐萃-s1.app"          # adhoc（PyInstaller BUNDLE 步本身也已是 adhoc）
+codesign --verify --deep --strict --verbose=2 "$STAGE/斐萃-s1.app"
+hdiutil create -volname "斐萃 s1" -srcfolder "$STAGE" -ov -format UDZO -fs HFS+ \
+  webui/build/dist/斐萃-s1.dmg
+hdiutil verify webui/build/dist/斐萃-s1.dmg
+```
+
+实测：**94 MB（99 045 133 B）、UDZO/zlib、压缩比 0.440、`hdiutil verify` = checksum VALID**；
+挂载后目录 = `斐萃-s1.app` ＋ `Applications -> /Applications`，**挂载内启动也能自关（`--test-exit-after 8` ⇒ EXIT=0）**。
+
+### 8.4 分发现状（必须对用户说清）
+
+产物 **未签名、未公证** ⇒ 用户机首次打开会被 **Gatekeeper** 拦（「无法验证开发者」）：
+
+- 临时绕过：右键 → 打开；或 `xattr -dr com.apple.quarantine /Applications/斐萃-s1.app`；
+- **正式分发**：需人类提供 **Developer ID Application 证书** ＋ **App Store Connect 凭据**，
+  然后 `codesign --force --deep --options runtime --timestamp` ＋ `xcrun notarytool submit --wait` ＋ `xcrun stapler staple`；
+- **ad-hoc 不是正式签名**（`TeamIdentifier=not set`），不可当作已签名的对外说法。

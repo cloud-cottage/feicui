@@ -78,7 +78,10 @@ binaries = []
 #     ＋ `src/validator.py`（文件名解析/新名预览，单一真源）。
 #   OCR 两件**仅阶段 2/3** 需要（`--engine-run src/ocr_rapid.py` 走文件级执行；
 #   `src/ocr_corrector.py` 是它的字表链路）——阶段 1 收进去也跑不了（无 rapidocr）。
-SRC_FILES = ["__init__.py", "pdf_library.py", "validator.py"]        # 全阶段必需
+#   2026-10-18 追加：`src/yinyuan_client.py`（B4 yinyuan 接入；`api.py` 顶层 `from src import`
+#   ⇒ 缺它会在打包态 import 阶段直接炸，源码态看不出来）。
+SRC_FILES = ["__init__.py", "pdf_library.py", "validator.py",
+             "yinyuan_client.py"]                                  # 全阶段必需
 if WITH_OCR:
     SRC_FILES += ["ocr_rapid.py", "ocr_corrector.py"]
 for _src_name in SRC_FILES:
@@ -93,6 +96,7 @@ for _src_name in SRC_FILES:
 #   （缺一个的后果是「打包成功、运行时 ImportError」）。
 hiddenimports = [
     "api", "src", "src.pdf_library", "src.validator",           # 壳 + 逻辑层
+    "src.yinyuan_client",                                        # yinyuan 接入（B4）
     "webview", "webview.platforms.cocoa",                        # PyWebView 原生窗口（macOS=WKWebView）
     "cv2", "tifffile", "pymupdf", "numpy", "PIL", "PIL.Image",   # 引擎（render_page_2400.py）渲染栈
 ]

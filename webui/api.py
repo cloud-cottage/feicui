@@ -1090,7 +1090,13 @@ class FeicuiApi:
             return {"ok": False, "code": "render_failed", "input_via": "",
                     "msg": f"出图失败，无法 OCR：{how}", **base}
         try:
-            from src import ocr_rapid                    # 懒 import：OCR 栈重，tab3 平时不该付这份开销
+            # ⚠ **必须走 `importlib`**（2026-10-18 修复）：PyInstaller 的 AST 分析会追踪
+            #   **函数体内**的 `import` 语句 ⇒ 写成 `from src import ocr_rapid` 时，
+            #   即使阶段 1 的 `datas`/`hiddenimports` 都没列它，`src/ocr_rapid.py` 照样被收进 PYZ
+            #   ⇒ 它 import rapidocr ⇒ 触发 `hook-onnxruntime.py`/`hook-shapely.py`
+            #   ⇒ s1 从 210 MB 涨到 298 MB（onnxruntime 70 MB ＋ shapely 4.3 MB ＋ pyclipper ＋ 模型）。
+            #   动态 import 不做静态分析；阶段 2/3 仍拿得到（spec 的 `if WITH_OCR:` 已列 hiddenimport）。
+            ocr_rapid = importlib.import_module("src.ocr_rapid")
             res = ocr_rapid.ocr_image(str(png))
             engine_id = ocr_rapid.OCR_ENGINE_NAME
         except Exception as exc:

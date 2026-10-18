@@ -133,6 +133,18 @@ if WITH_PADDLE:
 else:
     excludes += ["paddle", "paddlex", "paddleocr"]            # 阶段 1/2：打包侧排除（省 ≈631 MB）
 
+if not WITH_OCR:
+    # 阶段 1 双保险（2026-10-18）：**rapidocr 整条依赖链一律不进包**。
+    # 根因不在本 spec 的 datas/hiddenimports（阶段 1 本来就没列 `src/ocr_rapid.py`），
+    # 而是 `webui/api.py` 曾把 `from src import ocr_rapid` 写在 `tab3_ocr()` 函数体内
+    # ——**PyInstaller 的 AST 分析会追踪函数体内的 import** ⇒ ocr_rapid 被收进 PYZ
+    # ⇒ 它 import rapidocr ⇒ 触发 contrib 的 `hook-onnxruntime.py`（自带 dylib 收集）
+    # 与 `hook-shapely.py` ⇒ 连带 onnxruntime(70 MB) + shapely(4.3 MB) + pyclipper + ONNX 模型，
+    # s1 从 210 MB 涨到 298 MB。api.py 已改 `importlib.import_module`（动态，不被分析）。
+    # ⚠ `excludes` 只作用于 PYZ 的 import 分析，**对 datas/binaries 无效**；阶段 1 没有
+    #   `collect_all(...)` 也没有把模型列进 datas，所以这里能真正拦住。
+    excludes += ["rapidocr", "onnxruntime", "shapely", "pyclipper"]
+
 a = Analysis(
     [os.path.join(WEBUI, "build", "pack_main.py")],
     pathex=[WEBUI, os.path.join(ROOT, "server")],

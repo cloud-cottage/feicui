@@ -237,6 +237,37 @@ done
 实测（Apple Silicon / macOS 15.7.4，含 B4 `src/yinyuan_client.py`）：**s1 22.8 s / 210 MB（220 397 568 B）**、
 **s2 30.3 s / 329 MB（345 235 456 B）**，两次 `EXIT=0`。
 
+#### 8.1b ⚠ 体积回涨的根因：**函数体内的 `import` 照样被 PyInstaller 分析**（2026-10-18 实测）
+
+现象：同一套 spec 重打，**s1 从 210 MB 涨到 298 MB（312 508 416 B）**，构建日志多出
+`hook-onnxruntime.py` / `hook-shapely.py`，包内 `find` 命中 `onnxruntime`(70 MB) / `shapely`(4.3 MB) /
+`pyclipper` / `rapidocr` 模型 —— 即 rapidocr 整条依赖链。
+
+根因**不在 spec**（阶段 1 的 `datas` 只有 4 个 `src/*.py`，`hiddenimports` 也没列 `src.ocr_rapid.py`），
+而在 `webui/api.py::tab3_ocr()` 里那行**本意是懒加载**的
+`from src import ocr_rapid`：PyInstaller 的 AST 分析**会追踪函数体内的 import 语句** ⇒
+`src/ocr_rapid.py` 被收进 PYZ ⇒ 它 import `rapidocr` ⇒ contrib hook 连带整条链。
+对照：同文件的 `ocr_available()` 用 `importlib.util.find_spec` / `importlib.import_module`（动态），
+**不触发任何收集**。
+
+修法（两条同时上）：
+1. `webui/api.py` 该行改 `ocr_rapid = importlib.import_module("src.ocr_rapid")`
+   （`importlib` 顶部已 import；`try/except` 与错误文案不变）。阶段 2/3 照旧拿得到 ——
+   spec 的 `if WITH_OCR:` 已把 `src.ocr_rapid` 列进 `hiddenimports`。
+2. `feicui.spec` 加 `if not WITH_OCR: excludes += ["rapidocr", "onnxruntime", "shapely", "pyclipper"]`
+   作双保险（`excludes` 只作用于 PYZ import 分析，对 datas/binaries 无效；阶段 1 没有
+   `collect_all`、也没把模型列 datas ⇒ 这里有效）。
+
+重打读数（2026-10-18，同机）：**s1 21.8 s / 210 MB（219 894 347 B，find 求和）**、
+**s2 28.9 s / 329 MB（344 362 049 B）**，`EXIT=0`；s1 日志对
+`onnxruntime|shapely|rapidocr|pyclipper` **0 命中**，s2 仍命中 17 项（含
+`rapidocr/models/PP-OCRv6_det_small.onnx`）。
+
+`tab3_correct()` 里的 `from src import ocr_corrector` **保留静态 import**：该模块只依赖
+`argparse/json/sys/pathlib/typing`（无 numpy/cv2/rapidocr）⇒ 静态收进 PYZ 只多 21 163 B 源码，
+**不拉任何重型依赖**；且阶段 1 反而因此能真用纠错（探针实测 `n_hits=1`）。
+
+
 ### 8.2 包内验证（**打包态的坑只能在包里验**，源码态看不出来）
 
 ```bash

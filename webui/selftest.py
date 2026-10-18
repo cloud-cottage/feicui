@@ -372,6 +372,151 @@ def main(argv: list[str] | None = None) -> int:
                "DEPRECATED" in legacy and "def generate_test_tiff" in legacy,
                "旧版 Streamlit 页 webui.py 仍在仓（需求真源，保留）")
 
+        # ── ③c tab3 OCR 试试看 ＋ 纠错建议（逻辑层直测；**临时目录造图**，不碰仓/生产）──
+        ocr_sub = "OCR子目录"
+        (root / lib.TIFF_DIR / ocr_sub).mkdir(parents=True, exist_ok=True)
+        try:
+            from PIL import Image, ImageDraw, ImageFont
+            png = root / lib.TIFF_DIR / ocr_sub / "printed.png"
+            im = Image.new("RGB", (640, 260), "white")
+            dr = ImageDraw.Draw(im)
+            fnt = None
+            for cand in ("/System/Library/Fonts/Supplemental/Arial Bold.ttf",
+                         "/System/Library/Fonts/Supplemental/Arial.ttf",
+                         "/System/Library/Fonts/Helvetica.ttc"):
+                try:
+                    fnt = ImageFont.truetype(cand, 110)
+                    break
+                except Exception:
+                    continue
+            fnt = fnt or ImageFont.load_default(110)
+            dr.text((30, 40), "FEICUI", fill="black", font=fnt)   # 印刷体（①②类口径）
+            dr.text((30, 150), "123", fill="black", font=fnt)
+            im.save(png)
+            img_ok = True
+        except Exception as exc:
+            img_ok = False
+            record("tab3ocr/fixture_png_made", "FAIL",
+                   f"PIL 造图失败：{exc.__class__.__name__}: {exc}")
+        if img_ok:
+            oc = api.tab3_ocr({"subdir": ocr_sub, "name": "printed.png"})
+            texts = oc.get("texts") or []
+            expect("tab3ocr/printed_png_returns_texts",
+                   bool(oc.get("ok")) and len(texts) > 0
+                   and len(oc.get("scores") or []) == len(texts)
+                   and float(oc.get("elapsed_s") or 0) >= 0 and bool(oc.get("engine")),
+                   f"texts={texts} scores={oc.get('scores')} elapsed_s={oc.get('elapsed_s')} "
+                   f"engine={oc.get('engine')!r} mean={oc.get('mean_score')}")
+            expect("tab3ocr/printed_scores_high",
+                   bool(oc.get("scores")) and min(oc["scores"]) >= 0.9,
+                   f"min_score={min(oc.get('scores') or [0])}（①②类印刷体应高分）")
+            hint = str(oc.get("hint") or "")
+            expect("tab3ocr/honest_hint_present",
+                   "印面" in hint and "不可靠" in hint and "仅供参考" in hint
+                   and "一键" not in hint,
+                   f"hint={hint[:110]}…")
+            expect("tab3ocr/ocr_does_not_touch_file",
+                   png.is_file() and png.read_bytes()[:4] == b"\x89PNG",
+                   f"{png.name} 原样在位（OCR 只读）：size={png.stat().st_size}")
+
+        miss_ocr = api.tab3_ocr({"subdir": ocr_sub, "name": "不存在.png"})
+        expect("tab3ocr/missing_file_structured",
+               (not miss_ocr.get("ok")) and bool(miss_ocr.get("msg"))
+               and miss_ocr.get("texts") == [],
+               f"ok={miss_ocr.get('ok')} code={miss_ocr.get('code')} msg={miss_ocr.get('msg')}")
+        bad_png = root / lib.TIFF_DIR / ocr_sub / "broken.png"
+        bad_png.write_bytes(b"not an image at all")
+        bad_ocr = api.tab3_ocr({"subdir": ocr_sub, "name": "broken.png"})
+        expect("tab3ocr/invalid_image_structured",
+               (not bad_ocr.get("ok")) and bool(bad_ocr.get("msg"))
+               and bad_ocr.get("texts") == [],
+               f"ok={bad_ocr.get('ok')} code={bad_ocr.get('code')} msg={(bad_ocr.get('msg') or '')[:110]}")
+        sub_bad = api.tab3_ocr({"subdir": "不存在子目录", "name": "printed.png"})
+        expect("tab3ocr/bad_subdir_rejected", not sub_bad.get("ok"), str(sub_bad.get("msg")))
+
+        # 纠错：suggest 只给候选（不改字）；auto 必须显式传；无命中 ⇒ 空面板
+        cs = api.tab3_correct({"text": "左軍丞錄", "mode": "suggest"})
+        hits = cs.get("hits") or []
+        hit_brief = [(h.get("from"), h.get("to"), h.get("source"), h.get("confidence")) for h in hits]
+        expect("corrector/suggest_hits_錄_to_鈢",
+               bool(cs.get("ok")) and len(hits) == 1
+               and hits[0].get("from") == "錄" and hits[0].get("to") == "鈢"
+               and hits[0].get("verified") is True and hits[0].get("applied") is False,
+               f"mode={cs.get('mode')} hits={hit_brief}")
+        expect("corrector/suggest_does_not_rewrite",
+               cs.get("corrected") == "左軍丞錄" and cs.get("raw") == "左軍丞錄",
+               f"raw={cs.get('raw')!r} corrected={cs.get('corrected')!r}（suggest 不得改写）")
+        ca = api.tab3_correct({"text": "左軍丞錄", "mode": "auto"})
+        expect("corrector/auto_only_when_explicit",
+               ca.get("corrected") == "左軍丞鈢"
+               and (ca.get("stats") or {}).get("n_applied") == 1,
+               f"mode={ca.get('mode')} corrected={ca.get('corrected')!r} "
+               f"n_applied={(ca.get('stats') or {}).get('n_applied')}")
+        expect("corrector/map_review_state_reported",
+               (cs.get("map") or {}).get("n_verified") == 2
+               and bool((cs.get("map") or {}).get("review_status")),
+               f"map={cs.get('map')}（字表 2 条已核定 —— UI 必须显示，别让人以为审完了）")
+        cnone = api.tab3_correct({"text": "长乐未央", "mode": "suggest"})
+        expect("corrector/no_hits_when_no_rule",
+               bool(cnone.get("ok")) and (cnone.get("hits") or []) == [],
+               f"hits={cnone.get('hits')}（UI 此时**静默不显示空面板**）")
+        cbad = api.tab3_correct({"text": "錄", "mode": "乱来"})
+        expect("corrector/bad_mode_structured_failure",
+               (not cbad.get("ok")) and bool(cbad.get("msg")),
+               f"msg={(cbad.get('msg') or '')[:90]}")
+
+        # 能力探测 ＋ 模拟「本版不含 OCR 引擎」（阶段 1 包 s1 不带 rapidocr）：
+        #   ⇒ 必须**打开 tab3 就能看出不可用**（ocr_available=false）＋ tab3_ocr 结构化拒绝（不抛）
+        import api as api_mod
+        tl = api.tab3_list({"subdir": ocr_sub})
+        expect("ocrui/capability_exposed",
+               api_mod.ocr_available() is True and tl.get("ocr_available") is True
+               and (tl.get("ocr_note") or "") == "" and tl.get("corrector_available") is True,
+               f"本机 ocr_available={api_mod.ocr_available()} 列表里 ocr_available={tl.get('ocr_available')} "
+               f"ocr_note={tl.get('ocr_note')!r}")
+        _orig_probe = api_mod.ocr_available
+        try:
+            api_mod.ocr_available = lambda: False           # 模拟 s1 包（引擎不随包）
+            un = api.tab3_ocr({"subdir": ocr_sub, "name": "printed.png"})
+            ul = api.tab3_list({"subdir": ocr_sub})
+            cc = api.tab3_correct({"text": "左軍丞錄"})
+        finally:
+            api_mod.ocr_available = _orig_probe
+        expect("ocrui/unavailable_is_structured_not_raise",
+               (not un.get("ok")) and un.get("reason") == "OCR_UNAVAILABLE"
+               and "本版本不含 OCR 引擎" in (un.get("msg") or "") and un.get("texts") == [],
+               f"ok={un.get('ok')} reason={un.get('reason')} msg={(un.get('msg') or '')[:80]}")
+        expect("ocrui/unavailable_reported_in_list",
+               ul.get("ocr_available") is False and bool(ul.get("ocr_note")),
+               f"ocr_available={ul.get('ocr_available')} ocr_note={ul.get('ocr_note')!r}"
+               f"（UI 据此置灰按钮并给可读提示）")
+        expect("ocrui/corrector_works_without_engine",
+               bool(cc.get("ok")) and len(cc.get("hits") or []) == 1,
+               "纠错层纯 stdlib ⇒ 缺 OCR 引擎时仍可对手输释文给建议（面板不依赖引擎）")
+
+        # UI 静态面（渲染后断言的补充：节点/桥方法名必须在文件里）
+        html = (WEBUI_DIR / "ui" / "index.html").read_text(encoding="utf-8")
+        appjs = (WEBUI_DIR / "ui" / "app.js").read_text(encoding="utf-8")
+        need_ids = ["btn-tab3-ocr", "tab3-ocr-out", "tab3-ocr-hint", "tab3-ocr-raw",
+                    "tab3-corr", "tab3-corr-list", "btn-tab3-corr-apply", "tab3-corr-auto"]
+        missing = [i for i in need_ids if f'id="{i}"' not in html]
+        expect("ocrui/static_nodes_present", not missing,
+               f"缺={missing}；有={[i for i in need_ids if i not in missing]}")
+        expect("ocrui/auto_toggle_default_off",
+               'id="tab3-corr-auto" checked' not in html
+               and 'id="tab3-corr-auto" checked=' not in html,
+               "自动纠错复选框**默认未勾选**（auto 不默认生效）")
+        expect("ocrui/js_wires_ocr_and_corrector",
+               "'tab3_ocr'" in appjs and "'tab3_correct'" in appjs
+               and "mode: auto ? 'auto' : 'suggest'" in appjs
+               and "btn.disabled = (ST.tab3.ocrAvailable === false)" in
+               appjs.split("function doOcr")[1].split("function renderLog")[0],
+               "前端调 tab3_ocr / tab3_correct；suggest 为默认，auto 仅勾选后；按钮成败都复原（但缺引擎时保持禁用）")
+        expect("ocrui/js_gates_on_ocr_available",
+               "r.ocr_available !== false" in appjs and "ocrAvailable === false" in appjs
+               and "ocrBtn.disabled = !ST.tab3.ocrAvailable" in appjs,
+               "前端按 tab3_list.ocr_available 置灰按钮 / 禁用 auto 复选框并常驻提示（不点才炸）")
+
         # ── ④ tab2：产物列表 ＋ 生成入口（参数面 / 预检 / 引擎命令行）──
         t2 = api.tab2_list({})
         expect("tab2/list_ok", bool(t2.get("ok")),
@@ -500,7 +645,7 @@ def main(argv: list[str] | None = None) -> int:
             cmd = [str(VENV_PYTHON), str(WEBUI_DIR / "domtest.py"), "--out", str(dom_json)]
             t0 = time.time()
             try:
-                p = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
+                p = subprocess.run(cmd, capture_output=True, text=True, timeout=420)
                 rc, out, err = p.returncode, p.stdout, p.stderr
             except subprocess.TimeoutExpired as exc:
                 rc, out, err = "TIMEOUT", exc.stdout or "", exc.stderr or ""

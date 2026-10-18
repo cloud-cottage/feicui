@@ -220,6 +220,33 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent-line
   border: 1px dashed var(--warn-line); border-radius: 8px; padding: 6px 8px; }
 .badge-warn { font-size: 11px; font-weight: 400; color: var(--warn); background: var(--warn-bg);
   border: 1px solid var(--warn-line); border-radius: 999px; padding: 2px 8px; margin-left: 6px; }
+
+/* ═══════════ tab3 OCR 试试看 ＋ 纠错建议（只读辅助：只改输入框，不改文件）═══════════ */
+.ocr-row { gap: 8px; align-items: center; flex-wrap: wrap; margin: 2px 0 6px; }
+.ocr-row .chk { font-size: 11px; color: var(--muted); display: inline-flex; align-items: center;
+  gap: 4px; cursor: pointer; }
+.ocr-row .chk input { margin: 0; }
+.ocr-out { border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; background: #fafafa;
+  margin-bottom: 6px; }
+.ocr-out[hidden] { display: none; }
+/* 诚实提示：**必须显眼**（印面篆书通用 OCR 不可靠）⇒ 走 warn 色，不用 muted */
+.ocr-hint { font-size: 11px; color: var(--warn); background: var(--warn-bg);
+  border: 1px dashed var(--warn-line); border-radius: 6px; padding: 4px 6px; margin-bottom: 5px; }
+.ocr-raw { font-size: 12px; color: var(--text); word-break: break-all; line-height: 1.5; }
+.ocr-raw .seg { display: block; }
+.ocr-raw .seg .sc { color: var(--muted); font-size: 11px; margin-left: 6px; }
+.ocr-raw .seg .sc.low { color: var(--err); }
+.ocr-raw .eng { color: var(--muted); font-size: 11px; }
+.corr { border: 1px solid var(--accent-line); border-radius: 8px; padding: 6px 8px;
+  background: var(--accent-wash); margin-bottom: 6px; }
+.corr[hidden] { display: none; }
+.corr-head { font-size: 11px; font-weight: 600; color: var(--accent-deep); margin-bottom: 4px; }
+.corr-item { font-size: 12px; padding: 2px 0; word-break: break-all; }
+.corr-item .from { color: var(--err); font-weight: 600; }
+.corr-item .to { color: var(--accent-deep); font-weight: 600; }
+.corr-item .meta { color: var(--muted); font-size: 11px; margin-left: 6px; }
+.corr .btn.block { margin-top: 5px; }
+
 .op-log { margin-top: 12px; }
 .op-log .log-scroll { max-height: 30vh; }
 

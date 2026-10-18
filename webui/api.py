@@ -17,7 +17,10 @@
       - tab3  → `src/pdf_library.py`（子目录 / tiff 列表 / 测试 tiff）
                 ＋ 本文件：缩略图网格数据（`sips -Z 150` → 内联 base64，三级引擎回退）、
                 大图预览（`-Z 400`）、文件名解析/新名预览/校验（`src/validator.py` 单一真源）、
-                重命名（同目录同名 ⇒ 拒）＋ **本地**操作记录（`webui/var/rename_log.jsonl`）。
+                重命名（同目录同名 ⇒ 拒）＋ **本地**操作记录（`webui/var/rename_log.jsonl`）、
+                **OCR 试试看**（`src/ocr_rapid.py`，只读辅助：印面篆书不可用 ⇒ 返回值带
+                `hint` 诚实提示，UI 原样显示）＋ **纠错建议**（`src/ocr_corrector.py`，
+                默认 `suggest` 只给候选；`auto` 需前端显式传，且只改输入框、不动文件）。
                 腾讯文档日志 / 百度网盘云盘锁 **未接入**：接口返回值一律带
                 `cloud_log=not_connected` / `cloud_lock=not_connected`，UI 上明标。
       - 文件名模板 → `src/validator.py`
@@ -34,6 +37,8 @@ from __future__ import annotations
 
 import base64
 import hashlib
+import importlib
+import importlib.util
 import json
 import os
 import subprocess
@@ -105,6 +110,51 @@ RENAME_LOG = VAR_DIR / "rename_log.jsonl"
 CLOUD_LOG_STATUS = "not_connected"
 CLOUD_LOCK_STATUS = "not_connected"
 CLOUD_NOTE = "日志同步（腾讯文档）/ 云盘锁暂未接入：本壳只写本地记录 webui/var/rename_log.jsonl"
+
+# ── tab3：OCR 试试看（**只读辅助**：不写文件 / 不写库 / 不改名）──────────────────────
+#: OCR 输入面长边。取 1024：印面篆书笔画细，150/400 太小；再往上对「均分 0.24」没有实质改善。
+#: 走既有 `_thumb_file()` ⇒ 缓存落 `webui/var/thumbs/prev1024/<子目录>/*.png`（不入库）。
+OCR_MAX_EDGE = 1024
+#: **诚实提示 —— 单一真源**（UI 原样显示，不得改写成「一键得正确释文」）。
+#: 口径来自实测（`ops/ocr-rapid/README.md`）：①②类印刷体可靠（0.94–0.9999）；
+#: ③类**印面篆书不可用**（248 枚池：非空 60.1%、均分 0.2428；「左軍丞玺」被两引擎一致误读为「左軍丞錄」）。
+OCR_HINT = ("印面篆书通用 OCR 不可靠、仅供参考：248 枚实测均分 0.2428（非空仅 60.1%），"
+            "真实样本「左軍丞玺」被两引擎一致误读为「左軍丞錄」⇒ 请逐字人工核对后再重命名。")
+#: 引擎标签（回给 UI 显示，别让用户以为走的是云端 API）
+OCR_ENGINE_LABEL = "rapidocr-onnxruntime · PP-OCRv6 small（本地，无网络）"
+#: 可直接送 OCR 的位图后缀（TIFF / 其他 ⇒ 先出 PNG，见 `_ocr_png`）
+OCR_DIRECT_SUFFIXES = {".png", ".jpg", ".jpeg", ".bmp", ".webp"}
+#: 能力探测缓存（**只探一次**；打包件里 rapidocr 可能整个不在 ⇒ 绝不 per-call import）
+_OCR_PROBE: dict[str, object] = {"done": False, "available": False, "reason": ""}
+
+
+def ocr_available() -> bool:
+    """本版本**有没有** OCR 引擎（探测并缓存；缺失不抛，只回 False）。
+
+    为什么要有这一层：阶段 1 打包件（`斐萃-s1.app`）**不收** `rapidocr` 与
+    `src/ocr_rapid.py`（阶段 2/3 才收）⇒ tab3 的「OCR 试试看」在 s1 上必须**先置灰/隐藏**，
+    不能等用户点下去才吃 `ImportError`（UI 上就是「点了炸」）。
+    判据：`importlib.util.find_spec('rapidocr')` 有 + `src.ocr_rapid` 能 import（后者在 s1 里也没有）。
+    """
+    if not _OCR_PROBE["done"]:
+        available, why = False, ""
+        try:
+            if importlib.util.find_spec("rapidocr") is None:
+                why = "本版本未内置 OCR 引擎（rapidocr 未随包提供）"
+            else:
+                importlib.import_module("src.ocr_rapid")
+                available = True
+        except Exception as exc:
+            why = f"OCR 引擎不可用：{exc.__class__.__name__}: {exc}"
+        _OCR_PROBE.update({"done": True, "available": bool(available), "reason": why})
+    return bool(_OCR_PROBE["available"])
+
+
+def ocr_unavailable_note() -> str:
+    """能力缺失时的**可读**原因（UI 原样显示；可用时为空串）。"""
+    if ocr_available():
+        return ""
+    return str(_OCR_PROBE.get("reason") or "本版本未内置 OCR 引擎（rapidocr 未随包提供）")
 
 # ── 用户表（**仅后端**；可被 .env 的 FEICUI_USERS 覆盖，格式 `user:pwd:admin|user,...`）──
 _DEFAULT_USERS: dict[str, dict] = {
@@ -795,6 +845,8 @@ class FeicuiApi:
                 "thumb_max": TIFF_THUMB_MAX, "preview_max": TIFF_PREVIEW_MAX,
                 "limits": {"shiwen_max": validator.SHIWEN_MAX, "author_max": validator.AUTHOR_MAX},
                 "operator": name, "is_admin": bool(is_admin),
+                "ocr_available": ocr_available(), "ocr_note": ocr_unavailable_note(),
+                "corrector_available": True,          # 纠错层纯 stdlib（不依赖 OCR 引擎）
                 "cloud_log": CLOUD_LOG_STATUS, "cloud_lock": CLOUD_LOCK_STATUS, "note": CLOUD_NOTE}
 
     def tab3_generate_test(self, req: dict | None = None) -> dict:
@@ -985,6 +1037,117 @@ class FeicuiApi:
             return {"ok": False, "msg": msg or "出图失败"}
         return {"ok": True, "name": name, "size": size, "engine": engine,
                 "bytes": png.stat().st_size, "data_uri": self._data_uri(png)}
+
+    # ---- tab3 OCR（辅助面：只读，不写文件 / 不写库 / 不改名）----
+    def _ocr_png(self, src: Path, sub: str) -> tuple[Path | None, str]:
+        """OCR 输入面：位图（png/jpg/…）直用；TIFF 及其他 ⇒ 出 PNG（缓存，长边 OCR_MAX_EDGE）。"""
+        if src.suffix.lower() in OCR_DIRECT_SUFFIXES:
+            return src, "direct"
+        png, engine, msg = self._thumb_file(src, sub, OCR_MAX_EDGE)
+        return png, (engine or msg or "unknown")
+
+    def tab3_ocr(self, req: dict | None = None) -> dict:
+        """对当前选中裁切件跑**本地**通用 OCR（只读；绝不改文件、不写库、不改名）。
+
+        可靠性口径（**必须如实反映到 UI**，见 `ops/ocr-rapid/README.md`）：
+          ①②类（印刷体 / 版权页 / 边款释文）通用 OCR **可靠**（实测分数 0.94–0.9999）；
+          ③类（**印面篆书**）通用 OCR **不可用** —— 248 枚池：非空 60.1%、均分 0.2428，
+          真实样本「左軍丞玺」被两引擎一致误读为「左軍丞錄」。
+        故本方法只回**原始读数**，诚实提示由 `hint` 一并返回（`OCR_HINT` 单一真源），
+        UI 原样显示 ⇒ **不得**让用户以为一键可得正确释文。
+
+        返回：`{ok, texts, scores, elapsed_s, engine, text, hint, …}`；异常一律
+        `{ok: false, msg}`（本层永不抛 —— 与 `api.py` 全局纪律一致）。
+        """
+        t0 = time.time()
+        miss = self._need_root()
+        if miss:
+            return miss
+        req = req or {}
+        sub = self._safe_seg(str(req.get("subdir", "")))
+        bad = self._subdir_guard(sub)
+        if bad:
+            return bad
+        name = self._safe_seg(str(req.get("name", "")))
+        src = self._tiff_src(sub, name)
+        base = {"texts": [], "scores": [], "text": "", "elapsed_s": 0.0,
+                "engine": OCR_ENGINE_LABEL, "hint": OCR_HINT}
+        # **能力闸**：阶段 1 打包件没有 OCR 栈 ⇒ 结构化拒绝（绝不 import 之后才炸）
+        if not ocr_available():
+            body = dict(base)
+            body.update({"ok": False, "reason": "OCR_UNAVAILABLE", "code": "OCR_UNAVAILABLE",
+                         "msg": "本版本不含 OCR 引擎：本版（阶段 1 包）未内置 rapidocr，"
+                                "OCR 试试看不可用；请手动填写释文。"})
+            return body
+        if not name or not src.is_file():
+            return {"ok": False, "msg": f"文件不存在：{name or '（空）'}", "code": "missing", **base}
+        try:
+            png, how = self._ocr_png(src, sub)
+        except Exception as exc:
+            return {"ok": False, "code": "render_failed", "input_via": "",
+                    "msg": f"出图失败，无法 OCR：{exc.__class__.__name__}: {exc}", **base}
+        if png is None:
+            return {"ok": False, "code": "render_failed", "input_via": "",
+                    "msg": f"出图失败，无法 OCR：{how}", **base}
+        try:
+            from src import ocr_rapid                    # 懒 import：OCR 栈重，tab3 平时不该付这份开销
+            res = ocr_rapid.ocr_image(str(png))
+            engine_id = ocr_rapid.OCR_ENGINE_NAME
+        except Exception as exc:
+            return {"ok": False, "code": "ocr_error", "input_via": how,
+                    "msg": f"OCR 失败：{exc.__class__.__name__}: {exc}", **base}
+        texts = [str(t) for t in (res.get("texts") or [])]
+        scores = []
+        for s in (res.get("scores") or []):
+            try:
+                scores.append(round(float(s), 4))
+            except Exception:
+                scores.append(0.0)
+        elapsed = round(time.time() - t0, 2)
+        return {
+            "ok": True, "subdir": sub, "name": name,
+            "texts": texts, "scores": scores, "text": "".join(texts),
+            "elapsed_s": elapsed, "engine": OCR_ENGINE_LABEL, "engine_id": engine_id,
+            "input_via": how, "n": len(texts),
+            "mean_score": round(sum(scores) / len(scores), 4) if scores else 0.0,
+            "empty": not texts,
+            "hint": OCR_HINT,
+            "note": "" if texts else "未识别到文字（印面篆书常见，不代表该件无字）",
+        }
+
+    def tab3_correct(self, req: dict | None = None) -> dict:
+        """对一段释文给**纠错建议**（`src/ocr_corrector.py`；默认 `mode='suggest'`）。
+
+        红线（Kevin 定，逐条落在返回值里）：
+          * `suggest`（默认）**只给候选、不改字**；`auto` 必须由前端**显式**传（UI 复选框默认关），
+            且**只改输入框文本，绝不动文件**；
+          * 字表只有 2 条 `verified=true`（`錄→鈢`、`鮮→鲜`）⇒ 一并回 `map` 复核状态，
+            别让用户以为字表已审完（`review_status` / `n_verified`）。
+        返回：`{ok, mode, raw, corrected, hits, stats, map}`；异常 ⇒ `{ok: false, msg, hits: []}`。
+        """
+        req = req or {}
+        text = str(req.get("text", ""))
+        mode = str(req.get("mode", "suggest")).strip() or "suggest"
+        try:
+            from src import ocr_corrector
+            res = ocr_corrector.correct(text, mode=mode)
+            try:
+                mm = ocr_corrector.map_summary(ocr_corrector.load_map())
+            except Exception:
+                mm = {}
+        except Exception as exc:
+            return {"ok": False, "mode": mode, "hits": [], "raw": text, "corrected": text,
+                    "msg": f"纠错失败：{exc.__class__.__name__}: {exc}"}
+        keys = ("pos", "from", "to", "rule_id", "source", "confidence",
+                "verified", "applied", "skip_reason", "note")
+        hits = [{k: h.get(k) for k in keys} for h in (res.get("hits") or [])]
+        return {
+            "ok": True, "mode": res["stats"]["mode"], "raw": res.get("raw", text),
+            "corrected": res.get("corrected", text), "hits": hits, "stats": res.get("stats") or {},
+            "map": {"version": mm.get("version"), "review_status": mm.get("review_status"),
+                    "n_entries": mm.get("n_entries"), "n_verified": mm.get("n_verified")},
+            "note": "ℹ️ 只改输入框文本，不改文件名；建议来自本地字表，请人工确认",
+        }
 
     def tab3_parse(self, req: dict | None = None) -> dict:
         """文件名解析（`validator.parse_filename` 单一真源）⇒ 回填 P/C/R 与三字段。

@@ -215,6 +215,25 @@
           <label class="field"><span id="tab3-shiwen-label">印面释文（最多 10 个汉字）</span>
             <input id="tab3-shiwen" type="text" placeholder="如：长乐未央" autocomplete="off">
             <div class="suggest" id="tab3-shiwen-suggest" hidden></div></label>
+          <!-- ── OCR 试试看（只读辅助；印面篆书不可靠 ⇒ 结果面板必带诚实提示）── -->
+          <div class="row ocr-row">
+            <button id="btn-tab3-ocr" class="btn small" data-action="tab3-ocr"
+                    title="对当前选中的裁切件跑本地通用 OCR（只填释文框，不改文件）">🔍 OCR 试试看</button>
+            <label class="chk" title="默认关闭：字表只有 2 条已核定规则，UI 不该默默替用户改字">
+              <input type="checkbox" id="tab3-corr-auto"> 自动应用已核定纠错（默认关）
+            </label>
+            <span class="caption" id="tab3-ocr-msg"></span>
+          </div>
+          <div id="tab3-ocr-out" class="ocr-out" hidden>
+            <div class="ocr-hint" id="tab3-ocr-hint"></div>
+            <div class="ocr-raw" id="tab3-ocr-raw"></div>
+          </div>
+          <div id="tab3-corr" class="corr" hidden>
+            <div class="corr-head" id="tab3-corr-head">纠错建议（本地字表 · 仅改输入框）</div>
+            <div class="corr-list" id="tab3-corr-list"></div>
+            <button id="btn-tab3-corr-apply" class="btn small block" data-action="tab3-corr-apply">
+              全部应用到释文框（不改文件）</button>
+          </div>
           <label class="field"><span>朝代</span>
             <input id="tab3-dynasty" type="text" placeholder="如：汉"></label>
           <label class="field"><span id="tab3-author-label">作者（最多 4 个汉字）</span>

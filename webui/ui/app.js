@@ -15,7 +15,9 @@
     tab3: {
       subdirs: [], files: [], curSubdir: '', view: '', page: 0, selected: '',
       cfg: null, limits: null, isAdmin: false, els: {}, pageNames: [],
-      thumbStat: null, previewStat: null, lastCheck: null, versions: 0
+      thumbStat: null, previewStat: null, lastCheck: null, versions: 0,
+      // OCR 试试看：corrHits = 当前展示的纠错建议；ocrRaw = 这些建议所基于的释文文本
+      corrHits: [], ocrRaw: ''
     }
   };
 
@@ -334,6 +336,20 @@
       ST.tab3.cfg = r.view_cfg || ST.tab3.cfg;
       ST.tab3.limits = r.limits || ST.tab3.limits || { shiwen_max: 10, author_max: 4 };
       ST.tab3.isAdmin = !!r.is_admin;
+      // OCR 能力闸：阶段 1 打包件不含 rapidocr ⇒ **打开就置灰**，不让用户点了才炸
+      ST.tab3.ocrAvailable = (r.ocr_available !== false);
+      ST.tab3.ocrNote = r.ocr_note || '本版本未内置 OCR 引擎';
+      var ocrBtn = $('btn-tab3-ocr');
+      if (ocrBtn) {
+        ocrBtn.disabled = !ST.tab3.ocrAvailable;
+        ocrBtn.title = ST.tab3.ocrAvailable
+          ? '对当前选中的裁切件跑本地通用 OCR（只填释文框，不改文件）'
+          : ST.tab3.ocrNote;
+      }
+      var autoBox = $('tab3-corr-auto');
+      if (autoBox) { autoBox.disabled = !ST.tab3.ocrAvailable; }
+      setMsg('tab3-ocr-msg', ST.tab3.ocrAvailable ? '' : ST.tab3.ocrNote,
+        ST.tab3.ocrAvailable ? '' : 'err');
       ST.tab3.view = ST.tab3.view || r.view_default || 'medium';
       ST.tab3.page = 0;
       $('tab3-template').textContent = r.template || '—';
@@ -463,6 +479,7 @@
     $('tab3-edit').hidden = false;
     $('tab3-current').textContent = '当前文件：' + name + '（' + f.size_mb + ' MB · ' + f.mtime + '）';
     if (!silent) { setMsg('tab3-rename-msg', ''); }   // 改完名后的自动刷新（silent）**不清**结果提示
+    ocrResetPanel();                                  // 换件 ⇒ 上一件的 OCR/纠错读数不再成立
     var pv = $('tab3-preview');
     pv.removeAttribute('src');
     call('tab3_preview', { subdir: ST.tab3.curSubdir, name: name }).then(function (r) {
@@ -538,6 +555,165 @@
         setMsg('tab3-rename-msg', (r && r.msg) || '重命名失败', 'err');
         doCheck();
       }
+    });
+  }
+
+  // ── OCR 试试看 ＋ 纠错建议（**只读辅助**：只改释文输入框，绝不改文件/不改名）──
+  //   诚实口径：**印面篆书通用 OCR 不可靠**（248 枚均分 0.2428、非空 60.1%）⇒ 结果面板
+  //   必带提示；提示文本以后端 `r.hint` 为单一真源，下面只是「后端没给」时的兜底。
+  var OCR_HINT_FALLBACK = '印面篆书通用 OCR 不可靠，仅供参考（请逐字人工核对）';
+
+  function corrHide() {
+    var box = $('tab3-corr');
+    ST.tab3.corrHits = [];
+    if (!box) { return; }
+    box.hidden = true;
+    var list = $('tab3-corr-list');
+    if (list) { list.innerHTML = ''; }
+  }
+
+  function ocrResetPanel() {                      // 换件 / 重新识别前清场（不留上一件的读数）
+    corrHide();
+    ST.tab3.ocrRaw = '';
+    var out = $('tab3-ocr-out');
+    if (out) { out.hidden = true; }
+    var raw = $('tab3-ocr-raw');
+    if (raw) { raw.innerHTML = ''; }
+    var hint = $('tab3-ocr-hint');
+    if (hint) { hint.textContent = ''; }
+    setMsg('tab3-ocr-msg', '');
+    if (ST.tab3.ocrAvailable === false) {          // 缺引擎的提示要常驻（换件也别被清掉）
+      setMsg('tab3-ocr-msg', ST.tab3.ocrNote || '本版本未内置 OCR 引擎', 'err');
+    }
+  }
+
+  function renderOcrResult(r) {
+    var out = $('tab3-ocr-out'), box = $('tab3-ocr-raw');
+    $('tab3-ocr-hint').textContent = r.hint || OCR_HINT_FALLBACK;
+    box.innerHTML = '';
+    var texts = r.texts || [], scores = r.scores || [];
+    if (!texts.length) {
+      var d0 = document.createElement('div');
+      d0.className = 'seg muted';
+      d0.textContent = r.note || '未识别到文字';
+      box.appendChild(d0);
+    }
+    texts.forEach(function (t, i) {
+      var d = document.createElement('span'); d.className = 'seg';
+      var s = document.createElement('span'); s.textContent = t;
+      var v = scores[i];
+      var sc = document.createElement('span');
+      sc.className = 'sc' + (typeof v === 'number' && v < 0.6 ? ' low' : '');   // <0.6 标红：低分优先人看
+      sc.textContent = '分数 ' + (typeof v === 'number' ? v.toFixed(4) : '—');
+      d.appendChild(s); d.appendChild(sc); box.appendChild(d);
+    });
+    var eng = document.createElement('div');
+    eng.className = 'eng';
+    eng.textContent = (r.engine || '') + ' · ' + (r.elapsed_s === undefined ? '—' : r.elapsed_s + ' s') +
+      ' · 均分 ' + (r.mean_score === undefined ? '—' : r.mean_score);
+    box.appendChild(eng);
+    out.hidden = false;
+  }
+
+  function renderCorrections(c) {
+    var hits = (c && c.hits) || [], list = $('tab3-corr-list');
+    list.innerHTML = '';
+    ST.tab3.corrHits = [];
+    if (!hits.length) { corrHide(); return; }     // 无命中 ⇒ **静默**（不显示空面板）
+    var m = (c && c.map) || {};
+    $('tab3-corr-head').textContent = '纠错建议 ' + hits.length + ' 条（字表 ' +
+      (m.n_verified === undefined ? '?' : m.n_verified) + '/' +
+      (m.n_entries === undefined ? '?' : m.n_entries) + ' 已核定 · 仅改输入框，不改文件）';
+    hits.forEach(function (h) {
+      var d = document.createElement('div'); d.className = 'corr-item';
+      var f = document.createElement('span'); f.className = 'from'; f.textContent = h.from;
+      var t = document.createElement('span'); t.className = 'to'; t.textContent = h.to;
+      var meta = document.createElement('span'); meta.className = 'meta';
+      meta.textContent = '第 ' + ((h.pos === undefined ? -1 : h.pos) + 1) + ' 字 · ' +
+        (h.source || '出处未标') + ' · 置信 ' + (h.confidence === undefined ? '—' : h.confidence) +
+        (h.verified ? ' · 已核定' : ' · 未核定');
+      d.appendChild(f); d.appendChild(document.createTextNode(' → '));
+      d.appendChild(t); d.appendChild(meta);
+      list.appendChild(d);
+      ST.tab3.corrHits.push(h);
+    });
+    $('btn-tab3-corr-apply').disabled = false;
+    $('tab3-corr').hidden = false;
+  }
+
+  function applyAllCorrections() {
+    var hits = ST.tab3.corrHits || [];
+    if (!hits.length) { return; }
+    var el = $('tab3-shiwen');
+    var chars = String(el.value || '').split('');
+    var n = 0;
+    // 仅在「该位置仍是原字」时才替换 ⇒ 用户已手改过的字不被悄悄覆盖
+    hits.forEach(function (h) {
+      if (typeof h.pos === 'number' && h.pos >= 0 && chars[h.pos] === h.from) {
+        chars[h.pos] = h.to; n += 1;
+      }
+    });
+    el.value = chars.join('');
+    el.dispatchEvent(new Event('input', { bubbles: true }));   // 触发计数 / 新名预览 / 按钮门禁
+    setMsg('tab3-ocr-msg', '已应用 ' + n + '/' + hits.length + ' 条到释文框（未改文件）',
+      n ? 'ok' : 'err');
+    corrHide();
+  }
+
+  function doOcr() {
+    var name = ST.tab3.selected;
+    if (ST.tab3.ocrAvailable === false) {          // 能力闸：本版不含引擎 ⇒ 只给可读提示，不打桥
+      setMsg('tab3-ocr-msg', ST.tab3.ocrNote || '本版本未内置 OCR 引擎', 'err');
+      return;
+    }
+    if (!name) { setMsg('tab3-ocr-msg', '请先选择文件', 'err'); return; }
+    var btn = $('btn-tab3-ocr');
+    if (btn.disabled) { return; }                 // 防连点（长任务纪律：结果回来再启用）
+    btn.disabled = true;
+    corrHide();
+    setMsg('tab3-ocr-msg', '正在识别…（本地引擎，通常 <1 s）');
+    var ver = ST.tab3.versions;                   // 识别途中换了件 ⇒ 丢弃旧结果
+    call('tab3_ocr', { subdir: ST.tab3.curSubdir, name: name }).then(function (r) {
+      if (ver !== ST.tab3.versions) { return; }
+      if (!r || !r.ok) {
+        $('tab3-ocr-out').hidden = true;
+        setMsg('tab3-ocr-msg', (r && r.msg) || 'OCR 失败', 'err');
+        return;
+      }
+      renderOcrResult(r);
+      var box = $('tab3-shiwen'), filled = false;
+      if (!String(box.value || '').trim() && String(r.text || '').trim()) {
+        box.value = r.text;                       // **仅当输入框为空**才填（不覆盖用户/文件名解析结果）
+        filled = true;
+        box.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+      var srcText = String(box.value || '');
+      ST.tab3.ocrRaw = srcText;
+      setMsg('tab3-ocr-msg',
+        (r.texts || []).length
+          ? ('识别 ' + r.texts.length + ' 段 · ' + r.elapsed_s + ' s' +
+             (filled ? ' · 已填入释文框' : ' · 释文框非空，未覆盖'))
+          : (r.note || '未识别到文字'),
+        (r.texts || []).length ? 'ok' : 'err');
+      var auto = !!($('tab3-corr-auto') && $('tab3-corr-auto').checked);
+      return call('tab3_correct', { text: srcText, mode: auto ? 'auto' : 'suggest' })
+        .then(function (c) {
+          if (ver !== ST.tab3.versions) { return; }
+          if (!c || !c.ok) { corrHide(); return; }              // 纠错不可用 ⇒ 静默，不影响主流程
+          if (auto && c.corrected && c.corrected !== srcText) {  // auto 只在显式勾选时改**输入框**
+            box.value = c.corrected;
+            box.dispatchEvent(new Event('input', { bubbles: true }));
+            ST.tab3.ocrRaw = c.corrected;
+            setMsg('tab3-ocr-msg', '自动应用已核定纠错 ' + ((c.stats || {}).n_applied || 0) +
+              ' 处（仅改输入框）', 'ok');
+          }
+          renderCorrections(c);
+        });
+    }).catch(function () {
+      $('tab3-ocr-out').hidden = true;
+      setMsg('tab3-ocr-msg', '后端不可用', 'err');
+    }).then(function () {
+      btn.disabled = (ST.tab3.ocrAvailable === false);   // **成败都复原**（缺引擎则保持禁用）
     });
   }
 
@@ -779,6 +955,9 @@
       $(id).addEventListener('input', checkFields);
     });
     $('btn-tab3-rename').addEventListener('click', doRenameTab3);
+    // OCR 试试看 ＋「全部应用」纠错建议（只改输入框，不改文件）
+    $('btn-tab3-ocr').addEventListener('click', doOcr);
+    $('btn-tab3-corr-apply').addEventListener('click', applyAllCorrections);
     document.addEventListener('keydown', tab3Keydown);
     Array.prototype.forEach.call(document.querySelectorAll('[data-action="logout"]'), function (b) {
       b.addEventListener('click', function () {

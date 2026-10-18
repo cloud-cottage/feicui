@@ -8,7 +8,7 @@
     probe 里 `time.sleep` 等页面/异步桥，再用 `window.evaluate_js(...)` 读**渲染后的真实 DOM**；
   * 真交互：点 tab3 → 切四档视图 → 点缩略图格子 → 读右栏三输入框回填 → 改释文触发校验
     → 撞同名冲突 → 点「执行重命名」→ 点「生成测试 TIFF」→ 派发方向键；
-  * `threading.Timer(120, …)` 看门狗兜底关窗，防挂死。
+  * `threading.Timer(180, …)` 看门狗兜底关窗，防挂死。
 
 隔离（**不碰仓内/使用者真目录**）：
   * 本脚本在 import `api` **之前**把 `FEICUI_DATA_DIR` 指到临时目录 ⇒ `.env` / `.session.json` /
@@ -210,6 +210,27 @@ JS_LOG = """
     rows: rows.length,
     first: rows.length ? [...rows[0].querySelectorAll('td')].map(td=>td.textContent) : [],
     path: g('tab3-log-path').textContent, badge: g('tab3-log-badge').textContent
+  }); })()
+"""
+
+#: OCR 试试看 ＋ 纠错建议面板（右栏，渲染后读数）
+JS_OCR = """
+(() => { const g=id=>document.getElementById(id);
+  const out=g('tab3-ocr-out'), corr=g('tab3-corr'), raw=g('tab3-ocr-raw');
+  const btn=g('btn-tab3-ocr');
+  return JSON.stringify({
+    btn_exists: !!btn, btn_disabled: btn ? btn.disabled : null,
+    out_hidden: out ? out.hidden : null,
+    hint: g('tab3-ocr-hint') ? g('tab3-ocr-hint').textContent : '',
+    raw: raw ? raw.textContent : '', segs: raw ? raw.querySelectorAll('.seg').length : 0,
+    corr_hidden: corr ? corr.hidden : null,
+    corr_head: g('tab3-corr-head') ? g('tab3-corr-head').textContent : '',
+    corr_items: g('tab3-corr-list')
+      ? [...g('tab3-corr-list').querySelectorAll('.corr-item')].map(e=>e.textContent) : [],
+    apply_disabled: g('btn-tab3-corr-apply') ? g('btn-tab3-corr-apply').disabled : null,
+    auto_checked: g('tab3-corr-auto') ? g('tab3-corr-auto').checked : null,
+    shiwen: g('tab3-shiwen') ? g('tab3-shiwen').value : '',
+    msg: g('tab3-ocr-msg') ? g('tab3-ocr-msg').textContent : ''
   }); })()
 """
 
@@ -445,6 +466,167 @@ def _probe_body() -> None:
            f"管理员按钮 disabled={gd.get('disabled')} "
            f"items {g_pre.get('items')}→{g_post.get('items')} msg={g_post.get('msg')!r}")
 
+    # ── ⑨ OCR 试试看 ＋ 纠错建议（真后端跑一次 ⇒ 再注入假结果验交互逻辑）──
+    _ev("document.querySelector('#tab3-grid .thumb-item[data-name=\\\"P001-C2-R3-长乐未央-汉-陈巨来.tiff\\\"]').click()")
+    time.sleep(1.8)
+    ocr0 = _read("18_ocr_before_click", JS_OCR)
+    record("dom/ocr_button_present_and_enabled",
+           ocr0.get("btn_exists") is True and ocr0.get("btn_disabled") is False
+           and ocr0.get("out_hidden") is True and ocr0.get("corr_hidden") is True,
+           f"按钮存在={ocr0.get('btn_exists')} 可点={ocr0.get('btn_disabled') is False} "
+           f"结果面板初始隐藏={ocr0.get('out_hidden')} 纠错面板初始隐藏={ocr0.get('corr_hidden')} "
+           f"auto 默认勾选={ocr0.get('auto_checked')}")
+
+    # ⑨a 真后端：清空释文框 ⇒ 点按钮 ⇒ 等桥回来（**按钮必须复原**）
+    _ev("(() => { const e=document.getElementById('tab3-shiwen'); e.value='';"
+        "e.dispatchEvent(new Event('input',{bubbles:true})); return 1; })()")
+    _ev("document.getElementById('btn-tab3-ocr').click()")
+    _wait_js("(document.getElementById('tab3-ocr-msg').textContent || '').indexOf('正在识别') !== 0"
+             " && (document.getElementById('tab3-ocr-msg').textContent || '').length > 0", 40)
+    _wait_js("document.getElementById('btn-tab3-ocr').disabled === false", 20)
+    time.sleep(0.6)
+    ocr1 = _read("19_ocr_real_backend", JS_OCR)
+    real_ok = (ocr1.get("btn_disabled") is False
+               and ((ocr1.get("out_hidden") is False
+                     and "不可靠" in (ocr1.get("hint") or "")
+                     and "仅供参考" in (ocr1.get("hint") or ""))
+                    or (ocr1.get("out_hidden") is True and bool(ocr1.get("msg")))))
+    record("dom/ocr_real_backend_structured_and_button_restored", bool(real_ok),
+           f"真后端读数：结果面板隐藏={ocr1.get('out_hidden')} 段数={ocr1.get('segs')} "
+           f"释文框={ocr1.get('shiwen')!r} 提示={ (ocr1.get('msg') or '')[:60]!r} "
+           f"按钮复原={ocr1.get('btn_disabled') is False} "
+           f"诚实提示含「不可靠/仅供参考」={'不可靠' in (ocr1.get('hint') or '')}")
+    FIXTURE_INFO["ocr_real_backend"] = {"shiwen": ocr1.get("shiwen"), "segs": ocr1.get("segs"),
+                                        "hint_head": (ocr1.get("hint") or "")[:80],
+                                        "msg": ocr1.get("msg")}
+
+    # ⑨b 注入假 OCR 结果（只替换 tab3_ocr，tab3_correct 走真后端 ⇒ 纠错面板是真读数）
+    inj = _ev("""(() => {
+      window.__realTab3Ocr = window.pywebview.api.tab3_ocr;
+      window.__fakeOcr = {ok:true, texts:['左軍丞錄'], scores:[0.91], text:'左軍丞錄',
+        elapsed_s:0.12, engine:'FAKE-ENGINE（注入）', mean_score:0.91, n:1,
+        hint:'印面篆书通用 OCR 不可靠、仅供参考：注入的测试读数'};
+      window.pywebview.api.tab3_ocr = function(){ return Promise.resolve(window.__fakeOcr); };
+      return JSON.stringify({injected: window.pywebview.api.tab3_ocr !== window.__realTab3Ocr});
+    })()""")
+    injd = {}
+    try:
+        injd = json.loads(inj or "{}")
+    except Exception:
+        injd = {}
+    _ev("(() => { const e=document.getElementById('tab3-shiwen'); e.value='';"
+        "e.dispatchEvent(new Event('input',{bubbles:true})); return 1; })()")
+    _ev("document.getElementById('btn-tab3-ocr').click()")
+    _wait_js("document.getElementById('tab3-shiwen').value === '左軍丞錄'"
+             " && document.getElementById('tab3-ocr-out').hidden === false", 25)
+    _wait_js("document.getElementById('tab3-corr').hidden === false", 25)
+    time.sleep(0.5)
+    ocr2 = _read("20_ocr_fake_filled", JS_OCR)
+    record("dom/ocr_fills_empty_shiwen_only",
+           injd.get("injected") is True and ocr2.get("shiwen") == "左軍丞錄"
+           and "已填入释文框" in (ocr2.get("msg") or ""),
+           f"假结果已注入={injd.get('injected')} 释文框={ocr2.get('shiwen')!r} "
+           f"提示={ocr2.get('msg')!r}")
+    record("dom/ocr_honest_hint_rendered",
+           "印面" in (ocr2.get("hint") or "") and "不可靠" in (ocr2.get("hint") or "")
+           and "仅供参考" in (ocr2.get("hint") or ""),
+           f"诚实提示原文={ (ocr2.get('hint') or '')[:90]!r}")
+    record("dom/ocr_raw_text_and_scores_rendered",
+           "左軍丞錄" in (ocr2.get("raw") or "") and "分数 0.9100" in (ocr2.get("raw") or "")
+           and "FAKE-ENGINE" in (ocr2.get("raw") or ""),
+           f"原识别文本+分数区={ (ocr2.get('raw') or '')[:120]!r} 段数={ocr2.get('segs')}")
+    record("dom/corrector_panel_shown_with_hit",
+           ocr2.get("corr_hidden") is False and ocr2.get("apply_disabled") is False
+           and any("錄" in it and "鈢" in it for it in (ocr2.get("corr_items") or []))
+           and "已核定" in (ocr2.get("corr_head") or ""),
+           f"面板显示={ocr2.get('corr_hidden') is False} 标题={ocr2.get('corr_head')!r} "
+           f"条目={ocr2.get('corr_items')}")
+
+    # ⑨c 释文框非空 ⇒ 不覆盖；且无命中时纠错面板**静默隐藏**
+    _ev("(() => { const e=document.getElementById('tab3-shiwen'); e.value='长乐';"
+        "e.dispatchEvent(new Event('input',{bubbles:true})); return 1; })()")
+    _ev("document.getElementById('btn-tab3-ocr').click()")
+    _wait_js("(document.getElementById('tab3-ocr-msg').textContent || '').indexOf('未覆盖') >= 0", 25)
+    time.sleep(0.8)
+    ocr3 = _read("21_ocr_nonempty_not_overwritten", JS_OCR)
+    record("dom/ocr_does_not_overwrite_nonempty",
+           ocr3.get("shiwen") == "长乐" and "未覆盖" in (ocr3.get("msg") or ""),
+           f"释文框保持={ocr3.get('shiwen')!r} 提示={ocr3.get('msg')!r}")
+    record("dom/corrector_panel_hidden_when_no_hits",
+           ocr3.get("corr_hidden") is True and not (ocr3.get("corr_items") or []),
+           f"无命中时面板隐藏={ocr3.get('corr_hidden')} 条目={ocr3.get('corr_items')}"
+           f"（不显示空面板）")
+
+    # ⑨d 「全部应用」⇒ **只改输入框**（文件不动）：再注一次 左軍丞錄，然后点应用
+    _ev("(() => { const e=document.getElementById('tab3-shiwen'); e.value='';"
+        "e.dispatchEvent(new Event('input',{bubbles:true})); return 1; })()")
+    _ev("document.getElementById('btn-tab3-ocr').click()")
+    _wait_js("document.getElementById('tab3-corr').hidden === false"
+             " && document.getElementById('tab3-shiwen').value === '左軍丞錄'", 25)
+    time.sleep(0.4)
+    _ev("document.getElementById('btn-tab3-corr-apply').click()")
+    time.sleep(1.2)
+    ocr4 = _read("22_after_apply_all", JS_OCR)
+    g_after_apply = _read("23_grid_after_ocr_apply", JS_GRID)
+    record("dom/corrector_apply_all_changes_input_only",
+           ocr4.get("shiwen") == "左軍丞鈢" and ocr4.get("corr_hidden") is True
+           and "已应用 1/1" in (ocr4.get("msg") or "")
+           and "P001-C2-R3-长乐未央-汉-陈巨来.tiff" in (g_after_apply.get("names") or []),
+           f"应用后释文框={ocr4.get('shiwen')!r} 面板收起={ocr4.get('corr_hidden')} "
+           f"提示={ocr4.get('msg')!r} 网格文件名未变（未重命名）="
+           f"{'P001-C2-R3-长乐未央-汉-陈巨来.tiff' in (g_after_apply.get('names') or [])}")
+
+    # ⑨e 失败路径：结构化 {ok:false} ⇒ 提示错误 + 按钮复原（不得抛到 UI / 按钮卡死）
+    _ev("""(() => { window.pywebview.api.tab3_ocr = function(){
+        return Promise.resolve({ok:false, msg:'注入故障：OCR 引擎不可用'}); }; return 1; })()""")
+    _ev("document.getElementById('btn-tab3-ocr').click()")
+    _wait_js("(document.getElementById('tab3-ocr-msg').textContent || '').indexOf('注入故障') >= 0", 25)
+    time.sleep(0.5)
+    ocr5 = _read("24_ocr_failure_path", JS_OCR)
+    record("dom/ocr_failure_structured_and_button_restored",
+           "注入故障" in (ocr5.get("msg") or "") and ocr5.get("out_hidden") is True
+           and ocr5.get("btn_disabled") is False and ocr5.get("corr_hidden") is True,
+           f"错误提示={ocr5.get('msg')!r} 结果面板隐藏={ocr5.get('out_hidden')} "
+           f"按钮复原={ocr5.get('btn_disabled') is False} 纠错面板隐藏={ocr5.get('corr_hidden')}")
+
+    _ev("(() => { window.pywebview.api.tab3_ocr = window.__realTab3Ocr; return 1; })()")   # 还原桥
+
+    # ── ⑩ 能力闸：模拟「本版不含 OCR 引擎」（阶段 1 包 s1）⇒ 刷新后按钮**先置灰** + 常驻可读提示 ──
+    _ev("""(() => {
+      window.__realTab3List = window.pywebview.api.tab3_list;
+      window.pywebview.api.tab3_list = function(p){
+        return window.__realTab3List(p || {}).then(function(r){
+          r.ocr_available = false; r.ocr_note = '本版本未内置 OCR 引擎（注入模拟 s1 包）';
+          return r;
+        }); };
+      return 1; })()""")
+    _ev("document.getElementById('btn-tab3-refresh').click()")
+    _wait_js("document.getElementById('btn-tab3-ocr').disabled === true", 25)
+    time.sleep(0.8)
+    ocr6 = _read("25_ocr_unavailable_gate", JS_OCR)
+    _ev("document.getElementById('btn-tab3-ocr').click()")     # 置灰按钮点了不得有任何动静
+    time.sleep(0.6)
+    ocr6b = _read("26_ocr_unavailable_click_noop", JS_OCR)
+    record("dom/ocr_button_disabled_when_engine_absent",
+           ocr6.get("btn_disabled") is True and "未内置 OCR 引擎" in (ocr6.get("msg") or "")
+           and ocr6.get("auto_checked") is False,
+           f"按钮 disabled={ocr6.get('btn_disabled')} 提示={ocr6.get('msg')!r} "
+           f"auto 复选框={ocr6.get('auto_checked')}（打开就置灰，不用点）")
+    record("dom/ocr_disabled_click_is_noop",
+           ocr6b.get("btn_disabled") is True and ocr6b.get("out_hidden") is True
+           and "未内置 OCR 引擎" in (ocr6b.get("msg") or ""),
+           f"点禁用按钮后：disabled={ocr6b.get('btn_disabled')} 结果面板隐藏={ocr6b.get('out_hidden')} "
+           f"提示={ocr6b.get('msg')!r}（无异常、无假读数）")
+    # 还原：拿回真 tab3_list ⇒ 再刷新一次，按钮必须恢复可点（不留下「永久禁用」）
+    _ev("(() => { window.pywebview.api.tab3_list = window.__realTab3List; return 1; })()")
+    _ev("document.getElementById('btn-tab3-refresh').click()")
+    _wait_js("document.getElementById('btn-tab3-ocr').disabled === false", 25)
+    time.sleep(0.6)
+    ocr7 = _read("27_ocr_gate_restored", JS_OCR)
+    record("dom/ocr_button_reenabled_when_engine_present",
+           ocr7.get("btn_disabled") is False and "未内置" not in (ocr7.get("msg") or ""),
+           f"还原后按钮 disabled={ocr7.get('btn_disabled')} 提示={ocr7.get('msg')!r}")
+
 
 def probe() -> None:
     """pywebview 回调入口：**任何异常都不许吃掉后续步骤**；结束必关窗。"""
@@ -465,7 +647,7 @@ def main(argv: list[str] | None = None) -> int:
     global WIN
     ap = argparse.ArgumentParser(description="斐萃 tab3 渲染后 DOM 断言（真窗口）")
     ap.add_argument("--out", default=str(READINGS))
-    ap.add_argument("--watchdog", type=float, default=120.0)
+    ap.add_argument("--watchdog", type=float, default=180.0)
     args = ap.parse_args(argv)
 
     root = build_fixture()
@@ -516,6 +698,11 @@ def main(argv: list[str] | None = None) -> int:
     record("disk/conflict_left_both_files",
            post["conflict_pair_intact"],
            f"A特例 现有文件={post['generated_files']}")
+    # OCR「全部应用」只改输入框：被 OCR 的那件**文件名不变**（DOM 侧已断言网格名，这里再证盘面）
+    post["ocr_apply_kept_filename"] = (a_dir / "P001-C2-R3-长乐未央-汉-陈巨来.tiff").is_file()
+    record("disk/ocr_apply_did_not_rename_file", post["ocr_apply_kept_filename"],
+           f"{'P001-C2-R3-长乐未央-汉-陈巨来.tiff'} 仍在盘上={post['ocr_apply_kept_filename']}"
+           f"（纠错建议只落输入框，不触发重命名）")
 
     counts = {s: sum(1 for c in RESULT["checks"] if c["status"] == s) for s in ("PASS", "FAIL")}
     summary = {"schema": "feicui.webui.domtest.v1", "at": datetime.now().isoformat(timespec="seconds"),

@@ -8,6 +8,7 @@
 
   var ST = {                     // 页面状态（单页应用的手写小 store）
     user: null, root: '', navPath: '',
+    yy: { connected: false, prefix: '', label: '' },   // yinyuan 连接态（**只有 prefix**）
     tab1: { rows: [], items: [], selected: null, options: [] },
     tab2: { sources: [], job: null, lastPath: '' },
     // tab3：curSubdir / files / view(四档) / page(分页) / selected / 解析回填与本地记录
@@ -134,6 +135,8 @@
   function enterMain() {
     $('root-pill').textContent = '📁 ' + (ST.root || '—');
     call('app_info').then(function (r) { if (r && r.ok) { applyBrand(r); } });
+    // yinyuan 连接态（只显示 prefix）；未连接 ⇒ 入口按钮保持「连接 yinyuan」
+    call('yinyuan_status').then(function (r) { if (r && r.ok) { renderYinyuan(r); } }).catch(function () { });
     loadTab1();
   }
 
@@ -188,6 +191,11 @@
         tb.appendChild(tr);
       });
       var sel = $('tab1-dynasty'); sel.innerHTML = '<option value="">（未填）</option>';
+      ST.tab1.dynSource = r.dynasty_source || '';
+      sel.title = (r.dynasty_source === 'network' || r.dynasty_source === 'cache' ||
+        r.dynasty_source === 'cache_stale')
+        ? '朝代值域来自 yinyuan（' + r.dynasty_source + '）'
+        : '朝代值域＝本地 15 类（未连接 yinyuan 或离线回落）';
       ST.tab1.options.forEach(function (d) {
         var o = document.createElement('option'); o.value = d; o.textContent = d; sel.appendChild(o);
       });
@@ -592,9 +600,161 @@
     });
   }
 
+  // ───────────── yinyuan（印源）接入：弹窗 / 连接 / 候选补全 ─────────────
+  var yyTimer = null;
+
+  // 渲染连接态：**只显示 prefix**，完整 key 永不进 DOM
+  function renderYinyuan(st) {
+    var connected = !!(st && st.connected);
+    var pill = $('yy-pill');
+    if (pill) {
+      pill.hidden = !connected;
+      if (connected) {
+        pill.textContent = '🔗 ' + (st.prefix || 'yinyuan');
+        pill.title = (st.label || '') + '（' + (st.base_url || '') + '）';
+      }
+    }
+    var open = $('btn-yy-open');
+    if (open) { open.textContent = connected ? '🔗 yinyuan 已连接' : '🔗 连接 yinyuan'; }
+    $('yy-connected').hidden = !connected;
+    $('yy-form').hidden = connected;
+    if (!connected) { return; }
+    $('yy-prefix').textContent = st.prefix || '—';
+    $('yy-label').textContent = st.label || '—';
+    var c = st.cache || {};
+    var parts = ['dynasties', 'authors', 'inscriptions'].map(function (k) {
+      var v = c[k];
+      if (!v) { return k + ' 未同步'; }
+      return k + ' ' + (v.count === null || v.count === undefined ? '已缓存' : v.count + ' 条');
+    });
+    $('yy-cache-line').textContent = '缓存（24h）：' + parts.join(' · ');
+    ST.yy = { connected: true, prefix: st.prefix || '', label: st.label || '' };
+  }
+
+  function yyOpen() {
+    $('yy-msg').textContent = '';
+    $('yinyuan-modal').hidden = false;
+    call('yinyuan_status').then(function (r) {
+      if (r && r.ok) { renderYinyuan(r); } else { setMsg('yy-msg', (r && r.msg) || '取连接态失败', 'err'); }
+    }).catch(function () { setMsg('yy-msg', '后端不可用', 'err'); });
+  }
+
+  function yyClose() { $('yinyuan-modal').hidden = true; }
+
+  function yyConnect() {
+    var ident = $('yy-identifier').value.trim();
+    var pwd = $('yy-password').value;          // ⚠️ 口令**不 trim**（与 yinyuan B1 口径一致）
+    if (!ident || !pwd) { setMsg('yy-msg', '请填写手机号/邮箱与口令', 'err'); return; }
+    setMsg('yy-msg', '连接中…', '');
+    $('btn-yy-connect').disabled = true;
+    call('yinyuan_connect', { identifier: ident, password: pwd }).then(function (r) {
+      $('btn-yy-connect').disabled = false;
+      if (!r || !r.ok) { setMsg('yy-msg', (r && r.msg) || '连接失败', 'err'); return; }
+      $('yy-password').value = '';
+      setMsg('yy-msg', (r.msg || '已连接') + '（前缀 ' + (r.prefix || '') + '）', 'ok');
+      renderYinyuan({ ok: true, connected: true, prefix: r.prefix, label: r.label, cache: {} });
+      // 再取一次连接态（拿到缓存读数；后台预热可能还在跑）
+      call('yinyuan_status').then(function (s) { if (s && s.ok) { renderYinyuan(s); } }).catch(function () { });
+      loadTab1();                              // 值域可能已换成远端（缓存面）
+      toast('yinyuan：' + (r.msg || '已连接'));
+    }).catch(function () {
+      $('btn-yy-connect').disabled = false;
+      setMsg('yy-msg', '后端不可用', 'err');
+    });
+  }
+
+  function yyDisconnect() {
+    call('yinyuan_disconnect').then(function (r) {
+      setMsg('yy-msg', (r && r.msg) || '已断开', r && r.ok ? 'ok' : 'err');
+      call('yinyuan_status').then(function (s) { if (s && s.ok) { renderYinyuan(s); } });
+      loadTab1();
+    });
+  }
+
+  function yySync() {
+    setMsg('yy-msg', '同步中（朝代 / 作者 / 印文）…', '');
+    call('yinyuan_sync', { force: true }).then(function (r) {
+      if (!r || !r.ok) { setMsg('yy-msg', '同步失败', 'err'); return; }
+      setMsg('yy-msg', '已同步：作者 ' + (r.authors === undefined ? '—' : r.authors) +
+        ' 条 · 印文 ' + (r.inscriptions === undefined ? '—' : r.inscriptions) + ' 条 · 朝代 ' +
+        (r.dynasties || '—'), 'ok');
+      call('yinyuan_status').then(function (s) { if (s && s.ok) { renderYinyuan(s); } });
+      loadTab1();
+    }).catch(function () { setMsg('yy-msg', '同步失败', 'err'); });
+  }
+
+  // 候选补全：tab3 的「印面释文」← /inscriptions（seal_name/transcription）
+  //                      「作者」← /authors（name/art_names/courtesy_names）
+  // 拿不到 / 未连接 ⇒ 静默不显示候选，输入框仍可自由手输（不阻塞重命名）
+  function yySuggestBox(kind) {
+    return $(kind === 'author' ? 'tab3-author-suggest' : 'tab3-shiwen-suggest');
+  }
+
+  function yySuggestFetch(kind, value) {
+    var box = yySuggestBox(kind);
+    if (!box) { return; }
+    if (!value) { box.hidden = true; box.innerHTML = ''; return; }
+    call('yinyuan_suggest', { kind: kind, query: value, limit: 8 }).then(function (r) {
+      var items = (r && r.items) || [];
+      box.innerHTML = '';
+      if (!items.length) { box.hidden = true; return; }
+      items.forEach(function (it) {
+        var d = document.createElement('div');
+        d.className = 'suggest-item';
+        d.dataset.value = it.value;
+        var s1 = document.createElement('span'); s1.textContent = it.value; d.appendChild(s1);
+        var hint = it.hint || it.dynasty || '';
+        if (hint) { var s2 = document.createElement('span'); s2.className = 'hint';
+          s2.textContent = hint; d.appendChild(s2); }
+        d.addEventListener('click', function () { yyPick(kind, it.value); });
+        box.appendChild(d);
+      });
+      box.hidden = false;
+    }).catch(function () { box.hidden = true; });
+  }
+
+  function yyPick(kind, value) {
+    var input = $(kind === 'author' ? 'tab3-author' : 'tab3-shiwen');
+    if (input) { input.value = value; }
+    var box = yySuggestBox(kind);
+    if (box) { box.hidden = true; box.innerHTML = ''; }
+    doCheck();                                 // 立即走原有校验/新名预览
+  }
+
+  function bindYinyuan() {
+    $('btn-yy-open').addEventListener('click', yyOpen);
+    $('btn-yy-close').addEventListener('click', yyClose);
+    $('btn-yy-connect').addEventListener('click', yyConnect);
+    $('btn-yy-disconnect').addEventListener('click', yyDisconnect);
+    $('btn-yy-sync').addEventListener('click', yySync);
+    $('yy-password').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') { yyConnect(); }
+    });
+    [['tab3-author', 'author'], ['tab3-shiwen', 'inscription']].forEach(function (pair) {
+      var input = $(pair[0]);
+      if (!input) { return; }
+      var kind = pair[1];
+      input.addEventListener('input', function () {
+        var v = input.value.trim();
+        if (yyTimer) { clearTimeout(yyTimer); }
+        yyTimer = setTimeout(function () { yySuggestFetch(kind, v); }, 180);
+      });
+      input.addEventListener('blur', function () {
+        setTimeout(function () { var b = yySuggestBox(kind); if (b) { b.hidden = true; } }, 180);
+      });
+      input.addEventListener('keydown', function (e) {
+        var b = yySuggestBox(kind);
+        if (!b || b.hidden) { return; }
+        var first = b.querySelector('.suggest-item');
+        if (e.key === 'Escape') { b.hidden = true; }
+        else if (e.key === 'Enter' && first) { e.preventDefault(); yyPick(kind, first.dataset.value); }
+      });
+    });
+  }
+
   // ───────────── 事件绑定 ─────────────
   function bindAll() {
-    bindLogin(); bindTabs();
+    bindLogin(); bindTabs(); bindYinyuan();
     $('btn-home').addEventListener('click', browseHome);
     $('btn-up').addEventListener('click', browseUp);
     $('btn-verify').addEventListener('click', verifyDir);

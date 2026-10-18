@@ -222,3 +222,27 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent-line
   border: 1px solid var(--warn-line); border-radius: 999px; padding: 2px 8px; margin-left: 6px; }
 .op-log { margin-top: 12px; }
 .op-log .log-scroll { max-height: 30vh; }
+
+/* ═══════════ yinyuan 接入（B4）：弹窗 / 候选补全 ═══════════ */
+.modal { position: fixed; inset: 0; background: rgba(10, 20, 18, .38); z-index: 40;
+  display: flex; align-items: flex-start; justify-content: center; padding-top: 8vh; }
+.modal[hidden] { display: none; }
+.modal-card { background: var(--card); border-radius: 16px; padding: 20px 22px; width: min(520px, 92vw);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, .22); max-height: 84vh; overflow: auto; }
+.modal-card h2 { margin: 0 0 6px; font-size: 16px; }
+.yy-state { font-size: 13px; font-weight: 600; margin: 6px 0 10px; }
+.yy-state.ok { color: var(--ok); }
+.modal-card code { background: var(--accent-soft); border-radius: 6px; padding: 1px 6px;
+  font-size: 12px; word-break: break-all; }
+/* tab3 候选补全：绝对定位于输入框下方（父级 .field 设相对定位） */
+.field { position: relative; }
+.suggest { position: absolute; left: 0; right: 0; top: 100%; z-index: 20; margin-top: 2px;
+  background: #fff; border: 1px solid var(--line); border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .12); max-height: 190px; overflow: auto; }
+.suggest[hidden] { display: none; }
+.suggest-item { padding: 5px 8px; font-size: 12px; cursor: pointer; display: flex;
+  justify-content: space-between; gap: 8px; }
+.suggest-item:hover, .suggest-item.active { background: var(--accent-soft); }
+.suggest-item .hint { color: var(--muted); font-size: 11px; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis; max-width: 45%; }
+.suggest-empty { padding: 6px 8px; font-size: 11px; color: var(--muted); }

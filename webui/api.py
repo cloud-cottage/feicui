@@ -7,6 +7,9 @@
     ⇒ 与 `ui/`（纯 HTML/JS）严格分层；可直接被脚本 import 做单测（见 `selftest.py`）。
   * 能力全部**复用既有实现**，不重写算法：
       - tab1  → `src/pdf_library.py`（盘点 / pymupdf 探针 / 元数据侧车）
+      - yinyuan（印源）→ `src/yinyuan_client.py`：登录 ⇒ 自动建「斐萃-<主机名>」专用 key
+                （明文落 `…/斐萃/yinyuan.json`，600）⇒ 朝代/作者/印文只读 + 24h 缓存；
+                拿不到就**静默回落**（本地 15 类 / 自由手输），不阻塞重命名主流程。
       - 目录键 → 老工程 `server/app/naming.py`（纯 stdlib，单一真源）
       - tab2  → 老工程引擎 **子进程**
                 `venv/bin/python ops/book-page-2400/render_page_2400.py --pdf … --page … --dpi 1200`
@@ -66,6 +69,7 @@ sys.path.insert(0, str(REPO_ROOT / "server"))  # `app.naming`（纯 stdlib，无
 
 from src import pdf_library as lib  # noqa: E402
 from src import validator  # noqa: E402
+from src import yinyuan_client as yy  # noqa: E402
 
 APP_NAME = "斐萃 · 本地电脑版"
 APP_VERSION = "0.3.0-pywebview"
@@ -368,6 +372,11 @@ class FeicuiApi:
         self._session: dict | None = None
         self._root: str = ""
         self._nav_root = str(Path.home())
+        # yinyuan（印源）接入：**纯逻辑层**客户端（`src/yinyuan_client.py`），
+        # 密钥落 `~/Library/Application Support/斐萃/yinyuan.json`（600，不入库）；见 `yinyuan_*` 方法。
+        self.yinyuan = yy.YinyuanClient()
+        self._yy_warm_lock = threading.Lock()
+        self._yy_warm_state: dict = {"running": False, "done": False, "last": {}}
 
     # ---------------- 应用信息 ----------------
     def app_info(self, _req: dict | None = None) -> dict:
@@ -518,10 +527,111 @@ class FeicuiApi:
                  "notes": r.notes or "", "page_count": r.page_count,
                  "scan_dpi": r.scan_dpi, "probe_error": r.probe_error,
                  "updated_at": r.updated_at} for r in res["rows"]]
+        # 朝代下拉值域：**优先 yinyuan**（/dynasties 的 items[].value，24h 缓存），
+        # 拿不到（无 key / 无网 / 缓存空）⇒ 回落本地 15 枚举（`lib.DYNASTY_OPTIONS`）。
+        # ⚠️ 这里**只读缓存、不打网络**：tab1 扫描主流程不许被 8 s 超时卡住；
+        #    联网刷新在 `yinyuan_status` / `yinyuan_connect` 的后台预热线程里做。
+        dyn = self._yy_dynasty_safe()
         return {"ok": True, "root": res["root"], "rows": rows, "items": meta,
                 "stats": res["stats"], "probe_available": res["probe_available"],
-                "dynasty_options": list(lib.DYNASTY_OPTIONS),
+                "dynasty_options": dyn["items"], "dynasty_source": dyn["source"],
                 "tab": lib.ORIGINAL_DIR}
+
+    # ---------------- yinyuan（印源）接入 ----------------
+    def _yy_dynasty_safe(self) -> dict:
+        """朝代值域（缓存优先；永不抛、永不联网阻塞）。"""
+        try:
+            return self.yinyuan.dynasty_values(allow_network=False)
+        except Exception:
+            return {"ok": True, "source": "fallback_local",
+                    "items": list(lib.DYNASTY_OPTIONS), "degraded": True, "reason": "EXC"}
+
+    def _yy_warm(self, *, force: bool = False) -> dict:
+        """后台预热：拉朝代 + 作者 + 印文并落缓存（**线程里跑**，UI 不等它）。"""
+        with self._yy_warm_lock:
+            if self._yy_warm_state["running"]:
+                return {"ok": True, "skipped": True, "msg": "预热进行中"}
+            self._yy_warm_state["running"] = True
+        out: dict = {}
+        try:
+            out["dynasties"] = self.yinyuan.fetch_dynasties(force=force).get("source")
+            out["authors"] = self.yinyuan.fetch_authors(force=force).get("count")
+            out["inscriptions"] = self.yinyuan.fetch_inscriptions(force=force).get("count")
+            self.yinyuan.drop_caches()
+        except Exception as exc:
+            out["error"] = f"{exc.__class__.__name__}: {exc}"
+        finally:
+            with self._yy_warm_lock:
+                self._yy_warm_state["running"] = False
+                self._yy_warm_state["done"] = True
+                self._yy_warm_state["last"] = out
+        return {"ok": True, **out}
+
+    def _yy_warm_async(self, *, force: bool = False) -> None:
+        try:
+            threading.Thread(target=self._yy_warm, kwargs={"force": force},
+                             name="yy-warm", daemon=True).start()
+        except Exception:
+            pass
+
+    def yinyuan_status(self, _req: dict | None = None) -> dict:
+        """连接态（只回 prefix，不回明文）+ 缓存读数；顺带触发一次后台预热（仅当已连且有 key）。"""
+        try:
+            st = self.yinyuan.status()
+        except Exception as exc:
+            return {"ok": False, "msg": f"{exc.__class__.__name__}: {exc}"}
+        st["warm"] = dict(self._yy_warm_state)
+        if st.get("connected") and not self._yy_warm_state["done"]:
+            self._yy_warm_async()
+        return st
+
+    def yinyuan_connect(self, req: dict | None = None) -> dict:
+        """登录 yinyuan ⇒ 本地无 key 就自动建「斐萃-<主机名>」⇒ plain 落盘 600。
+
+        ⚠️ 口令**原样**传给逻辑层（不 strip、不归一）；返回值只含 prefix。
+        """
+        req = req or {}
+        ident = str(req.get("identifier", "") or "")
+        pwd = req.get("password")
+        pwd = "" if pwd is None else str(pwd)      # **不 strip**
+        try:
+            res = self.yinyuan.connect(ident, pwd, force_new=bool(req.get("force_new")))
+        except Exception as exc:
+            return {"ok": False, "reason": "EXC", "msg": f"{exc.__class__.__name__}: {exc}"}
+        if res.get("ok") and res.get("connected"):
+            self._yy_warm_async(force=True)
+        return res
+
+    def yinyuan_disconnect(self, _req: dict | None = None) -> dict:
+        try:
+            out = self.yinyuan.disconnect()
+        except Exception as exc:
+            return {"ok": False, "reason": "EXC", "msg": f"{exc.__class__.__name__}: {exc}"}
+        with self._yy_warm_lock:
+            self._yy_warm_state.update({"running": False, "done": False, "last": {}})
+        return out
+
+    def yinyuan_sync(self, req: dict | None = None) -> dict:
+        """手动「重新同步」（force）：同步执行（用户在等，允许慢一点；有 8 s×页 超时兜底）。"""
+        req = req or {}
+        return self._yy_warm(force=bool(req.get("force", True)))
+
+    def yinyuan_suggest(self, req: dict | None = None) -> dict:
+        """tab3 候选补全：`kind=author|inscription`，`query` 子串；**只读缓存，不打网络**。"""
+        req = req or {}
+        kind = str(req.get("kind", "author") or "author")
+        query = str(req.get("query", "") or "")
+        try:
+            limit = int(req.get("limit") or 8)
+        except Exception:
+            limit = 8
+        try:
+            if kind == "inscription":
+                return self.yinyuan.suggest_inscriptions(query, limit=limit)
+            return self.yinyuan.suggest_authors(query, limit=limit)
+        except Exception:
+            # 候选补全**永远不许**影响重命名主流程 ⇒ 静默降级为「无候选」
+            return {"ok": True, "items": [], "count": 0, "degraded": True, "reason": "EXC"}
 
     def tab1_save_meta(self, req: dict | None = None) -> dict:
         miss = self._need_root()

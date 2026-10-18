@@ -86,6 +86,8 @@
     <div class="topbar-right">
       <span class="pill" id="user-pill">👤 —</span>
       <span class="pill" id="root-pill">📁 —</span>
+      <span class="pill" id="yy-pill" hidden>🔗 —</span>
+      <button class="btn small" id="btn-yy-open" data-action="yinyuan-open">🔗 连接 yinyuan</button>
       <button class="btn small" data-action="change-dir">🔄 目录</button>
       <button class="btn small" data-action="logout">🚪 退出</button>
     </div>
@@ -211,11 +213,13 @@
           <div class="cur" id="tab3-current">—</div>
           <div id="tab3-parsed" class="msg"></div>
           <label class="field"><span id="tab3-shiwen-label">印面释文（最多 10 个汉字）</span>
-            <input id="tab3-shiwen" type="text" placeholder="如：长乐未央"></label>
+            <input id="tab3-shiwen" type="text" placeholder="如：长乐未央" autocomplete="off">
+            <div class="suggest" id="tab3-shiwen-suggest" hidden></div></label>
           <label class="field"><span>朝代</span>
             <input id="tab3-dynasty" type="text" placeholder="如：汉"></label>
           <label class="field"><span id="tab3-author-label">作者（最多 4 个汉字）</span>
-            <input id="tab3-author" type="text" placeholder="如：陈巨来"></label>
+            <input id="tab3-author" type="text" placeholder="如：陈巨来" autocomplete="off">
+            <div class="suggest" id="tab3-author-suggest" hidden></div></label>
           <div class="caption" id="tab3-counts">释文 0/10　作者 0/4</div>
           <div class="newname">预览新文件名：<code id="tab3-newname">—</code></div>
           <div id="tab3-valid" class="msg"></div>
@@ -242,6 +246,42 @@
     </div>
   </div>
 </section>
+
+<!-- ═══════════ 「连接 yinyuan」弹窗（登录 ⇒ 自动建斐萃专用 key；只显示 prefix） ═══════════ -->
+<div id="yinyuan-modal" class="modal" hidden>
+  <div class="modal-card" id="yinyuan-card" role="dialog" aria-modal="true" aria-labelledby="yy-title">
+    <h2 id="yy-title">🔗 连接 yinyuan（印源）</h2>
+    <p class="muted">首次连接会自动创建一把「斐萃-&lt;主机名&gt;」专用密钥，明文只落本机
+      <code>…/斐萃/yinyuan.json</code>（权限 600），界面只显示前缀。</p>
+
+    <!-- 已连接面 -->
+    <div id="yy-connected" hidden>
+      <div class="yy-state ok">✅ 已连接</div>
+      <div class="field"><span>专用密钥前缀</span><code id="yy-prefix">—</code></div>
+      <div class="field"><span>标签</span><code id="yy-label">—</code></div>
+      <div class="muted" id="yy-cache-line">缓存：—</div>
+      <div class="row" style="margin-top:10px">
+        <button class="btn small" id="btn-yy-sync" data-action="yinyuan-sync">🔄 重新同步数据</button>
+        <button class="btn small" id="btn-yy-disconnect" data-action="yinyuan-disconnect">✖ 断开</button>
+      </div>
+    </div>
+
+    <!-- 未连接面（登录框） -->
+    <div id="yy-form">
+      <label class="field"><span>手机号 / 邮箱</span>
+        <input id="yy-identifier" type="text" autocomplete="username" placeholder="13800000000 或 name@example.com"></label>
+      <label class="field"><span>口令</span>
+        <input id="yy-password" type="password" autocomplete="current-password" placeholder="yinyuan 账号口令"></label>
+      <button id="btn-yy-connect" class="btn primary block" data-action="yinyuan-connect">连接并创建专用密钥</button>
+      <p class="muted">口令只用于换取会话；日常调用只用本机密钥（会话不落盘）。</p>
+    </div>
+
+    <div id="yy-msg" class="msg"></div>
+    <div class="row" style="margin-top:8px">
+      <button class="btn small" id="btn-yy-close" data-action="yinyuan-close">关闭</button>
+    </div>
+  </div>
+</div>
 
 <div id="toast" class="toast"></div>
 <script src="app.js"></script>

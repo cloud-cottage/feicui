@@ -1,0 +1,256 @@
+{
+  "schema": "feicui.yinyuan.selftest.v1",
+  "generated_at": "2026-10-18T08:10:23",
+  "scratch": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-yinyuan-selftest-w4bnoorm",
+  "counts": {
+    "PASS": 38,
+    "FAIL": 0
+  },
+  "local_dynasty_options": [
+    "商周暨春秋",
+    "戰國",
+    "秦",
+    "漢",
+    "魏晉",
+    "隋唐",
+    "宋元",
+    "明早中期",
+    "晚明",
+    "清初",
+    "清中期",
+    "晚清",
+    "民國",
+    "新中國",
+    "當代"
+  ],
+  "checks": [
+    {
+      "check": "import/purity",
+      "status": "PASS",
+      "detail": "imports=['__future__', 'dataclasses', 'datetime', 'json', 'logging', 'os', 'pathlib', 'pdf_library', 're', 'socket', 'sys', 'urllib'] 命中禁用=[] 未知=[]",
+      "extra": {}
+    },
+    {
+      "check": "login/phone_split_password_not_trimmed",
+      "status": "PASS",
+      "detail": "path=/api/v1/auth/login body_keys=['password', 'phone'] password=' p@ss word ' len=11",
+      "extra": {}
+    },
+    {
+      "check": "login/email_split",
+      "status": "PASS",
+      "detail": "body={'password': 'x', 'email': 'a@b.com'}",
+      "extra": {}
+    },
+    {
+      "check": "login/bad_identity_local_no_network",
+      "status": "PASS",
+      "detail": "reason=INVALID_INPUT 新增调用=0",
+      "extra": {}
+    },
+    {
+      "check": "login/401_structured",
+      "status": "PASS",
+      "detail": "status=401 reason=UNAUTHORIZED msg='手机号/邮箱或口令不正确'",
+      "extra": {}
+    },
+    {
+      "check": "login/token_not_in_response",
+      "status": "PASS",
+      "detail": "登录返回体不含 token/口令",
+      "extra": {}
+    },
+    {
+      "check": "login/session_header_shape",
+      "status": "PASS",
+      "detail": "Authorization=['Session sess-TESTONLY-0123456789']",
+      "extra": {}
+    },
+    {
+      "check": "key/auto_created_on_first_connect",
+      "status": "PASS",
+      "detail": "created=True label='斐萃-BlueSpace.local' 期望='斐萃-BlueSpace.local'",
+      "extra": {}
+    },
+    {
+      "check": "key/plain_on_disk_600",
+      "status": "PASS",
+      "detail": "exists=True mode=0o600 plain_ok=True prefix='yy_TESTONLY'",
+      "extra": {}
+    },
+    {
+      "check": "key/plain_not_in_connect_response",
+      "status": "PASS",
+      "detail": "无明文/令牌；返回键=['connected', 'created', 'key_id', 'label', 'msg', 'ok', 'prefix', 'reused', 'session_expires_at', 'store_path']",
+      "extra": {}
+    },
+    {
+      "check": "key/status_only_prefix",
+      "status": "PASS",
+      "detail": "connected=True prefix='yy_TESTONLY' 无明文/令牌",
+      "extra": {}
+    },
+    {
+      "check": "key/reuse_existing_no_duplicate",
+      "status": "PASS",
+      "detail": "reused=True POST /keys=0 调用=[('POST', '/api/v1/auth/login'), ('GET', '/api/v1/authors?limit=1&offset=0')]",
+      "extra": {}
+    },
+    {
+      "check": "key/limit_409_structured",
+      "status": "PASS",
+      "detail": "reason=KEY_LIMIT status=409 msg='该账号有效密钥已达 10 把；请到 yinyuan 控制台撤销旧密钥后重试'",
+      "extra": {}
+    },
+    {
+      "check": "key/disconnect_removes_file",
+      "status": "PASS",
+      "detail": "removed=True 文件存在=False",
+      "extra": {}
+    },
+    {
+      "check": "log/no_secret_leak",
+      "status": "PASS",
+      "detail": "日志条数=6 泄漏=[]；日志样例=['斐萃.yinyuan INFO 登录成功 role=user expires_in=604800', '斐萃.yinyuan INFO 登录成功 role=user expires_in=604800', '斐萃.yinyuan INFO 已创建专用密钥 prefix=yy_TESTONLY stored=True']",
+      "extra": {}
+    },
+    {
+      "check": "log/all_payloads_clean",
+      "status": "PASS",
+      "detail": "connect/create_key 返回体均无明文",
+      "extra": {}
+    },
+    {
+      "check": "cache/dynasty_first_network_second_hit",
+      "status": "PASS",
+      "detail": "first=network(调用1) second=cache(累计1) 值域一致=True",
+      "extra": {}
+    },
+    {
+      "check": "cache/dynasty_file_written",
+      "status": "PASS",
+      "detail": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-yinyuan-selftest-w4bnoorm/c4/cache/dynasties.json mode=0o600",
+      "extra": {}
+    },
+    {
+      "check": "cache/dynasty_expired_refetch",
+      "status": "PASS",
+      "detail": "source=network 新增调用=1",
+      "extra": {}
+    },
+    {
+      "check": "fallback/dynasty_timeout",
+      "status": "PASS",
+      "detail": "source=fallback_local reason=TIMEOUT 15项逐字一致=True",
+      "extra": {}
+    },
+    {
+      "check": "fallback/dynasty_http401",
+      "status": "PASS",
+      "detail": "source=fallback_local reason=UNAUTHORIZED 15项逐字一致=True",
+      "extra": {}
+    },
+    {
+      "check": "fallback/dynasty_bad_json",
+      "status": "PASS",
+      "detail": "source=fallback_local reason=BAD_JSON 15项逐字一致=True",
+      "extra": {}
+    },
+    {
+      "check": "fallback/dynasty_network",
+      "status": "PASS",
+      "detail": "source=fallback_local reason=NETWORK 15项逐字一致=True",
+      "extra": {}
+    },
+    {
+      "check": "fallback/no_key_local_15_no_network",
+      "status": "PASS",
+      "detail": "source=fallback_local reason=NO_KEY 网络调用=0 15项逐字一致=True",
+      "extra": {}
+    },
+    {
+      "check": "fail/authors_http429_structured",
+      "status": "PASS",
+      "detail": "reason=RATE_LIMITED status=429 msg='稍后重试。'",
+      "extra": {}
+    },
+    {
+      "check": "fail/authors_http503_structured",
+      "status": "PASS",
+      "detail": "reason=NOT_CONFIGURED status=503 msg='稍后重试。'",
+      "extra": {}
+    },
+    {
+      "check": "paging/authors_450_by_200",
+      "status": "PASS",
+      "detail": "count=450 total=450 offsets=['0', '200', '400'] limit={'200'}",
+      "extra": {}
+    },
+    {
+      "check": "paging/authors_second_is_cache",
+      "status": "PASS",
+      "detail": "source=cache 新增调用=0",
+      "extra": {}
+    },
+    {
+      "check": "suggest/author_by_name_courtesy_artname",
+      "status": "PASS",
+      "detail": "name→[{'value': '作者0007', 'label': '作者0007', 'alias': ['号0007', '字0007'], 'hint': '清中期', 'dynasty': '清中期'}] courtesy→[{'value': '作者0007', 'label': '作者0007', 'alias': ['号0007', '字0007'], 'hint': '清中期', 'dynasty': '清中期'}] art→[{'value': '作者0007', 'label': '作者0007', 'alias': ['号0007', '字0007'], 'hint': '清中期', 'dynasty': '清中期'}]",
+      "extra": {}
+    },
+    {
+      "check": "suggest/inscription_seal_and_transcription",
+      "status": "PASS",
+      "detail": "count=260 seal候选=['印0100', '印0101', '印0102']",
+      "extra": {}
+    },
+    {
+      "check": "suggest/no_cache_degraded_empty",
+      "status": "PASS",
+      "detail": "items=[] degraded=True reason=NO_CACHE",
+      "extra": {}
+    },
+    {
+      "check": "api/tab1_dynasty_fallback_local15",
+      "status": "PASS",
+      "detail": "verify=True source=fallback_local n=15 逐字一致=True",
+      "extra": {}
+    },
+    {
+      "check": "api/connect_rejects_empty",
+      "status": "PASS",
+      "detail": "reason=INVALID_INPUT msg='请填写手机号/邮箱与口令'",
+      "extra": {}
+    },
+    {
+      "check": "api/connect_creates_key_600",
+      "status": "PASS",
+      "detail": "connected=True prefix='yy_TESTONLY' mode=0o600 返回键=['connected', 'created', 'key_id', 'label', 'msg', 'ok', 'prefix', 'reused', 'session_expires_at', 'store_path']",
+      "extra": {}
+    },
+    {
+      "check": "api/tab1_dynasty_from_cache",
+      "status": "PASS",
+      "detail": "source=cache options=['远1', '远2']",
+      "extra": {}
+    },
+    {
+      "check": "api/suggest_bridge_ok",
+      "status": "PASS",
+      "detail": "author=2 ['作者0000', '作者0001'] inscription=6 ['印0000', '印0001']",
+      "extra": {}
+    },
+    {
+      "check": "api/offline_no_throw",
+      "status": "PASS",
+      "detail": "tab1 source=fallback_local suggest=0 status.connected=False",
+      "extra": {}
+    },
+    {
+      "check": "api/disconnect_bridge",
+      "status": "PASS",
+      "detail": "msg='已断开 yinyuan'",
+      "extra": {}
+    }
+  ]
+}

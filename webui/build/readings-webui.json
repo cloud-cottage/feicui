@@ -1,22 +1,22 @@
 {
   "schema": "feicui.webui.selftest.v1",
   "app_version": "0.3.0-pywebview",
-  "at": "2026-10-18T09:04:11",
+  "at": "2026-10-18T09:29:43",
   "python": "/Users/kevin/bistro/feicui/venv/bin/python",
   "engine_python": "/Users/kevin/bistro/feicui/venv/bin/python",
   "engine_script": "/Users/kevin/bistro/feicui/ops/book-page-2400/render_page_2400.py",
-  "data_dir": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-selftest-data-toeqpnev",
+  "data_dir": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-selftest-data-rlh3gr3m",
   "counts": {
-    "PASS": 87,
+    "PASS": 80,
     "FAIL": 0,
-    "NOT_MEASURED": 1
+    "NOT_MEASURED": 3
   },
-  "elapsed_s": 268.5,
+  "elapsed_s": 1.9,
   "checks": [
     {
       "check": "fixture",
       "status": "PASS",
-      "detail": "夹具 /var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-selftest-rnxspk5r/feicui（含 2 份真 PDF：吴颐人篆刻作品展示.pdf 2098940 B / tmp.pdf 39722457 B）"
+      "detail": "夹具 /var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-selftest-0ijadce2/feicui（含 2 份真 PDF：吴颐人篆刻作品展示.pdf 2098940 B / tmp.pdf 39722457 B）"
     },
     {
       "check": "dir/verify_reject_wrong_name",
@@ -36,7 +36,7 @@
     {
       "check": "api/root_bound_to_fixture",
       "status": "PASS",
-      "detail": "_root=/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-selftest-rnxspk5r/feicui"
+      "detail": "_root=/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-selftest-0ijadce2/feicui"
     },
     {
       "check": "api/verify_dir_missing",
@@ -81,7 +81,7 @@
     {
       "check": "tab3/generate_test_tiff",
       "status": "PASS",
-      "detail": "已生成：P001-C3-R6-金石寿-宋-吴昌硕.tiff"
+      "detail": "已生成：P001-C9-R3-宁静致远-秦-赵之谦.tiff"
     },
     {
       "check": "tab3/list_ok",
@@ -91,7 +91,7 @@
     {
       "check": "tab3/filename_template",
       "status": "PASS",
-      "detail": "name=P001-C3-R6-金石寿-宋-吴昌硕.tiff standard=True"
+      "detail": "name=P001-C9-R3-宁静致远-秦-赵之谦.tiff standard=True"
     },
     {
       "check": "tab3/unknown_subdir_fallback",
@@ -101,12 +101,12 @@
     {
       "check": "tab3b/list_counts_files_only",
       "status": "PASS",
-      "detail": "files=5 names=['P001-C2-R3-长乐未央-汉-陈巨来.tiff', 'P001-C3-R6-金石寿-宋-吴昌硕.tiff', 'P002-C4-R5-吉祥如意-唐-吴昌硕.tiff', 'P003-C6-R7-清心-宋-齐白石.tif', '未命名副本.tiff']"
+      "detail": "files=5 names=['P001-C2-R3-长乐未央-汉-陈巨来.tiff', 'P001-C9-R3-宁静致远-秦-赵之谦.tiff', 'P002-C4-R5-吉祥如意-唐-吴昌硕.tiff', 'P003-C6-R7-清心-宋-齐白石.tif', '未命名副本.tiff']"
     },
     {
       "check": "tab3b/standard_flag",
       "status": "PASS",
-      "detail": "standard 面：[('P001-C2-R3-长', True), ('P001-C3-R6-金', True), ('P002-C4-R5-吉', True), ('P003-C6-R7-清', False), ('未命名副本.tiff', False)]"
+      "detail": "standard 面：[('P001-C2-R3-长', True), ('P001-C9-R3-宁', True), ('P002-C4-R5-吉', True), ('P003-C6-R7-清', False), ('未命名副本.tiff', False)]"
     },
     {
       "check": "tab3b/view_cfg_matches_old",
@@ -241,7 +241,7 @@
     {
       "check": "tab3ocr/printed_png_returns_texts",
       "status": "PASS",
-      "detail": "texts=['FEICUI', '123'] scores=[0.9995, 1.0] elapsed_s=1.11 engine='rapidocr-onnxruntime · PP-OCRv6 small（本地，无网络）' mean=0.9998"
+      "detail": "texts=['FEICUI', '123'] scores=[0.9995, 1.0] elapsed_s=1.02 engine='rapidocr-onnxruntime · PP-OCRv6 small（本地，无网络）' mean=0.9998"
     },
     {
       "check": "tab3ocr/printed_scores_high",
@@ -361,7 +361,7 @@
     {
       "check": "tab2/reject_missing_pdf",
       "status": "PASS",
-      "detail": "源 PDF 不存在：/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-selftest-rnxspk5r/feicui/1_Original_PDF/不存在.pdf"
+      "detail": "源 PDF 不存在：/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-selftest-0ijadce2/feicui/1_Original_PDF/不存在.pdf"
     },
     {
       "check": "tab2/reject_bad_dpi",
@@ -409,40 +409,9 @@
       "detail": "state=error err=引擎退出码 1（引擎对非整数倍 dpi 的硬断言，与预检一致）"
     },
     {
-      "check": "e2e/submit_job",
-      "status": "PASS",
-      "detail": "已开始渲染（异步）"
-    },
-    {
       "check": "e2e/render_one_page_1200dpi",
-      "status": "PASS",
-      "detail": "83.7s state=done out=P1-1200dpi-48bit.tif size=469.7 MB",
-      "seconds": 83.7,
-      "out": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-selftest-rnxspk5r/feicui/2_HighRes_PDF/tmp.pdf/P1-1200dpi-48bit.tif",
-      "size_mb": 469.7,
-      "progress_pushes": 52,
-      "max_percent": 100,
-      "log_tail": "      1\n    ],\n    \"observed_max_u8_round\": [\n      255,\n      255,\n      255\n    ],\n    \"outside_declared_range_px\": 1296,\n    \"outside_declared_range_and_outside_halo_px\": 0\n  },\n  \"crop\": null\n}"
-    },
-    {
-      "check": "e2e/tiff_magic",
-      "status": "PASS",
-      "detail": "magic=b'II*\\x00'"
-    },
-    {
-      "check": "e2e/progress_pushed",
-      "status": "PASS",
-      "detail": "pushes=52（native 下同一路径＝window.evaluate_js）"
-    },
-    {
-      "check": "tab2/cancel_requested",
-      "status": "PASS",
-      "detail": "已请求取消"
-    },
-    {
-      "check": "tab2/cancel_effect",
-      "status": "PASS",
-      "detail": "state=cancelled rc=-15 out_exists=False"
+      "status": "NOT_MEASURED",
+      "detail": "--no-e2e 跳过"
     },
     {
       "check": "guard/no_root_blocks_tab1",
@@ -451,11 +420,8 @@
     },
     {
       "check": "dom/rendered_dom_assertions",
-      "status": "PASS",
-      "detail": "rc=0 180.2s checks={'PASS': 39, 'FAIL': 0} probe_error=None js_errors=0",
-      "dom_readings": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-dom-9dznw8dw/dom.json",
-      "stdout_tail": "1d/feicui\",\n    \"data_dir\": \"/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-1i0owv1d/data\",\n    \"files\": 29,\n    \"admin\": \"ji\",\n    \"login_ok\": true,\n    \"verify_msg\": \"目录校验通过\",\n    \"ocr_real_backend\": {\n      \"shiwen\": \"试\",\n      \"segs\": 1,\n      \"hint_head\": \"印面篆书通用 OCR 不可靠、仅供参考：248 枚实测均分 0.2428（非空仅 60.1%），真实样本「左軍丞玺」被两引擎一致误读为「左軍丞錄」⇒ 请逐字人工\",\n      \"msg\": \"识别 1 段 · 0.94 s · 已填入释文框\"\n    }\n  },\n  \"post\": {\n    \"renamed_exists\": true,\n    \"old_gone\": true,\n    \"conflict_pair_intact\": true,\n    \"log_exists\": true,\n    \"log_lines\": 1,\n    \"log_last\": {\n      \"old_filename\": \"未命名副本.tiff\",\n      \"new_filename\": \"清心-宋-齐白石.tiff\",\n      \"operator\": \"ji\",\n      \"印面释文\": \"清心\",\n      \"朝代\": \"宋\",\n      \"作者\": \"齐白石\",\n      \"file_md5\": \"2e658cf3eade4d35a21d1752249d7779\",\n      \"status\": \"success\",\n      \"cloud_log\": \"not_connected\",\n      \"cloud_lock\": \"not_connected\"\n    },\n    \"generated_files\": [\n      \"P001-C2-R3-长乐未央-汉-陈巨来.tiff\",\n      \"P002-C1-R3-得自在-秦-齐白石.tiff\",\n      \"P005-C1-R1-乙-汉-丙.tiff\",\n      \"P005-C1-R1-待定-汉-丙.tiff\",\n      \"清心-宋-齐白石.tiff\"\n    ],\n    \"ocr_apply_kept_filename\": true\n  }\n}\n\n读数落盘：/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-dom-9dznw8dw/dom.json\n",
-      "stderr_tail": "le.py:60: File exists and is valid: /Users/kevin/bistro/feicui/venv/lib/python3.11/site-packages/rapidocr/models/ch_ppocr_mobile_v2.0_cls_mobile.onnx\u001b[0m\n\u001b[32m[INFO] 2026-10-18 09:01:48,334 [RapidOCR] main.py:63: Using /Users/kevin/bistro/feicui/venv/lib/python3.11/site-packages/rapidocr/models/ch_ppocr_mobile_v2.0_cls_mobile.onnx\u001b[0m\n\u001b[32m[INFO] 2026-10-18 09:01:48,363 [RapidOCR] base.py:23: Using engine_name: onnxruntime\u001b[0m\n\u001b[32m[INFO] 2026-10-18 09:01:48,377 [RapidOCR] download_file.py:60: File exists and is valid: /Users/kevin/bistro/feicui/venv/lib/python3.11/site-packages/rapidocr/models/PP-OCRv6_rec_small.onnx\u001b[0m\n\u001b[32m[INFO] 2026-10-18 09:01:48,378 [RapidOCR] main.py:63: Using /Users/kevin/bistro/feicui/venv/lib/python3.11/site-packages/rapidocr/models/PP-OCRv6_rec_small.onnx\u001b[0m\n"
+      "status": "NOT_MEASURED",
+      "detail": "未加 --with-dom（渲染后 DOM 断言需真窗口）"
     },
     {
       "check": "gui/window_launch",

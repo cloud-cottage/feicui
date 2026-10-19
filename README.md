@@ -287,3 +287,18 @@ cd feicui && ./venv/bin/python selfcheck_export.py
 **本轮产物**：`f2_recover_images.py`（恢复脚本）、`f2_recover_report.json`、`f2_ocr_sample.py`、
 `f2_ocr_sample_report.json`、`f2_rerun.py`、`f2_stamps_before/after.json`、`f2_rerun_report.json`、`f2_report.json`。
 
+## sealbank ⇒ xiai 试水批 100 条（2026-10-19，已投生产暂存、未采纳）
+
+- 投喂物：`local-private/datasrc/sealbank/out/xiai_imports_sealbank_placeholder.ndjson`
+  （5,529 行，占位图形态：`faces[0].image_storage_key='placeholder/seal-no-image'`、sha `18d94039…`、`image_status='present'`）。
+- 执行方：xiai 仓 `scripts/submit-sealbank-batch.mjs`（等距抽样 `stride=55` 取 100、限速 400ms/条、
+  幂等键 `(source, source_seal_id)` 预检＋op 体内复核、真实提交门 `ops.js::submitSealImport` ＋ `persist`）。
+- 结果（生产读回，非脚本内存）：**ok=99 / skipped=1（金丝雀幂等命中）/ rejected=0 / error=0**；
+  生产 `xiai_seal_imports` 中 `source='真微印網 sealbank.net'` 共 **100 行**，全部 `PENDING`、
+  `image_status=present`、faces 100/100 指向占位键且 sha ＝ 登记值、`content_fingerprint` 逐行重算一致。
+- 抽 3 条核验：`1268-001`（宋元/吾丘衍/魯郡吾氏）、`1859-183`（晚清/吳熙載/仲陶手斠）、
+  `1910-164`（晚清/趙石/沈成伯氏祕笈之印）—— 朝代均落在 xiai 15 类枚举内。
+- 批次号：`sealbank_idx_1051_1911`；回滚清单在 xiai 仓 `scripts/out/submit_batch_ids.json`
+  （按幂等键删、仅限仍 `PENDING` 行、需 `--yes` 二次确认）。**采纳（reviewSealImport）未跑、留给人类**。
+- 详见 xiai 仓 `docs/spec-increments/sealbank-trial-batch-100.md`（身份要求、执行读数、前端核验）。
+

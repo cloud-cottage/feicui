@@ -24,16 +24,33 @@ feicui（印谱 PDF 解析工具）的**独立 Vue3 + Vite 前端站点**。Stre
 ```bash
 cd /Users/kevin/bistro/feicui/web
 npm install
-npm run dev      # → http://127.0.0.1:5195/feicui/   （strictPort，若 5195 被占会直接报错而非换端口；base 默认 '/feicui/'）
-npm run build    # 生产构建（mode=production ⇒ 读 web/.env.production，base='/'）→ dist/
+npm run dev      # → http://127.0.0.1:5195/feicui/   （strictPort，若 5195 被占会直接报错而非换端口；base '/feicui/'）
+npm run build    # 生产构建（mode=production ⇒ 读 web/.env.production，base='/feicui/'）→ dist/
 ```
 
-**URL base 按环境参数化**（2026-10-19 线上白屏修复）：`vite.config.js` 用
-`loadEnv(mode, envDir, 'VITE_')` 显式读 `VITE_BASE`（`vite.config` 跑在 Node，`.env.*`
-**不会**自动注入 `process.env`）：
+**URL base：本地与生产同一口径 `/feicui/`**（2026-10-19 两轮纠偏后的定稿）。
+`vite.config.js` 用 `loadEnv(mode, envDir, 'VITE_')` 显式读 `VITE_BASE`（`vite.config`
+跑在 Node，`.env.*` **不会**自动注入 `process.env`）：
 - 未设置 ⇒ 默认 `'/feicui/'`：本地 dev、直连 5195、经 shu-web（5164）`/feicui` 反代；
-- `web/.env.production`（入库）置 `'/'`：`https://feicui.xiai.plus/` 由 Vercel 部署在**域名根路径**。
-- 需要「带 /feicui 前缀」的构建产物时显式覆盖：`VITE_BASE=/feicui/ npm run build`。
+- `web/.env.production`（入库）置 `'/feicui/'`：生产 Vercel 构建**同 base**，
+  故 `dist/index.html` 引用 `/feicui/assets/*.js|css`，与本地一致（不会再出现「本地能跑、线上白屏」）；
+- 需要别的 base 时显式覆盖：`VITE_BASE=/xxx/ npm run build`（参数化能力保留）。
+
+**公网路径映射（`web/vercel.json`，权威）**：
+
+| 公网 URL | 来源（`dist/` 产物） | 说明 |
+| --- | --- | --- |
+| `/`、`/index.html` | `dist/landing/index.html` | **公网引导页**（项目介绍 + GitHub Releases 下载）；源＝`web/public/landing/index.html` |
+| `/landing/*` | `dist/landing/*` | 引导页自身资源（相对路径 `assets/feicui.png`），静态直出、不被任何规则改写 |
+| `/feicui/`、`/feicui/:path*` | `dist/index.html` | **Vue 站**（SPA 深链回落） |
+| `/feicui/assets/*` | `dist/assets/*` | 构建产物资源；带 base 前缀 ⇒ 需显式映射到 `assets/` |
+
+为什么用 `routes` 而不是 `rewrites`：**Vercel 的静态文件（filesystem）优先于 `rewrites`**，
+且 `@vercel/routing-utils` 会在 `rewrites` 前自动插入 `{"handle":"filesystem"}`。由于
+`dist/index.html`（Vue 壳）就位于根路径，`{"source":"/","destination":"/landing/index.html"}`
+**永远不会命中**（根路径被静态 `index.html` 抢先）。故改用有序 `routes`：把 `/` 的两条规则
+放在 `handle: filesystem` **之前**，其余规则放在其后（未命中真实文件才回落 SPA）。
+`routes` 与 `rewrites`/`redirects`/`headers` 互斥，本文件只用 `routes`。
 
 
 后端（另一路）起法参考 spec §6.2：

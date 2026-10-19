@@ -1,9 +1,11 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
+  "routes": [
+    { "src": "^/$", "dest": "/landing/index.html" },
+    { "src": "^/index\\.html$", "dest": "/landing/index.html" },
+    { "handle": "filesystem" },
+    { "src": "^/feicui/assets/(.*)$", "dest": "/assets/$1" },
+    { "src": "^/feicui/?$", "dest": "/index.html" },
+    { "src": "^/feicui/(.*)$", "dest": "/index.html" }
   ]
 }

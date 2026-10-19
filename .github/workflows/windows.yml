@@ -1,0 +1,177 @@
+# .github/workflows/windows.yml
+# 「斐萃」Windows 构建（Phase 1 ＝ stage 1 · 不含 OCR）—— 产出可双击启动的 onedir 包
+#
+# 为什么在 CI 里打（而不是本机交叉编译）：PyInstaller **不能交叉编译**。Windows 产物必须在
+# windows-latest 上、用 Windows 版 CPython ＋ Windows 版 wheel 打出来。本机（macOS）只能验
+# 「spec 语法 / 平台分支逻辑 / 路径单测（注入式三平台）/ mac 回归」，真产物只能靠这里。
+#
+# 产物：artifact 名 `feicui-win-s1`（内含 `feicui-win-s1.zip`）
+#   └─ 斐萃-s1/斐萃.exe        ← 双击启动（GUI 子系统，无黑框）
+#      └─ _internal/           ← Python 运行时 ＋ 依赖（onedir；**不是 onefile**）
+#
+# 触发：
+#   * 手动：Actions →「windows-build」→ Run workflow（也可 `gh workflow run windows.yml`）
+#   * push / PR 触及打包相关路径时自动跑（见 `on.push.paths`）
+#
+# 密钥：**一条都不用**（没有签名、没有印源登录、没有 API key）⇒ fork 的 PR 也能跑。
+# 口径 / 已知限制见 `local-dist/build/README.md` §9「Windows 构建（Phase 1）」。
+
+name: windows-build
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "local-dist/**"
+      - "server/app/**"
+      - "ops/book-page-2400/**"
+      - "config/**"
+      - ".github/workflows/windows.yml"
+  pull_request:
+    paths:
+      - "local-dist/**"
+      - "server/app/**"
+      - "ops/book-page-2400/**"
+      - "config/**"
+      - ".github/workflows/windows.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: windows-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-win-s1:
+    name: win-s1 (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    strategy:
+      fail-fast: true            # 单组合也要显式钉住：将来加 stage 2 / arm64 时不要再串着烧机器
+      matrix:
+        include:
+          - os: windows-latest
+            stage: "1"
+    env:
+      # 中文路径（`斐萃-s1` / `斐萃.exe`）＋ 中文日志：Windows 默认代码页是 cp1252，
+      # 不钉 UTF-8 会在 print/写文件名时炸 UnicodeEncodeError（假失败）。
+      PYTHONUTF8: "1"
+      PYTHONIOENCODING: "utf-8"
+      PYTHONUNBUFFERED: "1"
+      FEICUI_PACK_STAGE: ${{ matrix.stage }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: local-dist/requirements.txt
+
+      - name: Install deps（壳 ＋ PyInstaller）
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          # pywebview 在 Windows 上的后端＝EdgeChromium(WebView2)＋WinForms，靠 `pythonnet`(clr)；
+          # 这个依赖是 pywebview 自己的 `Requires-Dist: pythonnet; sys_platform == "win32"`
+          # ⇒ pip 自动装，**不装 cefpython3**（CEF 是可选后端，wheel 大、且 WebView2 已在 Win10/11 常驻）。
+          pip install -r local-dist/requirements.txt pyinstaller
+          python -c "import webview, sys; print('pywebview', webview.__version__ if hasattr(webview,'__version__') else '?', sys.platform)"
+
+      - name: Install render stack（引擎/阶段 1 必需）
+        shell: pwsh
+        run: |
+          # 引擎脚本 `ops/book-page-2400/render_page_2400.py` 要 pymupdf / cv2(OpenCV) / numpy / tifffile / PIL。
+          # mac 上这些来自老工程 `venv`；CI 里没有那个 venv ⇒ 必须显式装，否则 spec 的 hiddenimports
+          # 会报 "hidden import not found"，产物「打得出来、渲染时 ImportError」。
+          # `opencv-python-headless`：CI 无 GUI，headless 版省 ~20 MB 且不带 Qt 插件（不会和 WinForms 抢）。
+          pip install pymupdf numpy tifffile opencv-python-headless pillow
+
+      - name: Verify pythonnet / clr（Windows 后端前置）
+        shell: pwsh
+        run: |
+          python -c "import clr; print('clr OK')"
+          python -c "import clr_loader; print('clr_loader', clr_loader.__version__)"
+
+      - name: Unit test — 跨平台用户目录（paths.py）
+        shell: pwsh
+        run: |
+          # 19 个断言：三平台默认路径（注入式）＋ 环境变量优先级 ＋ **本机真平台自洽**
+          # （在 windows-latest 上这一步同时证明 `%APPDATA%` / `%LOCALAPPDATA%` 真的被用上了）。
+          python local-dist/tests/test_paths.py
+
+      - name: Verify icon（feicui.ico 帧/尺寸自检）
+        shell: pwsh
+        run: python local-dist/build/make-ico.py --check
+
+      - name: Check spec syntax
+        shell: pwsh
+        run: |
+          python -c "compile(open('local-dist/build/feicui.spec', encoding='utf-8').read(), 'feicui.spec', 'exec'); print('spec compile OK')"
+
+      - name: PyInstaller build（stage 1 · onedir）
+        shell: pwsh
+        run: |
+          python -m PyInstaller --noconfirm --clean `
+            --distpath local-dist/build/dist/win `
+            --workpath local-dist/build/build/win `
+            local-dist/build/feicui.spec
+
+      - name: Assert bundle shape（onedir / 无 pyobjc / 无 OCR）
+        shell: pwsh
+        run: |
+          $root = "local-dist/build/dist/win/斐萃-s1"
+          $exe  = Join-Path $root "斐萃.exe"
+          if (-not (Test-Path $exe))                { throw "缺 exe：$exe" }
+          if (-not (Test-Path (Join-Path $root "_internal"))) { throw "不是 onedir（缺 _internal/）" }
+          # 红线：mac 专属后端绝不能进 Windows 包（pyobjc 不存在于 Windows）
+          $cocoa = Get-ChildItem -Path $root -Recurse -Force -ErrorAction SilentlyContinue |
+                   Where-Object { $_.Name -match '^(AppKit|WebKit|objc|Foundation)\.' }
+          if ($cocoa) { throw ("包内出现 pyobjc：`n" + (($cocoa | ForEach-Object FullName) -join "`n")) }
+          # 阶段 1 不许有 OCR 链
+          foreach ($bad in @("rapidocr", "onnxruntime", "paddle")) {
+            $hit = Get-ChildItem -Path $root -Recurse -Filter "$bad*" -ErrorAction SilentlyContinue
+            if ($hit) { throw "阶段 1 包里出现 $bad" }
+          }
+          $mb = [math]::Round(((Get-ChildItem $root -Recurse -File | Measure-Object Length -Sum).Sum / 1MB), 1)
+          Write-Host "bundle OK: $root ($mb MB)"; Get-ChildItem $root | Select-Object Name, Length
+
+      - name: Smoke test — 引导器＋用户目录（真跑一次 exe）
+        shell: pwsh
+        run: |
+          # `--engine-run <不存在的脚本>` ⇒ 引导器必须走到路径初始化、建好用户目录、写日志，然后以 **2** 退出。
+          # 这一步验的是「双击启动前的那半条路」：bootloader 能起、`src/paths.py` 在冻结态能被 import、
+          # Windows 上数据根真的落在 %APPDATA%\斐萃、日志真的落在 %LOCALAPPDATA%\斐萃\logs。
+          $exe = (Resolve-Path "local-dist/build/dist/win/斐萃-s1/斐萃.exe").Path
+          $p = Start-Process -FilePath $exe -ArgumentList "--engine-run", "__nope__.py" -PassThru -Wait
+          Write-Host "exit=$($p.ExitCode)"
+          if ($p.ExitCode -ne 2) { throw "期望退出码 2（引擎脚本缺失），实际 $($p.ExitCode)" }
+
+          $data = Join-Path $env:APPDATA "斐萃"
+          $logs = Join-Path $env:LOCALAPPDATA "斐萃\logs"
+          if (-not (Test-Path $data))              { throw "未建数据根：$data" }
+          if (-not (Test-Path (Join-Path $data "var\jobs"))) { throw "未建 var/jobs" }
+          $logf = Get-ChildItem $logs -Filter "pack-*.log" -ErrorAction SilentlyContinue | Select-Object -First 1
+          if (-not $logf) { throw "未写日志：$logs" }
+          Write-Host "--- $($logf.FullName) ---"; Get-Content $logf.FullName -Tail 20
+
+      - name: Package zip
+        shell: pwsh
+        run: |
+          Compress-Archive -Path "local-dist/build/dist/win/斐萃-s1" -DestinationPath "feicui-win-s1.zip" -Force
+          $len = (Get-Item feicui-win-s1.zip).Length
+          Write-Host "feicui-win-s1.zip = $([math]::Round($len/1MB,1)) MB"
+          Get-FileHash feicui-win-s1.zip -Algorithm SHA256 | Format-List
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: feicui-win-s1
+          path: feicui-win-s1.zip
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 0        # 已经是 zip

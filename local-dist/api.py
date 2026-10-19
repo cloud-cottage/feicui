@@ -803,12 +803,19 @@ class FeicuiApi:
         return {"ok": ok, "msg": msg}
 
     def open_in_finder(self, req: dict | None = None) -> dict:
-        """在访达里定位产物（仅 macOS；失败只报错，不抛）。"""
+        """在**系统文件管理器**里定位产物（macOS 访达 / Windows 资源管理器 / Linux xdg-open；失败只报错，不抛）。"""
         req = req or {}
         p = Path(str(req.get("path", "")))
         if not p.exists():
             return {"ok": False, "msg": "路径不存在"}
         try:
+            if sys.platform == "win32":
+                # 资源管理器：目录 ⇒ `explorer <dir>`；文件 ⇒ `explorer /select,<file>`（打开父目录并选中它）
+                subprocess.Popen(["explorer", f"/select,{p}"] if p.is_file() else ["explorer", str(p)])
+                return {"ok": True, "msg": "已在资源管理器打开"}
+            if sys.platform != "darwin":
+                subprocess.Popen(["xdg-open", str(p)])
+                return {"ok": True, "msg": "已打开"}
             subprocess.Popen(["open", "-R" if p.is_file() else "", str(p)] if p.is_file()
                              else ["open", str(p)])
             return {"ok": True, "msg": "已在访达打开"}

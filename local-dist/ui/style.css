@@ -52,7 +52,15 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; }
 body {
-  font-family: -apple-system, "PingFang SC", "MiSans", "Helvetica Neue", sans-serif;
+  /* 字体栈：**macOS 在前（观感一字不改：`-apple-system` 在 mac 上永远先命中）**，
+     Windows 字体在其中段兜底 —— Win 上没有 `-apple-system` / `PingFang SC` / `MiSans`，
+     不补就会掉到 Segoe UI（中文再退到系统默认宋体，字重/字宽都不一样）。
+     `Microsoft YaHei`（Win7+ 默认中文 UI 字体）→ `微软雅黑`（同字体的中文名，老 WebView2 也认）→
+     `SimSun`（宋体，最后兜底：极端精简的系统镜像里只剩它）。
+     ⚠ 顺序即优先级：不要把这些挪到 `-apple-system` 前面，否则 mac 会改用雅黑（如果装了 Office）。*/
+  font-family: -apple-system, "PingFang SC", "MiSans",
+               "Microsoft YaHei", "微软雅黑", "SimSun",
+               "Helvetica Neue", sans-serif;
   background: var(--bg); color: var(--text); font-size: 13px; line-height: 1.55;
 }
 code { background: #f0f0f0; padding: 1px 4px; border-radius: 4px; font-size: 12px; }

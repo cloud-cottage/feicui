@@ -353,3 +353,115 @@ hdiutil verify local-dist/build/dist/斐萃-s1.dmg
 红点物理点击**未实测**（`System Events` 无辅助功能授权，`-1712`）⇒ 人工步骤：
 `open -n local-dist/build/dist/斐萃-s1.app` → 6 s 后点红点 → `pgrep -f 斐萃-s1`（应 ≤3 s 内空）。
 
+
+---
+
+## 9. Windows 构建（Phase 1 · stage 1 · 2026-10-20）
+
+> 目标：**能双击启动**的 Windows 包（s1，无 OCR），由 GitHub Actions 产出可下载 artifact。
+> 本机是 macOS，**Windows 产物无法在本机验**（PyInstaller 不支持交叉编译）⇒ 本地只验「静态面」，
+> 真产物靠 CI；CI 失败就按日志收敛（这一节就是收敛的起点，不是终点）。
+
+### 9.1 触发方式
+
+| 方式 | 命令 / 位置 |
+| --- | --- |
+| 手动 | Actions →「**windows-build**」→ Run workflow；或 `gh workflow run windows.yml` |
+| 自动 | push / PR 触及 `local-dist/**`、`server/app/**`、`ops/book-page-2400/**`、`config/**`、本 workflow 本身 |
+
+`runs-on: windows-latest`、`setup-python 3.11`、`FEICUI_PACK_STAGE=1`、`strategy.fail-fast: true`、
+`concurrency` 按 ref 串行、`permissions: contents: read`、**不含任何密钥**（fork 的 PR 也能跑）。
+
+### 9.2 产物（artifact）
+
+| 项 | 值 |
+| --- | --- |
+| artifact 名 | `feicui-win-s1` |
+| 内容 | `feicui-win-s1.zip`（`Compress-Archive`，已压缩 ⇒ upload 用 `compression-level: 0`） |
+| zip 内 | `斐萃-s1/斐萃.exe` ＋ `斐萃-s1/_internal/**`（**onedir**） |
+| 保留 | 14 天；CI 同时打印 zip 的 SHA256 |
+| 启动 | 解压后**双击 `斐萃.exe`**；⚠ **不能只拷 `.exe`**（`_internal/` 是它的一半） |
+
+为什么 **onedir 不用 onefile**：① onefile 每次启动把 ~200 MB 解到 `%TEMP%\_MEIxxxx`（慢 + 磁盘占用）；
+② 引擎是**子进程**（`<exe> --engine-run <脚本>`），onefile 下 `sys.executable` 指向临时解包副本，
+父进程退出后临时目录被清 ⇒ 子进程路径失效。onedir 下 `sys.executable` 就是稳定的 `斐萃.exe`。
+
+### 9.3 用户目录：**单一真源** `local-dist/src/paths.py`
+
+| 目录 | 1（最高） | macOS | Windows | Linux |
+| --- | --- | --- | --- | --- |
+| 数据根 | `FEICUI_DATA_DIR` | `~/Library/Application Support/斐萃` | `%APPDATA%\斐萃` | `$XDG_DATA_HOME/斐萃`（默认 `~/.local/share/斐萃`） |
+| 日志 | `FEICUI_LOG_DIR` | `~/Library/Logs/斐萃` | `%LOCALAPPDATA%\斐萃\logs` | `$XDG_STATE_HOME/斐萃/logs` |
+
+- 此前这套拼接**散在** `pack_main.py` 与 `src/yinyuan_client.py` 两处、且都写死 macOS 路径
+  ⇒ 现在两者都只调 `paths.data_dir()` / `paths.log_dir()`；`paths.py` 是**唯一**做平台分支的文件
+  （`tests/test_paths.py::NoScatteredHardcodes` 会拦住「又把 `"Library"` 写回代码」的回退）。
+- 环境变量仍**最高优先**（自检脚本 `selftest.py` / `domtest*.py` 靠它隔离到 tmp）；**空串按未设处理**。
+- Windows 数据走 **Roaming**（配置随域漫游）、日志走 **Local**（大文件不进漫游）。
+- `pack_main.py` 启动 banner 现在打 `platform= / data_dir= / log_dir=`，Windows 排障第一步就看它
+  （`%LOCALAPPDATA%\斐萃\logs\pack-<yyyymmdd>.log`）。
+
+### 9.4 图标
+
+| 平台 | 文件 | 来源 / 生成 |
+| --- | --- | --- |
+| macOS | `build/feicui.icns`（1 013 361 B） | `bash build/make-icns.sh`（SVG → qlmanage → sips → iconutil） |
+| Windows | `build/feicui.ico`（**114 314 B / 6 帧 / 16·32·48·64·128·256，全 32bpp PNG 帧**） | `./venv/bin/python build/make-ico.py`（Pillow，只缩不放） |
+
+- **`.ico` 选择入库**（而不是构建时现生成）：体积小、构建输入稳定、CI 少一步 PIL 生成；
+  母图换版时重跑 `make-ico.py` 即可。CI 用 `make-ico.py --check` 校验「帧数/尺寸/文件存在」，不写盘。
+- 母图两者同源：`build/feicui-1024.png`（1024×1024 RGBA，由 `make-icns.sh` 用 qlmanage 从
+  `assets/feicui.svg` 矢量重渲染）。
+- spec 里 `icon=` **按平台选**：darwin → `.icns`（给 `BUNDLE`）、win32 → `.ico`（给 `EXE`，嵌进资源节）。
+
+### 9.5 spec 平台分支（`local-dist/build/feicui.spec`）
+
+| 平台 | 形态 | 图标 | 输出 |
+| --- | --- | --- | --- |
+| darwin | `COLLECT` ＋ `BUNDLE` | `feicui.icns` | `dist/斐萃-s1.app`（＋ `dist/斐萃-s1/`） |
+| win32 | **只有 `COLLECT`（onedir）** | `feicui.ico` | `dist/win/斐萃-s1/斐萃.exe` ＋ `_internal/` |
+| linux | 只有 `COLLECT`（未验收） | 有 `.ico` 就带 | `dist/斐萃-s1/` |
+
+- `BUNDLE` 段包在 `if sys.platform == "darwin"` 里（非 darwin 调它会直接断言失败）。
+- hiddenimports **按平台选后端**：darwin=`webview.platforms.cocoa`；win32=`edgechromium` ＋ `winforms`
+  ＋ `clr` ＋ `clr_loader`。**`cocoa` 绝不进 Windows 分析**（pyobjc 在 Windows 不存在 ⇒ ImportError）。
+- Windows 的 exe 名去掉阶段后缀（`斐萃.exe`，双击/固定到任务栏都按它走），阶段只体现在目录名 `斐萃-s1`。
+- `src/paths.py` 已进 `SRC_FILES`（datas）＋ hiddenimports：`pack_main.py` 在 import `api` **之前**就要用它。
+
+### 9.6 本地能验的（读数，2026-10-20 本机 macOS 15.7.4 / Apple Silicon）
+
+| 项 | 命令 | 读数 |
+| --- | --- | --- |
+| 跨平台路径单测 | `./venv/bin/python local-dist/tests/test_paths.py` | **19 tests / 19 OK**（darwin·win32·linux 三平台断言 ＋ 环境变量优先级 ＋ 空串 ＋ 真机自洽 ＋ 防回退） |
+| spec 平台分支模拟 | `./venv/bin/python local-dist/build/check-spec-platforms.py` | **24 checks / 0 不符**（桩掉 PyInstaller 后三平台各 exec 一遍 spec，断言 BUNDLE/图标/hiddenimports/产物名） |
+| `.ico` 自检 | `./venv/bin/python local-dist/build/make-ico.py --check` | 6 帧 / sizes `[16,32,48,64,128,256]` / 114 314 B / ok |
+| spec 语法 | `python -c "compile(open('local-dist/build/feicui.spec',encoding='utf-8').read(),'feicui.spec','exec')"` | OK |
+| **macOS 回归** | `selftest.py --no-e2e` / `domtest.py` / `domtest_yinyuan.py` | **80/0** ／ **39/0** ／ **11/0**（与改前一致） |
+| macOS s1 重打 | 见 §8.1 | 见下「本单实测」 |
+
+### 9.7 已知限制（**必须对用户说清**）
+
+1. **WebView2 运行时**：Windows 后端是 EdgeChromium(WebView2) ⇒ 需要机器上有 WebView2 Runtime。
+   Win11 自带、Win10 装过新版 Edge 的也有；**干净的老 Win10 / Server / LTSC 上可能没有** ⇒ 双击后窗口不出来
+   （现象：进程在、无窗）。缺就装 Microsoft 的 Evergreen Bootstrapper（离线包 ~120 MB）。
+2. **未签名 ⇒ SmartScreen 拦**：首次运行「Windows 已保护你的电脑」。绕过：更多信息 → 仍要运行。
+   正式分发需**代码签名证书**（EV/OV）＋ `signtool sign /tr <ts> /td sha256 /fd sha256`，本单**没有**（也无密钥）。
+3. **中文文件名/路径**：exe 目录名 `斐萃-s1`、用户名可能是中文 ⇒ 已钉 `PYTHONUTF8=1`／`PYTHONIOENCODING`；
+   但**未在真机上验**过「中文用户名 + 中文路径 + 深目录」的组合（CI 用 ASCII 临时目录）。
+4. **密钥 0600 退化**：`src/yinyuan_client.py` 用 `os.open(..., 0o600)` ＋ `os.chmod` 设权限；
+   Windows 上 `chmod` 只翻「只读」位，**不设 ACL** ⇒ 实际保护来自 `%APPDATA%\斐萃` 的**每用户 ACL**
+   （同机其他用户读不到，但**同用户的其他进程读得到**）。要真隔离得走 DPAPI（Phase 2）。
+5. **无 OCR**（stage 1）：本包不含 `rapidocr` / `onnxruntime` / `paddle`（CI 里有断言拦着）。
+6. **产物形态**：只有 zip（没有 MSI / 安装器 / 开始菜单快捷方式）；无自动更新。
+7. **CI 未验过的**：真窗口能否弹出（`webview.start()` 需要桌面会话，GitHub 的 Windows runner 是**无交互会话**
+   ⇒ CI 只验「引导器 + 用户目录 + 日志」这半条路，**窗口本身必须在真机验**）。
+
+### 9.8 Phase 2 待办（按优先级）
+
+1. **真机验收**：在 Win10（无 WebView2 / 有 WebView2）＋ Win11 各跑一次双击，记录「窗口出现时间 / 首屏报错」。
+2. **渲染链真跑**：CI 里目前只装依赖、不跑引擎；Phase 2 加一步「用样本 PDF 跑 `--engine-run render_page_2400.py` 出一页 1200dpi」。
+3. **WebView2 兜底**：启动时检测 `HKLM\SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\{F1E7...}`
+   是否装了 runtime，缺则弹一句人话 + 打开下载页（比「进程在、无窗」好排查）。
+4. **签名 + 安装器**：代码签名证书（需人类提供）＋ MSI/Inno Setup；顺带解决 SmartScreen。
+5. **DPAPI 存密钥**（替代 0600 退化）。
+6. **arm64 / stage 2**：`windows-latest` 只有 x64；stage 2（RapidOCR）体积 +~100 MB，另开 matrix 组合。

@@ -50,6 +50,12 @@ try:  # pragma: no cover - 导入形态分支
 except ImportError:  # pragma: no cover
     from pdf_library import DYNASTY_OPTIONS as LOCAL_DYNASTY_OPTIONS  # type: ignore
 
+#: 用户目录**单一真源**（`src/paths.py`）：本文件不再自己拼平台路径。
+try:  # pragma: no cover - 导入形态分支（包内 / 脚本直跑）
+    from . import paths as _paths
+except ImportError:  # pragma: no cover
+    import paths as _paths  # type: ignore
+
 __all__ = [
     "DEFAULT_BASE_URL", "CACHE_TTL_SECONDS", "PAGE_LIMIT", "MAX_PAGES",
     "KEY_FILE_NAME", "HttpResponse", "UrllibTransport", "YinyuanClient",
@@ -83,12 +89,13 @@ _PHONE_RE = re.compile(r"^\+?\d{6,20}$")
 # 路径 / 主机名（包外可写；`.env` / 密钥文件不入库不入包）
 # ============================================================
 def default_data_dir() -> Path:
-    """数据根：`FEICUI_DATA_DIR`（打包态由 `pack_main.py` 设）优先，否则
-    `~/Library/Application Support/斐萃/`（与打包态同址 ⇒ 源码态跑出来的 key 打包后仍可用）。"""
-    env = os.environ.get("FEICUI_DATA_DIR") or ""
-    if env:
-        return Path(env).expanduser()
-    return Path.home() / "Library" / "Application Support" / "斐萃"
+    """数据根：`FEICUI_DATA_DIR`（打包态由 `pack_main.py` 设）优先，否则按**平台**派生
+    （macOS `~/Library/Application Support/斐萃`、Windows `%APPDATA%\\斐萃`、
+    Linux `~/.local/share/斐萃`）—— 真源是 `src/paths.py`，本函数只做转发。
+
+    与打包态同址 ⇒ 源码态跑出来的 key 打包后仍可用。
+    """
+    return _paths.data_dir()
 
 
 def default_key_path(data_dir: Path | str | None = None) -> Path:

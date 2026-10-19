@@ -1,5 +1,5 @@
 # -*- mode: python ; coding: utf-8 -*-
-# local-dist/build/feicui.spec —— 「斐萃 · 本地封装分发版」macOS `.app` 打包（PyInstaller 6.x / Python 3.11）
+# local-dist/build/feicui.spec —— 「斐萃 · 本地封装分发版」打包（PyInstaller 6.x / Python 3.11，**macOS ＋ Windows**）
 #
 # 跑法（**必须**用独立构建环境；共用 `venv` 一字不改 —— 见 README §0）：
 #   cd /Users/kevin/bistro/feicui
@@ -7,6 +7,28 @@
 #   FEICUI_PACK_STAGE=1 \
 #   local-dist/build/.venv-build/bin/python -m PyInstaller --noconfirm --clean \
 #       --distpath local-dist/build/dist --workpath local-dist/build/build local-dist/build/feicui.spec
+#
+# Windows（CI 里就是这么跑的，见 `.github/workflows/windows.yml`；本机不装 Windows 也能读）：
+#   set FEICUI_PACK_STAGE=1
+#   python -m PyInstaller --noconfirm --clean ^
+#       --distpath local-dist/build/dist/win --workpath local-dist/build/build/win local-dist/build/feicui.spec
+#   ⇒ `local-dist/build/dist/win/斐萃-s1/斐萃.exe` ＋ `_internal/`（**onedir**，不是 onefile）
+#
+# ── 平台分支（**本 spec 唯一的 `sys.platform` 分叉点**）────────────────────────────
+#   | 平台 | 形态 | 图标 | 输出 |
+#   | --- | --- | --- | --- |
+#   | darwin | `COLLECT` ＋ **`BUNDLE`**（`.app`） | `build/feicui.icns` | `dist/斐萃-s1.app`（＋ `dist/斐萃-s1/`） |
+#   | win32  | **只有 `COLLECT`**（onedir） | `build/feicui.ico`  | `dist/win/斐萃-s1/斐萃.exe` ＋ `_internal/` |
+#   | linux  | 只有 `COLLECT`（onedir，未验收） | 无 | `dist/斐萃-s1/斐萃` |
+#
+#   ⚠ 三条**不能动**的取舍：
+#   1) **Windows 不用 onefile**：onefile 每次启动都要把 ~200 MB 解到 `%TEMP%\_MEIxxxx`（慢、且
+#      「引擎子进程 + 启动解压」= 一层不必要的失败面）。onedir 下 `sys.executable` 就是 `斐萃.exe`，
+#      `api.JobRunner` 走 `[斐萃.exe, --engine-run, <脚本>]` 自调，路径全是绝对路径 ⇒ 最稳。
+#   2) **`webview.platforms.cocoa` 绝不能进 Windows 分析**：它 `import AppKit/WebKit`（pyobjc，Windows
+#      上不存在）⇒ 要么构建期 `ModuleNotFoundError`、要么运行期 ImportError。平台后端按 `sys.platform` 选。
+#   3) **`BUNDLE` 段只在 darwin 追加**：在 Windows 上调 `BUNDLE(...)` 会直接抛
+#      `AssertionError: BUNDLE is supported only on macOS`（PyInstaller 6 的 `building.osx` 断言）。
 #
 # 阶段（`FEICUI_PACK_STAGE`）：
 #   1 = 壳 + UI + api + 逻辑层 + Python 运行时（含渲染栈）—— **不含 OCR**
@@ -20,8 +42,13 @@
 #   _MEIPASS/config/book_dir_keys.json              ← `naming.DEFAULT_DIR_KEYS_PATH = parents[2]/config/…`
 
 import os
+import sys
 
 from PyInstaller.utils.hooks import collect_all
+
+IS_MAC = sys.platform == "darwin"
+IS_WIN = sys.platform == "win32"
+IS_LINUX = not (IS_MAC or IS_WIN)
 
 ROOT = os.path.abspath(os.path.join(SPECPATH, "..", ".."))          # 仓根
 WEBUI = os.path.join(ROOT, "local-dist")
@@ -43,12 +70,31 @@ SUFFIX = {"1": "-s1", "2": "-s2", "3": "-s3-paddle"}[STAGE]
 #   （边缘能量 5.394，且 `ic10` 解码像素与母图**逐像素一致**/max diff 0）⇒ ≥1024 槽不再是放大。
 #   取图工具比选与失败原样留档见 `local-dist/build/readings-theme.md` §4.1（PyMuPDF 渲染全黑、
 #   ImageMagick 报 `vector graphics nested too deeply`，只有 qlmanage 可用）。
-ICON = os.path.join(WEBUI, "build", "feicui.icns")
-if not os.path.exists(ICON):
-    raise SystemExit(f"缺 .app 图标：{ICON}（用 `bash local-dist/build/make-icns.sh` 从 local-dist/assets/feicui.svg 生成）")
+ICON_ICNS = os.path.join(WEBUI, "build", "feicui.icns")
+ICON_ICO = os.path.join(WEBUI, "build", "feicui.ico")
+
+# ── Windows `.ico`（**同一个母图**的 6 帧位图：16/32/48/64/128/256）──────────────────────
+# 来源：`local-dist/build/feicui-1024.png`（与 icns 的 1024 槽**同一张** 1024 母图）。
+# 生成：`./venv/bin/python local-dist/build/make-ico.py`（Pillow；只缩不放）
+# 产物：`local-dist/build/feicui.ico` —— 114 314 B / 6 帧 / 全 32bpp PNG 帧 ⇒ **随仓提交**
+#   （体积小、构建输入稳定；CI 用 `make-ico.py --check` 校验帧与尺寸，不现场生成）。
+if IS_MAC:
+    ICON = ICON_ICNS
+    if not os.path.exists(ICON):
+        raise SystemExit(f"缺 .app 图标：{ICON}（用 `bash local-dist/build/make-icns.sh` 从 local-dist/assets/feicui.svg 生成）")
+elif IS_WIN:
+    ICON = ICON_ICO
+    if not os.path.exists(ICON):
+        raise SystemExit(f"缺 Windows 图标：{ICON}（用 `python local-dist/build/make-ico.py` 从 build/feicui-1024.png 生成）")
+else:
+    ICON = ICON_ICO if os.path.exists(ICON_ICO) else None      # Linux 未验收：有就带上，没有不拦
 
 APP_NAME = "斐萃"
-EXE_NAME = "斐萃" + SUFFIX
+
+# ── 产物名（按平台派生）────────────────────────────────────────────────────────────
+# macOS：可执行文件与 `.app` 都带阶段后缀（历史口径，别动 —— 老 DMG/脚本按它找）。
+# Windows：**exe 就叫 `斐萃.exe`**（双击/快捷方式/任务栏固定都按它走）；阶段后缀只留在**目录名**上。
+EXE_NAME = "斐萃" if IS_WIN else "斐萃" + SUFFIX
 BUNDLE_NAME = "斐萃" + SUFFIX
 
 # ── 随包数据（相对路径必须与上面的结构约定一致）────────────────────────────────
@@ -81,7 +127,8 @@ binaries = []
 #   2026-10-18 追加：`src/yinyuan_client.py`（B4 yinyuan 接入；`api.py` 顶层 `from src import`
 #   ⇒ 缺它会在打包态 import 阶段直接炸，源码态看不出来）。
 SRC_FILES = ["__init__.py", "pdf_library.py", "validator.py",
-             "yinyuan_client.py"]                                  # 全阶段必需
+             "yinyuan_client.py",
+             "paths.py"]                                          # 全阶段必需（paths.py = 用户目录单一真源）
 if WITH_OCR:
     SRC_FILES += ["ocr_rapid.py", "ocr_corrector.py"]
 for _src_name in SRC_FILES:
@@ -97,9 +144,33 @@ for _src_name in SRC_FILES:
 hiddenimports = [
     "api", "src", "src.pdf_library", "src.validator",           # 壳 + 逻辑层
     "src.yinyuan_client",                                        # yinyuan 接入（B4）
-    "webview", "webview.platforms.cocoa",                        # PyWebView 原生窗口（macOS=WKWebView）
+    "src.paths",                                                 # 用户目录单一真源（pack_main 也 import 它）
     "cv2", "tifffile", "pymupdf", "numpy", "PIL", "PIL.Image",   # 引擎（render_page_2400.py）渲染栈
 ]
+
+# ── PyWebView 原生窗口后端：**按平台二选一，绝不混装** ────────────────────────────────
+# 这个包（`webview`）在本仓两个「按文件路径加载」的脚本里被 import（`app.py`），所以静态分析看不见
+# ⇒ 必须显式列。但后端的实现模块是**平台绑定**的：
+#   macOS   → `webview.platforms.cocoa`（pyobjc：AppKit/WebKit/Quartz…）
+#   Windows → `webview.platforms.edgechromium`（WebView2 via pythonnet/clr）＋ `webview.platforms.winforms`
+#             （GUI 容器）；`mshtml` 是 IE 老后端，**不列**（Win10/11 上无意义且会拉 COM 依赖）
+#   Linux   → `webview.platforms.gtk`（未验收；本仓不安装 PyGObject，故不列，让 pywebview 自己回落/报错）
+# ⚠ 历史坑：这一行原来是**无条件** `"webview.platforms.cocoa"` ⇒ 在 windows-latest 上构建会
+#   `ModuleNotFoundError: No module named 'AppKit'`（pyobjc 只在 darwin 装）。
+if IS_MAC:
+    hiddenimports += ["webview", "webview.platforms.cocoa"]
+elif IS_WIN:
+    hiddenimports += [
+        "webview",
+        "webview.platforms.edgechromium",       # WebView2（EdgeChromium）后端
+        "webview.platforms.winforms",           # WinForms 窗口容器（edgechromium 依赖它）
+        "clr",                                  # pythonnet（pywebview 在 win32 上的硬依赖，见 METADATA）
+        # pythonnet 的 .NET 运行时装载器：contrib 的 hook-clr.py 会带走 `Python.Runtime.dll`；
+        # `clr_loader` 负责找 runtime（`coreclr` / `netfx` 两种），两个都列上防漏。
+        "clr_loader",
+    ]
+else:
+    hiddenimports += ["webview"]
 # ↑ 引擎的 `app.colorcal` / `app.naming` / `app.seal_canvas` **故意不列**：它们必须留在
 #   `_MEIPASS/server/app/*.py`（datas）走源码导入 —— 一进 PYZ，`naming.DEFAULT_DIR_KEYS_PATH`
 #   的 `parents[2]` 就会算到 `.app/Contents/` 而不是 `_MEIPASS`，目录键会**静默失效**（见 excludes）。
@@ -159,23 +230,28 @@ a = Analysis(
 )
 pyz = PYZ(a.pure)
 
-exe = EXE(
-    pyz,
-    a.scripts,
-    [],
+exe_kwargs = dict(
     exclude_binaries=True,
     name=EXE_NAME,
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
     upx=False,
-    console=False,             # `--windowed`：无控制台 ⇒ 日志落 ~/Library/Logs/斐萃/（见 pack_main.py）
+    # `--windowed`：无控制台 ⇒ 日志落 `log_dir()`（见 pack_main.py）。
+    # Windows 上这也意味着 GUI 子系统 exe（双击不弹黑框）；引擎子进程的 stdout 由父进程重定向到日志文件。
+    console=False,
     disable_windowed_traceback=False,
-    argv_emulation=False,
-    target_arch=None,
-    codesign_identity=None,
-    entitlements_file=None,
 )
+if IS_MAC:
+    # 仅 macOS 有意义的开关（PyInstaller 在其他平台上会忽略/断言，故只在 darwin 传）
+    exe_kwargs.update(argv_emulation=False, target_arch=None,
+                      codesign_identity=None, entitlements_file=None)
+if IS_WIN:
+    # Windows：图标嵌进 `.exe`（资源节）。macOS 的图标由下面的 `BUNDLE(icon=…)` 负责（`.icns`），
+    # **不给 EXE 传 mac 图标** ⇒ mac 产物与历史构建保持一致。
+    exe_kwargs["icon"] = ICON
+
+exe = EXE(pyz, a.scripts, [], **exe_kwargs)
 
 coll = COLLECT(
     exe,
@@ -187,19 +263,24 @@ coll = COLLECT(
     name=BUNDLE_NAME,
 )
 
-app = BUNDLE(
-    coll,
-    name=f"{BUNDLE_NAME}.app",
-    icon=ICON,
-    bundle_identifier="com.cloudcottage.feicui.local",
-    info_plist={
-        "CFBundleDisplayName": APP_NAME,
-        "CFBundleName": APP_NAME,
-        "CFBundleShortVersionString": "0.3.0",
-        "CFBundleVersion": "0.3.0",
-        "LSMinimumSystemVersion": "12.0",
-        "NSHighResolutionCapable": True,
-        "NSRequiresAquaSystemAppearance": False,
-        "LSApplicationCategoryType": "public.app-category.productivity",
-    },
-)
+# ── `.app` 只属于 macOS ──────────────────────────────────────────────────────────────
+# `BUNDLE` 内部是 `PyInstaller.building.osx`，非 darwin 直接断言失败 ⇒ **必须**包在 if 里。
+# Windows/Linux 到此为止：`COLLECT` 产出的 onedir 目录（`斐萃-s1/`，内含 `斐萃.exe` ＋ `_internal/`）
+# 就是最终产物，双击 `斐萃.exe` 即启动。
+if IS_MAC:
+    app = BUNDLE(
+        coll,
+        name=f"{BUNDLE_NAME}.app",
+        icon=ICON,
+        bundle_identifier="com.cloudcottage.feicui.local",
+        info_plist={
+            "CFBundleDisplayName": APP_NAME,
+            "CFBundleName": APP_NAME,
+            "CFBundleShortVersionString": "0.3.0",
+            "CFBundleVersion": "0.3.0",
+            "LSMinimumSystemVersion": "12.0",
+            "NSHighResolutionCapable": True,
+            "NSRequiresAquaSystemAppearance": False,
+            "LSApplicationCategoryType": "public.app-category.productivity",
+        },
+    )

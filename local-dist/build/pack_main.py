@@ -17,9 +17,16 @@
    （`runpy.run_path(..., run_name="__main__")`）。不带该标志就会把参数当 GUI 参数
    再起一个窗口 —— 这正是「PyInstaller 下引擎子进程怎么调」的答案。
 
-日志（`.app` 下**没有 stdout**）：
-    ~/Library/Logs/斐萃/pack-<yyyymmdd>.log     引导 / 异常 / 引擎子进程 stdout+stderr
-    ~/Library/Application Support/斐萃/         可写数据根（.env / var/ 侧车 / 作业日志）
+日志（`.app` 下**没有 stdout**；Windows 双击的 `.exe` 同理）：
+    数据根 = `local-dist/src/paths.py::data_dir()`（**跨平台单一真源**）：
+        macOS   ~/Library/Application Support/斐萃
+        Windows %APPDATA%\斐萃
+        Linux   ~/.local/share/斐萃（XDG_DATA_HOME）
+    日志   = `local-dist/src/paths.py::log_dir()`：
+        macOS   ~/Library/Logs/斐萃/pack-<yyyymmdd>.log
+        Windows %LOCALAPPDATA%\斐萃\logs\pack-<yyyymmdd>.log
+        Linux   ~/.local/state/斐萃/logs/pack-<yyyymmdd>.log
+    `FEICUI_DATA_DIR` / `FEICUI_LOG_DIR` 仍**最高优先**（自检脚本靠它隔离）。
 """
 from __future__ import annotations
 
@@ -30,8 +37,6 @@ from datetime import datetime
 from pathlib import Path
 
 ENGINE_RUN_FLAG = "--engine-run"          # 必须与 `local-dist/api.py::ENGINE_RUN_FLAG` 同字面量
-APP_SUPPORT_DIRNAME = "斐萃"
-LOG_DIRNAME = "斐萃"
 
 
 def _resource_root() -> Path:
@@ -41,21 +46,20 @@ def _resource_root() -> Path:
 
 
 def _user_dirs() -> tuple[Path, Path]:
-    home = Path.home()
-    data = Path(os.environ.get("FEICUI_DATA_DIR")
-                or home / "Library" / "Application Support" / APP_SUPPORT_DIRNAME)
-    logs = Path(os.environ.get("FEICUI_LOG_DIR") or home / "Library" / "Logs" / LOG_DIRNAME)
-    return data, logs
+    """`(data, logs)` —— **不在本文件拼平台路径**：全部委托 `local-dist/src/paths.py`。"""
+    root = _resource_root()
+    if str(root) not in sys.path:
+        sys.path.insert(0, str(root))
+    from src.paths import user_dirs           # 冻结态取自 PYZ / 源码态取自 `<root>/src/paths.py`
+    return user_dirs()
 
 
 def _boot() -> tuple[Path, Path]:
     """建用户目录、把两个路径环境变量钉好、把 stdout/stderr 接到日志文件。返回 (data, logs)。"""
+    from src.paths import ensure_dirs            # 与 `_user_dirs` 同源（单一真源）
+
     data, logs = _user_dirs()
-    for d in (data, data / "var", data / "var" / "jobs", logs):
-        try:
-            d.mkdir(parents=True, exist_ok=True)
-        except Exception:
-            pass
+    data, logs = ensure_dirs(data, logs)          # data / var / var/jobs / logs 四层
 
     root = _resource_root()
     # ⚠ 必须在 import api / src.* 之前设好（它们在建模块级常量时就读）
@@ -125,11 +129,12 @@ def run_gui(argv: list[str]) -> int:
 
 
 def main() -> int:
-    data, _logs = _boot()
+    data, logs = _boot()
     argv = sys.argv[1:]
     mode = "engine" if (argv and argv[0] == ENGINE_RUN_FLAG) else "gui"
     _banner(mode)
-    print(f"BOOT: resource_root={_resource_root()} data_dir={data} path0={sys.path[:3]}", flush=True)
+    print(f"BOOT: platform={sys.platform} resource_root={_resource_root()} "
+          f"data_dir={data} log_dir={logs} path0={sys.path[:3]}", flush=True)
     try:
         if mode == "engine":
             return run_engine(argv[1:])

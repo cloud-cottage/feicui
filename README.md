@@ -302,3 +302,53 @@ cd feicui && ./venv/bin/python selfcheck_export.py
   （按幂等键删、仅限仍 `PENDING` 行、需 `--yes` 二次确认）。**采纳（reviewSealImport）未跑、留给人类**。
 - 详见 xiai 仓 `docs/spec-increments/sealbank-trial-batch-100.md`（身份要求、执行读数、前端核验）。
 
+
+## 10. 桌面安装包发布 / 站内直链下载（v1.0.0，2026-10-20）
+
+**诉求**：引导页 `https://feicui.xiai.plus/` 上直接给出两个系统的下载地址 —— 不跳 GitHub Releases。
+
+**体积约束**：Vercel 单文件上限 **100 MB**，这条线决定「谁能站内直供」：
+
+| Release 资产（= URL 名，全 ASCII） | 平台 | 字节 | 大小 | 站内直链 |
+|---|---|---|---|---|
+| `feicui-mac-s1.dmg` | macOS 11+ arm64，标准版 | 99,046,046 | 94.5 MB | `/downloads/feicui-mac-s1.dmg` ✅ |
+| `feicui-mac-s2.dmg` | macOS 11+ arm64，含 RapidOCR + onnxruntime | 157,109,566 | 149.8 MB | ❌ 超限，**只在本 Release**（页面小字引导线下索取） |
+| `feicui-win-s1.zip` | Windows 10/11 x64，onedir | 98,524,982 | 94.0 MB | `/downloads/feicui-win-s1.zip` ✅ |
+
+**取包链路**：`web/package.json` 的 `build = node scripts/fetch-downloads.mjs && vite build`。
+脚本查 `GET /repos/cloud-cottage/feicui/releases/latest`，把两个 ≤100 MB 资产按 ASCII 名落到
+`web/public/downloads/`（该目录已 gitignore —— 仅供构建，不入库）。
+
+- 已存在且 > 50 MB ⇒ 当缓存跳过（`FETCH_DOWNLOADS_FORCE=1` 强制重下）
+- `FETCH_DOWNLOADS_SKIP=1` ⇒ 跳过下载（断网 / 只验前端时用）
+- **下载失败不阻断构建**（警告 + 退出码 0）⇒ 按钮仍在但点了 404，所以部署后必须跑验收
+
+**部署后验收**（父级清单）：
+
+```bash
+curl -sI https://feicui.xiai.plus/downloads/feicui-mac-s1.dmg
+#   期望 200 / content-length: 99046046 / content-type: application/x-apple-diskimage
+curl -sI https://feicui.xiai.plus/downloads/feicui-win-s1.zip
+#   期望 200 / content-length: 98524982
+curl -s https://feicui.xiai.plus/ | grep -o '/downloads/[a-zA-Z0-9._-]*' | sort -u
+#   期望两行：/downloads/feicui-mac-s1.dmg、/downloads/feicui-win-s1.zip
+```
+
+**重打 DMG 的配方**（源 app 由 PyInstaller 产出在 `local-dist/build/dist/斐萃-sN.app`）：
+
+```bash
+cd local-dist/build/dist
+STAGE=$(mktemp -d)
+ditto 斐萃-s1.app "$STAGE/斐萃-s1.app"      # ditto 保留资源分叉/权限，不要用 cp -R
+ln -s /Applications "$STAGE/Applications"
+hdiutil create -volname "斐萃-s1" -srcfolder "$STAGE" -fs HFS+ -format UDZO -ov feicui-mac-s1.dmg
+hdiutil verify feicui-mac-s1.dmg            # 必须 VALID 再上传
+```
+
+⚠️ **DMG 要等 app 完全写完再打**：本轮 `斐萃-mac-s2.dmg` 在写入过程中被读到 62 MB
+（父级据此怀疑包不完整），定稿后为 157,109,566 B —— `hdiutil verify` VALID，挂载后包内 app **330 MB**、
+`Contents/Frameworks` 含 `rapidocr` / `onnxruntime` / 135 个条目，与 s2 源 app 相称。
+
+**发布口径（Release body 必写）**：未签名未公证（mac 首次右键→打开，或
+`xattr -dr com.apple.quarantine /Applications/斐萃-s1.app`）；Windows 为 Phase 1（窗口交互未逐项验证）、
+需 WebView2 运行时；onedir **必须解压整目录**、不可单拷 `.exe`；来源（本仓本地构建）与许可（内部自用、第三方组件各自许可）提示。

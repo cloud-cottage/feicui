@@ -178,3 +178,30 @@ feicui/web/
 - 不做鉴权、不做部署配置。
 - **未改动** `shu/web/vite.config.js`（5164 的 `/feicui` 代理＝单独一轮任务；本工程只读参照，未写一字）。
 - **未改动** spec、`shu/docs/**`、`ctrl/**`、`feicui/server/**` 及所有已验收证据目录。
+
+## 7. 站内直链下载包（build 前自动取包，2026-10-20）
+
+引导页 `public/landing/index.html` 的两个主按钮**不再跳 GitHub**，改指站内路径：
+
+- `/downloads/feicui-mac-s1.dmg`（macOS 标准版，94.5 MB）
+- `/downloads/feicui-win-s1.zip`（Windows x64 onedir，94.0 MB）
+
+这两个文件由 `scripts/fetch-downloads.mjs` 在 `vite build` **之前**从 latest Release
+（`cloud-cottage/feicui`，tag `v1.0.0`）拉到 `public/downloads/`（ASCII 文件名；该目录已 gitignore，不入库）。
+
+| 开关 | 作用 |
+|---|---|
+| `FETCH_DOWNLOADS_SKIP=1` | 完全跳过下载（断网 / 只验前端 / CI） |
+| `FETCH_DOWNLOADS_FORCE=1` | 忽略「> 50 MB 即缓存」判定，强制重下 |
+| `GITHUB_TOKEN` | 私有仓库或 API 限流时使用（公开仓库不需要） |
+
+**失败不阻断构建**：任何异常只打 `⚠️` 警告、退出码恒 0 ⇒ 页面按钮照旧渲染，但点击会 404。
+所以每次部署后必须验：
+
+```bash
+curl -sI https://feicui.xiai.plus/downloads/feicui-mac-s1.dmg   # 200 + 99046046 + x-apple-diskimage
+curl -sI https://feicui.xiai.plus/downloads/feicui-win-s1.zip   # 200 + 98524982
+```
+
+**150 MB 的 `feicui-mac-s2.dmg`（含 RapidOCR）刻意不进网页** —— 超 Vercel 单文件 100 MB 上限，
+只留在 Release；页面小字只写「需要请联系」，不给外站链接。

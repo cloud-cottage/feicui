@@ -9,7 +9,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "node scripts/fetch-downloads.mjs && vite build",
     "preview": "vite preview",
     "test:edition": "node scripts/edition.test.mjs"
   },

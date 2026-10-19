@@ -13,6 +13,10 @@ node_modules/
 web/node_modules/
 dist/
 web/dist/
+# 站内直链下载包：`web/scripts/fetch-downloads.mjs` 在 build 前从 latest Release 拉到
+# `web/public/downloads/`（feicui-mac-s1.dmg / feicui-win-s1.zip，单件 ≈ 94 MB）。
+# 体积远超 Git 适合的范围 ⇒ 只进 Release 与构建产物，**不入库**。
+web/public/downloads/
 
 # ── Python 编译产物 ──
 __pycache__/

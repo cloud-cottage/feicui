@@ -83,12 +83,50 @@
             border-color: var(--accent);
             color: var(--accent);
         }
-        /* 下载按钮下方小字（说明「跳转 GitHub Releases」）；
+        /* 下载区：两个主按钮并列（Kevin 2026-10-20：网页直接给两个系统的下载地址，不跳 GitHub）。
+           窄屏自动折行 ⇒ 用 flex-wrap，不用固定宽度。 */
+        .dl-row {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .dl-row .btn {
+            margin-left: 0;
+        }
+        .dl-btn {
+            min-width: 244px;
+        }
+        .dl-meta {
+            display: block;
+            font-size: 12px;
+            font-weight: 400;
+            opacity: 0.78;
+            margin-top: 2px;
+        }
+        /* 下载按钮下方小字（安装提示 / 150 MB OCR 版说明）；
            ⚠ 必须用 `.hero .dl-hint`（0,2,0）压过 `.hero p`（0,1,1），否则字号被 15px 覆盖 */
         .hero .dl-hint {
             font-size: 12px;
             color: #999;
             margin: 12px 0 0;
+        }
+        .hero .dl-hint a {
+            color: var(--accent-deep);
+            text-decoration: none;
+        }
+        .hero .dl-hint a:hover {
+            text-decoration: underline;
+        }
+        .hero .dl-hint code {
+            background: #f2f2f2;
+            border-radius: 3px;
+            padding: 1px 4px;
+            font-size: 11px;
+            color: #555;
+        }
+        .hero .dl-row + .dl-hint {
+            margin-top: 20px;
         }
         .card {
             background: white;
@@ -181,9 +219,24 @@
             <img class="brand-logo" src="/landing/assets/feicui.png" alt="斐萃" width="96" height="96">
             <h1>「斐萃」玺印解析任务台</h1>
             <p>本地运行的玺印档案元数据编辑工具，支持印面释文、朝代、作者结构化管理</p>
-            <a href="https://github.com/cloud-cottage/feicui/releases/latest" class="btn btn-primary">下载最新版本</a>
-            <a href="#guide" class="btn btn-secondary">使用说明</a>
-            <p class="dl-hint">将跳转 GitHub Releases 下载页</p>
+            <div class="dl-row">
+                <a href="/downloads/feicui-mac-s1.dmg" download class="btn btn-primary dl-btn">
+                    下载 macOS 版（.dmg）
+                    <span class="dl-meta">Apple Silicon ｜ 94 MB</span>
+                </a>
+                <a href="/downloads/feicui-win-s1.zip" download class="btn btn-primary dl-btn">
+                    下载 Windows 版（.zip）
+                    <span class="dl-meta">Win 10/11 x64 ｜ 94 MB</span>
+                </a>
+            </div>
+            <p class="dl-hint">
+                macOS：打开 DMG 把「斐萃」拖进「应用程序」，首次<strong>右键 App →「打开」</strong>（未签名，仅需一次）<br>
+                Windows：<strong>解压整个目录</strong>后双击 <code>斐萃-s1\斐萃.exe</code> —— 不要单独拷出 exe，需已装 WebView2
+            </p>
+            <p class="dl-hint">
+                含 OCR 的 macOS 完整版（150 MB）体积超出网页宿主单文件限制，需要请联系。
+                <a href="#guide">使用说明 ↓</a>
+            </p>
         </div>
 
         <div class="card" id="guide">

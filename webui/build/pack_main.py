@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # webui/build/pack_main.py
-"""「斐萃 · 本地电脑版」——**PyInstaller 冻结态唯一入口**（源码态入口仍是 `webui/app.py`）。
+"""「斐萃 · 本地封装分发版」——**PyInstaller 冻结态唯一入口**（源码态入口仍是 `webui/app.py`）。
 
 本文件只在**打包产物**里当 `__main__` 跑；它在 `webui/build/feicui.spec` 里被指定为入口脚本。
 之所以不直接把 `webui/app.py` 当入口，有两条**实测**理由（详见 `webui/build/README.md` §2）：

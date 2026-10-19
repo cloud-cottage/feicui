@@ -1,4 +1,4 @@
-# webui/build —— 「斐萃本地电脑版」打包要点（PyInstaller ＋ PyWebView）
+# webui/build —— 「斐萃本地封装分发版」打包要点（PyInstaller ＋ PyWebView）
 
 > 状态：**未打包**（本单只写要点与实测读数）。入口 `webui/app.py`，UI `webui/ui/**`，
 > 桥 `webui/api.py`，引擎脚本 `ops/book-page-2400/render_page_2400.py`（老工程 `venv`）。

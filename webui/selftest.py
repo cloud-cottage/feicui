@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # webui/selftest.py
-"""「斐萃」本地电脑版 · **逻辑/API 层直测**（不依赖 GUI —— 主要验收面）。
+"""「斐萃」本地封装分发版 · **逻辑/API 层直测**（不依赖 GUI —— 主要验收面）。
 
 做什么：
   ① 在 **scratch 临时目录**造一份 `feicui/` 夹具（三个标准子目录 ＋ 一份真 PDF 拷贝）；

@@ -1,4 +1,4 @@
-/* webui/ui/app.js —— 斐萃 本地电脑版：三 tab UI 逻辑（纯本地 JS，无 CDN 依赖）
+/* webui/ui/app.js —— 斐萃 本地封装分发版：三 tab UI 逻辑（纯本地 JS，无 CDN 依赖）
  *
  * 桥：window.pywebview.api[method](payload) —— 由 pywebview 注入（唯一形态＝原生窗口）。
  * 进度：Python 端 `window.evaluate_js('window.onProgress(…)')` 推；另有 1.5 s 轮询兜底。

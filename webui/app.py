@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # webui/app.py
-"""「斐萃」本地电脑版 —— **PyWebView 原生窗口入口**（唯一启动形态）。
+"""「斐萃」本地封装分发版 —— **PyWebView 原生窗口入口**（唯一启动形态）。
 
 口径（Kevin 2026-10-16，含当日变更）：
   * 壳 ＝ **PyWebView 原生窗口**（Streamlit UI 退役；不再有 `--serve` / 端口监听 / 浏览器形态）。
@@ -31,7 +31,7 @@ if str(WEBUI_DIR) not in sys.path:
 
 from api import APP_NAME, APP_TITLE, APP_VERSION, UI_DIR, FeicuiApi  # noqa: E402
 
-#: 窗口标题＝**单一真源** `api.APP_TITLE`（＝「斐萃」玺印解析任务台 · 本地电脑版，带本地版后缀）
+#: 窗口标题＝**单一真源** `api.APP_TITLE`（＝「斐萃」玺印解析任务台 · 本地封装分发版，带本地版后缀）
 WINDOW_TITLE = APP_TITLE
 INDEX = UI_DIR / "index.html"
 
@@ -126,7 +126,7 @@ def build_window(api: FeicuiApi, *, width: int = 1320, height: int = 880):
 
 
 def main(argv: list[str] | None = None) -> int:
-    ap = argparse.ArgumentParser(description="斐萃 本地电脑版（PyWebView）")
+    ap = argparse.ArgumentParser(description="斐萃 本地封装分发版（PyWebView）")
     ap.add_argument("--debug", action="store_true", help="开 DevTools / 调试模式")
     ap.add_argument("--width", type=int, default=1320)
     ap.add_argument("--height", type=int, default=880)

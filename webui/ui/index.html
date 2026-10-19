@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- 标题文案的**单一真源**＝`webui/api.py` 的 APP_TITLE / APP_SLOGAN（经 app_info 推给本页）；
      这里留一份同值静态兜底，仅改文案时改 api.py 即可 -->
-<title>「斐萃」玺印解析任务台 · 本地电脑版</title>
+<title>「斐萃」玺印解析任务台 · 本地封装分发版</title>
 <!-- ⚠️ 路径坑（实测）：本页由 PyWebView 内建 http server 供给，**server 根＝`ui/` 目录**
      （url 形如 http://127.0.0.1:<port>/index.html）⇒ `../assets/feicui.png` 会 404。
      故图标按仓内「assets 用复制不用软链」口径**复制**一份进 `ui/`（`feicui.png` / `feicui.svg`
@@ -23,7 +23,7 @@
     <div class="brand-head">
       <img id="brand-logo" class="brand-logo" src="feicui.png" width="56" height="56" alt="斐萃 logo" title="斐萃">
       <div>
-        <h1 class="brand" id="brand-title">「斐萃」玺印解析任务台 · 本地电脑版</h1>
+        <h1 class="brand" id="brand-title">「斐萃」玺印解析任务台 · 本地封装分发版</h1>
         <p class="brand-sub" id="brand-slogan">数字玺印生成工具</p>
       </div>
     </div>
@@ -76,7 +76,7 @@
   <header class="topbar">
     <div class="topbar-left">
       <span class="logo" id="topbar-title"><img id="topbar-logo" class="logo-img" src="feicui.png"
-        alt="斐萃 logo" title="斐萃"><span id="topbar-title-text">「斐萃」玺印解析任务台 · 本地电脑版</span></span>
+        alt="斐萃 logo" title="斐萃"><span id="topbar-title-text">「斐萃」玺印解析任务台 · 本地封装分发版</span></span>
       <nav id="tabs" class="tabs">
         <button class="tab active" data-tab="1_Original_PDF">1_Original_PDF</button>
         <button class="tab" data-tab="2_HighRes_PDF">2_HighRes_PDF</button>

@@ -1,5 +1,5 @@
 # webui/api.py
-"""「斐萃」本地电脑版 —— **js_api 桥接层**（PyWebView `js_api` 的唯一后端面）。
+"""「斐萃」本地封装分发版 —— **js_api 桥接层**（PyWebView `js_api` 的唯一后端面）。
 
 架构纪律（Kevin 2026-10-16，PyWebView 换壳；同日口径变更：**只保留原生窗口形态**，
 不做 HTTP/端口监听）：
@@ -76,14 +76,16 @@ from src import pdf_library as lib  # noqa: E402
 from src import validator  # noqa: E402
 from src import yinyuan_client as yy  # noqa: E402
 
-APP_NAME = "斐萃 · 本地电脑版"
+APP_NAME = "斐萃 · 本地封装分发版"
 APP_VERSION = "0.3.0-pywebview"
 #: ── 标题/副标题 **单一真源**（改文案只改这两行；`app.py` 的窗口标题与 `ui/` 均从
 #:    `app_info()` 取，HTML 里只留一份同值兜底）────────────────────────────────────
-#: 口径（Kevin 2026-10-16）：**PyWebView 本地版带后缀** ⇒ `「斐萃」玺印解析任务台 · 本地电脑版`
-#: （注意「· 本地电脑版」前有空格）；主标题沿用旧版 `webui/src/webui.py` L42 的
+#: 口径（Kevin 2026-10-16 文案统一；2026-10-19 v1.40 三版本命名更名，见 docs/feicui.spec.md §0.5.4）：
+#: **PyWebView 本地封装分发版带后缀** ⇒ `「斐萃」玺印解析任务台 · 本地封装分发版`
+#: （注意「· 本地封装分发版」前有空格；旧后缀「· 本地电脑版」已被 v1.40 取代）；主标题沿用旧版
+#: `webui/src/webui.py` L42 的
 #: `APP_TITLE_IN_PAGE`（「斐萃」玺印解析任务台）＋ 本地版后缀。**其它页面不加后缀**。
-APP_TITLE = "「斐萃」玺印解析任务台 · 本地电脑版"
+APP_TITLE = "「斐萃」玺印解析任务台 · 本地封装分发版"
 APP_SLOGAN = "数字玺印生成工具"
 
 SESSION_EXPIRE_DAYS = 7

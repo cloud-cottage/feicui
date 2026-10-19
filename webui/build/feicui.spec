@@ -1,5 +1,5 @@
 # -*- mode: python ; coding: utf-8 -*-
-# webui/build/feicui.spec —— 「斐萃 · 本地电脑版」macOS `.app` 打包（PyInstaller 6.x / Python 3.11）
+# webui/build/feicui.spec —— 「斐萃 · 本地封装分发版」macOS `.app` 打包（PyInstaller 6.x / Python 3.11）
 #
 # 跑法（**必须**用独立构建环境；共用 `venv` 一字不改 —— 见 README §0）：
 #   cd /Users/kevin/bistro/feicui

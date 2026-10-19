@@ -17,21 +17,23 @@
     image_bytes / image_mime / image_source_kind（值域不封闭，原样收）。
 
 映射（sealbank → xiai，源标「真微印網 sealbank.net」）：
-  source_seal_id   ← 印章编号「年-序」（编年条目内嵌 m2ImgShow SRCHTXT）
-  seal_name/seal_wen ← 条目正文〔…〕内印文（无则 null）
-  author           ← 印人姓名（persons.ndjson）
-  dynasty          ← 由生卒年推导（1644–1911 ⇒ 清；推导值，raw_json 留底）
+  source_seal_id   ← 印章编号「年-序」（编年条目内嵌 m2ImgShow SRCHTXT；书版索引同编号，补 3 位零）
+  seal_name/seal_wen ← 条目正文〔…〕内印文（无则 null）；书版索引直接给「印面文字」
+  author           ← 印人姓名（persons.ndjson / 书版印文索引「刻印者」）
+  dynasty          ← 由年份推导，写 xiai 15 类枚举（书版索引按印章纪年；编年条目按生年近似）
   seal_type/shape  ← 正则描摹「朱文/白文…」「正方/長方…」（无则 null）
   seal_uri         ← m2ImgShow 详情页 URL（公开可引）
   seal_yt_url      ← 匿名 80px 缩图 URL（SBYBImg/red80/*.gif；仅有缩图的条目）
   seal_ytsw_url    ← 恒 null（原始图需扣點，餘點 0 不可得）
   transcription/material/size( seal_cc)/provenance(seal_ly) ← 恒 null（会员面，未得）
+    例外：`transcription`（釋文）与既有 8 键同组，**落空串 ""**（不是 null）—— 注释与实现一致
   image_status     ← 有缩图 ⇒ present＋faces[kind=FACE,image_source_kind='yt',image_storage_key=''(未上传)]
-                      无缩图 ⇒ source_no_image＋faces=[]
-  raw_json         ← sealbank 编年条目整行（只落导入行，正式集合不带）
+                      无缩图 ⇒ source_no_image＋faces=[]（xiai v1.65 起明文放行，见 README）
+  raw_json         ← sealbank 原始行（只落导入行，正式集合不带）
 
 用法：
   python3 to_xiai.py sample     # 3 枚样本 → out/xiai_imports_sample.ndjson
+  python3 to_xiai.py index      # 书版印文索引 5,529 枚 → out/xiai_imports_sealbank.ndjson
   python3 to_xiai.py candidates # 全候选计数报告（不落全量文件；全量启动权在用户）
 """
 
@@ -46,6 +48,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "out")
 SOURCE_LABEL = "真微印網 sealbank.net"
 BATCH_ID = "sealbank_sample_01"
+SOURCE_NO_IMAGE = "source_no_image"
 
 # —— xiai 封闭键面（自 xiai/src/data/seed.js 逐字抄录；改动须回源头对齐）——
 SEAL_IMPORT_SEAL_FIELDS = [
@@ -75,18 +78,45 @@ ALLOWED_PAYLOAD_KEYS = set(
 _SEAL_WEN = re.compile(r"〔([^〕]{1,40})〕")
 _SHAPE = re.compile(r"(正方|長方|方形|圓形|橢圓|橢圓形|不規則|自然形|隨形)")
 _STYPE = re.compile(r"(朱白文|朱文|白文|押脚朱文|回文朱文)")
-_DYN = [(1911, "清"), (1644, "清"), (1368, "明")]
+
+# —— 朝代推导（xiai `DYNASTY_OPTIONS` 15 类枚举；**写库门** src/data/db.js:2250 只收这 15 值）——
+# 分段按朝代更替年归新朝（1368 明洪武元年、1644 清顺治元年）；明 / 清再按帝王世系细分：
+#   宋元       : 1051–1367（宋亡 1279；元 1271 建号，1280 起实为元，两者同归「宋元」类）
+#   明早中期   : 1368–1521（洪武–正德）
+#   晚明       : 1522–1643（嘉靖–崇祯）
+#   清初       : 1644–1735（顺治–雍正）
+#   清中期     : 1736–1820（乾隆–嘉庆）
+#   晚清       : 1821–1911（道光–宣统）
+# 粗分（宋/元/明/清）另存 raw_json.derived.dynasty_coarse —— 书版索引口径要的是粗分，
+# 但 `dynasty` 字段本身必须落在 xiai 的 15 类值域内，否则写入被 `INVALID_VALUE` 拒。
+DYN_SEGMENTS = (
+    (1051, 1279, "宋元", "宋", "宋（北宋 960–1127／南宋 1127–1279；1279 宋亡）"),
+    (1280, 1367, "宋元", "元", "元（1271 建号，1279 灭宋；1368 元亡）"),
+    (1368, 1521, "明早中期", "明", "明早中期（洪武 1368–正德 1521）"),
+    (1522, 1643, "晚明", "明", "晚明（嘉靖 1522–崇祯 1643）"),
+    (1644, 1735, "清初", "清", "清初（顺治 1644–雍正 1735）"),
+    (1736, 1820, "清中期", "清", "清中期（乾隆 1736–嘉庆 1820）"),
+    (1821, 1911, "晚清", "清", "晚清（道光 1821–宣统 1911；本书止于 1911）"),
+)
 
 
-def derive_dynasty(years):
-    """由生卒年推导朝代（推导值；两岸年代交叠以生年判）。"""
+def derive_dynasty(year):
+    """年份 → (xiai 15 类 dynasty, 粗分 宋/元/明/清, 依据串)；越界 ⇒ (None, None, None)。"""
+    try:
+        y = int(year)
+    except (TypeError, ValueError):
+        return None, None, None
+    for lo, hi, name, coarse, why in DYN_SEGMENTS:
+        if lo <= y <= hi:
+            return name, coarse, why
+    return None, None, None
+
+
+def derive_dynasty_from_birth(years):
+    """兼容旧路径：由生年（编年条目只有生卒年）近似 → 15 类枚举。"""
     if not years:
         return None
-    y = years[0]
-    for lo, name in _DYN:
-        if y >= lo:
-            return name
-    return None
+    return derive_dynasty(years[0])[0]
 
 
 def map_entry(entry: dict, person: dict) -> dict:
@@ -103,7 +133,7 @@ def map_entry(entry: dict, person: dict) -> dict:
     row: dict = {"batch_id": BATCH_ID, "source": SOURCE_LABEL}
     # 印章级（既有 8 键：字符串可空串）
     row["seal_name"] = wen.group(1) if wen else ""
-    row["dynasty"] = derive_dynasty(person.get("years")) or ""
+    row["dynasty"] = derive_dynasty_from_birth(person.get("years")) or ""
     row["seal_type"] = stype.group(1) if stype else ""
     row["shape"] = shape.group(1) if shape else ""
     row["author"] = person.get("name", "")
@@ -119,7 +149,7 @@ def map_entry(entry: dict, person: dict) -> dict:
     row["seal_cc"] = None        # 尺寸未得
     row["seal_ly"] = None        # 出处未得
     row["seal_yn"] = entry.get("year")  # 整数或 null（条目纪年）
-    row["transcription"] = ""    # 釋文未得（既有 8 键允许空串默认）
+    row["transcription"] = ""    # 釋文未得；既有 8 键允许空串（**落 "" 而非 null**，与实现一致）
     # faces（影像先行：二进制未上传 ⇒ storage_key 空串；采纳时由 xiai 校验）
     if is_seal_thumb:
         row["image_status"] = "present"
@@ -138,7 +168,10 @@ def map_entry(entry: dict, person: dict) -> dict:
                        "text": text, "note": entry.get("note", ""),
                        "seal_ids": entry.get("seal_ids", []), "thumb": thumb,
                        "scraped_at": entry.get("scraped_at"), "derived": {
-                           "dynasty_rule": "birth_year∈[1644,1911]⇒清"}}
+                           "dynasty": row["dynasty"],
+                           "dynasty_coarse": derive_dynasty(person.get("years")[0])[1] if person.get("years") else None,
+                           "dynasty_rule": "生年近似：" + (derive_dynasty_from_birth(person.get("years")) or ""),
+                           "note": "编年条目只给生卒年，朝代按生年近似；书版索引按印章纪年精确"}}
     return row
 
 
@@ -188,9 +221,108 @@ def load_data():
     return persons, entries
 
 
+IDX_BATCH_ID = "sealbank_idx_1051_1911"
+IDX_DETAIL_URL = ("http://www.sealbank.net/m2ImgShow.asp?STOP=M2IMGS&LM=2&L1=2&L2=1&L3=0"
+                  "&LS=C&SRCHTXT={sid}")
+
+
+def seq_padded(seq: str) -> str:
+    """`1287-5` → `1287-005`（网页详情页 / 编年页的 3 位补零编号形态）。"""
+    year, no = str(seq).split("-")
+    return f"{year}-{int(no):03d}"
+
+
+def map_index_seal(rec: dict) -> dict:
+    """书版《篆刻年歷》印文索引一行 → xiai 导入候选（无影像，走 source_no_image 落行）。"""
+    seq = rec["seq"]
+    year = rec.get("year")
+    text = rec.get("seal_text") or ""
+    author = rec.get("author") or ""
+    dyn, coarse, why = derive_dynasty(year)
+    sid = seq_padded(seq)
+    row: dict = {"batch_id": IDX_BATCH_ID, "source": SOURCE_LABEL}
+    # 印章级 8 键（字符串可空串）
+    row["seal_name"] = text
+    row["dynasty"] = dyn or ""
+    row["seal_type"] = ""
+    row["seal_style"] = ""
+    row["material"] = None
+    row["shape"] = ""
+    row["author"] = author
+    row["transcription"] = ""     # 釋文未得（既有 8 键允许空串；**不是 null**）
+    # 源侧扩面（字符串/整数/null；不得空串、不得 0）
+    row["source_seal_id"] = sid
+    row["seal_uri"] = IDX_DETAIL_URL.format(sid=sid)
+    row["category"] = "印章"
+    row["seal_wen"] = text or None
+    row["seal_yt_url"] = None      # 书版索引不带图；red80 缩图按人内序号编，不属此书编号
+    row["seal_ytsw_url"] = None    # 原始图需扣點，永久不可得
+    row["seal_cc"] = None          # 尺寸未得
+    row["seal_ly"] = None          # 出处未得
+    row["seal_yn"] = year if isinstance(year, int) else None
+    # 影像：本书版索引无图 ⇒ 行级缺图标记 + 零 faces（xiai v1.65 AC-553/554）
+    row["image_status"] = SOURCE_NO_IMAGE
+    row["faces"] = []
+    row["raw_json"] = {
+        "book": "篆刻年歷 1051-1911（官方免费书版索引）",
+        "index_file": "篆刻年歷印文索引.txt",
+        "seq_raw": seq, "seq_padded": sid, "year": year,
+        "author_raw": author, "seal_text_raw": text,
+        "derived": {"dynasty": dyn, "dynasty_coarse": coarse, "dynasty_rule": why},
+        "source": SOURCE_LABEL,
+    }
+    return row
+
+
+def index_seals() -> dict:
+    """读 out/idx_seals.ndjson → out/xiai_imports_sealbank.ndjson（逐行 flush）。"""
+    src = os.path.join(OUT, "idx_seals.ndjson")
+    rows, errs, seen, dups = [], [], {}, []
+    for line in open(src, encoding="utf-8"):
+        if not line.strip():
+            continue
+        row = map_index_seal(json.loads(line))
+        key = (row["source"], row["source_seal_id"])
+        if key in seen:
+            dups.append(row["source_seal_id"])
+            continue
+        seen[key] = True
+        bad = validate_row(row)
+        if bad:
+            errs.append({"seq": row["source_seal_id"], "errors": bad})
+        rows.append(row)
+    path = os.path.join(OUT, "xiai_imports_sealbank.ndjson")
+    with open(path, "w", encoding="utf-8") as f:
+        for row in rows:
+            f.write(json.dumps(row, ensure_ascii=False) + "\n")
+            f.flush()
+    dist = {}
+    for row in rows:
+        dist[row["dynasty"]] = dist.get(row["dynasty"], 0) + 1
+    # 人工可核样例：等距抽 10 条（seq / 印文 / 刻印者 / 推导朝代）
+    step = max(1, len(rows) // 10)
+    samples = [{"seq": r["source_seal_id"], "seq_raw": r["raw_json"]["seq_raw"],
+                "seal_text": r["seal_wen"], "author": r["author"], "dynasty": r["dynasty"],
+                "dynasty_coarse": r["raw_json"]["derived"]["dynasty_coarse"],
+                "year": r["raw_json"]["year"], "image_status": r["image_status"]}
+               for r in rows[::step][:10]]
+    return {
+        "path": path, "rows": len(rows), "source_rows": sum(1 for l in open(src, encoding="utf-8") if l.strip()),
+        "validation_failures": len(errs), "validation_errors": errs[:5],
+        "duplicate_idempotent_keys": len(dups), "dup_samples": dups[:5],
+        "image_status": {"source_no_image": sum(1 for r in rows if r["image_status"] == SOURCE_NO_IMAGE)},
+        "dynasty_distribution": dist,
+        "samples": samples,
+        "batch_id": IDX_BATCH_ID, "source": SOURCE_LABEL,
+    }
+
+
 def main(argv=None):
     argv = argv if argv is not None else sys.argv[1:]
     cmd = argv[0] if argv else "sample"
+    if cmd == "index":
+        print(json.dumps(index_seals(), ensure_ascii=False, indent=1))
+        return 0
     persons, entries = load_data()
     seal_entries = [(p, e) for e in entries
                     for p in [persons.get(e["person_id"])] if p and e.get("seal_ids")]

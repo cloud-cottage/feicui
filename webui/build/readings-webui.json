@@ -1,22 +1,22 @@
 {
   "schema": "feicui.webui.selftest.v1",
   "app_version": "0.3.0-pywebview",
-  "at": "2026-10-19T09:47:15",
+  "at": "2026-10-19T10:42:38",
   "python": "/Users/kevin/bistro/feicui/venv/bin/python",
   "engine_python": "/Users/kevin/bistro/feicui/venv/bin/python",
   "engine_script": "/Users/kevin/bistro/feicui/ops/book-page-2400/render_page_2400.py",
-  "data_dir": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-selftest-data-lx9y4bnn",
+  "data_dir": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-selftest-data-mp4z20kw",
   "counts": {
     "PASS": 80,
     "FAIL": 0,
     "NOT_MEASURED": 3
   },
-  "elapsed_s": 3.1,
+  "elapsed_s": 2.2,
   "checks": [
     {
       "check": "fixture",
       "status": "PASS",
-      "detail": "夹具 /var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-selftest-xymhjt6c/feicui（含 2 份真 PDF：吴颐人篆刻作品展示.pdf 2098940 B / tmp.pdf 39722457 B）"
+      "detail": "夹具 /var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-selftest-rrod9qgs/feicui（含 2 份真 PDF：吴颐人篆刻作品展示.pdf 2098940 B / tmp.pdf 39722457 B）"
     },
     {
       "check": "dir/verify_reject_wrong_name",
@@ -36,7 +36,7 @@
     {
       "check": "api/root_bound_to_fixture",
       "status": "PASS",
-      "detail": "_root=/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-selftest-xymhjt6c/feicui"
+      "detail": "_root=/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-selftest-rrod9qgs/feicui"
     },
     {
       "check": "api/verify_dir_missing",
@@ -81,7 +81,7 @@
     {
       "check": "tab3/generate_test_tiff",
       "status": "PASS",
-      "detail": "已生成：P001-C4-R7-得自在-明-陈巨来.tiff"
+      "detail": "已生成：P001-C4-R9-延年益寿-汉-吴昌硕.tiff"
     },
     {
       "check": "tab3/list_ok",
@@ -91,7 +91,7 @@
     {
       "check": "tab3/filename_template",
       "status": "PASS",
-      "detail": "name=P001-C4-R7-得自在-明-陈巨来.tiff standard=True"
+      "detail": "name=P001-C4-R9-延年益寿-汉-吴昌硕.tiff standard=True"
     },
     {
       "check": "tab3/unknown_subdir_fallback",
@@ -101,12 +101,12 @@
     {
       "check": "tab3b/list_counts_files_only",
       "status": "PASS",
-      "detail": "files=5 names=['P001-C2-R3-长乐未央-汉-陈巨来.tiff', 'P001-C4-R7-得自在-明-陈巨来.tiff', 'P002-C4-R5-吉祥如意-唐-吴昌硕.tiff', 'P003-C6-R7-清心-宋-齐白石.tif', '未命名副本.tiff']"
+      "detail": "files=5 names=['P001-C2-R3-长乐未央-汉-陈巨来.tiff', 'P001-C4-R9-延年益寿-汉-吴昌硕.tiff', 'P002-C4-R5-吉祥如意-唐-吴昌硕.tiff', 'P003-C6-R7-清心-宋-齐白石.tif', '未命名副本.tiff']"
     },
     {
       "check": "tab3b/standard_flag",
       "status": "PASS",
-      "detail": "standard 面：[('P001-C2-R3-长', True), ('P001-C4-R7-得', True), ('P002-C4-R5-吉', True), ('P003-C6-R7-清', False), ('未命名副本.tiff', False)]"
+      "detail": "standard 面：[('P001-C2-R3-长', True), ('P001-C4-R9-延', True), ('P002-C4-R5-吉', True), ('P003-C6-R7-清', False), ('未命名副本.tiff', False)]"
     },
     {
       "check": "tab3b/view_cfg_matches_old",
@@ -241,7 +241,7 @@
     {
       "check": "tab3ocr/printed_png_returns_texts",
       "status": "PASS",
-      "detail": "texts=['FEICUI', '123'] scores=[0.9995, 1.0] elapsed_s=1.76 engine='rapidocr-onnxruntime · PP-OCRv6 small（本地，无网络）' mean=0.9998"
+      "detail": "texts=['FEICUI', '123'] scores=[0.9995, 1.0] elapsed_s=1.2 engine='rapidocr-onnxruntime · PP-OCRv6 small（本地，无网络）' mean=0.9998"
     },
     {
       "check": "tab3ocr/printed_scores_high",
@@ -361,7 +361,7 @@
     {
       "check": "tab2/reject_missing_pdf",
       "status": "PASS",
-      "detail": "源 PDF 不存在：/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-selftest-xymhjt6c/feicui/1_Original_PDF/不存在.pdf"
+      "detail": "源 PDF 不存在：/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-selftest-rrod9qgs/feicui/1_Original_PDF/不存在.pdf"
     },
     {
       "check": "tab2/reject_bad_dpi",

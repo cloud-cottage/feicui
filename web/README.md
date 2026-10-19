@@ -22,11 +22,19 @@ feicui（印谱 PDF 解析工具）的**独立 Vue3 + Vite 前端站点**。Stre
 | 对照 | `http://localhost:5195/` 亦可访问（浏览器解析到 127.0.0.1），但**登记/代理目标一律以 `127.0.0.1:5195` 为准** |
 
 ```bash
-cd /Users/kevin/bistro/xiai/feicui/web
+cd /Users/kevin/bistro/feicui/web
 npm install
-npm run dev      # → http://127.0.0.1:5195/   （strictPort，若 5195 被占会直接报错而非换端口）
-npm run build    # → dist/
+npm run dev      # → http://127.0.0.1:5195/feicui/   （strictPort，若 5195 被占会直接报错而非换端口；base 默认 '/feicui/'）
+npm run build    # 生产构建（mode=production ⇒ 读 web/.env.production，base='/'）→ dist/
 ```
+
+**URL base 按环境参数化**（2026-10-19 线上白屏修复）：`vite.config.js` 用
+`loadEnv(mode, envDir, 'VITE_')` 显式读 `VITE_BASE`（`vite.config` 跑在 Node，`.env.*`
+**不会**自动注入 `process.env`）：
+- 未设置 ⇒ 默认 `'/feicui/'`：本地 dev、直连 5195、经 shu-web（5164）`/feicui` 反代；
+- `web/.env.production`（入库）置 `'/'`：`https://feicui.xiai.plus/` 由 Vercel 部署在**域名根路径**。
+- 需要「带 /feicui 前缀」的构建产物时显式覆盖：`VITE_BASE=/feicui/ npm run build`。
+
 
 后端（另一路）起法参考 spec §6.2：
 

@@ -1,6 +1,6 @@
 import { fileURLToPath, URL } from 'node:url'
 import net from 'node:net'
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -45,7 +45,8 @@ function apiProxyErrorGuard(proxy) {
 // 故此处必须按同一口径注册 base 前缀（'/feicui/__feicui/backend-probe'），
 // 否则经 5164 时落在 shu/web 代理键之外 → SPA 兜底返回 HTML → 横幅停在「连通性未知」。
 // 旧的无前缀路径**保留兼容**（阶段 1a 起存在；直连 5195 的旧客户端/自测脚本仍可用）。
-function backendProbe() {
+// BASE 由调用方注入（原先依赖模块级 const BASE，base 参数化后改为显式传参）。
+function backendProbe(base) {
   return {
     name: 'feicui-backend-probe',
     apply: 'serve',
@@ -72,7 +73,11 @@ function backendProbe() {
         socket.once('error', (e) => finish(false, e.code || 'error'))
       }
       // ① base 感知路径（与 BACKEND_PROBE_PATH / API 代理同源）：/feicui/__feicui/backend-probe
-      server.middlewares.use(`${BASE.replace(/\/+$/, '')}/__feicui/backend-probe`, handler)
+      //    base='/' 时该路径与下面的「② 无前缀键」完全重合，只注册一次即可。
+      const basePrefix = base.replace(/\/+$/, '')
+      if (basePrefix) {
+        server.middlewares.use(`${basePrefix}/__feicui/backend-probe`, handler)
+      }
       // ② 直连 5195 的旧路径兼容键（无前缀，本轮保留未动）
       server.middlewares.use('/__feicui/backend-probe', handler)
     },
@@ -83,66 +88,86 @@ function backendProbe() {
 // URL base（阶段 1c）：feicui 前端被 shu/web（5164）以 `/feicui` 反代直达，
 // 故以 `/feicui/` 为 base ⇒ 生成的 asset 绝对路径自带前缀，无需在 5164 侧 rewrite。
 // dev 与 preview 同 base（预览与直连行为一致）。
+//
+// 生产（2026-10-19）：`https://feicui.xiai.plus/` 由 Vercel 部署在**域名根路径**，
+// 若仍以 `/feicui/` 为 base，则 index.html 引用 `/feicui/assets/*.js|css` ⇒ 404
+// ⇒ `#app` 永远空壳（白屏）。故 base 改为**按环境参数化**：
+//   - 未设置 VITE_BASE（默认，本地 dev / 直连 5195 / 经 5164 反代）⇒ '/feicui/'（行为不变）；
+//   - 生产根域构建由 `web/.env.production` 置 `VITE_BASE=/`（该文件入库，非敏感）。
+// 取值方式：**不能**依赖 `process.env.VITE_BASE` —— vite.config 运行在 Node，
+// `.env.*` 不会被自动注入，必须用 `loadEnv(mode, envDir, 'VITE_')` 显式读取
+// （见下方 defineConfig 回调）。`process.env.VITE_BASE` 仅作显式 shell 覆盖的兜底。
+// 注意：base 只影响**资源/路由前缀**，dev 的 `/feicui/api` 代理键与 5164 反代口径不动。
 // ─────────────────────────────────────────────────────────────────────────────
-const BASE = '/feicui/'
+const DEFAULT_BASE = '/feicui/'
 
-export default defineConfig({
-  base: BASE,
-  plugins: [vue(), backendProbe()],
-  resolve: {
-    alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
-  },
-  server: {
-    // 绑定口径（**显式**，非默认）：依据 /Users/kevin/bistro/ctrl/PORTS.md §1 制度 (d)
-    // 「本机非生产链路引用一律写 127.0.0.1，不写 localhost」。
-    // 若只绑 IPv6 `::1`，则阶段 1c 在 shu/web/vite.config.js 里把 /feicui 代理指向
-    // http://127.0.0.1:5195 时会 ECONNREFUSED（jiazu Gramps-Web ↔ ::1:5198 的同类坑，方向相反）。
-    // 故此处**显式**绑 127.0.0.1，保证 127.0.0.1:5195 可达。
-    host: '127.0.0.1',
-    port: PORT,
-    strictPort: true,
-    // HMR（阶段 1c）：被 5164 反代时不依赖其 ws 代理，客户端直连 5195 的 ws。
-    // 5164 侧未配 ws 代理，若沿用默认 clientPort 会出现「页面通、热更连不上」的静默降级，
-    // 故显式钉死 5195（＝本服务端口）。
-    hmr: { clientPort: PORT },
-    proxy: {
-      // 直连 5195 的旧路径兼容键（阶段 1a 起存在，**本轮保留未动**）。
-      '/api': {
-        target: API_TARGET,
-        changeOrigin: false,
-        configure: apiProxyErrorGuard,
-      },
-      // ── 阶段 1c 修复（G-2）：base 感知的 API 键 ─────────────────────────────
-      // feicui 前端 base = '/feicui/'，故页面发出的 API 请求是 `/feicui/api/**`
-      // （见 src/config/env.js 的 API_BASE）。这样**同一份 API 路径在两种访问方式下都通**：
-      //   ① 直连 5195：/feicui/api/jobs → 本键 rewrite → /api/jobs → 5196
-      //   ② 经 5164  ：shu/web 的 '/feicui' 键**不带 rewrite**、原样透传到 5195，
-      //                到达后命中本键 → 同上（故 shu/web 侧**无需**再加第二条代理键，冻结面最小）
-      //
-      // 为什么必须显式 rewrite：Vite 的代理**不会**自动剥掉匹配到的 context，
-      // 且 proxy 中间件早于 baseMiddleware 执行 —— 这正是 G-2 的机理：
-      // 旧配置下 `/feicui/api/jobs` 既不匹配 '/api'（已在 base 之前），
-      // 剥掉 base 后又已过了代理阶段 ⇒ 落到 SPA 兜底，返回 200 text/html。
-      // rewrite 只剥开头的 `/feicui`（/feicui/api/jobs → /api/jobs），查询串原样保留。
-      //
-      // 目标默认 = http://127.0.0.1:5196（spec §6.1；FEICUI_API_TARGET 仅离线自测覆盖）。
-      // 同样挂 apiProxyErrorGuard：5196 未启动时返回 **503 JSON**（backend_unreachable），
-      // 使页面显示「后端未启动」，而不是把 HTML 当接口响应体展示。
-      '/feicui/api': {
-        target: API_TARGET,
-        changeOrigin: false,
-        rewrite: (p) => p.replace(/^\/feicui/, ''),
-        configure: apiProxyErrorGuard,
+export default defineConfig(({ mode }) => {
+  // 第三个参数＝前缀白名单：只把 VITE_* 带进配置作用域，避免误读无关变量。
+  // envDir 用本配置文件所在目录（web/），与 `vite build` 的 root 一致。
+  const envDir = fileURLToPath(new URL('.', import.meta.url))
+  const env = loadEnv(mode, envDir, 'VITE_')
+  // Vite 要求 base 以 '/' 结尾；`VITE_BASE=/` 已满足，这里仍做一次归一化兜底。
+  const rawBase = env.VITE_BASE || process.env.VITE_BASE || DEFAULT_BASE
+  const BASE = rawBase.endsWith('/') ? rawBase : `${rawBase}/`
+
+  return {
+    base: BASE,
+    plugins: [vue(), backendProbe(BASE)],
+    resolve: {
+      alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
+    },
+    server: {
+      // 绑定口径（**显式**，非默认）：依据 /Users/kevin/bistro/ctrl/PORTS.md §1 制度 (d)
+      // 「本机非生产链路引用一律写 127.0.0.1，不写 localhost」。
+      // 若只绑 IPv6 `::1`，则阶段 1c 在 shu/web/vite.config.js 里把 /feicui 代理指向
+      // http://127.0.0.1:5195 时会 ECONNREFUSED（jiazu Gramps-Web ↔ ::1:5198 的同类坑，方向相反）。
+      // 故此处**显式**绑 127.0.0.1，保证 127.0.0.1:5195 可达。
+      host: '127.0.0.1',
+      port: PORT,
+      strictPort: true,
+      // HMR（阶段 1c）：被 5164 反代时不依赖其 ws 代理，客户端直连 5195 的 ws。
+      // 5164 侧未配 ws 代理，若沿用默认 clientPort 会出现「页面通、热更连不上」的静默降级，
+      // 故显式钉死 5195（＝本服务端口）。
+      hmr: { clientPort: PORT },
+      proxy: {
+        // 直连 5195 的旧路径兼容键（阶段 1a 起存在，**本轮保留未动**）。
+        '/api': {
+          target: API_TARGET,
+          changeOrigin: false,
+          configure: apiProxyErrorGuard,
+        },
+        // ── 阶段 1c 修复（G-2）：base 感知的 API 键 ─────────────────────────────
+        // feicui 前端 base = '/feicui/'，故页面发出的 API 请求是 `/feicui/api/**`
+        // （见 src/config/env.js 的 API_BASE）。这样**同一份 API 路径在两种访问方式下都通**：
+        //   ① 直连 5195：/feicui/api/jobs → 本键 rewrite → /api/jobs → 5196
+        //   ② 经 5164  ：shu/web 的 '/feicui' 键**不带 rewrite**、原样透传到 5195，
+        //                到达后命中本键 → 同上（故 shu/web 侧**无需**再加第二条代理键，冻结面最小）
+        //
+        // 为什么必须显式 rewrite：Vite 的代理**不会**自动剥掉匹配到的 context，
+        // 且 proxy 中间件早于 baseMiddleware 执行 —— 这正是 G-2 的机理：
+        // 旧配置下 `/feicui/api/jobs` 既不匹配 '/api'（已在 base 之前），
+        // 剥掉 base 后又已过了代理阶段 ⇒ 落到 SPA 兜底，返回 200 text/html。
+        // rewrite 只剥开头的 `/feicui`（/feicui/api/jobs → /api/jobs），查询串原样保留。
+        //
+        // 目标默认 = http://127.0.0.1:5196（spec §6.1；FEICUI_API_TARGET 仅离线自测覆盖）。
+        // 同样挂 apiProxyErrorGuard：5196 未启动时返回 **503 JSON**（backend_unreachable），
+        // 使页面显示「后端未启动」，而不是把 HTML 当接口响应体展示。
+        '/feicui/api': {
+          target: API_TARGET,
+          changeOrigin: false,
+          rewrite: (p) => p.replace(/^\/feicui/, ''),
+          configure: apiProxyErrorGuard,
+        },
       },
     },
-  },
-  preview: {
-    host: '127.0.0.1',
-    port: PORT,
-    strictPort: true,
-  },
-  build: {
-    outDir: 'dist',
-    emptyOutDir: true,
-  },
+    preview: {
+      host: '127.0.0.1',
+      port: PORT,
+      strictPort: true,
+    },
+    build: {
+      outDir: 'dist',
+      emptyOutDir: true,
+    },
+  }
 })

@@ -8,7 +8,7 @@ feicui-local-private）共用的同一套代码，本目录**不放**其副本�
 
 | 路径 | 内容 |
 | --- | --- |
-| `datasrc/sealbank/` | 真微印網（sealbank.net）数据源工作面（README 取证 ＋ `cookies.txt` ＋ `out/` 抓取产出） |
+| `datasrc/sealbank/` | 真微印網（sealbank.net）数据源工作面（README 取证 ＋ `cookies.txt` ＋ `client.py` 抓取器 ＋ `to_xiai.py` 映射器 ＋ `out/` 抓取产出） |
 | `datasrc/fudan/` | 复旦印藏（yin.fudan.edu.cn）数据源要点 |
 
 `datasrc/` 各源**同级独立**，利于将来单一数据源被多版本复用（server 接入时按源名各取所需）。

@@ -184,6 +184,36 @@ hao 47.7%、place 77.5%、**birth/death 0%**（源文本无显式生卒年写法
 - **`out/xiai_imports_sealbank.ndjson`（5,529 行 / 5.4 MB）** ⇒ xiai imports 候选
 - `out/idx_parse_report.json`、`out/idx_join_verify.json`
 
+### 占位图模式（2026-10-19｜xiai 影像例外）
+
+书版索引 5,529 条**全部无图**（`seal_yt_url` / `seal_ytsw_url` 皆 null）。默认的
+`source_no_image ＋ faces=[]` 会**丢掉「一个印面」这一事实**（详情页没有印面块、没法在印面上挂勘误）。
+占位图模式保留印面、指向 xiai 侧已登记的**公共占位图**（米白宣纸底＋朱红印章边框＋竖排「待补充」）：
+
+```
+python3 to_xiai.py index                # 无图模式（既有形态，逐字不变）→ out/xiai_imports_sealbank.ndjson
+python3 to_xiai.py index --placeholder  # 占位图模式                → out/xiai_imports_sealbank_placeholder.ndjson
+python3 to_xiai.py index --both         # 两种形态各落一份（同一次解析；文件名区分，互不覆盖）
+```
+
+占位图模式每行：
+
+| 键 | 值 |
+|---|---|
+| `image_status` | `present` |
+| `faces[0].kind` | `FACE` |
+| `faces[0].image_storage_key` | `placeholder/seal-no-image` |
+| `faces[0].image_sha256` | `18d94039…de329c`（512×512 JPEG / 23,357 B，与 xiai 资产逐字节一致） |
+| `faces[0].image_source_kind` | `placeholder` |
+
+**这是 xiai 侧的「影像例外」，只对 sealbank 来源开放**：xiai 在**提交门**与**采纳门**各判一次
+——来源标签不含 `sealbank` 却引用该键 ⇒ `INVALID_VALUE` ＋ 零写入；其它来源的普通影像引用规则
+**一字未改**。xiai 侧登记行由 `scripts/register-seal-placeholder-image.mjs` 写入（`xiai_images`，
+`storage='bundled'`，**不含二进制**：字节来自随包资产 `public/placeholders/seal-no-image.jpg`）。
+
+xiai 侧验收（离线、零云端，30 条断言）：`node scripts/verify-seal-placeholder.mjs
+--ndjson /Users/kevin/bistro/feicui/local-private/datasrc/sealbank/out/xiai_imports_sealbank_placeholder.ndjson`
+
 ### 已知残留（不编造，原样保留）
 
 - 印文 4 处、人名 31 处含 `◎{big5:…}` 占位 ⇒ **展示层需能渲染该记法**，否则出现裸码；

@@ -29,12 +29,17 @@
     例外：`transcription`（釋文）与既有 8 键同组，**落空串 ""**（不是 null）—— 注释与实现一致
   image_status     ← 有缩图 ⇒ present＋faces[kind=FACE,image_source_kind='yt',image_storage_key=''(未上传)]
                       无缩图 ⇒ source_no_image＋faces=[]（xiai v1.65 起明文放行，见 README）
+                      **占位图模式**（`--placeholder`）⇒ present＋faces[kind=FACE,
+                      image_storage_key='placeholder/seal-no-image']（xiai 侧已登记该公共占位图，
+                      仅 sealbank 来源可引用；见 README「占位图模式」）
   raw_json         ← sealbank 原始行（只落导入行，正式集合不带）
 
 用法：
-  python3 to_xiai.py sample     # 3 枚样本 → out/xiai_imports_sample.ndjson
-  python3 to_xiai.py index      # 书版印文索引 5,529 枚 → out/xiai_imports_sealbank.ndjson
-  python3 to_xiai.py candidates # 全候选计数报告（不落全量文件；全量启动权在用户）
+  python3 to_xiai.py sample                  # 3 枚样本 → out/xiai_imports_sample.ndjson
+  python3 to_xiai.py index                   # 5,529 枚，**无图模式** → out/xiai_imports_sealbank.ndjson
+  python3 to_xiai.py index --placeholder     # 5,529 枚，**占位图模式** → out/xiai_imports_sealbank_placeholder.ndjson
+  python3 to_xiai.py index --both            # 两种形态各落一份（文件名区分；同一次解析）
+  python3 to_xiai.py candidates              # 全候选计数报告（不落全量文件；全量启动权在用户）
 """
 
 from __future__ import annotations
@@ -49,6 +54,14 @@ OUT = os.path.join(HERE, "out")
 SOURCE_LABEL = "真微印網 sealbank.net"
 BATCH_ID = "sealbank_sample_01"
 SOURCE_NO_IMAGE = "source_no_image"
+
+# —— 占位图（xiai 侧登记面｜仅 sealbank 来源可引用）——
+# 真值来源：xiai `src/data/seed.js::SEAL_PLACEHOLDER_IMAGE` / `public/placeholders/seal-no-image.jpg`。
+# 换图必须同时改三处：xiai 资产文件、xiai 常量、这里（占位图模式产出的引用要能被采纳门解析到）。
+PLACEHOLDER_KEY = "placeholder/seal-no-image"
+PLACEHOLDER_SHA256 = "18d94039af1b1d4289b60fb6ef527323e05bc739b41229081c94702407de329c"
+PLACEHOLDER_BYTES = 23357
+PLACEHOLDER_MIME = "image/jpeg"
 
 # —— xiai 封闭键面（自 xiai/src/data/seed.js 逐字抄录；改动须回源头对齐）——
 SEAL_IMPORT_SEAL_FIELDS = [
@@ -209,6 +222,15 @@ def validate_row(row: dict) -> list:
         errs.append(f"image_status invalid: {row['image_status']}")
     if row.get("image_status") == "source_no_image" and row.get("faces"):
         errs.append("source_no_image 行 faces 应为空")
+    # 占位图模式专项：faces 全部指向占位键，且 key/sha/bytes/mime 与 xiai 登记值一致。
+    for f in row.get("faces", []):
+        if f.get("image_storage_key") == PLACEHOLDER_KEY:
+            if f.get("image_sha256") != PLACEHOLDER_SHA256:
+                errs.append("placeholder image_sha256 与 xiai 登记值不符")
+            if f.get("image_bytes") != PLACEHOLDER_BYTES:
+                errs.append("placeholder image_bytes 与 xiai 登记值不符")
+            if f.get("image_mime") != PLACEHOLDER_MIME:
+                errs.append("placeholder image_mime 与 xiai 登记值不符")
     return errs
 
 
@@ -232,8 +254,13 @@ def seq_padded(seq: str) -> str:
     return f"{year}-{int(no):03d}"
 
 
-def map_index_seal(rec: dict) -> dict:
-    """书版《篆刻年歷》印文索引一行 → xiai 导入候选（无影像，走 source_no_image 落行）。"""
+def map_index_seal(rec: dict, placeholder: bool = False) -> dict:
+    """书版《篆刻年歷》印文索引一行 → xiai 导入候选。
+
+    `placeholder=False`（默认）：无影像 ⇒ `source_no_image` ＋ `faces=[]`（保住文本本体）。
+    `placeholder=True`：无影像 ⇒ 行级 `present` ＋ `faces=[FACE]` 指向 xiai 已登记的公共占位图
+    `placeholder/seal-no-image`（仅 sealbank 来源可引用的**影像例外**）；印面本体字段与行同值。
+    """
     seq = rec["seq"]
     year = rec.get("year")
     text = rec.get("seal_text") or ""
@@ -260,9 +287,21 @@ def map_index_seal(rec: dict) -> dict:
     row["seal_cc"] = None          # 尺寸未得
     row["seal_ly"] = None          # 出处未得
     row["seal_yn"] = year if isinstance(year, int) else None
-    # 影像：本书版索引无图 ⇒ 行级缺图标记 + 零 faces（xiai v1.65 AC-553/554）
-    row["image_status"] = SOURCE_NO_IMAGE
-    row["faces"] = []
+    # 影像：本书版索引无图。
+    #   默认 ⇒ 行级缺图标记 + 零 faces（xiai v1.65 AC-553/554）；
+    #   占位图模式 ⇒ 行级 present + 一个 FACE 指向公共占位图（保住「一个印面」，详情页有印面块）。
+    if placeholder:
+        row["image_status"] = "present"
+        row["faces"] = [{
+            "kind": "FACE", "seal_name": text, "dynasty": dyn or "", "seal_type": "",
+            "face_style": "", "seal_class": "", "author": author, "author_person_id": "",
+            "transcription": "", "image_storage_key": PLACEHOLDER_KEY,
+            "image_sha256": PLACEHOLDER_SHA256, "image_bytes": PLACEHOLDER_BYTES,
+            "image_mime": PLACEHOLDER_MIME, "image_source_kind": "placeholder",
+        }]
+    else:
+        row["image_status"] = SOURCE_NO_IMAGE
+        row["faces"] = []
     row["raw_json"] = {
         "book": "篆刻年歷 1051-1911（官方免费书版索引）",
         "index_file": "篆刻年歷印文索引.txt",
@@ -274,14 +313,19 @@ def map_index_seal(rec: dict) -> dict:
     return row
 
 
-def index_seals() -> dict:
-    """读 out/idx_seals.ndjson → out/xiai_imports_sealbank.ndjson（逐行 flush）。"""
+def index_seals(placeholder: bool = False) -> dict:
+    """读 out/idx_seals.ndjson → 导入 NDJSON（逐行 flush）。
+
+    `placeholder=False` ⇒ `out/xiai_imports_sealbank.ndjson`（无图模式，既有形态，逐字不变）；
+    `placeholder=True`  ⇒ `out/xiai_imports_sealbank_placeholder.ndjson`（占位图模式，文件名区分，
+                          两份文件**不互相覆盖**）。
+    """
     src = os.path.join(OUT, "idx_seals.ndjson")
     rows, errs, seen, dups = [], [], {}, []
     for line in open(src, encoding="utf-8"):
         if not line.strip():
             continue
-        row = map_index_seal(json.loads(line))
+        row = map_index_seal(json.loads(line), placeholder=placeholder)
         key = (row["source"], row["source_seal_id"])
         if key in seen:
             dups.append(row["source_seal_id"])
@@ -291,7 +335,8 @@ def index_seals() -> dict:
         if bad:
             errs.append({"seq": row["source_seal_id"], "errors": bad})
         rows.append(row)
-    path = os.path.join(OUT, "xiai_imports_sealbank.ndjson")
+    path = os.path.join(OUT, "xiai_imports_sealbank_placeholder.ndjson" if placeholder
+                        else "xiai_imports_sealbank.ndjson")
     with open(path, "w", encoding="utf-8") as f:
         for row in rows:
             f.write(json.dumps(row, ensure_ascii=False) + "\n")
@@ -310,7 +355,10 @@ def index_seals() -> dict:
         "path": path, "rows": len(rows), "source_rows": sum(1 for l in open(src, encoding="utf-8") if l.strip()),
         "validation_failures": len(errs), "validation_errors": errs[:5],
         "duplicate_idempotent_keys": len(dups), "dup_samples": dups[:5],
-        "image_status": {"source_no_image": sum(1 for r in rows if r["image_status"] == SOURCE_NO_IMAGE)},
+        "image_status": {"source_no_image": sum(1 for r in rows if r["image_status"] == SOURCE_NO_IMAGE),
+                         "present": sum(1 for r in rows if r["image_status"] == "present")},
+        "mode": "placeholder" if placeholder else "no_image",
+        "placeholder_key": PLACEHOLDER_KEY if placeholder else None,
         "dynasty_distribution": dist,
         "samples": samples,
         "batch_id": IDX_BATCH_ID, "source": SOURCE_LABEL,
@@ -321,7 +369,17 @@ def main(argv=None):
     argv = argv if argv is not None else sys.argv[1:]
     cmd = argv[0] if argv else "sample"
     if cmd == "index":
-        print(json.dumps(index_seals(), ensure_ascii=False, indent=1))
+        flags = set(argv[1:])
+        unknown = flags - {"--placeholder", "--both"}
+        if unknown:
+            print(f"unknown flags: {sorted(unknown)}（只认 --placeholder / --both）", file=sys.stderr)
+            return 2
+        if "--both" in flags:
+            # 同一次解析、两种形态各落一份（文件名区分：…_sealbank.ndjson / …_sealbank_placeholder.ndjson）
+            print(json.dumps({"no_image": index_seals(False),
+                              "placeholder": index_seals(True)}, ensure_ascii=False, indent=1))
+            return 0
+        print(json.dumps(index_seals("--placeholder" in flags), ensure_ascii=False, indent=1))
         return 0
     persons, entries = load_data()
     seal_entries = [(p, e) for e in entries

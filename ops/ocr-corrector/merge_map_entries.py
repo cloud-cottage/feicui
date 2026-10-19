@@ -1,10 +1,10 @@
 #!/usr/bin/env python
-"""ops/ocr-corrector · 把候选条目**合并**进正式字表（`webui/data/guxi_variant_map.json`）。
+"""ops/ocr-corrector · 把候选条目**合并**进正式字表（`local-dist/data/guxi_variant_map.json`）。
 
 幂等：按 `rule_id` 去重、按 `from` 去重（`validate_map` 禁止同 `from` 两条规则）；
 已存在的 `from` **不覆盖**（人工审核过的条目永远不会被脚本改写）。
 
-★ 只写 `webui/data/guxi_variant_map.json` 这一个文件；不碰数据库、不碰 `output/`。
+★ 只写 `local-dist/data/guxi_variant_map.json` 这一个文件；不碰数据库、不碰 `output/`。
 
 跑法：
     ./venv/bin/python ops/ocr-corrector/merge_map_entries.py --apply
@@ -19,11 +19,11 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
 HERE = Path(__file__).resolve().parent
-sys.path.insert(0, str(REPO / "webui" / "src"))
+sys.path.insert(0, str(REPO / "local-dist" / "src"))
 
 from ocr_corrector import load_map, map_summary, validate_map  # noqa: E402
 
-MAP = REPO / "webui/data/guxi_variant_map.json"
+MAP = REPO / "local-dist/data/guxi_variant_map.json"
 CAND = HERE / "out/candidates_map_entries.json"
 MERGE_NOTE = ("由 ops/ocr-corrector/merge_map_entries.py 合入的候选（source∈{cross_engine,"
               "font_glyph_shape}，verified=false，默认不生效）：待人工逐条审核后，若与真值一致，"

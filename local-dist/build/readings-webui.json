@@ -1,0 +1,432 @@
+{
+  "schema": "feicui.webui.selftest.v1",
+  "app_version": "0.3.0-pywebview",
+  "at": "2026-10-19T11:18:49",
+  "python": "/Users/kevin/bistro/feicui/venv/bin/python",
+  "engine_python": "/Users/kevin/bistro/feicui/venv/bin/python",
+  "engine_script": "/Users/kevin/bistro/feicui/ops/book-page-2400/render_page_2400.py",
+  "data_dir": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-selftest-data-j0v9t7d4",
+  "counts": {
+    "PASS": 80,
+    "FAIL": 0,
+    "NOT_MEASURED": 3
+  },
+  "elapsed_s": 2.2,
+  "checks": [
+    {
+      "check": "fixture",
+      "status": "PASS",
+      "detail": "夹具 /var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-selftest-r1tgpeda/feicui（含 2 份真 PDF：吴颐人篆刻作品展示.pdf 2098940 B / tmp.pdf 39722457 B）"
+    },
+    {
+      "check": "dir/verify_reject_wrong_name",
+      "status": "PASS",
+      "detail": "目录名称必须是 `feicui`，当前为 `not_feicui`"
+    },
+    {
+      "check": "dir/verify_accept_fixture",
+      "status": "PASS",
+      "detail": "目录校验通过"
+    },
+    {
+      "check": "api/verify_dir",
+      "status": "PASS",
+      "detail": "目录校验通过"
+    },
+    {
+      "check": "api/root_bound_to_fixture",
+      "status": "PASS",
+      "detail": "_root=/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-selftest-r1tgpeda/feicui"
+    },
+    {
+      "check": "api/verify_dir_missing",
+      "status": "PASS",
+      "detail": "目录不存在"
+    },
+    {
+      "check": "tab1/list_ok",
+      "status": "PASS",
+      "detail": "rows=2"
+    },
+    {
+      "check": "tab1/row_count",
+      "status": "PASS",
+      "detail": "count=2"
+    },
+    {
+      "check": "tab1/probe_pages",
+      "status": "PASS",
+      "detail": "page_count=132 page_mm=? scan_dpi=300"
+    },
+    {
+      "check": "tab1/dynasty_options",
+      "status": "PASS",
+      "detail": "n=15"
+    },
+    {
+      "check": "tab1/reject_bad_dynasty",
+      "status": "PASS",
+      "detail": "朝代必须是以下之一：商周暨春秋 / 戰國 / 秦 / 漢 / 魏晉 / 隋唐 / 宋元 / 明早中期 / 晚明 / 清初 / 清中期 / 晚清 / 民國 / 新中國 / 當代（当前「不是朝代」）"
+    },
+    {
+      "check": "tab1/save_meta",
+      "status": "PASS",
+      "detail": "元数据已保存"
+    },
+    {
+      "check": "tab1/meta_persisted",
+      "status": "PASS",
+      "detail": "dynasty=漢 author=吴颐人"
+    },
+    {
+      "check": "tab3/generate_test_tiff",
+      "status": "PASS",
+      "detail": "已生成：P001-C2-R8-吉祥如意-清-陈巨来.tiff"
+    },
+    {
+      "check": "tab3/list_ok",
+      "status": "PASS",
+      "detail": "subdirs=['测试子目录'] files=1"
+    },
+    {
+      "check": "tab3/filename_template",
+      "status": "PASS",
+      "detail": "name=P001-C2-R8-吉祥如意-清-陈巨来.tiff standard=True"
+    },
+    {
+      "check": "tab3/unknown_subdir_fallback",
+      "status": "PASS",
+      "detail": "current=测试子目录"
+    },
+    {
+      "check": "tab3b/list_counts_files_only",
+      "status": "PASS",
+      "detail": "files=5 names=['P001-C2-R3-长乐未央-汉-陈巨来.tiff', 'P001-C2-R8-吉祥如意-清-陈巨来.tiff', 'P002-C4-R5-吉祥如意-唐-吴昌硕.tiff', 'P003-C6-R7-清心-宋-齐白石.tif', '未命名副本.tiff']"
+    },
+    {
+      "check": "tab3b/standard_flag",
+      "status": "PASS",
+      "detail": "standard 面：[('P001-C2-R3-长', True), ('P001-C2-R8-吉', True), ('P002-C4-R5-吉', True), ('P003-C6-R7-清', False), ('未命名副本.tiff', False)]"
+    },
+    {
+      "check": "tab3b/view_cfg_matches_old",
+      "status": "PASS",
+      "detail": "view_cfg={'large': {'cols': 5, 'per_page': 20}, 'medium': {'cols': 10, 'per_page': 50}, 'small': {'cols': 20, 'per_page': 100}, 'list': {'cols': 1, 'per_page': 30}} limits={'shiwen_max': 10, 'author_max': 4}"
+    },
+    {
+      "check": "tab3b/cloud_flags_not_connected",
+      "status": "PASS",
+      "detail": "cloud_log=not_connected cloud_lock=not_connected"
+    },
+    {
+      "check": "tab3b/parse_backfill",
+      "status": "PASS",
+      "detail": "fields={'shiwen': '长乐未央', 'dynasty': '汉', 'author': '陈巨来'} prefix=P001-C2-R3- page/col/row=1/2/3"
+    },
+    {
+      "check": "tab3b/parse_nonstandard_empty_prefix",
+      "status": "PASS",
+      "detail": "standard=False prefix='' note=文件名非标准模板 ⇒ 前缀留空，请手动填写（与旧版一致）"
+    },
+    {
+      "check": "tab3b/check_same_name_noop",
+      "status": "PASS",
+      "detail": "new_name=P001-C2-R3-长乐未央-汉-陈巨来.tiff reason=文件名未变化"
+    },
+    {
+      "check": "tab3b/check_preview_prefix_from_old_name",
+      "status": "PASS",
+      "detail": "new_name=清心-宋-齐白石.tiff（非合规 ⇒ 前缀留空，与旧版一致）"
+    },
+    {
+      "check": "tab3b/reject_shiwen_over_limit",
+      "status": "PASS",
+      "detail": "reason=印面释文最多 10 个汉字，当前 11 counts={'shiwen': 11, 'author': 3}"
+    },
+    {
+      "check": "tab3b/reject_empty_shiwen",
+      "status": "PASS",
+      "detail": "reason=印面释文不能为空"
+    },
+    {
+      "check": "tab3b/reject_author_over_limit",
+      "status": "PASS",
+      "detail": "reason=作者最多 4 个汉字，当前 5"
+    },
+    {
+      "check": "tab3b/reject_invalid_char",
+      "status": "PASS",
+      "detail": "reason=字段包含非法字符：\\/:*?\"<>|"
+    },
+    {
+      "check": "tab3b/non_chinese_input_behavior",
+      "status": "PASS",
+      "detail": "can_rename=True counts={'shiwen': 0, 'author': 0} ⚠️ 现状：validator 只查长度/非法字符，**不校验非汉字**（旧版同此口径）"
+    },
+    {
+      "check": "tab3b/thumbs_real_png",
+      "status": "PASS",
+      "detail": "count=2 engines={'P001-C2-R3-长乐未央-汉-陈巨来.tiff': 'sips', '未命名副本.tiff': 'sips'} dims={'P001-C2-R3-长乐未央-汉-陈巨来.tiff': (150, 150), '未命名副本.tiff': (150, 150)} png={'P001-C2-R3-长乐未央-汉-陈巨来.tiff': True, '未命名副本.tiff': True} failed={}"
+    },
+    {
+      "check": "tab3b/preview_400_max",
+      "status": "PASS",
+      "detail": "size=400 bytes=36568 engine=sips dims=(400, 400)"
+    },
+    {
+      "check": "tab3b/preview_missing_file",
+      "status": "PASS",
+      "detail": "文件不存在：不存在.tiff"
+    },
+    {
+      "check": "tab3b/path_traversal_blocked",
+      "status": "PASS",
+      "detail": "msg=文件不存在：test_seal.tiff（_safe_seg 压成单段名 ⇒ 出不了 3_Cropped_Tiff）"
+    },
+    {
+      "check": "tab3b/rename_ok_and_file_moved",
+      "status": "PASS",
+      "detail": "msg=✅ 改名完成，本地记录已写入 new=清心-宋-齐白石.tiff md5_record=True"
+    },
+    {
+      "check": "tab3b/rename_record_md5_matches",
+      "status": "PASS",
+      "detail": "file_md5=2e658cf3eade4d35a21d1752249d7779 == 占位图 md5 2e658cf3eade4d35a21d1752249d7779"
+    },
+    {
+      "check": "tab3b/local_log_written",
+      "status": "PASS",
+      "detail": "rows=1 last={'old_filename': '未命名副本.tiff', 'new_filename': '清心-宋-齐白石.tiff', 'operator': 'selftest', '印面释文': '清心', 'cloud_log': 'not_connected', 'cloud_lock': 'not_connected'}"
+    },
+    {
+      "check": "tab3b/rename_idempotent_noop",
+      "status": "PASS",
+      "detail": "code=noop msg="
+    },
+    {
+      "check": "tab3b/rename_conflict_rejected",
+      "status": "PASS",
+      "detail": "code=conflict msg= 原文件仍在=True"
+    },
+    {
+      "check": "tab3b/rename_invalid_rejected",
+      "status": "PASS",
+      "detail": "code=invalid msg=印面释文最多 10 个汉字，当前 11"
+    },
+    {
+      "check": "tab3b/rename_missing_rejected",
+      "status": "PASS",
+      "detail": "code=missing"
+    },
+    {
+      "check": "tab3b/rename_bad_subdir_rejected",
+      "status": "PASS",
+      "detail": "子目录不存在：不存在子目录"
+    },
+    {
+      "check": "tab3b/admin_guard_active",
+      "status": "PASS",
+      "detail": "非管理员会话（['pan']）⇒ 仅管理员可生成测试 TIFF"
+    },
+    {
+      "check": "tab3b/no_gui_import_in_logic_layer",
+      "status": "PASS",
+      "detail": "扫描 ['api.py', '__init__.py', 'baidu_disk_api.py', 'ocr_corrector.py', 'ocr_rapid.py', 'pdf_library.py', 'tencent_doc_api.py', 'validator.py', 'yinyuan_client.py']；offenders=[]"
+    },
+    {
+      "check": "tab3b/legacy_streamlit_page_retained",
+      "status": "PASS",
+      "detail": "旧版 Streamlit 页 webui.py 仍在仓（需求真源，保留）"
+    },
+    {
+      "check": "tab3ocr/printed_png_returns_texts",
+      "status": "PASS",
+      "detail": "texts=['FEICUI', '123'] scores=[0.9995, 1.0] elapsed_s=1.07 engine='rapidocr-onnxruntime · PP-OCRv6 small（本地，无网络）' mean=0.9998"
+    },
+    {
+      "check": "tab3ocr/printed_scores_high",
+      "status": "PASS",
+      "detail": "min_score=0.9995（①②类印刷体应高分）"
+    },
+    {
+      "check": "tab3ocr/honest_hint_present",
+      "status": "PASS",
+      "detail": "hint=印面篆书通用 OCR 不可靠、仅供参考：248 枚实测均分 0.2428（非空仅 60.1%），真实样本「左軍丞玺」被两引擎一致误读为「左軍丞錄」⇒ 请逐字人工核对后再重命名。…"
+    },
+    {
+      "check": "tab3ocr/ocr_does_not_touch_file",
+      "status": "PASS",
+      "detail": "printed.png 原样在位（OCR 只读）：size=9194"
+    },
+    {
+      "check": "tab3ocr/missing_file_structured",
+      "status": "PASS",
+      "detail": "ok=False code=missing msg=文件不存在：不存在.png"
+    },
+    {
+      "check": "tab3ocr/invalid_image_structured",
+      "status": "PASS",
+      "detail": "ok=False code=ocr_error msg=OCR 失败：UnidentifiedImageError: cannot identify image file '/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr000"
+    },
+    {
+      "check": "tab3ocr/bad_subdir_rejected",
+      "status": "PASS",
+      "detail": "子目录不存在：不存在子目录"
+    },
+    {
+      "check": "corrector/suggest_hits_錄_to_鈢",
+      "status": "PASS",
+      "detail": "mode=suggest hits=[('錄', '鈢', 'measured_truth', 0.9)]"
+    },
+    {
+      "check": "corrector/suggest_does_not_rewrite",
+      "status": "PASS",
+      "detail": "raw='左軍丞錄' corrected='左軍丞錄'（suggest 不得改写）"
+    },
+    {
+      "check": "corrector/auto_only_when_explicit",
+      "status": "PASS",
+      "detail": "mode=auto corrected='左軍丞鈢' n_applied=1"
+    },
+    {
+      "check": "corrector/map_review_state_reported",
+      "status": "PASS",
+      "detail": "map={'version': '0.3.0-draft', 'review_status': 'partially_reviewed', 'n_entries': 52, 'n_verified': 2}（字表 2 条已核定 —— UI 必须显示，别让人以为审完了）"
+    },
+    {
+      "check": "corrector/no_hits_when_no_rule",
+      "status": "PASS",
+      "detail": "hits=[]（UI 此时**静默不显示空面板**）"
+    },
+    {
+      "check": "corrector/bad_mode_structured_failure",
+      "status": "PASS",
+      "detail": "msg=纠错失败：ValueError: mode 必须是 ('suggest', 'auto') 之一，实得 '乱来'"
+    },
+    {
+      "check": "ocrui/capability_exposed",
+      "status": "PASS",
+      "detail": "本机 ocr_available=True 列表里 ocr_available=True ocr_note=''"
+    },
+    {
+      "check": "ocrui/unavailable_is_structured_not_raise",
+      "status": "PASS",
+      "detail": "ok=False reason=OCR_UNAVAILABLE msg=本版本不含 OCR 引擎：本版（阶段 1 包）未内置 rapidocr，OCR 试试看不可用；请手动填写释文。"
+    },
+    {
+      "check": "ocrui/unavailable_reported_in_list",
+      "status": "PASS",
+      "detail": "ocr_available=False ocr_note='本版本未内置 OCR 引擎（rapidocr 未随包提供）'（UI 据此置灰按钮并给可读提示）"
+    },
+    {
+      "check": "ocrui/corrector_works_without_engine",
+      "status": "PASS",
+      "detail": "纠错层纯 stdlib ⇒ 缺 OCR 引擎时仍可对手输释文给建议（面板不依赖引擎）"
+    },
+    {
+      "check": "ocrui/static_nodes_present",
+      "status": "PASS",
+      "detail": "缺=[]；有=['btn-tab3-ocr', 'tab3-ocr-out', 'tab3-ocr-hint', 'tab3-ocr-raw', 'tab3-corr', 'tab3-corr-list', 'btn-tab3-corr-apply', 'tab3-corr-auto']"
+    },
+    {
+      "check": "ocrui/auto_toggle_default_off",
+      "status": "PASS",
+      "detail": "自动纠错复选框**默认未勾选**（auto 不默认生效）"
+    },
+    {
+      "check": "ocrui/js_wires_ocr_and_corrector",
+      "status": "PASS",
+      "detail": "前端调 tab3_ocr / tab3_correct；suggest 为默认，auto 仅勾选后；按钮成败都复原（但缺引擎时保持禁用）"
+    },
+    {
+      "check": "ocrui/js_gates_on_ocr_available",
+      "status": "PASS",
+      "detail": "前端按 tab3_list.ocr_available 置灰按钮 / 禁用 auto 复选框并常驻提示（不点才炸）"
+    },
+    {
+      "check": "tab2/list_ok",
+      "status": "PASS",
+      "detail": "sources=2 dirs=0"
+    },
+    {
+      "check": "tab2/dir_key_resolved",
+      "status": "PASS",
+      "detail": "dir_key=tmp.pdf（复用 server/app/naming.py）"
+    },
+    {
+      "check": "tab2/e2e_source_present",
+      "status": "PASS",
+      "detail": "tmp.pdf dir_key=tmp.pdf"
+    },
+    {
+      "check": "tab2/reject_missing_pdf",
+      "status": "PASS",
+      "detail": "源 PDF 不存在：/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-selftest-r1tgpeda/feicui/1_Original_PDF/不存在.pdf"
+    },
+    {
+      "check": "tab2/reject_bad_dpi",
+      "status": "PASS",
+      "detail": "dpi 只支持 [1200, 2400]"
+    },
+    {
+      "check": "tab2/reject_bad_page",
+      "status": "PASS",
+      "detail": "页号从 1 开始"
+    },
+    {
+      "check": "tab2/engine_script_present",
+      "status": "PASS",
+      "detail": "/Users/kevin/bistro/feicui/ops/book-page-2400/render_page_2400.py exists=True"
+    },
+    {
+      "check": "tab2/engine_cmd_shape",
+      "status": "PASS",
+      "detail": "argv[0]=/Users/kevin/bistro/feicui/venv/bin/python len=16"
+    },
+    {
+      "check": "tab2/engine_cmd_python_exists",
+      "status": "PASS",
+      "detail": "/Users/kevin/bistro/feicui/venv/bin/python"
+    },
+    {
+      "check": "tab2/precheck_dpi_multiple",
+      "status": "PASS",
+      "detail": "scan_dpi=122 msg=目标 dpi 1200 不是扫描 dpi（tab1 探针估 122）的整数倍：引擎只做整数倍上采样（硬断言）。请改选 dpi / 换页后重扫探针；确要强行提交可传 force=tr"
+    },
+    {
+      "check": "tab2/reject_existing_output",
+      "status": "PASS",
+      "detail": "产物已存在（不会覆盖）：P1-1200dpi-48bit.tif"
+    },
+    {
+      "check": "tab2/force_bypasses_precheck",
+      "status": "PASS",
+      "detail": "已开始渲染（异步）"
+    },
+    {
+      "check": "tab2/force_then_engine_asserts",
+      "status": "PASS",
+      "detail": "state=error err=引擎退出码 1（引擎对非整数倍 dpi 的硬断言，与预检一致）"
+    },
+    {
+      "check": "e2e/render_one_page_1200dpi",
+      "status": "NOT_MEASURED",
+      "detail": "--no-e2e 跳过"
+    },
+    {
+      "check": "guard/no_root_blocks_tab1",
+      "status": "PASS",
+      "detail": "尚未选择并校验 feicui 目录"
+    },
+    {
+      "check": "dom/rendered_dom_assertions",
+      "status": "NOT_MEASURED",
+      "detail": "未加 --with-dom（渲染后 DOM 断言需真窗口）"
+    },
+    {
+      "check": "gui/window_launch",
+      "status": "NOT_MEASURED",
+      "detail": "未加 --with-gui（无头/无人看画面）"
+    }
+  ]
+}

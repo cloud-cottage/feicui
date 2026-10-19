@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """ops/ocr-rapid · 用待评估引擎在**同一 248 枚印面池**上跑读数（逐件独立子进程 + 幂等落账）。
 
-纪律（本仓硬约束，见 `webui/build/README.md` §2.1）：
+纪律（本仓硬约束，见 `local-dist/build/README.md` §2.1）：
   - **一件一子进程**：driver 只负责起进程与记账；每个进程只处理 **1 枚** crop 就退出
     （历史实测：原生推理栈在同进程反复建立/释放上下文会 SIGSEGV）。
   - **幂等落账**：结果逐行 append 到 JSONL，`(stem, config)` 已存在即跳过 ⇒ 中断可续跑。
@@ -33,7 +33,7 @@ CROPS = HERE / "var" / "crops"
 JSONL = RAW / "rapid_pool.jsonl"
 MANIFEST = REPO / "spike-ocr" / "raw" / "corpus_manifest.json"
 PP_ABC = REPO / "labeling" / "raw" / "abc_all_248.json"
-READINGS = REPO / "webui" / "build" / "readings-ocr-rapid.json"
+READINGS = REPO / "local-dist" / "build" / "readings-ocr-rapid.json"
 PY = REPO / "venv" / "bin" / "python"
 WORKER = Path(__file__).resolve()
 SELF = str(WORKER)
@@ -46,7 +46,7 @@ CONFIGS = {
 
 def _worker(npy: str, cfg: str) -> int:
     """子进程体：跑 1 枚，把结果以 @@JSON@@ 单行打给父进程。"""
-    sys.path.insert(0, str(REPO / "webui"))
+    sys.path.insert(0, str(REPO / "local-dist"))
     import numpy as np
     from src.ocr_rapid import ocr_image, get_engine
 

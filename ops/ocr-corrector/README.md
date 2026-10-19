@@ -55,8 +55,8 @@
 
 | 文件 | 作用 |
 |---|---|
-| `webui/src/ocr_corrector.py` | **纠错框架（纯逻辑）**：不 import streamlit/webview/api/OCR 引擎。`correct(text, mode='suggest'|'auto') -> {raw, corrected, hits[], unmapped[], stats}`；`--selftest` 25 条断言；`--text/--mode/--off` CLI |
-| `webui/data/guxi_variant_map.json` | **字表**（schema `guxi_variant_map/v1`，含 `version`/`updated_at`/`last_reviewed_by`/`review_status`/`auto_min_confidence`/`entries[]`） |
+| `local-dist/src/ocr_corrector.py` | **纠错框架（纯逻辑）**：不 import streamlit/webview/api/OCR 引擎。`correct(text, mode='suggest'|'auto') -> {raw, corrected, hits[], unmapped[], stats}`；`--selftest` 25 条断言；`--text/--mode/--off` CLI |
+| `local-dist/data/guxi_variant_map.json` | **字表**（schema `guxi_variant_map/v1`，含 `version`/`updated_at`/`last_reviewed_by`/`review_status`/`auto_min_confidence`/`entries[]`） |
 | `ops/ocr-corrector/extract_corpus_stats.py` | 从 `stamps.text`（只读 `mode=ro`）挖单字频次 + 罕见字清单 + PP-OCR rec 字典指纹 |
 | `ops/ocr-corrector/glyph_shape.py` | 字形相似度（**本地字体栅格代理**，纯 PIL+numpy；不带 IDS/部首数据的诚实替代） |
 | `ops/ocr-corrector/gen_candidates.py` | 候选生成（248 池 OCR 输出字 × 语料字池，跨引擎 + 字形两路证据） |
@@ -69,7 +69,7 @@
 
 ```bash
 cd /Users/kevin/bistro/feicui
-./venv/bin/python webui/src/ocr_corrector.py --selftest                       # 25/25
+./venv/bin/python local-dist/src/ocr_corrector.py --selftest                       # 25/25
 ./venv/bin/python ops/ocr-corrector/extract_corpus_stats.py                   # 语料统计
 ./venv/bin/python ops/ocr-corrector/gen_candidates.py                         # 候选
 ./venv/bin/python ops/ocr-corrector/merge_map_entries.py --apply              # 候选入表（幂等）
@@ -141,7 +141,7 @@ cd /Users/kevin/bistro/feicui
 - 已知真值样本冒烟（**文本级**）：`左軍丞錄` →（`auto`）→ **`左軍丞鈢`** ✅ 达标；
   `suggest` 下不改写、只给 `錄→鈢` 候选（`hits[0]` 带 pos/rule_id/source/confidence）。
   ⚠ 该样本**图像不在本仓磁盘上**（全仓前 4 层 `find` 未见）⇒ 本轮只能做「OCR 文本 → 纠错器」
-  这半段的冒烟，**做不了**「图 → OCR → 纠错」端到端重跑（`webui/assets/test_seal.*` 是
+  这半段的冒烟，**做不了**「图 → OCR → 纠错」端到端重跑（`local-dist/assets/test_seal.*` 是
   自造的「试」字测试底，不是该样本）。
 - **种子标定（唯一有真值的字对在字形代理里的位次）**：`錄→鈢` 字形代理分 **0.5128**，
   高于语料池里 493 个字中的**最高者**`禄`（0.413）⇒ 若 `鈢` 在池里，它**排第 1**；
@@ -232,7 +232,7 @@ cd /Users/kevin/bistro/feicui
    印文释文）实测 **`鈢`/`璽` 均 0 命中**（该库是明清印人印为主）⇒ **本地没有任何语料含古玺
    「鈢」这类字**；把它并入语料**建议单独立单**（本单未做，避免超范围）。
 6. **未改任何生产面**：`stamps`/`yinpu.db` 只读、`output/**`、`server/`、`web/` 未动；纠错层
-   尚未接进 `webui`/`app.py`（本单只交框架 + 字表 + 证据，接线另立单）。
+   尚未接进 `local-dist`/`app.py`（本单只交框架 + 字表 + 证据，接线另立单）。
 
 ## 8. 风险与坑（实现时踩到/需人知晓）
 
@@ -259,7 +259,7 @@ cd /Users/kevin/bistro/feicui
 
 Kevin 定的将来形态：映射数据由 **xiai 项目**的在线 API 提供，feicui 只做消费方。
 本单**不实现网络拉取**（该 API 尚不存在、本线无联网许可），本地
-`webui/data/guxi_variant_map.json` 为**离线回落**。
+`local-dist/data/guxi_variant_map.json` 为**离线回落**。
 
 - **接口约定（xiai 侧要按这个实现）**：`GET <base>/guxi-variant-map` → JSON，**与本地 schema 兼容**
   （`guxi_variant_map/v1`）：
@@ -290,12 +290,12 @@ Kevin 定的将来形态：映射数据由 **xiai 项目**的在线 API 提供�
 
 | 文件 | 改动 |
 |---|---|
-| `webui/data/guxi_variant_map.json` | 删 3 条判错条目（原条目原样存 `rejected[]`）；`鲜→鮮` 升 `source='measured_truth'`+`verified=true`+`confidence 0.9`（人工核验）；顶层 `version 0.3.0-draft` / `last_reviewed_by=Kevin` / `review_status=partially_reviewed` + 新增 `policy`、`rejected[]`、5 条 note；计数 **55 → 52** |
+| `local-dist/data/guxi_variant_map.json` | 删 3 条判错条目（原条目原样存 `rejected[]`）；`鲜→鮮` 升 `source='measured_truth'`+`verified=true`+`confidence 0.9`（人工核验）；顶层 `version 0.3.0-draft` / `last_reviewed_by=Kevin` / `review_status=partially_reviewed` + 新增 `policy`、`rejected[]`、5 条 note；计数 **55 → 52** |
 | `ops/ocr-corrector/README.md` | 新增 §0（裁定落实 + 证伪读数）、§9（数据源接口约定）、§10（本表）；§2/§6/§7/§8 口径同步 |
 | `ops/ocr-corrector/merge_map_entries.py` | ① 跳过 `rejected[]`（判错条目**不得**被重跑合回）；② 不再把 `version/updated_at/review_status` 写死回退（防抹掉裁定留痕） |
 | `ops/ocr-corrector/make_review_table.py` | 评审表**分区**（A 区 `cross_engine`/未入表、B 区 `font_glyph_shape`）+ **B 区警告行**；已裁定删除的行单独列出；CSV 增 `section` / `recommendation_level` 列 |
 | `ops/ocr-corrector/eval_corrector.py` | 生成的 `out/eval_report*.md` 固定带「★ 负读数（抽检证伪）」段 + 字表来源分布行 |
 | `ops/ocr-corrector/out/eval_report*.{json,md}`、`out/candidates_top_table.{md,csv}` | 按新字表/新分区**重跑再生**（`--selftest` 25/25）；`out/` 其余产物未重跑 |
 
-**未做（本单范围外）**：把纠错层接进 `webui`/`app.py`（另立单）；`out/` 其余产物（`char_freq`/`rare_chars`/
+**未做（本单范围外）**：把纠错层接进 `local-dist`/`app.py`（另立单）；`out/` 其余产物（`char_freq`/`rare_chars`/
 `corpus_stats`/`candidates_*`）未重跑（它们的输入语料未变）；网络拉取（无 API、无联网许可）。

@@ -25,7 +25,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
 HERE = Path(__file__).resolve().parent
-sys.path.insert(0, str(REPO / "webui" / "src"))
+sys.path.insert(0, str(REPO / "local-dist" / "src"))
 sys.path.insert(0, str(HERE))
 
 from glyph_shape import GlyphShape            # noqa: E402
@@ -44,7 +44,7 @@ def is_han(ch: str) -> bool:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--map", default=str(REPO / "webui/data/guxi_variant_map.json"))
+    ap.add_argument("--map", default=str(REPO / "local-dist/data/guxi_variant_map.json"))
     ap.add_argument("--min-freq", type=int, default=3)
     ap.add_argument("--mode", default="suggest", choices=["suggest", "auto"])
     ap.add_argument("--out-dir", default=str(OUT))

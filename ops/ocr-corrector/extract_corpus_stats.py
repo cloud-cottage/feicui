@@ -184,7 +184,7 @@ def main() -> int:
         "notes": [
             "count 含数字/拉丁/标点噪声；分析古玺用字请先按 category=='han' 过滤（本表 han 行已单列）。",
             "in_ppocr_rec_dict=False ⇒ CTC 解码头结构上无法输出该字（强含义）；True 不代表能读对。",
-            "本表是**统计事实**，不是「异体字映射」——映射另见 webui/data/guxi_variant_map.json（每条带 source/confidence/verified）。",
+            "本表是**统计事实**，不是「异体字映射」——映射另见 local-dist/data/guxi_variant_map.json（每条带 source/confidence/verified）。",
         ],
     }
     (out / "corpus_stats.json").write_text(

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- 标题文案的**单一真源**＝`local-dist/api.py` 的 APP_TITLE / APP_SLOGAN（经 app_info 推给本页）；
+     这里留一份同值静态兜底，仅改文案时改 api.py 即可 -->
+<title>「斐萃」玺印解析任务台 · 本地封装分发版</title>
+<!-- ⚠️ 路径坑（实测）：本页由 PyWebView 内建 http server 供给，**server 根＝`ui/` 目录**
+     （url 形如 http://127.0.0.1:<port>/index.html）⇒ `../assets/feicui.png` 会 404。
+     故图标按仓内「assets 用复制不用软链」口径**复制**一份进 `ui/`（`feicui.png` / `feicui.svg`
+     与 `local-dist/assets/` 逐字节相同）；`rel=icon` 与品牌区 img 都用同目录相对路径。 -->
+<link rel="icon" type="image/png" href="feicui.png">
+<link rel="alternate icon" type="image/svg+xml" href="feicui.svg">
+<link rel="apple-touch-icon" href="feicui.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ═══════════ 视图 1：登录 ═══════════ -->
+<section id="view-login" class="view active">
+  <div class="card login-card">
+    <div class="brand-head">
+      <img id="brand-logo" class="brand-logo" src="feicui.png" width="56" height="56" alt="斐萃 logo" title="斐萃">
+      <div>
+        <h1 class="brand" id="brand-title">「斐萃」玺印解析任务台 · 本地封装分发版</h1>
+        <p class="brand-sub" id="brand-slogan">数字玺印生成工具</p>
+      </div>
+    </div>
+    <p class="muted">请登录后使用（口令由后端校验，前端不持有）</p>
+    <label class="field">
+      <span>账号</span>
+      <input id="login-user" type="text" autocomplete="username" placeholder="账号">
+    </label>
+    <label class="field">
+      <span>密码</span>
+      <input id="login-pwd" type="password" autocomplete="current-password" placeholder="密码">
+    </label>
+    <button id="btn-login" class="btn primary block" data-action="login">登录</button>
+    <div id="login-msg" class="msg"></div>
+    <div class="mode-line">运行形态：<b id="mode-label">检测中…</b> <span id="app-version" class="muted"></span></div>
+  </div>
+</section>
+
+<!-- ═══════════ 视图 2：目录选择 / 校验 ═══════════ -->
+<section id="view-dir" class="view">
+  <div class="card">
+    <h2>目录初始化</h2>
+    <p class="muted">请选择本地名为 <code>feicui</code> 的同步目录。结构必须为
+      <code>1_Original_PDF</code> / <code>2_HighRes_PDF</code> /
+      <code>3_Cropped_Tiff</code>（仅一级子目录）。</p>
+    <div class="row">
+      <button id="btn-home" class="btn" data-action="browse-home">🏠 家目录</button>
+      <button id="btn-up" class="btn" data-action="browse-up">⬆️ 上一级</button>
+      <button id="btn-ensure" class="btn" data-action="ensure-subdirs">🛠 创建标准子目录</button>
+    </div>
+    <div class="path-line">当前位置：<code id="dir-path">—</code></div>
+    <div class="two-col">
+      <ul id="dir-entries" class="list scroll"></ul>
+      <div class="hint-col">
+        <p class="muted">逐级进入，直到目录名为 <code>feicui</code>，再点「校验目录并进入」。</p>
+        <button id="btn-verify" class="btn primary block" data-action="verify">✅ 校验目录并进入</button>
+        <div id="dir-msg" class="msg"></div>
+      </div>
+    </div>
+    <hr>
+    <div class="row">
+      <span class="muted">已登录：<b id="dir-user">—</b></span>
+      <button id="btn-logout-dir" class="btn small" data-action="logout">🚪 退出登录</button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 视图 3：主界面（三 tab） ═══════════ -->
+<section id="view-main" class="view">
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="logo" id="topbar-title"><img id="topbar-logo" class="logo-img" src="feicui.png"
+        alt="斐萃 logo" title="斐萃"><span id="topbar-title-text">「斐萃」玺印解析任务台 · 本地封装分发版</span></span>
+      <nav id="tabs" class="tabs">
+        <button class="tab active" data-tab="1_Original_PDF">1_Original_PDF</button>
+        <button class="tab" data-tab="2_HighRes_PDF">2_HighRes_PDF</button>
+        <button class="tab" data-tab="3_Cropped_Tiff">3_Cropped_Tiff</button>
+      </nav>
+    </div>
+    <div class="topbar-right">
+      <span class="pill" id="user-pill">👤 —</span>
+      <span class="pill" id="root-pill">📁 —</span>
+      <span class="pill" id="yy-pill" hidden>🔗 —</span>
+      <button class="btn small" id="btn-yy-open" data-action="yinyuan-open">🔗 连接 yinyuan</button>
+      <button class="btn small" data-action="change-dir">🔄 目录</button>
+      <button class="btn small" data-action="logout">🚪 退出</button>
+    </div>
+  </header>
+
+  <!-- ── tab1：1_Original_PDF ── -->
+  <div class="panel active" data-panel="1_Original_PDF">
+    <div class="panel-head">
+      <h2>1_Original_PDF · 原件盘点与元数据</h2>
+      <div class="row">
+        <label class="inline"><input id="tab1-force" type="checkbox"> 强制重探（页数/尺寸/dpi）</label>
+        <button id="btn-tab1-rescan" class="btn primary" data-action="tab1-rescan">🔍 扫描 / 刷新</button>
+      </div>
+    </div>
+    <div id="tab1-stats" class="stats"></div>
+    <div class="two-col main-col">
+      <div class="pane">
+        <h3>本地 PDF（<span id="tab1-count">0</span>）</h3>
+        <div class="table-wrap scroll">
+          <table id="tab1-table" class="grid">
+            <thead><tr><th>文件名</th><th>大小(MB)</th><th>页数</th><th>页面尺寸</th>
+              <th>扫描dpi(估)</th><th>朝代</th><th>作者</th><th>改时间</th></tr></thead>
+            <tbody id="tab1-body"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="pane side">
+        <h3>元数据补填</h3>
+        <p class="muted">选中左侧一行后编辑；仅写入本地侧车 <code>local-dist/var/pdf_meta.json</code>。</p>
+        <div class="field-block">
+          <div class="cur" id="tab1-selected">未选择文件</div>
+          <label class="field"><span>朝代</span>
+            <select id="tab1-dynasty"></select></label>
+          <label class="field"><span>作者</span>
+            <input id="tab1-author" type="text" maxlength="12" placeholder="如：陈巨来"></label>
+          <label class="field"><span>备注</span>
+            <textarea id="tab1-notes" rows="3" placeholder="自由备注"></textarea></label>
+          <button id="btn-tab1-save" class="btn primary block" data-action="tab1-save">💾 保存元数据</button>
+          <div id="tab1-msg" class="msg"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── tab2：2_HighRes_PDF ── -->
+  <div class="panel" data-panel="2_HighRes_PDF">
+    <div class="panel-head">
+      <h2>2_HighRes_PDF · 整页高分辨率（1200 dpi · 48bit TIFF）</h2>
+      <div class="row">
+        <button id="btn-tab2-refresh" class="btn" data-action="tab2-refresh">🔄 刷新</button>
+        <button id="btn-tab2-open" class="btn" data-action="open-in-finder">📂 访达定位</button>
+      </div>
+    </div>
+    <p class="muted">整页渲染单页 ≈64 s（1200 dpi 48bit ⇒ 8500×12236）；**整本禁止**（851 页 ≈6.4 h）。
+      渲染走老工程引擎子进程，异步 + 进度 + 可取消。</p>
+    <div class="two-col main-col">
+      <div class="pane">
+        <h3>产物（<code>2_HighRes_PDF/&lt;目录键&gt;/</code>）</h3>
+        <div id="tab2-products" class="tree scroll"></div>
+      </div>
+      <div class="pane side">
+        <h3>生成入口</h3>
+        <label class="field"><span>源 PDF</span>
+          <select id="tab2-source"></select></label>
+        <label class="field"><span>页号（1-based）</span>
+          <input id="tab2-page" type="number" min="1" value="1"></label>
+        <label class="field"><span>目标 dpi</span>
+          <select id="tab2-dpi">
+            <option value="1200" selected>1200（缺省）</option>
+            <option value="2400">2400（旧产线，≈108 s/页）</option>
+          </select></label>
+        <label class="inline"><input id="tab2-overwrite" type="checkbox"> 覆盖已有产物</label>
+        <label class="inline"><input id="tab2-force" type="checkbox"> 强制提交（跳过 dpi 整数倍预检）</label>
+        <button id="btn-tab2-generate" class="btn primary block" data-action="tab2-generate">⚙️ 开始生成 HighRes（异步）</button>
+        <button id="btn-tab2-cancel" class="btn block" data-action="tab2-cancel" disabled>✖ 取消当前任务</button>
+        <div class="progress-wrap">
+          <div class="progress"><div id="tab2-progress-bar" class="bar" style="width:0%"></div></div>
+          <div id="tab2-progress-msg" class="muted">空闲</div>
+        </div>
+        <details class="logbox"><summary>任务日志（尾部）</summary>
+          <pre id="tab2-log" class="scroll"></pre></details>
+        <div id="tab2-msg" class="msg"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── tab3：3_Cropped_Tiff ── -->
+  <div class="panel" data-panel="3_Cropped_Tiff">
+    <div class="panel-head">
+      <h2>3_Cropped_Tiff · 印面切片（选件 / 解析 / 重命名）</h2>
+      <div class="row">
+        <button id="btn-tab3-refresh" class="btn" data-action="tab3-refresh">🔄 刷新</button>
+        <button id="btn-tab3-test" class="btn" data-action="tab3-test">🎲 在此目录生成测试 TIFF（管理员）</button>
+      </div>
+    </div>
+    <div class="two-col tab3-col">
+      <!-- ── 左栏（≈1.5）：子目录标签页 + 缩略图网格（四档视图 + 分页 + 键盘导航）── -->
+      <div class="pane">
+        <h3>一级子目录</h3>
+        <div id="tab3-subdirs" class="subdir-tabs"></div>
+        <div class="row" id="tab3-views">
+          <button class="btn small view-btn" data-view="large" data-action="tab3-view">🖼️ 大图标</button>
+          <button class="btn small view-btn" data-view="medium" data-action="tab3-view">📋 中等图标</button>
+          <button class="btn small view-btn" data-view="small" data-action="tab3-view">📄 小图标</button>
+          <button class="btn small view-btn" data-view="list" data-action="tab3-view">📃 列表</button>
+        </div>
+        <div class="caption" id="tab3-pageinfo">共 0 个文件 · 第 1/1 页 · ↑↓←→ 切换选中</div>
+        <div class="pager">
+          <button id="btn-tab3-prev" class="btn small" data-action="tab3-prev" disabled>⬅️ 上一页</button>
+          <span id="tab3-pageno" class="muted">1 / 1</span>
+          <button id="btn-tab3-next" class="btn small" data-action="tab3-next" disabled>下一页 ➡️</button>
+        </div>
+        <div id="tab3-grid" class="thumb-grid" data-view="medium" tabindex="0"></div>
+        <p class="muted">命名模板：<code id="tab3-template">—</code></p>
+        <div id="tab3-msg" class="msg"></div>
+      </div>
+      <!-- ── 右栏（≈1）：大图预览 + 文件名解析 + 三输入框 + 新名预览 + 执行 ── -->
+      <div class="pane side">
+        <div id="tab3-noselect" class="muted">请在左侧点击选择一个 tiff 文件</div>
+        <div id="tab3-edit" hidden>
+          <h3>大图预览</h3>
+          <div class="preview-wrap"><img id="tab3-preview" alt="大图预览"></div>
+          <div class="cur" id="tab3-current">—</div>
+          <div id="tab3-parsed" class="msg"></div>
+          <label class="field"><span id="tab3-shiwen-label">印面释文（最多 10 个汉字）</span>
+            <input id="tab3-shiwen" type="text" placeholder="如：长乐未央" autocomplete="off">
+            <div class="suggest" id="tab3-shiwen-suggest" hidden></div></label>
+          <!-- ── OCR 试试看（只读辅助；印面篆书不可靠 ⇒ 结果面板必带诚实提示）── -->
+          <div class="row ocr-row">
+            <button id="btn-tab3-ocr" class="btn small" data-action="tab3-ocr"
+                    title="对当前选中的裁切件跑本地通用 OCR（只填释文框，不改文件）">🔍 OCR 试试看</button>
+            <label class="chk" title="默认关闭：字表只有 2 条已核定规则，UI 不该默默替用户改字">
+              <input type="checkbox" id="tab3-corr-auto"> 自动应用已核定纠错（默认关）
+            </label>
+            <span class="caption" id="tab3-ocr-msg"></span>
+          </div>
+          <div id="tab3-ocr-out" class="ocr-out" hidden>
+            <div class="ocr-hint" id="tab3-ocr-hint"></div>
+            <div class="ocr-raw" id="tab3-ocr-raw"></div>
+          </div>
+          <div id="tab3-corr" class="corr" hidden>
+            <div class="corr-head" id="tab3-corr-head">纠错建议（本地字表 · 仅改输入框）</div>
+            <div class="corr-list" id="tab3-corr-list"></div>
+            <button id="btn-tab3-corr-apply" class="btn small block" data-action="tab3-corr-apply">
+              全部应用到释文框（不改文件）</button>
+          </div>
+          <label class="field"><span>朝代</span>
+            <input id="tab3-dynasty" type="text" placeholder="如：汉"></label>
+          <label class="field"><span id="tab3-author-label">作者（最多 4 个汉字）</span>
+            <input id="tab3-author" type="text" placeholder="如：陈巨来" autocomplete="off">
+            <div class="suggest" id="tab3-author-suggest" hidden></div></label>
+          <div class="caption" id="tab3-counts">释文 0/10　作者 0/4</div>
+          <div class="newname">预览新文件名：<code id="tab3-newname">—</code></div>
+          <div id="tab3-valid" class="msg"></div>
+          <button id="btn-tab3-rename" class="btn primary block" data-action="tab3-rename"
+                  disabled>执行重命名 + 写入本地记录</button>
+          <div id="tab3-rename-msg" class="msg"></div>
+          <div class="notice">⚠️ 日志同步（腾讯文档）／云盘锁 <b>暂未接入</b>：本次只写本地记录
+            <code>local-dist/var/rename_log.jsonl</code>（不写云日志、不取云锁）</div>
+        </div>
+      </div>
+    </div>
+    <!-- ── 操作日志（本地记录；云同步未接入 ⇒ 明标）── -->
+    <div class="pane op-log">
+      <h3>操作日志（本地记录）
+        <span class="badge-warn" id="tab3-log-badge">日志同步（腾讯文档）/ 云盘锁暂未接入</span></h3>
+      <div class="table-wrap scroll log-scroll">
+        <table class="grid">
+          <thead><tr><th>时间</th><th>原文件名</th><th>新文件名</th><th>释文</th><th>朝代</th>
+            <th>作者</th><th>操作人</th><th>状态</th></tr></thead>
+          <tbody id="tab3-log-body"></tbody>
+        </table>
+      </div>
+      <p class="muted" id="tab3-log-path">—</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 「连接 yinyuan」弹窗（登录 ⇒ 自动建斐萃专用 key；只显示 prefix） ═══════════ -->
+<div id="yinyuan-modal" class="modal" hidden>
+  <div class="modal-card" id="yinyuan-card" role="dialog" aria-modal="true" aria-labelledby="yy-title">
+    <h2 id="yy-title">🔗 连接 yinyuan（印源）</h2>
+    <p class="muted">首次连接会自动创建一把「斐萃-&lt;主机名&gt;」专用密钥，明文只落本机
+      <code>…/斐萃/yinyuan.json</code>（权限 600），界面只显示前缀。</p>
+
+    <!-- 已连接面 -->
+    <div id="yy-connected" hidden>
+      <div class="yy-state ok">✅ 已连接</div>
+      <div class="field"><span>专用密钥前缀</span><code id="yy-prefix">—</code></div>
+      <div class="field"><span>标签</span><code id="yy-label">—</code></div>
+      <div class="muted" id="yy-cache-line">缓存：—</div>
+      <div class="row" style="margin-top:10px">
+        <button class="btn small" id="btn-yy-sync" data-action="yinyuan-sync">🔄 重新同步数据</button>
+        <button class="btn small" id="btn-yy-disconnect" data-action="yinyuan-disconnect">✖ 断开</button>
+      </div>
+    </div>
+
+    <!-- 未连接面（登录框） -->
+    <div id="yy-form">
+      <label class="field"><span>手机号 / 邮箱</span>
+        <input id="yy-identifier" type="text" autocomplete="username" placeholder="13800000000 或 name@example.com"></label>
+      <label class="field"><span>口令</span>
+        <input id="yy-password" type="password" autocomplete="current-password" placeholder="yinyuan 账号口令"></label>
+      <button id="btn-yy-connect" class="btn primary block" data-action="yinyuan-connect">连接并创建专用密钥</button>
+      <p class="muted">口令只用于换取会话；日常调用只用本机密钥（会话不落盘）。</p>
+    </div>
+
+    <div id="yy-msg" class="msg"></div>
+    <div class="row" style="margin-top:8px">
+      <button class="btn small" id="btn-yy-close" data-action="yinyuan-close">关闭</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+<script src="app.js"></script>
+</body>
+</html>

@@ -3,7 +3,7 @@
 
 口径（本仓既有）：
   - **200 dpi 足够**（历史实测 400 dpi 慢 2.9×，见 `ops/biblio-metadata/`）；
-  - 一页一子进程（原生推理栈纪律，见 `webui/build/README.md` §2.1）；
+  - 一页一子进程（原生推理栈纪律，见 `local-dist/build/README.md` §2.1）；
   - 只读源 PDF，不写 `output/`。
 
 跑法：
@@ -40,7 +40,7 @@ KEY_RE = re.compile(r"ISBN|书号|統一書號|统一书号|定价|定價|印数
 
 
 def _render_page(pdf: str, page: int, dpi: int) -> int:
-    sys.path.insert(0, str(REPO / "webui"))
+    sys.path.insert(0, str(REPO / "local-dist"))
     import cv2
     import numpy as np
     import pymupdf

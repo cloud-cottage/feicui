@@ -25,7 +25,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 OUT = HERE / "out"
-MAP = HERE.parents[1] / "webui/data/guxi_variant_map.json"
+MAP = HERE.parents[1] / "local-dist/data/guxi_variant_map.json"
 
 HDR = ("| # | OCR 报出的字 | 建议候选 Top1 | 备选（字形分/跨引擎次/corpus次） | 池内出现 | "
        "OCR 最高原始分 | 出现样本 | 跨引擎对方报的字 | 字形代理分 | corpus 频次 | 字表 rule_id |")
@@ -104,7 +104,7 @@ def main() -> int:
 
     md = ["# 需人工审核的候选清单", "",
           "> 生成：`ops/ocr-corrector/make_review_table.py --n %d`（数据源 `out/candidates_summary.csv` / "
-          "`out/candidates_map_entries.json` / 字表 `webui/data/guxi_variant_map.json`）" % a.n,
+          "`out/candidates_map_entries.json` / 字表 `local-dist/data/guxi_variant_map.json`）" % a.n,
           "> ★ 全部 **`verified=false`、默认不生效**：本表只作人工审核的输入，不构成任何「已验证映射」。",
           "> 审核通过 ⇒ 改 `source='measured_truth'` + `verified=true`；不通过 ⇒ 删条（并在字表顶层 `rejected[]` 留痕）。",
           "> 排序键：池内出现次数 ↓ → 跨引擎一致次数 ↓ → 字形代理分 ↓（无魔法权重）。", ""]

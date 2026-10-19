@@ -1,11 +1,11 @@
 /* 斐萃（feicui）前端样式：只用系统字体栈，**零外链字体 / 零外链图片 / 零 CDN** */
-/* 口径 v1.41 主题：**浅色底 + 翡翠绿主色** —— 与 feicui-local-dist（webui/ui/style.css）
-   同一套 UI：下方 10 个主 token 与 webui/ui/style.css L17-39 **逐值相同**（Kevin 2026-10-19
+/* 口径 v1.41 主题：**浅色底 + 翡翠绿主色** —— 与 feicui-local-dist（local-dist/ui/style.css）
+   同一套 UI：下方 10 个主 token 与 local-dist/ui/style.css L17-39 **逐值相同**（Kevin 2026-10-19
    「三者同一套 UI、UI 向 local-dist 靠拢」），深色宝石卡面（--bg-card-gem）已废弃。
    组件 / 页面内**不得**散落色值；旧变量名保留为别名（减 diff，web 各页 scoped 样式
-   引用仍解析），派生灰阶 / 语义色底不引入新色相（warn 琥珀 / danger 红承 webui 语义族）。 */
+   引用仍解析），派生灰阶 / 语义色底不引入新色相（warn 琥珀 / danger 红承 local-dist 语义族）。 */
 :root {
-  /* ── 翡翠绿强调色：与 webui/ui/style.css 逐值相同（不得自换）────────────────── */
+  /* ── 翡翠绿强调色：与 local-dist/ui/style.css 逐值相同（不得自换）────────────────── */
   --accent: #1fbe8f;       /* 主色（主按钮 / 激活页签 / 进度条 / 选中描边） */
   --accent-deep: #118a66;  /* 深阶（hover / 按下 / 凹面 / 链接文字） */
   --accent-soft: #e7f8f2;  /* 浅淡底（hover 垫色 / 选中格底） */
@@ -14,14 +14,14 @@
   --accent-wash: #f3fcf8;  /* 极浅 hover（表格行 / 面板） */
   --accent-soft-2: #c3eee0;/* 选中行（比 hover 深一阶） */
 
-  /* ── 底色 / 文字 / 线：与 webui 同值 ────────────────────────────────────────── */
+  /* ── 底色 / 文字 / 线：与 local-dist 同值 ────────────────────────────────────────── */
   --bg: #f5f5f5;
   --card: #ffffff;
   --line: #e5e5e5;
   --text: #1a1a1a;
   --muted: #7a7a7a;
 
-  /* ── 语义色（与主色分离：成功绿 / 失败红 / 警示琥珀；承 webui 同值）──────────── */
+  /* ── 语义色（与主色分离：成功绿 / 失败红 / 警示琥珀；承 local-dist 同值）──────────── */
   --ok: #1f9d55;
   --err: #d93025;
   --warn: #8a5a00;
@@ -32,11 +32,11 @@
   --fg: var(--text);            /* 主文字（原深底亮字值已弃） */
   --fg-dim: var(--muted);       /* 次文字（原深底灰青值已弃） */
   --bg-card: var(--card);       /* 卡面＝白卡（原深青墨宝石卡面已废弃，色值不再保留于本仓） */
-  --bg-soft: #fafafa;           /* 输入 / 内嵌面板垫底（webui th / logbox 同档） */
-  --bg-inset: #f0f0f0;          /* 代码块底（webui code 同值） */
+  --bg-soft: #fafafa;           /* 输入 / 内嵌面板垫底（local-dist th / logbox 同档） */
+  --bg-inset: #f0f0f0;          /* 代码块底（local-dist code 同值） */
   --line-strong: #c9c9c9;       /* 强调描边（dashed 虚线框等；中性灰，无新色相） */
 
-  /* danger 族：文字 = webui --err；浅底 / 描边为同族派生（红系，非新色相） */
+  /* danger 族：文字 = local-dist --err；浅底 / 描边为同族派生（红系，非新色相） */
   --danger: var(--err);
   --danger-bg: #fdecea;
   --danger-bg-strong: #fadbd8;
@@ -65,7 +65,7 @@ h3 { margin: 0 0 8px; font-size: 13px; font-weight: 600; }
 p { margin: 6px 0; }
 
 .shell { max-width: 1180px; margin: 0 auto; padding: 14px 18px 60px; }
-/* 顶栏（v1.41 对齐 webui .topbar / .brand-head）：白底圆角卡 ＋ 56px 圆角 logo ＋
+/* 顶栏（v1.41 对齐 local-dist .topbar / .brand-head）：白底圆角卡 ＋ 56px 圆角 logo ＋
    h1.brand 全串（「斐萃」玺印解析任务台 ＋ hostname 动态后缀）＋ 页签 ＋ 右侧动作区。
    sticky 吸顶、背景不透明（白卡），滚动内容不从顶栏下透出。 */
 .shell__head {
@@ -82,7 +82,7 @@ p { margin: 6px 0; }
 .brand-block { display: flex; flex-direction: column; justify-content: center; }
 .brand { margin: 0; font-size: 20px; font-weight: 600; color: var(--text); line-height: 1.25; }
 .brand-sub { font-size: 12px; font-weight: 400; color: var(--muted); margin-top: 2px; }
-/* 页签条（对齐 webui .tabs / .tab：描边小按钮、选中＝主色块）：
+/* 页签条（对齐 local-dist .tabs / .tab：描边小按钮、选中＝主色块）：
    原 .nav 已移入 <header>（.shell__head-left 内、RouterView 之前）。
    选中态沿用 router-link-active。 */
 .shell__tabs { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
@@ -107,7 +107,7 @@ p { margin: 6px 0; }
 .page__head { margin-bottom: 12px; }
 .page__sub { color: var(--fg-dim); display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 
-/* 卡片（对齐 webui .card：白底 + 圆角 14 + 柔和投影、无描边） */
+/* 卡片（对齐 local-dist .card：白底 + 圆角 14 + 柔和投影、无描边） */
 .card {
   background: var(--card); border-radius: 14px;
   padding: 16px 20px; margin-bottom: 14px;
@@ -130,7 +130,7 @@ input[type='text'], input[type='number'], select {
   font-family: inherit;
 }
 input:focus, select:focus { outline: 2px solid var(--accent-line); border-color: var(--accent); }
-/* 按钮（对齐 webui .btn 族）：默认＝主色块（.btn.primary 形态），ghost＝描边白底（.btn 形态） */
+/* 按钮（对齐 local-dist .btn 族）：默认＝主色块（.btn.primary 形态），ghost＝描边白底（.btn 形态） */
 button {
   background: var(--accent); border: 1px solid var(--accent); color: var(--on-accent);
   border-radius: 8px; padding: 7px 14px; font-size: 13px; font-weight: 500;
@@ -147,7 +147,7 @@ button.linkish:hover { text-decoration: underline; }
 button.linkish:not(:disabled):hover { background: none; border: 0; }
 .actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 
-/* 表格（对齐 webui .grid / .table-wrap：细描边行、表头浅底、行 hover 极浅垫色） */
+/* 表格（对齐 local-dist .grid / .table-wrap：细描边行、表头浅底、行 hover 极浅垫色） */
 .table { width: 100%; border-collapse: collapse; margin-top: 6px; font-size: 12.5px; }
 .table th, .table td {
   border-bottom: 1px solid var(--line); text-align: left; padding: 5px 8px; vertical-align: top;
@@ -188,7 +188,7 @@ table.kv th { color: var(--fg-dim); font-weight: 500; width: 260px; }
 .banner--up { color: var(--ok); }
 .banner--unknown { color: var(--fg-dim); }
 
-/* 进度条（对齐 webui .progress：细条圆角胶囊 + 主色实心） */
+/* 进度条（对齐 local-dist .progress：细条圆角胶囊 + 主色实心） */
 .progress { height: 10px; background: #eee; border: 0; border-radius: 999px; overflow: hidden; margin: 8px 0 4px; }
 .progress__bar { height: 100%; background: var(--accent); transition: width .3s; }
 .errlist { color: var(--danger); margin: 4px 0; }

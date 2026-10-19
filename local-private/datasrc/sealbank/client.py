@@ -18,6 +18,11 @@
 
 CLI（各子命令打印 JSON 摘要）：
   python3 client.py probe  <url|path>                 # 单页探针
+  python3 client.py index-probe                       # 索引页形态探针（5 请求）
+  python3 client.py index                             # 全量印人索引（400 姓氏槽，断点续传）
+  python3 client.py index-spotcheck                   # 索引→编年链路抽样对拍（每前缀 1 人）
+  python3 client.py m1-catalog                        # 真微印庫人物社團全目錄（10 页 7,482 筆）
+  python3 client.py index-union                       # 索引 ∪ 目錄 并集（对拍官网 10,487）
   python3 client.py scan                              # Layer1 编号定界扫描
   python3 client.py persons --ids Q9901,Q9902,Q9910   # Layer1 编年抓取（断点续传）
   python3 client.py seals   --ids 1799-061,...        # Layer2 会员详情样本
@@ -57,6 +62,10 @@ SEAL_URL = (
     BASE_URL + "/m2ImgShow.asp?STOP=M2IMGS&LM=2&L1=2&L2=1&L3=0&LS=C&SRCHTXT={sid}"
 )
 THUMB_URL = BASE_URL + "/SBYBImg/red80/{sid}.gif"
+
+# 索引页（唯一可靠的全量印人入口；编号为多字母段 Q/P/R/S/O…）
+INDEX_URL = BASE_URL + "/m2ViewIndex.asp?LM=2&L1=2&L2=2&L3=0&LS=C"
+INDEX_SURNAME_URL = INDEX_URL + "&n1sttxt={n}"
 
 # ── cookie 装载（绝不打印值）────────────────────────────────────────────────
 
@@ -511,6 +520,479 @@ def scan_boundaries(client: SealBankClient, coarse=None, fine_seeds=None) -> dic
     return report
 
 
+# ── 索引页：全量印人普查（依人物瀏覽＞姓名檢索）─────────────────────────────
+#
+# 形态（2026-10-19 实测）：索引按**姓氏首字的繁體筆劃**分组（2–24 劃），第一层列出
+# 400 个姓氏首字链接（`&n1sttxt=1..400`，N 互不重复）；每个 N 的页是**单人页、无分页**，
+# 页头「共 N 筆資料」，每人一格：`姓名` + `．字號．生卒．N則`，链接带印人编号
+# （多字母段 Q/P/R/S/O…）。⇒ 全量印人 = 遍历这 400 个 N。
+
+_STROKE_HDR = re.compile(r"<font[^>]*>(\d+)\s*劃-姓氏首字</font>")
+_CHAR_LINK = re.compile(r"n1sttxt=(\d+)#CURRENTFN'[^>]*>\s*<font[^>]*>([^<]+)</font>")
+_REC_LINK = re.compile(
+    r"<a HREF='m2MainFind\.asp\?[^']*SRCHTXT=([A-Z]\d+)&SK=MV'[^>]*>(.*?)</a>"
+    r"(.*?)(?=</TD>|</TR>)",
+    re.S,
+)
+_HEADER_COUNT = re.compile(r"共(?:&nbsp;|\s)*(\d+)(?:&nbsp;|\s)*筆資料")
+
+
+def parse_index_shelf(text: str) -> dict:
+    """索引首页 → {chars:[{n,char,stroke}], unique_n, n_links, strokes}。"""
+    chars = []
+    stroke = None
+    # 按出现顺序同时扫描「N 劃-姓氏首字」与字符链接，记录每字所属笔画
+    events = []
+    for m in _STROKE_HDR.finditer(text):
+        events.append((m.start(), "stroke", m.group(1)))
+    for m in _CHAR_LINK.finditer(text):
+        events.append((m.start(), "char", (m.group(1), m.group(2).strip())))
+    events.sort()
+    for _, kind, val in events:
+        if kind == "stroke":
+            stroke = int(val)
+        else:
+            chars.append({"n": int(val[0]), "char": val[1], "stroke": stroke})
+    by_n = {}
+    for c in chars:
+        by_n.setdefault(c["n"], []).append(c["char"])
+    return {
+        "chars": chars,
+        "n_links": len(chars),
+        "unique_n": len(by_n),
+        "stroke_groups": sorted({c["stroke"] for c in chars if c["stroke"]}),
+        # 同一 n1sttxt 槽挂多个字（异体/同槽）：审计用，抓取时按 n 去重
+        "multi_char_slots": [
+            {"n": n, "chars": cs} for n, cs in sorted(by_n.items()) if len(cs) > 1
+        ],
+    }
+
+
+def _parse_entry_meta(detail_html: str) -> dict:
+    """`．字號．1879 ∼ 1949．20則` → 结构化（缺项留空/None）。"""
+    plain = _strip(detail_html).replace("\n", "")
+    out = {"zi_hao": "", "years_raw": "", "year_start": None, "year_end": None,
+           "entry_count": None, "entry_count_raw": ""}
+    m = re.search(r"(\d+)\s*則", plain)
+    if m:
+        out["entry_count"] = int(m.group(1))
+        out["entry_count_raw"] = m.group(0)
+    segs = [s for s in re.split(r"[．·]", plain) if s.strip()]
+    for s in segs:
+        s = s.strip()
+        if "則" in s:
+            continue
+        if re.search(r"\d{3,4}", s) or ("？" in s and ("∼" in s or "〜" in s or "~" in s)):
+            if not out["years_raw"]:
+                out["years_raw"] = s
+        elif not out["zi_hao"]:
+            out["zi_hao"] = s
+    if out["years_raw"]:
+        ys = re.findall(r"\d{3,4}", out["years_raw"])
+        if ys:
+            out["year_start"] = int(ys[0])
+        if len(ys) > 1:
+            out["year_end"] = int(ys[1])
+    return out
+
+
+def parse_surname_page(text: str, n: int = 0) -> dict:
+    """单个姓氏首字页 → {n, char, declared, records, ...}。"""
+    out = {"n": n, "char": "", "declared": None, "records": [],
+           "current_char": "", "parse_error": ""}
+    try:
+        mh = _HEADER_COUNT.search(text)
+        if mh:
+            out["declared"] = int(mh.group(1))
+        mc = re.search(r"<a Name='CURRENTFN'>(.*?)</a>", text, re.S)
+        if mc:
+            out["char"] = _strip(mc.group(1))
+        for pid, anchor, tail in _REC_LINK.findall(text):
+            name = _strip(anchor)
+            meta = _parse_entry_meta(tail)
+            rec = {
+                "id": pid,
+                "prefix": pid[0],
+                "name": name,
+                "zi_hao": meta["zi_hao"],
+                "years_raw": meta["years_raw"],
+                "year_start": meta["year_start"],
+                "year_end": meta["year_end"],
+                "entry_count": meta["entry_count"],
+                "surname_slot": n,
+                "surname_char": out["char"],
+                "href": "m2MainFind.asp?LM=2&L1=2&L2=2&L3=0&LS=C&SRCHTXT=%s&SK=MV" % pid,
+            }
+            out["records"].append(rec)
+        if out["declared"] is not None and out["declared"] != len(out["records"]):
+            out["parse_error"] = f"declared {out['declared']} != parsed {len(out['records'])}"
+    except Exception as e:
+        out["parse_error"] = f"{type(e).__name__}: {e}"
+    return out
+
+
+def probe_index(client: SealBankClient, out_dir: str, sample_n=(1, 34, 208, 389)) -> dict:
+    """小样本探索引形态（首页 + 若干姓氏槽），落 out/index_probe.json。"""
+    os.makedirs(out_dir, exist_ok=True)
+    r = client.get(INDEX_URL)
+    shelf = parse_index_shelf(r["text"]) if r["ok"] else {"chars": [], "n_links": 0, "unique_n": 0}
+    pages = []
+    for n in sample_n:
+        rp = client.get(INDEX_SURNAME_URL.format(n=n))
+        p = parse_surname_page(rp["text"], n=n) if rp["ok"] else {"n": n, "records": [], "declared": None}
+        per_char = {}
+        for rec in p.get("records", []):
+            per_char[rec["prefix"]] = per_char.get(rec["prefix"], 0) + 1
+        pages.append({
+            "n": n,
+            "status": rp["status"],
+            "bytes": rp["bytes"],
+            "char": p.get("char"),
+            "declared": p.get("declared"),
+            "parsed": len(p.get("records", [])),
+            "prefix_dist": per_char,
+            "sample": p.get("records", [])[:3],
+            "parse_error": p.get("parse_error", ""),
+        })
+    out = {
+        "generated_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "source": SOURCE_LABEL,
+        "index_url": INDEX_URL,
+        "surname_url_template": INDEX_SURNAME_URL,
+        "shelf_status": r["status"],
+        "shelf_bytes": r["bytes"],
+        "shelf_char_links": shelf.get("n_links"),
+        "shelf_unique_n": shelf.get("unique_n"),
+        "shelf_stroke_groups": shelf.get("stroke_groups"),
+        "shelf_duplicate_n": shelf.get("multi_char_slots"),
+        "organization": "姓氏首字（繁體筆劃分组）→ 该姓氏下印人清单（单人页，表格式，2 列/行）",
+        "pagination": "姓氏首字页无分页（无 PN= 链接）；首页为全字表，无分页",
+        "per_record_fields": ["id(SRCHTXT)", "prefix", "name", "zi_hao", "years", "entry_count(則)"],
+        "pages": pages,
+    }
+    path = os.path.join(out_dir, "index_probe.json")
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(out, f, ensure_ascii=False, indent=1)
+    out["path"] = path
+    return out
+
+
+def fetch_index(client: SealBankClient, out_dir: str, limit: int = 0, refetch: bool = False) -> dict:
+    """遍历 400 个姓氏槽 → out/index_pages/<n>.json → out/index.ndjson + index_summary.json。
+
+    断点续传：已存在的 index_pages/<n>.json 直接复用（`--refetch` 强制重抓）；
+    NDJSON 每次从页缓存**重建**（不 append，避免重跑去重问题）。
+    """
+    pages_dir = os.path.join(out_dir, "index_pages")
+    os.makedirs(pages_dir, exist_ok=True)
+    # 1) 索引首页（字表）—— 缓存
+    shelf_path = os.path.join(out_dir, "index_shelf.json")
+    shelf = None
+    if os.path.exists(shelf_path) and not refetch:
+        try:
+            shelf = json.load(open(shelf_path, encoding="utf-8"))
+        except Exception:
+            shelf = None
+    if shelf is None:
+        r = client.get(INDEX_URL)
+        if not r["ok"]:
+            return {"ok": False, "error": f"shelf fetch failed: {r['status']} {r['error']}"}
+        shelf = parse_index_shelf(r["text"])
+        shelf["fetched_at"] = time.strftime("%Y-%m-%dT%H:%M:%S")
+        with open(shelf_path, "w", encoding="utf-8") as f:
+            json.dump(shelf, f, ensure_ascii=False, indent=1)
+
+    ns = sorted({c["n"] for c in shelf["chars"]})
+    stat = {"shelf_chars": len(shelf["chars"]), "shelf_unique_n": len(ns),
+            "pages_fetched": 0, "pages_cached": 0, "pages_failed": [], "requested": 0}
+    for n in ns:
+        if limit and stat["requested"] >= limit:
+            break
+        p = os.path.join(pages_dir, f"{n}.json")
+        if os.path.exists(p) and not refetch:
+            stat["pages_cached"] += 1
+            continue
+        r = client.get(INDEX_SURNAME_URL.format(n=n))
+        if not r["ok"]:
+            stat["pages_failed"].append({"n": n, "status": r["status"], "error": r["error"]})
+            stat["requested"] += 1
+            continue
+        page = parse_surname_page(r["text"], n=n)
+        page["fetched_at"] = time.strftime("%Y-%m-%dT%H:%M:%S")
+        page["bytes"] = r["bytes"]
+        with open(p, "w", encoding="utf-8") as f:
+            json.dump(page, f, ensure_ascii=False, indent=1)
+        stat["pages_fetched"] += 1
+        stat["requested"] += 1
+
+    # 2) 重建 NDJSON + 汇总
+    summary = assemble_index(out_dir)
+    summary.update({k: stat[k] for k in ("shelf_chars", "shelf_unique_n", "pages_fetched",
+                                         "pages_cached", "pages_failed")})
+    return summary
+
+
+def spotcheck_index(client: SealBankClient, out_dir: str, count: int = 10) -> dict:
+    """抽样核验索引 → 编年链路：取 count 个**不同前缀**的印人，各抓编年页 1，
+    对拍「姓名 / 則数」是否与索引一致（只抓第 1 页，不跑全量）。"""
+    nd_path = os.path.join(out_dir, "index.ndjson")
+    if not os.path.exists(nd_path):
+        return {"ok": False, "error": "index.ndjson missing; run `index` first"}
+    records = [json.loads(l) for l in open(nd_path, encoding="utf-8") if l.strip()]
+    by_prefix = {}
+    for rec in records:
+        by_prefix.setdefault(rec["prefix"], []).append(rec)
+    picks = []
+    # 每个前缀取「則数」中位偏上的一人（避开 1 則与超大户，兼顾代表性）
+    for pre in sorted(by_prefix):
+        group = sorted([r for r in by_prefix[pre] if r.get("entry_count")],
+                       key=lambda r: r["entry_count"])
+        if group:
+            picks.append(group[len(group) * 2 // 3])
+    picks = picks[:count] if count else picks
+    results = []
+    for rec in picks:
+        r = client.get_person_page(rec["id"], 1)
+        p = r.get("parsed") or {}
+        name_ok = (p.get("name") or "").strip() == rec["name"].strip()
+        count_ok = rec.get("entry_count") is None or p.get("total") == rec["entry_count"]
+        results.append({
+            "id": rec["id"],
+            "prefix": rec["prefix"],
+            "index_name": rec["name"],
+            "index_entry_count": rec.get("entry_count"),
+            "status": r["status"],
+            "found": bool(p.get("found")),
+            "page1_name": p.get("name"),
+            "page1_total": p.get("total"),
+            "page1_total_pages": p.get("total_pages"),
+            "name_match": name_ok,
+            "count_match": count_ok,
+            "ok": bool(r["ok"] and p.get("found") and name_ok and count_ok),
+        })
+    out = {
+        "generated_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "source": SOURCE_LABEL,
+        "method": "每前缀取 1 人，抓编年第 1 页，对比 姓名 + 頁面「共有N則」",
+        "sample_size": len(results),
+        "distinct_prefixes": sorted({r["prefix"] for r in results}),
+        "all_pass": all(x["ok"] for x in results) if results else False,
+        "results": results,
+    }
+    path = os.path.join(out_dir, "index_spotcheck.json")
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(out, f, ensure_ascii=False, indent=1)
+    out["path"] = path
+    return out
+
+
+OFFICIAL_TARGETS = {"persons": 10487, "entries": 133883, "seals": 81281}
+
+
+_GLYPH_NOTE = re.compile(r"◎\{([^}]*)\}")
+
+
+def _enrich(rec: dict) -> dict:
+    """站点自造字记法 `◎{左禾右犀}` → 保留原 name，另给 name_plain + glyph_notes。"""
+    notes = _GLYPH_NOTE.findall(rec["name"])
+    rec["name_plain"] = _strip(_GLYPH_NOTE.sub("", rec["name"]))
+    rec["glyph_notes"] = notes
+    rec["has_glyph_placeholder"] = bool(notes) or "◎" in rec["name"]
+    return rec
+
+
+def assemble_index(out_dir: str) -> dict:
+    """从 index_pages/*.json 重建 index.ndjson（按编号去重）+ index_summary.json。"""
+    pages_dir = os.path.join(out_dir, "index_pages")
+    files = sorted(
+        [f for f in os.listdir(pages_dir) if f.endswith(".json")],
+        key=lambda x: int(x[:-5]) if x[:-5].isdigit() else 0,
+    ) if os.path.isdir(pages_dir) else []
+    seen, records, dups = {}, [], []
+    page_audit = []
+    declared_sum = 0
+    for fn in files:
+        page = json.load(open(os.path.join(pages_dir, fn), encoding="utf-8"))
+        if page.get("declared") is not None:
+            declared_sum += page["declared"]
+        parsed = len(page.get("records", []))
+        if page.get("parse_error") or (page.get("declared") not in (None, parsed)):
+            page_audit.append({"file": fn, "n": page.get("n"), "char": page.get("char"),
+                               "declared": page.get("declared"), "parsed": parsed,
+                               "error": page.get("parse_error", "")})
+        for rec in page.get("records", []):
+            pid = rec["id"]
+            if pid in seen:
+                dups.append({"id": pid, "name": rec["name"],
+                             "slots": [seen[pid]["surname_slot"], rec["surname_slot"]]})
+                continue
+            seen[pid] = _enrich(rec)
+            records.append(seen[pid])
+
+    nd_path = os.path.join(out_dir, "index.ndjson")
+    with open(nd_path, "w", encoding="utf-8") as f:
+        for rec in records:
+            f.write(json.dumps(rec, ensure_ascii=False) + "\n")
+        f.flush()
+
+    prefix_dist = {}
+    for rec in records:
+        prefix_dist[rec["prefix"]] = prefix_dist.get(rec["prefix"], 0) + 1
+    with_count = [r for r in records if r.get("entry_count") is not None]
+    entry_sum = sum(r["entry_count"] for r in with_count)
+    zero_count = [r for r in with_count if r["entry_count"] == 0]
+
+    summary = {
+        "generated_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "source": SOURCE_LABEL,
+        "index_url": INDEX_URL,
+        "surname_pages_read": len(files),
+        "declared_sum_from_pages": declared_sum,
+        "unique_persons": len(records),
+        "raw_records": len(records) + len(dups),
+        "duplicate_ids": dups,
+        "prefix_dist": dict(sorted(prefix_dist.items())),
+        "with_entry_count": len(with_count),
+        "without_entry_count": len(records) - len(with_count),
+        "with_entry_count_pct": round(100.0 * len(with_count) / len(records), 2) if records else 0.0,
+        "entry_count_sum": entry_sum,
+        "zero_entry_persons": len(zero_count),
+        "glyph_placeholder_persons": sum(1 for r in records if r.get("has_glyph_placeholder")),
+        "page_count_mismatch": page_audit,
+        "official_targets": OFFICIAL_TARGETS,
+        "person_delta_vs_official": len(records) - OFFICIAL_TARGETS["persons"],
+        "entries_delta_vs_official": entry_sum - OFFICIAL_TARGETS["entries"],
+        "paths": {"ndjson": nd_path, "summary": os.path.join(out_dir, "index_summary.json")},
+    }
+    with open(os.path.join(out_dir, "index_summary.json"), "w", encoding="utf-8") as f:
+        json.dump(summary, f, ensure_ascii=False, indent=1)
+    return summary
+
+
+# ── 真微印庫目錄（m1 人物社團全目錄）：印人档的另一半 ──────────────────────
+#
+# `m1IndexAll.asp?LM=1&L1=5&L2=1&L3=0&LS=D` 首頁自述「人物社團全目錄共7482筆」，
+# 每頁 749 筆、10 页；条目链接 `m1MainFind.asp?...SRCHTXT=<ID>&SK=MV`，
+# **与篆刻年歷共用同一印人编号空间**（G/I/J/K/L/M/N/O/P/Q/R/S…）。
+# 但此目录**不带「則数」**（只有 生卒/字號/籍貫 简介）⇒ entry_count 为 None。
+
+M1_CATALOG_URL = BASE_URL + "/m1IndexAll.asp?LM=1&L1=5&L2=1&L3={page}&LS=D&FILTER=&PN={page}"
+M1_CATALOG_TOTAL = re.compile(r"人物社團全目錄共(?:&nbsp;|\s)*([\d,]+)(?:&nbsp;|\s)*筆")
+_M1_REC = re.compile(
+    r"<a Href='m1MainFind\.asp\?[^']*SRCHTXT=([A-Z]\d+)&SK=MV'[^>]*>(.*?)</a>(.*?)</font>",
+    re.S | re.I,
+)
+
+
+def parse_m1_catalog_page(text: str, page: int = 1) -> dict:
+    out = {"page": page, "declared_total": None, "records": [], "per_page": None, "parse_error": ""}
+    mt = M1_CATALOG_TOTAL.search(text)
+    if mt:
+        out["declared_total"] = int(mt.group(1).replace(",", ""))
+    mp = re.search(r"本頁計呈現(?:&nbsp;|\s)*([\d,]+)(?:&nbsp;|\s)*筆", text)
+    if mp:
+        out["per_page"] = int(mp.group(1).replace(",", ""))
+    for pid, anchor, bio in _M1_REC.findall(text):
+        plain = _strip(bio).replace("\n", "")
+        plain = plain.lstrip("，, ").strip()
+        yrs = re.findall(r"(\d{3,4})\s*[∼~〜﹣-]\s*(\d{3,4}|？)", plain)
+        out["records"].append({
+            "id": pid,
+            "prefix": pid[0],
+            "name": _strip(anchor),
+            "bio": plain,
+            "year_start": int(yrs[0][0]) if yrs else None,
+            "year_end": int(yrs[0][1]) if yrs and yrs[0][1].isdigit() else None,
+            "entry_count": None,  # 目录不带則数
+            "source_section": "m1_catalog",
+            "href": "m1MainFind.asp?LM=1&L1=1&L2=3&L3=0&LS=C&SRCHTXT=%s&SK=MV" % pid,
+            "page": page,
+        })
+    if out["per_page"] and out["per_page"] != len(out["records"]):
+        out["parse_error"] = f"per_page {out['per_page']} != parsed {len(out['records'])}"
+    return out
+
+
+def fetch_m1_catalog(client: SealBankClient, out_dir: str, pages: int = 10, refetch: bool = False) -> dict:
+    """m1 人物社團目錄 → out/m1_catalog.ndjson（断点续传：out/m1_catalog_pages/<p>.json）。"""
+    pdir = os.path.join(out_dir, "m1_catalog_pages")
+    os.makedirs(pdir, exist_ok=True)
+    stat = {"pages_fetched": 0, "pages_cached": 0, "failed": [], "declared_total": None}
+    for p in range(1, pages + 1):
+        fp = os.path.join(pdir, f"{p}.json")
+        if os.path.exists(fp) and not refetch:
+            stat["pages_cached"] += 1
+            continue
+        r = client.get(M1_CATALOG_URL.format(page=p))
+        if not r["ok"]:
+            stat["failed"].append({"page": p, "status": r["status"], "error": r["error"]})
+            continue
+        page = parse_m1_catalog_page(r["text"], page=p)
+        with open(fp, "w", encoding="utf-8") as f:
+            json.dump(page, f, ensure_ascii=False, indent=1)
+        stat["pages_fetched"] += 1
+    recs, seen = [], set()
+    files = sorted([f for f in os.listdir(pdir) if f.endswith(".json")],
+                   key=lambda x: int(x[:-5]))
+    for fn in files:
+        page = json.load(open(os.path.join(pdir, fn), encoding="utf-8"))
+        if page.get("declared_total"):
+            stat["declared_total"] = page["declared_total"]
+        for rec in page["records"]:
+            if rec["id"] in seen:
+                continue
+            seen.add(rec["id"])
+            rec["name_plain"] = _strip(_GLYPH_NOTE.sub("", rec["name"]))
+            recs.append(rec)
+    with open(os.path.join(out_dir, "m1_catalog.ndjson"), "w", encoding="utf-8") as f:
+        for rec in recs:
+            f.write(json.dumps(rec, ensure_ascii=False) + "\n")
+        f.flush()
+    stat["unique_persons"] = len(recs)
+    stat["pages_read"] = len(files)
+    stat["page_audit"] = [
+        {"file": fn, "parsed": len(json.load(open(os.path.join(pdir, fn), encoding="utf-8"))["records"])}
+        for fn in files
+    ]
+    return stat
+
+
+def union_summary(out_dir: str) -> dict:
+    """篆刻年歷索引 ∪ m1 人物目錄 → 编号并集，并与官网 10,487 对拍。"""
+    def load(name):
+        p = os.path.join(out_dir, name)
+        if not os.path.exists(p):
+            return []
+        return [json.loads(l) for l in open(p, encoding="utf-8") if l.strip()]
+
+    m2 = load("index.ndjson")
+    m1 = load("m1_catalog.ndjson")
+    m2_ids, m1_ids = {r["id"] for r in m2}, {r["id"] for r in m1}
+    union = m2_ids | m1_ids
+    prefix = {}
+    for pid in union:
+        prefix[pid[0]] = prefix.get(pid[0], 0) + 1
+    out = {
+        "generated_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "source": SOURCE_LABEL,
+        "m2_chronology_persons": len(m2_ids),
+        "m1_catalog_persons": len(m1_ids),
+        "overlap": len(m2_ids & m1_ids),
+        "m2_only": len(m2_ids - m1_ids),
+        "m1_only": len(m1_ids - m2_ids),
+        "union_persons": len(union),
+        "prefix_dist_union": dict(sorted(prefix.items())),
+        "official_target": OFFICIAL_TARGETS["persons"],
+        "delta_vs_official": len(union) - OFFICIAL_TARGETS["persons"],
+        "note": ("m2=篆刻年歷人名索引（带則数）；m1=真微印庫人物社團全目錄（不带則数）。"
+                 "两者共用同一编号空间，并集即公开可枚举的印人全集；"
+                 "官网 10,487 为「印人档」口径（含未进目录的档案人物），差额即未公开枚举部分。"),
+    }
+    with open(os.path.join(out_dir, "index_union_summary.json"), "w", encoding="utf-8") as f:
+        json.dump(out, f, ensure_ascii=False, indent=1)
+    return out
+
+
 # ── 断点续传抓取（Layer 1 主任务）──────────────────────────────────────────
 
 
@@ -882,6 +1364,22 @@ def main(argv=None):
 
     sub.add_parser("scan")
 
+    sp = sub.add_parser("index-probe", help="探索引页形态（首页 + 4 个姓氏槽）")
+    sp.add_argument("--sample", default="1,34,208,389", help="抽查的 n1sttxt 槽")
+
+    sp = sub.add_parser("index", help="全量印人索引（400 姓氏槽，断点续传）")
+    sp.add_argument("--limit", type=int, default=0, help="本次最多抓 N 个姓氏槽（0=全部）")
+    sp.add_argument("--refetch", action="store_true", help="忽略页缓存强制重抓")
+
+    sp = sub.add_parser("index-spotcheck", help="抽样对拍索引→编年链路（每前缀 1 人）")
+    sp.add_argument("--count", type=int, default=10)
+
+    sp = sub.add_parser("m1-catalog", help="真微印庫人物社團全目錄（10 页 / 7,482 筆）")
+    sp.add_argument("--pages", type=int, default=10)
+    sp.add_argument("--refetch", action="store_true")
+
+    sub.add_parser("index-union", help="篆刻年歷索引 ∪ m1 目錄 → 并集对拍 10,487")
+
     sp = sub.add_parser("persons")
     sp.add_argument("--ids", required=True, help="逗号分隔印人编号")
     sp.add_argument("--max-pages", type=int, default=0, help="每人最多抓 N 页（0=不限；试跑/中断模拟）")
@@ -945,6 +1443,27 @@ def main(argv=None):
                                     "effective_high"] if k in rep}
         slim["path"] = path
         print(json.dumps(slim, ensure_ascii=False, indent=1))
+    elif args.cmd == "index-probe":
+        sample = tuple(int(x) for x in args.sample.split(",") if x.strip())
+        out = probe_index(client, args.out, sample_n=sample)
+        out.pop("shelf_stroke_groups", None)
+        print(json.dumps(out, ensure_ascii=False, indent=1))
+    elif args.cmd == "index":
+        s = fetch_index(client, args.out, limit=args.limit, refetch=args.refetch)
+        slim = {k: s.get(k) for k in ("shelf_unique_n", "pages_fetched", "pages_cached",
+                                      "pages_failed", "surname_pages_read", "unique_persons",
+                                      "prefix_dist", "entry_count_sum", "person_delta_vs_official",
+                                      "entries_delta_vs_official", "with_entry_count_pct",
+                                      "page_count_mismatch")}
+        print(json.dumps(slim, ensure_ascii=False, indent=1))
+    elif args.cmd == "m1-catalog":
+        print(json.dumps(fetch_m1_catalog(client, args.out, pages=args.pages,
+                                          refetch=args.refetch), ensure_ascii=False, indent=1))
+    elif args.cmd == "index-union":
+        print(json.dumps(union_summary(args.out), ensure_ascii=False, indent=1))
+    elif args.cmd == "index-spotcheck":
+        s = spotcheck_index(client, args.out, count=args.count)
+        print(json.dumps(s, ensure_ascii=False, indent=1))
     elif args.cmd == "persons":
         ids = args.ids.split(",")
         s = fetch_persons(client, ids, args.out, max_pages=args.max_pages)

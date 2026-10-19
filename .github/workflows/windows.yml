@@ -95,7 +95,7 @@ jobs:
         shell: pwsh
         run: |
           python -c "import clr; print('clr OK')"
-          python -c "import clr_loader; print('clr_loader', clr_loader.__version__)"
+          python -c "import importlib.metadata as m; print('pythonnet', m.version('pythonnet')); print('clr_loader', m.version('clr-loader'))"
 
       - name: Unit test — 跨平台用户目录（paths.py）
         shell: pwsh

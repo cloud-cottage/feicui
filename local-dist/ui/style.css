@@ -295,6 +295,19 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent-line
 .cur.mono { font-size: 11px; word-break: break-all; }
 .w-num { width: 96px; }
 .row.tight { margin-top: 4px; gap: 6px; }
+.pv-card { margin-top: 12px; border-top: 1px dashed var(--line); padding-top: 10px; }
+.pv-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.pv-title { margin: 0; font-size: 13px; }
+.pv-title .muted { font-size: 11px; font-weight: 400; margin-left: 6px; }
+.pv-nav { align-items: center; gap: 6px; margin-top: 0; }
+.pv-nav .w-num { width: 84px; }
+.pv-frame { margin-top: 8px; border: 1px solid var(--line); border-radius: 10px;
+  background: #f7f7f7; padding: 8px; text-align: center; position: relative; min-height: 120px; }
+#tab1-pv-img { display: block; max-width: 100%; height: auto; margin: 0 auto;
+  border: 1px solid var(--line); border-radius: 6px; background: #fff; }
+#tab1-pv-img[hidden] { display: none; }
+.pv-hint { font-size: 12px; color: var(--muted); padding: 44px 8px; }
+.pv-hint[hidden] { display: none; }
 select.grow { flex: 1 1 320px; min-width: 240px; }
 
 /* 切图台 */

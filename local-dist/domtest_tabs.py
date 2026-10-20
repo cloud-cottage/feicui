@@ -41,7 +41,7 @@ SCRATCH = Path(tempfile.mkdtemp(prefix="feicui-domtest-tabs-"))
 os.environ["FEICUI_DATA_DIR"] = str(SCRATCH / "data")
 Path(os.environ["FEICUI_DATA_DIR"]).mkdir(parents=True, exist_ok=True)
 
-from api import APP_TITLE, DATA_DIR, FeicuiApi  # noqa: E402
+from api import APP_TITLE, DATA_DIR, FeicuiApi, app_name, app_title  # noqa: E402
 from src import pdf_library as lib  # noqa: E402
 
 _spec = importlib.util.spec_from_file_location("feicui_webui_app", WEBUI_DIR / "app.py")
@@ -161,6 +161,36 @@ JS_TAB1 = """
   }); })()
 """
 
+JS_TAB1_PV = """
+(() => { const g=id=>document.getElementById(id);
+  const pi=g('tab1-pv-page'), img=g('tab1-pv-img'), hint=g('tab1-pv-hint');
+  const card=g('tab1-pv-card'), from=g('tab1-hr-from');
+  return JSON.stringify({
+    card: !!card,
+    in_hr_card: !!(g('tab1-hr-card') && g('tab1-hr-card').querySelector('#tab1-pv-card')),
+    after_range: !!(card && from && (from.compareDocumentPosition(card) & Node.DOCUMENT_POSITION_FOLLOWING)),
+    page_input: { exists: !!pi, type: pi?pi.type:null, min: pi?pi.min:'',
+                  editable: pi?(!pi.disabled && !pi.readOnly):null,
+                  value: pi?pi.value:null, max: pi?pi.max:'' },
+    nodes: { prev: !!g('btn-tab1-pv-prev'), next: !!g('btn-tab1-pv-next'),
+             setfrom: !!g('btn-tab1-pv-setfrom'), img: !!img, hint: !!hint,
+             info: !!g('tab1-pv-info'), msg: !!g('tab1-pv-msg') },
+    prev_disabled: g('btn-tab1-pv-prev')?g('btn-tab1-pv-prev').disabled:null,
+    next_disabled: g('btn-tab1-pv-next')?g('btn-tab1-pv-next').disabled:null,
+    setfrom_disabled: g('btn-tab1-pv-setfrom')?g('btn-tab1-pv-setfrom').disabled:null,
+    setfrom_label: g('btn-tab1-pv-setfrom')?g('btn-tab1-pv-setfrom').textContent:'',
+    info: g('tab1-pv-info')?g('tab1-pv-info').textContent:'',
+    img_hidden: img?img.hidden:null,
+    img_src_prefix: img?String(img.getAttribute('src')||'').slice(0,22):'',
+    img_maxw: img?getComputedStyle(img).maxWidth:'',
+    hint_text: hint?hint.textContent:'',
+    hint_hidden: hint?hint.hidden:null,
+    msg: g('tab1-pv-msg')?g('tab1-pv-msg').textContent:'',
+    msg_class: g('tab1-pv-msg')?g('tab1-pv-msg').className:'',
+    hr_from: g('tab1-hr-from')?g('tab1-hr-from').value:''
+  }); })()
+"""
+
 JS_TAB1_BOOKNAME = """
 (() => { const el=document.getElementById('tab1-book-name');
   return JSON.stringify({
@@ -259,6 +289,30 @@ def _probe_body() -> None:
     _wait_js("document.querySelectorAll('#tab1-body tr').length > 0", 25)
     time.sleep(1.0)
 
+    # ── ⓪ 窗口/页面标题：**Lite|Pro 按运行期 OCR 能力实算**（源码态有 rapidocr ⇒ Pro；lite 包 ⇒ Lite）──
+    #    断言一律与后端 `app_title()` / `app_info()` 的实算值比对，**不写死** `Pro`/`Lite`。
+    _wait_js("document.title.indexOf('Lite')>=0 || document.title.indexOf('Pro')>=0", 15)
+    ttl = _read("00_app_title", "(() => JSON.stringify({title: document.title,"
+                " brand: (document.getElementById('brand-title')||{}).textContent||'',"
+                " topbar: (document.getElementById('topbar-title-text')||{}).textContent||''}))()")
+    info = FeicuiApi().app_info()
+    want_title, want_name = app_title(), app_name()
+    got_title = ttl.get("title") or ""
+    record("tabs/app_title_has_edition",
+           ("· Lite" in got_title or "· Pro" in got_title)
+           and got_title.startswith("「斐萃」玺印解析任务台 · 本地封装分发版"),
+           f"document.title={got_title!r}（要求基础串 + `· Lite|Pro`）")
+    record("tabs/app_title_matches_backend_actual",
+           got_title == want_title and got_title == APP_TITLE,
+           f"document.title={got_title!r} api.app_title()={want_title!r} APP_TITLE={APP_TITLE!r}")
+    record("tabs/app_info_title_name_same_source",
+           info.get("title") == got_title and info.get("app") == want_name
+           and want_name.endswith(("· Lite", "· Pro"))
+           and got_title in (ttl.get("brand") or "") and got_title in (ttl.get("topbar") or ""),
+           f"app_info.title={info.get('title')!r} app_info.app={info.get('app')!r} "
+           f"app_name()={want_name!r} edition={info.get('edition')!r} "
+           f"brand={ttl.get('brand')!r} topbar={ttl.get('topbar')!r}")
+
     # ── ① tab1：**书籍名称**输入框（目录键唯一来源；留空 ⇒ 文件名回落）──
     t1bn = _read("00_tab1_book_name", JS_TAB1_BOOKNAME)
     record("tabs/tab1_book_name_input_editable",
@@ -305,6 +359,76 @@ def _probe_body() -> None:
     record("tabs/tab1_source_follows_selected_row",
            SOURCE_PDF.name in (t1c.get("src_text") or "") and "未选择" not in (t1c.get("src_text") or ""),
            f"源行={t1c.get('src_text')!r}")
+
+    # ── ① tab1：PDF 快速预览（先看内容 ⇒ 再定「从第几页开始高清化」）──
+    pv0 = _read("03a_tab1_pv_nodes", JS_TAB1_PV)
+    ppi = pv0.get("page_input") or {}
+    record("tabs/tab1_pv_region_and_page_input",
+           bool(pv0.get("card")) and bool(pv0.get("in_hr_card")) and bool(pv0.get("after_range"))
+           and all((pv0.get("nodes") or {}).values())
+           and bool(ppi.get("exists")) and ppi.get("type") == "number" and bool(ppi.get("editable")),
+           f"卡片={pv0.get('card')} 在 hr-card 内={pv0.get('in_hr_card')} "
+           f"在起止页行下方={pv0.get('after_range')} nodes={pv0.get('nodes')} 页码输入={ppi}")
+
+    # 注入假 `tab1_preview`（真渲染走 96dpi 真 PDF，图内容与页数随夹具变 ⇒ 只验 UI 行为）
+    _ev("(() => { const B64=" + json.dumps(tiny_png()) + ";"
+        " window.pywebview.api.tab1_preview = function(p){ var n=(p&&p.page)||1;"
+        " return Promise.resolve({ok:true, page:n, total:5, png_b64:B64, px_w:714, px_h:1000,"
+        " page_mm_w:179.9, page_mm_h:259.0, dpi:96, dpi_used:96, cached:false, elapsed_s:0.08}); };"
+        " return 1; })()")
+    _wait_js("(document.getElementById('tab1-pv-info')||{}).textContent"
+             " && document.getElementById('tab1-pv-info').textContent.indexOf('/ 5 页')>=0", 10)
+    _ev("(() => { const el=document.getElementById('tab1-pv-page'); el.value='3';"
+        " el.dispatchEvent(new Event('change')); return el.value; })()")
+    _wait_js("document.getElementById('tab1-pv-info').textContent.indexOf('第 3 / 5 页')>=0", 10)
+    time.sleep(0.4)
+    pv1 = _read("03b_tab1_pv_page3", JS_TAB1_PV)
+    _ev("document.getElementById('btn-tab1-pv-setfrom').click()")
+    time.sleep(0.4)
+    pv2 = _read("03c_tab1_pv_setfrom", JS_TAB1_PV)
+    record("tabs/tab1_pv_paging_and_setfrom",
+           pv1.get("info") == "第 3 / 5 页" and pv1.get("img_hidden") is False
+           and str(pv1.get("img_src_prefix") or "").startswith("data:image/png;base64,")
+           and pv1.get("img_maxw") == "100%"
+           and pv1.get("prev_disabled") is False and pv1.get("next_disabled") is False
+           and pv2.get("hr_from") == "3" and "设为起始页" in (pv2.get("msg") or "")
+           and "err" not in (pv2.get("msg_class") or ""),
+           f"读数={pv1.get('info')!r} 图隐藏={pv1.get('img_hidden')} "
+           f"src={pv1.get('img_src_prefix')!r} maxW={pv1.get('img_maxw')!r} "
+           f"上页禁用={pv1.get('prev_disabled')} 下页禁用={pv1.get('next_disabled')} "
+           f"→ hr-from={pv2.get('hr_from')!r} 提示={pv2.get('msg')!r}")
+
+    # 边界：第 1 页 ⇒ 「上一页」禁用；第 5 页（末页）/ 输入超范围 99 ⇒ 夹到 5，「下一页」禁用
+    _ev("(() => { const el=document.getElementById('tab1-pv-page'); el.value='1';"
+        " el.dispatchEvent(new Event('change')); return el.value; })()")
+    _wait_js("document.getElementById('tab1-pv-info').textContent.indexOf('第 1 / 5 页')>=0", 10)
+    pv_first = _read("03d_tab1_pv_first", JS_TAB1_PV)
+    _ev("(() => { const el=document.getElementById('tab1-pv-page'); el.value='99';"
+        " el.dispatchEvent(new Event('change')); return el.value; })()")
+    _wait_js("document.getElementById('tab1-pv-info').textContent.indexOf('第 5 / 5 页')>=0", 10)
+    pv_last = _read("03e_tab1_pv_last", JS_TAB1_PV)
+
+    # 失败路径：后端结构化 reason ⇒ 预览区给原因、红条带 reason（不 alert / 不炸桥）
+    _ev("(() => { window.pywebview.api.tab1_preview = function(p){"
+        " return Promise.resolve({ok:false, reason:'PAGE_OUT_OF_PDF', page:(p&&p.page)||1,"
+        " total:5, msg:'第 4 页超出范围（本书共 5 页）'}); }; return 1; })()")
+    _ev("(() => { const el=document.getElementById('tab1-pv-page'); el.value='4';"
+        " el.dispatchEvent(new Event('change')); return el.value; })()")
+    _wait_js("(document.getElementById('tab1-pv-msg')||{}).textContent"
+             " && document.getElementById('tab1-pv-msg').textContent.indexOf('PAGE_OUT_OF_PDF')>=0", 10)
+    pv_err = _read("03f_tab1_pv_error", JS_TAB1_PV)
+    record("tabs/tab1_pv_bounds_and_error_reason",
+           pv_first.get("prev_disabled") is True and pv_first.get("next_disabled") is False
+           and pv_last.get("prev_disabled") is False and pv_last.get("next_disabled") is True
+           and str(pv_last.get("page_input", {}).get("value")) == "5"
+           and "PAGE_OUT_OF_PDF" in (pv_err.get("msg") or "")
+           and "err" in (pv_err.get("msg_class") or "")
+           and pv_err.get("img_hidden") is True,
+           f"首/末页禁用=({pv_first.get('prev_disabled')},{pv_first.get('next_disabled')})/"
+           f"({pv_last.get('prev_disabled')},{pv_last.get('next_disabled')}) "
+           f"末页夹紧={pv_last.get('page_input', {}).get('value')!r} "
+           f"失败提示={pv_err.get('msg')!r} class={pv_err.get('msg_class')!r} "
+           f"图隐藏={pv_err.get('img_hidden')}")
 
     # 进度 / 完成态（注入 onProgress 推送 + 假 status，避免真跑 ≈6.2 s/页 的渲染）
     running = {

@@ -46,6 +46,7 @@ import sys
 import threading
 import time
 import uuid
+from collections import OrderedDict
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -76,7 +77,7 @@ from src import pdf_library as lib  # noqa: E402
 from src import validator  # noqa: E402
 from src import yinyuan_client as yy  # noqa: E402
 
-APP_NAME = "斐萃 · 本地封装分发版"
+APP_NAME_BASE = "斐萃 · 本地封装分发版"
 APP_VERSION = "0.3.0-pywebview"
 #: ── 标题/副标题 **单一真源**（改文案只改这两行；`app.py` 的窗口标题与 `ui/` 均从
 #:    `app_info()` 取，HTML 里只留一份同值兜底）────────────────────────────────────
@@ -85,7 +86,48 @@ APP_VERSION = "0.3.0-pywebview"
 #: （注意「· 本地封装分发版」前有空格；旧后缀「· 本地电脑版」已被 v1.40 取代）；主标题沿用旧版
 #: `local-dist/src/webui.py` L42 的
 #: `APP_TITLE_IN_PAGE`（「斐萃」玺印解析任务台）＋ 本地版后缀。**其它页面不加后缀**。
-APP_TITLE = "「斐萃」玺印解析任务台 · 本地封装分发版"
+#: 2026-10-20 追加：**按运行期能力**再带 `· Lite` / `· Pro`（同一份代码出两个包，
+#: 标题必须一眼看出来跑的是哪个；lite 包把 rapidocr/onnxruntime 全 excludes 掉）。
+APP_TITLE_BASE = "「斐萃」玺印解析任务台 · 本地封装分发版"
+
+
+def ocr_capable() -> bool:
+    """运行期 OCR 能力探测（**只 find_spec，不加载模型、不 import onnxruntime**）。
+
+    真源是 `src.field_extract.ocr_capable()`（lite 包 `rapidocr` 与适配层都没有 ⇒ False）；
+    它本身只用 stdlib，但**任何异常都当「不可用」**（窗口标题不许因为探测失败而挂），
+    并在延迟 import 失败时退回本文件的 find_spec 探测。
+    """
+    try:
+        from src import field_extract as _fe
+        return bool(_fe.ocr_capable())
+    except Exception:
+        try:
+            return (importlib.util.find_spec("rapidocr") is not None
+                    and importlib.util.find_spec("src.ocr_rapid") is not None)
+        except Exception:
+            return False
+
+
+def app_edition() -> str:
+    """`Pro`（有 OCR 栈）/ `Lite`（无 OCR 栈）——**逐次实算**，不改环境变量、不打包注入。"""
+    return "Pro" if ocr_capable() else "Lite"
+
+
+def app_title() -> str:
+    """当前进程的窗口/页面标题（基础串 ＋ `· Lite|Pro`）。"""
+    return f"{APP_TITLE_BASE} · {app_edition()}"
+
+
+def app_name() -> str:
+    """当前进程的应用名/窗口标识（基础串 ＋ `· Lite|Pro`）。"""
+    return f"{APP_NAME_BASE} · {app_edition()}"
+
+
+#: 模块级常量＝**当前进程的实算值**（`app.py` 的 `WINDOW_TITLE`、`selftest`、`domtest` 都引用它；
+#: 保持常量语义不断，两个包各自 import 时各得其所）。
+APP_TITLE = app_title()
+APP_NAME = app_name()
 APP_SLOGAN = "数字玺印生成工具"
 
 SESSION_EXPIRE_DAYS = 7
@@ -524,14 +566,20 @@ class FeicuiApi:
         self._hr_task: HighResTask | None = None
         # tab2 切图台：1200dpi 渲页很重 ⇒ 裁切串行（并发第二个请求直接拒，不排队堆内存）
         self._crop_lock = threading.Lock()
+        # tab1 PDF 快速预览：**内存 LRU（最近 8 张）**，key=pdf 路径+page+dpi+max_w
+        # ⇒ 来回翻页不重渲（96dpi 单页 ≈0.1 s 级，但 4.5 GB 的高清 PDF 打开/解码并不免费）
+        self._pv_lock = threading.Lock()
+        self._pv_cache: "OrderedDict[str, dict]" = OrderedDict()
 
     # ---------------- 应用信息 ----------------
     def app_info(self, _req: dict | None = None) -> dict:
         env = _load_env()
         name, is_admin = self._session_user()
         return {
-            "ok": True, "app": APP_NAME, "version": APP_VERSION,
-            "title": APP_TITLE, "slogan": APP_SLOGAN,
+            "ok": True, "app": app_name(), "version": APP_VERSION,
+            "title": app_title(), "slogan": APP_SLOGAN,
+            # 版本形态：**运行期实算**（Lite＝无 rapidocr；Pro＝有）——UI 顶栏/标题栏同源
+            "edition": app_edition(), "ocr_capable": ocr_capable(),
             "engine_python": self.jobs.engine_python(),
             "engine_mode": self.jobs.engine_mode(),
             "engine_prefix": self.jobs.engine_prefix(),
@@ -1014,6 +1062,123 @@ class FeicuiApi:
         task.cancel_event.set()
         return {"ok": True, "task_id": task.id,
                 "msg": f"已请求取消（完成 {task.pages_done}/{task.pages_total or '?'} 页，进度保留可续跑）"}
+
+    # ---------------- tab1 PDF 快速预览（低清缩略；先看清内容再定「从第几页开始高清化」）----------------
+    #: 预览 dpi：**一律低清**（96 左右）。**绝不用 1200dpi 渲整页**（≈6 s/页、吃 GB 内存）。
+    PREVIEW_DPI_DEFAULT = 96
+    PREVIEW_DPI_MIN, PREVIEW_DPI_MAX = 36, 200
+    PREVIEW_MAX_W_DEFAULT = 760
+    PREVIEW_CACHE_SIZE = 8                # 内存 LRU：最近 8 张（翻页往返不重渲）
+
+    @staticmethod
+    def _pv_fitz():
+        """PyMuPDF 延迟取（`pymupdf` 新名优先，回落老 `fitz`）；取不到 ⇒ 结构化错误，不抛。"""
+        for name in ("pymupdf", "fitz"):
+            try:
+                return importlib.import_module(name), None
+            except Exception:
+                continue
+        return None, {"ok": False, "reason": "RENDER_FAILED",
+                      "msg": "缺少 PyMuPDF（pymupdf），无法渲染预览"}
+
+    def _pv_cache_get(self, key: str) -> dict | None:
+        with self._pv_lock:
+            hit = self._pv_cache.get(key)
+            if hit is not None:
+                self._pv_cache.move_to_end(key)
+            return hit
+
+    def _pv_cache_put(self, key: str, val: dict) -> None:
+        with self._pv_lock:
+            self._pv_cache[key] = val
+            self._pv_cache.move_to_end(key)
+            while len(self._pv_cache) > self.PREVIEW_CACHE_SIZE:
+                self._pv_cache.popitem(last=False)      # 淘汰最久未用
+
+    def tab1_preview(self, req: dict | None = None) -> dict:
+        """tab1 单页低清预览：`{pdf, page=1, dpi=96, max_w=760}` ⇒ base64 PNG。
+
+        契约：`{ok, page, total, png_b64, px_w, px_h, page_mm_w, page_mm_h, dpi, dpi_used,
+        cached, elapsed_s}`；失败一律**结构化**（`PDF_NOT_FOUND` / `PAGE_OUT_OF_PDF` /
+        `RENDER_FAILED`），**绝不抛 500 / 不炸桥**。dpi 夹紧到 36–200（超范围不报错）；
+        宽度超过 `max_w` ⇒ 降低**有效 dpi** 等比缩（只渲一次，比「先渲大图再缩」省内存）。
+        """
+        t0 = time.perf_counter()
+        req = req or {}
+        raw = req.get("pdf") or req.get("filename") or req.get("name")
+        pdf = self._resolve_pdf(raw)
+        if pdf is None:
+            return {"ok": False, "reason": "PDF_NOT_FOUND", "page": req.get("page"),
+                    "msg": f"找不到 PDF：{str(raw or '')!r}"
+                           f"（可给绝对路径，或 1_Original_PDF 下的文件名）"}
+        raw_page = req.get("page")
+        if raw_page in (None, ""):
+            page = 1
+        else:
+            try:
+                page = int(raw_page)
+            except Exception:
+                page = 1
+        try:
+            dpi = int(req.get("dpi") or self.PREVIEW_DPI_DEFAULT)
+        except Exception:
+            dpi = self.PREVIEW_DPI_DEFAULT
+        dpi = max(self.PREVIEW_DPI_MIN, min(self.PREVIEW_DPI_MAX, dpi))   # 夹紧，不报错
+        try:
+            max_w = int(req.get("max_w") or self.PREVIEW_MAX_W_DEFAULT)
+        except Exception:
+            max_w = self.PREVIEW_MAX_W_DEFAULT
+        max_w = max(200, min(2400, max_w))
+
+        key = f"{pdf}|{page}|{dpi}|{max_w}"
+        hit = self._pv_cache_get(key)
+        if hit is not None:
+            return {**hit, "cached": True,
+                    "elapsed_s": round(time.perf_counter() - t0, 3)}
+
+        fitz, ferr = self._pv_fitz()
+        if fitz is None:
+            return {**(ferr or {}), "page": page}
+        try:
+            doc = fitz.open(str(pdf))
+        except Exception as exc:
+            return {"ok": False, "reason": "RENDER_FAILED", "page": page,
+                    "msg": f"打开 PDF 失败：{exc.__class__.__name__}: {exc}"}
+        try:
+            total = int(doc.page_count)
+            if page < 1 or page > total:
+                return {"ok": False, "reason": "PAGE_OUT_OF_PDF", "page": page,
+                        "total": total, "msg": f"第 {page} 页超出范围（本书共 {total} 页）"}
+            pg = doc[page - 1]
+            rect = pg.rect
+            mm_w = round(rect.width / 72.0 * 25.4, 1)
+            mm_h = round(rect.height / 72.0 * 25.4, 1)
+            dpi_used = float(dpi)
+            if rect.width > 0 and rect.width * dpi / 72.0 > max_w:
+                dpi_used = max(36.0, max_w * 72.0 / rect.width)
+            # ⚠️ 本机 PyMuPDF 的 `get_pixmap(dpi=…)` 只吃 **int**（float ⇒ fz_pixmap_xres_set
+            #    TypeError）⇒ 向下取整（保证宽度不超 max_w）。
+            dpi_used = float(max(36, int(dpi_used)))
+            pix = pg.get_pixmap(dpi=int(dpi_used), alpha=False, colorspace=fitz.csRGB)
+            png = pix.tobytes("png")
+            px_w, px_h = int(pix.width), int(pix.height)
+        except Exception as exc:
+            return {"ok": False, "reason": "RENDER_FAILED", "page": page,
+                    "msg": f"渲染第 {page} 页失败：{exc.__class__.__name__}: {exc}"}
+        finally:
+            try:
+                doc.close()
+            except Exception:
+                pass
+
+        out = {"ok": True, "page": page, "total": total,
+               "png_b64": base64.b64encode(png).decode("ascii"),
+               "px_w": px_w, "px_h": px_h,
+               "page_mm_w": mm_w, "page_mm_h": mm_h,
+               "dpi": dpi, "dpi_used": round(dpi_used, 1),
+               "pdf": str(pdf), "cached": False}
+        self._pv_cache_put(key, dict(out))
+        return {**out, "elapsed_s": round(time.perf_counter() - t0, 3)}
 
     # ---------------- tab2：2_HighRes_PDF ----------------
     def _dir_key_for(self, pdf) -> tuple[str, str]:

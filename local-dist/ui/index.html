@@ -3,8 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!-- 标题文案的**单一真源**＝`local-dist/api.py` 的 APP_TITLE / APP_SLOGAN（经 app_info 推给本页）；
-     这里留一份同值静态兜底，仅改文案时改 api.py 即可 -->
+<!-- 标题文案的**单一真源**＝`local-dist/api.py` 的 `app_title()` / `APP_TITLE_BASE`（经 app_info
+     推给本页）；此处静态文案只是**无 JS 时的兜底**＝基础串。运行时 `app.js::applyBrand` 会用
+     app_info 返回的标题覆写 `document.title` 与顶栏 brand ⇒ 页面标题/窗口标题统一带
+     `· Lite` 或 `· Pro`（按运行期 OCR 能力实算，同一份代码出两个包）。 -->
 <title>「斐萃」玺印解析任务台 · 本地封装分发版</title>
 <!-- ⚠️ 路径坑（实测）：本页由 PyWebView 内建 http server 供给，**server 根＝`ui/` 目录**
      （url 形如 http://127.0.0.1:<port>/index.html）⇒ `../assets/feicui.png` 会 404。
@@ -181,6 +183,27 @@
           </div>
           <div id="tab1-hr-err" class="msg"></div>
         </div>
+      </div>
+
+      <!-- ── tab1 · PDF 快速预览（低清 96dpi 缩略；先看清内容 ⇒ 再决定从第几页开始高清化）── -->
+      <div class="pv-card" id="tab1-pv-card">
+        <div class="pv-head">
+          <h4 class="pv-title">🔍 PDF 预览<span class="muted">（低清 96 dpi 缩略 · 用来看从哪页开始高清化）</span></h4>
+          <div class="row tight pv-nav">
+            <span class="muted">页码</span>
+            <input id="tab1-pv-page" type="number" min="1" step="1" class="w-num"
+                   placeholder="第 1 页" title="输入页码后回车即可跳到该页">
+            <button id="btn-tab1-pv-prev" class="btn" disabled>◀ 上一页</button>
+            <button id="btn-tab1-pv-next" class="btn" disabled>下一页 ▶</button>
+            <span class="muted" id="tab1-pv-info">第 — / — 页</span>
+            <button id="btn-tab1-pv-setfrom" class="btn" disabled>📌 把第 — 页设为起始页</button>
+          </div>
+        </div>
+        <div class="pv-frame">
+          <img id="tab1-pv-img" alt="PDF 预览" hidden>
+          <div class="pv-hint" id="tab1-pv-hint">未选择文件（在上方表格点一行即可预览第 1 页）</div>
+        </div>
+        <div id="tab1-pv-msg" class="msg"></div>
       </div>
     </div>
   </div>

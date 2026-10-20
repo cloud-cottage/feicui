@@ -9,7 +9,7 @@
   var ST = {                     // 页面状态（单页应用的手写小 store）
     user: null, root: '', navPath: '',
     yy: { connected: false, prefix: '', label: '' },   // yinyuan 连接态（**只有 prefix**）
-    tab1: { rows: [], items: [], selected: null, options: [] },
+    tab1: { rows: [], items: [], selected: null, options: [], pv: { pdf: '', page: 1, total: 0 } },
     tab2: {
       sources: [], job: null, lastPath: '',
       // 切图台（Phase B）：items＝2_HighRes_PDF 下的高清 PDF；boxes＝**400dpi 页坐标**的手工可编辑框
@@ -31,8 +31,14 @@
 
   // ───────────── 桥：就绪检测 + 调用 ─────────────
   var bridgeReady = false;
-  window.addEventListener('pywebviewready', function () { bridgeReady = true; setModeLabel(true); });
-  setTimeout(function () { setModeLabel(!!(window.pywebview && window.pywebview.api)); }, 400);
+  window.addEventListener('pywebviewready', function () {
+    bridgeReady = true; setModeLabel(true);
+    syncBrand();                 // 标题/窗口标题：**Lite/Pro 立刻可见**（后端 app_info 实算）
+  });
+  setTimeout(function () {
+    setModeLabel(!!(window.pywebview && window.pywebview.api));
+    if (window.pywebview && window.pywebview.api) { syncBrand(); }
+  }, 400);
 
   function hasBridge() { return !!(window.pywebview && window.pywebview.api); }
 
@@ -144,7 +150,7 @@
   // ───────────── 主界面 ─────────────
   function enterMain() {
     $('root-pill').textContent = '📁 ' + (ST.root || '—');
-    call('app_info').then(function (r) { if (r && r.ok) { applyBrand(r); } });
+    syncBrand();                      // 标题/品牌（单一真源 app_info：含 Lite|Pro 版本形态）
     // yinyuan 连接态（只显示 prefix）；未连接 ⇒ 入口按钮保持「连接 yinyuan」
     call('yinyuan_status').then(function (r) { if (r && r.ok) { renderYinyuan(r); } }).catch(function () { });
     loadTab1();
@@ -152,9 +158,15 @@
   }
 
   // 标题/副标题：**单一真源**在后端（`api.APP_TITLE` / `APP_SLOGAN`），此处只做应用
+  // 版本形态（Lite|Pro）由后端按运行期能力实算 ⇒ 前端**不硬编码**，一律用 info.title
+  function syncBrand() {
+    if (!hasBridge()) { return; }
+    call('app_info').then(function (r) { if (r && r.ok) { applyBrand(r); } }).catch(function () { });
+  }
+
   function applyBrand(info) {
     if (info.title) {
-      document.title = info.title;
+      document.title = info.title;      // 页面标题（窗口标题栏由 app.py 用同一 APP_TITLE 建窗）
       // 注意：topbar 标题在 **内层 span**（外层还有 logo <img>，不能直接覆写 textContent）
       ['brand-title', 'topbar-title-text'].forEach(function (id) {
         if ($(id)) { $(id).textContent = info.title; }
@@ -229,6 +241,7 @@
       $('tab1-true-dpi').value = (m.true_dpi === null || m.true_dpi === undefined) ? '' : m.true_dpi;
     }
     renderHrSource();                       // 高清化卡片跟随选中行
+    pvLoad(1);                              // PDF 预览：选书即自动看第 1 页（决定从哪页开始高清化）
   }
   function saveTab1() {
     if (!ST.tab1.selected) { setMsg('tab1-msg', '请先选中一行', 'err'); return; }
@@ -280,6 +293,7 @@
     if (!m) {
       el.textContent = '源 PDF：未选择文件（请先在上方表格点一行）';
       el.classList.add('warn');
+      pvClear();                          // 预览区同步清空（无选中 ⇒ 无预览）
       return;
     }
     el.classList.remove('warn');
@@ -370,6 +384,109 @@
     call('tab1_highres_status').then(function (r) {
       if (r && r.ok) { renderHrStatus(r); }
     }).catch(function () { });
+  }
+
+  // ── tab1 · PDF 快速预览（后端 `tab1_preview`：96 dpi 单页、限宽 760、LRU 8 张）──
+  //   用途：**先看清页面内容**，再决定「从第几页开始高清化」（配合 #tab1-hr-from）。
+  //   选书 ⇒ 自动预览第 1 页；翻页/输入页码跳页；「设为起始页」直接写 #tab1-hr-from。
+  var pvSeq = 0;                          // 请求序号：翻页太快时只认最后一发（防止旧图盖新图）
+
+  function pvState() {
+    if (!ST.tab1.pv) { ST.tab1.pv = { pdf: '', page: 1, total: 0 }; }
+    return ST.tab1.pv;
+  }
+
+  function pvClamp(p) {
+    var st = pvState(), n = parseInt(p, 10);
+    if (!isFinite(n) || isNaN(n) || n < 1) { n = 1; }
+    if (st.total && n > st.total) { n = st.total; }
+    return n;
+  }
+
+  function pvRenderNav() {
+    var st = pvState(), total = st.total || 0, page = st.page || 1;
+    if ($('tab1-pv-page')) {
+      $('tab1-pv-page').value = String(page);
+      if (total) { $('tab1-pv-page').max = String(total); } else { $('tab1-pv-page').removeAttribute('max'); }
+    }
+    if ($('tab1-pv-info')) {
+      $('tab1-pv-info').textContent = total ? ('第 ' + page + ' / ' + total + ' 页') : '第 — / — 页';
+    }
+    if ($('btn-tab1-pv-prev')) { $('btn-tab1-pv-prev').disabled = !total || page <= 1; }
+    if ($('btn-tab1-pv-next')) { $('btn-tab1-pv-next').disabled = !total || page >= total; }
+    if ($('btn-tab1-pv-setfrom')) {
+      $('btn-tab1-pv-setfrom').disabled = !total;
+      $('btn-tab1-pv-setfrom').textContent = '📌 把第 ' + (total ? page : '—') + ' 页设为起始页';
+    }
+  }
+
+  function pvHint(text) {
+    var h = $('tab1-pv-hint');
+    if (h) { h.hidden = false; h.textContent = text; }
+    if ($('tab1-pv-img')) { $('tab1-pv-img').hidden = true; }
+  }
+
+  function pvClear(text) {
+    var st = pvState();
+    st.pdf = ''; st.page = 1; st.total = 0;
+    pvSeq++;
+    var img = $('tab1-pv-img');
+    if (img) { img.removeAttribute('src'); img.hidden = true; }
+    pvHint(text || '未选择文件（在上方表格点一行即可预览第 1 页）');
+    pvRenderNav();
+    setMsg('tab1-pv-msg', '');
+  }
+
+  function pvLoad(page) {
+    var m = ST.tab1.selected;
+    if (!m) { pvClear(); return; }
+    var st = pvState();
+    if (st.pdf !== m.filename) { st.pdf = m.filename; st.page = 1; st.total = m.page_count || 0; }
+    st.page = pvClamp(page === undefined || page === null ? st.page : page);
+    var want = st.page;
+    pvRenderNav();
+    var seq = ++pvSeq;
+    pvHint('第 ' + want + ' 页 · 渲染中…');
+    setMsg('tab1-pv-msg', '第 ' + want + ' 页 渲染中…');
+    call('tab1_preview', { pdf: m.filename, page: want, dpi: 96, max_w: 760 }).then(function (r) {
+      if (seq !== pvSeq) { return; }                    // 已有更新的一发 ⇒ 丢弃本次结果
+      if (!r || !r.ok) {                                 // 结构化失败（不 alert、不炸桥）
+        var why = (r && r.reason) || 'RENDER_FAILED';
+        var msg = (r && r.msg) || '预览失败';
+        pvHint('第 ' + want + ' 页 无法预览：' + why);
+        setMsg('tab1-pv-msg', '❌ ' + why + ' · ' + msg, 'err');
+        return;
+      }
+      st.total = r.total || st.total;
+      st.page = r.page || want;
+      if ($('tab1-pv-img')) {
+        $('tab1-pv-img').src = 'data:image/png;base64,' + r.png_b64;
+        $('tab1-pv-img').hidden = false;
+      }
+      if ($('tab1-pv-hint')) { $('tab1-pv-hint').hidden = true; }
+      pvRenderNav();
+      setMsg('tab1-pv-msg', '第 ' + st.page + ' / ' + st.total + ' 页 · ' +
+        r.px_w + '×' + r.px_h + ' px · ' + r.page_mm_w + '×' + r.page_mm_h + ' mm · ' +
+        (r.cached ? '缓存命中' : r.elapsed_s + ' s'), 'ok');
+    }).catch(function (e) {
+      if (seq !== pvSeq) { return; }
+      pvHint('第 ' + want + ' 页 无法预览');
+      setMsg('tab1-pv-msg', '❌ 预览请求失败：' + ((e && e.message) || e), 'err');
+    });
+  }
+
+  function pvStep(delta) {
+    var st = pvState();
+    if (!st.total) { return; }
+    pvLoad(pvClamp((st.page || 1) + delta));
+  }
+
+  function pvSetFrom() {
+    var st = pvState();
+    if (!st.total) { setMsg('tab1-pv-msg', '请先在上方表格选一行并翻到要用的页', 'err'); return; }
+    var page = pvClamp(st.page);
+    if ($('tab1-hr-from')) { $('tab1-hr-from').value = String(page); }
+    setMsg('tab1-pv-msg', '✅ 已把第 ' + page + ' 页设为起始页（高清化从第 ' + page + ' 页开始）', 'ok');
   }
 
   // ── tab2 ──
@@ -1808,6 +1925,14 @@
     $('btn-tab1-hr-start').addEventListener('click', hrStart);
     $('btn-tab1-hr-cancel').addEventListener('click', hrCancel);
     $('btn-tab1-hr-goto2').addEventListener('click', function () { activateTab('2_HighRes_PDF'); });
+    // tab1 · PDF 快速预览（页码输入 / 上下页 / 设为起始页）
+    $('btn-tab1-pv-prev').addEventListener('click', function () { pvStep(-1); });
+    $('btn-tab1-pv-next').addEventListener('click', function () { pvStep(1); });
+    $('btn-tab1-pv-setfrom').addEventListener('click', pvSetFrom);
+    $('tab1-pv-page').addEventListener('change', function () { pvLoad(this.value); });
+    $('tab1-pv-page').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') { e.preventDefault(); pvLoad(this.value); }
+    });
     ctBind();                               // tab2 切图台（画布 / 检测 / 裁切 / 选页）
     $('btn-tab2-refresh').addEventListener('click', loadTab2);
     $('btn-tab2-generate').addEventListener('click', generateTab2);

@@ -250,6 +250,42 @@ JS_TAB2 = """
   }); })()
 """
 
+JS_TAB2_AC = """
+(() => { const g=id=>document.getElementById(id);
+  const card=g('tab2-ac-card'), dpi=g('tab2-ac-dpi'), res=g('tab2-ac-resume');
+  const lite=g('tab2-ac-lite'), btn=g('btn-tab2-ac-start'), bar=g('tab2-ac-bar');
+  return JSON.stringify({
+    card: !!card, in_panel: !!(card && document.querySelector('.panel[data-panel="2_HighRes_PDF"]') &&
+                             document.querySelector('.panel[data-panel="2_HighRes_PDF"]').contains(card)),
+    nodes: { start: !!btn, cancel: !!g('btn-tab2-ac-cancel'), bar: !!bar,
+             progress: !!g('tab2-ac-progress'), seals: !!g('tab2-ac-seals'),
+             eta: !!g('tab2-ac-eta'), page_s: !!g('tab2-ac-page-s'),
+             from: !!g('tab2-ac-from'), to: !!g('tab2-ac-to'), resume: !!res,
+             done: !!g('tab2-ac-done'), fails: !!g('tab2-ac-fails'),
+             goto3: !!g('btn-tab2-ac-goto3'), msg: !!g('tab2-ac-msg') },
+    dpi_options: dpi?[...dpi.options].map(o=>o.value):[],
+    dpi_value: dpi?dpi.value:null,
+    resume_checked: res?res.checked:null,
+    btn_text: btn?btn.textContent.trim():'',
+    start_disabled: btn?btn.disabled:null,
+    cancel_disabled: g('btn-tab2-ac-cancel')?g('btn-tab2-ac-cancel').disabled:null,
+    lite_hidden: lite?lite.hidden:null,
+    lite_text: lite?lite.textContent.trim():'',
+    bar_width: bar?(bar.style.width||''):'',
+    progress_text: g('tab2-ac-progress')?g('tab2-ac-progress').textContent:'',
+    seals_text: g('tab2-ac-seals')?g('tab2-ac-seals').textContent:'',
+    eta_text: g('tab2-ac-eta')?g('tab2-ac-eta').textContent:'',
+    page_s_text: g('tab2-ac-page-s')?g('tab2-ac-page-s').textContent:'',
+    done_hidden: g('tab2-ac-done')?g('tab2-ac-done').hidden:null,
+    summary: g('tab2-ac-summary')?g('tab2-ac-summary').textContent:'',
+    fail_rows: (() => { const b=g('tab2-ac-fails'); return b?b.querySelectorAll('.file').length:null; })(),
+    fails_text: g('tab2-ac-fails')?g('tab2-ac-fails').textContent:'',
+    msg_text: g('tab2-ac-msg')?g('tab2-ac-msg').textContent:'',
+    msg_class: g('tab2-ac-msg')?g('tab2-ac-msg').className:'',
+    payload: window.__acPayload || null
+  }); })()
+"""
+
 JS_TAB3 = """
 (() => { const g=id=>document.getElementById(id);
   const p=document.querySelector('[data-panel="3_Cropped_Tiff"]');
@@ -748,6 +784,80 @@ def _probe_body() -> None:
            and "code-sequence" not in (t2l.get("order_src") or ""),
            f"顺序来源={t2l.get('order_src')!r}")
     _ev("window.pywebview.api.tab2_extract = window.__realExtract; 1")   # 还原真桥
+
+    # ── ③-7 tab2 一键全自动卡片（范围 / dpi / 断点续跑 / 进度+ETA / 汇总 / lite 文案）──
+    #    能力分支**按运行期实算**（源码态有 rapidocr ⇒ Pro；lite 包 ⇒ Lite），断言不写死。
+    ac0 = _read("08d_tab2_autocrop_card", JS_TAB2_AC)
+    nodes = ac0.get("nodes") or {}
+    record("tabs/tab2_autocrop_card_nodes",
+           bool(ac0.get("card")) and bool(ac0.get("in_panel")) and all(nodes.values())
+           and ac0.get("dpi_options") == ["300", "600", "1200", "2400"]
+           and ac0.get("dpi_value") == "1200"
+           and ac0.get("resume_checked") is True
+           and ac0.get("cancel_disabled") is True,
+           f"card={ac0.get('card')} in_panel={ac0.get('in_panel')} nodes={nodes} "
+           f"dpi={ac0.get('dpi_options')} value={ac0.get('dpi_value')!r} "
+           f"resume={ac0.get('resume_checked')} cancel_disabled={ac0.get('cancel_disabled')}")
+    ocr_ok = bool(FeicuiApi().app_info().get("ocr_capable"))
+    if ocr_ok:
+        # Pro：lite 提示条应**隐藏**；隐藏元素里的静态文案仍留在 DOM 中，故不检查其文本。
+        ok_wording = (ac0.get("btn_text") or "") == "🚀 开始全自动" \
+            and ac0.get("lite_hidden") is True
+        want_desc = "按钮='🚀 开始全自动' 且 lite 提示条 hidden"
+    else:
+        # Lite：提示条可见，且按钮降级为「仅检测切图」，提示文案点名 lite 版。
+        ok_wording = (ac0.get("lite_hidden") is False
+                      and "斐萃_lite" in (ac0.get("lite_text") or "")
+                      and "仅检测切图" in (ac0.get("btn_text") or ""))
+        want_desc = "lite 提示条可见（含 斐萃_lite）且按钮含「仅检测切图」"
+    record("tabs/tab2_autocrop_lite_wording_matches_capability", ok_wording,
+           f"ocr_capable={ocr_ok} 按钮={ac0.get('btn_text')!r}"
+           f" lite_hidden={ac0.get('lite_hidden')} 提示={ac0.get('lite_text')!r}"
+           f"（应：{want_desc}）")
+
+    # 假桥：先是 running，第二次轮询变 done（带 1 条失败页）⇒ 验进度/ETA/汇总/失败清单渲染
+    _ev("(() => { window.__realAcStart = window.pywebview.api.tab2_autocrop_start;"
+        " window.__realAcStatus = window.pywebview.api.tab2_autocrop_status; window.__acN = 0;"
+        " window.__acPayload = null;"
+        " window.pywebview.api.tab2_autocrop_start = function(p){ window.__acPayload = p;"
+        " return Promise.resolve({ok:true, job:{state:'queued', running:true, progress:{pages_total:3}}}); };"
+        " window.pywebview.api.tab2_autocrop_status = function(){ window.__acN += 1;"
+        " var run = window.__acN < 2;"
+        " return Promise.resolve({ok:true, state: run?'running':'done', running: run, cancelled:false,"
+        " cancelled_:false, dir_key:'合成目录键', msg: run?'第 2/3 页 · 已裁 2 枚':'完成：裁 2 页 / 跳过 1 页 / 失败 1 页',"
+        " elapsed_s: 9.5, progress:{page: run?2:3, pages_total:3, pages_done: run?1:2, pages_skipped:1,"
+        " pages_failed: run?0:1, seals_total: run?2:5, current_page_elapsed_s:4.5, eta_s: run?30:0},"
+        " result:{failed_pages:[{page:2, reason:'IndexError: 合成故障'}]}}); }; return 1; })()")
+    _ev("document.getElementById('btn-tab2-ac-start').click()")
+    ac_wait = _wait_js("(document.getElementById('tab2-ac-summary')||{}).textContent"
+                       ".indexOf('失败 1 页')>=0", 12)
+    time.sleep(0.4)
+    ac1 = _read("08e_tab2_autocrop_poll", JS_TAB2_AC)
+    pl = ac1.get("payload") or {}
+    record("tabs/tab2_autocrop_poll_progress_eta_and_summary",
+           bool(ac_wait)
+           and "第 3 / 3 页" in (ac1.get("progress_text") or "")
+           and "已裁 5 枚" in (ac1.get("seals_text") or "")
+           and "ETA" in (ac1.get("eta_text") or "")
+           and ac1.get("done_hidden") is False
+           and "成功 2 页" in (ac1.get("summary") or "")
+           and "跳过 1 页" in (ac1.get("summary") or "")
+           and ac1.get("fail_rows") == 1
+           and "第 2 页" in (ac1.get("fails_text") or "")
+           and ac1.get("start_disabled") is False and ac1.get("cancel_disabled") is True
+           and pl.get("dpi") == 1200 and pl.get("resume") is True,
+           f"等待={ac_wait} 页={ac1.get('progress_text')!r} 枚={ac1.get('seals_text')!r} "
+           f"ETA={ac1.get('eta_text')!r} 当前页={ac1.get('page_s_text')!r} "
+           f"汇总={ac1.get('summary')!r} 失败行={ac1.get('fail_rows')} "
+           f"失败文本={ac1.get('fails_text')!r} 进度条={ac1.get('bar_width')!r} "
+           f"start_disabled={ac1.get('start_disabled')} cancel_disabled={ac1.get('cancel_disabled')} "
+           f"payload={pl}")
+    record("tabs/tab2_autocrop_poll_no_js_errors",
+           not RESULT.get("js_errors"),
+           f"js_errors={RESULT.get('js_errors')}")
+    _ev("window.pywebview.api.tab2_autocrop_start = window.__realAcStart;"
+        " window.pywebview.api.tab2_autocrop_status = window.__realAcStatus;"
+        " window.__acPayload = null; 1")
 
     # ── ④ 切到 tab3：原节点一字未变（渲染后）──
     _ev("document.querySelector('#tabs .tab[data-tab=\"3_Cropped_Tiff\"]').click()")

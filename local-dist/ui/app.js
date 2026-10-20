@@ -174,6 +174,8 @@
     }
     if (info.slogan && $('brand-slogan')) { $('brand-slogan').textContent = info.slogan; }
     if (info.version) { $('app-version').textContent = 'v' + info.version; }
+    // lite（无 OCR）⇒ 全自动按钮改文案 + 亮小字提示（能力由后端按运行期实算，前端不硬编码）
+    acApplyCapability(!!info.ocr_capable);
   }
   function bindTabs() {
     Array.prototype.forEach.call(document.querySelectorAll('#tabs .tab'), function (btn) {
@@ -188,7 +190,7 @@
       p.classList.toggle('active', p.dataset.panel === name);
     });
     if (name === '1_Original_PDF') hrPollOnce();          // 回到 tab1 时对齐高清化进度
-    if (name === '2_HighRes_PDF') loadTab2();
+    if (name === '2_HighRes_PDF') { loadTab2(); acPollOnce(); }   // 回到 tab2 ⇒ 全自动进度补一次
     if (name === '3_Cropped_Tiff') loadTab3();
   }
 
@@ -982,6 +984,7 @@
         if (hit) { sel.value = keep; }
       }
       ctOnSourceChange(!!keep);
+      acRenderSource();                   // 全自动卡片：源行跟随「① 源」选中项
       return r;
     }).catch(function () { return null; });
   }
@@ -1229,16 +1232,172 @@
     toast('已裁切 ' + outs.length + ' 件');
   }
 
+  // ── tab2 · 🚀 一键全自动（后端 tab2_autocrop_start / status / cancel）──
+  //   源＝「① 源」选中的高清 PDF；后端逐页 检测→OCR→裁切，**每页落盘**进度
+  //   ⇒ 可取消、可断点续跑、单页失败不中断。本页 1 s 轮询（页面隐藏时暂停）。
+  var acTimer = null;
+
+  function acSource() {
+    var it = ctItem();
+    return (it && (it.path || it.name)) || ctState().pdf || '';
+  }
+
+  function acRenderSource() {
+    var el = $('tab2-ac-source');
+    if (!el) { return; }
+    var it = ctItem();
+    if (!it) {
+      el.textContent = '源 PDF：未选择（在上方「① 源」里选一份高清 PDF）';
+      el.classList.add('warn');
+      return;
+    }
+    el.classList.remove('warn');
+    el.textContent = '源 PDF：' + it.name + '（' + (it.pages || '?') + ' 页 · 目录键 ' + it.dir_key + '）';
+  }
+
+  // lite（`app_info.ocr_capable === false`）⇒ 文案如实说「只检测切图」，并亮小字提示
+  function acApplyCapability(ocrOk) {
+    var btn = $('btn-tab2-ac-start'), hint = $('tab2-ac-lite');
+    if (btn) { btn.textContent = ocrOk ? '🚀 开始全自动' : '一键全自动（仅检测切图）'; }
+    if (hint) { hint.hidden = !!ocrOk; }
+  }
+
+  function acSetBusy(running) {
+    if ($('btn-tab2-ac-start')) { $('btn-tab2-ac-start').disabled = !!running; }
+    if ($('btn-tab2-ac-cancel')) { $('btn-tab2-ac-cancel').disabled = !running; }
+  }
+
+  function acStopPoll() { if (acTimer) { clearInterval(acTimer); acTimer = null; } }
+
+  function acStartPoll() {
+    if (acTimer) { return; }
+    acTimer = setInterval(function () {
+      if (document.hidden) { return; }          // 页面隐藏 ⇒ 不轮询（切回来 acPollOnce 补一次）
+      call('tab2_autocrop_status').then(function (r) {
+        if (r && r.ok) { acRender(r); }
+      }).catch(acStopPoll);
+    }, 1000);
+  }
+
+  function acFmtEta(s) {
+    if (s === null || s === undefined || !isFinite(s) || s < 0) { return 'ETA —'; }
+    if (s < 1) { return 'ETA ≈ 0 秒'; }
+    if (s < 90) { return 'ETA 约 ' + Math.ceil(s) + ' 秒'; }
+    return 'ETA 约 ' + (s / 60).toFixed(1) + ' 分';
+  }
+
+  function acShowResult(st) {
+    var p = st.progress || st, r = st.result || {};
+    if (!$('tab2-ac-done')) { return; }
+    $('tab2-ac-done').hidden = false;
+    $('tab2-ac-summary').textContent = (st.state === 'cancelled' ? '⏸ 已取消：' : '✅ 完成：') +
+      '成功 ' + (p.pages_done || 0) + ' 页 / 跳过 ' + (p.pages_skipped || 0) + ' 页 / 失败 ' +
+      (p.pages_failed || 0) + ' 页 · 共 ' + (p.seals_total || 0) + ' 枚 · ' +
+      (st.elapsed_s || 0) + ' s · ' + (st.dir_key || '');
+    var box = $('tab2-ac-fails');
+    box.innerHTML = '';
+    var fails = (r && r.failed_pages) || [];
+    if (!fails.length) {
+      box.innerHTML = '<div class="muted">（无失败页）</div>';
+      return;
+    }
+    fails.slice(0, 10).forEach(function (f) {
+      var row = document.createElement('div');
+      row.className = 'file';
+      row.innerHTML = '<span>第 ' + esc(f.page) + ' 页</span><span class="muted">' +
+        esc(f.reason || '') + '</span>';
+      box.appendChild(row);
+    });
+    if (fails.length > 10) {
+      var more = document.createElement('div');
+      more.className = 'muted';
+      more.textContent = '…另有 ' + (fails.length - 10) + ' 条（见进度文件 failed）';
+      box.appendChild(more);
+    }
+  }
+
+  function acRender(st) {
+    if (!st) { return; }
+    var p = st.progress || st;
+    var total = p.pages_total || 0, done = p.pages_done || 0;
+    var skipped = p.pages_skipped || 0, failed = p.pages_failed || 0;
+    var handled = done + skipped + failed;
+    var pct = total ? Math.min(100, Math.round(handled * 100 / total)) : 0;
+    $('tab2-ac-bar').style.width = pct + '%';
+    $('tab2-ac-progress').textContent = '第 ' + (p.page || 0) + ' / ' + (total || '?') + ' 页';
+    $('tab2-ac-seals').textContent = '已裁 ' + (p.seals_total || 0) + ' 枚';
+    $('tab2-ac-eta').textContent = acFmtEta(p.eta_s);
+    $('tab2-ac-page-s').textContent = '当前页 ' +
+      (Number(p.current_page_elapsed_s || 0)).toFixed(1) + ' s';
+    var running = !!st.running || st.state === 'queued';
+    acSetBusy(running);
+    if (running) { acStartPoll(); } else { acStopPoll(); }
+    if (st.state === 'done' || st.state === 'cancelled') {
+      acShowResult(st);
+      setMsg('tab2-ac-msg', st.msg || '', st.state === 'cancelled' ? 'err' : 'ok');
+    } else if (st.state === 'failed') {
+      $('tab2-ac-done').hidden = true;
+      setMsg('tab2-ac-msg', '❌ ' + (st.error || st.msg || '失败'), 'err');
+    } else if (st.msg) {
+      setMsg('tab2-ac-msg', st.msg);
+    }
+  }
+
+  function acStart() {
+    var pdf = acSource();
+    if (!pdf) { setMsg('tab2-ac-msg', '请先在上方「① 源」选一份高清 PDF', 'err'); return; }
+    var payload = { pdf: pdf, dpi: parseInt($('tab2-ac-dpi').value || '1200', 10),
+                    resume: !!$('tab2-ac-resume').checked };
+    var from = ($('tab2-ac-from').value || '').trim();
+    var to = ($('tab2-ac-to').value || '').trim();
+    if (from) { payload.page_from = parseInt(from, 10); }
+    if (to) { payload.page_to = parseInt(to, 10); }
+    acSetBusy(true);
+    $('tab2-ac-done').hidden = true;
+    $('tab2-ac-fails').innerHTML = '';
+    setMsg('tab2-ac-msg', '已提交（后台逐页跑，每页裁完即写进度）…');
+    call('tab2_autocrop_start', payload).then(function (r) {
+      if (!r || !r.ok) {
+        acSetBusy(false);
+        var why = (r && r.reason) || '';
+        var m = (r && r.msg) || '启动失败';
+        if (why === 'BAD_DPI' && r.allowed) { m += '（允许：' + r.allowed.join(' / ') + '）'; }
+        if (why === 'BUSY' && r.job) { acRender(r.job); }
+        setMsg('tab2-ac-msg', '❌ ' + why + ' ' + m, 'err');
+        return;
+      }
+      acStartPoll();
+      call('tab2_autocrop_status').then(function (s) { if (s && s.ok) { acRender(s); } });
+    });
+  }
+
+  function acCancel() {
+    call('tab2_autocrop_cancel').then(function (r) {
+      setMsg('tab2-ac-msg', (r && r.msg) || (r && r.ok ? '已请求取消' : '没有在跑的全自动任务'),
+        r && r.ok ? 'ok' : 'err');
+    });
+  }
+
+  function acPollOnce() {
+    call('tab2_autocrop_status').then(function (r) {
+      if (r && r.ok && (r.state !== 'idle' || r.result)) { acRender(r); }
+    }).catch(function () { });
+  }
+
   function ctBind() {
     ctBindCanvas();
     $('btn-tab2-detect').addEventListener('click', ctDetect);
     $('btn-tab2-redetect').addEventListener('click', ctDetect);
     $('btn-tab2-clear').addEventListener('click', ctClear);
     $('btn-tab2-crop').addEventListener('click', ctCrop);
+    // tab2 · 🚀 一键全自动（检测+字段+切图 一条龙；进度轮询 / 取消 / 去 tab3）
+    $('btn-tab2-ac-start').addEventListener('click', acStart);
+    $('btn-tab2-ac-cancel').addEventListener('click', acCancel);
+    $('btn-tab2-ac-goto3').addEventListener('click', function () { activateTab('3_Cropped_Tiff'); });
     $('btn-tab2-ct-reload').addEventListener('click', loadTab2Sources);
     $('btn-tab2-ct-prev').addEventListener('click', function () { ctGoPage(-1); });
     $('btn-tab2-ct-next').addEventListener('click', function () { ctGoPage(1); });
-    $('tab2-ct-source').addEventListener('change', function () { ctOnSourceChange(false); });
+    $('tab2-ct-source').addEventListener('change', function () { ctOnSourceChange(false); acRenderSource(); });
     // 阅读顺序：改了就重算 C/R ⇒ 读数列 + 文件名预演全刷（框不动、不重检）
     var ro = $('tab2-read-order');
     if (ro) {

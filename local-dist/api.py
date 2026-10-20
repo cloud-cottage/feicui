@@ -547,6 +547,135 @@ class HighResTask:
 
 
 # ============================================================
+# tab2 一键全自动：逐页「检测 → 字段(OCR) → 裁切」批处理
+# ============================================================
+class AutoCropTask:
+    """一次「tab2 一键全自动」任务（**单例**：同一时刻只允许一个，见 `FeicuiApi.tab2_autocrop_start`）。
+
+    实跑逻辑在 `src/autocrop.py`（纯逻辑层，每页落盘进度 / 断点续跑 / 单页失败不中断）；
+    本类只做**状态容器 + 进度推送 + 取消开关**，供 `tab2_autocrop_status` 轮询。
+    `state ∈ {queued, running, done, failed, cancelled}`。
+    """
+
+    def __init__(self, pdf: Path, dpi: int, page_from: int, page_to: int | None,
+                 resume: bool, push=None):
+        self.id = uuid.uuid4().hex[:12]
+        self.pdf = pdf
+        self.dpi = dpi
+        self.page_from = page_from
+        self.page_to = page_to
+        self.resume = resume
+        self.cancel_event = threading.Event()
+        self.state = "queued"
+        self.page = page_from
+        self.pages_total = 0
+        self.pages_done = 0
+        self.pages_skipped = 0
+        self.pages_failed = 0
+        self.seals_total = 0
+        self.current_page_elapsed_s = 0.0
+        self.eta_s: float | None = None
+        self.dir_key = ""
+        self.reading_order = ""
+        self.order_source = ""
+        self.ocr_available: bool | None = None
+        self.msg = "排队中"
+        self.result: dict | None = None
+        self.error = ""
+        self.started_at = datetime.now().isoformat(timespec="seconds")
+        self.finished_at = ""
+        self._t0 = time.time()
+        self._push = push
+        self._lock = threading.Lock()
+
+    def snapshot(self) -> dict:
+        with self._lock:
+            running = self.state in ("queued", "running")
+            return {
+                "task_id": self.id, "state": self.state, "running": running,
+                "cancelled": bool(self.state == "cancelled"
+                                  or (running and self.cancel_event.is_set())),
+                "progress": {
+                    "page": self.page, "pages_total": self.pages_total,
+                    "pages_done": self.pages_done, "pages_skipped": self.pages_skipped,
+                    "pages_failed": self.pages_failed, "seals_total": self.seals_total,
+                    "current_page_elapsed_s": round(self.current_page_elapsed_s, 2),
+                    "eta_s": self.eta_s},
+                # 兼容直读（UI 两种取法都行：`st.pages_done` 或 `st.progress.pages_done`）
+                "page": self.page, "pages_total": self.pages_total,
+                "pages_done": self.pages_done, "pages_skipped": self.pages_skipped,
+                "pages_failed": self.pages_failed, "seals_total": self.seals_total,
+                "current_page_elapsed_s": round(self.current_page_elapsed_s, 2),
+                "eta_s": self.eta_s,
+                "dir_key": self.dir_key, "reading_order": self.reading_order,
+                "order_source": self.order_source, "ocr_available": self.ocr_available,
+                "pdf": self.pdf.name, "dpi": self.dpi,
+                "page_from": self.page_from, "page_to": self.page_to, "resume": self.resume,
+                "msg": self.msg, "result": self.result, "error": self.error,
+                "started_at": self.started_at, "finished_at": self.finished_at,
+                "elapsed_s": round(time.time() - self._t0, 1),
+            }
+
+    def _emit(self) -> None:
+        if self._push is None:
+            return
+        try:
+            self._push({"kind": "tab2_autocrop", **self.snapshot()})
+        except Exception:
+            pass
+
+    def on_progress(self, rec: dict) -> None:
+        """`src.autocrop.run_autocrop(progress_cb=…)` 的回调（**不许抛**）。"""
+        try:
+            with self._lock:
+                self.state = "running"
+                self.page = int(rec.get("page") or self.page)
+                self.pages_total = int(rec.get("pages_total") or self.pages_total)
+                self.pages_done = int(rec.get("pages_done") or 0)
+                self.pages_skipped = int(rec.get("pages_skipped") or 0)
+                self.pages_failed = int(rec.get("pages_failed") or 0)
+                self.seals_total = int(rec.get("seals_total") or 0)
+                self.current_page_elapsed_s = float(rec.get("current_page_elapsed_s") or 0.0)
+                eta = rec.get("eta_s")
+                self.eta_s = None if eta is None else float(eta)
+                self.dir_key = str(rec.get("dir_key") or self.dir_key)
+                self.msg = f"第 {self.page}/{self.pages_total or '?'} 页 · 已裁 {self.seals_total} 枚"
+            self._emit()
+        except Exception:
+            pass
+
+    def finish(self, result: dict) -> None:
+        with self._lock:
+            self.result = result
+            ok = bool(result.get("ok"))
+            cancelled = bool(result.get("cancelled"))
+            self.pages_total = int(result.get("pages_total") or self.pages_total)
+            self.pages_done = int(result.get("pages_done") or self.pages_done)
+            self.pages_skipped = int(result.get("pages_skipped") or self.pages_skipped)
+            self.pages_failed = int(result.get("pages_failed") or self.pages_failed)
+            self.seals_total = int(result.get("seals_total") or self.seals_total)
+            self.dir_key = str(result.get("dir_key") or self.dir_key)
+            self.reading_order = str(result.get("reading_order") or self.reading_order)
+            self.order_source = str(result.get("order_source") or self.order_source)
+            self.ocr_available = result.get("ocr_available", self.ocr_available)
+            self.current_page_elapsed_s = 0.0
+            self.eta_s = 0.0
+            if ok and cancelled:
+                self.state = "cancelled"
+                self.msg = f"已取消（完成 {self.pages_done} 页 · 跳过 {self.pages_skipped} 页，进度已保存可续跑）"
+            elif ok:
+                self.state = "done"
+                self.msg = (f"完成：裁 {self.pages_done} 页 / 跳过 {self.pages_skipped} 页 / "
+                            f"失败 {self.pages_failed} 页 · 共 {self.seals_total} 枚")
+            else:
+                self.state = "failed"
+                self.error = f"{result.get('reason') or 'ERROR'}: {result.get('msg') or ''}".strip(": ")
+                self.msg = self.error or "失败"
+            self.finished_at = datetime.now().isoformat(timespec="seconds")
+        self._emit()
+
+
+# ============================================================
 # js_api（暴露给 JS；也由 `serve.py` 逐方法转发）
 # ============================================================
 class FeicuiApi:
@@ -566,6 +695,9 @@ class FeicuiApi:
         self._hr_task: HighResTask | None = None
         # tab2 切图台：1200dpi 渲页很重 ⇒ 裁切串行（并发第二个请求直接拒，不排队堆内存）
         self._crop_lock = threading.Lock()
+        # tab2 一键全自动（单例任务；见 `AutoCropTask` / `tab2_autocrop_start`）
+        self._ac_lock = threading.Lock()
+        self._ac_task: AutoCropTask | None = None
         # tab1 PDF 快速预览：**内存 LRU（最近 8 张）**，key=pdf 路径+page+dpi+max_w
         # ⇒ 来回翻页不重渲（96dpi 单页 ≈0.1 s 级，但 4.5 GB 的高清 PDF 打开/解码并不免费）
         self._pv_lock = threading.Lock()
@@ -1672,6 +1804,120 @@ class FeicuiApi:
         if meta_ord:
             return meta_ord, "book-meta"
         return "ltr-ttb", "fallback"
+
+    # ---------------- tab2 一键全自动（检测 → OCR → 裁切，逐页落盘 / 断点续跑 / 可取消）----------------
+    #: 全自动的切图 dpi（默认 1200，与人工裁切同档；600 只是省时试跑用）
+    AUTOCROP_DPI_DEFAULT = 1200
+    AUTOCROP_DPI_ALLOWED = (300, 600, 1200, 2400)
+
+    def tab2_autocrop_start(self, req: dict | None = None) -> dict:
+        """一键全自动：`{pdf, page_from?, page_to?, dpi?, resume?}` ⇒ `{ok, job:{…}}`。
+
+        * 后台线程跑 `src.autocrop.run_autocrop`（**UI 不阻塞**），进度见 `tab2_autocrop_status`；
+        * **单例**：已在跑 ⇒ `{ok:false, reason:'BUSY', job:…}`（不排队：1200dpi 页图很吃内存）；
+        * `resume=True`（默认）⇒ 进度文件里已裁完的页直接跳过（断点续跑）；`resume=False` ⇒ 全重跑；
+        * 全程**不向 UI 抛栈**：异常一律折成 `{ok:false, reason, msg}`。
+        """
+        try:
+            miss = self._need_root()
+            if miss:
+                return miss
+            req = req or {}
+            pdf = self._resolve_pdf(req.get("pdf") or req.get("filename") or req.get("name"))
+            if pdf is None:
+                return {"ok": False, "reason": "PDF_NOT_FOUND",
+                        "msg": f"找不到 PDF：{req.get('pdf') or req.get('filename') or ''!r}"
+                               f"（可给绝对路径，或 2_HighRes_PDF 下的文件名）"}
+            try:
+                dpi = int(req.get("dpi") or self.AUTOCROP_DPI_DEFAULT)
+            except Exception:
+                return {"ok": False, "reason": "BAD_DPI", "dpi": req.get("dpi"),
+                        "allowed": list(self.AUTOCROP_DPI_ALLOWED), "msg": "dpi 必须是整数"}
+            if dpi not in self.AUTOCROP_DPI_ALLOWED:
+                return {"ok": False, "reason": "BAD_DPI", "dpi": dpi,
+                        "allowed": list(self.AUTOCROP_DPI_ALLOWED),
+                        "msg": f"dpi 只支持 {list(self.AUTOCROP_DPI_ALLOWED)}"
+                               f"（默认 {self.AUTOCROP_DPI_DEFAULT}）"}
+            try:
+                page_from = int(req.get("page_from") or 1)
+                raw_to = req.get("page_to")
+                page_to = None if raw_to in (None, "") else int(raw_to)
+            except Exception:
+                return {"ok": False, "reason": "BAD_RANGE", "msg": "page_from / page_to 必须是整数"}
+            if page_from < 1 or (page_to is not None and page_to < page_from):
+                return {"ok": False, "reason": "BAD_RANGE",
+                        "msg": f"页区间不合法：{page_from}–{page_to}"}
+            resume = bool(req.get("resume", True))
+            ac, err = self._src_module("autocrop")
+            if err:
+                return err
+            dir_key, dir_key_source = self._dir_key_for(pdf)
+            with self._ac_lock:                      # 单例：查-建 在同一把锁里，避免双起
+                cur = self._ac_task
+                if cur is not None and cur.state in ("queued", "running"):
+                    return {"ok": False, "reason": "BUSY", "job": cur.snapshot(),
+                            "msg": f"已有全自动任务在跑（第 {cur.page}/{cur.pages_total or '?'} 页）"}
+                task = AutoCropTask(pdf, dpi, page_from, page_to, resume, push=self.jobs._push)
+                task.dir_key = dir_key
+                self._ac_task = task
+                threading.Thread(target=self._autocrop_run,
+                                 args=(task, ac, dir_key, dir_key_source),
+                                 daemon=True, name=f"autocrop-{task.id}").start()
+            return {"ok": True, "job": task.snapshot(),
+                    "dir_key": dir_key, "dir_key_source": dir_key_source,
+                    "page_from": page_from, "page_to": page_to, "dpi": dpi, "resume": resume,
+                    "msg": "已开始全自动（后台线程；每页裁完即落盘，可随时取消/续跑）",
+                    "note": "进度见 tab2_autocrop_status / onProgress(kind=tab2_autocrop)"}
+        except Exception as exc:                     # noqa: BLE001 —— 端点兜底：永不向 UI 抛栈
+            return {"ok": False, "reason": "ERROR",
+                    "msg": f"启动失败：{exc.__class__.__name__}: {exc}"}
+
+    def _autocrop_run(self, task: AutoCropTask, ac, dir_key: str, dir_key_source: str) -> None:
+        """后台线程体：跑逻辑层 ⇒ 把结果交回 `task.finish`（**不许抛出去**）。"""
+        try:
+            res = ac.run_autocrop(task.pdf, self._root_path(),
+                                  dpi=task.dpi, detect_dpi=ac.DETECT_DPI,
+                                  page_from=task.page_from, page_to=task.page_to,
+                                  resume=task.resume,
+                                  progress_cb=task.on_progress,
+                                  cancel_flag=task.cancel_event.is_set,
+                                  dir_key=dir_key, dir_key_source=dir_key_source)
+        except Exception as exc:
+            res = {"ok": False, "reason": "ERROR", "msg": f"{exc.__class__.__name__}: {exc}",
+                   "pages_done": task.pages_done}
+        try:
+            task.finish(res)
+        except Exception:
+            pass
+
+    def tab2_autocrop_status(self, _req: dict | None = None) -> dict:
+        """轮询：`{ok, running, cancelled, state, progress:{page, pages_total, pages_done,
+        seals_total, current_page_elapsed_s, eta_s}, dir_key, msg, result}`。"""
+        try:
+            task = self._ac_task
+            if task is None:
+                return {"ok": True, "running": False, "cancelled": False, "state": "idle",
+                        "progress": {"page": 0, "pages_total": 0, "pages_done": 0,
+                                     "pages_skipped": 0, "pages_failed": 0, "seals_total": 0,
+                                     "current_page_elapsed_s": 0.0, "eta_s": None},
+                        "dir_key": "", "msg": "空闲（还没跑过全自动）", "result": None}
+            return {"ok": True, **task.snapshot()}
+        except Exception as exc:                     # noqa: BLE001
+            return {"ok": False, "running": False, "cancelled": False, "reason": "ERROR",
+                    "msg": f"状态读取失败：{exc.__class__.__name__}: {exc}"}
+
+    def tab2_autocrop_cancel(self, _req: dict | None = None) -> dict:
+        """请求取消（当前页写盘后停；**已裁页与进度保留**，可就地续跑）。"""
+        try:
+            task = self._ac_task
+            if task is None or task.state not in ("queued", "running"):
+                return {"ok": False, "reason": "IDLE", "msg": "没有在跑的全自动任务"}
+            task.cancel_event.set()
+            return {"ok": True, "job": task.snapshot(),
+                    "msg": f"已请求取消（完成 {task.pages_done} 页 · 进度保留可续跑）"}
+        except Exception as exc:                     # noqa: BLE001
+            return {"ok": False, "reason": "ERROR",
+                    "msg": f"取消失败：{exc.__class__.__name__}: {exc}"}
 
     def open_in_finder(self, req: dict | None = None) -> dict:
         """在**系统文件管理器**里定位产物（macOS 访达 / Windows 资源管理器 / Linux xdg-open；失败只报错，不抛）。"""

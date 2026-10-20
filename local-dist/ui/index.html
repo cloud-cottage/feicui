@@ -217,6 +217,55 @@
         <button id="btn-tab2-open" class="btn" data-action="open-in-finder">📂 访达定位</button>
       </div>
     </div>
+    <!-- ── tab2 · 🚀 一键全自动（逐页 检测 → OCR → 裁切；断点续跑 / 可取消 / 单页失败不中断）── -->
+    <div class="pane hr-card" id="tab2-ac-card">
+      <h3>🚀 一键全自动（识别 + 切图）
+        <span class="muted">（当前「① 源」选中的高清 PDF ⇒ <code>3_Cropped_Tiff/&lt;目录键&gt;/</code>）</span></h3>
+      <div class="hr-grid">
+        <div>
+          <div class="cur" id="tab2-ac-source">源 PDF：未选择（在上方「① 源」里选一份高清 PDF）</div>
+          <label class="field"><span>页码范围（留空＝全文；续跑时可只填缺的页）</span></label>
+          <div class="row tight">
+            <input id="tab2-ac-from" type="number" min="1" placeholder="从第 1 页" class="w-num">
+            <span class="muted">→</span>
+            <input id="tab2-ac-to" type="number" min="1" placeholder="到末页" class="w-num">
+          </div>
+          <label class="field"><span>切图 dpi（默认 1200）</span>
+            <select id="tab2-ac-dpi">
+              <option value="300">300 dpi（省时试跑）</option>
+              <option value="600">600 dpi</option>
+              <option value="1200" selected>1200 dpi（默认）</option>
+              <option value="2400">2400 dpi（很慢）</option>
+            </select></label>
+          <p class="caption">逐页跑：400dpi 检测 → 字段提取（有 OCR 才认字）→ 切图。
+            <b>每页裁完立即写进度</b>（<code>.autocrop_progress.json</code>），中断/取消后勾着「跳过已完成页」再点一次即可续跑；
+            单页出错只记一笔，<b>不会中断全批</b>。</p>
+        </div>
+        <div>
+          <label class="inline"><input id="tab2-ac-resume" type="checkbox" checked> 跳过已完成页（断点续跑）</label>
+          <div class="caption" id="tab2-ac-lite" hidden>本版无 OCR（斐萃_lite）：字段留空，文件名会带你手填的朝代/作者（NA 若无）。</div>
+          <div class="row">
+            <button id="btn-tab2-ac-start" class="btn primary">🚀 开始全自动</button>
+            <button id="btn-tab2-ac-cancel" class="btn" disabled>✖ 取消</button>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress"><div id="tab2-ac-bar" class="bar" style="width:0%"></div></div>
+            <div class="row tight">
+              <span class="caption" id="tab2-ac-progress">第 0 / 0 页</span>
+              <span class="caption" id="tab2-ac-seals">已裁 0 枚</span>
+              <span class="caption" id="tab2-ac-eta">ETA —</span>
+              <span class="caption" id="tab2-ac-page-s">当前页 —</span>
+            </div>
+          </div>
+          <div id="tab2-ac-done" hidden>
+            <div class="cur" id="tab2-ac-summary">—</div>
+            <div id="tab2-ac-fails" class="tree scroll"></div>
+            <button id="btn-tab2-ac-goto3" class="btn block">➡ 去 tab3 看裁片</button>
+          </div>
+          <div id="tab2-ac-msg" class="msg"></div>
+        </div>
+      </div>
+    </div>
     <div class="two-col ct-col">
       <!-- ── 左：源 / 选页 / 检测 / 画布 ── -->
       <div class="pane">

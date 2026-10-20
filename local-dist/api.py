@@ -415,6 +415,95 @@ class JobRunner:
 
 
 # ============================================================
+# tab1 一键高清化：整本（或页段）PDF → 高分辨率页图 PDF
+# ============================================================
+class HighResTask:
+    """一次「一键高清化」任务（**单例**：同一时刻只允许一个，见 `FeicuiApi.tab1_highres_start`）。
+
+    实跑逻辑在 `src/highres_pdf.py`（纯逻辑层）；本类只做**状态容器 + 进度推送 + 取消开关**，
+    供 `tab1_highres_status` 轮询。`state ∈ {queued, running, done, failed, cancelled}`。
+    """
+
+    def __init__(self, pdf: Path, out: Path, dpi: int, page_from: int, page_to: int | None,
+                 page_bytes_dir: Path | None, push=None):
+        self.id = uuid.uuid4().hex[:12]
+        self.pdf = pdf
+        self.out = out
+        self.dpi = dpi
+        self.page_from = page_from
+        self.page_to = page_to
+        self.page_bytes_dir = page_bytes_dir
+        self.cancel_event = threading.Event()
+        self.state = "queued"
+        self.page = 0                 # 最近完成的页号
+        self.pages_total = 0
+        self.pages_done = 0
+        self.bytes = 0
+        self.msg = "排队中"
+        self.result: dict | None = None
+        self.error = ""
+        self.started_at = datetime.now().isoformat(timespec="seconds")
+        self.finished_at = ""
+        self._t0 = time.time()
+        self._push = push
+        self._lock = threading.Lock()
+
+    def snapshot(self) -> dict:
+        with self._lock:
+            return {
+                "task_id": self.id, "state": self.state, "running": self.state in ("queued", "running"),
+                "page": self.page, "pages_total": self.pages_total, "pages_done": self.pages_done,
+                "bytes": self.bytes, "msg": self.msg, "dpi": self.dpi,
+                "pdf": self.pdf.name, "out": str(self.out),
+                "page_from": self.page_from, "page_to": self.page_to,
+                "page_bytes_dir": str(self.page_bytes_dir) if self.page_bytes_dir else "",
+                "result": self.result, "error": self.error,
+                "started_at": self.started_at, "finished_at": self.finished_at,
+                "elapsed_s": round(time.time() - self._t0, 1),
+            }
+
+    def _emit(self) -> None:
+        if self._push is None:
+            return
+        try:
+            self._push({"kind": "tab1_highres", **self.snapshot()})
+        except Exception:
+            pass
+
+    def on_progress(self, rec: dict) -> None:
+        """`src.highres_pdf.render_pdf_to_pdf(progress_cb=…)` 的回调（**不许抛**）。"""
+        with self._lock:
+            self.state = "running"
+            self.page = int(rec.get("page") or 0)
+            self.pages_total = int(rec.get("pages_total") or self.pages_total)
+            self.pages_done = int(rec.get("pages_done") or 0)
+            self.bytes = int(rec.get("bytes") or 0)
+            self.msg = f"{rec.get('msg') or ''}（{self.pages_done}/{self.pages_total}）"
+        self._emit()
+
+    def finish(self, result: dict) -> None:
+        with self._lock:
+            self.result = result
+            ok = bool(result.get("ok"))
+            reason = str(result.get("reason") or "")
+            if ok:
+                self.state = "done"
+                self.pages_done = int(result.get("pages_done") or self.pages_done)
+                self.bytes = int(result.get("bytes") or self.bytes)
+                self.msg = f"完成：{self.out.name}（{self.pages_done} 页，{self.bytes/1024**2:.1f} MB）"
+            elif reason == "CANCELLED":
+                self.state = "cancelled"
+                self.pages_done = int(result.get("pages_done") or self.pages_done)
+                self.msg = f"已取消（完成 {self.pages_done}/{self.pages_total or '?'} 页）"
+            else:
+                self.state = "failed"
+                self.error = f"{reason}: {result.get('msg') or ''}".strip(": ")
+                self.msg = self.error or "失败"
+            self.finished_at = datetime.now().isoformat(timespec="seconds")
+        self._emit()
+
+
+# ============================================================
 # js_api（暴露给 JS；也由 `serve.py` 逐方法转发）
 # ============================================================
 class FeicuiApi:
@@ -429,6 +518,11 @@ class FeicuiApi:
         self.yinyuan = yy.YinyuanClient()
         self._yy_warm_lock = threading.Lock()
         self._yy_warm_state: dict = {"running": False, "done": False, "last": {}}
+        # tab1 一键高清化（单例任务；见 `HighResTask` / `tab1_highres_start`）
+        self._hr_lock = threading.Lock()
+        self._hr_task: HighResTask | None = None
+        # tab2 切图台：1200dpi 渲页很重 ⇒ 裁切串行（并发第二个请求直接拒，不排队堆内存）
+        self._crop_lock = threading.Lock()
 
     # ---------------- 应用信息 ----------------
     def app_info(self, _req: dict | None = None) -> dict:
@@ -704,6 +798,150 @@ class FeicuiApi:
             return {"ok": False, "msg": f"保存失败：{exc.__class__.__name__}: {exc}"}
         return {"ok": ok, "msg": msg}
 
+    # ---------------- tab1 一键高清化（Phase A：后端与契约；UI 另单）----------------
+    #: dpi 白名单（Kevin 2026-10-20 补充口径）：**只三档**，默认 1200。
+    #: ⚠️ 1200 的 PNG **比 600 更小**（印谱实测 13.3 MB vs 15.5 MB/页）—— 别"优化"成 600。
+    HIGHRES_DPI_ALLOWED = (300, 600, 1200)
+    HIGHRES_DPI_DEFAULT = 1200
+
+    def _src_module(self, name: str):
+        """延迟 import 逻辑层模块（`src/highres_pdf|seal_detect|seal_crop`）。
+
+        延迟的理由：这几个模块在 import 期就要 `pymupdf / cv2 / numpy / tifffile`；
+        放模块顶部会让**整个 app 起不来**（也让只测编排的 selftest 变重）。
+        """
+        try:
+            mod = importlib.import_module(f"src.{name}")
+            return mod, None
+        except Exception as exc:
+            return None, {"ok": False, "reason": "DEPS_MISSING",
+                          "msg": f"逻辑层 {name} 不可用：{exc.__class__.__name__}: {exc}"}
+
+    def _resolve_pdf(self, raw: str | None) -> Path | None:
+        """PDF 定位（宽容）：绝对/相对路径 ⇒ 原样；纯文件名 ⇒ 依次找 `1_Original_PDF`、
+        `2_HighRes_PDF` 顶层、`2_HighRes_PDF/<目录键>/`（切图台的源就是高清 PDF）。"""
+        name = str(raw or "").strip()
+        if not name:
+            return None
+        p = Path(name).expanduser()
+        if p.is_file():
+            return p
+        if p.is_absolute():
+            return None
+        root = self._root_path()
+        cands = [root / lib.ORIGINAL_DIR / name, root / lib.HIGHRES_DIR / name]
+        try:
+            cands += sorted((root / lib.HIGHRES_DIR).glob(f"*/{name}"))
+        except Exception:
+            pass
+        for c in cands:
+            if c.is_file():
+                return c
+        return None
+
+    def tab1_highres_start(self, req: dict | None = None) -> dict:
+        """启动「一键高清化」：源 PDF ⇒ `2_HighRes_PDF/<目录键>/<书名>-HighRes.pdf`（后台线程）。
+
+        契约：`{pdf, dpi=1200, page_from, page_to, keep_page_pngs=true, overwrite=false}`
+        ⇒ `{ok, task_id, out, dpi, pages_total?, note}`；已运行 ⇒ `{ok:false, reason:'BUSY'}`。
+        **1100 页级的书 ≈ 6 s/页**（本机实测）⇒ 一律异步，UI 轮询 `tab1_highres_status`。
+        """
+        miss = self._need_root()
+        if miss:
+            return miss
+        req = req or {}
+        pdf = self._resolve_pdf(req.get("pdf") or req.get("filename") or req.get("name"))
+        if pdf is None:
+            return {"ok": False, "reason": "PDF_NOT_FOUND",
+                    "msg": f"找不到 PDF：{req.get('pdf') or req.get('filename') or ''!r}"
+                           f"（可给绝对路径，或 1_Original_PDF 下的文件名）"}
+        try:
+            dpi = int(req.get("dpi") or self.HIGHRES_DPI_DEFAULT)
+        except Exception:
+            return {"ok": False, "reason": "BAD_DPI", "dpi": req.get("dpi"),
+                    "allowed": list(self.HIGHRES_DPI_ALLOWED), "msg": "dpi 必须是整数"}
+        if dpi not in self.HIGHRES_DPI_ALLOWED:
+            return {"ok": False, "reason": "BAD_DPI", "dpi": dpi,
+                    "allowed": list(self.HIGHRES_DPI_ALLOWED),
+                    "msg": f"dpi 只支持 {list(self.HIGHRES_DPI_ALLOWED)}（默认 "
+                           f"{self.HIGHRES_DPI_DEFAULT}；1200 的 PNG 反而比 600 小，别降档）"}
+        try:
+            page_from = int(req.get("page_from") or 1)
+            raw_to = req.get("page_to")
+            page_to = None if raw_to in (None, "") else int(raw_to)
+        except Exception:
+            return {"ok": False, "reason": "BAD_RANGE", "msg": "page_from / page_to 必须是整数"}
+        if page_from < 1 or (page_to is not None and page_to < page_from):
+            return {"ok": False, "reason": "BAD_RANGE",
+                    "msg": f"页区间不合法：{page_from}–{page_to}"}
+
+        keep_pngs = bool(req.get("keep_page_pngs", True))
+        dir_key = self._dir_key_of(pdf.name)
+        out_dir = self._root_path() / lib.HIGHRES_DIR / dir_key
+        out_pdf = out_dir / f"{pdf.stem}-HighRes.pdf"
+        page_bytes_dir = (VAR_DIR / "highres_pages" / dir_key / pdf.stem) if keep_pngs else None
+
+        with self._hr_lock:                       # 单例：查-建 在同一把锁里，避免双起
+            cur = self._hr_task
+            if cur is not None and cur.state in ("queued", "running"):
+                return {"ok": False, "reason": "BUSY", "task_id": cur.id,
+                        "msg": f"已有高清化任务在跑（{cur.pages_done}/{cur.pages_total or '?'} 页）",
+                        "status": cur.snapshot()}
+            hr, err = self._src_module("highres_pdf")
+            if err:
+                return err
+            if bool(req.get("overwrite")):        # 显式重来：清产物与进度（默认是**续跑**）
+                for p in (out_pdf, Path(str(out_pdf) + ".progress.json")):
+                    try:
+                        if p.is_file():
+                            p.unlink()
+                    except Exception:
+                        pass
+            task = HighResTask(pdf, out_pdf, dpi, page_from, page_to, page_bytes_dir,
+                               push=self.jobs._push)
+            self._hr_task = task
+            threading.Thread(target=self._highres_run, args=(task, hr), daemon=True,
+                             name=f"highres-{task.id}").start()
+
+        return {"ok": True, "task_id": task.id, "out": str(out_pdf), "dpi": dpi,
+                "page_from": page_from, "page_to": page_to,
+                "keep_page_pngs": keep_pngs,
+                "page_bytes_dir": str(page_bytes_dir) if page_bytes_dir else "",
+                "msg": "已开始高清化（后台线程，UI 不阻塞）",
+                "note": "≈6 s/页（本机实测）；进度见 tab1_highres_status / onProgress(kind=tab1_highres)"}
+
+    def _highres_run(self, task: HighResTask, hr) -> None:
+        """后台线程体：跑逻辑层 ⇒ 把结果交回 `task.finish`（**不许抛出去**）。"""
+        try:
+            res = hr.render_pdf_to_pdf(
+                task.pdf, task.out, dpi=task.dpi,
+                page_from=task.page_from, page_to=task.page_to,
+                page_bytes_dir=task.page_bytes_dir,
+                progress_cb=task.on_progress, cancel_event=task.cancel_event,
+                size_limit_bytes=int(getattr(hr, "DEFAULT_SIZE_LIMIT_BYTES", 15 * 1024 ** 3)),
+            )
+        except Exception as exc:
+            res = {"ok": False, "reason": "ERROR", "msg": f"{exc.__class__.__name__}: {exc}",
+                   "pages_done": task.pages_done}
+        task.finish(res)
+
+    def tab1_highres_status(self, _req: dict | None = None) -> dict:
+        """轮询状态：`{running, page, pages_total, pages_done, bytes, msg, result, …}`。"""
+        task = self._hr_task
+        if task is None:
+            return {"ok": True, "running": False, "state": "idle", "page": 0, "pages_total": 0,
+                    "pages_done": 0, "bytes": 0, "msg": "空闲（未跑过高清化）", "result": None}
+        return {"ok": True, **task.snapshot()}
+
+    def tab1_highres_cancel(self, _req: dict | None = None) -> dict:
+        """请求取消（当前页渲完后停；**进度与页缓存保留**，可续跑）。"""
+        task = self._hr_task
+        if task is None or task.state not in ("queued", "running"):
+            return {"ok": False, "reason": "IDLE", "msg": "没有在跑的高清化任务"}
+        task.cancel_event.set()
+        return {"ok": True, "task_id": task.id,
+                "msg": f"已请求取消（完成 {task.pages_done}/{task.pages_total or '?'} 页，进度保留可续跑）"}
+
     # ---------------- tab2：2_HighRes_PDF ----------------
     def _dir_key_of(self, pdf_name: str) -> str:
         """目录键＝老工程 `naming.dir_key_for`（ISBN 优先）；不可用时回落 PDF 主名。"""
@@ -801,6 +1039,125 @@ class FeicuiApi:
         req = req or {}
         ok, msg = self.jobs.cancel(str(req.get("job_id", "")))
         return {"ok": ok, "msg": msg}
+
+    # ---------------- tab2 切图台（Phase A：检测 ⇒ 人工微调 ⇒ 1200dpi 裁切）----------------
+    def tab2_detect(self, req: dict | None = None) -> dict:
+        """自动检测红印：`{pdf, page, dpi=400}` ⇒ `{ok, boxes:[{x1,y1,x2,y2,idx,…}], count,
+        elapsed_s, preview_png_b64, size, dpi, boxes_dpi}`。
+
+        * **坐标系统＝400dpi**（与库内 `stamps` bbox 同系；`dpi` 默认 400，改了就对不上库）；
+        * `preview_png_b64`：整页**降采样到宽 ≤1000px** 并画好框（UI 画布直接用，免前端重复渲染）；
+        * 同步执行（400dpi 渲 + 检测 ≈ 0.2–0.5 s），**不占 UI 线程锁**。
+        """
+        miss = self._need_root()
+        if miss:
+            return miss
+        req = req or {}
+        pdf = self._resolve_pdf(req.get("pdf") or req.get("filename"))
+        if pdf is None:
+            return {"ok": False, "reason": "PDF_NOT_FOUND",
+                    "msg": f"找不到 PDF：{req.get('pdf') or req.get('filename') or ''!r}"}
+        try:
+            page = int(req.get("page") or 0)
+        except Exception:
+            return {"ok": False, "reason": "BAD_PAGE", "msg": "page 必须是整数（1-based）"}
+        if page < 1:
+            return {"ok": False, "reason": "BAD_PAGE", "msg": "page 从 1 开始"}
+        try:
+            dpi = int(req.get("dpi") or 400)
+        except Exception:
+            return {"ok": False, "reason": "BAD_DPI", "msg": "dpi 必须是整数"}
+        sd, err = self._src_module("seal_detect")
+        if err:
+            return err
+        t0 = time.time()
+        try:
+            img = sd.render_page(pdf, page, dpi)
+        except IndexError as exc:
+            return {"ok": False, "reason": "BAD_PAGE", "msg": str(exc), "page": page}
+        except Exception as exc:
+            return {"ok": False, "reason": "ERROR",
+                    "msg": f"渲页失败：{exc.__class__.__name__}: {exc}", "page": page}
+        try:
+            boxes = sd.detect_seals(img)
+        except Exception as exc:
+            return {"ok": False, "reason": "ERROR",
+                    "msg": f"检测失败：{exc.__class__.__name__}: {exc}", "page": page}
+        preview, pw, ph = self._preview_with_boxes(img, boxes)
+        return {"ok": True, "pdf": str(pdf), "pdf_name": pdf.name, "page": page,
+                "dpi": int(dpi), "boxes_dpi": 400,
+                "size": [int(img.shape[1]), int(img.shape[0])],
+                "boxes": boxes, "count": len(boxes),
+                "preview_png_b64": preview, "preview_size": [pw, ph],
+                "preview_scale": round(ph / max(img.shape[0], 1), 4),
+                "elapsed_s": round(time.time() - t0, 2)}
+
+    @staticmethod
+    def _preview_with_boxes(img, boxes, max_w: int = 1000) -> tuple[str, int, int]:
+        """整页图 → 降采样 + 画框 → **base64 PNG**（UI 画布直接用；失败返回空串，不抛）。"""
+        try:
+            import cv2  # 延迟 import（与逻辑层同栈）
+            h, w = img.shape[:2]
+            scale = min(1.0, float(max_w) / max(w, 1))
+            small = cv2.resize(img, (max(1, int(w * scale)), max(1, int(h * scale))),
+                               interpolation=cv2.INTER_AREA) if scale < 1.0 else img.copy()
+            for b in boxes or []:
+                x1 = int(round(float(b["x1"]) * scale))
+                y1 = int(round(float(b["y1"]) * scale))
+                x2 = int(round(float(b["x2"]) * scale))
+                y2 = int(round(float(b["y2"]) * scale))
+                cv2.rectangle(small, (x1, y1), (x2, y2), (0, 200, 255), 2)      # 橙：自动框
+                cv2.putText(small, str(b.get("idx", "")), (x1 + 3, max(y1 - 4, 12)),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 200, 255), 1, cv2.LINE_AA)
+            ok, buf = cv2.imencode(".png", small)
+            if not ok:
+                return "", small.shape[1], small.shape[0]
+            return base64.b64encode(buf.tobytes()).decode("ascii"), small.shape[1], small.shape[0]
+        except Exception:
+            return "", 0, 0
+
+    def tab2_crop(self, req: dict | None = None) -> dict:
+        """按框裁切：`{pdf, page, boxes, dpi=1200, cr_from_boxes?}` ⇒
+        `{ok, outputs:[{name,path,bytes,…}], skipped, dir_key, dir_key_source, …}`。
+
+        * `boxes` 在 **400dpi 坐标系**（＝检测输出 / 库内 bbox）；按 `dpi/400` 等比放大后裁；
+        * 落 `output/3_Cropped_Tiff/<目录键>/P<页>-C<列>-R<行>.tiff`（RGB 8bit ＋ Deflate）；
+        * **一次调用请传本页全部框**：C/R 按**本次框集合**的网格位次排序 ⇒ 分多次各传一枚会各自
+          从 `C1-R1` 起、同名互相覆盖（UI 应攒齐整页框后一次提交；要库内口径就传 `cr_from_boxes`）；
+        * 未登记的书 ⇒ 目录键回落书名并标 `dir_key_source='fallback'`；
+        * **串行**：另一单裁切在跑 ⇒ 直接 `{ok:false, reason:'BUSY'}`（不排队堆 1200dpi 页图）。
+        """
+        miss = self._need_root()
+        if miss:
+            return miss
+        req = req or {}
+        pdf = self._resolve_pdf(req.get("pdf") or req.get("filename"))
+        if pdf is None:
+            return {"ok": False, "reason": "PDF_NOT_FOUND",
+                    "msg": f"找不到 PDF：{req.get('pdf') or req.get('filename') or ''!r}"}
+        boxes = req.get("boxes") or []
+        if not isinstance(boxes, list) or not boxes:
+            return {"ok": False, "reason": "NO_BOXES", "msg": "没有可裁的框（先检测或手动画框）"}
+        try:
+            page = int(req.get("page") or 0)
+        except Exception:
+            return {"ok": False, "reason": "BAD_PAGE", "msg": "page 必须是整数（1-based）"}
+        sc, err = self._src_module("seal_crop")
+        if err:
+            return err
+        if not self._crop_lock.acquire(blocking=False):
+            return {"ok": False, "reason": "BUSY", "msg": "上一单裁切还在跑（1200dpi 渲页很重）"}
+        try:
+            res = sc.crop_page(pdf, page, boxes,
+                               self._root_path() / lib.TIFF_DIR,
+                               pdf_name=pdf.name,
+                               dpi=int(req.get("dpi") or 1200),
+                               cr_from_boxes=req.get("cr_from_boxes"))
+        except Exception as exc:
+            return {"ok": False, "reason": "ERROR", "msg": f"{exc.__class__.__name__}: {exc}"}
+        finally:
+            self._crop_lock.release()
+        return res
 
     def open_in_finder(self, req: dict | None = None) -> dict:
         """在**系统文件管理器**里定位产物（macOS 访达 / Windows 资源管理器 / Linux xdg-open；失败只报错，不抛）。"""

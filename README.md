@@ -352,3 +352,100 @@ hdiutil verify feicui-mac-s1.dmg            # 必须 VALID 再上传
 **发布口径（Release body 必写）**：未签名未公证（mac 首次右键→打开，或
 `xattr -dr com.apple.quarantine /Applications/斐萃-s1.app`）；Windows 为 Phase 1（窗口交互未逐项验证）、
 需 WebView2 运行时；onedir **必须解压整目录**、不可单拷 `.exe`；来源（本仓本地构建）与许可（内部自用、第三方组件各自许可）提示。
+
+
+## 11. tab1 一键高清化 ＋ tab2 切图台（Phase A：后端与契约，2026-10-20）
+
+**本轮范围**：三个纯逻辑层模块 ＋ js_api 契约（**不动 `ui/`**；UI 另单）。
+
+| 层 | 文件 | 干什么 |
+|---|---|---|
+| 逻辑 | `local-dist/src/highres_pdf.py` | PDF ⇒ **逐页 1200dpi 8bit PNG 嵌入的 PDF**（不落中间 JPEG） |
+| 逻辑 | `local-dist/src/seal_detect.py` | 红印自动检测（HSV 双区间 + 形态学 + 连通域几何过滤；**400dpi 坐标系**） |
+| 逻辑 | `local-dist/src/seal_crop.py` | 按框 1200dpi 裁切 ⇒ `P<页>-C<列>-R<行>.tiff`（RGB 8bit ＋ Deflate） |
+| 契约 | `local-dist/api.py` | `tab1_highres_start/status/cancel`、`tab2_detect`、`tab2_crop` |
+
+### 11.1 tab1 高清化：dpi 白名单 {300, 600, 1200}，默认 1200
+
+落点 `output/2_HighRes_PDF/<目录键>/<书名>-HighRes.pdf`；非法 dpi ⇒ `{ok:false, reason:'BAD_DPI',
+allowed:[300,600,1200]}`，**一页都不渲**。页尺寸逐页取自源页 pt（保真，下游 400dpi bbox 与
+1200dpi 裁切同一比例尺）。
+
+**体积实测（`秦印类编 检索版.pdf` p370，510×734 pt，白底黑字红印）**：
+
+| dpi | 像素 | Mpx | PNG/页 | 说明 |
+|---|---|---|---|---|
+| 300 | 2125×3059 | 6.5 | **5.36 MB** | 只够预览 |
+| 600 | 4250×6118 | 26.0 | **15.5 MB** | 最差档：体积最大、清晰度还不是最高 |
+| **1200** | 8500×12236 | 104.0 | **13.3 MB** | 默认；**比 600 小 14%** |
+
+⚠️ **反直觉但已复现**：1200dpi 的 PNG **比 600dpi 更小** —— 600 落在扫描墨边的"半软"频段，
+抗锯齿灰阶多、熵高；1200 已解析原扫描点的硬边，二值化倾向强 ⇒ zlib 压得更好。
+**别把默认档"优化"成 600**（体积更大 + 清晰度更低，双输）。父级在另一页量到 1200dpi 7.4 MB/页，
+量级一致（页内容不同，绝对值浮动）；整本体量 = 页数 × 13 MB 量级。
+
+**耗时（macOS 本机，PyMuPDF 1.28.2，同一页）**：渲染 **0.21 s** ＋ PNG 编码 **2.85 s**（zlib 是瓶颈）
+＋ 组装/落盘 ≈1.2 s ⇒ **端到端 ≈ 6 s/页**；3 页（p370–372）全流程 **18.5 s**、产物 **39.4 MB**
+（页图 39.38 MB ＋ 容器开销）。851 页的书 ≈ **80–90 分钟**；PNG 编码单线程纯 CPU，多页并行收益有限。
+
+**断点续跑**：
+- 进度文件 `<out>.progress.json`（＝ `…/秦印类编 检索版-HighRes.pdf.progress.json`）：
+  `{schema, src, out, dpi, pages, done{页: {px, png_bytes, png, pt}}, bytes}`，**每页一写**（tmp→replace 原子写）；
+- 页缓存：`keep_page_pngs=true`（默认）⇒ `<数据目录>/var/highres_pages/<目录键>/<书名>/P0370.png`；
+  不给 `page_bytes_dir` 则用 `<out 同目录>/.pages-<书名>/` 并在成功后清理；
+- 实测：删掉 `P0371.png` 与进度里该页条目后重跑 ⇒ **`rendered_pages=1`**、其余两页复用、产物页数仍为 3；
+- 体积告警（阈值调 1 MB 实测）⇒ `{ok:false, reason:'SIZE_LIMIT', pages_done:1}`，**进度与页缓存保留**，可续跑。
+
+### 11.2 tab2 切图台：检测（400dpi）⇒ 人工微调 ⇒ 裁切（1200dpi）
+
+`tab2_detect({pdf, page, dpi=400})` ⇒ `{boxes:[{x1,y1,x2,y2,idx}], count, elapsed_s,
+preview_png_b64, preview_size, preview_scale}`；预览是**整页降采样到宽 ≤1000px 并已画框**的 base64 PNG
+（UI 画布直接贴，不用前端再算缩放）。
+
+检测参数（`seal_detect.DEFAULT_PARAMS`，PoC 逐字移植）：HSV 红双区间 `(0,70,40)-(12,255,255)` ∪
+`(160,70,40)-(180,255,255)`；椭圆核 9×9 闭运算 ×2；3×3 开运算 ×1；连通域 8 邻接后过滤
+面积 ≥ 页面积 `0.0004`、边 ≥ `40 px`、长宽比 `0.25–4.0`、填充率 ≥ `0.12`、排除贴边跨页 80% 长条；
+`merge_near_boxes()` 合并同印碎片（默认开，`gap = 较短边 × 0.35`）。
+
+**p370 对拍 PoC（`merge=False` ＝ PoC 原算法）**：真值 7 / 检测 12 / 命中 7 / 漏检 0 / 召回 100% /
+平均 IoU **0.7742** —— **12 个框与 `scratch/sealdetect/report_p370.json` 的 `det_boxes` 逐框相等**
+（另 5 框是页面上真实存在、库内未标注的印章）。`merge=True`（默认）在本页未触发合并，读数不变。
+对**高清 PDF** 检测（`2_HighRes_PDF/<目录键>/…-HighRes.pdf`）与对原 PDF 检测：框数同 12，
+**best-IoU 均值 0.9983 / 最小 0.9955** ⇒ 两路可互换（高清 PDF 省去重渲原页）。
+
+`tab2_crop({pdf, page, boxes, dpi=1200})` ⇒ 渲页一次（1200dpi）⇒ bbox 按 `1200/400=3` 等比放大后裁
+⇒ `output/3_Cropped_Tiff/<目录键>/P<页>-C<列>-R<行>.tiff`（tifffile，RGB 8bit ＋ Deflate）。
+实测 3 枚：`P370-C1-R1` 702×732、`P370-C2-R1` 591×1002、`P370-C3-R1` 579×561 px，**宽高与 bbox ×3 逐像素一致**。
+
+**C/R 规则（本模块自定，写死在 `seal_crop.grid_order`）**：按 y 中心升序分**行带**（与当前带垂直重叠
+≥ 较矮框 50% ⇒ 同带）⇒ 带号即 `R`（1 起）；带内按 x 中心升序 ⇒ `C`（1 起）。构造上 `(C,R)` 页内唯一。
+**一次调用要传本页全部框**（C/R 按本次框集合排；分次各传一枚会各自从 C1-R1 起、同名覆盖）；
+需要库内口径就传 `cr_from_boxes=[(c,r),…]`。未登记的书 ⇒ 目录键回落书名并标 `dir_key_source='fallback'`。
+
+### 11.3 js_api 契约（Phase A 定稿面）
+
+```text
+tab1_highres_start({pdf, dpi=1200, page_from=1, page_to=null, keep_page_pngs=true, overwrite=false})
+    → {ok, task_id, out, dpi, page_from, page_to, keep_page_pngs, page_bytes_dir, note}
+      | {ok:false, reason: BAD_DPI|BAD_RANGE|PDF_NOT_FOUND|BUSY|DEPS_MISSING, allowed?, msg}
+tab1_highres_status()  → {ok, running, state, page, pages_total, pages_done, bytes, msg, result, out, elapsed_s}
+tab1_highres_cancel()  → {ok, task_id, msg} | {ok:false, reason:'IDLE'}
+tab2_detect({pdf, page, dpi=400})            → {ok, boxes, count, elapsed_s, preview_png_b64, preview_size, preview_scale, size, boxes_dpi}
+tab2_crop({pdf, page, boxes, dpi=1200, cr_from_boxes?}) → {ok, outputs[{name,path,bytes,page,c,r,box,size}], skipped, dir_key, dir_key_source, dir, scale, elapsed_s}
+```
+
+长任务纪律：tab1 高清化**单例**（在跑则 `BUSY`，不起第二个线程）＋ `progress_cb` 更新状态 ＋
+`onProgress({kind:'tab1_highres', …})` 主动推；`pdf` 参数可给绝对路径、或 `1_Original_PDF` /
+`2_HighRes_PDF/<目录键>/` 下的文件名；全部返回结构化 dict、**永不抛**；裁切串行（第二个请求 `BUSY`）。
+
+### 11.4 本轮验收读数（逻辑层真跑，未依赖 GUI）
+
+- 高清化 3 页：页数 3、页尺寸 510×734.16 pt 逐页相符、每页 1 张 `/FlateDecode` 8bit 图（8500×12236）、
+  再渲 100dpi 正常、39.4 MB；断点续跑 / 幂等 / 取消 / 体积告警 / BAD_DPI 全部按契约返回。
+- 检测 p370：与 PoC 逐框相等（7/7、IoU 0.7742）。
+- 裁切 3 枚：TIFF 存在、`tifffile` 可读、RGB uint8、DEFLATE、宽高 = bbox×3。
+- 回归：`selftest.py --no-e2e` **80/0**、`domtest.py` **39/0**、`domtest_yinyuan.py` **11/0**。
+- 验收脚本（不入库）：`~/.hermes/profiles/zang/cache/scratch/hrverify/verify_{highres,detect_crop,api}.py`
+  ＋ 读数 `readings_{highres,detect_crop,api}.json`（产物落在该目录的沙箱 feicui 根，**没污染 `output/`**）。
+
+**未测**：整本 851 页的端到端（红线：不跑整本）、Windows 上的 pymupdf/tifffile 行为、UI 接线（另单）。

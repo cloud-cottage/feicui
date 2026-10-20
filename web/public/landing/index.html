@@ -233,6 +233,40 @@
         .log-early { margin-top: 6px; font-size: 13px; color: #666; }
         .log-early summary { cursor: pointer; color: var(--accent-deep); }
         .log-early ul { margin: 8px 0 0 18px; }
+        .dl-hint {
+            font-size: 13px;
+            color: #666;
+        }
+        /* ── Windows 安装教程 ── */
+        .tut {
+            margin: 10px auto 0;
+            max-width: 640px;
+            text-align: left;
+            background: #fff;
+            border: 1px solid #e5e5e5;
+            border-radius: 10px;
+            padding: 10px 18px;
+        }
+        .tut summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--accent-deep);
+            font-size: 14px;
+        }
+        .tut[open] summary { margin-bottom: 4px; }
+        .tut ol { margin: 10px 0 6px 20px; padding: 0; }
+        .tut li { margin: 9px 0; font-size: 14px; color: #333; }
+        .tut code { background: #f5f5f5; padding: 1px 6px; border-radius: 4px; font-size: 13px; }
+        .tut a { color: var(--accent-deep); text-decoration: underline; }
+        .tut-note {
+            font-size: 13px;
+            color: var(--warn);
+            background: var(--warn-bg);
+            border-left: 3px solid var(--warn-line);
+            padding: 8px 12px;
+            border-radius: 0 6px 6px 0;
+            margin: 10px 0 4px;
+        }
         footer {
             text-align: center;
             padding: 32px;
@@ -261,6 +295,19 @@
                 macOS：打开 DMG 把「斐萃」拖进「应用程序」，首次<strong>右键 App →「打开」</strong>（未签名，仅需一次）<br>
                 Windows：<strong>解压整个目录</strong>后双击 <code>斐萃-s1\斐萃.exe</code> —— 不要单独拷出 exe，需已装 WebView2
             </p>
+            <details class="tut" open>
+                <summary>Windows 详细安装教程（点开 / 收起）</summary>
+                <ol>
+                    <li><strong>下载并完整解压</strong>：右键 zip →「全部解压缩」。<strong>必须保留整个目录</strong>（<code>斐萃-s1</code> 与 <code>_internal</code>），只把 <code>斐萃.exe</code> 单独拖出来将无法启动。</li>
+                    <li><strong>双击运行</strong>：进入 <code>斐萃-s1</code> 文件夹，双击 <code>斐萃.exe</code>。</li>
+                    <li><strong>SmartScreen 提示（首次）</strong>：本程序未做数字签名，Windows 会提示「已保护你的电脑」→ 点 <strong>「更多信息」→「仍要运行」</strong>（属正常现象）。</li>
+                    <li><strong>杀毒软件提示</strong>：个别杀软可能误报，选「允许 / 加入信任列表」即可。</li>
+                    <li><strong>WebView2 运行时</strong>：Windows 10/11 一般已内置。若双击后<strong>一闪而过、没有窗口</strong>，需安装一次：
+                        <a href="https://developer.microsoft.com/microsoft-edge/webview2/" target="_blank" rel="noopener">微软官网 · WebView2 运行时（常青版安装程序）</a>，装完重新双击即可。</li>
+                    <li><strong>数据保存在哪</strong>：<code>%APPDATA%\斐萃</code>（首次运行自动创建，无需配置；卸载直接删目录）。</li>
+                </ol>
+                <p class="tut-note">当前 Windows 版<strong>不含 OCR</strong>（印章文字识别）功能，其余与 macOS 版一致；含 OCR 的 macOS 完整版（150 MB）超出网页单文件限制，需要请联系。</p>
+            </details>
             <p class="dl-hint">
                 含 OCR 的 macOS 完整版（150 MB）体积超出网页宿主单文件限制，需要请联系。
                 <a href="#guide">使用说明 ↓</a>
@@ -303,6 +350,15 @@
             <p class="muted" style="font-size:13px;color:#666;margin:-4px 0 16px">
                 按时间倒序。<strong>v1.0.0</strong> 是首个公开分发的版本；其前的条目为内部迭代阶段（按日期记录，未编版本号）。
             </p>
+
+            <div class="log-item">
+                <div class="log-head"><span class="log-ver">v1.0.1</span><span class="log-date">2026-10-20 · 高清化与切图台</span></div>
+                <ul>
+                    <li><strong>一键高清化</strong>（tab1）：PDF → 1200 dpi 8-bit PNG 嵌 PDF，默认 1200（可选 300/600），断点续跑/取消/体积告警，约 6.2 s/页</li>
+                    <li><strong>切图台</strong>（tab2）：列出高清 PDF → 自动识别页面朱红印面 → 画布增删/拖拽微调 → 1200 dpi 裁出 <code>P&lt;页&gt;-C&lt;列&gt;-R&lt;行&gt;.tiff</code>（实测与 bbox 等比逐像素一致）</li>
+                    <li>修复：v1.0.0 的安装包不含上述两能力（spec 未收新模块），本次重新打包替换全部资产</li>
+                </ul>
+            </div>
 
             <div class="log-item">
                 <div class="log-head"><span class="log-ver">v1.0.0</span><span class="log-date">2026-10-20 · 首个公开版本</span></div>

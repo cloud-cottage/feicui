@@ -126,8 +126,13 @@ binaries = []
 #   `src/ocr_corrector.py` 是它的字表链路）——阶段 1 收进去也跑不了（无 rapidocr）。
 #   2026-10-18 追加：`src/yinyuan_client.py`（B4 yinyuan 接入；`api.py` 顶层 `from src import`
 #   ⇒ 缺它会在打包态 import 阶段直接炸，源码态看不出来）。
+#   2026-10-20 追加（v1.0.1）：`src/highres_pdf.py`（tab1 一键高清化）＋ `src/seal_detect.py` /
+#   `src/seal_crop.py`（tab2 切图台）。`api.py` 经 `_src_module()` **动态 import**（静态分析看不见）
+#   ⇒ 不显式列就是「打包成功、运行时 ImportError」。三者只依赖 cv2/numpy/tifffile/pymupdf
+#   （hiddenimports 已含），**无 rapidocr/paddle 依赖** ⇒ 全阶段收，不含 OCR 的 s1 也能用。
 SRC_FILES = ["__init__.py", "pdf_library.py", "validator.py",
              "yinyuan_client.py",
+             "highres_pdf.py", "seal_detect.py", "seal_crop.py",  # v1.0.1：tab1 高清化 + tab2 切图台
              "paths.py"]                                          # 全阶段必需（paths.py = 用户目录单一真源）
 if WITH_OCR:
     SRC_FILES += ["ocr_rapid.py", "ocr_corrector.py"]
@@ -145,6 +150,7 @@ hiddenimports = [
     "api", "src", "src.pdf_library", "src.validator",           # 壳 + 逻辑层
     "src.yinyuan_client",                                        # yinyuan 接入（B4）
     "src.paths",                                                 # 用户目录单一真源（pack_main 也 import 它）
+    "src.highres_pdf", "src.seal_detect", "src.seal_crop",       # v1.0.1：tab1 高清化 + tab2 切图台（api._src_module 动态 import ⇒ 必须显式列）
     "cv2", "tifffile", "pymupdf", "numpy", "PIL", "PIL.Image",   # 引擎（render_page_2400.py）渲染栈
 ]
 

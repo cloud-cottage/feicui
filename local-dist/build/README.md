@@ -5,6 +5,18 @@
 > 本文档里的体积 / 依赖读数均为**本机实测**（2026-10-16，Apple Silicon / macOS 15.7.4），
 > 取证命令逐条列出，可复跑。
 
+## 产物名（2026-10-20 更名，下划线分隔）
+
+| 阶段（`FEICUI_PACK_STAGE`） | 能力 | 产物名 |
+| --- | --- | --- |
+| `1` | 壳 + UI + 逻辑层（**无 OCR**） | `斐萃_lite.app` |
+| `2` | 阶段 1 ＋ RapidOCR（含 ONNX 模型） | `斐萃_pro.app` |
+| `3` | 阶段 2 ＋ paddle/paddlex/paddleocr（只做体积对照） | `斐萃_pro_paddle.app`（预留，尚未构建） |
+
+- 旧名 `斐萃-s1` / `斐萃-s2` / `斐萃-s3-paddle` **已废弃**（连字符 + sN 口径）。环境变量名与取值（1/2/3）**不变**。
+- `.app` 目录名 = `Contents/MacOS/` 下 stub 名 = `CFBundleExecutable` = `CFBundleName`，四者同源（PyInstaller `BUNDLE(name=…)`）⇒ **改名只能改 spec 后重打包，不能事后 `mv` 目录**。
+- ⚠ **DMG / GitHub Release 资产 / 站内下载直链属发版单范围**（资产名正在由发版单统一改为 `feicui-mac-lite.dmg` / `feicui-win-lite.zip` 等），本单只改**本机构建产物（`.app`）名**；在发版单落地前，线上仍是旧资产名。
+
 ---
 
 ## 0. 先定一件事：本地版**要 OCR**
@@ -271,9 +283,9 @@ done
 ### 8.2 包内验证（**打包态的坑只能在包里验**，源码态看不出来）
 
 ```bash
-A=local-dist/build/dist/斐萃-s1.app
+A=local-dist/build/dist/斐萃_lite.app
 ls -1 "$A/Contents/Frameworks/src"        # ← PyInstaller 6：_MEIPASS=Contents/Frameworks（数据/源码在此，非 Resources）
-PROBE_STAGE=s1 "$A/Contents/MacOS/斐萃-s1" --engine-run /path/to/probe.py   # 见下
+PROBE_STAGE=s1 "$A/Contents/MacOS/斐萃_lite" --engine-run /path/to/probe.py   # 见下
 open -n "$A" --args --test-exit-after 12  # 起窗 12 s 自关；日志 ~/Library/Logs/斐萃/pack-<yyyymmdd>.log
 ```
 
@@ -297,23 +309,23 @@ open -n "$A" --args --test-exit-after 12  # 起窗 12 s 自关；日志 ~/Librar
 
 ```bash
 STAGE=$(mktemp -d)/dmg && mkdir -p "$STAGE"
-ditto local-dist/build/dist/斐萃-s1.app "$STAGE/斐萃-s1.app"
+ditto local-dist/build/dist/斐萃_lite.app "$STAGE/斐萃_lite.app"
 ln -s /Applications "$STAGE/Applications"
-codesign --force --deep -s - "$STAGE/斐萃-s1.app"          # adhoc（PyInstaller BUNDLE 步本身也已是 adhoc）
-codesign --verify --deep --strict --verbose=2 "$STAGE/斐萃-s1.app"
+codesign --force --deep -s - "$STAGE/斐萃_lite.app"          # adhoc（PyInstaller BUNDLE 步本身也已是 adhoc）
+codesign --verify --deep --strict --verbose=2 "$STAGE/斐萃_lite.app"
 hdiutil create -volname "斐萃 s1" -srcfolder "$STAGE" -ov -format UDZO -fs HFS+ \
-  local-dist/build/dist/斐萃-s1.dmg
-hdiutil verify local-dist/build/dist/斐萃-s1.dmg
+  local-dist/build/dist/斐萃_lite.dmg
+hdiutil verify local-dist/build/dist/斐萃_lite.dmg
 ```
 
 实测：**94 MB（99 045 133 B）、UDZO/zlib、压缩比 0.440、`hdiutil verify` = checksum VALID**；
-挂载后目录 = `斐萃-s1.app` ＋ `Applications -> /Applications`，**挂载内启动也能自关（`--test-exit-after 8` ⇒ EXIT=0）**。
+挂载后目录 = `斐萃_lite.app` ＋ `Applications -> /Applications`，**挂载内启动也能自关（`--test-exit-after 8` ⇒ EXIT=0）**。
 
 ### 8.4 分发现状（必须对用户说清）
 
 产物 **未签名、未公证** ⇒ 用户机首次打开会被 **Gatekeeper** 拦（「无法验证开发者」）：
 
-- 临时绕过：右键 → 打开；或 `xattr -dr com.apple.quarantine /Applications/斐萃-s1.app`；
+- 临时绕过：右键 → 打开；或 `xattr -dr com.apple.quarantine /Applications/斐萃_lite.app`；
 - **正式分发**：需人类提供 **Developer ID Application 证书** ＋ **App Store Connect 凭据**，
   然后 `codesign --force --deep --options runtime --timestamp` ＋ `xcrun notarytool submit --wait` ＋ `xcrun stapler staple`；
 - **ad-hoc 不是正式签名**（`TeamIdentifier=not set`），不可当作已签名的对外说法。
@@ -351,7 +363,7 @@ hdiutil verify local-dist/build/dist/斐萃-s1.dmg
 | 挂载 DMG → 跑 `--test-exit-after 8` → `hdiutil detach`（**无 `-force`**） | s1/s2 各 1 | `DETACH_RC=0`，残留进程 0 |
 
 红点物理点击**未实测**（`System Events` 无辅助功能授权，`-1712`）⇒ 人工步骤：
-`open -n local-dist/build/dist/斐萃-s1.app` → 6 s 后点红点 → `pgrep -f 斐萃-s1`（应 ≤3 s 内空）。
+`open -n local-dist/build/dist/斐萃_lite.app` → 6 s 后点红点 → `pgrep -f 斐萃_lite`（应 ≤3 s 内空）。
 
 
 ---
@@ -376,9 +388,9 @@ hdiutil verify local-dist/build/dist/斐萃-s1.dmg
 
 | 项 | 值 |
 | --- | --- |
-| artifact 名 | `feicui-win-s1` |
-| 内容 | `feicui-win-s1.zip`（`Compress-Archive`，已压缩 ⇒ upload 用 `compression-level: 0`） |
-| zip 内 | `斐萃-s1/斐萃.exe` ＋ `斐萃-s1/_internal/**`（**onedir**） |
+| artifact 名 | `feicui-win-lite` |
+| 内容 | `feicui-win-lite.zip`（`Compress-Archive`，已压缩 ⇒ upload 用 `compression-level: 0`） |
+| zip 内 | `斐萃_lite/斐萃.exe` ＋ `斐萃_lite/_internal/**`（**onedir**） |
 | 保留 | 14 天；CI 同时打印 zip 的 SHA256 |
 | 启动 | 解压后**双击 `斐萃.exe`**；⚠ **不能只拷 `.exe`**（`_internal/` 是它的一半） |
 
@@ -418,14 +430,14 @@ hdiutil verify local-dist/build/dist/斐萃-s1.dmg
 
 | 平台 | 形态 | 图标 | 输出 |
 | --- | --- | --- | --- |
-| darwin | `COLLECT` ＋ `BUNDLE` | `feicui.icns` | `dist/斐萃-s1.app`（＋ `dist/斐萃-s1/`） |
-| win32 | **只有 `COLLECT`（onedir）** | `feicui.ico` | `dist/win/斐萃-s1/斐萃.exe` ＋ `_internal/` |
-| linux | 只有 `COLLECT`（未验收） | 有 `.ico` 就带 | `dist/斐萃-s1/` |
+| darwin | `COLLECT` ＋ `BUNDLE` | `feicui.icns` | `dist/斐萃_lite.app`（＋ `dist/斐萃_lite/`） |
+| win32 | **只有 `COLLECT`（onedir）** | `feicui.ico` | `dist/win/斐萃_lite/斐萃.exe` ＋ `_internal/` |
+| linux | 只有 `COLLECT`（未验收） | 有 `.ico` 就带 | `dist/斐萃_lite/` |
 
 - `BUNDLE` 段包在 `if sys.platform == "darwin"` 里（非 darwin 调它会直接断言失败）。
 - hiddenimports **按平台选后端**：darwin=`webview.platforms.cocoa`；win32=`edgechromium` ＋ `winforms`
   ＋ `clr` ＋ `clr_loader`。**`cocoa` 绝不进 Windows 分析**（pyobjc 在 Windows 不存在 ⇒ ImportError）。
-- Windows 的 exe 名去掉阶段后缀（`斐萃.exe`，双击/固定到任务栏都按它走），阶段只体现在目录名 `斐萃-s1`。
+- Windows 的 exe 名去掉阶段后缀（`斐萃.exe`，双击/固定到任务栏都按它走），阶段只体现在目录名 `斐萃_lite`。
 - `src/paths.py` 已进 `SRC_FILES`（datas）＋ hiddenimports：`pack_main.py` 在 import `api` **之前**就要用它。
 
 ### 9.6 本地能验的（读数，2026-10-20 本机 macOS 15.7.4 / Apple Silicon）
@@ -446,7 +458,7 @@ hdiutil verify local-dist/build/dist/斐萃-s1.dmg
    （现象：进程在、无窗）。缺就装 Microsoft 的 Evergreen Bootstrapper（离线包 ~120 MB）。
 2. **未签名 ⇒ SmartScreen 拦**：首次运行「Windows 已保护你的电脑」。绕过：更多信息 → 仍要运行。
    正式分发需**代码签名证书**（EV/OV）＋ `signtool sign /tr <ts> /td sha256 /fd sha256`，本单**没有**（也无密钥）。
-3. **中文文件名/路径**：exe 目录名 `斐萃-s1`、用户名可能是中文 ⇒ 已钉 `PYTHONUTF8=1`／`PYTHONIOENCODING`；
+3. **中文文件名/路径**：exe 目录名 `斐萃_lite`、用户名可能是中文 ⇒ 已钉 `PYTHONUTF8=1`／`PYTHONIOENCODING`；
    但**未在真机上验**过「中文用户名 + 中文路径 + 深目录」的组合（CI 用 ASCII 临时目录）。
 4. **密钥 0600 退化**：`src/yinyuan_client.py` 用 `os.open(..., 0o600)` ＋ `os.chmod` 设权限；
    Windows 上 `chmod` 只翻「只读」位，**不设 ACL** ⇒ 实际保护来自 `%APPDATA%\斐萃` 的**每用户 ACL**

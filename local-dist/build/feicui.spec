@@ -12,14 +12,14 @@
 #   set FEICUI_PACK_STAGE=1
 #   python -m PyInstaller --noconfirm --clean ^
 #       --distpath local-dist/build/dist/win --workpath local-dist/build/build/win local-dist/build/feicui.spec
-#   ⇒ `local-dist/build/dist/win/斐萃-s1/斐萃.exe` ＋ `_internal/`（**onedir**，不是 onefile）
+#   ⇒ `local-dist/build/dist/win/斐萃_lite/斐萃.exe` ＋ `_internal/`（**onedir**，不是 onefile）
 #
 # ── 平台分支（**本 spec 唯一的 `sys.platform` 分叉点**）────────────────────────────
 #   | 平台 | 形态 | 图标 | 输出 |
 #   | --- | --- | --- | --- |
-#   | darwin | `COLLECT` ＋ **`BUNDLE`**（`.app`） | `build/feicui.icns` | `dist/斐萃-s1.app`（＋ `dist/斐萃-s1/`） |
-#   | win32  | **只有 `COLLECT`**（onedir） | `build/feicui.ico`  | `dist/win/斐萃-s1/斐萃.exe` ＋ `_internal/` |
-#   | linux  | 只有 `COLLECT`（onedir，未验收） | 无 | `dist/斐萃-s1/斐萃` |
+#   | darwin | `COLLECT` ＋ **`BUNDLE`**（`.app`） | `build/feicui.icns` | `dist/斐萃_<阶段>.app`（＋ `dist/斐萃_<阶段>/`） |
+#   | win32  | **只有 `COLLECT`**（onedir） | `build/feicui.ico`  | `dist/win/斐萃_<阶段>/斐萃.exe` ＋ `_internal/` |
+#   | linux  | 只有 `COLLECT`（onedir，未验收） | 无 | `dist/斐萃_<阶段>/斐萃` |
 #
 #   ⚠ 三条**不能动**的取舍：
 #   1) **Windows 不用 onefile**：onefile 每次启动都要把 ~200 MB 解到 `%TEMP%\_MEIxxxx`（慢、且
@@ -55,7 +55,7 @@ WEBUI = os.path.join(ROOT, "local-dist")
 STAGE = os.environ.get("FEICUI_PACK_STAGE", "1")
 WITH_OCR = STAGE in ("2", "3")
 WITH_PADDLE = STAGE == "3"
-SUFFIX = {"1": "-s1", "2": "-s2", "3": "-s3-paddle"}[STAGE]
+SUFFIX = {"1": "_lite", "2": "_pro", "3": "_pro_paddle"}[STAGE]
 
 # ── `.app` 图标（**用户可见的那个**）──────────────────────────────────────────
 # 来源：**`local-dist/assets/feicui.svg`**（矢量，viewBox 0 0 480 480；与 480×480 的 `feicui.png` 同一设计）。
@@ -92,7 +92,11 @@ else:
 APP_NAME = "斐萃"
 
 # ── 产物名（按平台派生）────────────────────────────────────────────────────────────
-# macOS：可执行文件与 `.app` 都带阶段后缀（历史口径，别动 —— 老 DMG/脚本按它找）。
+# macOS：可执行文件与 `.app` 都带阶段后缀（`_lite` / `_pro` / `_pro_paddle`，下划线分隔）。
+#   ⚠ 产物名与 `CFBundleExecutable` / MacOS 下 stub 名**同源**（PyInstaller 按 `name` 生成），
+#     所以改名只能改这里再重打包 —— 事后 `mv` 目录名会让 `CFBundleExecutable` 指向不存在的文件。
+#   ⚠ **不要**用产物名做阶段判定（老代码 `startswith('-s1')` 那种写法已废弃）：
+#     阶段判定一律读 `FEICUI_PACK_STAGE`（spec/打包侧）或运行时能力探测（源码侧）。
 # Windows：**exe 就叫 `斐萃.exe`**（双击/快捷方式/任务栏固定都按它走）；阶段后缀只留在**目录名**上。
 EXE_NAME = "斐萃" if IS_WIN else "斐萃" + SUFFIX
 BUNDLE_NAME = "斐萃" + SUFFIX
@@ -273,7 +277,7 @@ coll = COLLECT(
 
 # ── `.app` 只属于 macOS ──────────────────────────────────────────────────────────────
 # `BUNDLE` 内部是 `PyInstaller.building.osx`，非 darwin 直接断言失败 ⇒ **必须**包在 if 里。
-# Windows/Linux 到此为止：`COLLECT` 产出的 onedir 目录（`斐萃-s1/`，内含 `斐萃.exe` ＋ `_internal/`）
+# Windows/Linux 到此为止：`COLLECT` 产出的 onedir 目录（`斐萃_<阶段>/`，内含 `斐萃.exe` ＋ `_internal/`）
 # 就是最终产物，双击 `斐萃.exe` 即启动。
 if IS_MAC:
     app = BUNDLE(
@@ -282,8 +286,8 @@ if IS_MAC:
         icon=ICON,
         bundle_identifier="com.cloudcottage.feicui.local",
         info_plist={
-            "CFBundleDisplayName": APP_NAME,
-            "CFBundleName": APP_NAME,
+            "CFBundleDisplayName": BUNDLE_NAME,
+            "CFBundleName": BUNDLE_NAME,
             "CFBundleShortVersionString": "0.3.0",
             "CFBundleVersion": "0.3.0",
             "LSMinimumSystemVersion": "12.0",

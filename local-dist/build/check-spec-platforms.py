@@ -87,7 +87,7 @@ def main() -> int:
         if not cond:
             fails.append(msg)
 
-    # ── darwin：行为必须与历史一致（BUNDLE 有、icns、cocoa 有、名字带 -s1）──────────────
+    # ── darwin：行为必须与历史一致（BUNDLE 有、icns、cocoa 有、名字带 _lite）──────────────
     mac = run("darwin")
     check(mac["bundle"] is not None, "darwin: 调用了 BUNDLE（.app）")
     check(mac["bundle"] and mac["bundle"].get("icon") == str(WEBUI / "build" / "feicui.icns"),
@@ -95,8 +95,8 @@ def main() -> int:
     check("webview.platforms.cocoa" in mac["hiddenimports"], "darwin: hiddenimports 含 webview.platforms.cocoa")
     check("webview.platforms.edgechromium" not in mac["hiddenimports"],
           "darwin: hiddenimports **不含** edgechromium")
-    check(mac["vars"]["EXE_NAME"] == "斐萃-s1" and mac["vars"]["BUNDLE_NAME"] == "斐萃-s1",
-          "darwin: EXE_NAME/BUNDLE_NAME = 斐萃-s1（历史产物名不变）")
+    check(mac["vars"]["EXE_NAME"] == "斐萃_lite" and mac["vars"]["BUNDLE_NAME"] == "斐萃_lite",
+          "darwin: EXE_NAME/BUNDLE_NAME = 斐萃_lite（stage 1 ⇒ _lite）")
     check(mac["exe"].get("console") is False and "icon" not in mac["exe"],
           "darwin: console=False 且 EXE 不传 icon（mac 图标只走 BUNDLE）")
     check(mac["exe"].get("argv_emulation") is False and "target_arch" in mac["exe"],
@@ -105,8 +105,8 @@ def main() -> int:
     # ── win32：onedir、ico、无 cocoa、exe 名 斐萃.exe ─────────────────────────────────
     win = run("win32")
     check(win["bundle"] is None, "win32: **不**调用 BUNDLE（否则 PyInstaller 直接断言失败）")
-    check(win["collect"] and win["collect"].get("name") == "斐萃-s1",
-          "win32: COLLECT 目录名 = 斐萃-s1（onedir）")
+    check(win["collect"] and win["collect"].get("name") == "斐萃_lite",
+          "win32: COLLECT 目录名 = 斐萃_lite（onedir）")
     check(win["exe"].get("name") == "斐萃" and win["vars"]["EXE_NAME"] == "斐萃",
           "win32: EXE 名 = 斐萃（双击用，不带阶段后缀）")
     check(win["exe"].get("icon") == str(WEBUI / "build" / "feicui.ico"),

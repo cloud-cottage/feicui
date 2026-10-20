@@ -334,14 +334,15 @@ curl -s https://feicui.xiai.plus/ | grep -o '/downloads/[a-zA-Z0-9._-]*' | sort 
 #   期望两行：/downloads/feicui-mac-s1.dmg、/downloads/feicui-win-s1.zip
 ```
 
-**重打 DMG 的配方**（源 app 由 PyInstaller 产出在 `local-dist/build/dist/斐萃-sN.app`）：
+**重打 DMG 的配方**（源 app 由 PyInstaller 产出在 `local-dist/build/dist/斐萃_{lite,pro}.app`；
+⚠ **DMG 资产名属发版单范围**（正在统一为 `feicui-mac-lite.dmg` 等，待发版单落地），本单不动资产名）：
 
 ```bash
 cd local-dist/build/dist
 STAGE=$(mktemp -d)
-ditto 斐萃-s1.app "$STAGE/斐萃-s1.app"      # ditto 保留资源分叉/权限，不要用 cp -R
+ditto 斐萃_lite.app "$STAGE/斐萃_lite.app"      # ditto 保留资源分叉/权限，不要用 cp -R
 ln -s /Applications "$STAGE/Applications"
-hdiutil create -volname "斐萃-s1" -srcfolder "$STAGE" -fs HFS+ -format UDZO -ov feicui-mac-s1.dmg
+hdiutil create -volname "斐萃_lite" -srcfolder "$STAGE" -fs HFS+ -format UDZO -ov feicui-mac-s1.dmg
 hdiutil verify feicui-mac-s1.dmg            # 必须 VALID 再上传
 ```
 
@@ -350,7 +351,7 @@ hdiutil verify feicui-mac-s1.dmg            # 必须 VALID 再上传
 `Contents/Frameworks` 含 `rapidocr` / `onnxruntime` / 135 个条目，与 s2 源 app 相称。
 
 **发布口径（Release body 必写）**：未签名未公证（mac 首次右键→打开，或
-`xattr -dr com.apple.quarantine /Applications/斐萃-s1.app`）；Windows 为 Phase 1（窗口交互未逐项验证）、
+`xattr -dr com.apple.quarantine /Applications/斐萃_lite.app`）；Windows 为 Phase 1（窗口交互未逐项验证）、
 需 WebView2 运行时；onedir **必须解压整目录**、不可单拷 `.exe`；来源（本仓本地构建）与许可（内部自用、第三方组件各自许可）提示。
 
 

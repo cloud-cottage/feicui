@@ -5,8 +5,8 @@
 # windows-latest 上、用 Windows 版 CPython ＋ Windows 版 wheel 打出来。本机（macOS）只能验
 # 「spec 语法 / 平台分支逻辑 / 路径单测（注入式三平台）/ mac 回归」，真产物只能靠这里。
 #
-# 产物：artifact 名 `feicui-win-s1`（内含 `feicui-win-s1.zip`）
-#   └─ 斐萃-s1/斐萃.exe        ← 双击启动（GUI 子系统，无黑框）
+# 产物：artifact 名 `feicui-win-lite`（内含 `feicui-win-lite.zip`）
+#   └─ 斐萃_lite/斐萃.exe        ← 双击启动（GUI 子系统，无黑框）
 #      └─ _internal/           ← Python 运行时 ＋ 依赖（onedir；**不是 onefile**）
 #
 # 触发：
@@ -43,8 +43,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-win-s1:
-    name: win-s1 (${{ matrix.os }})
+  build-win-lite:
+    name: win-lite (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     timeout-minutes: 45
     strategy:
@@ -54,7 +54,7 @@ jobs:
           - os: windows-latest
             stage: "1"
     env:
-      # 中文路径（`斐萃-s1` / `斐萃.exe`）＋ 中文日志：Windows 默认代码页是 cp1252，
+      # 中文路径（`斐萃_lite` / `斐萃.exe`）＋ 中文日志：Windows 默认代码页是 cp1252，
       # 不钉 UTF-8 会在 print/写文件名时炸 UnicodeEncodeError（假失败）。
       PYTHONUTF8: "1"
       PYTHONIOENCODING: "utf-8"
@@ -124,7 +124,7 @@ jobs:
       - name: Assert bundle shape（onedir / 无 pyobjc / 无 OCR）
         shell: pwsh
         run: |
-          $root = "local-dist/build/dist/win/斐萃-s1"
+          $root = "local-dist/build/dist/win/斐萃_lite"
           $exe  = Join-Path $root "斐萃.exe"
           if (-not (Test-Path $exe))                { throw "缺 exe：$exe" }
           if (-not (Test-Path (Join-Path $root "_internal"))) { throw "不是 onedir（缺 _internal/）" }
@@ -146,7 +146,7 @@ jobs:
           # `--engine-run <不存在的脚本>` ⇒ 引导器必须走到路径初始化、建好用户目录、写日志，然后以 **2** 退出。
           # 这一步验的是「双击启动前的那半条路」：bootloader 能起、`src/paths.py` 在冻结态能被 import、
           # Windows 上数据根真的落在 %APPDATA%\斐萃、日志真的落在 %LOCALAPPDATA%\斐萃\logs。
-          $exe = (Resolve-Path "local-dist/build/dist/win/斐萃-s1/斐萃.exe").Path
+          $exe = (Resolve-Path "local-dist/build/dist/win/斐萃_lite/斐萃.exe").Path
           $p = Start-Process -FilePath $exe -ArgumentList "--engine-run", "__nope__.py" -PassThru -Wait
           Write-Host "exit=$($p.ExitCode)"
           if ($p.ExitCode -ne 2) { throw "期望退出码 2（引擎脚本缺失），实际 $($p.ExitCode)" }
@@ -162,16 +162,16 @@ jobs:
       - name: Package zip
         shell: pwsh
         run: |
-          Compress-Archive -Path "local-dist/build/dist/win/斐萃-s1" -DestinationPath "feicui-win-s1.zip" -Force
-          $len = (Get-Item feicui-win-s1.zip).Length
-          Write-Host "feicui-win-s1.zip = $([math]::Round($len/1MB,1)) MB"
-          Get-FileHash feicui-win-s1.zip -Algorithm SHA256 | Format-List
+          Compress-Archive -Path "local-dist/build/dist/win/斐萃_lite" -DestinationPath "feicui-win-lite.zip" -Force
+          $len = (Get-Item feicui-win-lite.zip).Length
+          Write-Host "feicui-win-lite.zip = $([math]::Round($len/1MB,1)) MB"
+          Get-FileHash feicui-win-lite.zip -Algorithm SHA256 | Format-List
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: feicui-win-s1
-          path: feicui-win-s1.zip
+          name: feicui-win-lite
+          path: feicui-win-lite.zip
           if-no-files-found: error
           retention-days: 14
           compression-level: 0        # 已经是 zip

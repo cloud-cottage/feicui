@@ -920,6 +920,17 @@
     return (v && v !== 'auto') ? (foNormalize(v) || 'auto') : 'auto';
   }
 
+  // 无 OCR 能力（`斐萃_lite` / 阶段 1 包）⇒ 字段区顶部**信息色**提示，不是错误：
+  // 检测照常成功（红印框 + 可编辑字段），只是三字段要人工填。绝不显示红色横幅。
+  function ctOcrNote(r) {
+    var el = $('tab2-ocr-note');
+    if (!el) { return; }
+    var avail = !(r && r.ocr_available === false);
+    el.hidden = avail;
+    el.textContent = avail ? ''
+      : '本版不含 OCR（lite）：释文/状态/编号需手动填写；要自动识别请用斐萃_pro';
+  }
+
   function ctDetect() {
     var ct = ctState(), it = ctItem();
     if (!it) {
@@ -968,12 +979,21 @@
           ctRender();
           $('tab2-canvas-hint').hidden = !!ct.img;
         });
+        ctOcrNote(r);
         var rev = ct.fields.filter(function (f) { return f && f.needs_review; }).length;
-        setMsg('tab2-ct-msg', '检测到 ' + ct.boxes.length + ' 枚 · 字段 ' + ct.fields.length +
-          ' 组（阅读顺序 ' + (ct.orderResolved || '—') + ' / ' + (ct.orderSource || '—') +
-          (rev ? ' · ⚠ 待人工确认 ' + rev : '') + '）· ' +
-          (r.elapsed_s === undefined ? '?' : r.elapsed_s) + ' s · 页 ' + ct.size[0] + '×' + ct.size[1],
-          ct.boxes.length ? 'ok' : 'err');
+        var noOcr = (r.ocr_available === false);
+        if (noOcr) {
+          // lite：检测成功但无字段读数 ⇒ 信息色（**不是** ❌ 红条），字段可手填并参与命名
+          setMsg('tab2-ct-msg', '已检测 ' + ct.boxes.length + ' 枚印章（本版无 OCR，字段请手动填写）· ' +
+            (r.elapsed_s === undefined ? '?' : r.elapsed_s) + ' s · 页 ' + ct.size[0] + '×' + ct.size[1],
+            'info');
+        } else {
+          setMsg('tab2-ct-msg', '检测到 ' + ct.boxes.length + ' 枚 · 字段 ' + ct.fields.length +
+            ' 组（阅读顺序 ' + (ct.orderResolved || '—') + ' / ' + (ct.orderSource || '—') +
+            (rev ? ' · ⚠ 待人工确认 ' + rev : '') + '）· ' +
+            (r.elapsed_s === undefined ? '?' : r.elapsed_s) + ' s · 页 ' + ct.size[0] + '×' + ct.size[1],
+            ct.boxes.length ? 'ok' : 'err');
+        }
       }).catch(function () { btn.disabled = false; });
   }
 

@@ -41,10 +41,20 @@
 ## 返回（**永不抛**）
 
 `extract_fields(...)` ⇒
-`{ok, size, reading_order, order_source, seals:[{read_order, idx, c, r, box, inscription,
+`{ok, size, reading_order, order_source, ocr_available, seals:[{read_order, idx, c, r, box, inscription,
 inscription_score, inscription_verified, status, status_score, code, code_score, needs_review,
 candidates, text_boxes}], dropped:{inside_seal, edge, far, noise}, dropped_texts:{…}, far_limit,
 count, elapsed_s}`；失败 ⇒ `{ok: False, reason, msg}`。
+
+## 无 OCR 时的降级（`斐萃_lite` / 阶段 1 包）
+
+`ocr_capable()` 只**探测**（`importlib.util.find_spec`，不加载模型）：`rapidocr` 或适配层
+`src.ocr_rapid` 任一缺失 ⇒ False。此时 `extract_fields` **仍返回 `ok: True`**：
+
+* 只做**红印检测**（`seal_detect`，不依赖 OCR），`boxes` 照常给；
+* 每枚 `seals[i]` 的 `inscription/status/code` 均为**空字符串**，三个 `*_score` 为 `None`；
+* `ocr_available: False`，`note` ＝ `OCR_UNAVAILABLE_NOTE`（提示手动填 / 改用 `斐萃_pro`）；
+* `reading_order` 回落 `ltr-ttb`、`order_source='fallback'`（无编号可推断）。
 
 ## 红线
 
@@ -53,6 +63,7 @@ count, elapsed_s}`；失败 ⇒ `{ok: False, reason, msg}`。
 """
 from __future__ import annotations
 
+import importlib.util
 import re
 import time
 
@@ -64,6 +75,7 @@ __all__ = [
     "FAR_FACTOR",
     "MIN_VOTES",
     "LOW_SCORE",
+    "OCR_UNAVAILABLE_NOTE",
     "normalize_reading_order",
     "grid_positions",
     "reading_sequence",
@@ -73,6 +85,7 @@ __all__ = [
     "detect_seals",
     "render_page",
     "infer_reading_order",
+    "ocr_capable",
     "extract_fields",
 ]
 
@@ -90,6 +103,9 @@ FAR_FACTOR = 2.2
 MIN_VOTES = 3
 #: 低分警戒线：未验证且低于此分 ⇒ `needs_review`。
 LOW_SCORE = 0.95
+#: 无 OCR 能力时的**可读**提示（UI 原样显示；口径同 `api.OCR_*`）。
+OCR_UNAVAILABLE_NOTE = ("本版不含 OCR（斐萃_lite）⇒ 释文/状态/编号请手动填写，"
+                        "或改用 斐萃_pro（含 OCR）自动识别")
 
 _CODE_RE = re.compile(r"[0-9O]{3,5}")
 _DIGITS_RE = re.compile(r"[0-9Oo]+")
@@ -228,6 +244,25 @@ def render_page(pdf, page: int, dpi: int = DETECT_DPI):
 
 
 # ── OCR 适配 ─────────────────────────────────────────────────────────────────
+def ocr_capable(ocr_fn=None) -> bool:
+    """本机/本包**能不能**做 OCR —— 只探测，**不加载模型**（不 import onnxruntime）。
+
+    * 已注入 `ocr_fn` ⇒ True（单测 / 离线纯逻辑路径）；
+    * 否则 `rapidocr` 与适配层 `src.ocr_rapid` **都要在**：阶段 1 打包件
+      （`斐萃_lite.app`，`feicui.spec` 把 `rapidocr`/`onnxruntime` 全进 `excludes`）两者都没有
+      ⇒ False，调用方据此**优雅降级**（只做红印检测，字段留空交人工填），而不是点一下就
+      `ModuleNotFoundError`。
+    """
+    if ocr_fn is not None:
+        return True
+    try:
+        if importlib.util.find_spec("rapidocr") is None:
+            return False
+        return importlib.util.find_spec("src.ocr_rapid") is not None
+    except Exception:                                    # 探测本身失败 ⇒ 当作不可用（不抛）
+        return False
+
+
 def _ocr_items(bgr, ocr_fn=None) -> list[dict]:
     """OCR ⇒ `[{text, score, box}]`（`ocr_fn` 可注入：签名 `fn(bgr) -> {texts,scores,boxes}`）。"""
     if ocr_fn is None:
@@ -321,6 +356,7 @@ def extract_fields(bgr, boxes=None, *, ocr_fn=None, reading_order: str = "auto",
     try:
         if bgr is None or getattr(bgr, "size", 0) == 0:
             return {"ok": False, "reason": "NO_IMAGE", "msg": "没有页图（先渲页 / 检测）"}
+        has_ocr = ocr_capable(ocr_fn)
         H, W = int(bgr.shape[0]), int(bgr.shape[1])
         raw_boxes = list(boxes) if boxes else None
         seal_boxes = [_as_box(b) for b in raw_boxes] if raw_boxes else detect_seals(bgr)
@@ -329,10 +365,14 @@ def extract_fields(bgr, boxes=None, *, ocr_fn=None, reading_order: str = "auto",
                     "order_source": "fallback", "seals": [], "count": 0,
                     "dropped": {"inside_seal": 0, "edge": 0, "far": 0, "noise": 0},
                     "dropped_texts": {"inside_seal": [], "edge": [], "far": [], "noise": []},
-                    "far_limit": 0.0, "elapsed_s": round(time.time() - t0, 2),
+                    "far_limit": 0.0, "ocr_available": has_ocr,
+                    "elapsed_s": round(time.time() - t0, 2),
                     "note": "未检测到印章"}
 
-        items = _ocr_items(bgr, ocr_fn)
+        # **降级闸**：本包不带 OCR（斐萃_lite）⇒ 只做红印检测，字段留空字符串交人工填，
+        # 绝不 import 适配层（否则 `ModuleNotFoundError` 会把「检测成功」变成「点了就炸」）。
+        items = _ocr_items(bgr, ocr_fn) if has_ocr else []
+        blank = None if has_ocr else ""        # 无 OCR 时三字段是**空串**（不是 None，UI 直接可编辑）
 
         # ① 四轮过滤
         avg_side = sum(min(b[2] - b[0], b[3] - b[1]) for b in seal_boxes) / max(len(seal_boxes), 1)
@@ -373,9 +413,9 @@ def extract_fields(bgr, boxes=None, *, ocr_fn=None, reading_order: str = "auto",
                 kinds[classify_text(it["text"])].append(it)
             seal = {
                 "idx": i + 1, "box": [int(v) for v in sb],
-                "inscription": None, "inscription_score": None,
-                "status": None, "status_score": None,
-                "code": None, "code_score": None,
+                "inscription": blank, "inscription_score": None,
+                "status": blank, "status_score": None,
+                "code": blank, "code_score": None,
                 "candidates": {k: [it["text"] for it in v] for k, v in kinds.items() if v},
                 "text_boxes": [{"text": it["text"], "score": round(it["score"], 4),
                                 "kind": classify_text(it["text"]),
@@ -415,17 +455,21 @@ def extract_fields(bgr, boxes=None, *, ocr_fn=None, reading_order: str = "auto",
             seals[i]["read_order"] = rank
             seals[i]["c"], seals[i]["r"] = int(pos[i][0]), int(pos[i][1])
 
-        return {"ok": True, "size": [W, H],
-                "reading_order": order, "order_source": source,
-                "seals": seals, "count": len(seals),
-                "dropped": {"inside_seal": len(inside), "edge": len(edge),
-                            "far": len(far), "noise": len(noise)},
-                "dropped_texts": {"inside_seal": [it["text"] for it in inside],
-                                  "edge": [it["text"] for it in edge],
-                                  "far": [it["text"] for it in far],
-                                  "noise": [it["text"] for it in noise]},
-                "far_limit": round(far_limit, 1),
-                "ocr_items": len(items), "elapsed_s": round(time.time() - t0, 2)}
+        out = {"ok": True, "size": [W, H],
+               "reading_order": order, "order_source": source,
+               "seals": seals, "count": len(seals),
+               "ocr_available": has_ocr,
+               "dropped": {"inside_seal": len(inside), "edge": len(edge),
+                           "far": len(far), "noise": len(noise)},
+               "dropped_texts": {"inside_seal": [it["text"] for it in inside],
+                                 "edge": [it["text"] for it in edge],
+                                 "far": [it["text"] for it in far],
+                                 "noise": [it["text"] for it in noise]},
+               "far_limit": round(far_limit, 1),
+               "ocr_items": len(items), "elapsed_s": round(time.time() - t0, 2)}
+        if not has_ocr:
+            out["note"] = OCR_UNAVAILABLE_NOTE
+        return out
     except Exception as exc:                              # noqa: BLE001 —— 本地版永不抛
         return {"ok": False, "reason": "ERROR",
                 "msg": f"字段提取失败：{exc.__class__.__name__}: {exc}",

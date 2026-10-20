@@ -544,6 +544,45 @@ def _probe_body() -> None:
            and (t2e.get("order_src") or "").strip() == "—",
            f"字段行数={_rows} 顺序来源={t2e.get('order_src')!r}")
 
+    # ── ③-6 lite 包（无 OCR）语义：检测**成功**、字段留空可编辑、信息色提示条（**不是**红条）──
+    #    响应形状照 `斐萃_lite.app` 真值：`ocr_available=false`、三字段空串、`order_source='fallback'`。
+    #    回归点是用户实测那个红横幅 `字段提取失败: ModuleNotFoundError: No module named 'rapidocr'`
+    #    —— lite 包点「自动检测」绝不能走到那里。
+    _lite_seals = [dict(s, inscription="", status="", code="", inscription_score=None,
+                        needs_review=False) for s in SEALS]
+    lite = dict(fake, seals=_lite_seals, ocr_available=False, fields_manual=True,
+                reading_order="ltr-ttb", order_source="fallback",
+                note="本版不含 OCR（斐萃_lite）：本次只做了红印检测（3 枚），释文/状态/编号请手动填写；"
+                     "要自动识别请用 斐萃_pro（含 OCR）")
+    _ev("window.pywebview.api.tab2_extract = function(){ return Promise.resolve("
+        + json.dumps(lite) + "); }; 1")
+    _ev("document.getElementById('btn-tab2-detect').click()")
+    _wait_js("document.querySelectorAll('#tab2-fields .frow').length === 3", 20)
+    time.sleep(0.5)
+    t2l = _read("08b_tab2_lite_no_ocr", JS_TAB2)
+    ocrbar = _read("08c_tab2_lite_ocr_banner",
+                   "(() => { const n=document.getElementById('tab2-ocr-note');"
+                   " const m=document.getElementById('tab2-ct-msg');"
+                   " return JSON.stringify({hidden: n?n.hidden:null, note: n?n.textContent:'',"
+                   " cls: m?m.className:'', msg: m?m.textContent:''}); })()")
+    lcells = (t2l.get("fields") or {}).get("cells") or []
+    record("tabs/tab2_lite_no_ocr_ok_info_banner",
+           (t2l.get("canvas") or {}).get("boxes") == "3"
+           and "已检测 3 枚印章（本版无 OCR，字段请手动填写）" in (t2l.get("msg") or "")
+           and "info" in (ocrbar.get("cls") or "") and "err" not in (ocrbar.get("cls") or "")
+           and ocrbar.get("hidden") is False and "斐萃_pro" in (ocrbar.get("note") or "")
+           and len(lcells) == 3 and all(c.get("editable") for c in lcells)
+           and all((c.get("ins") or "", c.get("status") or "", c.get("code") or "") == ("", "", "")
+                   for c in lcells),
+           f"框数={(t2l.get('canvas') or {}).get('boxes')} 消息={t2l.get('msg')!r} "
+           f"class={ocrbar.get('cls')!r} 提示条={ocrbar.get('note')!r} "
+           f"字段={[(c.get('ins'), c.get('status'), c.get('code')) for c in lcells]}")
+    record("tabs/tab2_lite_order_falls_back_not_code_sequence",
+           "fallback" in (t2l.get("order_src") or "")
+           and "code-sequence" not in (t2l.get("order_src") or ""),
+           f"顺序来源={t2l.get('order_src')!r}")
+    _ev("window.pywebview.api.tab2_extract = window.__realExtract; 1")   # 还原真桥
+
     # ── ④ 切到 tab3：原节点一字未变（渲染后）──
     _ev("document.querySelector('#tabs .tab[data-tab=\"3_Cropped_Tiff\"]').click()")
     _wait_js("document.querySelectorAll('#tab3-grid .thumb-item').length > 0", 25)

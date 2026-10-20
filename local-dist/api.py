@@ -153,10 +153,11 @@ def ocr_available() -> bool:
 
 
 def ocr_unavailable_note() -> str:
-    """能力缺失时的**可读**原因（UI 原样显示；可用时为空串）。"""
+    """能力缺失时的**可读**原因（UI 原样显示；可用时为空串），并给出可执行的替代路径。"""
     if ocr_available():
         return ""
-    return str(_OCR_PROBE.get("reason") or "本版本未内置 OCR 引擎（rapidocr 未随包提供）")
+    why = str(_OCR_PROBE.get("reason") or "本版本未内置 OCR 引擎（rapidocr 未随包提供）")
+    return f"{why} ⇒ 释文请手动填写；要自动识别请用 斐萃_pro（含 OCR）"
 
 # ── 用户表（**仅后端**；可被 .env 的 FEICUI_USERS 覆盖，格式 `user:pwd:admin|user,...`）──
 _DEFAULT_USERS: dict[str, dict] = {
@@ -1206,6 +1207,10 @@ class FeicuiApi:
         * `reading_order='auto'` ⇒ 按编号序列推断（`order_source='code-sequence'`）；
           显式传 `rtl-ttb` 等 ⇒ `order_source='manual'`；
         * 预览图把三类字段用**不同颜色**标出（释文/状态/编号），并标读数与 P-C-R。
+        * **无 OCR 能力时优雅降级**（阶段 1 包 `斐萃_lite.app`：`rapidocr` 不在包里）⇒ 仍返回
+          `ok: True`，只做红印检测得到 `boxes`，`seals` 三字段为空串、`ocr_available=False`、
+          `fields_manual=True`、`note` 提示手动填写或改用 `斐萃_pro`；**绝不抛 `ModuleNotFoundError`**。
+          阅读顺序无法由编号推断 ⇒ 用本书元数据（`order_source='book-meta'`）或回落 `ltr-ttb`（`fallback`）。
         """
         miss = self._need_root()
         if miss:
@@ -1237,26 +1242,44 @@ class FeicuiApi:
             return {"ok": False, "reason": "ERROR",
                     "msg": f"渲页失败：{exc.__class__.__name__}: {exc}", "page": page}
         boxes_in = req.get("boxes") if isinstance(req.get("boxes"), list) and req.get("boxes") else None
+        # 能力闸先判：lite 包（阶段 1）没有 rapidocr ⇒ 只做红印检测，字段留空交人工填
+        ocr_ok = ocr_available()
+        book, meta_source, meta_key = lib.resolve_book_meta(pdf)   # 五级键回落
+        order_req = str(req.get("reading_order") or "auto").strip().lower()
+        fe_order, order_override = str(req.get("reading_order") or "auto"), ""
+        if not ocr_ok and order_req == "auto":
+            # 无编号可推断 ⇒ 用**书级元数据**（与 tab2_crop 的 auto 口径一致），没有才回落 ltr-ttb
+            bm_order = getattr(fe, "normalize_reading_order", lambda _v: None)(book.get("reading_order") or "")
+            if bm_order:
+                fe_order, order_override = bm_order, "book-meta"
         try:
             fields = fe.extract_fields(img, boxes_in,
-                                       reading_order=str(req.get("reading_order") or "auto"),
+                                       reading_order=fe_order,
                                        authoritative=req.get("authoritative"))
         except Exception as exc:
             return {"ok": False, "reason": "ERROR",
                     "msg": f"字段提取失败：{exc.__class__.__name__}: {exc}", "page": page}
         if not fields.get("ok"):
             return {**fields, "pdf": str(pdf), "pdf_name": pdf.name, "page": page, "dpi": int(dpi)}
+        ocr_ok = bool(fields.get("ocr_available", ocr_ok))
         seals = fields.get("seals") or []
         preview, pw, ph = self._preview_with_fields(img, seals)
-        book, meta_source, meta_key = lib.resolve_book_meta(pdf)   # 五级键回落
         boxes = [{"x1": s["box"][0], "y1": s["box"][1], "x2": s["box"][2], "y2": s["box"][3],
                   "idx": s.get("read_order") or s.get("idx")} for s in seals]
+        order_source = order_override or fields.get("order_source")
+        if not ocr_ok:
+            note = (f"本版不含 OCR（斐萃_lite）：本次只做了红印检测（{len(boxes)} 枚），"
+                    "释文/状态/编号请手动填写（字段仍随裁切写入 _fields.json）；"
+                    "要自动识别请用 斐萃_pro（含 OCR）")
+        else:
+            note = "字段仅供参考：纠错只认权威词表与同页多数票（≥3），其余原样输出"
         return {"ok": True, "pdf": str(pdf), "pdf_name": pdf.name, "page": page,
                 "dpi": int(dpi), "boxes_dpi": 400,
                 "size": fields.get("size") or [int(img.shape[1]), int(img.shape[0])],
                 "boxes": boxes, "count": len(boxes), "seals": seals,
                 "reading_order": fields.get("reading_order"),
-                "order_source": fields.get("order_source"),
+                "order_source": order_source,
+                "ocr_available": ocr_ok, "fields_manual": (not ocr_ok),
                 "book_meta": {"dynasty": book.get("dynasty") or "",
                               "author": book.get("author") or "",
                               "reading_order": book.get("reading_order") or "auto",
@@ -1266,7 +1289,7 @@ class FeicuiApi:
                 "preview_png_b64": preview, "preview_size": [pw, ph],
                 "preview_scale": round(ph / max(int(img.shape[0]), 1), 4),
                 "elapsed_s": round(time.time() - t0, 2),
-                "note": "字段仅供参考：纠错只认权威词表与同页多数票（≥3），其余原样输出"}
+                "note": note}
 
     @staticmethod
     def _preview_with_fields(img, seals, max_w: int = 1000) -> tuple[str, int, int]:
@@ -1698,8 +1721,8 @@ class FeicuiApi:
         if not ocr_available():
             body = dict(base)
             body.update({"ok": False, "reason": "OCR_UNAVAILABLE", "code": "OCR_UNAVAILABLE",
-                         "msg": "本版本不含 OCR 引擎：本版（阶段 1 包）未内置 rapidocr，"
-                                "OCR 试试看不可用；请手动填写释文。"})
+                         "msg": "本版本不含 OCR 引擎（斐萃_lite / 阶段 1 包未内置 rapidocr）："
+                                "OCR 试试看不可用，释文请手动填写；要自动识别请用斐萃_pro。"})
             return body
         if not name or not src.is_file():
             return {"ok": False, "msg": f"文件不存在：{name or '（空）'}", "code": "missing", **base}

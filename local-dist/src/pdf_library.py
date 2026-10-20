@@ -134,12 +134,34 @@ def validate_dynasty(value: str | None) -> tuple[bool, str | None]:
     return True, v
 
 
+#: 阅读顺序（tab1 元数据 / tab2 切图台共用同一值域；`auto` ＝ 按编号推断）。
+#: 语义：`<horiz>-<vert>`，`rtl` ⇒ **右列＝C1**、`btt` ⇒ 下行为 R1（见 `src/field_extract.py`）。
+READING_ORDER_OPTIONS = ("auto", "rtl-ttb", "ltr-ttb", "rtl-btt", "ltr-btt")
+
+
+def validate_reading_order(value: str | None) -> tuple[bool, str | None]:
+    """空串 ⇒ (True, None)；非空必须 ∈ `READING_ORDER_OPTIONS`（不猜、不静默改写）。"""
+    if value is None or str(value).strip() == "":
+        return True, None
+    v = str(value).strip().lower().replace("_", "-")
+    if v not in READING_ORDER_OPTIONS:
+        return False, f"阅读顺序必须是以下之一：{' / '.join(READING_ORDER_OPTIONS)}（当前「{value}」）"
+    return True, v
+
+
 def update_book_meta(filename: str, *, dynasty=None, author=None, notes=None,
-                     store: Path | str | None = None) -> tuple[bool, str]:
-    """人工补填：写入侧车（``local-dist/var/pdf_meta.json``）。缺省键＝不改。"""
+                     reading_order=None, store: Path | str | None = None) -> tuple[bool, str]:
+    """人工补填：写入侧车（``local-dist/var/pdf_meta.json``）。缺省键＝不改。
+
+    `reading_order` 为 **2026-10-20 新增**（`auto|rtl-ttb|ltr-ttb|rtl-btt|ltr-btt`），
+    供 tab2 切图台定 C/R 方向；**不改动**既有 dynasty/author/notes 语义。
+    """
     ok, dyn = validate_dynasty(dynasty)
     if not ok:
         return False, dyn  # type: ignore[return-value]
+    ok, ro = validate_reading_order(reading_order)
+    if not ok:
+        return False, ro  # type: ignore[return-value]
     data = load_meta(store)
     book = data["books"].setdefault(str(filename), {})
     now = datetime.now().isoformat(timespec="seconds")
@@ -149,6 +171,8 @@ def update_book_meta(filename: str, *, dynasty=None, author=None, notes=None,
         book["author"] = str(author).strip() or None
     if notes is not None:
         book["notes"] = str(notes).strip() or None
+    if reading_order is not None:
+        book["reading_order"] = ro
     book["updated_at"] = now
     save_meta(data, store)
     return True, "元数据已保存"
@@ -171,6 +195,7 @@ class PdfRow:
     dynasty: str | None = None
     author: str | None = None
     notes: str | None = None
+    reading_order: str | None = None      # auto|rtl-ttb|…（tab2 C/R 方向；2026-10-20 新增）
     updated_at: str = ""
 
     @property
@@ -294,7 +319,7 @@ def scan(root: Path, *, store: Path | str | None = None, probe: bool = True,
             filename=p.name, path=str(p), size_bytes=stt.st_size, mtime=mtime,
             page_count=page_count, page_mm=page_mm, scan_dpi=scan_dpi, probe_error=err or "",
             dynasty=m.get("dynasty"), author=m.get("author"), notes=m.get("notes"),
-            updated_at=m.get("updated_at", ""),
+            reading_order=m.get("reading_order"), updated_at=m.get("updated_at", ""),
         ))
     if probed:
         save_meta(meta, store)

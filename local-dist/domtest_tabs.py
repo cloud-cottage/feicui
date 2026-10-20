@@ -89,6 +89,10 @@ def build_fixture() -> Path:
     sub3 = root / lib.TIFF_DIR / "A特例"
     sub3.mkdir(parents=True, exist_ok=True)
     shutil.copy2(WEBUI_DIR / "assets" / "test_seal.tiff", sub3 / "P001-C2-R3-长乐未央-汉-陈巨来.tiff")
+    # tab3 兼容解析用：切图台**新命名**（带编号）的件 —— 旧模板解析器认不出它，
+    # 若 tab3 只认旧模板，这里会显示「命名不合模板」且 P/C/R 空白（本单的阻塞项之一）。
+    shutil.copy2(WEBUI_DIR / "assets" / "test_seal.tiff",
+                 sub3 / "0424_P370_C1_R1_中羞行府_清中期_吳熙載.tiff")
     return root
 
 
@@ -176,7 +180,22 @@ JS_TAB2 = """
     pageinfo: g('tab2-ct-pageinfo')?g('tab2-ct-pageinfo').textContent:'',
     srcinfo: g('tab2-ct-srcinfo')?g('tab2-ct-srcinfo').textContent:'',
     msg: g('tab2-ct-msg')?g('tab2-ct-msg').textContent:'',
-    dir: g('tab2-crop-dir')?g('tab2-crop-dir').textContent:''
+    dir: g('tab2-crop-dir')?g('tab2-crop-dir').textContent:'',
+    read_order: (() => { const s=g('tab2-read-order');
+      return s?{ count: s.options.length, options: [...s.options].map(o=>o.value), value: s.value }:null; })(),
+    order_src: g('tab2-order-src')?g('tab2-order-src').textContent:'',
+    fields: (() => { const box=g('tab2-fields'); if(!box){ return null; }
+      const rows=[...box.querySelectorAll('.frow')];
+      const q=(r,k)=>r.querySelector('.fin[data-k='+k+']');
+      return { rows: rows.length, cells: rows.map(r=>({
+        i: r.dataset.i, rev: r.classList.contains('rev'),
+        inputs: r.querySelectorAll('.fin').length,
+        editable: [...r.querySelectorAll('.fin')].every(x=>!x.disabled && !x.readOnly),
+        ins: q(r,'inscription')?q(r,'inscription').value:null,
+        status: q(r,'status')?q(r,'status').value:null,
+        code: q(r,'code')?q(r,'code').value:null,
+        score: r.querySelector('.fscore')?r.querySelector('.fscore').textContent:'',
+        name: r.querySelector('.fname')?r.querySelector('.fname').textContent:'' })) }; })()
   }); })()
 """
 
@@ -195,8 +214,26 @@ JS_TAB3 = """
 """
 
 
+JS_TAB3_ONE = """
+(() => { const g=id=>document.getElementById(id); const NAME=__NAME__;
+  const item=[...document.querySelectorAll('#tab3-grid .thumb-item')].find(d=>d.dataset.name===NAME);
+  return JSON.stringify({
+    found: !!item,
+    bad_class: item&&item.querySelector('.name')?item.querySelector('.name').classList.contains('bad'):null,
+    shiwen: g('tab3-shiwen')?g('tab3-shiwen').value:null,
+    dynasty: g('tab3-dynasty')?g('tab3-dynasty').value:null,
+    author: g('tab3-author')?g('tab3-author').value:null,
+    parsed_msg: g('tab3-parsed')?g('tab3-parsed').textContent:'',
+    newname: g('tab3-newname')?g('tab3-newname').textContent:'',
+    rename_disabled: g('btn-tab3-rename')?g('btn-tab3-rename').disabled:null,
+    current: g('tab3-current')?g('tab3-current').textContent:''
+  }); })()
+"""
+
+
 def _probe_body() -> None:
     _wait_js("!!(document.readyState==='complete' && window.pywebview && window.pywebview.api)", 30)
+
     _wait_js("!!document.querySelector('#view-main.active') && !!document.getElementById('tabs')", 30)
     _wait_js("document.querySelectorAll('#tab1-body tr').length > 0", 25)
     time.sleep(1.0)
@@ -308,24 +345,44 @@ def _probe_body() -> None:
            f"details.open={t2.get('adv_open')} summary={t2.get('adv_summary')!r} "
            f"旧节点在 details 内={len(t2.get('legacy_inside_adv') or [])}/9 缺={t2.get('legacy_missing')}")
 
-    # ── ③ 注入假 tab2_detect ⇒ 点「自动检测」⇒ canvas 框数 = 注入数 ──
+    # ── ③ 注入假 tab2_extract ⇒ 点「自动检测」⇒ canvas 框数 = 注入数 ＋ 字段区就位 ──
+    #    走 tab2_extract（不是 tab2_detect）：一次拿回 框 ＋ 三字段 ＋ 阅读顺序 ＋ 本书元数据
+    from src import seal_crop as sc                      # 命名口径：与前端 foName 对拍用
+    PAGE = 370
+    BOXES = [
+        {"x1": 300, "y1": 300, "x2": 900, "y2": 900},
+        {"x1": 1400, "y1": 600, "x2": 2000, "y2": 1200},
+        {"x1": 800, "y1": 2400, "x2": 1500, "y2": 3100},
+    ]
+    BOOK = {"dynasty": "清中期", "author": "吳熙載", "reading_order": "auto"}
+    SEALS = [
+        {"idx": 1, "box": [300, 300, 900, 900], "inscription": "中候", "status": "蟫",
+         "code": "0425", "inscription_score": 0.9912, "needs_review": False,
+         "read_order": 2, "c": 2, "r": 1},
+        {"idx": 2, "box": [1400, 600, 2000, 1200], "inscription": "中羞行府", "status": "故",
+         "code": "0424", "inscription_score": 0.6120, "needs_review": True,
+         "read_order": 1, "c": 1, "r": 1},
+        {"idx": 3, "box": [800, 2400, 1500, 3100], "inscription": None, "status": None,
+         "code": None, "inscription_score": None, "needs_review": False,
+         "read_order": 3, "c": 1, "r": 2},
+    ]
     png_b64 = tiny_png()
     fake = {
         "ok": True, "pdf": "/fake/HighRes.pdf", "pdf_name": "吴颐人篆刻作品展示-HighRes.pdf",
-        "page": 1, "dpi": 400, "boxes_dpi": 400, "size": [3400, 4760],
-        "boxes": [
-            {"x1": 300, "y1": 300, "x2": 900, "y2": 900, "idx": 1},
-            {"x1": 1400, "y1": 600, "x2": 2000, "y2": 1200, "idx": 2},
-            {"x1": 800, "y1": 2400, "x2": 1500, "y2": 3100, "idx": 3},
-        ],
-        "count": 3, "preview_png_b64": png_b64, "preview_size": [714, 1000],
-        "preview_scale": 0.2101, "elapsed_s": 0.31,
+        "page": PAGE, "dpi": 400, "boxes_dpi": 400, "size": [3400, 4760],
+        "boxes": BOXES, "count": 3, "seals": SEALS,
+        "reading_order": "rtl-ttb", "order_source": "code-sequence", "book_meta": BOOK,
+        "dropped": {"inside_seal": 7, "edge": 2, "far": 0, "noise": 5},
+        "preview_png_b64": png_b64, "preview_size": [714, 1000],
+        "preview_scale": 0.2101, "elapsed_s": 0.42,
     }
-    _ev("(() => { window.__realDetect = window.pywebview.api.tab2_detect;"
-        " window.pywebview.api.tab2_detect = function(){ return Promise.resolve("
+    _ev("(() => { window.__realExtract = window.pywebview.api.tab2_extract;"
+        " window.pywebview.api.tab2_extract = function(){ return Promise.resolve("
         + json.dumps(fake) + "); }; return 1; })()")
+    _ev("document.getElementById('tab2-ct-page').value = '" + str(PAGE) + "'")
     _ev("document.getElementById('btn-tab2-detect').click()")
     _wait_js("document.getElementById('tab2-canvas').dataset.boxes === '3'", 20)
+    _wait_js("document.querySelectorAll('#tab2-fields .frow').length === 3", 20)
     time.sleep(0.5)
     t2b = _read("05_tab2_after_detect", JS_TAB2)
     cvb = t2b.get("canvas") or {}
@@ -336,6 +393,113 @@ def _probe_body() -> None:
            f"canvas.dataset.boxes={cvb.get('boxes')} canvas={cvb.get('w')}×{cvb.get('h')} "
            f"计数={t2b.get('count_text')!r} 裁切按钮={t2b.get('crop_label')!r} "
            f"disabled={t2b.get('crop_disabled')}")
+
+    # ── ③-1 字段区：一行/枚、三字段（释文/状态/编号）可编辑、读数＋文件名预演 ──
+    fld = t2b.get("fields") or {}
+    cells = fld.get("cells") or []
+    record("tabs/tab2_fields_one_row_per_box_editable",
+           fld.get("rows") == 3 and len(cells) == 3
+           and all(int(c.get("inputs") or 0) == 3 and c.get("editable") for c in cells),
+           f"行数={fld.get('rows')} 每行输入框={[c.get('inputs') for c in cells]} "
+           f"全部可编辑={[c.get('editable') for c in cells]}")
+    record("tabs/tab2_fields_show_extracted_values",
+           [c.get("ins") for c in cells] == ["中候", "中羞行府", ""]
+           and [c.get("status") for c in cells] == ["蟫", "故", ""]
+           and [c.get("code") for c in cells] == ["0425", "0424", ""],
+           f"释文={[c.get('ins') for c in cells]} 状态={[c.get('status') for c in cells]} "
+           f"编号={[c.get('code') for c in cells]}")
+
+    # ── ③-2 阅读顺序下拉：恰 5 项、默认 auto；后端推断值显示在提示里 ──
+    ro = t2b.get("read_order") or {}
+    record("tabs/tab2_read_order_select_five_options_default_auto",
+           int(ro.get("count") or 0) == 5
+           and ro.get("options") == ["auto", "rtl-ttb", "ltr-ttb", "rtl-btt", "ltr-btt"]
+           and ro.get("value") == "auto"
+           and "rtl-ttb" in (t2b.get("order_src") or "")
+           and "code-sequence" in (t2b.get("order_src") or ""),
+           f"选项={ro.get('options')} 当前={ro.get('value')!r} 顺序来源={t2b.get('order_src')!r}")
+
+    # ── ③-3 needs_review（低分未验证）必须**看得见**：整行 .rev ＋ 分数旁「⚠」 ──
+    revs = [c for c in cells if c.get("rev")]
+    record("tabs/tab2_needs_review_visible",
+           len(revs) == 1 and revs[0].get("i") == "1" and "⚠" in (revs[0].get("score") or ""),
+           f"待确认行={[(c.get('i'), c.get('score')) for c in revs]}")
+
+    # ── ③-4 **前后端命名对拍**：DOM 里的文件名预演 vs Python `build_crop_name`（逐字相同）──
+    cr = sc.grid_order([[b["x1"], b["y1"], b["x2"], b["y2"]] for b in BOXES], reading_order="rtl-ttb")
+
+    def py_name(i, fields):
+        c, r = cr[i]
+        return sc.build_crop_name(PAGE, c, r, fields,
+                                  dynasty=BOOK["dynasty"], author=BOOK["author"])[0]
+
+    want = [py_name(0, {"code": "0425", "inscription": "中候"}),
+            py_name(1, {"code": "0424", "inscription": "中羞行府"}),
+            py_name(2, {"inscription": ""})]
+    got = [c.get("name") for c in cells]
+    record("tabs/tab2_crop_name_preview_matches_backend",
+           got == want
+           and any(n.startswith(f"0424_P{PAGE}_C1_R1_中羞行府_清中期_吳熙載") for n in got)
+           and any(n == f"P{PAGE}-C1-R2.tiff" for n in got),
+           f"DOM={got} Python={want}")
+
+    # 清洗用例：编号含 `/` ＋ 释文空 ⇒ `04-24`、`NA`（前后端同一份清洗规则）
+    _ev("""(() => { const g=id=>document.getElementById(id);
+      const box=g('tab2-fields'); const row=box.querySelectorAll('.frow')[2];
+      const set=(k,v)=>{ const el=row.querySelector('.fin[data-k='+k+']');
+        el.value=v; el.dispatchEvent(new Event('input',{bubbles:true})); };
+      set('code','04/24'); set('status',''); return 1; })()""")
+    time.sleep(0.4)
+    t2f = _read("06_tab2_field_edit", JS_TAB2)
+    got2 = [c.get("name") for c in (t2f.get("fields") or {}).get("cells") or []]
+    want2 = [want[0], want[1], py_name(2, {"code": "04/24", "inscription": ""})]
+    record("tabs/tab2_field_edit_cleans_name_and_keeps_parity",
+           got2 == want2 and want2[2] == f"04-24_P{PAGE}_C1_R2_NA_清中期_吳熙載.tiff",
+           f"DOM={got2} Python={want2}")
+
+    # 超长释文：两端都必须 ≤200 且逐字相同（截断顺序 ins → aut → dyn）
+    long_ins = "甲" * 150
+    _ev("""(() => { const g=id=>document.getElementById(id);
+      const row=g('tab2-fields').querySelectorAll('.frow')[0];
+      const el=row.querySelector('.fin[data-k=inscription]');
+      el.value='"""+ long_ins + """'; el.dispatchEvent(new Event('input',{bubbles:true}));
+      return 1; })()""")
+    time.sleep(0.4)
+    t2g = _read("07_tab2_long_inscription", JS_TAB2)
+    got3 = [c.get("name") for c in (t2g.get("fields") or {}).get("cells") or []]
+    want3 = [py_name(0, {"code": "0425", "inscription": long_ins}), want[1],
+             py_name(2, {"code": "04/24", "inscription": ""})]
+    record("tabs/tab2_long_inscription_truncated_parity",
+           got3 == want3 and all(len(n) <= 200 for n in got3),
+           f"DOM 长度={[len(n) for n in got3]} Python 长度={[len(n) for n in want3]} "
+           f"逐字相同={got3 == want3}")
+
+    # ── ③-5 `auto` 语义：下拉停在 `auto` ⇒ 提交给 `tab2_crop` 的 `reading_order` 必须是 `'auto'`
+    #    （**不是**上一轮 `tab2_extract` 的推断值）⇒ 后端自己推断，`order_source` 才是
+    #    `code-sequence` 而不是 `manual`。这里拦下真实 payload 验语义 ＋ Python 侧同口径复算。
+    _ev("(() => { window.__cropReq = null; window.__realCrop = window.pywebview.api.tab2_crop;"
+        " window.pywebview.api.tab2_crop = function(req){ window.__cropReq = req;"
+        " return Promise.resolve({ok:true, outputs:[], skipped:[], dir_key:'9787000000001',"
+        " dir_key_source:'from_dir', reading_order:'rtl-ttb', order_source:'code-sequence',"
+        " fields_count:3, elapsed_s:0.01}); }; return 1; })()")
+    _ev("document.getElementById('btn-tab2-crop').click()")
+    _wait_js("!!window.__cropReq", 20)
+    t2cr = _read("08a_tab2_crop_payload",
+                 "JSON.stringify({req: window.__cropReq || null,"
+                 " src: (document.getElementById('tab2-order-src') || {}).textContent || ''})")
+    creq = t2cr.get("req") or {}
+    py_order, py_src = FeicuiApi._resolve_reading_order(
+        "auto", BOOK,
+        [dict(SEALS[i], box=[BOXES[i]["x1"], BOXES[i]["y1"], BOXES[i]["x2"], BOXES[i]["y2"]])
+         for i in range(len(SEALS))])
+    record("tabs/tab2_crop_payload_auto_and_order_source_code_sequence",
+           creq.get("reading_order") == "auto" and int(creq.get("page") or 0) == PAGE
+           and len(creq.get("boxes") or []) == 3 and len(creq.get("fields") or []) == 3
+           and py_src == "code-sequence" and py_order == "rtl-ttb"
+           and "code-sequence" in (t2cr.get("src") or ""),
+           f"payload.reading_order={creq.get('reading_order')!r} "
+           f"boxes={len(creq.get('boxes') or [])} fields={len(creq.get('fields') or [])} "
+           f"后端复算=({py_order},{py_src}) 界面来源={t2cr.get('src')!r}")
 
     # 单击第一枚框 ⇒ 删除（框数 3 → 2）
     _ev("""(() => { const g=id=>document.getElementById(id); const cv=g('tab2-canvas');
@@ -364,13 +528,21 @@ def _probe_body() -> None:
            f"双击空白后框数={(t2d.get('canvas') or {}).get('boxes')} 计数={t2d.get('count_text')!r} "
            f"提示={t2d.get('msg')!r}")
 
-    # 清空框 ⇒ 0；裁切按钮置灰
+    # 清空框 ⇒ 0；裁切按钮置灰；**字段区与阅读顺序也一并清**（不留上一页读数）
     _ev("document.getElementById('btn-tab2-clear').click()")
     time.sleep(0.3)
     t2e = _read("08_tab2_clear", JS_TAB2)
     record("tabs/tab2_clear_boxes_disables_crop",
            (t2e.get("canvas") or {}).get("boxes") == "0" and t2e.get("crop_disabled") is True,
            f"框数={(t2e.get('canvas') or {}).get('boxes')} 裁切 disabled={t2e.get('crop_disabled')}")
+    # ⚠ 断言写法坑（本单修的 2 条 FAIL 之一）：原先写 `int(get("rows") or -1) == 0` ——
+    #    `rows` 恰为 **0** 时 `0 or -1` 得 `-1`，**把正确结果判成 FAIL**。取值为 0 合法处一律
+    #    用 `is not None` 判空，别用 `or`。
+    _rows = (t2e.get("fields") or {}).get("rows")
+    record("tabs/tab2_clear_also_clears_fields_and_order",
+           _rows is not None and int(_rows) == 0
+           and (t2e.get("order_src") or "").strip() == "—",
+           f"字段行数={_rows} 顺序来源={t2e.get('order_src')!r}")
 
     # ── ④ 切到 tab3：原节点一字未变（渲染后）──
     _ev("document.querySelector('#tabs .tab[data-tab=\"3_Cropped_Tiff\"]').click()")
@@ -385,6 +557,28 @@ def _probe_body() -> None:
            and document_id_ok(t3),
            f"id 数={t3.get('id_count')}（HEAD 静态块 {INFO['tab3_id_count']} 个）"
            f" 视图按钮={t3.get('view_btns')} h2={t3.get('h2')!r}")
+
+    # ── ⑤ tab3 读**切图台新命名**（`<编号>_P<页>_C<列>_R<行>_…tiff`）──
+    #    兼容解析不生效时：这条会看到「命名不合模板」＋三字段空白（＝阻塞项失败）
+    new_name = "0424_P370_C1_R1_中羞行府_清中期_吳熙載.tiff"
+    _ev("(() => { const el=[...document.querySelectorAll('#tab3-grid .thumb-item')]"
+        ".find(d=>d.dataset.name===" + json.dumps(new_name) + ");"
+        " if(el){ el.click(); return 1; } return 0; })()")
+    _wait_js("!!document.getElementById('tab3-shiwen')"
+             " && document.getElementById('tab3-shiwen').value === '中羞行府'", 20)
+    time.sleep(0.5)
+    t3n = _read("10_tab3_new_naming", JS_TAB3_ONE.replace("__NAME__", json.dumps(new_name)))
+    record("tabs/tab3_new_naming_shows_page_col_row_and_fields",
+           bool(t3n.get("found")) and t3n.get("bad_class") is False
+           and t3n.get("shiwen") == "中羞行府" and t3n.get("dynasty") == "清中期"
+           and t3n.get("author") == "吳熙載"
+           and "第 370 页 · 第 1 列 · 第 1 行" in (t3n.get("parsed_msg") or "")
+           and "0424" in (t3n.get("parsed_msg") or ""),
+           f"命中={t3n.get('found')} 标坏={t3n.get('bad_class')} 释文={t3n.get('shiwen')!r} "
+           f"朝代={t3n.get('dynasty')!r} 作者={t3n.get('author')!r} 解析提示={t3n.get('parsed_msg')!r}")
+    record("tabs/tab3_new_naming_rename_preview_keeps_code_scheme",
+           t3n.get("newname") == new_name and t3n.get("rename_disabled") is True,
+           f"新名预览={t3n.get('newname')!r} 改名按钮 disabled={t3n.get('rename_disabled')}")
 
 
 def document_id_ok(t3: dict) -> bool:

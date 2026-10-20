@@ -14,7 +14,10 @@
       sources: [], job: null, lastPath: '',
       // 切图台（Phase B）：items＝2_HighRes_PDF 下的高清 PDF；boxes＝**400dpi 页坐标**的手工可编辑框
       ct: { items: [], pdf: '', pdfName: '', page: 1, pages: null, boxes: [], sel: -1,
-            img: null, scale: 1, size: [0, 0], boxesDpi: 400, drag: null, dirKey: '', srcDir: '' }
+            img: null, scale: 1, size: [0, 0], boxesDpi: 400, drag: null, dirKey: '', srcDir: '',
+            // 字段区（2026-10-20）：fields 与 boxes **同序**；orderResolved＝后端推断的阅读顺序
+            fields: [], orderResolved: '', orderSource: '', bookDynasty: '', bookAuthor: '',
+            bookOrder: 'auto' }
     },
     // tab3：curSubdir / files / view(四档) / page(分页) / selected / 解析回填与本地记录
     tab3: {
@@ -220,6 +223,7 @@
     $('tab1-dynasty').value = m.dynasty || '';
     $('tab1-author').value = m.author || '';
     $('tab1-notes').value = m.notes || '';
+    $('tab1-reading-order').value = m.reading_order || 'auto';
     renderHrSource();                       // 高清化卡片跟随选中行
   }
   function saveTab1() {
@@ -228,7 +232,8 @@
       filename: ST.tab1.selected.filename,
       dynasty: $('tab1-dynasty').value,
       author: $('tab1-author').value,
-      notes: $('tab1-notes').value
+      notes: $('tab1-notes').value,
+      reading_order: $('tab1-reading-order').value
     }).then(function (r) {
       setMsg('tab1-msg', (r && r.msg) || '', r && r.ok ? 'ok' : 'err');
       if (r && r.ok) loadTab1(false);
@@ -464,7 +469,146 @@
       ' 页 · 检测坐标系 400dpi';
   }
 
-  // 画布重绘：底图（后端预览，已画自动框）+ 本页**可编辑框**（选中红、其余青）+ 序号
+  // ───── 字段区（释文/状态/编号 + 阅读顺序 + 裁切文件名预演）─────
+  //   口径与后端 `src/field_extract.py` / `src/seal_crop.py` **逐条对齐**：
+  //   ① C/R 方向跟随阅读顺序（rtl ⇒ 右列 C1；btt ⇒ 下行 R1）；② 有编号 ⇒ 编号前缀名，
+  //   否则 `P<页>-C<列>-R<行>.tiff`；③ 段清洗（非法字符→`-`、折叠、去首尾、空⇒NA）、整名 >200 截断。
+  function foNormalize(v) {
+    var parts = String(v || '').toLowerCase().split(/[-_\s]+/), h = null, vt = null;
+    parts.forEach(function (p) {
+      if (p === 'rtl' || p === 'ltr') { h = p; }
+      if (p === 'ttb' || p === 'btt') { vt = p; }
+    });
+    return (h && vt) ? (h + '-' + vt) : '';
+  }
+
+  // 生效的阅读顺序：下拉显式值 > 后端推断值 > 本书元数据 > ltr-ttb（＝改动前行为）
+  function foEffective() {
+    var ct = ctState(), v = $('tab2-read-order') ? $('tab2-read-order').value : 'auto';
+    if (v && v !== 'auto') { return foNormalize(v) || 'ltr-ttb'; }
+    return ct.orderResolved || foNormalize(ct.bookOrder) || 'ltr-ttb';
+  }
+
+  // 与后端 grid_positions 同规则：行带按垂直重叠 ≥ 0.5×较矮框高聚类
+  function foGrid(boxes, order) {
+    var horiz = (order.indexOf('rtl') === 0) ? 'rtl' : 'ltr';
+    var vert = (order.slice(-3) === 'btt') ? 'btt' : 'ttb';
+    var info = boxes.map(function (b, i) {
+      return { i: i, y1: b.y1, y2: b.y2, cx: (b.x1 + b.x2) / 2, cy: (b.y1 + b.y2) / 2,
+               h: Math.max(1, b.y2 - b.y1) };
+    });
+    var bands = [];
+    info.slice().sort(function (a, b) { return (a.cy - b.cy) || (a.cx - b.cx) || (a.i - b.i); })
+      .forEach(function (it) {
+        var placed = false;
+        bands.forEach(function (band) {
+          if (placed) { return; }
+          var top = Math.min.apply(null, band.map(function (x) { return x.y1; }));
+          var bot = Math.max.apply(null, band.map(function (x) { return x.y2; }));
+          var od = Math.min(bot, it.y2) - Math.max(top, it.y1);
+          var short = Math.min(Math.min.apply(null, band.map(function (x) { return x.h; })), it.h);
+          if (od >= 0.5 * short) { band.push(it); placed = true; }
+        });
+        if (!placed) { bands.push([it]); }
+      });
+    var out = new Array(info.length);
+    bands.forEach(function (band, bi) {
+      var r = (vert === 'ttb') ? (bi + 1) : (bands.length - bi);
+      var sorted = band.slice().sort(function (a, b) { return (a.cx - b.cx) || (a.i - b.i); });
+      if (horiz === 'rtl') { sorted.reverse(); }
+      sorted.forEach(function (it, ci) { out[it.i] = { c: ci + 1, r: r }; });
+    });
+    return out;
+  }
+
+  function foSanitize(v) {
+    var s = (v === null || v === undefined) ? '' : String(v);
+    s = s.replace(/[\/\\:*?"<>|\r\n\t]+/g, '-').replace(/-{2,}/g, '-')
+      .replace(/^[-\s]+/, '').replace(/[-\s]+$/, '');
+    return s || 'NA';
+  }
+
+  // 裁切文件名预演（与 `seal_crop.build_crop_name` 同规则；越界/超长策略一致）
+  //   段顺序＝**释文_朝代_作者**（与后端/文档/示例一致），截断顺序 ins → aut → dyn 也与后端 `_fit_name` 一致。
+  function foName(page, c, r, f) {
+    var ct = ctState(), code = (f && f.code) ? String(f.code).trim() : '';
+    if (!code) { return 'P' + (page || 1) + '-C' + c + '-R' + r + '.tiff'; }
+    var prefix = foSanitize(code) + '_P' + (page || 1) + '_C' + c + '_R' + r + '_';
+    var vals = {
+      ins: foSanitize((f && f.inscription) || ''),
+      aut: foSanitize((f && f.author) || ct.bookAuthor),
+      dyn: foSanitize((f && f.dynasty) || ct.bookDynasty)
+    };
+    function build() { return prefix + vals.ins + '_' + vals.dyn + '_' + vals.aut + '.tiff'; }
+    ['ins', 'aut', 'dyn'].forEach(function (k) {
+      while (build().length > 200 && vals[k].length > 4) { vals[k] = vals[k].slice(0, -1); }
+    });
+    var name = build();
+    if (name.length > 200) { name = name.slice(0, 199) + '~'; }
+    return name;
+  }
+
+  function foScore(f) {
+    var sc = f && f.inscription_score;
+    var txt = (sc === null || sc === undefined) ? '—' : Number(sc).toFixed(2);
+    return txt + ((f && f.needs_review) ? ' ⚠' : '');
+  }
+
+  function ctRenderFields() {
+    var ct = ctState(), box = $('tab2-fields');
+    if (!box) { return; }
+    ct.fields = ct.fields || [];
+    while (ct.fields.length < ct.boxes.length) { ct.fields.push({}); }
+    if (ct.fields.length > ct.boxes.length) { ct.fields = ct.fields.slice(0, ct.boxes.length); }
+    var pos = foGrid(ct.boxes, foEffective());
+    box.innerHTML = '';
+    ct.boxes.forEach(function (b, i) {
+      var f = ct.fields[i] || {}, p = pos[i] || { c: '?', r: '?' };
+      var row = document.createElement('div');
+      row.className = 'frow' + (f.needs_review ? ' rev' : '');
+      row.dataset.i = String(i);
+      row.innerHTML = '<span class="fno">#' + esc(f.read_order || (i + 1)) + '</span>'
+        + '<input class="fin" data-k="inscription" maxlength="40" placeholder="释文" value="'
+        + esc(f.inscription || '') + '">'
+        + '<input class="fin" data-k="status" maxlength="4" placeholder="状态" value="'
+        + esc(f.status || '') + '">'
+        + '<input class="fin" data-k="code" maxlength="8" placeholder="编号" value="'
+        + esc(f.code || '') + '">'
+        + '<span class="fscore">' + esc(foScore(f)) + '</span>'
+        + '<span class="fname" title="裁切文件名">' + esc(foName(ct.page, p.c, p.r, f)) + '</span>';
+      box.appendChild(row);
+    });
+    if (!ct.boxes.length) {
+      box.innerHTML = '<div class="muted">（先「🔍 自动检测」：检测后每枚印一行，三字段可直接改）</div>';
+    }
+    // 来源标签**带上后端原值**（`code-sequence` / `manual` / `book-meta` / `fallback`）：
+    // 中文说明给人看，原值给 DOM 断言与排障用（否则「机器推的」与「人选的」在界面上无从区分）。
+    var src = ct.orderSource === 'code-sequence'
+      ? '自动 ⇒ ' + (ct.orderResolved || '?') + '（code-sequence：按编号序列推断）'
+      : (ct.orderSource === 'manual' ? '手动：' + (ct.orderResolved || '?') + '（manual）'
+        : (ct.orderSource ? '兜底：' + (ct.orderResolved || '?') + '（' + ct.orderSource + '）' : '—'));
+    if ($('tab2-order-src')) { $('tab2-order-src').textContent = src; }
+  }
+
+  // 只刷新某一行的文件名预演（输入时不重绘，避免丢焦点）
+  function ctRefreshName(i) {
+    var ct = ctState(), row = document.querySelector('#tab2-fields .frow[data-i="' + i + '"]');
+    if (!row) { return; }
+    var pos = foGrid(ct.boxes, foEffective());
+    var p = pos[i] || { c: '?', r: '?' };
+    var el = row.querySelector('.fname');
+    if (el) { el.textContent = foName(ct.page, p.c, p.r, ct.fields[i] || {}); }
+  }
+
+  function ctRefreshAllNames() {
+    var ct = ctState(), pos = foGrid(ct.boxes, foEffective());
+    Array.prototype.forEach.call(document.querySelectorAll('#tab2-fields .frow'), function (row) {
+      var i = parseInt(row.dataset.i, 10), p = pos[i] || { c: '?', r: '?' };
+      var el = row.querySelector('.fname');
+      if (el) { el.textContent = foName(ct.page, p.c, p.r, ct.fields[i] || {}); }
+    });
+  }
+
   function ctRender() {
     var cv = $('tab2-canvas');
     if (!cv) { return; }
@@ -491,6 +635,7 @@
       }
     });
     ctUpdateCount();
+    ctRenderFields();                        // 字段区与框**同序**：框一变就读数列/文件名预演全刷
   }
 
   // 视口坐标 ⇒ 400dpi 页坐标（CSS 缩放 × 预览缩放两级换算）
@@ -542,6 +687,7 @@
     var ct = ctState();
     if (i < 0 || i >= ct.boxes.length) { return; }
     ct.boxes.splice(i, 1);
+    if (ct.fields && i < ct.fields.length) { ct.fields.splice(i, 1); }   // 字段与框**同序删**（别错位）
     ct.sel = -1;
     ctRender();
   }
@@ -603,6 +749,7 @@
       var minSize = 8 / (ct.scale || 1);
       if (!ev.__abort && (a.x2 - a.x1) >= minSize && (a.y2 - a.y1) >= minSize) {
         ct.boxes.push(a);
+        ct.fields = ct.fields || []; ct.fields.push({});    // 新框 ⇒ 字段占位（同序）
         ct.sel = ct.boxes.length - 1;
       } else {
         ct.sel = -1;
@@ -621,6 +768,7 @@
     if (ctHit(p) >= 0) { return; }
     var b = ctClampBox({ x1: p.x - 200, y1: p.y - 200, x2: p.x + 200, y2: p.y + 200 });
     ct.boxes.push(b);
+    ct.fields = ct.fields || []; ct.fields.push({});        // 新增框 ⇒ 字段占位（同序）
     ct.sel = ct.boxes.length - 1;
     ctRender();
     setMsg('tab2-ct-msg', '已新增 1 枚手绘框（拖角手柄可改大小）', 'ok');
@@ -703,6 +851,7 @@
       return;
     }
     ct.boxes = []; ct.sel = -1; ct.img = null; ct.size = [0, 0]; ct.scale = 1;
+    ct.fields = []; ct.orderResolved = ''; ct.orderSource = '';
     if (!it) {
       ct.pdf = ''; ct.pages = null;
       $('tab2-ct-srcinfo').textContent = '（无可选源：先在 tab1 一键高清化，再回本页「🔄 重列」）';
@@ -731,6 +880,7 @@
     ct.page = p;
     $('tab2-ct-page').value = String(p);
     ct.boxes = []; ct.sel = -1; ct.img = null;
+    ct.fields = []; ct.orderResolved = ''; ct.orderSource = '';   // 换页 ⇒ 上一页字段作废
     ctUpdatePageInfo();
     ctRender();
     ctDetect();                            // 翻页即重检（少一次点击；检测 ≈0.2–0.5 s）
@@ -739,8 +889,35 @@
   function ctClear() {
     var ct = ctState();
     ct.boxes = []; ct.sel = -1;
+    ct.fields = []; ct.orderResolved = ''; ct.orderSource = '';   // 字段/阅读顺序一并清（不留上一页读数）
     ctRender();
     setMsg('tab2-ct-msg', '已清空本页框（底图保留；「全部重检」可拿回自动框）', '');
+  }
+
+  // 后端 seal（`tab2_extract` 的一枚）⇒ 字段行对象；**顺序＝boxes 顺序**（后端按 seals 同序给 boxes）
+  function ctFieldOf(s) {
+    s = s || {};
+    return {
+      inscription: s.inscription || '', status: s.status || '', code: s.code || '',
+      inscription_score: (s.inscription_score === undefined ? null : s.inscription_score),
+      inscription_verified: !!s.inscription_verified,
+      status_score: s.status_score, code_score: s.code_score,
+      needs_review: !!s.needs_review, read_order: s.read_order || null
+    };
+  }
+
+  // 送后端的阅读顺序：下拉显式值 > 后端推断值（本页已检出的 `orderResolved`）> `auto`（后端取本书元数据）
+  function ctOrderForDetect() {
+    var v = $('tab2-read-order') ? $('tab2-read-order').value : 'auto';
+    return (v && v !== 'auto') ? (foNormalize(v) || 'auto') : 'auto';
+  }
+  // 送后端的阅读顺序：**只有用户显式选择时才传具体值**；停在 `auto` ⇒ 一律传 `'auto'`
+  // （让后端自己推断，返回 `order_source='code-sequence'` / `book-meta` / `fallback`）。
+  // ⚠ 不要把 `ct.orderResolved`（上一轮 tab2_extract 的推断值）当显式值回传 —— 那会被后端
+  //   记成 `manual`，把「机器推的」冒充成「人选的」。
+  function ctOrderForCrop() {
+    var v = $('tab2-read-order') ? $('tab2-read-order').value : 'auto';
+    return (v && v !== 'auto') ? (foNormalize(v) || 'auto') : 'auto';
   }
 
   function ctDetect() {
@@ -755,33 +932,48 @@
     ctUpdatePageInfo();
     var btn = $('btn-tab2-detect');
     btn.disabled = true;
-    setMsg('tab2-ct-msg', '检测中…（400dpi 渲页 + 红印检测，约 0.2–0.5 s）');
-    call('tab2_detect', { pdf: ct.pdf, page: page, dpi: 400 }).then(function (r) {
-      btn.disabled = false;
-      if (!r || !r.ok) {
-        setMsg('tab2-ct-msg', '❌ ' + ((r && r.msg) || '检测失败'), 'err');
-        return;
-      }
-      ct.size = r.size || [0, 0];
-      ct.scale = r.preview_scale || 1;
-      ct.boxesDpi = r.boxes_dpi || 400;
-      ct.boxes = (r.boxes || []).map(function (b) {
-        return { x1: b.x1, y1: b.y1, x2: b.x2, y2: b.y2 };   // 只留几何（序号由本页重排）
-      });
-      ct.sel = -1;
-      if (r.preview_size && r.preview_size[0]) {
-        var cv = $('tab2-canvas');
-        cv.width = Math.round(r.preview_size[0]);
-        cv.height = Math.round(r.preview_size[1]);
-      }
-      ctLoadPreview(r.preview_png_b64, function () {
-        ctRender();
-        $('tab2-canvas-hint').hidden = !!ct.img;
-      });
-      setMsg('tab2-ct-msg', '检测到 ' + ct.boxes.length + ' 枚（' + (r.elapsed_s === undefined ? '?' : r.elapsed_s) +
-        ' s · 框坐标 400dpi · 页 {0}×{1})'.replace('{0}', ct.size[0]).replace('{1}', ct.size[1]),
-        ct.boxes.length ? 'ok' : 'err');
-    }).catch(function () { btn.disabled = false; });
+    setMsg('tab2-ct-msg', '检测中…（400dpi 渲页 + 红印检测 + 三字段提取，约 0.5–2 s）');
+    // ★ 走 `tab2_extract`（不是 tab2_detect）：同一次渲页顺带把释文/状态/编号与阅读顺序一起拿回来
+    call('tab2_extract', { pdf: ct.pdf, page: page, dpi: 400, reading_order: ctOrderForDetect() })
+      .then(function (r) {
+        btn.disabled = false;
+        if (!r || !r.ok) {
+          setMsg('tab2-ct-msg', '❌ ' + ((r && r.msg) || '检测失败'), 'err');
+          return;
+        }
+        ct.size = r.size || [0, 0];
+        ct.scale = r.preview_scale || 1;
+        ct.boxesDpi = r.boxes_dpi || 400;
+        ct.boxes = (r.boxes || []).map(function (b) {
+          return { x1: b.x1, y1: b.y1, x2: b.x2, y2: b.y2 };   // 只留几何（序号由本页重排）
+        });
+        var seals = r.seals || [];
+        ct.fields = (seals.length === ct.boxes.length)
+          ? seals.map(ctFieldOf)                               // 同长度 ⇒ 逐枚对齐
+          : ct.boxes.map(function () { return {}; });          // 长度不符（旧后端）⇒ 空字段占位
+        ct.orderResolved = r.reading_order || '';
+        ct.orderSource = r.order_source || '';
+        var bm = r.book_meta || {};
+        ct.bookDynasty = bm.dynasty || '';
+        ct.bookAuthor = bm.author || '';
+        ct.bookOrder = bm.reading_order || 'auto';
+        ct.sel = -1;
+        if (r.preview_size && r.preview_size[0]) {
+          var cv = $('tab2-canvas');
+          cv.width = Math.round(r.preview_size[0]);
+          cv.height = Math.round(r.preview_size[1]);
+        }
+        ctLoadPreview(r.preview_png_b64, function () {
+          ctRender();
+          $('tab2-canvas-hint').hidden = !!ct.img;
+        });
+        var rev = ct.fields.filter(function (f) { return f && f.needs_review; }).length;
+        setMsg('tab2-ct-msg', '检测到 ' + ct.boxes.length + ' 枚 · 字段 ' + ct.fields.length +
+          ' 组（阅读顺序 ' + (ct.orderResolved || '—') + ' / ' + (ct.orderSource || '—') +
+          (rev ? ' · ⚠ 待人工确认 ' + rev : '') + '）· ' +
+          (r.elapsed_s === undefined ? '?' : r.elapsed_s) + ' s · 页 ' + ct.size[0] + '×' + ct.size[1],
+          ct.boxes.length ? 'ok' : 'err');
+      }).catch(function () { btn.disabled = false; });
   }
 
   function ctCrop() {
@@ -791,10 +983,14 @@
       return { x1: Math.round(b.x1), y1: Math.round(b.y1), x2: Math.round(b.x2), y2: Math.round(b.y2) };
     });
     if (!boxes.length) { setMsg('tab2-ct-msg', '没有可裁的框（先「🔍 自动检测」或空白处双击新增）', 'err'); return; }
+    // 字段与框**同序**整页提交；阅读顺序＝字段区预演用的那一个（否则文件名与预演不一致）
+    var fields = ct.boxes.map(function (b, i) { return ct.fields[i] || {}; });
+    var order = ctOrderForCrop();
     var btn = $('btn-tab2-crop');
     btn.disabled = true;
     setMsg('tab2-crop-msg', '裁切中…（1200dpi 渲页，单页约 6 s）');
-    call('tab2_crop', { pdf: ct.pdf, page: ct.page, boxes: boxes, dpi: 1200 }).then(function (r) {
+    call('tab2_crop', { pdf: ct.pdf, page: ct.page, boxes: boxes, dpi: 1200,
+                        reading_order: order, fields: fields }).then(function (r) {
       if (!r || !r.ok) {
         btn.disabled = false;
         setMsg('tab2-crop-msg', '❌ ' + ((r && r.msg) || '裁切失败'), 'err');
@@ -822,9 +1018,12 @@
     var skipped = Array.isArray(r.skipped) ? r.skipped.length : (r.skipped || 0);
     $('tab2-crop-dir').textContent = '目录键：' + (r.dir_key || '—') + '（' + (r.dir_key_source || '?') +
       '）⇒ 3_Cropped_Tiff/' + (r.dir_key || '') + '/';
+    var fc = (r.fields_count === undefined ? 0 : r.fields_count);
     setMsg('tab2-crop-msg', '✅ ' + outs.length + ' 件落到 3_Cropped_Tiff/' + (r.dir_key || '') + '/ · ' +
       (r.elapsed_s === undefined ? '?' : r.elapsed_s) + ' s' +
-      (skipped ? ' · 跳过 ' + skipped : ''), 'ok');
+      (skipped ? ' · 跳过 ' + skipped : '') +
+      (fc ? ' · 字段 ' + fc + ' 组 → ' + (r.fields_sidecar || '_fields.json') : ' · 未写字段 sidecar') +
+      ' · 顺序 ' + (r.reading_order || '—') + '/' + (r.order_source || '—'), 'ok');
     toast('已裁切 ' + outs.length + ' 件');
   }
 
@@ -838,6 +1037,33 @@
     $('btn-tab2-ct-prev').addEventListener('click', function () { ctGoPage(-1); });
     $('btn-tab2-ct-next').addEventListener('click', function () { ctGoPage(1); });
     $('tab2-ct-source').addEventListener('change', function () { ctOnSourceChange(false); });
+    // 阅读顺序：改了就重算 C/R ⇒ 读数列 + 文件名预演全刷（框不动、不重检）
+    var ro = $('tab2-read-order');
+    if (ro) {
+      ro.addEventListener('change', function () { ctRenderFields(); });
+    }
+    // 字段编辑（事件委托）：input 改字段值 ⇒ 只刷本行文件名预演/分数；人工改过释文 ⇒ 撤掉 ⚠ 待确认
+    var fbox = $('tab2-fields');
+    if (fbox) {
+      fbox.addEventListener('input', function (ev) {
+        var el = ev.target, ct = ctState();
+        if (!el || !el.classList || !el.classList.contains('fin')) { return; }
+        var row = el.parentNode;
+        while (row && !(row.classList && row.classList.contains('frow'))) { row = row.parentNode; }
+        if (!row || row.dataset.i === undefined) { return; }
+        var i = parseInt(row.dataset.i, 10);
+        if (!(i >= 0) || i >= ct.boxes.length) { return; }
+        var f = ct.fields[i] || (ct.fields[i] = {});
+        f[el.dataset.k] = el.value;
+        if (el.dataset.k === 'inscription') {
+          f.needs_review = false; f.inscription_verified = true;
+          row.classList.remove('rev');
+        }
+        var sc = row.querySelector('.fscore');
+        if (sc) { sc.textContent = foScore(f); }
+        ctRefreshName(i);
+      });
+    }
     $('tab2-ct-page').addEventListener('change', function () {
       var ct = ctState();
       var p = parseInt($('tab2-ct-page').value || '1', 10);
@@ -846,6 +1072,7 @@
       ct.page = p;
       $('tab2-ct-page').value = String(p);
       ct.boxes = []; ct.sel = -1; ct.img = null;
+      ct.fields = []; ct.orderResolved = ''; ct.orderSource = '';
       ctUpdatePageInfo(); ctRender();
     });
   }

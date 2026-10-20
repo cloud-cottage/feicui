@@ -125,6 +125,14 @@
             <input id="tab1-author" type="text" maxlength="12" placeholder="如：陈巨来"></label>
           <label class="field"><span>备注</span>
             <textarea id="tab1-notes" rows="3" placeholder="自由备注"></textarea></label>
+          <label class="field"><span>阅读顺序 <span class="muted">（tab2 切图定 C/R 方向的默认值）</span></span>
+            <select id="tab1-reading-order">
+              <option value="auto" selected>自动（按编号序列推断）</option>
+              <option value="rtl-ttb">rtl-ttb（右列 C1 · 自上而下）</option>
+              <option value="ltr-ttb">ltr-ttb（左列 C1 · 自上而下）</option>
+              <option value="rtl-btt">rtl-btt（右列 C1 · 自下而上）</option>
+              <option value="ltr-btt">ltr-btt（左列 C1 · 自下而上）</option>
+            </select></label>
           <button id="btn-tab1-save" class="btn primary block" data-action="tab1-save">💾 保存元数据</button>
           <div id="tab1-msg" class="msg"></div>
         </div>
@@ -212,7 +220,27 @@
         <p class="caption">画布交互：<b>单击框＝删除</b>（点中先变红）｜框内拖拽＝移动｜角上手柄＝改大小｜
           空白处<b>双击＝新增框</b>（空白拖拽亦可框选新增）｜Delete＝删选中框</p>
 
-        <h3>④ 裁切</h3>
+        <h3>④ 字段 <span class="muted">（每枚一行：读数｜释文｜状态｜编号｜分数 —— 可直接改）</span></h3>
+        <div class="row">
+          <label class="inline">阅读顺序
+            <select id="tab2-read-order">
+              <option value="auto" selected>自动（按编号序列推断）</option>
+              <option value="rtl-ttb">rtl-ttb（右列 C1 · 自上而下）</option>
+              <option value="ltr-ttb">ltr-ttb（左列 C1 · 自上而下）</option>
+              <option value="rtl-btt">rtl-btt（右列 C1 · 自下而上）</option>
+              <option value="ltr-btt">ltr-btt（左列 C1 · 自下而上）</option>
+            </select></label>
+          <span class="caption" id="tab2-order-src">—</span>
+        </div>
+        <p class="caption">释文/状态/编号改完直接「✂️ 裁切」：字段随裁切写入
+          <code>&lt;目录键&gt;/_fields.json</code>；<b>有编号</b>时文件名 ⇒
+          <code>&lt;编号&gt;_P&lt;页&gt;_C&lt;列&gt;_R&lt;行&gt;_&lt;释文&gt;_&lt;朝代&gt;_&lt;作者&gt;.tiff</code>，
+          无编号仍用 <code>P&lt;页&gt;-C&lt;列&gt;-R&lt;行&gt;.tiff</code>。<b>纠错只认权威词表与同页多数票（≥3）</b>，
+          其余原样输出，「⚠」只是待人工确认。</p>
+        <div id="tab2-fields" class="tree scroll"></div>
+        <div id="tab2-fields-msg" class="msg"></div>
+
+        <h3>⑤ 裁切</h3>
         <div class="row">
           <button id="btn-tab2-crop" class="btn primary" data-action="tab2-crop" disabled>✂️ 裁切选中（0）</button>
         </div>
@@ -221,9 +249,10 @@
 
       <!-- ── 右：裁切产物 ＋ 折叠的高级（旧页面渲染能力，保留）── -->
       <div class="pane side">
-        <h3>⑤ 裁切产物</h3>
-        <p class="muted">落点：<code>3_Cropped_Tiff/&lt;目录键&gt;/P&lt;页&gt;-C&lt;列&gt;-R&lt;行&gt;.tiff</code>。
-          一次提交本页<b>全部框</b>（C/R 由后端按网格位次排；分多次各传一枚会各从 C1-R1 起、互相覆盖）。</p>
+        <h3>⑥ 裁切产物</h3>
+        <p class="muted">落点：<code>3_Cropped_Tiff/&lt;目录键&gt;/</code>（有编号 ⇒ 编号前缀名；无编号 ⇒
+          <code>P&lt;页&gt;-C&lt;列&gt;-R&lt;行&gt;.tiff</code>）。
+          一次提交本页<b>全部框</b>（C/R 由后端按网格位次＋阅读顺序排；分多次各传一枚会各从 C1-R1 起、互相覆盖）。</p>
         <div class="caption" id="tab2-crop-dir">目录键：—</div>
         <div id="tab2-crop-out" class="tree scroll"></div>
         <div id="tab2-crop-msg" class="msg"></div>

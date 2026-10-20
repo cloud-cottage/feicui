@@ -672,7 +672,8 @@ class FeicuiApi:
         meta = [{"filename": r.filename, "dynasty": r.dynasty or "", "author": r.author or "",
                  "notes": r.notes or "", "page_count": r.page_count,
                  "scan_dpi": r.scan_dpi, "probe_error": r.probe_error,
-                 "updated_at": r.updated_at} for r in res["rows"]]
+                 "reading_order": r.reading_order or "", "updated_at": r.updated_at}
+                for r in res["rows"]]
         # 朝代下拉值域：**优先 yinyuan**（/dynasties 的 items[].value，24h 缓存），
         # 拿不到（无 key / 无网 / 缓存空）⇒ 回落本地 15 枚举（`lib.DYNASTY_OPTIONS`）。
         # ⚠️ 这里**只读缓存、不打网络**：tab1 扫描主流程不许被 8 s 超时卡住；
@@ -681,6 +682,7 @@ class FeicuiApi:
         return {"ok": True, "root": res["root"], "rows": rows, "items": meta,
                 "stats": res["stats"], "probe_available": res["probe_available"],
                 "dynasty_options": dyn["items"], "dynasty_source": dyn["source"],
+                "reading_order_options": list(lib.READING_ORDER_OPTIONS),
                 "tab": lib.ORIGINAL_DIR}
 
     # ---------------- yinyuan（印源）接入 ----------------
@@ -793,6 +795,7 @@ class FeicuiApi:
                 dynasty=req.get("dynasty"),
                 author=req.get("author"),
                 notes=req.get("notes"),
+                reading_order=req.get("reading_order"),
             )
         except Exception as exc:
             return {"ok": False, "msg": f"保存失败：{exc.__class__.__name__}: {exc}"}
@@ -1193,14 +1196,127 @@ class FeicuiApi:
         except Exception:
             return "", 0, 0
 
+    # ---------------- tab2 字段提取（释文 / 状态字 / 编号 + 阅读顺序）----------------
+    def tab2_extract(self, req: dict | None = None) -> dict:
+        """自动检测 + **字段提取**：`{pdf, page, dpi=400, reading_order='auto', boxes?}` ⇒
+        `{ok, boxes, count, seals:[…三字段…], reading_order, order_source, dropped, preview_png_b64}`。
+
+        * 算法在 `src/field_extract.py`（PoC 逐条移植；四轮过滤/就近归属/分类/阅读顺序/纠错口径）；
+        * `boxes` 可传（人工微调后的框）⇒ 只做 OCR 归属，不重检测；
+        * `reading_order='auto'` ⇒ 按编号序列推断（`order_source='code-sequence'`）；
+          显式传 `rtl-ttb` 等 ⇒ `order_source='manual'`；
+        * 预览图把三类字段用**不同颜色**标出（释文/状态/编号），并标读数与 P-C-R。
+        """
+        miss = self._need_root()
+        if miss:
+            return miss
+        req = req or {}
+        pdf = self._resolve_pdf(req.get("pdf") or req.get("filename"))
+        if pdf is None:
+            return {"ok": False, "reason": "PDF_NOT_FOUND",
+                    "msg": f"找不到 PDF：{req.get('pdf') or req.get('filename') or ''!r}"}
+        try:
+            page = int(req.get("page") or 0)
+        except Exception:
+            return {"ok": False, "reason": "BAD_PAGE", "msg": "page 必须是整数（1-based）"}
+        if page < 1:
+            return {"ok": False, "reason": "BAD_PAGE", "msg": "page 从 1 开始"}
+        try:
+            dpi = int(req.get("dpi") or 400)
+        except Exception:
+            return {"ok": False, "reason": "BAD_DPI", "msg": "dpi 必须是整数"}
+        fe, err = self._src_module("field_extract")
+        if err:
+            return err
+        t0 = time.time()
+        try:
+            img = fe.render_page(pdf, page, dpi)
+        except IndexError as exc:
+            return {"ok": False, "reason": "BAD_PAGE", "msg": str(exc), "page": page}
+        except Exception as exc:
+            return {"ok": False, "reason": "ERROR",
+                    "msg": f"渲页失败：{exc.__class__.__name__}: {exc}", "page": page}
+        boxes_in = req.get("boxes") if isinstance(req.get("boxes"), list) and req.get("boxes") else None
+        try:
+            fields = fe.extract_fields(img, boxes_in,
+                                       reading_order=str(req.get("reading_order") or "auto"),
+                                       authoritative=req.get("authoritative"))
+        except Exception as exc:
+            return {"ok": False, "reason": "ERROR",
+                    "msg": f"字段提取失败：{exc.__class__.__name__}: {exc}", "page": page}
+        if not fields.get("ok"):
+            return {**fields, "pdf": str(pdf), "pdf_name": pdf.name, "page": page, "dpi": int(dpi)}
+        seals = fields.get("seals") or []
+        preview, pw, ph = self._preview_with_fields(img, seals)
+        book = (lib.load_meta().get("books") or {}).get(pdf.name, {}) or {}
+        boxes = [{"x1": s["box"][0], "y1": s["box"][1], "x2": s["box"][2], "y2": s["box"][3],
+                  "idx": s.get("read_order") or s.get("idx")} for s in seals]
+        return {"ok": True, "pdf": str(pdf), "pdf_name": pdf.name, "page": page,
+                "dpi": int(dpi), "boxes_dpi": 400,
+                "size": fields.get("size") or [int(img.shape[1]), int(img.shape[0])],
+                "boxes": boxes, "count": len(boxes), "seals": seals,
+                "reading_order": fields.get("reading_order"),
+                "order_source": fields.get("order_source"),
+                "book_meta": {"dynasty": book.get("dynasty") or "",
+                              "author": book.get("author") or "",
+                              "reading_order": book.get("reading_order") or "auto"},
+                "dropped": fields.get("dropped"), "dropped_texts": fields.get("dropped_texts"),
+                "far_limit": fields.get("far_limit"), "ocr_items": fields.get("ocr_items"),
+                "preview_png_b64": preview, "preview_size": [pw, ph],
+                "preview_scale": round(ph / max(int(img.shape[0]), 1), 4),
+                "elapsed_s": round(time.time() - t0, 2),
+                "note": "字段仅供参考：纠错只认权威词表与同页多数票（≥3），其余原样输出"}
+
+    @staticmethod
+    def _preview_with_fields(img, seals, max_w: int = 1000) -> tuple[str, int, int]:
+        """整页图 + 印章框 + **三类字段框（分色）** + 读数/释文标签 ⇒ base64 PNG（失败返回空串）。"""
+        try:
+            import cv2  # 延迟 import
+            h, w = img.shape[:2]
+            scale = min(1.0, float(max_w) / max(w, 1))
+            small = cv2.resize(img, (max(1, int(w * scale)), max(1, int(h * scale))),
+                               interpolation=cv2.INTER_AREA) if scale < 1.0 else img.copy()
+            colors = {"inscription": (200, 120, 0), "status": (0, 140, 255), "code": (180, 0, 180)}
+
+            def px(b):
+                x1, y1, x2, y2 = (float(v) for v in b[:4])
+                return (int(round(x1 * scale)), int(round(y1 * scale)),
+                        int(round(x2 * scale)), int(round(y2 * scale)))
+
+            for s in seals or []:
+                x1, y1, x2, y2 = px(s.get("box") or [0, 0, 0, 0])
+                cv2.rectangle(small, (x1, y1), (x2, y2), (0, 180, 0), 2)        # 绿：印章
+                tag = f"#{s.get('read_order') or ''} C{s.get('c', '?')}-R{s.get('r', '?')}"
+                cv2.putText(small, tag, (x1 + 3, max(y1 - 5, 12)),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 180, 0), 1, cv2.LINE_AA)
+                for tb in s.get("text_boxes") or []:
+                    bx1, by1, bx2, by2 = px(tb.get("box"))
+                    col = colors.get(tb.get("kind"), (120, 120, 120))
+                    cv2.rectangle(small, (bx1, by1), (bx2, by2), col, 2)       # 分色：三类字段
+                label = f"{(s.get('inscription') or '-')}｜{(s.get('status') or '-')}｜{(s.get('code') or '-')}"
+                cv2.putText(small, label, (x1, min(y2 + 22, small.shape[0] - 6)),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.55, (0, 0, 220), 2, cv2.LINE_AA)
+            ok, buf = cv2.imencode(".png", small)
+            if not ok:
+                return "", small.shape[1], small.shape[0]
+            return base64.b64encode(buf.tobytes()).decode("ascii"), small.shape[1], small.shape[0]
+        except Exception:
+            return "", 0, 0
+
     def tab2_crop(self, req: dict | None = None) -> dict:
-        """按框裁切：`{pdf, page, boxes, dpi=1200, cr_from_boxes?}` ⇒
-        `{ok, outputs:[{name,path,bytes,…}], skipped, dir_key, dir_key_source, …}`。
+        """按框裁切：`{pdf, page, boxes, dpi=1200, cr_from_boxes?, reading_order?, fields?, per_seal_json?}` ⇒
+        `{ok, outputs:[{name,path,bytes,naming,…}], skipped, dir_key, dir_key_source, reading_order,
+        order_source, fields_sidecar, …}`。
 
         * `boxes` 在 **400dpi 坐标系**（＝检测输出 / 库内 bbox）；按 `dpi/400` 等比放大后裁；
-        * 落 `output/3_Cropped_Tiff/<目录键>/P<页>-C<列>-R<行>.tiff`（RGB 8bit ＋ Deflate）；
+        * **命名两层**：`fields[].code` 非空 ⇒ `<编号>_P<页>_C<列>_R<行>_<释文>_<朝代>_<作者>.tiff`，
+          否则回落 `P<页>-C<列>-R<行>.tiff`（旧名，保兼容）；清洗/截断规则见 `src/seal_crop.py` docstring；
+        * **C/R 方向**跟随 `reading_order`（`rtl` ⇒ **右列 C1**）；`'auto'`/缺省 ⇒ 取本书元数据
+          （tab1「阅读顺序」），再不行回落 `ltr-ttb`（＝改动前行为）。`cr_from_boxes` 优先级最高；
+        * `fields` 与 `boxes` 同序（tab2 字段区编辑后的值）⇒ 裁完落 `<目录键>/_fields.json`
+          （按页合并；含 `naming` 与字段原值），`per_seal_json=true` 另写每枚 `.json`；
         * **一次调用请传本页全部框**：C/R 按**本次框集合**的网格位次排序 ⇒ 分多次各传一枚会各自
-          从 `C1-R1` 起、同名互相覆盖（UI 应攒齐整页框后一次提交；要库内口径就传 `cr_from_boxes`）；
+          从 `C1-R1` 起、同名互相覆盖（UI 应攒齐整页框后一次提交）；
         * 未登记的书 ⇒ 目录键回落书名并标 `dir_key_source='fallback'`；
         * **串行**：另一单裁切在跑 ⇒ 直接 `{ok:false, reason:'BUSY'}`（不排队堆 1200dpi 页图）。
         """
@@ -1222,6 +1338,19 @@ class FeicuiApi:
         sc, err = self._src_module("seal_crop")
         if err:
             return err
+        book = (lib.load_meta().get("books") or {}).get(pdf.name, {}) or {}
+        fields_req = req.get("fields")
+        seals_hint = []
+        if isinstance(fields_req, list):
+            for i, f in enumerate(fields_req):
+                if not isinstance(f, dict):
+                    continue
+                row = dict(f)
+                b = boxes[i] if i < len(boxes) else None
+                if isinstance(b, dict):
+                    row["box"] = [b.get("x1"), b.get("y1"), b.get("x2"), b.get("y2")]
+                seals_hint.append(row)
+        order, order_source = self._resolve_reading_order(req.get("reading_order"), book, seals_hint)
         if not self._crop_lock.acquire(blocking=False):
             return {"ok": False, "reason": "BUSY", "msg": "上一单裁切还在跑（1200dpi 渲页很重）"}
         try:
@@ -1229,12 +1358,51 @@ class FeicuiApi:
                                self._root_path() / lib.TIFF_DIR,
                                pdf_name=pdf.name,
                                dpi=int(req.get("dpi") or 1200),
-                               cr_from_boxes=req.get("cr_from_boxes"))
+                               cr_from_boxes=req.get("cr_from_boxes"),
+                               reading_order=order,
+                               fields=req.get("fields"),
+                               per_seal_json=bool(req.get("per_seal_json")),
+                               order_source=order_source,
+                               dynasty=book.get("dynasty"),
+                               author=book.get("author"))
         except Exception as exc:
             return {"ok": False, "reason": "ERROR", "msg": f"{exc.__class__.__name__}: {exc}"}
         finally:
             self._crop_lock.release()
         return res
+
+    @staticmethod
+    def _resolve_reading_order(raw, book: dict, seals=None) -> tuple[str, str]:
+        """⇒ `(reading_order, order_source∈{manual,code-sequence,book-meta,fallback})`。
+
+        `raw` 显式合法 ⇒ 原样（`manual`，用户意图优先）；`auto`/空 ⇒ **按编号序列推断**
+        （`fields[].code` 至少 2 枚且都带框 ⇒ `code-sequence`）→ 本书元数据（`book-meta`）→
+        `ltr-ttb`（`fallback`，＝改动前行为）。
+
+        ⚠ 语义分界（`ctOrderForCrop` 与后端必须同口径）：**下拉停在 `auto` ⇒ 前端只传 `'auto'`**，
+        由后端在这里推断；**不要把上一轮 `tab2_extract` 的推断值当显式值回传** —— 那会把
+        `order_source` 误标成 `manual`，抹掉「这个顺序是机器推的还是人选的」这一信息。
+        """
+        try:
+            from src.field_extract import normalize_reading_order, infer_reading_order
+        except Exception:
+            normalize_reading_order = lambda v: v if v in ("rtl-ttb", "ltr-ttb", "rtl-btt", "ltr-btt") else None  # noqa: E731
+            infer_reading_order = None
+        raw_s = str(raw or "").strip().lower()
+        if raw_s and raw_s != "auto":
+            ord_ = normalize_reading_order(raw_s)
+            if ord_:
+                return ord_, "manual"
+        coded = [s for s in (seals or []) if isinstance(s, dict)
+                 and str(s.get("code") or "").strip() and s.get("box")]
+        if infer_reading_order is not None and len(coded) >= 2:
+            ord_, src = infer_reading_order(coded)
+            if src == "code-sequence" and ord_:
+                return ord_, "code-sequence"
+        meta_ord = normalize_reading_order((book or {}).get("reading_order"))
+        if meta_ord:
+            return meta_ord, "book-meta"
+        return "ltr-ttb", "fallback"
 
     def open_in_finder(self, req: dict | None = None) -> dict:
         """在**系统文件管理器**里定位产物（macOS 访达 / Windows 资源管理器 / Linux xdg-open；失败只报错，不抛）。"""
@@ -1271,13 +1439,17 @@ class FeicuiApi:
         for n in lib.list_tiff_files(root, cur) if cur else []:
             f = root / lib.TIFF_DIR / cur / n
             stt = f.stat()
-            parsed = validator.parse_filename(n)
+            parsed = validator.parse_tiff_name(n)      # 旧模板 + 切图台新命名（兼容解析）
             files.append({
                 "name": n, "size_mb": round(stt.st_size / 1024 / 1024, 2),
                 "mtime": datetime.fromtimestamp(stt.st_mtime).strftime("%Y-%m-%d %H:%M"),
-                "standard": validator.is_standard_tiff(n),
-                "shiwen": parsed[0] if parsed else "", "dynasty": parsed[1] if parsed else "",
-                "author": parsed[2] if parsed else "",
+                "standard": parsed is not None,
+                "naming": (parsed or {}).get("naming") or "",
+                "page": (parsed or {}).get("page"), "col": (parsed or {}).get("col"),
+                "row": (parsed or {}).get("row"),
+                "shiwen": (parsed or {}).get("shiwen") or "",
+                "dynasty": (parsed or {}).get("dynasty") or "",
+                "author": (parsed or {}).get("author") or "",
                 "path": str(f),
             })
         name, is_admin = self._session_user()
@@ -1599,36 +1771,62 @@ class FeicuiApi:
         }
 
     def tab3_parse(self, req: dict | None = None) -> dict:
-        """文件名解析（`validator.parse_filename` 单一真源）⇒ 回填 P/C/R 与三字段。
+        """文件名解析（`validator.parse_tiff_name` 单一真源）⇒ 回填 P/C/R 与三字段。
 
-        非标准模板 ⇒ 三字段留空、前缀留空（与旧版 `webui.py` L808–816 同口径），并给出提示。
+        认**两套**命名：旧模板 `P<页>-C<列>-R<行>-释文-朝代-作者.tiff` 与切图台新命名
+        `<编号>_P<页>_C<列>_R<行>_<释文>_<朝代>_<作者>.tiff`（`naming` 字段区分）。
+        两套都不匹配 ⇒ 三字段留空、前缀留空（与旧版 `webui.py` L808–816 同口径），并给出提示。
         """
         req = req or {}
         name = self._safe_seg(str(req.get("name", "")))
-        parsed = validator.parse_filename(name)
-        fields = {"shiwen": parsed[3], "dynasty": parsed[4], "author": parsed[5]} if parsed \
-            else {"shiwen": "", "dynasty": "", "author": ""}
+        parsed = validator.parse_tiff_name(name)
+        fields = ({"shiwen": parsed["shiwen"], "dynasty": parsed["dynasty"],
+                   "author": parsed["author"]} if parsed
+                  else {"shiwen": "", "dynasty": "", "author": ""})
+        prefix = ""
+        if parsed:
+            prefix = (f"{parsed['code']}_P{parsed['page_raw']}_C{parsed['col_raw']}_R{parsed['row_raw']}_"
+                      if parsed["naming"] == "with_code"
+                      else f"P{parsed['page_raw']}-C{parsed['col_raw']}-R{parsed['row_raw']}-")
+        note = ""
+        if not parsed:
+            note = "文件名非标准模板 ⇒ 前缀留空，请手动填写（与旧版一致）"
+        elif parsed["naming"] == "with_code":
+            note = f"新命名（切图台带编号）：编号 {parsed['code']} · P/C/R 已回填"
         return {"ok": True, "name": name, "standard": bool(parsed), "fields": fields,
-                "page": int(parsed[0]) if parsed else None,
-                "col": int(parsed[1]) if parsed else None,
-                "row": int(parsed[2]) if parsed else None,
-                "prefix": f"P{parsed[0]}-C{parsed[1]}-R{parsed[2]}-" if parsed else "",
-                "limits": {"shiwen_max": validator.SHIWEN_MAX, "author_max": validator.AUTHOR_MAX},
-                "note": "" if parsed else "文件名非标准模板 ⇒ 前缀留空，请手动填写（与旧版一致）"}
+                "naming": (parsed or {}).get("naming") or "",
+                "code": (parsed or {}).get("code") or "",
+                "page": parsed["page"] if parsed else None,
+                "col": parsed["col"] if parsed else None,
+                "row": parsed["row"] if parsed else None,
+                "prefix": prefix, "note": note,
+                "limits": {"shiwen_max": validator.SHIWEN_MAX, "author_max": validator.AUTHOR_MAX}}
 
     def _compose_new_name(self, old_name: str, shiwen: str, dynasty: str,
                           author: str) -> dict:
-        """新文件名 = `{旧文件名解析出的 P/C/R 前缀}{释文}-{朝代}-{作者}.tiff`。
+        """新文件名 = **沿用旧文件名的命名方案**（旧模板 / 切图台新命名）＋ 三字段。
 
-        与旧版 `webui.py` L811/L829 **同一构造**：前缀来自 `parse_filename` 的回填
-        （非标准模板 ⇒ 前缀留空，提示手填）；校验一律走 `validator.validate_fields`。
+        * 旧模板 ⇒ `P<页>-C<列>-R<行>-释文-朝代-作者.tiff`（与旧版 `webui.py` L811/L829 同构造）；
+        * 新命名（`<编号>_P<页>_C<列>_R<行>_…`）⇒ `<编号>_P<页>_C<列>_R<行>_释文_朝代_作者.tiff`
+          （**保留编号**，不把新文件降级回旧名 —— 兼容解析不等于改语义）；
+        * 两套都不匹配 ⇒ 前缀留空（提示手填）；校验一律走 `validator.validate_fields`。
         """
-        parsed = validator.parse_filename(old_name)
-        prefix = f"P{parsed[0]}-C{parsed[1]}-R{parsed[2]}-" if parsed else ""
+        parsed = validator.parse_tiff_name(old_name)
+        if parsed:
+            raw = (parsed["page_raw"], parsed["col_raw"], parsed["row_raw"])
+            prefix = (f"{parsed['code']}_P{raw[0]}_C{raw[1]}_R{raw[2]}_"
+                      if parsed["naming"] == "with_code"
+                      else f"P{raw[0]}-C{raw[1]}-R{raw[2]}-")
+            new_name = validator.build_crop_filename(
+                raw[0], raw[1], raw[2], shiwen, dynasty, author,
+                code=parsed["code"] if parsed["naming"] == "with_code" else "")
+        else:
+            prefix, new_name = "", f"{shiwen}-{dynasty}-{author}{validator.SUFFIX}"
         valid, msg = validator.validate_fields(shiwen, dynasty, author)
         return {
-            "prefix": prefix, "standard": bool(parsed), "valid": bool(valid), "msg": msg,
-            "new_name": f"{prefix}{shiwen}-{dynasty}-{author}{validator.SUFFIX}",
+            "prefix": prefix, "standard": bool(parsed),
+            "naming": (parsed or {}).get("naming") or "",
+            "valid": bool(valid), "msg": msg, "new_name": new_name,
             "counts": {"shiwen": validator.count_chinese(shiwen),
                        "author": validator.count_chinese(author)},
             "limits": {"shiwen_max": validator.SHIWEN_MAX, "author_max": validator.AUTHOR_MAX},

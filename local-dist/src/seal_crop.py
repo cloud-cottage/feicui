@@ -10,20 +10,40 @@
    `scale = dpi / boxes_dpi` **等比放大 bbox**，不是重测）。
 2. 逐框裁（`numpy` 切片，越界自动夹到页内）⇒ **RGB 8bit** ⇒ `tifffile` 写
    **TIFF＋Deflate**（与老工程 `backfill_book_images.py` 同容器口径；`tifffile` 是打包既有依赖）。
-3. 命名 `P<页>-C<列>-R<行>.tiff`（**大写、短横、不补零**）：页＝`page`（1-based，同 `stamps.page`）。
+3. 命名（**两层，2026-10-20 增补**）：
+   * **无编号** ⇒ `P<页>-C<列>-R<行>.tiff`（大写、短横、不补零；页＝`page`，1-based，同 `stamps.page`）；
+   * **有编号**（`src/field_extract.py` 从页上识别出编号）⇒
+     `<编号>_P<页>_C<列>_R<行>_<释文>_<朝代>_<作者>.tiff`
+     （例 `0424_P370_C1_R1_中羞行府_清中期_吳熙載.tiff`；P/C/R **保留字母前缀**便于机器解析，
+     编号只当前缀，**不改 C/R 方向**）。段清洗：`/ \ : * ? " < > |` 与换行 ⇒ `-`、连字符折叠、
+     首尾去 `-`、空段写 `NA`、整名 >200 字符按「释文→作者→朝代」各留 ≥4 字截断（仍超则截 200 加 `~`）。
+     朝代/作者优先级：**印级 fields > 本书元数据（tab1）> `NA`**（`build_crop_name`）。
 4. 落点 `out_dir/<目录键>/`：目录键取 `config/book_dir_keys.json`（真源 `server/app/naming.py`）；
    未登记 ⇒ **回落到书名自身**（去扩展名、压空白）并标 `dir_key_source: "fallback"`（不静默）。
 
 ## C/R 排序规则（本模块自定，写死在这里）
 
 检测框来自图像，不是库内 `stamps`，所以不能沿用 `naming.assign_cr` 的「按列聚类」——
-切图台按**页面网格**读法排：
+切图台按**页面网格 ＋ 阅读顺序**排：
 
-* **行带（R，自上而下 1 起）**：框按 **y 中心**升序；与当前行带「**垂直重叠 ≥ 较矮框高度的 50%**」
+* **行带（R，1 起）**：框按 **y 中心**升序；与当前行带「**垂直重叠 ≥ 较矮框高度的 50%**」
   ⇒ 归同一带，否则开新带（同一带即"同一行印章"，允许基线略有参差）。
-* **列（C，带内自左向右 1 起）**：带内按 **x 中心**升序编号。
+  `reading_order` 的 **vert** 决定 **R 的方向**：`ttb` ⇒ 最上带 R1；`btt` ⇒ 最下带 R1。
+* **列（C，带内 1 起）**：`reading_order` 的 **horiz** 决定方向：`ltr` ⇒ 左列 C1；
+  **`rtl` ⇒ 右列 C1**（印谱/竖排书的常见版式；此前一律按 x 升序把左列当 C1，那本书里是**反的**）。
+* `reading_order` 取值 `rtl-ttb | ltr-ttb | rtl-btt | ltr-btt`（`ttb-rtl` 这类反向写法的
+  `ttb-rtl` 也认，见 `field_extract.normalize_reading_order`）；缺省 **`ltr-ttb`**
+  （＝改动前行为，**保持向后兼容**）。
+  几何单一真源是 `field_extract.grid_positions()`（纯 stdlib），本模块只做委托 ＋ 兜底实现。
 * 构造上 `(C,R)` 页内唯一（每带内 C 互异、带间 R 互异）⇒ 名不撞。
 * 调用方可传 `cr_from_boxes=[(c, r), …]`（**与 `boxes` 同序**）覆盖，供人工微调后用库内口径命名。
+
+## 字段 sidecar（可选）
+
+`crop_page(..., fields=[…], reading_order=…)`：`fields` 与 `boxes` 同序（每项
+`{inscription,status,code,…}`），裁完把「每枚 P-C-R ＋ 三字段 ＋ 分数 ＋ needs_review」
+汇入 `out_dir/<目录键>/_fields.json`（按页合并，`pages.<页号>`）；`per_seal_json=True`
+时另写每枚 `<名>.json`。返回里带 `fields_sidecar` / `reading_order` / `order_source`。
 
 ## 返回（**永不抛**）
 
@@ -42,6 +62,7 @@ import os
 import re
 import sys
 import time
+from datetime import datetime
 from pathlib import Path
 
 import numpy as np
@@ -56,7 +77,10 @@ __all__ = [
     "CROP_DPI",
     "BOX_DPI",
     "TIFF_COMPRESSION",
+    "NAME_MAX_LEN",
     "grid_order",
+    "build_crop_name",
+    "sanitize_name_part",
     "crop_page",
     "resolve_dir_key",
 ]
@@ -150,8 +174,8 @@ def _as_box(b) -> tuple[int, int, int, int]:
     return (min(x1, x2), min(y1, y2), max(x1, x2), max(y1, y2))
 
 
-def grid_order(boxes, row_overlap: float = 0.5) -> list[tuple[int, int]]:
-    """页面网格排序 ⇒ **与入参同序**的 `(C, R)`（规则见模块 docstring「C/R 排序规则」）。"""
+def _grid_order_fallback(boxes, row_overlap: float = 0.5) -> list[tuple[int, int]]:
+    """兜底实现（＝改动前的「ltr-ttb」口径；只在 `field_extract` 拿不到时用）。"""
     boxes = [_as_box(b) for b in boxes]
     n = len(boxes)
     if n == 0:
@@ -180,6 +204,28 @@ def grid_order(boxes, row_overlap: float = 0.5) -> list[tuple[int, int]]:
     return out  # type: ignore[return-value]
 
 
+def grid_order(boxes, row_overlap: float = 0.5,
+               reading_order: str = "ltr-ttb") -> list[tuple[int, int]]:
+    """页面网格 + 阅读顺序 ⇒ **与入参同序**的 `(C, R)`（规则见模块 docstring「C/R 排序规则」）。
+
+    `reading_order` 的 `rtl` 让**右列＝C1**、`btt` 让**下行为 R1**；缺省 `ltr-ttb` ＝改动前行为。
+    几何单一真源是 `field_extract.grid_positions()`；拿不到（打包异常等）⇒ 兜底实现（仅 ltr-ttb 口径）。
+    """
+    try:
+        from .field_extract import grid_positions, normalize_reading_order  # 纯 stdlib
+    except Exception:                                     # pragma: no cover —— 直跑 src/ 时回落
+        try:
+            from src.field_extract import grid_positions, normalize_reading_order  # type: ignore
+        except Exception:
+            return _grid_order_fallback(boxes, row_overlap=row_overlap)
+    order = normalize_reading_order(reading_order) or "ltr-ttb"
+    try:
+        return [(int(p[0]), int(p[1])) for p in
+                grid_positions(boxes, row_overlap=row_overlap, reading_order=order)]
+    except Exception:                                     # pragma: no cover
+        return _grid_order_fallback(boxes, row_overlap=row_overlap)
+
+
 def _cr_from_arg(cr_from_boxes, n: int) -> list[tuple[int, int]] | None:
     """归一 `cr_from_boxes`（`[(c,r)]` / `[{c,r}]`）；长度不符 ⇒ `None`（回落网格排序）。"""
     if not cr_from_boxes:
@@ -197,13 +243,152 @@ def _cr_from_arg(cr_from_boxes, n: int) -> list[tuple[int, int]] | None:
     return pairs
 
 
+#: 含编号命名时整名上限（Windows 单段 255 / 全路径 260；留余量）。
+NAME_MAX_LEN = 200
+#: Windows / macOS 都不安全、且会让 `open()` 失败的字符 ⇒ 一律替成 `-`。
+_ILLEGAL_CHARS = re.compile(r'[/\\:*?"<>|\r\n\t]+')
+
+
+def sanitize_name_part(value, default: str = "NA") -> str:
+    """文件名段清洗：非法字符/换行 ⇒ `-`；连续 `-` 折叠；首尾 `-` 去除；空 ⇒ `default`（默认 `NA`）。"""
+    s = "" if value is None else str(value)
+    s = _ILLEGAL_CHARS.sub("-", s)
+    s = re.sub(r"-{2,}", "-", s)
+    s = s.strip().strip("-").strip()
+    return s or default
+
+
+def _fit_name(prefix: str, ins: str, dyn: str, aut: str, limit: int = NAME_MAX_LEN) -> str:
+    """超长整形：按「释文 → 作者 → 朝代」逐个截断（每段保留 ≥4 字），仍超 ⇒ 整名截到 `limit` 加 `~`。
+
+    ⚠ 段顺序＝**释文\_朝代\_作者**（与模块 docstring / 示例 `0424_P370_C1_R1_中羞行府_清中期_吳熙載.tiff`
+    一致）。此前这里把 `aut` 排在 `dyn` 前，产出 `…_吳熙載_清中期.tiff`，与文档/示例/前端预演**不一致**
+    —— 2026-10-20 按文档口径改正（`test_field_extract.py` 有逐字对拍）。
+    """
+    vals = {"ins": ins, "aut": aut, "dyn": dyn}
+
+    def build() -> str:
+        return prefix + "_".join([vals["ins"], vals["dyn"], vals["aut"]]) + ".tiff"
+
+    for key in ("ins", "aut", "dyn"):
+        while len(build()) > limit and len(vals[key]) > 4:
+            vals[key] = vals[key][:-1]
+    name = build()
+    if len(name) > limit:
+        name = name[: limit - 1] + "~"
+    return name
+
+
+def build_crop_name(page: int, c: int, r: int, fields=None, *,
+                    dynasty: str | None = None, author: str | None = None,
+                    limit: int = NAME_MAX_LEN) -> tuple[str, str]:
+    """⇒ `(文件名, naming)`；`naming ∈ {with_code, legacy}`。
+
+    * **有编号**（`fields['code']` 非空）⇒ `<编号>_P<页>_C<列>_R<行>_<释文>_<朝代>_<作者>.tiff`
+      （例 `0424_P370_C1_R1_中羞行府_清中期_吳熙載.tiff`）：P/C/R 的**字母前缀保留**（便于机器解析），
+      编号在前只影响前缀与排序，**不影响** C/R 方向；
+    * **无编号** ⇒ 回落 `P<页>-C<列>-R<行>.tiff`（**保兼容**）；
+    * 朝代/作者优先级：**印级 fields > 本书元数据（tab1）> `NA`**；空字段一律写 `NA`（位置稳定）；
+    * 段内非法字符清洗见 `sanitize_name_part`；整名超 `limit` 见 `_fit_name`。
+    """
+    f = fields or {}
+    code_raw = str(f.get("code") or "").strip()
+    if not code_raw:
+        return f"P{int(page)}-C{int(c)}-R{int(r)}.tiff", "legacy"
+    prefix = "_".join([sanitize_name_part(code_raw), f"P{int(page)}", f"C{int(c)}", f"R{int(r)}"]) + "_"
+    ins = sanitize_name_part(f.get("inscription"))
+    dyn = sanitize_name_part(f.get("dynasty") or dynasty)
+    aut = sanitize_name_part(f.get("author") or author)
+    return _fit_name(prefix, ins, dyn, aut, limit=limit), "with_code"
+
+
+def _norm_order(reading_order) -> str:
+    """阅读顺序归一（`rtl-ttb|…`）；认不出 / 缺省 ⇒ `ltr-ttb`（＝改动前行为）。"""
+    try:
+        from .field_extract import normalize_reading_order
+    except Exception:                                     # pragma: no cover
+        try:
+            from src.field_extract import normalize_reading_order  # type: ignore
+        except Exception:
+            return "ltr-ttb"
+    return normalize_reading_order(reading_order) or "ltr-ttb"
+
+
+def _norm_fields(fields, n: int) -> tuple[list[dict], bool]:
+    """字段入参归一成**与 boxes 同序**的 `n` 项（缺项补空 dict）；⇒ `(rows, aligned)`。"""
+    rows: list[dict] = []
+    for f in list(fields or [])[:n]:
+        rows.append(dict(f) if isinstance(f, dict) else {})
+    aligned = (len(rows) == n)
+    while len(rows) < n:
+        rows.append({})
+    return rows, aligned
+
+
+def _write_fields_sidecar(target_dir: Path, *, page: int, dir_key: str, pdf_name: str,
+                          reading_order: str, order_source: str, seals: list[dict],
+                          per_seal_json: bool = False) -> tuple[str, int]:
+    """把本页字段汇入 `<dir>/_fields.json`（按 `pages.<页号>` 合并）；可选每枚 `.json`。
+
+    ⇒ `(sidecar_path, 写入枚数)`；**永不抛**（写不动就返回 `("", 0)`，裁切结果照样返回）。
+    """
+    try:
+        target_dir.mkdir(parents=True, exist_ok=True)
+        path = target_dir / "_fields.json"
+        data: dict = {"schema": "feicui.fields.v1", "dir_key": dir_key, "pdf_name": pdf_name}
+        if path.is_file():
+            try:
+                old = json.loads(path.read_text(encoding="utf-8"))
+                if isinstance(old, dict):
+                    data.update({k: v for k, v in old.items() if k not in ("pages", "schema")})
+                    data["pages"] = old.get("pages") if isinstance(old.get("pages"), dict) else {}
+            except Exception:
+                pass
+        pages = data.get("pages")
+        if not isinstance(pages, dict):
+            pages = {}
+        pages[str(int(page))] = {"page": int(page), "reading_order": reading_order,
+                                 "order_source": order_source, "count": len(seals),
+                                 "naming": ("with_code" if any(s.get("naming") == "with_code"
+                                                               for s in seals) else "legacy"),
+                                 "seals": seals}
+        data["pages"] = pages
+        data["schema"] = "feicui.fields.v1"
+        data["updated_at"] = datetime.now().isoformat(timespec="seconds")
+        tmp = path.with_suffix(".json.part")
+        tmp.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+        tmp.replace(path)
+        n = 0
+        if per_seal_json:
+            for s in seals:
+                stem = os.path.splitext(str(s.get("name") or ""))[0]
+                if not stem:
+                    continue
+                (target_dir / f"{stem}.json").write_text(
+                    json.dumps({**s, "pdf_name": pdf_name, "page": int(page),
+                                "reading_order": reading_order,
+                                "order_source": order_source},
+                               ensure_ascii=False, indent=2), encoding="utf-8")
+                n += 1
+        return str(path), n
+    except Exception:                                     # noqa: BLE001 —— never raise
+        return "", 0
+
+
 def crop_page(pdf, page: int, boxes, out_dir, pdf_name: str | None = None,
               dpi: int = CROP_DPI, cr_from_boxes=None, *, boxes_dpi: int = BOX_DPI,
-              dir_keys_path=None) -> dict:
+              dir_keys_path=None, reading_order: str | None = None, fields=None,
+              write_fields: bool = True, per_seal_json: bool = False,
+              order_source: str | None = None, dynasty: str | None = None,
+              author: str | None = None) -> dict:
     """渲页 ⇒ 按框裁 ⇒ 写 `P<页>-C<列>-R<行>.tiff`（**永不抛**，返回结构化 dict）。
 
     `boxes` 在 `boxes_dpi`（默认 400，＝库内 bbox 系）坐标系；`dpi` 只影响**切图渲页分辨率**
     （bbox 按 `dpi/boxes_dpi` 等比放大）。`pdf_name` 缺省取 PDF 文件名（算目录键用）。
+
+    `reading_order`（`rtl-ttb|ltr-ttb|rtl-btt|ltr-btt`）决定 **C/R 方向**（`rtl` ⇒ 右列 C1）；
+    缺省 `ltr-ttb` ＝改动前行为。`cr_from_boxes` 优先级更高（人工微调口径）。
+    `fields`（与 `boxes` 同序）非空且 `write_fields` ⇒ 落 `_fields.json` sidecar。
     """
     t0 = time.time()
     try:
@@ -230,7 +415,10 @@ def crop_page(pdf, page: int, boxes, out_dir, pdf_name: str | None = None,
     dir_key, dir_key_source = resolve_dir_key(name, dir_keys_path)
     target_dir = Path(out_dir) / dir_key
     scale = float(dpi) / float(boxes_dpi)
-    pairs = _cr_from_arg(cr_from_boxes, len(norm)) or grid_order(norm)
+    order = _norm_order(reading_order)
+    book_dynasty = str(dynasty).strip() if dynasty else None
+    book_author = str(author).strip() if author else None
+    pairs = _cr_from_arg(cr_from_boxes, len(norm)) or grid_order(norm, reading_order=order)
 
     try:
         doc = fitz.open(Path(pdf))
@@ -256,7 +444,8 @@ def crop_page(pdf, page: int, boxes, out_dir, pdf_name: str | None = None,
     target_dir.mkdir(parents=True, exist_ok=True)
     outputs: list[dict] = []
     skipped: list[dict] = []
-    for (x1, y1, x2, y2), (c, r) in zip(norm, pairs):
+    field_rows, aligned = _norm_fields(fields, len(norm))
+    for k, ((x1, y1, x2, y2), (c, r)) in enumerate(zip(norm, pairs)):
         sx1, sy1 = int(round(x1 * scale)), int(round(y1 * scale))
         sx2, sy2 = int(round(x2 * scale)), int(round(y2 * scale))
         cx1, cy1 = max(0, sx1), max(0, sy1)
@@ -266,7 +455,8 @@ def crop_page(pdf, page: int, boxes, out_dir, pdf_name: str | None = None,
                             "reason": "OUT_OF_PAGE" if (cx2 <= cx1 or cy2 <= cy1) else "TOO_SMALL"})
             continue
         crop = np.ascontiguousarray(page_img[cy1:cy2, cx1:cx2, :3])   # RGB 8bit
-        fname = f"P{page}-C{c}-R{r}.tiff"
+        fname, naming = build_crop_name(page, c, r, field_rows[k],
+                                        dynasty=book_dynasty, author=book_author)
         fpath = target_dir / fname
         try:
             tifffile.imwrite(str(fpath), crop, photometric="rgb", compression=TIFF_COMPRESSION)
@@ -276,9 +466,39 @@ def crop_page(pdf, page: int, boxes, out_dir, pdf_name: str | None = None,
             continue
         outputs.append({"name": fname, "path": str(fpath), "bytes": fpath.stat().st_size,
                         "page": page, "c": c, "r": r, "box": [x1, y1, x2, y2],
-                        "size": [int(crop.shape[1]), int(crop.shape[0])], "dpi": dpi})
+                        "size": [int(crop.shape[1]), int(crop.shape[0])], "dpi": dpi,
+                        "naming": naming, "code": field_rows[k].get("code"),
+                        "inscription": field_rows[k].get("inscription")})
+
+    # 字段 sidecar（`fields` 与 boxes 同序；空 ⇒ 不写，不影响裁切结果）
+    seals: list[dict] = []
+    if any(field_rows):
+        by_box = {tuple(int(round(v)) for v in norm[i]): field_rows[i] for i in range(len(norm))}
+        for o in outputs:
+            f = by_box.get(tuple(int(v) for v in o["box"]), {}) or {}
+            seals.append({
+                "name": o["name"], "naming": o.get("naming"), "c": o["c"], "r": o["r"],
+                "read_order": f.get("read_order", f.get("readOrder")),
+                "box": o["box"],
+                "inscription": f.get("inscription"), "inscription_score": f.get("inscription_score"),
+                "inscription_verified": f.get("inscription_verified"),
+                "status": f.get("status"), "status_score": f.get("status_score"),
+                "code": f.get("code"), "code_score": f.get("code_score"),
+                "dynasty": f.get("dynasty") or book_dynasty,
+                "author": f.get("author") or book_author,
+                "needs_review": bool(f.get("needs_review")),
+            })
+    sidecar, per_seal_n = ("", 0)
+    if seals and write_fields:
+        sidecar, per_seal_n = _write_fields_sidecar(
+            target_dir, page=page, dir_key=dir_key, pdf_name=name,
+            reading_order=order, order_source=str(order_source or "manual"),
+            seals=seals, per_seal_json=bool(per_seal_json))
     return {"ok": True, "outputs": outputs, "skipped": skipped,
             "dir_key": dir_key, "dir_key_source": dir_key_source, "dir": str(target_dir),
             "dpi": dpi, "boxes_dpi": int(boxes_dpi), "scale": round(scale, 3),
             "page_size": [int(W), int(H)],
+            "reading_order": order, "order_source": str(order_source or "manual"),
+            "fields_sidecar": sidecar, "fields_count": len(seals),
+            "fields_per_seal_json": per_seal_n, "fields_aligned": aligned,
             "count": len(outputs), "elapsed_s": round(time.time() - t0, 2)}

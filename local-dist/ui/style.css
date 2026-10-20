@@ -307,3 +307,28 @@ select.grow { flex: 1 1 320px; min-width: 240px; }
 .adv-panel .field { max-width: 320px; }
 #tab2-crop-out { max-height: 30vh; }
 
+/* ④ 字段区：每枚一行 —— 读数｜释文｜状态｜编号｜分数｜文件名预演（沿用 token，无外链资源） */
+#tab2-fields { max-height: 34vh; margin-top: 6px; }
+.frow { display: flex; align-items: center; gap: 6px; padding: 3px 4px;
+  border-bottom: 1px solid var(--line); }
+.frow:hover { background: var(--accent-wash); }
+.frow .fno { flex: 0 0 26px; color: var(--muted); font-size: 11px; text-align: right; }
+.frow .fin { flex: 0 1 120px; min-width: 64px; padding: 3px 6px; font-size: 12px;
+  border: 1px solid var(--line); border-radius: 6px; background: #fff; color: var(--text); }
+.frow .fin[data-k="status"] { flex: 0 0 48px; min-width: 44px; text-align: center; }
+.frow .fin[data-k="code"] { flex: 0 0 62px; min-width: 56px; text-align: center;
+  font-variant-numeric: tabular-nums; }
+.frow .fscore { flex: 0 0 52px; font-size: 11px; color: var(--muted);
+  font-variant-numeric: tabular-nums; white-space: nowrap; }
+.frow .fname { flex: 1 1 auto; min-width: 0; font-size: 11px; color: var(--accent-deep);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+/* needs_review（低分未验证）⇒ 整行浅黄垫底 + 分数处「⚠」（色值走既有语义 token） */
+.frow.rev { background: var(--warn-bg); }
+.frow.rev .fscore { color: var(--warn); font-weight: 600; }
+.frow.rev .fin[data-k="inscription"] { border-color: var(--warn-line); }
+/* 别名：字段区若改为「标签＋值」两段式（`.fmeta`）也用同一套 token */
+.fmeta { font-size: 11px; color: var(--muted); }
+.fmeta b { color: var(--accent-deep); font-weight: 600; }
+
+

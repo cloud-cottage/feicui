@@ -205,6 +205,34 @@
         .copy-btn:hover {
             background: var(--accent-deep);
         }
+        /* ── 版本迭代时间线 ── */
+        .log-item {
+            border-left: 3px solid var(--accent-soft);
+            padding: 2px 0 2px 14px;
+            margin: 0 0 18px;
+        }
+        .log-head {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 6px;
+        }
+        .log-ver {
+            background: var(--accent);
+            color: var(--on-accent);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 6px;
+            white-space: nowrap;
+        }
+        .log-date { font-size: 14px; font-weight: 600; }
+        .log-item ul { margin: 4px 0 0 18px; padding: 0; }
+        .log-item li { margin: 4px 0; font-size: 14px; color: #333; }
+        .log-early { margin-top: 6px; font-size: 13px; color: #666; }
+        .log-early summary { cursor: pointer; color: var(--accent-deep); }
+        .log-early ul { margin: 8px 0 0 18px; }
         footer {
             text-align: center;
             padding: 32px;
@@ -270,13 +298,71 @@
             </ul>
         </div>
 
-        <div class="card">
-            <h2>更新日志</h2>
-            <ul>
-                <li><strong>v0.3.0</strong> - 壳由 Streamlit 换为 <strong>PyWebView</strong>（原生窗口 ＋ js_api 桥）；
-                    三页签工作流；整页 1200 dpi 生成异步化（进度 / 取消）。<em>腾讯文档日志同步暂未接入本壳。</em></li>
-                <li><strong>v0.1.0</strong> - 初始版本：文件浏览、元数据编辑、腾讯文档日志同步</li>
-            </ul>
+        <div class="card" id="changelog">
+            <h2>版本迭代 · 本地分发版</h2>
+            <p class="muted" style="font-size:13px;color:#666;margin:-4px 0 16px">
+                按时间倒序。<strong>v1.0.0</strong> 是首个公开分发的版本；其前的条目为内部迭代阶段（按日期记录，未编版本号）。
+            </p>
+
+            <div class="log-item">
+                <div class="log-head"><span class="log-ver">v1.0.0</span><span class="log-date">2026-10-20 · 首个公开版本</span></div>
+                <ul>
+                    <li><strong>双平台分发包</strong>：macOS <code>.dmg</code>（94 MB）／ Windows <code>.zip</code>（94 MB），本页直接下载</li>
+                    <li><strong>一键高清化</strong>（tab1）：300 / 600 / 1200 dpi 可选，<strong>默认 1200</strong>；1200 dpi 8-bit PNG 直接嵌入 PDF，约 6.2 秒/页（851 页约 1 小时）；支持<strong>断点续跑</strong>、中途取消、体积告警</li>
+                    <li><strong>切图台</strong>（tab2）：自动识别页面朱红印面（抽样实测召回 100%）→ 画布上增删/拖拽微调 → 按 <strong>1200 dpi</strong> 裁出 <code>P&lt;页&gt;-C&lt;列&gt;-R&lt;行&gt;.tiff</code></li>
+                    <li>Windows 版由 CI（windows-latest）构建，绿色解压即用，需系统已装 WebView2</li>
+                </ul>
+            </div>
+
+            <div class="log-item">
+                <div class="log-head"><span class="log-ver">内部</span><span class="log-date">2026-10-19 · 三版本定名与 UI 统一</span></div>
+                <ul>
+                    <li>三个形态正式定名：<code>feicui-web</code>（公网页）／<code>feicui-local-dist</code>（本分发版）／<code>feicui-local-private</code>（私有版）</li>
+                    <li>三者共用同一套 UI（翡翠绿浅色系）；本地版标题按访问来源自动带形态后缀</li>
+                    <li>目录重组：<code>webui/ → local-dist/</code>，公网引导页并入 <code>web/</code></li>
+                </ul>
+            </div>
+
+            <div class="log-item">
+                <div class="log-head"><span class="log-ver">内部</span><span class="log-date">2026-10-18 · OCR、印源接入与稳定性</span></div>
+                <ul>
+                    <li><strong>OCR 与纠错建议</strong>（tab3）：RapidOCR 识别 + 古玺异体/形近字后处理建议（默认只建议不自动改）；本版本不含 OCR 时按钮自动置灰并说明</li>
+                    <li><strong>接入「印源」账号</strong>：登录后自动创建本机专用密钥，朝代／作者／释文只读缓存 24 小时，断网自动回落本地词表</li>
+                    <li>修复「关闭窗口后进程不退出」；精简阶段包体积（298 → 210 MB）</li>
+                </ul>
+            </div>
+
+            <div class="log-item">
+                <div class="log-head"><span class="log-ver">内部</span><span class="log-date">2026-10-17 · 原生窗口换壳与主题</span></div>
+                <ul>
+                    <li>界面由浏览器方案改为 <strong>PyWebView 原生窗口</strong>，三页签工作流（原件 / 高清 / 裁切件）</li>
+                    <li>强调色由暖橙改为<strong>翡翠绿</strong>；打包改为逐文件收集，退役面板不再进包</li>
+                </ul>
+            </div>
+
+            <div class="log-item">
+                <div class="log-head"><span class="log-ver">内部</span><span class="log-date">2026-10-16 · 桌面打包与 OCR 探路</span></div>
+                <ul>
+                    <li>首个 macOS <code>.app</code>（无 OCR 版 209 MB / 含 OCR 版 328 MB）</li>
+                    <li>接入 RapidOCR；整页渲染 dpi 参数化（默认由 2400 改为 1200）</li>
+                </ul>
+            </div>
+
+            <div class="log-item">
+                <div class="log-head"><span class="log-ver">内部</span><span class="log-date">2026-10 上旬 · 算法与数据管线定型</span></div>
+                <ul>
+                    <li>在「<strong>印章本体 100% 冻结</strong>」前提下做宣纸底纹与印泥色彩选型（不重绘任何印文与线条）</li>
+                    <li>高清页预览兼容性修复、仓库迁移、生产库就位</li>
+                </ul>
+            </div>
+
+            <details class="log-early">
+                <summary>更早的内部记录（v0.x）</summary>
+                <ul>
+                    <li><strong>v0.3.0</strong> - 壳由 Streamlit 换为 PyWebView 的改造起点；三页签工作流与整页 1200 dpi 异步化在同一阶段成形</li>
+                    <li><strong>v0.1.0</strong> - 初始版本：文件浏览、元数据编辑</li>
+                </ul>
+            </details>
         </div>
 
         <footer>

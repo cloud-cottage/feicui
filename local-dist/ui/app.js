@@ -957,6 +957,7 @@
         ct.bookDynasty = bm.dynasty || '';
         ct.bookAuthor = bm.author || '';
         ct.bookOrder = bm.reading_order || 'auto';
+        ctMetaSrc(r);
         ct.sel = -1;
         if (r.preview_size && r.preview_size[0]) {
           var cv = $('tab2-canvas');
@@ -1001,7 +1002,18 @@
     }).catch(function () { btn.disabled = false; });
   }
 
+  // 朝代/作者**取自哪一级键**（exact/stripped-suffix/dir-key/stem-prefix/none）——一眼看出为何是 NA
+  function ctMetaSrc(r) {
+    var el = $('tab2-meta-src');
+    if (!el) { return; }
+    var src = (r && r.meta_source) || (r && r.book_meta && r.book_meta.meta_source) || 'none';
+    var key = (r && r.meta_key) || (r && r.book_meta && r.book_meta.meta_key) || '';
+    el.textContent = '朝代/作者来源：' + src + (key ? '（books 键 ' + key + '）' : '') +
+      (src === 'none' ? ' —— 侧车无本书元数据 ⇒ 文件名写 NA' : '');
+  }
+
   function ctRenderOutputs(r) {
+    ctMetaSrc(r);
     var box = $('tab2-crop-out');
     box.innerHTML = '';
     var outs = r.outputs || [];

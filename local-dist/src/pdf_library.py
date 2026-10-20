@@ -257,6 +257,118 @@ def validate_reading_order(value: str | None) -> tuple[bool, str | None]:
     return True, v
 
 
+# ============================================================
+# 书级元数据的**键解析**（2026-10-20 修：高清化后的 PDF 读不到 tab1 元数据）
+# ============================================================
+#: 高清化产物在文件名尾部加的后缀（`<书名>-HighRes.pdf`）——**只去一次**，大小写不敏感。
+HIGHRES_SUFFIX_RE = re.compile(r"[-_](?:highres|高清)$", re.IGNORECASE)
+
+#: 五级命中次序（诊断口径；UI 原样显示 `meta_source`）
+META_SOURCE_LEVELS = ("exact", "stripped-suffix", "dir-key", "stem-prefix", "none")
+
+
+def strip_highres_suffix(name: str) -> str:
+    """去掉**一次**高清化后缀（`-HighRes` / `_HighRes` / `-高清` / `_高清` / `-highres`）。
+
+    * 大小写不敏感；扩展名（`.pdf`）由调用方先剥；
+    * 去完为空（例 `-HighRes`）⇒ **原样返回**（不让空 stem 去撞键）。
+    """
+    s = str(name or "")
+    out = HIGHRES_SUFFIX_RE.sub("", s)
+    return out if out.strip() else s
+
+
+def resolve_book_meta(pdf_path, *, root=None, books=None) -> tuple[dict, str, str]:
+    """按**五级优先级**为一份 PDF 找书级元数据 ⇒ `(book, meta_source, meta_key)`。
+
+    为什么需要（用户实测 bug）：tab1 的侧车键是**原始名**
+    `{"秦印类编 检索版.pdf": {"dynasty": "秦", "author": "佚名"}}`，而用户的标准路径是
+    tab1 一键高清化 ⇒ tab2 拿 `2_HighRes_PDF/<目录键>/秦印类编 检索版-HighRes.pdf` 切图。
+    旧代码一律 `books.get(pdf.name)` 精确匹配 ⇒ 恒空 ⇒ 文件名出 `…_NA_NA.tiff`。
+
+    优先级（命中即返回；**第三项回命中键名**便于诊断「为什么是 NA」）：
+      1. `exact`            —— `pdf.name` 精确命中；
+      2. `stripped-suffix`  —— 去掉高清化后缀再查（`.pdf` 形式与裸 stem 都试）；
+      3. `dir-key`          —— PDF 位于 `<根>/2_HighRes_PDF/<目录键>/` ⇒ 用 `<目录键>`（及 `.pdf`）查；
+      4. `stem-prefix`      —— `books` 里**唯一**一个键的 stem 与本 PDF 的 stem（去后缀后）
+                               **相等或互为前缀**；多于一个 ⇒ **不猜**（`none`）；
+      5. `none`             —— `({}, 'none', '')`。
+
+    `root=` 给了 ⇒ `dir-key` 只在「确实位于 `root/2_HighRes_PDF/<目录键>/` 之下」时成立。
+
+    **只读**（`books=` 给定 ⇒ 零 I/O）、幂等、**永不抛**；无任何网络访问；
+    **绝不写侧车** —— 读取回落不产生 `-HighRes.pdf` 键（侧车不被污染）。
+    """
+    try:
+        p = Path(str(pdf_path))
+        name = p.name
+        table = books if isinstance(books, dict) else (load_meta().get("books") or {})
+        if not isinstance(table, dict):
+            return {}, "none", ""
+
+        def _hit(key) -> dict | None:
+            val = table.get(key)
+            return dict(val) if isinstance(val, dict) else None
+
+        # ── 1) exact ──────────────────────────────────────────────────────
+        book = _hit(name)
+        if book is not None:
+            return book, "exact", name
+        if not name:
+            return {}, "none", ""
+
+        is_pdf = name.lower().endswith(".pdf")
+        stem = name[:-4] if is_pdf else name
+        base_stem = strip_highres_suffix(stem)
+
+        # ── 2) stripped-suffix ────────────────────────────────────────────
+        if base_stem != stem:
+            for key in ([base_stem + ".pdf", base_stem] if is_pdf else [base_stem]):
+                book = _hit(key)
+                if book is not None:
+                    return book, "stripped-suffix", key
+
+        # ── 3) dir-key ────────────────────────────────────────────────────
+        parts = list(p.parts)
+        if HIGHRES_DIR in parts:
+            i = len(parts) - 1 - parts[::-1].index(HIGHRES_DIR)
+            # 只认 `<…>/2_HighRes_PDF/<目录键>/<文件>.pdf`（PDF 直接位于目录键下）
+            in_dir_key = (i + 3 == len(parts) and bool(parts[i + 1].strip()))
+            if in_dir_key and root is not None:
+                try:
+                    in_dir_key = (Path(root) / HIGHRES_DIR) in p.parents
+                except Exception:
+                    in_dir_key = False
+            if in_dir_key:
+                dirk = parts[i + 1]
+                for key in (dirk + ".pdf", dirk):
+                    book = _hit(key)
+                    if book is not None:
+                        return book, "dir-key", key
+
+        # ── 4) stem-prefix（**仅唯一命中**才采用；歧义一律不猜）──────────
+        if base_stem:
+            hits: list[tuple[str, dict]] = []
+            for key, val in table.items():
+                if not isinstance(val, dict):
+                    continue
+                kstem = str(key)
+                if kstem.lower().endswith(".pdf"):
+                    kstem = kstem[:-4]
+                if not kstem:
+                    continue
+                if (kstem == base_stem or kstem.startswith(base_stem)
+                        or base_stem.startswith(kstem)):
+                    hits.append((str(key), val))
+            if len(hits) == 1:
+                return dict(hits[0][1]), "stem-prefix", hits[0][0]
+
+        # ── 5) none ───────────────────────────────────────────────────────
+        return {}, "none", ""
+    except Exception:                                          # 永不抛（本地版要能起得来）
+        return {}, "none", ""
+
+
 def update_book_meta(filename: str, *, dynasty=None, author=None, notes=None,
                      reading_order=None, store: Path | str | None = None) -> tuple[bool, str]:
     """人工补填：写入侧车（``local-dist/var/pdf_meta.json``）。缺省键＝不改。

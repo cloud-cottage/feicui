@@ -1090,7 +1090,7 @@ class FeicuiApi:
             return {"ok": False, "msg": f"dpi 只支持 {list(DPI_WHITELIST)}"}
         # 预检：引擎硬断言「目标 dpi 须为扫描 dpi 的整数倍」（否则白跑 ≈80 s 才报错）
         if not bool(req.get("force")):
-            book = (lib.load_meta().get("books") or {}).get(name, {}) or {}
+            book, _ms, _mk = lib.resolve_book_meta(name)   # 五级键回落（高清化名也能读到元数据）
             sd = book.get("scan_dpi")
             if isinstance(sd, int) and sd > 0 and dpi % sd != 0:
                 return {"ok": False, "scan_dpi": sd, "retryable_with_force": True,
@@ -1248,7 +1248,7 @@ class FeicuiApi:
             return {**fields, "pdf": str(pdf), "pdf_name": pdf.name, "page": page, "dpi": int(dpi)}
         seals = fields.get("seals") or []
         preview, pw, ph = self._preview_with_fields(img, seals)
-        book = (lib.load_meta().get("books") or {}).get(pdf.name, {}) or {}
+        book, meta_source, meta_key = lib.resolve_book_meta(pdf)   # 五级键回落
         boxes = [{"x1": s["box"][0], "y1": s["box"][1], "x2": s["box"][2], "y2": s["box"][3],
                   "idx": s.get("read_order") or s.get("idx")} for s in seals]
         return {"ok": True, "pdf": str(pdf), "pdf_name": pdf.name, "page": page,
@@ -1259,7 +1259,8 @@ class FeicuiApi:
                 "order_source": fields.get("order_source"),
                 "book_meta": {"dynasty": book.get("dynasty") or "",
                               "author": book.get("author") or "",
-                              "reading_order": book.get("reading_order") or "auto"},
+                              "reading_order": book.get("reading_order") or "auto",
+                              "meta_source": meta_source, "meta_key": meta_key},
                 "dropped": fields.get("dropped"), "dropped_texts": fields.get("dropped_texts"),
                 "far_limit": fields.get("far_limit"), "ocr_items": fields.get("ocr_items"),
                 "preview_png_b64": preview, "preview_size": [pw, ph],
@@ -1338,7 +1339,7 @@ class FeicuiApi:
         sc, err = self._src_module("seal_crop")
         if err:
             return err
-        book = (lib.load_meta().get("books") or {}).get(pdf.name, {}) or {}
+        book, meta_source, meta_key = lib.resolve_book_meta(pdf)   # 五级键回落（高清化名/目录键）
         fields_req = req.get("fields")
         seals_hint = []
         if isinstance(fields_req, list):
@@ -1369,6 +1370,12 @@ class FeicuiApi:
             return {"ok": False, "reason": "ERROR", "msg": f"{exc.__class__.__name__}: {exc}"}
         finally:
             self._crop_lock.release()
+        if isinstance(res, dict):                                   # 诊断：朝代/作者取自哪级键
+            res.setdefault("meta_source", meta_source)
+            res.setdefault("meta_key", meta_key)
+            res.setdefault("book_meta", {"dynasty": book.get("dynasty") or "",
+                                         "author": book.get("author") or "",
+                                         "meta_source": meta_source, "meta_key": meta_key})
         return res
 
     @staticmethod

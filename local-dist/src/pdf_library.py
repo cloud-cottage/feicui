@@ -257,6 +257,35 @@ def validate_reading_order(value: str | None) -> tuple[bool, str | None]:
     return True, v
 
 
+#: 人工「真实 dpi」合理区间（`true_dpi`：PDF 自带 dpi/尺寸**不准**时由人填；与自动探测的
+#: `scan_dpi` **分开**存 —— 后者是探针按内嵌图宽估出来的，前者是人的断言，切图算 mm 优先用它）。
+TRUE_DPI_MIN, TRUE_DPI_MAX = 50, 2400
+
+
+def validate_true_dpi(value) -> tuple[bool, int | None | str]:
+    """空 / `None` ⇒ `(True, None)`（＝不采用人工 dpi，走页面尺寸推算）。
+
+    非空必须是 `50–2400` 的整数（`"300"` / `300` / `"300.0"` 都收）；**不合法一律拒绝**并回提示，
+    **不静默改写**成边界值。
+    """
+    if value is None:
+        return True, None
+    s = str(value).strip()
+    if s == "":
+        return True, None
+    try:
+        f = float(s)
+        if not f.is_integer():
+            raise ValueError
+        n = int(f)
+    except Exception:
+        return False, f"真实 dpi 必须是 {TRUE_DPI_MIN}–{TRUE_DPI_MAX} 的整数（当前「{value}」）"
+    if not TRUE_DPI_MIN <= n <= TRUE_DPI_MAX:
+        return False, (f"真实 dpi 须在 {TRUE_DPI_MIN}–{TRUE_DPI_MAX} 之间"
+                       f"（当前「{value}」；不确定就留空，用页面尺寸推算）")
+    return True, n
+
+
 # ============================================================
 # 书级元数据的**键解析**（2026-10-20 修：高清化后的 PDF 读不到 tab1 元数据）
 # ============================================================
@@ -370,11 +399,15 @@ def resolve_book_meta(pdf_path, *, root=None, books=None) -> tuple[dict, str, st
 
 
 def update_book_meta(filename: str, *, dynasty=None, author=None, notes=None,
-                     reading_order=None, store: Path | str | None = None) -> tuple[bool, str]:
+                     reading_order=None, true_dpi=None,
+                     store: Path | str | None = None) -> tuple[bool, str]:
     """人工补填：写入侧车（``local-dist/var/pdf_meta.json``）。缺省键＝不改。
 
     `reading_order` 为 **2026-10-20 新增**（`auto|rtl-ttb|ltr-ttb|rtl-btt|ltr-btt`），
     供 tab2 切图台定 C/R 方向；**不改动**既有 dynasty/author/notes 语义。
+
+    `true_dpi`（2026-10-20 新增）：人工填的**真实扫描 dpi**（50–2400 或空），切图算 mm 时优先用；
+    空串 ⇒ 清空该键（回落页面尺寸推算）。与探针自动估的 `scan_dpi` **互不覆盖**。
     """
     ok, dyn = validate_dynasty(dynasty)
     if not ok:
@@ -382,6 +415,9 @@ def update_book_meta(filename: str, *, dynasty=None, author=None, notes=None,
     ok, ro = validate_reading_order(reading_order)
     if not ok:
         return False, ro  # type: ignore[return-value]
+    ok, td = validate_true_dpi(true_dpi)
+    if not ok:
+        return False, td  # type: ignore[return-value]
     data = load_meta(store)
     book = data["books"].setdefault(str(filename), {})
     now = datetime.now().isoformat(timespec="seconds")
@@ -393,6 +429,8 @@ def update_book_meta(filename: str, *, dynasty=None, author=None, notes=None,
         book["notes"] = str(notes).strip() or None
     if reading_order is not None:
         book["reading_order"] = ro
+    if true_dpi is not None:
+        book["true_dpi"] = td
     book["updated_at"] = now
     save_meta(data, store)
     return True, "元数据已保存"
@@ -416,6 +454,7 @@ class PdfRow:
     author: str | None = None
     notes: str | None = None
     reading_order: str | None = None      # auto|rtl-ttb|…（tab2 C/R 方向；2026-10-20 新增）
+    true_dpi: int | None = None           # 人工填的真实 dpi（切图算 mm 优先用；2026-10-20 新增）
     updated_at: str = ""
 
     @property
@@ -540,6 +579,7 @@ def scan(root: Path, *, store: Path | str | None = None, probe: bool = True,
             page_count=page_count, page_mm=page_mm, scan_dpi=scan_dpi, probe_error=err or "",
             dynasty=m.get("dynasty"), author=m.get("author"), notes=m.get("notes"),
             reading_order=m.get("reading_order"), updated_at=m.get("updated_at", ""),
+            true_dpi=m.get("true_dpi"),
         ))
     if probed:
         save_meta(meta, store)

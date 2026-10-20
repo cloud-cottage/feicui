@@ -224,6 +224,9 @@
     $('tab1-author').value = m.author || '';
     $('tab1-notes').value = m.notes || '';
     $('tab1-reading-order').value = m.reading_order || 'auto';
+    if ($('tab1-true-dpi')) {
+      $('tab1-true-dpi').value = (m.true_dpi === null || m.true_dpi === undefined) ? '' : m.true_dpi;
+    }
     renderHrSource();                       // 高清化卡片跟随选中行
   }
   function saveTab1() {
@@ -233,7 +236,9 @@
       dynasty: $('tab1-dynasty').value,
       author: $('tab1-author').value,
       notes: $('tab1-notes').value,
-      reading_order: $('tab1-reading-order').value
+      reading_order: $('tab1-reading-order').value,
+      // 空串 = 清空（切图回落页面尺寸推算）；有值 ⇒ 切图优先按它算 mm
+      true_dpi: $('tab1-true-dpi') ? $('tab1-true-dpi').value : ''
     }).then(function (r) {
       setMsg('tab1-msg', (r && r.msg) || '', r && r.ok ? 'ok' : 'err');
       if (r && r.ok) loadTab1(false);
@@ -561,9 +566,12 @@
     while (ct.fields.length < ct.boxes.length) { ct.fields.push({}); }
     if (ct.fields.length > ct.boxes.length) { ct.fields = ct.fields.slice(0, ct.boxes.length); }
     var pos = foGrid(ct.boxes, foEffective());
+    ct.sizes = ct.sizes || {};
     box.innerHTML = '';
     ct.boxes.forEach(function (b, i) {
       var f = ct.fields[i] || {}, p = pos[i] || { c: '?', r: '?' };
+      // 已裁过的 C/R ⇒ 预演里也带物理尺寸（同一页同一位置＝同一枚；没算过就不显示）
+      var mm = ct.sizes[p.c + '-' + p.r] || '';
       var row = document.createElement('div');
       row.className = 'frow' + (f.needs_review ? ' rev' : '');
       row.dataset.i = String(i);
@@ -575,7 +583,8 @@
         + '<input class="fin" data-k="code" maxlength="8" placeholder="编号" value="'
         + esc(f.code || '') + '">'
         + '<span class="fscore">' + esc(foScore(f)) + '</span>'
-        + '<span class="fname" title="裁切文件名">' + esc(foName(ct.page, p.c, p.r, f)) + '</span>';
+        + '<span class="fname" title="裁切文件名">' + esc(foName(ct.page, p.c, p.r, f)) + '</span>'
+        + (mm ? '<span class="fmuted muted"> · ' + esc(mm) + '</span>' : '');
       box.appendChild(row);
     });
     if (!ct.boxes.length) {
@@ -1032,8 +1041,16 @@
       (src === 'none' ? ' —— 侧车无本书元数据 ⇒ 文件名写 NA' : '');
   }
 
+  // 物理尺寸文案（mm，**整数**；后端没算出来 ⇒ 空串，不显示假值）
+  function ctMmText(w, h) {
+    if (w === null || w === undefined || h === null || h === undefined) { return ''; }
+    return w + ' × ' + h + ' mm';
+  }
+
   function ctRenderOutputs(r) {
     ctMetaSrc(r);
+    var ct = ctState();
+    ct.sizes = ct.sizes || {};
     var box = $('tab2-crop-out');
     box.innerHTML = '';
     var outs = r.outputs || [];
@@ -1042,8 +1059,12 @@
       row.className = 'file';
       var sz = Array.isArray(o.size) ? (o.size[0] + '×' + o.size[1]) : (o.size || '—');
       var kb = Math.max(1, Math.round((o.bytes || 0) / 1024));
+      var mm = ctMmText(o.width_mm, o.height_mm);
+      if (mm && o.c !== undefined && o.r !== undefined) {
+        ct.sizes[o.c + '-' + o.r] = mm;          // 供字段区预演复用（同一 C/R 的尺寸）
+      }
       row.innerHTML = '<span>' + esc(o.name) + '</span><span class="muted">' + esc(sz) +
-        ' · ' + kb + ' KB</span>';
+        (mm ? ' · ' + esc(mm) : '') + ' · ' + kb + ' KB</span>';
       box.appendChild(row);
     });
     if (!outs.length) { box.innerHTML = '<div class="muted">（无产物）</div>'; }

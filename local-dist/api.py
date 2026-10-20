@@ -673,7 +673,9 @@ class FeicuiApi:
         meta = [{"filename": r.filename, "dynasty": r.dynasty or "", "author": r.author or "",
                  "notes": r.notes or "", "page_count": r.page_count,
                  "scan_dpi": r.scan_dpi, "probe_error": r.probe_error,
-                 "reading_order": r.reading_order or "", "updated_at": r.updated_at}
+                 "reading_order": r.reading_order or "",
+                 "true_dpi": r.true_dpi,
+                 "updated_at": r.updated_at}
                 for r in res["rows"]]
         # 朝代下拉值域：**优先 yinyuan**（/dynasties 的 items[].value，24h 缓存），
         # 拿不到（无 key / 无网 / 缓存空）⇒ 回落本地 15 枚举（`lib.DYNASTY_OPTIONS`）。
@@ -797,6 +799,8 @@ class FeicuiApi:
                 author=req.get("author"),
                 notes=req.get("notes"),
                 reading_order=req.get("reading_order"),
+                # 只有**请求里带了**该键才动它（缺键＝不改；空串＝清空 ⇒ 回落页面尺寸推算）
+                true_dpi=(req.get("true_dpi") if "true_dpi" in req else None),
             )
         except Exception as exc:
             return {"ok": False, "msg": f"保存失败：{exc.__class__.__name__}: {exc}"}
@@ -1342,6 +1346,10 @@ class FeicuiApi:
         * **一次调用请传本页全部框**：C/R 按**本次框集合**的网格位次排序 ⇒ 分多次各传一枚会各自
           从 `C1-R1` 起、同名互相覆盖（UI 应攒齐整页框后一次提交）；
         * 未登记的书 ⇒ 目录键回落书名并标 `dir_key_source='fallback'`；
+        * **物理尺寸（mm）**：本书元数据 `true_dpi`（tab1 人工填的真实 dpi）非空 ⇒ `manual-dpi`
+          口径，否则用渲染页 `page.rect` ⇒ `page-box`；`outputs[]` 每项带
+          `width_mm/height_mm/size_source`（整数 mm），TIFF 内另写 `XResolution/YResolution/
+          ResolutionUnit` ＋ 单条 `ImageDescription(270)`；
         * **串行**：另一单裁切在跑 ⇒ 直接 `{ok:false, reason:'BUSY'}`（不排队堆 1200dpi 页图）。
         """
         miss = self._need_root()
@@ -1388,7 +1396,8 @@ class FeicuiApi:
                                per_seal_json=bool(req.get("per_seal_json")),
                                order_source=order_source,
                                dynasty=book.get("dynasty"),
-                               author=book.get("author"))
+                               author=book.get("author"),
+                               true_dpi=book.get("true_dpi"))
         except Exception as exc:
             return {"ok": False, "reason": "ERROR", "msg": f"{exc.__class__.__name__}: {exc}"}
         finally:

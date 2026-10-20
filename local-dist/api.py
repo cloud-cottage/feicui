@@ -1970,6 +1970,23 @@ class FeicuiApi:
     _closer = None
 
 
+def startup() -> dict:
+    """**进程启动一次性钩子**（`app.py::main` 调用）：目录兜底 ＋ 旧侧车迁移。**永不抛**。
+
+    * 迁移＝`lib.migrate_legacy_meta()`：数据根**优先**、`books` **键并集**、旧件改名 `.migrated`
+      留痕、**幂等**（第二次起来 `action="noop"`、0 变更）。
+    * 只在**真启动**调（不在 `build_api()` 里）：`selftest.py` / `domtest*.py` 在 import 前把
+      `FEICUI_DATA_DIR` 指到临时目录，若 import 即迁移，会把仓内 `local-dist/var/pdf_meta.json`
+      搬进临时目录并改名 —— 那是自检污染，不是用户路径。
+    """
+    info: dict = {"data_dir": str(DATA_DIR), "meta_path": str(lib.DEFAULT_META_PATH), "migration": {}}
+    try:
+        info["migration"] = lib.migrate_legacy_meta()
+    except Exception as exc:                                  # 迁移失败不拦启动
+        info["migration"] = {"action": "error", "reason": f"{exc.__class__.__name__}: {exc}"}
+    return info
+
+
 def build_api() -> FeicuiApi:
     """唯一入口：两种形态都拿同一份实例。"""
     api = FeicuiApi()

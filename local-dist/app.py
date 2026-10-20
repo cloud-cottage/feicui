@@ -30,6 +30,7 @@ if str(WEBUI_DIR) not in sys.path:
     sys.path.insert(0, str(WEBUI_DIR))
 
 from api import APP_NAME, APP_TITLE, APP_VERSION, UI_DIR, FeicuiApi  # noqa: E402
+from api import startup as api_startup  # noqa: E402  # 启动一次性钩子（旧侧车迁移，幂等）
 
 #: 窗口标题＝**单一真源** `api.APP_TITLE`（＝「斐萃」玺印解析任务台 · 本地封装分发版，带本地版后缀）
 WINDOW_TITLE = APP_TITLE
@@ -135,6 +136,12 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
 
     api = FeicuiApi()
+    # 启动一次性钩子（幂等）：旧源码态侧车 `local-dist/var/pdf_meta.json` ⇒ 数据根；
+    # 必须在建窗**之前**（tab1 首次盘点就要读到合并后的侧车）。
+    _boot = api_startup()
+    _mig = _boot.get("migration") or {}
+    print(f"STARTUP data_dir={_boot.get('data_dir')} meta={_boot.get('meta_path')} "
+          f"migration={_mig.get('action')} changed={bool(_mig.get('changed'))}", flush=True)
     webview, window = build_window(api, width=args.width, height=args.height)
 
     if args.test_exit_after and args.test_exit_after > 0:

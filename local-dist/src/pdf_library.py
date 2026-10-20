@@ -8,13 +8,14 @@
 口径（对齐老工程 `/feicui/pdf-records` 语义，但**只操作本地目录**）：
   * 根 ＝ 用户选定的本地 `feicui/` 目录（登录后校验通过的那个）；
   * PDF 面 ＝ `<root>/1_Original_PDF/*.pdf`（**只读盘点**——本模块不改动 PDF 本体）；
-  * 元数据侧车 ＝ `local-dist/var/pdf_meta.json`（**不入库**，`.gitignore` 的 `var/` 覆盖）；
+  * 元数据侧车 ＝ **数据根**`/var/pdf_meta.json`（＝ `paths.data_dir()/var/pdf_meta.json`；
+    源码态与打包态**同一份**；`FEICUI_DATA_DIR` 最高优先）。旧源码态落点
+    `local-dist/var/pdf_meta.json` 由 `migrate_legacy_meta()` 一次性并入（原文件改 `.migrated`）；
     侧车内同时缓存**派生读数**（页数 / 页尺寸 / 扫描 dpi）⇒ 重扫描不必重复解析。
 """
 from __future__ import annotations
 
 import json
-import os
 import re
 import random
 from dataclasses import dataclass
@@ -41,11 +42,35 @@ DYNASTY_OPTIONS = (
 
 META_SCHEMA = "feicui.webui.pdf_meta.v1"
 
-#: 侧车默认落点（local-dist/var/ 已被仓根 `.gitignore` 的 `var/` 规则忽略）
-#: 打包态（PyInstaller）下资源根在 `.app` 内、**不可写** ⇒ 由入口设 `FEICUI_DATA_DIR`
-#: 指到用户目录（`~/Library/Application Support/斐萃/var/pdf_meta.json`）；源码态不设 ⇒ 逐字不变。
-_DATA_DIR = Path(os.environ.get("FEICUI_DATA_DIR") or Path(__file__).resolve().parents[1])
-DEFAULT_META_PATH = _DATA_DIR / "var" / "pdf_meta.json"
+# ============================================================
+# 数据根（**单一真源 `src/paths.py`**）
+# ============================================================
+#: 为什么不再自己拼数据根（2026-10-20 修）：
+#:   此前这里是 `Path(os.environ.get("FEICUI_DATA_DIR") or Path(__file__).resolve().parents[1])`
+#:   ⇒ **源码态**读仓内 `local-dist/var/pdf_meta.json`，而打包态 / UI 写在数据根
+#:   `~/Library/Application Support/斐萃/var/pdf_meta.json` ⇒ 两份侧车互不可见：
+#:   用户在 tab1 填的朝代/作者在源码态读不到，切图仍出 `NA`（P1 事故根因）。
+#:   现在一律走 `paths.data_dir()`（它已内置 `FEICUI_DATA_DIR` 优先、空串按未设、
+#:   darwin/win32/linux 三平台派生）—— 与 `src/paths.py` 文件头写的约定一致。
+try:                                                          # 包导入（`from src import pdf_library`）
+    from .paths import data_dir as _paths_data_dir
+except Exception:                                             # pragma: no cover - 顶层导入（sys.path 含 src/）
+    from paths import data_dir as _paths_data_dir  # type: ignore[no-redef]
+
+
+def default_meta_path(*, platform: str | None = None, environ=None, home=None) -> Path:
+    """侧车默认落点 ＝ **数据根**/`var/pdf_meta.json`（`FEICUI_DATA_DIR` 由 `paths` 处理）。
+
+    关键字参数只为**单测三平台注入**（darwin / win32 / linux 同一套派生）。
+    """
+    return _paths_data_dir(platform=platform, environ=environ, home=home) / "var" / "pdf_meta.json"
+
+
+DEFAULT_META_PATH = default_meta_path()
+
+#: 旧版（源码态）侧车落点：`local-dist/var/pdf_meta.json`。**只用于一次性迁移**，
+#: 不再是任何读写路径（`migrate_legacy_meta` 迁移后改名 `.migrated` 留痕）。
+_LEGACY_META_PATH = Path(__file__).resolve().parents[1] / "var" / "pdf_meta.json"  # gate-allow: legacy-meta
 
 
 # ============================================================
@@ -122,6 +147,89 @@ def save_meta(data: dict, store: Path | str | None = None) -> Path:
     tmp.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
     tmp.replace(p)
     return p
+
+
+def migrate_legacy_meta(*, target: Path | str | None = None,
+                        legacy: Path | str | None = None) -> dict:
+    """**一次性**把旧源码态侧车（`local-dist/var/pdf_meta.json`）并入数据根侧车。**幂等**。
+
+    规则（对齐 P1 单）：
+      * 数据根**没有**侧车 ⇒ 旧件内容整体写入数据根（`action="created"`）；
+      * 数据根**已有**侧车 ⇒ `books` 做**键并集**：同键字段**以数据根为准**，数据根缺（不存在 /
+        `null` / 空串）的字段由旧件补（`action="merged"`）；无差异 ⇒ `action="clean"`（不写盘）；
+      * **不覆盖已有**值（数据根优先）；
+      * 处理完旧件**不删**，改名 `<名>.migrated` 留痕（已有同名 `.migrated` ⇒ 加时间戳，不覆盖）；
+      * 旧件不存在 / 读不动 / 空 `books` ⇒ `action="noop"`、`reason=…`、**不动任何文件**。
+    返回 `{"action", "changed", "target", "legacy", "archived", "added_books", "filled_fields",
+    "reason"}` —— 只回 JSON 可序列化值，**永不抛**。
+    """
+    tgt = Path(target) if target else DEFAULT_META_PATH
+    old = Path(legacy) if legacy else _LEGACY_META_PATH
+    out: dict = {"action": "noop", "changed": False, "target": str(tgt), "legacy": str(old),
+                 "archived": "", "added_books": [], "filled_fields": [], "reason": ""}
+    if not old.is_file():
+        out["reason"] = "no_legacy"
+        return out
+    try:
+        legacy_data = json.loads(old.read_text(encoding="utf-8"))
+    except Exception as exc:
+        out["reason"] = f"legacy_unreadable: {exc.__class__.__name__}"
+        return out
+    if (not isinstance(legacy_data, dict)
+            or not isinstance(legacy_data.get("books"), dict) or not legacy_data["books"]):
+        out["reason"] = "legacy_empty"
+        return out
+
+    added: list[str] = []
+    filled: list[str] = []
+    try:
+        if not tgt.is_file():
+            save_meta(legacy_data, tgt)
+            out["action"] = "created"
+            added = sorted(str(k) for k in legacy_data["books"])
+        else:
+            cur = load_meta(tgt)
+            books = cur["books"]
+            for name, book in legacy_data["books"].items():
+                if not isinstance(book, dict):
+                    continue
+                if not isinstance(books.get(name), dict):
+                    books[name] = dict(book)
+                    added.append(str(name))
+                    continue
+                dst = books[name]
+                for key, val in book.items():
+                    if dst.get(key) is None or dst.get(key) == "" or key not in dst:
+                        if dst.get(key) != val:
+                            dst[key] = val
+                            filled.append(f"{name}.{key}")
+            if added or filled:
+                save_meta(cur, tgt)
+                out["action"] = "merged"
+            else:
+                out["action"] = "clean"
+    except Exception as exc:                                  # 写不动 ⇒ 不归档（下回还能再试）
+        out["reason"] = f"write_failed: {exc.__class__.__name__}"
+        return out
+
+    out["changed"] = bool(added or filled) or out["action"] == "created"
+    out["added_books"] = added
+    out["filled_fields"] = filled
+    out["archived"] = str(_archive_legacy(old))
+    return out
+
+
+def _archive_legacy(old: Path) -> Path:
+    """旧件改名留痕（`pdf_meta.json` ⇒ `pdf_meta.json.migrated`）；同名已存在 ⇒ 加时间戳。"""
+    dest = old.with_name(old.name + ".migrated")
+    if dest.exists():
+        stamp = datetime.now().strftime("%Y%m%d%H%M%S")
+        dest = old.with_name(f"{old.name}.migrated.{stamp}")
+    try:
+        old.replace(dest)
+    except Exception:
+        return Path("")
+    return dest
 
 
 def validate_dynasty(value: str | None) -> tuple[bool, str | None]:

@@ -1,0 +1,686 @@
+{
+  "schema": "feicui.webui.domtest_tabs.v1",
+  "at": "2026-10-20T13:15:17",
+  "python": "/Users/kevin/bistro/feicui/venv/bin/python",
+  "app_title": "「斐萃」玺印解析任务台 · 本地封装分发版",
+  "counts": {
+    "PASS": 20,
+    "FAIL": 0
+  },
+  "fixture": {
+    "scratch": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-tabs-t_drzxov",
+    "fixture": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-tabs-t_drzxov/feicui",
+    "data_dir": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-tabs-t_drzxov/data",
+    "source_pdf": "吴颐人篆刻作品展示.pdf",
+    "tab3_id_count": 41,
+    "tab3_ids": [
+      "btn-tab3-corr-apply",
+      "btn-tab3-next",
+      "btn-tab3-ocr",
+      "btn-tab3-prev",
+      "btn-tab3-refresh",
+      "btn-tab3-rename",
+      "btn-tab3-test",
+      "tab3-author",
+      "tab3-author-label",
+      "tab3-author-suggest",
+      "tab3-corr",
+      "tab3-corr-auto",
+      "tab3-corr-head",
+      "tab3-corr-list",
+      "tab3-counts",
+      "tab3-current",
+      "tab3-dynasty",
+      "tab3-edit",
+      "tab3-grid",
+      "tab3-log-badge",
+      "tab3-log-body",
+      "tab3-log-path",
+      "tab3-msg",
+      "tab3-newname",
+      "tab3-noselect",
+      "tab3-ocr-hint",
+      "tab3-ocr-msg",
+      "tab3-ocr-out",
+      "tab3-ocr-raw",
+      "tab3-pageinfo",
+      "tab3-pageno",
+      "tab3-parsed",
+      "tab3-preview",
+      "tab3-rename-msg",
+      "tab3-shiwen",
+      "tab3-shiwen-label",
+      "tab3-shiwen-suggest",
+      "tab3-subdirs",
+      "tab3-template",
+      "tab3-valid",
+      "tab3-views"
+    ],
+    "admin": "ji",
+    "login_ok": true,
+    "verify_msg": "目录校验通过"
+  },
+  "checks": [
+    {
+      "check": "tabs/tab3_block_byte_identical_to_head",
+      "status": "PASS",
+      "detail": "工作区 tab3 块 4868 字符 / HEAD 4868 字符 （逐字节相同=True）"
+    },
+    {
+      "check": "tabs/no_new_frontend_deps",
+      "status": "PASS",
+      "detail": "外链资源=[] 页面仅引本地 app.js=True 前端无外网 URL=True"
+    },
+    {
+      "check": "tabs/tab1_hr_nodes_present",
+      "status": "PASS",
+      "detail": "card=True dpi=True nodes={'start': True, 'cancel': True, 'bar': True, 'msg': True, 'done': True, 'out': True, 'goto2': True, 'from': True, 'to': True, 'src': True}"
+    },
+    {
+      "check": "tabs/tab1_dpi_three_options_default_1200",
+      "status": "PASS",
+      "detail": "options=['300', '600', '1200'] value='1200' selected=['1200']"
+    },
+    {
+      "check": "tabs/tab1_dpi_size_hint",
+      "status": "PASS",
+      "detail": "提示='体积实测：300 ≈ 5.4 MB/页｜600 ≈ 15.5 MB/页｜ 1200 ≈ 13.3 MB/页（1200 反而最小，PNG 对硬边更友好）｜耗时约 6.2 s/页'"
+    },
+    {
+      "check": "tabs/tab1_cancel_starts_disabled",
+      "status": "PASS",
+      "detail": "取消按钮初始 disabled=True"
+    },
+    {
+      "check": "tabs/tab1_start_requires_selected_row",
+      "status": "PASS",
+      "detail": "src='源 PDF：未选择文件（请先在上方表格点一行）' 提示='请先在上方表格选中一行（源 PDF 取当前选中行）' class='msg err'"
+    },
+    {
+      "check": "tabs/tab1_source_follows_selected_row",
+      "status": "PASS",
+      "detail": "源行='源 PDF：吴颐人篆刻作品展示.pdf（32 页）'"
+    },
+    {
+      "check": "tabs/tab1_progress_bar_and_counters",
+      "status": "PASS",
+      "detail": "bar='40%' 文案='[running] 2/5 页 · 累计 27.0 MB · 当前页 2 · 12.4 s · 渲页中（2/5）' 开始禁用=True 取消可用=True"
+    },
+    {
+      "check": "tabs/tab1_done_shows_out_path_and_goto",
+      "status": "PASS",
+      "detail": "done 显示=True 产物='✅ /x/2_HighRes_PDF/9787000000001/吴颐人篆刻作品展示-HighRes.pdf（5 页 · 66.0 MB）' bar='100%' 按钮='➡ 去 tab2 切图'"
+    },
+    {
+      "check": "tabs/tab1_goto2_switches_to_tab2",
+      "status": "PASS",
+      "detail": "tab2 active=True tab1 active=False"
+    },
+    {
+      "check": "tabs/tab2_cut_station_nodes_present",
+      "status": "PASS",
+      "detail": "panel_active=True nodes={'detect': True, 'redetect': True, 'clear': True, 'crop': True, 'canvas': True, 'count': True, 'pageinfo': True, 'page': True, 'prev': True, 'next': True, 'src': True, 'cropout': True, 'cropdir': True, 'adv': True, 'reload': True}"
+    },
+    {
+      "check": "tabs/tab2_canvas_has_size",
+      "status": "PASS",
+      "detail": "canvas intrinsic=1000×1414 css=722×1020"
+    },
+    {
+      "check": "tabs/tab2_sources_listed_from_highres_dir",
+      "status": "PASS",
+      "detail": "options=['吴颐人篆刻作品展示-HighRes.pdf  →  9787000000001（32 页） · 2 MB'] 源信息='吴颐人篆刻作品展示-HighRes.pdf · 2 MB · 目录键 9787000000001（from_dir）· 32 页 · 改于 2026-10-11 10:35'"
+    },
+    {
+      "check": "tabs/tab2_legacy_render_folded_not_removed",
+      "status": "PASS",
+      "detail": "details.open=False summary='高级：单页预览渲染（已由 tab1 一键高清化取代）' 旧节点在 details 内=9/9 缺=[]"
+    },
+    {
+      "check": "tabs/tab2_detect_draws_boxes_on_canvas",
+      "status": "PASS",
+      "detail": "canvas.dataset.boxes=3 canvas=714×1000 计数='检测到 3 枚' 裁切按钮='✂️ 裁切选中（3）' disabled=False"
+    },
+    {
+      "check": "tabs/tab2_single_click_box_deletes",
+      "status": "PASS",
+      "detail": "点击框中心后框数=2 计数='检测到 2 枚'"
+    },
+    {
+      "check": "tabs/tab2_dblclick_empty_adds_box",
+      "status": "PASS",
+      "detail": "双击空白后框数=3 计数='检测到 3 枚' 提示='已新增 1 枚手绘框（拖角手柄可改大小）'"
+    },
+    {
+      "check": "tabs/tab2_clear_boxes_disables_crop",
+      "status": "PASS",
+      "detail": "框数=0 裁切 disabled=True"
+    },
+    {
+      "check": "tabs/tab3_dom_intact_after_tab2_rewrite",
+      "status": "PASS",
+      "detail": "id 数=41（HEAD 静态块 41 个） 视图按钮=4 h2='3_Cropped_Tiff · 印面切片（选件 / 解析 / 重命名）'"
+    }
+  ],
+  "dom": {
+    "01_tab1_hr": {
+      "has_card": true,
+      "dpi_exists": true,
+      "dpi_options": [
+        "300",
+        "600",
+        "1200"
+      ],
+      "dpi_value": "1200",
+      "dpi_selected_attr": [
+        "1200"
+      ],
+      "nodes": {
+        "start": true,
+        "cancel": true,
+        "bar": true,
+        "msg": true,
+        "done": true,
+        "out": true,
+        "goto2": true,
+        "from": true,
+        "to": true,
+        "src": true
+      },
+      "cancel_disabled": true,
+      "start_disabled": false,
+      "bar_width": "0%",
+      "done_hidden": true,
+      "hr_msg": "[idle] 0/? 页 · 累计 0.0 MB · 空闲（未跑过高清化）",
+      "out_text": "—",
+      "hint": "体积实测：300 ≈ 5.4 MB/页｜600 ≈ 15.5 MB/页｜ 1200 ≈ 13.3 MB/页（1200 反而最小，PNG 对硬边更友好）｜耗时约 6.2 s/页",
+      "src_text": "源 PDF：未选择文件（请先在上方表格点一行）",
+      "err_text": "",
+      "err_class": "msg",
+      "goto_label": "➡ 去 tab2 切图"
+    },
+    "02_tab1_no_selection": {
+      "has_card": true,
+      "dpi_exists": true,
+      "dpi_options": [
+        "300",
+        "600",
+        "1200"
+      ],
+      "dpi_value": "1200",
+      "dpi_selected_attr": [
+        "1200"
+      ],
+      "nodes": {
+        "start": true,
+        "cancel": true,
+        "bar": true,
+        "msg": true,
+        "done": true,
+        "out": true,
+        "goto2": true,
+        "from": true,
+        "to": true,
+        "src": true
+      },
+      "cancel_disabled": true,
+      "start_disabled": false,
+      "bar_width": "0%",
+      "done_hidden": true,
+      "hr_msg": "[idle] 0/? 页 · 累计 0.0 MB · 空闲（未跑过高清化）",
+      "out_text": "—",
+      "hint": "体积实测：300 ≈ 5.4 MB/页｜600 ≈ 15.5 MB/页｜ 1200 ≈ 13.3 MB/页（1200 反而最小，PNG 对硬边更友好）｜耗时约 6.2 s/页",
+      "src_text": "源 PDF：未选择文件（请先在上方表格点一行）",
+      "err_text": "请先在上方表格选中一行（源 PDF 取当前选中行）",
+      "err_class": "msg err",
+      "goto_label": "➡ 去 tab2 切图"
+    },
+    "03_tab1_after_select": {
+      "has_card": true,
+      "dpi_exists": true,
+      "dpi_options": [
+        "300",
+        "600",
+        "1200"
+      ],
+      "dpi_value": "1200",
+      "dpi_selected_attr": [
+        "1200"
+      ],
+      "nodes": {
+        "start": true,
+        "cancel": true,
+        "bar": true,
+        "msg": true,
+        "done": true,
+        "out": true,
+        "goto2": true,
+        "from": true,
+        "to": true,
+        "src": true
+      },
+      "cancel_disabled": true,
+      "start_disabled": false,
+      "bar_width": "0%",
+      "done_hidden": true,
+      "hr_msg": "[idle] 0/? 页 · 累计 0.0 MB · 空闲（未跑过高清化）",
+      "out_text": "—",
+      "hint": "体积实测：300 ≈ 5.4 MB/页｜600 ≈ 15.5 MB/页｜ 1200 ≈ 13.3 MB/页（1200 反而最小，PNG 对硬边更友好）｜耗时约 6.2 s/页",
+      "src_text": "源 PDF：吴颐人篆刻作品展示.pdf（32 页）",
+      "err_text": "请先在上方表格选中一行（源 PDF 取当前选中行）",
+      "err_class": "msg err",
+      "goto_label": "➡ 去 tab2 切图"
+    },
+    "03b_tab1_progress": {
+      "has_card": true,
+      "dpi_exists": true,
+      "dpi_options": [
+        "300",
+        "600",
+        "1200"
+      ],
+      "dpi_value": "1200",
+      "dpi_selected_attr": [
+        "1200"
+      ],
+      "nodes": {
+        "start": true,
+        "cancel": true,
+        "bar": true,
+        "msg": true,
+        "done": true,
+        "out": true,
+        "goto2": true,
+        "from": true,
+        "to": true,
+        "src": true
+      },
+      "cancel_disabled": false,
+      "start_disabled": true,
+      "bar_width": "40%",
+      "done_hidden": true,
+      "hr_msg": "[running] 2/5 页 · 累计 27.0 MB · 当前页 2 · 12.4 s · 渲页中（2/5）",
+      "out_text": "—",
+      "hint": "体积实测：300 ≈ 5.4 MB/页｜600 ≈ 15.5 MB/页｜ 1200 ≈ 13.3 MB/页（1200 反而最小，PNG 对硬边更友好）｜耗时约 6.2 s/页",
+      "src_text": "源 PDF：吴颐人篆刻作品展示.pdf（32 页）",
+      "err_text": "请先在上方表格选中一行（源 PDF 取当前选中行）",
+      "err_class": "msg err",
+      "goto_label": "➡ 去 tab2 切图"
+    },
+    "03c_tab1_done": {
+      "has_card": true,
+      "dpi_exists": true,
+      "dpi_options": [
+        "300",
+        "600",
+        "1200"
+      ],
+      "dpi_value": "1200",
+      "dpi_selected_attr": [
+        "1200"
+      ],
+      "nodes": {
+        "start": true,
+        "cancel": true,
+        "bar": true,
+        "msg": true,
+        "done": true,
+        "out": true,
+        "goto2": true,
+        "from": true,
+        "to": true,
+        "src": true
+      },
+      "cancel_disabled": true,
+      "start_disabled": false,
+      "bar_width": "100%",
+      "done_hidden": false,
+      "hr_msg": "[done] 5/5 页 · 累计 66.0 MB · 当前页 5 · 31 s · 完成",
+      "out_text": "✅ /x/2_HighRes_PDF/9787000000001/吴颐人篆刻作品展示-HighRes.pdf（5 页 · 66.0 MB）",
+      "hint": "体积实测：300 ≈ 5.4 MB/页｜600 ≈ 15.5 MB/页｜ 1200 ≈ 13.3 MB/页（1200 反而最小，PNG 对硬边更友好）｜耗时约 6.2 s/页",
+      "src_text": "源 PDF：吴颐人篆刻作品展示.pdf（32 页）",
+      "err_text": "完成：/x/2_HighRes_PDF/9787000000001/吴颐人篆刻作品展示-HighRes.pdf",
+      "err_class": "msg ok",
+      "goto_label": "➡ 去 tab2 切图"
+    },
+    "03d_goto2": {
+      "tab2": true,
+      "tab1": false
+    },
+    "04_tab2_nodes": {
+      "panel_active": true,
+      "nodes": {
+        "detect": true,
+        "redetect": true,
+        "clear": true,
+        "crop": true,
+        "canvas": true,
+        "count": true,
+        "pageinfo": true,
+        "page": true,
+        "prev": true,
+        "next": true,
+        "src": true,
+        "cropout": true,
+        "cropdir": true,
+        "adv": true,
+        "reload": true
+      },
+      "adv_open": false,
+      "adv_summary": "高级：单页预览渲染（已由 tab1 一键高清化取代）",
+      "legacy_inside_adv": [
+        "btn-tab2-generate",
+        "btn-tab2-cancel",
+        "tab2-page",
+        "tab2-dpi",
+        "tab2-source",
+        "tab2-products",
+        "tab2-progress-bar",
+        "tab2-progress-msg",
+        "tab2-log"
+      ],
+      "legacy_missing": [],
+      "canvas": {
+        "w": 1000,
+        "h": 1414,
+        "css_w": 722,
+        "css_h": 1020,
+        "boxes": "0",
+        "scale": "1",
+        "ctx": true
+      },
+      "src_options": [
+        {
+          "v": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-tabs-t_drzxov/feicui/2_HighRes_PDF/9787000000001/吴颐人篆刻作品展示-HighRes.pdf",
+          "t": "吴颐人篆刻作品展示-HighRes.pdf  →  9787000000001（32 页） · 2 MB"
+        }
+      ],
+      "count_text": "检测到 0 枚",
+      "crop_label": "✂️ 裁切选中（0）",
+      "crop_disabled": true,
+      "pageinfo": "第 1 / 32 页 · 检测坐标系 400dpi",
+      "srcinfo": "吴颐人篆刻作品展示-HighRes.pdf · 2 MB · 目录键 9787000000001（from_dir）· 32 页 · 改于 2026-10-11 10:35",
+      "msg": "",
+      "dir": "目录键：9787000000001（from_dir）⇒ 3_Cropped_Tiff/9787000000001/"
+    },
+    "05_tab2_after_detect": {
+      "panel_active": true,
+      "nodes": {
+        "detect": true,
+        "redetect": true,
+        "clear": true,
+        "crop": true,
+        "canvas": true,
+        "count": true,
+        "pageinfo": true,
+        "page": true,
+        "prev": true,
+        "next": true,
+        "src": true,
+        "cropout": true,
+        "cropdir": true,
+        "adv": true,
+        "reload": true
+      },
+      "adv_open": false,
+      "adv_summary": "高级：单页预览渲染（已由 tab1 一键高清化取代）",
+      "legacy_inside_adv": [
+        "btn-tab2-generate",
+        "btn-tab2-cancel",
+        "tab2-page",
+        "tab2-dpi",
+        "tab2-source",
+        "tab2-products",
+        "tab2-progress-bar",
+        "tab2-progress-msg",
+        "tab2-log"
+      ],
+      "legacy_missing": [],
+      "canvas": {
+        "w": 714,
+        "h": 1000,
+        "css_w": 722,
+        "css_h": 1011,
+        "boxes": "3",
+        "scale": "0.2101",
+        "ctx": true
+      },
+      "src_options": [
+        {
+          "v": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-tabs-t_drzxov/feicui/2_HighRes_PDF/9787000000001/吴颐人篆刻作品展示-HighRes.pdf",
+          "t": "吴颐人篆刻作品展示-HighRes.pdf  →  9787000000001（32 页） · 2 MB"
+        }
+      ],
+      "count_text": "检测到 3 枚",
+      "crop_label": "✂️ 裁切选中（3）",
+      "crop_disabled": false,
+      "pageinfo": "第 1 / 32 页 · 检测坐标系 400dpi",
+      "srcinfo": "吴颐人篆刻作品展示-HighRes.pdf · 2 MB · 目录键 9787000000001（from_dir）· 32 页 · 改于 2026-10-11 10:35",
+      "msg": "检测到 3 枚（0.31 s · 框坐标 400dpi · 页 3400×4760)",
+      "dir": "目录键：9787000000001（from_dir）⇒ 3_Cropped_Tiff/9787000000001/"
+    },
+    "06_tab2_click_deletes": {
+      "panel_active": true,
+      "nodes": {
+        "detect": true,
+        "redetect": true,
+        "clear": true,
+        "crop": true,
+        "canvas": true,
+        "count": true,
+        "pageinfo": true,
+        "page": true,
+        "prev": true,
+        "next": true,
+        "src": true,
+        "cropout": true,
+        "cropdir": true,
+        "adv": true,
+        "reload": true
+      },
+      "adv_open": false,
+      "adv_summary": "高级：单页预览渲染（已由 tab1 一键高清化取代）",
+      "legacy_inside_adv": [
+        "btn-tab2-generate",
+        "btn-tab2-cancel",
+        "tab2-page",
+        "tab2-dpi",
+        "tab2-source",
+        "tab2-products",
+        "tab2-progress-bar",
+        "tab2-progress-msg",
+        "tab2-log"
+      ],
+      "legacy_missing": [],
+      "canvas": {
+        "w": 714,
+        "h": 1000,
+        "css_w": 722,
+        "css_h": 1011,
+        "boxes": "2",
+        "scale": "0.2101",
+        "ctx": true
+      },
+      "src_options": [
+        {
+          "v": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-tabs-t_drzxov/feicui/2_HighRes_PDF/9787000000001/吴颐人篆刻作品展示-HighRes.pdf",
+          "t": "吴颐人篆刻作品展示-HighRes.pdf  →  9787000000001（32 页） · 2 MB"
+        }
+      ],
+      "count_text": "检测到 2 枚",
+      "crop_label": "✂️ 裁切选中（2）",
+      "crop_disabled": false,
+      "pageinfo": "第 1 / 32 页 · 检测坐标系 400dpi",
+      "srcinfo": "吴颐人篆刻作品展示-HighRes.pdf · 2 MB · 目录键 9787000000001（from_dir）· 32 页 · 改于 2026-10-11 10:35",
+      "msg": "检测到 3 枚（0.31 s · 框坐标 400dpi · 页 3400×4760)",
+      "dir": "目录键：9787000000001（from_dir）⇒ 3_Cropped_Tiff/9787000000001/"
+    },
+    "07_tab2_dblclick_adds": {
+      "panel_active": true,
+      "nodes": {
+        "detect": true,
+        "redetect": true,
+        "clear": true,
+        "crop": true,
+        "canvas": true,
+        "count": true,
+        "pageinfo": true,
+        "page": true,
+        "prev": true,
+        "next": true,
+        "src": true,
+        "cropout": true,
+        "cropdir": true,
+        "adv": true,
+        "reload": true
+      },
+      "adv_open": false,
+      "adv_summary": "高级：单页预览渲染（已由 tab1 一键高清化取代）",
+      "legacy_inside_adv": [
+        "btn-tab2-generate",
+        "btn-tab2-cancel",
+        "tab2-page",
+        "tab2-dpi",
+        "tab2-source",
+        "tab2-products",
+        "tab2-progress-bar",
+        "tab2-progress-msg",
+        "tab2-log"
+      ],
+      "legacy_missing": [],
+      "canvas": {
+        "w": 714,
+        "h": 1000,
+        "css_w": 722,
+        "css_h": 1011,
+        "boxes": "3",
+        "scale": "0.2101",
+        "ctx": true
+      },
+      "src_options": [
+        {
+          "v": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-tabs-t_drzxov/feicui/2_HighRes_PDF/9787000000001/吴颐人篆刻作品展示-HighRes.pdf",
+          "t": "吴颐人篆刻作品展示-HighRes.pdf  →  9787000000001（32 页） · 2 MB"
+        }
+      ],
+      "count_text": "检测到 3 枚",
+      "crop_label": "✂️ 裁切选中（3）",
+      "crop_disabled": false,
+      "pageinfo": "第 1 / 32 页 · 检测坐标系 400dpi",
+      "srcinfo": "吴颐人篆刻作品展示-HighRes.pdf · 2 MB · 目录键 9787000000001（from_dir）· 32 页 · 改于 2026-10-11 10:35",
+      "msg": "已新增 1 枚手绘框（拖角手柄可改大小）",
+      "dir": "目录键：9787000000001（from_dir）⇒ 3_Cropped_Tiff/9787000000001/"
+    },
+    "08_tab2_clear": {
+      "panel_active": true,
+      "nodes": {
+        "detect": true,
+        "redetect": true,
+        "clear": true,
+        "crop": true,
+        "canvas": true,
+        "count": true,
+        "pageinfo": true,
+        "page": true,
+        "prev": true,
+        "next": true,
+        "src": true,
+        "cropout": true,
+        "cropdir": true,
+        "adv": true,
+        "reload": true
+      },
+      "adv_open": false,
+      "adv_summary": "高级：单页预览渲染（已由 tab1 一键高清化取代）",
+      "legacy_inside_adv": [
+        "btn-tab2-generate",
+        "btn-tab2-cancel",
+        "tab2-page",
+        "tab2-dpi",
+        "tab2-source",
+        "tab2-products",
+        "tab2-progress-bar",
+        "tab2-progress-msg",
+        "tab2-log"
+      ],
+      "legacy_missing": [],
+      "canvas": {
+        "w": 714,
+        "h": 1000,
+        "css_w": 722,
+        "css_h": 1011,
+        "boxes": "0",
+        "scale": "0.2101",
+        "ctx": true
+      },
+      "src_options": [
+        {
+          "v": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-tabs-t_drzxov/feicui/2_HighRes_PDF/9787000000001/吴颐人篆刻作品展示-HighRes.pdf",
+          "t": "吴颐人篆刻作品展示-HighRes.pdf  →  9787000000001（32 页） · 2 MB"
+        }
+      ],
+      "count_text": "检测到 0 枚",
+      "crop_label": "✂️ 裁切选中（0）",
+      "crop_disabled": true,
+      "pageinfo": "第 1 / 32 页 · 检测坐标系 400dpi",
+      "srcinfo": "吴颐人篆刻作品展示-HighRes.pdf · 2 MB · 目录键 9787000000001（from_dir）· 32 页 · 改于 2026-10-11 10:35",
+      "msg": "已清空本页框（底图保留；「全部重检」可拿回自动框）",
+      "dir": "目录键：9787000000001（from_dir）⇒ 3_Cropped_Tiff/9787000000001/"
+    },
+    "09_tab3_dom": {
+      "panel_active": true,
+      "ids": [
+        "btn-tab3-refresh",
+        "btn-tab3-test",
+        "tab3-subdirs",
+        "tab3-views",
+        "tab3-pageinfo",
+        "btn-tab3-prev",
+        "tab3-pageno",
+        "btn-tab3-next",
+        "tab3-grid",
+        "tab3-template",
+        "tab3-msg",
+        "tab3-noselect",
+        "tab3-edit",
+        "tab3-preview",
+        "tab3-current",
+        "tab3-parsed",
+        "tab3-shiwen-label",
+        "tab3-shiwen",
+        "tab3-shiwen-suggest",
+        "btn-tab3-ocr",
+        "tab3-corr-auto",
+        "tab3-ocr-msg",
+        "tab3-ocr-out",
+        "tab3-ocr-hint",
+        "tab3-ocr-raw",
+        "tab3-corr",
+        "tab3-corr-head",
+        "tab3-corr-list",
+        "btn-tab3-corr-apply",
+        "tab3-dynasty",
+        "tab3-author-label",
+        "tab3-author",
+        "tab3-author-suggest",
+        "tab3-counts",
+        "tab3-newname",
+        "tab3-valid",
+        "btn-tab3-rename",
+        "tab3-rename-msg",
+        "tab3-log-badge",
+        "tab3-log-body",
+        "tab3-log-path"
+      ],
+      "id_count": 41,
+      "h2": "3_Cropped_Tiff · 印面切片（选件 / 解析 / 重命名）",
+      "view_btns": 4,
+      "head_btns": [
+        "btn-tab3-refresh",
+        "btn-tab3-test"
+      ],
+      "template": "P???-C?-R?-释文-朝代-作者.tiff"
+    }
+  },
+  "js_errors": []
+}

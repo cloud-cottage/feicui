@@ -10,7 +10,12 @@
     user: null, root: '', navPath: '',
     yy: { connected: false, prefix: '', label: '' },   // yinyuan 连接态（**只有 prefix**）
     tab1: { rows: [], items: [], selected: null, options: [] },
-    tab2: { sources: [], job: null, lastPath: '' },
+    tab2: {
+      sources: [], job: null, lastPath: '',
+      // 切图台（Phase B）：items＝2_HighRes_PDF 下的高清 PDF；boxes＝**400dpi 页坐标**的手工可编辑框
+      ct: { items: [], pdf: '', pdfName: '', page: 1, pages: null, boxes: [], sel: -1,
+            img: null, scale: 1, size: [0, 0], boxesDpi: 400, drag: null, dirKey: '', srcDir: '' }
+    },
     // tab3：curSubdir / files / view(四档) / page(分页) / selected / 解析回填与本地记录
     tab3: {
       subdirs: [], files: [], curSubdir: '', view: '', page: 0, selected: '',
@@ -140,6 +145,7 @@
     // yinyuan 连接态（只显示 prefix）；未连接 ⇒ 入口按钮保持「连接 yinyuan」
     call('yinyuan_status').then(function (r) { if (r && r.ok) { renderYinyuan(r); } }).catch(function () { });
     loadTab1();
+    hrPollOnce();                     // 上一轮高清化可能还在跑（切回来要看到进度）
   }
 
   // 标题/副标题：**单一真源**在后端（`api.APP_TITLE` / `APP_SLOGAN`），此处只做应用
@@ -166,6 +172,7 @@
     Array.prototype.forEach.call(document.querySelectorAll('.panel'), function (p) {
       p.classList.toggle('active', p.dataset.panel === name);
     });
+    if (name === '1_Original_PDF') hrPollOnce();          // 回到 tab1 时对齐高清化进度
     if (name === '2_HighRes_PDF') loadTab2();
     if (name === '3_Cropped_Tiff') loadTab3();
   }
@@ -202,6 +209,7 @@
         var o = document.createElement('option'); o.value = d; o.textContent = d; sel.appendChild(o);
       });
       setMsg('tab1-msg', '扫描完成：' + ST.tab1.rows.length + ' 个 PDF', 'ok');
+      renderHrSource();                     // 「⚡ 一键高清化」的源行（取当前选中行）
     });
   }
   function selectTab1(i, tr) {
@@ -212,6 +220,7 @@
     $('tab1-dynasty').value = m.dynasty || '';
     $('tab1-author').value = m.author || '';
     $('tab1-notes').value = m.notes || '';
+    renderHrSource();                       // 高清化卡片跟随选中行
   }
   function saveTab1() {
     if (!ST.tab1.selected) { setMsg('tab1-msg', '请先选中一行', 'err'); return; }
@@ -224,6 +233,111 @@
       setMsg('tab1-msg', (r && r.msg) || '', r && r.ok ? 'ok' : 'err');
       if (r && r.ok) loadTab1(false);
     });
+  }
+
+  // ── tab1 · ⚡ 一键高清化（Phase A 后端：tab1_highres_start / status / cancel）──
+  //   源＝**当前选中行**；三档 dpi（300/600/1200，默认 1200）＋页区间；后台线程跑，
+  //   本页 900 ms 轮询 + `window.onProgress({kind:'tab1_highres'})` 推送兜底。
+  var hrTimer = null;
+
+  function hrSource() { var m = ST.tab1.selected; return m ? (m.filename || '') : ''; }
+
+  function renderHrSource() {
+    var el = $('tab1-hr-source'), m = ST.tab1.selected;
+    if (!el) { return; }
+    if (!m) {
+      el.textContent = '源 PDF：未选择文件（请先在上方表格点一行）';
+      el.classList.add('warn');
+      return;
+    }
+    el.classList.remove('warn');
+    el.textContent = '源 PDF：' + m.filename + (m.page_count ? '（' + m.page_count + ' 页）' : '（页数未探）');
+  }
+
+  function hrSetBusy(running) {
+    $('btn-tab1-hr-start').disabled = !!running;
+    $('btn-tab1-hr-cancel').disabled = !running;
+  }
+
+  function hrStopPoll() { if (hrTimer) { clearInterval(hrTimer); hrTimer = null; } }
+
+  function hrStartPoll() {
+    if (hrTimer) { return; }
+    hrTimer = setInterval(function () {
+      call('tab1_highres_status').then(function (r) {
+        if (r && r.ok) { renderHrStatus(r); }
+      }).catch(hrStopPoll);
+    }, 900);
+  }
+
+  function renderHrStatus(st) {
+    if (!st) { return; }
+    var total = st.pages_total || 0, done = st.pages_done || 0;
+    var pct = total ? Math.min(100, Math.round(done * 100 / total)) :
+      (st.state === 'done' ? 100 : 0);
+    var mb = ((st.bytes || 0) / 1048576).toFixed(1);
+    $('tab1-hr-bar').style.width = pct + '%';
+    var line = '[' + (st.state || 'idle') + '] ' + done + '/' + (total || '?') + ' 页 · 累计 ' + mb + ' MB';
+    if (st.page) { line += ' · 当前页 ' + st.page; }
+    if (st.elapsed_s) { line += ' · ' + st.elapsed_s + ' s'; }
+    if (st.msg) { line += ' · ' + st.msg; }
+    $('tab1-hr-msg').textContent = line;
+    var running = (st.state === 'running' || st.state === 'queued');
+    hrSetBusy(running);
+    if (running) { hrStartPoll(); } else { hrStopPoll(); }
+    if (st.state === 'done') {
+      $('tab1-hr-done').hidden = false;
+      $('tab1-hr-out').textContent = '✅ ' + (st.out || '—') + '（' + done + ' 页 · ' + mb + ' MB）';
+      setMsg('tab1-hr-err', '完成：' + (st.out || ''), 'ok');
+    } else if (st.state === 'failed') {
+      $('tab1-hr-done').hidden = true;
+      setMsg('tab1-hr-err', '❌ 失败：' + (st.error || st.msg || ''), 'err');
+    } else if (st.state === 'cancelled') {
+      setMsg('tab1-hr-err', (st.msg || '已取消') + '（进度保留，可续跑）', 'err');
+    }
+  }
+
+  function hrStart() {
+    var pdf = hrSource();
+    if (!pdf) { setMsg('tab1-hr-err', '请先在上方表格选中一行（源 PDF 取当前选中行）', 'err'); return; }
+    var from = ($('tab1-hr-from').value || '').trim();
+    var to = ($('tab1-hr-to').value || '').trim();
+    var payload = { pdf: pdf, dpi: parseInt($('tab1-hr-dpi').value || '1200', 10) };
+    if (from) { payload.page_from = parseInt(from, 10); }
+    if (to) { payload.page_to = parseInt(to, 10); }
+    hrSetBusy(true);
+    $('tab1-hr-done').hidden = true;
+    setMsg('tab1-hr-err', '已提交（后台线程，UI 不阻塞）…');
+    call('tab1_highres_start', payload).then(function (r) {
+      if (!r || !r.ok) {
+        hrSetBusy(false);
+        var why = (r && r.reason) || '';
+        var m = (r && r.msg) || '启动失败';
+        if (why === 'BAD_DPI' && r.allowed) { m += '（允许：' + r.allowed.join(' / ') + '）'; }
+        if (why === 'BUSY' && r.status) {
+          renderHrStatus(r.status);
+        }
+        setMsg('tab1-hr-err', '❌ ' + why + ' ' + m, 'err');
+        return;
+      }
+      setMsg('tab1-hr-err', '已开始：' + (r.out || '') + '（' + r.dpi + ' dpi · ' +
+        (r.note || '≈6.2 s/页') + '）', 'ok');
+      hrStartPoll();
+      call('tab1_highres_status').then(function (s) { if (s && s.ok) { renderHrStatus(s); } });
+    });
+  }
+
+  function hrCancel() {
+    call('tab1_highres_cancel').then(function (r) {
+      setMsg('tab1-hr-err', (r && r.msg) || (r && r.ok ? '已请求取消' : '没有在跑的高清化任务'),
+        r && r.ok ? 'ok' : 'err');
+    });
+  }
+
+  function hrPollOnce() {
+    call('tab1_highres_status').then(function (r) {
+      if (r && r.ok) { renderHrStatus(r); }
+    }).catch(function () { });
   }
 
   // ── tab2 ──
@@ -252,6 +366,7 @@
       if (!(r.dirs || []).length) { box.innerHTML = '<div class="muted">（2_HighRes_PDF 下暂无产物）</div>'; }
       if (!r.engine.exists) { setMsg('tab2-msg', '引擎脚本缺失：' + r.engine.script, 'err'); }
       else if (r.jobs && r.jobs.length) { renderJob(r.jobs[0]); }
+      loadTab2Sources();                    // 切图台的源列表（2_HighRes_PDF/**/*.pdf）
     });
   }
   function generateTab2() {
@@ -306,12 +421,432 @@
   // Python 端进度推送入口（pywebview evaluate_js）
   window.onProgress = function (job) {
     if (!job) return;
+    if (job.kind === 'tab1_highres') { renderHrStatus(job); return; }   // tab1 一键高清化
     if (!ST.tab2.job || ST.tab2.job.job_id === job.job_id) { renderJob(job); }
   };
   function openInFinder() {
     var first = document.querySelector('#tab2-products .file span');
     call('open_in_finder', { path: ST.tab2.lastPath }).then(function (r) {
       setMsg('tab2-msg', (r && r.msg) || '', r && r.ok ? 'ok' : 'err');
+    });
+  }
+
+  // ═════════ 切图台（phase B）：源列表 → 选页 → 400dpi 自动检测 → 画布微调 → 1200dpi 裁切 ═════════
+  //   坐标口径：**框一律存 400dpi 页坐标**（＝后端 tab2_detect / tab2_crop 与库内 bbox 同系），
+  //   画布上的一切换算只经 `ct.scale`（＝后端 preview_scale；预览已由后端画框图并降采样到宽 ≤1000）。
+  function ctState() { return ST.tab2.ct; }
+
+  function ctItem() {
+    var v = $('tab2-ct-source').value, items = ctState().items || [];
+    for (var i = 0; i < items.length; i++) {
+      if ((items[i].path || items[i].name) === v) { return items[i]; }
+    }
+    return null;
+  }
+
+  function ctUpdateCount() {
+    var ct = ctState(), n = ct.boxes.length;
+    $('tab2-box-count').textContent = '检测到 ' + n + ' 枚';
+    var btn = $('btn-tab2-crop');
+    btn.textContent = '✂️ 裁切选中（' + n + '）';
+    btn.disabled = (n === 0);
+    var cv = $('tab2-canvas');
+    if (cv) {
+      cv.dataset.boxes = String(n);
+      cv.dataset.page = String(ct.page || 1);
+      cv.dataset.scale = String(ct.scale || 1);
+    }
+  }
+
+  function ctUpdatePageInfo() {
+    var ct = ctState();
+    $('tab2-ct-pageinfo').textContent = '第 ' + (ct.page || 1) + ' / ' + (ct.pages || '?') +
+      ' 页 · 检测坐标系 400dpi';
+  }
+
+  // 画布重绘：底图（后端预览，已画自动框）+ 本页**可编辑框**（选中红、其余青）+ 序号
+  function ctRender() {
+    var cv = $('tab2-canvas');
+    if (!cv) { return; }
+    var ct = ctState(), ctx = cv.getContext('2d');
+    if (!cv.width || !cv.height) { cv.width = 1000; cv.height = 1414; }
+    if (ct.img) {
+      ctx.drawImage(ct.img, 0, 0, cv.width, cv.height);
+    } else {
+      ctx.fillStyle = '#f5f5f5'; ctx.fillRect(0, 0, cv.width, cv.height);
+    }
+    var s = ct.scale || 1;
+    ct.boxes.forEach(function (b, i) {
+      var x = b.x1 * s, y = b.y1 * s, w = (b.x2 - b.x1) * s, h = (b.y2 - b.y1) * s;
+      var sel = (i === ct.sel);
+      ctx.lineWidth = sel ? 3 : 2;
+      ctx.strokeStyle = sel ? '#d93025' : '#00b8e6';
+      ctx.strokeRect(x, y, w, h);
+      ctx.fillStyle = sel ? '#d93025' : '#00b8e6';
+      ctx.font = 'bold 13px -apple-system, sans-serif';
+      ctx.fillText(String(i + 1), x + 4, Math.max(y - 5, 13));
+      if (sel) {
+        ctx.fillRect(x - 4, y - 4, 8, 8); ctx.fillRect(x + w - 4, y - 4, 8, 8);
+        ctx.fillRect(x - 4, y + h - 4, 8, 8); ctx.fillRect(x + w - 4, y + h - 4, 8, 8);
+      }
+    });
+    ctUpdateCount();
+  }
+
+  // 视口坐标 ⇒ 400dpi 页坐标（CSS 缩放 × 预览缩放两级换算）
+  function ctPt(ev) {
+    var cv = $('tab2-canvas'), ct = ctState();
+    var r = cv.getBoundingClientRect();
+    var kx = cv.width / (r.width || cv.width || 1);
+    var ky = cv.height / (r.height || cv.height || 1);
+    var px = (ev.clientX - r.left) * kx, py = (ev.clientY - r.top) * ky;
+    var s = ct.scale || 1;
+    return { x: px / s, y: py / s };
+  }
+
+  function ctHit(p) {                       // 命中最小的框（叠框时点最上面那枚）
+    var boxes = ctState().boxes, best = -1, bestA = Infinity;
+    boxes.forEach(function (b, i) {
+      if (p.x >= b.x1 && p.x <= b.x2 && p.y >= b.y1 && p.y <= b.y2) {
+        var a = (b.x2 - b.x1) * (b.y2 - b.y1);
+        if (a < bestA) { bestA = a; best = i; }
+      }
+    });
+    return best;
+  }
+
+  function ctHandle(p, i) {                 // 选中框的四角手柄（9 预览像素容差）
+    var b = ctState().boxes[i];
+    if (!b) { return ''; }
+    var tol = 9 / (ctState().scale || 1);
+    var xs = [b.x1, b.x2], ys = [b.y1, b.y2];
+    for (var a = 0; a < 2; a += 1) {
+      for (var c = 0; c < 2; c += 1) {
+        if (Math.abs(p.x - xs[a]) <= tol && Math.abs(p.y - ys[c]) <= tol) {
+          return (a ? 'r' : 'l') + (c ? 'b' : 't');
+        }
+      }
+    }
+    return '';
+  }
+
+  function ctClampBox(b) {                  // 夹在页内 + 保证正序
+    var size = ctState().size || [0, 0];
+    var W = size[0] || 1e9, H = size[1] || 1e9;
+    var x1 = Math.max(0, Math.min(b.x1, b.x2)), x2 = Math.min(W, Math.max(b.x1, b.x2));
+    var y1 = Math.max(0, Math.min(b.y1, b.y2)), y2 = Math.min(H, Math.max(b.y1, b.y2));
+    return { x1: x1, y1: y1, x2: x2, y2: y2 };
+  }
+
+  function ctDelete(i) {
+    var ct = ctState();
+    if (i < 0 || i >= ct.boxes.length) { return; }
+    ct.boxes.splice(i, 1);
+    ct.sel = -1;
+    ctRender();
+  }
+
+  function ctDown(ev) {
+    var ct = ctState();
+    if (!ct.img) { return; }
+    var p = ctPt(ev), i = ctHit(p);
+    if (i >= 0) {
+      var h = (i === ct.sel) ? ctHandle(p, i) : '';
+      var o = ct.boxes[i];
+      ct.sel = i;
+      ct.drag = (h ? { mode: 'resize', idx: i, corner: h, start: p, orig: { x1: o.x1, y1: o.y1, x2: o.x2, y2: o.y2 } }
+        : { mode: 'move', idx: i, start: p, moved: false, orig: { x1: o.x1, y1: o.y1, x2: o.x2, y2: o.y2 } });
+    } else {
+      ct.sel = -1;
+      ct.drag = { mode: 'new', start: p, cur: p };
+    }
+    ctRender();
+    ev.preventDefault();
+  }
+
+  function ctMove(ev) {
+    var ct = ctState(), d = ct.drag;
+    if (!d) { return; }
+    var p = ctPt(ev), minStep = 2 / (ct.scale || 1);
+    ev.preventDefault();
+    if (d.mode === 'new') {
+      d.cur = p;
+      ctRender();
+      var a = ctClampBox({ x1: d.start.x, y1: d.start.y, x2: p.x, y2: p.y });
+      var ctx = $('tab2-canvas').getContext('2d'), s = ct.scale || 1;
+      ctx.setLineDash([6, 4]);
+      ctx.strokeStyle = '#d93025'; ctx.lineWidth = 2;
+      ctx.strokeRect(a.x1 * s, a.y1 * s, (a.x2 - a.x1) * s, (a.y2 - a.y1) * s);
+      ctx.setLineDash([]);
+      return;
+    }
+    var o = d.orig;
+    if (d.mode === 'move') {
+      var dx = p.x - d.start.x, dy = p.y - d.start.y;
+      if (Math.abs(dx) > minStep || Math.abs(dy) > minStep) { d.moved = true; }
+      ct.boxes[d.idx] = ctClampBox({ x1: o.x1 + dx, y1: o.y1 + dy, x2: o.x2 + dx, y2: o.y2 + dy });
+    } else if (d.mode === 'resize') {
+      var nb = { x1: o.x1, y1: o.y1, x2: o.x2, y2: o.y2 };
+      if (d.corner.indexOf('l') >= 0) { nb.x1 = p.x; } else { nb.x2 = p.x; }
+      if (d.corner.indexOf('t') >= 0) { nb.y1 = p.y; } else { nb.y2 = p.y; }
+      ct.boxes[d.idx] = ctClampBox(nb);
+    }
+    ctRender();
+  }
+
+  function ctUp(ev) {
+    var ct = ctState(), d = ct.drag;
+    ct.drag = null;
+    if (!d) { return; }
+    if (d.mode === 'new') {
+      var a = ctClampBox({ x1: d.start.x, y1: d.start.y, x2: d.cur.x, y2: d.cur.y });
+      var minSize = 8 / (ct.scale || 1);
+      if (!ev.__abort && (a.x2 - a.x1) >= minSize && (a.y2 - a.y1) >= minSize) {
+        ct.boxes.push(a);
+        ct.sel = ct.boxes.length - 1;
+      } else {
+        ct.sel = -1;
+      }
+    } else if (d.mode === 'move' && !d.moved) {
+      ctDelete(d.idx);                      // **单击框＝删除**（点中先变红，松开即删）
+      return;
+    }
+    ctRender();
+  }
+
+  function ctDbl(ev) {                      // 空白处双击＝新增默认框（≈1 英寸见方，400dpi 下 400×400）
+    var ct = ctState();
+    if (!ct.img) { return; }
+    var p = ctPt(ev);
+    if (ctHit(p) >= 0) { return; }
+    var b = ctClampBox({ x1: p.x - 200, y1: p.y - 200, x2: p.x + 200, y2: p.y + 200 });
+    ct.boxes.push(b);
+    ct.sel = ct.boxes.length - 1;
+    ctRender();
+    setMsg('tab2-ct-msg', '已新增 1 枚手绘框（拖角手柄可改大小）', 'ok');
+  }
+
+  function ctKey(ev) {
+    if (!document.querySelector('.panel.active[data-panel="2_HighRes_PDF"]')) { return; }
+    var tag = (document.activeElement && document.activeElement.tagName || '').toLowerCase();
+    if (tag === 'input' || tag === 'textarea' || tag === 'select') { return; }
+    if (ev.key === 'Delete' || ev.key === 'Backspace') {
+      var ct = ctState();
+      if (ct.sel >= 0 && ct.boxes.length) { ev.preventDefault(); ctDelete(ct.sel); }
+    }
+  }
+
+  function ctBindCanvas() {
+    var cv = $('tab2-canvas');
+    if (!cv || cv.dataset.bound) { return; }
+    cv.dataset.bound = '1';
+    cv.addEventListener('mousedown', ctDown);
+    cv.addEventListener('mousemove', ctMove);
+    cv.addEventListener('mouseup', ctUp);
+    cv.addEventListener('mouseleave', function () {
+      if (ctState().drag) { ctUp({ __abort: true }); }
+    });
+    cv.addEventListener('dblclick', ctDbl);
+    document.addEventListener('keydown', ctKey);
+  }
+
+  function ctLoadPreview(b64, cb) {
+    var ct = ctState();
+    if (!b64) { ct.img = null; cb(); return; }
+    var im = new Image();
+    im.onload = function () { ct.img = im; cb(); };
+    im.onerror = function () { ct.img = null; cb(); };
+    im.src = 'data:image/png;base64,' + b64;
+  }
+
+  function loadTab2Sources() {
+    return call('tab2_list_sources').then(function (r) {
+      var sel = $('tab2-ct-source'), ct = ctState();
+      if (!r || !r.ok) {
+        sel.innerHTML = '<option value="">（源列表读取失败）</option>';
+        setMsg('tab2-ct-msg', (r && r.msg) || '源列表读取失败', 'err');
+        return r;
+      }
+      var keep = sel.value || '';
+      ct.items = r.items || [];
+      ct.srcDir = r.dir || '';
+      sel.innerHTML = '';
+      if (!ct.items.length) {
+        sel.innerHTML = '<option value="">（2_HighRes_PDF 下暂无 PDF —— 先在 tab1「⚡ 一键高清化」）</option>';
+      }
+      ct.items.forEach(function (it) {
+        var o = document.createElement('option');
+        o.value = it.path || it.name;
+        o.textContent = it.name + '  →  ' + it.dir_key +
+          (it.pages ? '（' + it.pages + ' 页）' : '') + ' · ' + it.size_mb + ' MB';
+        sel.appendChild(o);
+      });
+      if (keep) {
+        var hit = ct.items.some(function (it) { return (it.path || it.name) === keep; });
+        if (hit) { sel.value = keep; }
+      }
+      ctOnSourceChange(!!keep);
+      return r;
+    }).catch(function () { return null; });
+  }
+
+  function ctOnSourceChange(silent) {
+    var ct = ctState(), it = ctItem();
+    // 同一份 PDF 的「静默刷新」（切页签回来 / 点「🔄 刷新」）⇒ **保留**已调好的框，别把人工微调清掉
+    if (silent && it && ct.pdf === (it.path || it.name) && ct.boxes.length && ct.img) {
+      ct.pages = it.pages || ct.pages;
+      ct.dirKey = it.dir_key || ct.dirKey;
+      $('tab2-ct-srcinfo').textContent = it.name + ' · ' + it.size_mb + ' MB · 目录键 ' + it.dir_key +
+        '（' + it.dir_key_source + '）· ' + (it.pages ? it.pages + ' 页' : '页数未知');
+      ctUpdatePageInfo();
+      ctRender();
+      return;
+    }
+    ct.boxes = []; ct.sel = -1; ct.img = null; ct.size = [0, 0]; ct.scale = 1;
+    if (!it) {
+      ct.pdf = ''; ct.pages = null;
+      $('tab2-ct-srcinfo').textContent = '（无可选源：先在 tab1 一键高清化，再回本页「🔄 重列」）';
+      ctUpdatePageInfo();
+      ctRender();
+      return;
+    }
+    ct.pdf = it.path || it.name;
+    ct.pages = it.pages || null;
+    ct.dirKey = it.dir_key || '';
+    $('tab2-ct-srcinfo').textContent = it.name + ' · ' + it.size_mb + ' MB · 目录键 ' + it.dir_key +
+      '（' + it.dir_key_source + '）· ' + (it.pages ? it.pages + ' 页' : '页数未知') +
+      ' · 改于 ' + (it.mtime || '—');
+    $('tab2-crop-dir').textContent = '目录键：' + (it.dir_key || '—') +
+      '（' + (it.dir_key_source || '?') + '）⇒ 3_Cropped_Tiff/' + (it.dir_key || '') + '/';
+    if (!silent) { ct.page = 1; $('tab2-ct-page').value = '1'; }
+    $('tab2-canvas-hint').hidden = false;      // 新源／新页：先提示「自动检测」
+    ctUpdatePageInfo();
+    ctRender();
+  }
+
+  function ctGoPage(delta) {
+    var ct = ctState(), p = (ct.page || 1) + delta;
+    if (p < 1) { p = 1; }
+    if (ct.pages && p > ct.pages) { p = ct.pages; }
+    ct.page = p;
+    $('tab2-ct-page').value = String(p);
+    ct.boxes = []; ct.sel = -1; ct.img = null;
+    ctUpdatePageInfo();
+    ctRender();
+    ctDetect();                            // 翻页即重检（少一次点击；检测 ≈0.2–0.5 s）
+  }
+
+  function ctClear() {
+    var ct = ctState();
+    ct.boxes = []; ct.sel = -1;
+    ctRender();
+    setMsg('tab2-ct-msg', '已清空本页框（底图保留；「全部重检」可拿回自动框）', '');
+  }
+
+  function ctDetect() {
+    var ct = ctState(), it = ctItem();
+    if (!it) {
+      setMsg('tab2-ct-msg', '请先选一份高清 PDF（2_HighRes_PDF 下无 PDF 时先在 tab1 一键高清化）', 'err');
+      return;
+    }
+    var page = parseInt($('tab2-ct-page').value || '1', 10);
+    if (!(page >= 1)) { setMsg('tab2-ct-msg', '页号从 1 开始（1-based）', 'err'); return; }
+    ct.page = page;
+    ctUpdatePageInfo();
+    var btn = $('btn-tab2-detect');
+    btn.disabled = true;
+    setMsg('tab2-ct-msg', '检测中…（400dpi 渲页 + 红印检测，约 0.2–0.5 s）');
+    call('tab2_detect', { pdf: ct.pdf, page: page, dpi: 400 }).then(function (r) {
+      btn.disabled = false;
+      if (!r || !r.ok) {
+        setMsg('tab2-ct-msg', '❌ ' + ((r && r.msg) || '检测失败'), 'err');
+        return;
+      }
+      ct.size = r.size || [0, 0];
+      ct.scale = r.preview_scale || 1;
+      ct.boxesDpi = r.boxes_dpi || 400;
+      ct.boxes = (r.boxes || []).map(function (b) {
+        return { x1: b.x1, y1: b.y1, x2: b.x2, y2: b.y2 };   // 只留几何（序号由本页重排）
+      });
+      ct.sel = -1;
+      if (r.preview_size && r.preview_size[0]) {
+        var cv = $('tab2-canvas');
+        cv.width = Math.round(r.preview_size[0]);
+        cv.height = Math.round(r.preview_size[1]);
+      }
+      ctLoadPreview(r.preview_png_b64, function () {
+        ctRender();
+        $('tab2-canvas-hint').hidden = !!ct.img;
+      });
+      setMsg('tab2-ct-msg', '检测到 ' + ct.boxes.length + ' 枚（' + (r.elapsed_s === undefined ? '?' : r.elapsed_s) +
+        ' s · 框坐标 400dpi · 页 {0}×{1})'.replace('{0}', ct.size[0]).replace('{1}', ct.size[1]),
+        ct.boxes.length ? 'ok' : 'err');
+    }).catch(function () { btn.disabled = false; });
+  }
+
+  function ctCrop() {
+    var ct = ctState(), it = ctItem();
+    if (!it) { setMsg('tab2-ct-msg', '请先选一份高清 PDF', 'err'); return; }
+    var boxes = ct.boxes.map(function (b) {
+      return { x1: Math.round(b.x1), y1: Math.round(b.y1), x2: Math.round(b.x2), y2: Math.round(b.y2) };
+    });
+    if (!boxes.length) { setMsg('tab2-ct-msg', '没有可裁的框（先「🔍 自动检测」或空白处双击新增）', 'err'); return; }
+    var btn = $('btn-tab2-crop');
+    btn.disabled = true;
+    setMsg('tab2-crop-msg', '裁切中…（1200dpi 渲页，单页约 6 s）');
+    call('tab2_crop', { pdf: ct.pdf, page: ct.page, boxes: boxes, dpi: 1200 }).then(function (r) {
+      if (!r || !r.ok) {
+        btn.disabled = false;
+        setMsg('tab2-crop-msg', '❌ ' + ((r && r.msg) || '裁切失败'), 'err');
+        return;
+      }
+      ctRenderOutputs(r);
+      btn.disabled = false;
+    }).catch(function () { btn.disabled = false; });
+  }
+
+  function ctRenderOutputs(r) {
+    var box = $('tab2-crop-out');
+    box.innerHTML = '';
+    var outs = r.outputs || [];
+    outs.forEach(function (o) {
+      var row = document.createElement('div');
+      row.className = 'file';
+      var sz = Array.isArray(o.size) ? (o.size[0] + '×' + o.size[1]) : (o.size || '—');
+      var kb = Math.max(1, Math.round((o.bytes || 0) / 1024));
+      row.innerHTML = '<span>' + esc(o.name) + '</span><span class="muted">' + esc(sz) +
+        ' · ' + kb + ' KB</span>';
+      box.appendChild(row);
+    });
+    if (!outs.length) { box.innerHTML = '<div class="muted">（无产物）</div>'; }
+    var skipped = Array.isArray(r.skipped) ? r.skipped.length : (r.skipped || 0);
+    $('tab2-crop-dir').textContent = '目录键：' + (r.dir_key || '—') + '（' + (r.dir_key_source || '?') +
+      '）⇒ 3_Cropped_Tiff/' + (r.dir_key || '') + '/';
+    setMsg('tab2-crop-msg', '✅ ' + outs.length + ' 件落到 3_Cropped_Tiff/' + (r.dir_key || '') + '/ · ' +
+      (r.elapsed_s === undefined ? '?' : r.elapsed_s) + ' s' +
+      (skipped ? ' · 跳过 ' + skipped : ''), 'ok');
+    toast('已裁切 ' + outs.length + ' 件');
+  }
+
+  function ctBind() {
+    ctBindCanvas();
+    $('btn-tab2-detect').addEventListener('click', ctDetect);
+    $('btn-tab2-redetect').addEventListener('click', ctDetect);
+    $('btn-tab2-clear').addEventListener('click', ctClear);
+    $('btn-tab2-crop').addEventListener('click', ctCrop);
+    $('btn-tab2-ct-reload').addEventListener('click', loadTab2Sources);
+    $('btn-tab2-ct-prev').addEventListener('click', function () { ctGoPage(-1); });
+    $('btn-tab2-ct-next').addEventListener('click', function () { ctGoPage(1); });
+    $('tab2-ct-source').addEventListener('change', function () { ctOnSourceChange(false); });
+    $('tab2-ct-page').addEventListener('change', function () {
+      var ct = ctState();
+      var p = parseInt($('tab2-ct-page').value || '1', 10);
+      if (!(p >= 1)) { p = 1; }
+      if (ct.pages && p > ct.pages) { p = ct.pages; }
+      ct.page = p;
+      $('tab2-ct-page').value = String(p);
+      ct.boxes = []; ct.sel = -1; ct.img = null;
+      ctUpdatePageInfo(); ctRender();
     });
   }
 
@@ -937,6 +1472,11 @@
     $('btn-ensure').addEventListener('click', ensureSubdirs);
     $('btn-tab1-rescan').addEventListener('click', function () { loadTab1($('tab1-force').checked); });
     $('btn-tab1-save').addEventListener('click', saveTab1);
+    // tab1 · ⚡ 一键高清化（三档 dpi / 页区间 / 开始 / 取消 / 去 tab2）
+    $('btn-tab1-hr-start').addEventListener('click', hrStart);
+    $('btn-tab1-hr-cancel').addEventListener('click', hrCancel);
+    $('btn-tab1-hr-goto2').addEventListener('click', function () { activateTab('2_HighRes_PDF'); });
+    ctBind();                               // tab2 切图台（画布 / 检测 / 裁切 / 选页）
     $('btn-tab2-refresh').addEventListener('click', loadTab2);
     $('btn-tab2-generate').addEventListener('click', generateTab2);
     $('btn-tab2-cancel').addEventListener('click', cancelTab2);

@@ -983,6 +983,83 @@ class FeicuiApi:
                            "exists": ENGINE_SCRIPT.exists()},
                 "jobs": self.jobs.recent()}
 
+    def tab2_list_sources(self, _req: dict | None = None) -> dict:
+        """切图台的**源列表**：`2_HighRes_PDF/**/*.pdf`（递归）。
+
+        ⇒ `{ok, dir, items:[{name, rel, path, dir_key, dir_key_source, bytes, size_mb,
+        mtime, pages}], count, note}`。
+
+        口径：
+          * 目录键＝`config/book_dir_keys.json`（经 `server/app/naming.dir_key_entry`：
+            ISBN 优先，未登记标 `fallback_unregistered`）；若该 PDF **已躺在**
+            `2_HighRes_PDF/<目录键>/` 里而未登记 ⇒ 以**所在目录**为准（与裁切落点一致）；
+          * 页数用 pymupdf **惰性**打开取 `page_count`，打不开/无库 ⇒ `null`（**不抛**）；
+          * 结构化返回，任何异常都变成 `{ok:false, msg}`（桥不许断）。
+        """
+        miss = self._need_root()
+        if miss:
+            return miss
+        root = self._root_path()
+        base = root / lib.HIGHRES_DIR
+        try:
+            files = (sorted((p for p in base.rglob("*") if p.is_file() and p.suffix.lower() == ".pdf"),
+                            key=lambda p: str(p).lower()) if base.is_dir() else [])
+        except Exception as exc:
+            return {"ok": False, "reason": "SCAN_FAILED", "dir": str(base),
+                    "msg": f"扫描 2_HighRes_PDF 失败：{exc.__class__.__name__}: {exc}"}
+
+        naming, keys = None, {}
+        try:
+            from app import naming as _naming  # noqa: WPS433（延迟导入，失败也不致命）
+            naming, keys = _naming, _naming.load_dir_keys()
+        except Exception:
+            naming, keys = None, {}
+
+        items: list[dict] = []
+        for p in files:
+            try:
+                stt = p.stat()
+            except Exception:
+                continue
+            dir_key, source = p.stem, "fallback_unregistered"
+            if naming is not None:
+                try:
+                    dir_key, source = naming.dir_key_entry(p.name, keys)
+                except Exception:
+                    dir_key, source = p.stem, "fallback_unregistered"
+            # 未登记但已在本目录键子目录里 ⇒ 认所在目录（它是裁切的落点，别再改口径）
+            if source == "fallback_unregistered":
+                try:
+                    if p.parent != base and p.parent.parent == base:
+                        dir_key, source = p.parent.name, "from_dir"
+                except Exception:
+                    pass
+            pages = None
+            for mod_name in ("pymupdf", "fitz"):   # 老工程 venv 两种模块名都有
+                try:
+                    doc = importlib.import_module(mod_name).open(str(p))
+                    try:
+                        pages = int(doc.page_count)
+                    finally:
+                        doc.close()
+                    break
+                except Exception:
+                    continue
+            rel = p.name
+            try:
+                rel = str(p.relative_to(base))
+            except Exception:
+                pass
+            items.append({
+                "name": p.name, "rel": rel, "path": str(p),
+                "dir_key": dir_key or p.stem, "dir_key_source": source or "fallback_unregistered",
+                "bytes": int(stt.st_size), "size_mb": round(stt.st_size / 1024 / 1024, 2),
+                "mtime": datetime.fromtimestamp(stt.st_mtime).strftime("%Y-%m-%d %H:%M"),
+                "pages": pages,
+            })
+        return {"ok": True, "dir": str(base), "items": items, "count": len(items),
+                "note": "页数由 pymupdf 惰性读取（打不开 ⇒ null）；目录键见 config/book_dir_keys.json"}
+
     def tab2_generate(self, req: dict | None = None) -> dict:
         """异步启动一页 HighRes 渲染（1200dpi 单页 ≈64 s）。立即返回 job_id。"""
         miss = self._need_root()

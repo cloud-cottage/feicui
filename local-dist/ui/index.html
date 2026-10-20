@@ -130,45 +130,131 @@
         </div>
       </div>
     </div>
+
+    <!-- ── tab1 · ⚡ 一键高清化（源＝当前选中行；tab2 切图台的输入）── -->
+    <div class="pane hr-card" id="tab1-hr-card">
+      <h3>⚡ 一键高清化（原件 ⇒ <code>2_HighRes_PDF/&lt;目录键&gt;/</code>）</h3>
+      <div class="hr-grid">
+        <div>
+          <div class="cur" id="tab1-hr-source">源 PDF：未选择文件（请先在上方表格点一行）</div>
+          <label class="field"><span>目标 dpi（三档 · 默认 1200）</span>
+            <select id="tab1-hr-dpi">
+              <option value="300">300 dpi（≈5.4 MB/页）</option>
+              <option value="600">600 dpi（≈15.5 MB/页）</option>
+              <option value="1200" selected>1200 dpi（≈13.3 MB/页 · 默认）</option>
+            </select></label>
+          <p class="caption hr-note">体积实测：300 ≈ 5.4 MB/页｜600 ≈ 15.5 MB/页｜
+            <b>1200 ≈ 13.3 MB/页（1200 反而最小，PNG 对硬边更友好）</b>｜耗时约 6.2 s/页</p>
+        </div>
+        <div>
+          <label class="field"><span>页区间（留空＝全部）</span></label>
+          <div class="row tight">
+            <input id="tab1-hr-from" type="number" min="1" placeholder="从第 1 页" class="w-num">
+            <span class="muted">→</span>
+            <input id="tab1-hr-to" type="number" min="1" placeholder="到末页" class="w-num">
+          </div>
+          <div class="row">
+            <button id="btn-tab1-hr-start" class="btn primary">⚡ 开始高清化</button>
+            <button id="btn-tab1-hr-cancel" class="btn" disabled>✖ 取消</button>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress"><div id="tab1-hr-bar" class="bar" style="width:0%"></div></div>
+            <div id="tab1-hr-msg" class="muted">空闲</div>
+          </div>
+          <div id="tab1-hr-done" hidden>
+            <div class="cur mono" id="tab1-hr-out">—</div>
+            <button id="btn-tab1-hr-goto2" class="btn block">➡ 去 tab2 切图</button>
+          </div>
+          <div id="tab1-hr-err" class="msg"></div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- ── tab2：2_HighRes_PDF ── -->
+  <!-- ── tab2：2_HighRes_PDF · 切图台（检测 ⇒ 微调 ⇒ 1200dpi 裁切）── -->
   <div class="panel" data-panel="2_HighRes_PDF">
     <div class="panel-head">
-      <h2>2_HighRes_PDF · 整页高分辨率（1200 dpi · 48bit TIFF）</h2>
+      <h2>2_HighRes_PDF · 切图台（自动检测红印 ⇒ 人工微调 ⇒ 1200dpi 裁切）</h2>
       <div class="row">
         <button id="btn-tab2-refresh" class="btn" data-action="tab2-refresh">🔄 刷新</button>
         <button id="btn-tab2-open" class="btn" data-action="open-in-finder">📂 访达定位</button>
       </div>
     </div>
-    <p class="muted">整页渲染单页 ≈64 s（1200 dpi 48bit ⇒ 8500×12236）；**整本禁止**（851 页 ≈6.4 h）。
-      渲染走老工程引擎子进程，异步 + 进度 + 可取消。</p>
-    <div class="two-col main-col">
+    <div class="two-col ct-col">
+      <!-- ── 左：源 / 选页 / 检测 / 画布 ── -->
       <div class="pane">
-        <h3>产物（<code>2_HighRes_PDF/&lt;目录键&gt;/</code>）</h3>
-        <div id="tab2-products" class="tree scroll"></div>
-      </div>
-      <div class="pane side">
-        <h3>生成入口</h3>
-        <label class="field"><span>源 PDF</span>
-          <select id="tab2-source"></select></label>
-        <label class="field"><span>页号（1-based）</span>
-          <input id="tab2-page" type="number" min="1" value="1"></label>
-        <label class="field"><span>目标 dpi</span>
-          <select id="tab2-dpi">
-            <option value="1200" selected>1200（缺省）</option>
-            <option value="2400">2400（旧产线，≈108 s/页）</option>
-          </select></label>
-        <label class="inline"><input id="tab2-overwrite" type="checkbox"> 覆盖已有产物</label>
-        <label class="inline"><input id="tab2-force" type="checkbox"> 强制提交（跳过 dpi 整数倍预检）</label>
-        <button id="btn-tab2-generate" class="btn primary block" data-action="tab2-generate">⚙️ 开始生成 HighRes（异步）</button>
-        <button id="btn-tab2-cancel" class="btn block" data-action="tab2-cancel" disabled>✖ 取消当前任务</button>
-        <div class="progress-wrap">
-          <div class="progress"><div id="tab2-progress-bar" class="bar" style="width:0%"></div></div>
-          <div id="tab2-progress-msg" class="muted">空闲</div>
+        <h3>① 源（<code>2_HighRes_PDF/**</code> 下的高清 PDF）</h3>
+        <div class="row">
+          <select id="tab2-ct-source" class="grow"></select>
+          <button id="btn-tab2-ct-reload" class="btn small" data-action="tab2-list-sources">🔄 重列</button>
         </div>
-        <details class="logbox"><summary>任务日志（尾部）</summary>
-          <pre id="tab2-log" class="scroll"></pre></details>
+        <div class="caption" id="tab2-ct-srcinfo">—</div>
+
+        <h3>② 选页 <span class="muted">（检测坐标系固定 400 dpi）</span></h3>
+        <div class="row">
+          <button id="btn-tab2-ct-prev" class="btn small" data-action="tab2-ct-prev">⬅️ 上一页</button>
+          <input id="tab2-ct-page" type="number" min="1" value="1" class="w-num">
+          <button id="btn-tab2-ct-next" class="btn small" data-action="tab2-ct-next">下一页 ➡️</button>
+          <span class="caption" id="tab2-ct-pageinfo">第 1 / ? 页 · 检测 400dpi</span>
+        </div>
+
+        <h3>③ 检测</h3>
+        <div class="row">
+          <button id="btn-tab2-detect" class="btn primary" data-action="tab2-detect">🔍 自动检测</button>
+          <button id="btn-tab2-redetect" class="btn small" data-action="tab2-redetect">♻️ 全部重检</button>
+          <button id="btn-tab2-clear" class="btn small" data-action="tab2-clear">🧹 清空框</button>
+          <span class="caption" id="tab2-box-count">检测到 0 枚</span>
+        </div>
+        <div class="canvas-wrap" id="tab2-canvas-wrap">
+          <canvas id="tab2-canvas" width="1000" height="1414"></canvas>
+          <div class="canvas-hint" id="tab2-canvas-hint">先点「🔍 自动检测」把整页画进来</div>
+        </div>
+        <p class="caption">画布交互：<b>单击框＝删除</b>（点中先变红）｜框内拖拽＝移动｜角上手柄＝改大小｜
+          空白处<b>双击＝新增框</b>（空白拖拽亦可框选新增）｜Delete＝删选中框</p>
+
+        <h3>④ 裁切</h3>
+        <div class="row">
+          <button id="btn-tab2-crop" class="btn primary" data-action="tab2-crop" disabled>✂️ 裁切选中（0）</button>
+        </div>
+        <div id="tab2-ct-msg" class="msg"></div>
+      </div>
+
+      <!-- ── 右：裁切产物 ＋ 折叠的高级（旧页面渲染能力，保留）── -->
+      <div class="pane side">
+        <h3>⑤ 裁切产物</h3>
+        <p class="muted">落点：<code>3_Cropped_Tiff/&lt;目录键&gt;/P&lt;页&gt;-C&lt;列&gt;-R&lt;行&gt;.tiff</code>。
+          一次提交本页<b>全部框</b>（C/R 由后端按网格位次排；分多次各传一枚会各从 C1-R1 起、互相覆盖）。</p>
+        <div class="caption" id="tab2-crop-dir">目录键：—</div>
+        <div id="tab2-crop-out" class="tree scroll"></div>
+        <div id="tab2-crop-msg" class="msg"></div>
+
+        <details class="logbox adv-panel" id="tab2-adv">
+          <summary>高级：单页预览渲染（已由 tab1 一键高清化取代）</summary>
+          <p class="muted">整页渲染单页 ≈64 s（1200 dpi 48bit ⇒ 8500×12236）；<b>整本禁止</b>
+            （851 页 ≈6.4 h）。渲染走老工程引擎子进程，异步 + 进度 + 可取消。
+            常规流程请用 tab1「⚡ 一键高清化」。</p>
+          <label class="field"><span>源 PDF（1_Original_PDF）</span>
+            <select id="tab2-source"></select></label>
+          <label class="field"><span>页号（1-based）</span>
+            <input id="tab2-page" type="number" min="1" value="1"></label>
+          <label class="field"><span>目标 dpi</span>
+            <select id="tab2-dpi">
+              <option value="1200" selected>1200（缺省）</option>
+              <option value="2400">2400（旧产线，≈108 s/页）</option>
+            </select></label>
+          <label class="inline"><input id="tab2-overwrite" type="checkbox"> 覆盖已有产物</label>
+          <label class="inline"><input id="tab2-force" type="checkbox"> 强制提交（跳过 dpi 整数倍预检）</label>
+          <button id="btn-tab2-generate" class="btn primary block" data-action="tab2-generate">⚙️ 开始生成 HighRes（异步）</button>
+          <button id="btn-tab2-cancel" class="btn block" data-action="tab2-cancel" disabled>✖ 取消当前任务</button>
+          <div class="progress-wrap">
+            <div class="progress"><div id="tab2-progress-bar" class="bar" style="width:0%"></div></div>
+            <div id="tab2-progress-msg" class="muted">空闲</div>
+          </div>
+          <h3>已有产物（<code>2_HighRes_PDF/&lt;目录键&gt;/</code>）</h3>
+          <div id="tab2-products" class="tree scroll"></div>
+          <details class="logbox"><summary>任务日志（尾部）</summary>
+            <pre id="tab2-log" class="scroll"></pre></details>
+        </details>
         <div id="tab2-msg" class="msg"></div>
       </div>
     </div>

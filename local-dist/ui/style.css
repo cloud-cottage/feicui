@@ -281,3 +281,29 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent-line
 .suggest-item .hint { color: var(--muted); font-size: 11px; white-space: nowrap;
   overflow: hidden; text-overflow: ellipsis; max-width: 45%; }
 .suggest-empty { padding: 6px 8px; font-size: 11px; color: var(--muted); }
+
+/* ═══════════ Phase B：tab1「⚡ 一键高清化」＋ tab2 切图台（无新依赖，纯本地样式）═══════════ */
+.hr-card { margin-top: 12px; }
+.hr-grid { display: grid; grid-template-columns: 1.15fr 1fr; gap: 14px; align-items: start; }
+.hr-note { margin-top: 4px; line-height: 1.6; }
+.hr-note b { color: var(--accent-deep); }
+.cur.warn { background: var(--warn-bg); border-color: var(--warn-line); color: var(--warn); }
+.cur.mono { font-size: 11px; word-break: break-all; }
+.w-num { width: 96px; }
+.row.tight { margin-top: 4px; gap: 6px; }
+select.grow { flex: 1 1 320px; min-width: 240px; }
+
+/* 切图台 */
+.ct-col { grid-template-columns: 1.45fr 1fr; align-items: start; }
+.canvas-wrap { position: relative; border: 1px solid var(--line); border-radius: 10px;
+  background: #f7f7f7; margin-top: 8px; overflow: hidden; }
+#tab2-canvas { display: block; width: 100%; height: auto; cursor: crosshair;
+  touch-action: none; user-select: none; }
+.canvas-hint { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-size: 12px; color: var(--muted); pointer-events: none; }
+.canvas-hint[hidden] { display: none; }
+.adv-panel { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 8px; }
+.adv-panel > summary { font-size: 12px; color: var(--muted); cursor: pointer; }
+.adv-panel .field { max-width: 320px; }
+#tab2-crop-out { max-height: 30vh; }
+

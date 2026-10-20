@@ -449,3 +449,63 @@ tab2_crop({pdf, page, boxes, dpi=1200, cr_from_boxes?}) → {ok, outputs[{name,p
   ＋ 读数 `readings_{highres,detect_crop,api}.json`（产物落在该目录的沙箱 feicui 根，**没污染 `output/`**）。
 
 **未测**：整本 851 页的端到端（红线：不跑整本）、Windows 上的 pymupdf/tifffile 行为、UI 接线（另单）。
+
+---
+
+## 12. UI 接线（Phase B）：tab1「⚡ 一键高清化」＋ tab2「切图台」（2026-10-20）
+
+**范围**：只动 `local-dist/ui/{index.html,style.css,app.js}` ＋ `api.py` **新增一个**方法
+`tab2_list_sources()`；`local-dist/src/*` 算法与 Phase A 契约签名**一字未改**；**tab3 整块一字未改**
+（`domtest_tabs.py` 与 `git show HEAD:…index.html` 的 tab3 块逐字节比对，4868 字符全等）。
+**零新依赖**：无 CDN、无新 npm 包、无打包步骤（仍是一个 `<script src="app.js">`）。
+
+### 12.1 tab1：⚡ 一键高清化卡片
+
+- **源＝当前选中行**（表格点一行即同步；未选中时点「开始」只红字提示，不打桥）；
+- **dpi 三档下拉 300 / 600 / 1200，默认 1200**，紧贴一行小字：
+  `300 ≈ 5.4 MB/页｜600 ≈ 15.5 MB/页｜1200 ≈ 13.3 MB/页（1200 反而最小，PNG 对硬边更友好）｜约 6.2 s/页`；
+- 页区间 `from` / `to`（留空＝全部）；「⚡ 开始」/「✖ 取消」（长任务期间开始禁用、取消可用）；
+- 进度：进度条 ＋ `pages_done/pages_total` ＋ 累计 MB ＋ 当前 state（900 ms 轮询
+  `tab1_highres_status`，并收 `onProgress({kind:'tab1_highres'})` 主动推）；
+- 完成 ⇒ 显示产物绝对路径 ＋ 「➡ 去 tab2 切图」（切页）；失败/取消 ⇒ 红字（不 `alert`）。
+
+### 12.2 tab2：切图台（原页级渲染降级为折叠面板）
+
+1. **源列表**＝`tab2_list_sources()`（扫 `2_HighRes_PDF/**/*.pdf`，递归；页数用 pymupdf 惰性取，
+   取不到为 `null`；目录键走 `config/book_dir_keys.json`，未登记但已在 `<目录键>/` 里 ⇒ `from_dir`）；
+2. **选页**：数字输入 ＋ 上一页/下一页，明标「检测坐标系 400dpi」；
+3. **🔍 自动检测** ⇒ `tab2_detect`，`preview_png_b64` 贴进 `<canvas>`（整页降采样至宽 ≤1000，后端已画框）；
+   框**可单击删除**（点中先变红）、框内拖拽移动、选中框角手柄改大小、**空白双击新增**、`Delete` 删选中框；
+   「♻️ 全部重检」/「🧹 清空框」；框数同步显示在「检测到 N 枚」与按钮「✂️ 裁切选中（N）」上；
+4. **✂️ 裁切选中（N）** ⇒ `tab2_crop({pdf, page, boxes, dpi:1200})` ⇒ 列产物（名称/尺寸/字节）＋
+   明标落点 `3_Cropped_Tiff/<目录键>/`（含 `dir_key_source`）；
+5. **高级：单页预览渲染**（`<details>` 默认收起，标签写明「已由 tab1 一键高清化取代」）——原
+   `tab2_generate` / 1200·2400dpi / 覆盖 / 强制 / 进度 / 日志 / 已有产物树**全部保留**，`id` 未改名。
+
+坐标口径：画布一切换算只经后端 `preview_scale`（视口 → canvas → 400dpi 页坐标），框一律以
+`{x1,y1,x2,y2}`（400dpi）发给后端，序号由前端按当前顺序重排。
+
+### 12.3 验收读数（渲染后 DOM，真窗口 `evaluate_js`）
+
+| 脚本 | 读数 | 说明 |
+| --- | --- | --- |
+| `selftest.py --no-e2e` | **80 / 0** | 逻辑层回归，未降 |
+| `domtest.py` | **39 / 0** | tab3 渲染后 DOM（未改一个断言） |
+| `domtest_yinyuan.py` | **11 / 0** | yinyuan 接入 |
+| `domtest_tabs.py`（新增） | **20 / 0** | 见下 |
+
+`domtest_tabs.py` 覆盖：tab1 dpi 下拉**选项恰为 `300/600/1200`、默认选中 `1200`**、体积提示文案、
+未选中行的红字拒绝、源行跟随选中行、进度条 40%（2/5 页 · 27.0 MB）、完成态产物路径与「去 tab2」真跳页；
+tab2 节点齐备、canvas 有尺寸（714×1000 intrinsic）、源列表来自 `2_HighRes_PDF`、高级面板 `details.open=false`
+且 9 个旧节点全在其内、注入 3 枚假框后**canvas 框数＝3**、单击框 3→2、双击空白 2→3、清空后 0 且裁切置灰；
+tab3 块与 HEAD 逐字节相同 ＋ 渲染后 41 个 id 集合不变。读数落 `local-dist/build/readings-dom-tabs.json`。
+
+**另做一次真后端贯通**（UI 实发的那组键，非注入）：`tab1_highres_start({dpi:300,page_from:1,page_to:1})`
+⇒ `done` 1/1 页 0.34 MB / 2.0 s；`tab2_list_sources` 认到该 HighRes PDF（`from_dir`、1 页）；
+`tab2_detect` 1 枚（2205×4095 · preview 1000×1857 · scale 0.4535 · 0.19 s）；
+`tab2_crop` ⇒ `P1-C1-R1.tiff` 1629×1710 / 155 KB（0.23 s）。
+
+**未测**：1200dpi 整页/整本的真耗时与体积（Phase A §11.4 已实测，本单未复测）；拖拽移动/角手柄改大小
+与「裁切」按钮只做了代码路径与单击/双击/清空的 DOM 断言，未在画布上真拖（WebKit 里合成拖拽序列
+`mousedown→mousemove→mouseup` 的读数可信度低于直接断言，留待人工点检）。
+

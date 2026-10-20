@@ -14,7 +14,8 @@ web/node_modules/
 dist/
 web/dist/
 # 站内直链下载包：`web/scripts/fetch-downloads.mjs` 在 build 前从 latest Release 拉到
-# `web/public/downloads/`（feicui-mac-s1.dmg / feicui-win-s1.zip，单件 ≈ 94 MB）。
+# `web/public/downloads/`（v1.1.0 起为 feicui-mac-lite.dmg / feicui-win-lite.zip，单件 ≈ 94 MB；
+# 含 OCR 的 feicui-mac-pro.dmg ≈ 150 MB **不站内托管**，只留 Release）。
 # 体积远超 Git 适合的范围 ⇒ 只进 Release 与构建产物，**不入库**。
 web/public/downloads/
 

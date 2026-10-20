@@ -282,34 +282,45 @@
             <h1>「斐萃」玺印解析任务台</h1>
             <p>本地运行的玺印档案元数据编辑工具，支持印面释文、朝代、作者结构化管理</p>
             <div class="dl-row">
-                <a href="/downloads/feicui-mac-s1.dmg" download class="btn btn-primary dl-btn">
-                    下载 macOS 版（.dmg）
-                    <span class="dl-meta">Apple Silicon ｜ 94 MB</span>
+                <a href="/downloads/feicui-mac-lite.dmg" download class="btn btn-primary dl-btn">
+                    下载 macOS 精简版（.dmg）
+                    <span class="dl-meta">斐萃_lite ｜ 无 OCR ｜ Apple Silicon ｜ 约 94 MB</span>
                 </a>
-                <a href="/downloads/feicui-win-s1.zip" download class="btn btn-primary dl-btn">
-                    下载 Windows 版（.zip）
-                    <span class="dl-meta">Win 10/11 x64 ｜ 94 MB</span>
+                <a href="/downloads/feicui-win-lite.zip" download class="btn btn-primary dl-btn">
+                    下载 Windows 精简版（.zip）
+                    <span class="dl-meta">斐萃_lite ｜ 无 OCR ｜ Win 10/11 x64 ｜ 约 94 MB</span>
+                </a>
+                <a href="https://github.com/cloud-cottage/feicui/releases/latest" target="_blank" rel="noopener" class="btn btn-secondary dl-btn" id="dl-pro">
+                    下载 macOS 专业版（.dmg）
+                    <span class="dl-meta">斐萃_pro ｜ 含 OCR ｜ Apple Silicon ｜ 约 150 MB</span>
                 </a>
             </div>
             <p class="dl-hint">
+                <strong>含 OCR 专业版（斐萃_pro，约 150 MB，macOS）</strong>内置 RapidOCR 印章文字识别，
+                体积超出网页宿主单文件 100 MB 上限，<strong>未站内托管</strong> —— 点上面第三个按钮跳转
+                <code>releases/latest</code> 页面下载 <code>feicui-mac-pro.dmg</code>。
+            </p>
+            <p class="dl-hint">
                 macOS：打开 DMG 把「斐萃」拖进「应用程序」，首次<strong>右键 App →「打开」</strong>（未签名，仅需一次）<br>
-                Windows：<strong>解压整个目录</strong>后双击 <code>斐萃-s1\斐萃.exe</code> —— 不要单独拷出 exe，需已装 WebView2
+                Windows：<strong>解压整个目录</strong>后双击 <code>斐萃_lite\斐萃.exe</code> —— 不要单独拷出 exe，需已装 WebView2
             </p>
             <details class="tut" open>
                 <summary>Windows 详细安装教程（点开 / 收起）</summary>
                 <ol>
-                    <li><strong>下载并完整解压</strong>：右键 zip →「全部解压缩」。<strong>必须保留整个目录</strong>（<code>斐萃-s1</code> 与 <code>_internal</code>），只把 <code>斐萃.exe</code> 单独拖出来将无法启动。</li>
-                    <li><strong>双击运行</strong>：进入 <code>斐萃-s1</code> 文件夹，双击 <code>斐萃.exe</code>。</li>
+                    <li><strong>下载并完整解压</strong>：右键 zip →「全部解压缩」。<strong>必须保留整个目录</strong>（<code>斐萃_lite</code> 与 <code>_internal</code>），只把 <code>斐萃.exe</code> 单独拖出来将无法启动。</li>
+                    <li><strong>双击运行</strong>：进入 <code>斐萃_lite</code> 文件夹，双击 <code>斐萃.exe</code>。</li>
                     <li><strong>SmartScreen 提示（首次）</strong>：本程序未做数字签名，Windows 会提示「已保护你的电脑」→ 点 <strong>「更多信息」→「仍要运行」</strong>（属正常现象）。</li>
                     <li><strong>杀毒软件提示</strong>：个别杀软可能误报，选「允许 / 加入信任列表」即可。</li>
                     <li><strong>WebView2 运行时</strong>：Windows 10/11 一般已内置。若双击后<strong>一闪而过、没有窗口</strong>，需安装一次：
                         <a href="https://developer.microsoft.com/microsoft-edge/webview2/" target="_blank" rel="noopener">微软官网 · WebView2 运行时（常青版安装程序）</a>，装完重新双击即可。</li>
                     <li><strong>数据保存在哪</strong>：<code>%APPDATA%\斐萃</code>（首次运行自动创建，无需配置；卸载直接删目录）。</li>
                 </ol>
-                <p class="tut-note">当前 Windows 版<strong>不含 OCR</strong>（印章文字识别）功能，其余与 macOS 版一致；含 OCR 的 macOS 完整版（150 MB）超出网页单文件限制，需要请联系。</p>
+                <p class="tut-note">Windows 精简版（<code>斐萃_lite</code>）<strong>不含 OCR</strong>（印章文字识别）功能，其余与 macOS 精简版一致；<strong>含 OCR 的专业版（<code>斐萃_pro</code>，macOS，约 150 MB）</strong>见上方第三个按钮（跳 GitHub Release 下载）。</p>
             </details>
             <p class="dl-hint">
-                含 OCR 的 macOS 完整版（150 MB）体积超出网页宿主单文件限制，需要请联系。
+                <strong>两个包怎么选</strong>：只要归档、切图、命名 ⇒ 下 <code>斐萃_lite</code>（94 MB，站内直链，最快）；
+                要印面<strong>释文 OCR 识别与纠错建议</strong> ⇒ 下 <code>斐萃_pro</code>（150 MB，含 RapidOCR，跳
+                <a href="https://github.com/cloud-cottage/feicui/releases/latest" target="_blank" rel="noopener">GitHub Release 页</a>）。
                 <a href="#guide">使用说明 ↓</a>
             </p>
         </div>
@@ -348,8 +359,20 @@
         <div class="card" id="changelog">
             <h2>版本迭代 · 本地分发版</h2>
             <p class="muted" style="font-size:13px;color:#666;margin:-4px 0 16px">
-                按时间倒序。<strong>v1.0.0</strong> 是首个公开分发的版本；其前的条目为内部迭代阶段（按日期记录，未编版本号）。
+                按时间倒序。当前最新 <strong>v1.1.0</strong>；<strong>v1.0.0</strong> 是首个公开分发的版本；其前的条目为内部迭代阶段（按日期记录，未编版本号）。
             </p>
+
+            <div class="log-item">
+                <div class="log-head"><span class="log-ver">v1.1.0</span><span class="log-date">2026-10-20 · 切图台字段识别与命名升级</span></div>
+                <ul>
+                    <li><strong>切图台三字段自动识别</strong>（tab2）：每枚印自动带出<strong>释文 / 状态字 / 编号</strong>，三列在画布旁可逐枚<strong>就地编辑</strong>；识别分低于 0.95 且未经多数票确认者标「待复核」，<strong>只提示不改字</strong></li>
+                    <li><strong>阅读顺序</strong>（tab2 / tab1 元数据共用）：<code>auto</code>（按编号序列自动推断，编号即版序）或人工指定 <code>rtl-ttb</code> / <code>ltr-ttb</code> / <code>rtl-btt</code> / <code>ltr-btt</code>；<strong>决定列号 <code>C</code> 与行号 <code>R</code> 的方向</strong>（右列/左列、上行/下行谁先），优先序「人工 ＞ 编号推断 ＞ 书级元数据 ＞ 兜底」</li>
+                    <li><strong>切片文件名升级</strong>：<code>编号_P页码_C列_R行_释文_朝代_作者.tiff</code>（例 <code>0424_P370_C1_R1_中羞行府_清中期_吳熙載.tiff</code>；空字段写 <code>NA</code> 保持位置稳定）；<strong>无编号自动回落旧名</strong> <code>P&lt;页&gt;-C&lt;列&gt;-R&lt;行&gt;.tiff</code>，老批次不受影响</li>
+                    <li><strong>tab3 兼容新命名</strong>：裁切件页签按<strong>新名 / 旧名 / <code>-O</code> 原始切片</strong>三形态都能解析出页·列·行，混合目录照常浏览</li>
+                    <li><strong>两个包改名</strong>：无 OCR 的 <code>斐萃_lite</code>（macOS 94 MB / Windows 94 MB，<strong>本页站内直链</strong>）／含 RapidOCR 的 <code>斐萃_pro</code>（macOS 约 150 MB，超网页单文件上限，<strong>跳 GitHub Release 下载</strong>）；旧名 <code>斐萃-s1</code> / <code>斐萃-s2</code> 退役</li>
+                    <li><strong>纠错口径收紧</strong>：只认<strong>权威词表</strong>与<strong>同页多数票 ≥ 3</strong>，<strong>禁止猜测式改字</strong>（曾把正确的「中羞行府」误改成「中差行府」）</li>
+                </ul>
+            </div>
 
             <div class="log-item">
                 <div class="log-head"><span class="log-ver">v1.0.1</span><span class="log-date">2026-10-20 · 高清化与切图台</span></div>

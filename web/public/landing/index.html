@@ -359,8 +359,21 @@
         <div class="card" id="changelog">
             <h2>版本迭代 · 本地分发版</h2>
             <p class="muted" style="font-size:13px;color:#666;margin:-4px 0 16px">
-                按时间倒序。当前最新 <strong>v1.1.0</strong>；<strong>v1.0.0</strong> 是首个公开分发的版本；其前的条目为内部迭代阶段（按日期记录，未编版本号）。
+                按时间倒序。当前最新 <strong>v1.1.1</strong>；<strong>v1.0.0</strong> 是首个公开分发的版本；其前的条目为内部迭代阶段（按日期记录，未编版本号）。
             </p>
+
+            <div class="log-item">
+                <div class="log-head"><span class="log-ver">v1.1.1</span><span class="log-date">2026-10-20 · 预览、标题与底层口径修正</span></div>
+                <ul>
+                    <li><strong>tab1 PDF 快速预览</strong>（新）：填页码或 ◀▶ 翻页即时看渲染图，96 dpi 限宽 760（<strong>绝不渲 1200 dpi 整页</strong>），内存 LRU 8 张；「设为起始页」一键写入高清化的起始页；实测单页冷调 <strong>0.398 s</strong>、二次命中缓存 <strong>0.000 s</strong></li>
+                    <li><strong>窗口标题区分 Lite / Pro</strong>：标题栏按运行期能力自动带 <code>· Lite</code> 或 <code>· Pro</code>（窗口标题 / <code>document.title</code> / 程序信息三处同源），不用再猜自己装的是哪一档；打包态实测 <code>app_title</code> ⇒ 「… · 本地封装分发版 <strong>· Lite</strong>」</li>
+                    <li><strong>元数据侧车路径统一</strong>：全部走 <code>paths.data_dir()</code>，并在启动时把旧开发残留 <code>pdf_meta.json</code> 幂等迁到数据根（不覆盖已有内容）⇒ 修掉「填了朝代/作者却仍写出 <code>NA_NA</code>」；<code>test_meta_path</code> <strong>10/10</strong>，实测命名由 <code>…_NA_NA.tiff</code> 变为 <code>0421_P99_C1_R1_中候_秦_佚名.tiff</code></li>
+                    <li><strong>高清件元数据键回落</strong>：<code>2_HighRes_PDF</code> 里的 <code>-HighRes.pdf</code> 读不到书级元数据时，按「原名 → 去后缀 → 目录键 → 书名前缀（仅唯一命中）」五级回查，界面标出来源；<code>test_meta_resolve</code> <strong>16/16</strong>（含歧义不猜、只读不污染）</li>
+                    <li><strong>Lite 包无 OCR 优雅降级</strong>：不再弹 <code>ModuleNotFoundError</code>，仍能<strong>只做红印检测</strong>、三字段留空手动填（返回 <code>ocr_available:false</code>），阅读顺序回落到书级元数据；<code>test_ocr_fallback</code> <strong>9/9</strong></li>
+                    <li><strong>切片带物理尺寸</strong>：每枚 TIFF 写入 <code>XResolution/YResolution</code> 与单条 <code>ImageDescription(270)</code>（270 条含宽×高 mm，另 282/283 分辨率、296 单位），<code>_fields.json</code> 升 <code>v2</code> 逐枚带 <code>width_mm/height_mm/size_source</code>；<code>test_slice_size</code> <strong>16/16</strong>，实测 1200 dpi 切片回读 270/282/283/296 齐全、界面显示「12 × 12 mm」</li>
+                    <li><strong>目录键改人工确认书名</strong>：<code>3_Cropped_Tiff/</code> 的目录键只认 tab1 人工确认的书名（未确认回落 PDF 文件名并在界面提示），确认那一刻<strong>自动迁移</strong>旧目录并逐件校验 sha256、失败整体回滚；<code>test_dir_key</code> <strong>29/29</strong>，沙箱实测迁移 3 件 730 B 且回读 sha256 一致</li>
+                </ul>
+            </div>
 
             <div class="log-item">
                 <div class="log-head"><span class="log-ver">v1.1.0</span><span class="log-date">2026-10-20 · 切图台字段识别与命名升级</span></div>

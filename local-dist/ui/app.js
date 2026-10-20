@@ -223,6 +223,7 @@
     $('tab1-dynasty').value = m.dynasty || '';
     $('tab1-author').value = m.author || '';
     $('tab1-notes').value = m.notes || '';
+    if ($('tab1-book-name')) { $('tab1-book-name').value = m.book_name || ''; }
     $('tab1-reading-order').value = m.reading_order || 'auto';
     if ($('tab1-true-dpi')) {
       $('tab1-true-dpi').value = (m.true_dpi === null || m.true_dpi === undefined) ? '' : m.true_dpi;
@@ -233,6 +234,8 @@
     if (!ST.tab1.selected) { setMsg('tab1-msg', '请先选中一行', 'err'); return; }
     call('tab1_save_meta', {
       filename: ST.tab1.selected.filename,
+      // 书籍名称＝**目录键的唯一来源**（与 PDF 文件名无关；空串＝清空 ⇒ 目录键回落文件名）
+      book_name: $('tab1-book-name') ? $('tab1-book-name').value : '',
       dynasty: $('tab1-dynasty').value,
       author: $('tab1-author').value,
       notes: $('tab1-notes').value,
@@ -240,9 +243,28 @@
       // 空串 = 清空（切图回落页面尺寸推算）；有值 ⇒ 切图优先按它算 mm
       true_dpi: $('tab1-true-dpi') ? $('tab1-true-dpi').value : ''
     }).then(function (r) {
-      setMsg('tab1-msg', (r && r.msg) || '', r && r.ok ? 'ok' : 'err');
-      if (r && r.ok) loadTab1(false);
+      if (!r || !r.ok) { setMsg('tab1-msg', (r && r.msg) || '保存失败', 'err'); return; }
+      var m = r.migration;
+      if (m) {
+        if (m.ok) {
+          setMsg('tab1-msg', r.msg + ' · ' + migText(m), 'ok');
+        } else {
+          setMsg('tab1-msg', '⚠️ ' + (m.msg || '目录迁移失败') +
+            '（元数据已保存；旧目录 ' + (m.from || '—') + ' 未改动）', 'err');
+        }
+      } else {
+        setMsg('tab1-msg', r.msg || '', 'ok');
+      }
+      loadTab1(false);
     });
+  }
+
+  // 迁移提示文案：「目录已从 `旧` 迁移到 `新`（N 件 / X MB）」
+  function migText(m) {
+    var mb = ((m.bytes || 0) / 1048576);
+    mb = mb >= 10 ? mb.toFixed(0) : mb.toFixed(1);
+    return '目录已从 `' + (m.from || '—') + '` 迁移到 `' + (m.to || '—') + '`（' +
+      (m.files || 0) + ' 件 / ' + mb + ' MB）';
   }
 
   // ── tab1 · ⚡ 一键高清化（Phase A 后端：tab1_highres_start / status / cancel）──
@@ -847,6 +869,17 @@
     }).catch(function () { return null; });
   }
 
+  // 目录键文案（tab2 页头）：来源 ∈ manual | filename-fallback；fallback 时加确认提示
+  function ctDirText(dirKey, src) {
+    var t = '目录键：' + (dirKey || '—') + '（' + (src || '?') + '）⇒ 3_Cropped_Tiff/' +
+      (dirKey || '') + '/';
+    return t + ctDirHint(src);
+  }
+
+  function ctDirHint(src) {
+    return src === 'filename-fallback' ? ' · 建议去 tab1 确认书名' : '';
+  }
+
   function ctOnSourceChange(silent) {
     var ct = ctState(), it = ctItem();
     // 同一份 PDF 的「静默刷新」（切页签回来 / 点「🔄 刷新」）⇒ **保留**已调好的框，别把人工微调清掉
@@ -854,7 +887,8 @@
       ct.pages = it.pages || ct.pages;
       ct.dirKey = it.dir_key || ct.dirKey;
       $('tab2-ct-srcinfo').textContent = it.name + ' · ' + it.size_mb + ' MB · 目录键 ' + it.dir_key +
-        '（' + it.dir_key_source + '）· ' + (it.pages ? it.pages + ' 页' : '页数未知');
+        '（' + it.dir_key_source + '）· ' + (it.pages ? it.pages + ' 页' : '页数未知') +
+        ctDirHint(it.dir_key_source);
       ctUpdatePageInfo();
       ctRender();
       return;
@@ -873,9 +907,8 @@
     ct.dirKey = it.dir_key || '';
     $('tab2-ct-srcinfo').textContent = it.name + ' · ' + it.size_mb + ' MB · 目录键 ' + it.dir_key +
       '（' + it.dir_key_source + '）· ' + (it.pages ? it.pages + ' 页' : '页数未知') +
-      ' · 改于 ' + (it.mtime || '—');
-    $('tab2-crop-dir').textContent = '目录键：' + (it.dir_key || '—') +
-      '（' + (it.dir_key_source || '?') + '）⇒ 3_Cropped_Tiff/' + (it.dir_key || '') + '/';
+      ' · 改于 ' + (it.mtime || '—') + ctDirHint(it.dir_key_source);
+    $('tab2-crop-dir').textContent = ctDirText(it.dir_key, it.dir_key_source);
     if (!silent) { ct.page = 1; $('tab2-ct-page').value = '1'; }
     $('tab2-canvas-hint').hidden = false;      // 新源／新页：先提示「自动检测」
     ctUpdatePageInfo();
@@ -1069,8 +1102,7 @@
     });
     if (!outs.length) { box.innerHTML = '<div class="muted">（无产物）</div>'; }
     var skipped = Array.isArray(r.skipped) ? r.skipped.length : (r.skipped || 0);
-    $('tab2-crop-dir').textContent = '目录键：' + (r.dir_key || '—') + '（' + (r.dir_key_source || '?') +
-      '）⇒ 3_Cropped_Tiff/' + (r.dir_key || '') + '/';
+    $('tab2-crop-dir').textContent = ctDirText(r.dir_key, r.dir_key_source);
     var fc = (r.fields_count === undefined ? 0 : r.fields_count);
     setMsg('tab2-crop-msg', '✅ ' + outs.length + ' 件落到 3_Cropped_Tiff/' + (r.dir_key || '') + '/ · ' +
       (r.elapsed_s === undefined ? '?' : r.elapsed_s) + ' s' +
@@ -1167,7 +1199,9 @@
         ST.tab3.ocrAvailable ? '' : 'err');
       ST.tab3.view = ST.tab3.view || r.view_default || 'medium';
       ST.tab3.page = 0;
+      ST.tab3.dirMeta = r.subdir_meta || [];
       $('tab3-template').textContent = r.template || '—';
+      renderTab3DirInfo(r);
       $('btn-tab3-test').disabled = !ST.tab3.isAdmin;
       $('btn-tab3-test').title = ST.tab3.isAdmin ? '' : '仅管理员可生成测试 TIFF';
       $('tab3-shiwen-label').textContent = '印面释文（最多 ' + ST.tab3.limits.shiwen_max + ' 个汉字）';
@@ -1184,6 +1218,17 @@
     });
   }
 
+  function renderTab3DirInfo(r) {
+    var el = $('tab3-dirinfo');
+    if (!el || !r) { return; }
+    var src = r.dir_key_source || 'unregistered';
+    var t = '目录键：' + (r.dir_key || '—') + '（' + src + '）';
+    if (src === 'filename-fallback') { t += ' · 建议去 tab1 确认书名'; }
+    if (src === 'legacy') { t += ' · 旧键目录（只读，不自动迁）'; }
+    if (r.dir_key_legacy) { t += ' · 同名新键目录：' + (r.dir_key_book || '—'); }
+    el.textContent = t;
+  }
+
   function renderSubdirTabs() {
     var box = $('tab3-subdirs');
     box.innerHTML = '';
@@ -1191,11 +1236,18 @@
       box.innerHTML = '<span class="muted">（3_Cropped_Tiff 下无子目录）</span>';
       return;
     }
+    var meta = {};
+    (ST.tab3.dirMeta || []).forEach(function (m) { meta[m.dir_key] = m; });
     ST.tab3.subdirs.forEach(function (d) {
+      var m = meta[d] || {};
       var b = document.createElement('button');
-      b.textContent = '📁 ' + d;
-      b.title = d;
+      b.textContent = (m.legacy ? '🔖 ' : '📁 ') + d;
+      b.title = m.legacy
+        ? ('旧目录键（' + (m.legacy_of || '?') + ' 的历史落点）· 只读展示，不自动迁移；'
+           + '去 tab1 确认书名后保存 ⇒ 自动改名迁移')
+        : d;
       b.classList.toggle('active', d === ST.tab3.curSubdir);
+      b.classList.toggle('legacy', !!m.legacy);
       b.disabled = (d === ST.tab3.curSubdir);
       b.addEventListener('click', function () { ST.tab3.selected = ''; loadTab3(d); });
       box.appendChild(b);

@@ -1,4 +1,5 @@
 {
+  "_DEPRECATED": "已被 book_name 人工确认机制取代，仅作历史映射参考。自 2026-10-20 起：目录键＝tab1 人工确认的书籍名称（pdf_meta.<书>.book_name ⇒ 3_Cropped_Tiff/<书名>/，dir_key_source=manual）；未确认 ⇒ PDF 文件名（filename-fallback）。**代码零读取点**（grep 可证）；本文件保留只为历史追溯与旧目录迁移对照，改它不会影响任何产物落点。",
   "schema": "yinsuo.feicui.book_dir_keys.v1",
   "status": "ADDITIVE_PENDING_JING_REGISTRATION",
   "note": "影像命名「书籍目录键」表（加法文件）。名字形与落点口径真源＝docs/image-naming-draft-v0.1.md（§6 Kevin 四答 ＋ §6.1 落地清单）：落点 output/books/<目录键>/，目录键**尽可能 ISBN；无 ISBN 落中文书名**，身份未确认者回落 PDF 名并逐条标记（dir_key_source=pdf_name_unconfirmed）。本文件**只增不改**：既有 book_codes.json（书简码，平台签发面）与本表**职责不同**，后者是本地落盘目录名，不得相互覆盖。**待 Jing 按规范流程入册**（本单不接 worker、不做全量回填、不改库）。键＝PDF 文件名（逐字，含扩展名，与 config/templates.json 同源）。",

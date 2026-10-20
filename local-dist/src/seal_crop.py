@@ -18,8 +18,9 @@
      编号只当前缀，**不改 C/R 方向**）。段清洗：`/ \ : * ? " < > |` 与换行 ⇒ `-`、连字符折叠、
      首尾去 `-`、空段写 `NA`、整名 >200 字符按「释文→作者→朝代」各留 ≥4 字截断（仍超则截 200 加 `~`）。
      朝代/作者优先级：**印级 fields > 本书元数据（tab1）> `NA`**（`build_crop_name`）。
-4. 落点 `out_dir/<目录键>/`：目录键取 `config/book_dir_keys.json`（真源 `server/app/naming.py`）；
-   未登记 ⇒ **回落到书名自身**（去扩展名、压空白）并标 `dir_key_source: "fallback"`（不静默）。
+4. 落点 `out_dir/<目录键>/`：目录键**只认 tab1 人工确认的书名**（`api.tab1_save_meta` ⇒
+   `crop_page(dir_key=…)` 直接传入）；没传 ⇒ 回落**文件名主名**（去扩展名、压空白）并标
+   `dir_key_source: "filename-fallback"`（不静默）。**不读**已退场的 `config/book_dir_keys.json`。
 
 ## C/R 排序规则（本模块自定，写死在这里）
 
@@ -83,7 +84,6 @@ from __future__ import annotations
 import json
 import os
 import re
-import sys
 import time
 from datetime import datetime
 from decimal import ROUND_HALF_UP, Decimal
@@ -267,74 +267,42 @@ def _write_tiff(path, arr, *, dpi, description: str) -> None:
         description=description, metadata=None,
     )
 
-_naming_mod = None
-_naming_tried = False
-
-
-def _repo_root() -> Path:
-    """源码态：`local-dist/src/seal_crop.py` → 仓根；打包态：`FEICUI_WEBUI_DIR` 的父级。"""
-    env = os.environ.get("FEICUI_WEBUI_DIR")
-    if env:
-        return Path(env).resolve().parent
-    return Path(__file__).resolve().parents[2]
-
-
-def _naming():
-    """拿 `server/app/naming.py`（纯 stdlib 模块）；拿不到 ⇒ `None`（调用方回落本地实现）。"""
-    global _naming_mod, _naming_tried
-    if _naming_tried:
-        return _naming_mod
-    _naming_tried = True
-    for base in (_repo_root(), Path(__file__).resolve().parents[2],
-                 Path(os.environ.get("FEICUI_WEBUI_DIR") or ".")):
-        server = Path(base) / "server"
-        if (server / "app" / "naming.py").is_file():
-            if str(server) not in sys.path:
-                sys.path.insert(0, str(server))
-            try:
-                from app import naming as _n  # noqa: WPS433（延迟导入）
-                _naming_mod = _n
-            except Exception:
-                _naming_mod = None
-            return _naming_mod
-    return None
-
-
 def _normalize_book_name(pdf_name: str) -> str:
     """书名规范化（与 `naming.normalize_book_name` 同口径：去扩展名、压空白、去首尾空白）。"""
     stem = os.path.splitext(os.path.basename(str(pdf_name)))[0]
     return re.sub(r"\s+", " ", stem).strip()
 
 
-def resolve_dir_key(pdf_name: str, dir_keys_path=None) -> tuple[str, str]:
-    """⇒ `(目录键, 来源)`。来源 ∈ `{ISBN, chinese_title, pdf_name_unconfirmed, fallback}`。
+#: 高清化后缀（与 `pdf_library.HIGHRES_SUFFIX_RE` **同口径**）——**只去一次**，大小写不敏感。
+_HIGHRES_SUFFIX_RE = re.compile(r"[-_](?:highres|高清)$", re.IGNORECASE)
 
-    已登记 ⇒ 表内 `dir_key` / `dir_key_source`；**未登记 ⇒ 回落书名自身**并返回 `"fallback"`
-    （派单口径；`naming` 原值 `fallback_unregistered` 一并映射成 `fallback`，UI 只需认一个词）。
+
+def _strip_highres_suffix(name: str) -> str:
+    """去掉**一次**高清化后缀（`-HighRes` / `_HighRes` / `-高清` / `_高清`）。
+
+    去完为空（例 `-HighRes`）⇒ **原样返回**（不让空键冒出来）。
     """
-    naming = _naming()
-    if naming is not None:
-        try:
-            keys = naming.load_dir_keys(dir_keys_path)
-            key, src = naming.dir_key_entry(pdf_name, keys)
-            src = str(src or "")
-            if src.startswith("fallback"):
-                return key, "fallback"
-            return key, src
-        except Exception:
-            pass
-    # 兜底：直接读表（不依赖 naming 能否 import）
+    s = str(name or "")
+    out = _HIGHRES_SUFFIX_RE.sub("", s)
+    return out if out.strip() else s
+
+
+def resolve_dir_key(pdf_name: str, dir_keys_path=None) -> tuple[str, str]:
+    """⇒ `(目录键, 来源)`；来源**恒为** `'filename-fallback'`。
+
+    2026-10-20 口径变更：目录键**只认 tab1 人工确认的书名**（`api.tab1_save_meta` ⇒
+    `crop_page(dir_key=…)` 直接传入）。本函数只在调用方**没给** `dir_key` 时兜底
+    ⇒ 一律用**文件名主名**（去扩展名、压空白），UI 据此提示「建议去 tab1 确认书名」。
+
+    * **不再读** `config/book_dir_keys.json`（该文件已退场；书名不存在这里，去问 tab1）；
+    * `dir_keys_path` 仅为老调用方**签名兼容**保留，**不再消费**；
+    * **永不抛**。
+    """
     try:
-        p = Path(dir_keys_path) if dir_keys_path else _repo_root() / "config" / "book_dir_keys.json"
-        data = json.loads(p.read_text(encoding="utf-8"))
-        books = data.get("books") if isinstance(data.get("books"), dict) else data
-        entry = books.get(str(pdf_name)) or {}
-        if isinstance(entry, dict) and entry.get("dir_key"):
-            src = str(entry.get("dir_key_source") or "unspecified")
-            return str(entry["dir_key"]), ("fallback" if src.startswith("fallback") else src)
+        stem = _strip_highres_suffix(_normalize_book_name(pdf_name))
     except Exception:
-        pass
-    return _normalize_book_name(pdf_name), "fallback"
+        stem = ""
+    return (stem or "unnamed"), "filename-fallback"
 
 
 def _as_box(b) -> tuple[int, int, int, int]:
@@ -560,7 +528,9 @@ def crop_page(pdf, page: int, boxes, out_dir, pdf_name: str | None = None,
               dir_keys_path=None, reading_order: str | None = None, fields=None,
               write_fields: bool = True, per_seal_json: bool = False,
               order_source: str | None = None, dynasty: str | None = None,
-              author: str | None = None, true_dpi: int | None = None) -> dict:
+              author: str | None = None, true_dpi: int | None = None,
+              dir_key: str | None = None,
+              dir_key_source: str | None = None) -> dict:
     """渲页 ⇒ 按框裁 ⇒ 写 `P<页>-C<列>-R<行>.tiff`（**永不抛**，返回结构化 dict）。
 
     `boxes` 在 `boxes_dpi`（默认 400，＝库内 bbox 系）坐标系；`dpi` 只影响**切图渲页分辨率**
@@ -572,6 +542,10 @@ def crop_page(pdf, page: int, boxes, out_dir, pdf_name: str | None = None,
     `true_dpi`（人工填的真实扫描 dpi）非空且合理 ⇒ mm 走 `manual-dpi` 口径（见 `slice_size_mm`）；
     缺省用页面物理尺寸（`page-box`）。每枚 TIFF 写 XResolution/YResolution/ResolutionUnit
     ＋ **单条** `ImageDescription(270)`（含 `width_mm/height_mm/size_source`）。
+
+    `dir_key` / `dir_key_source`（2026-10-20 新增）：**调用方已定好的目录键**（tab1 人工确认书名
+    ⇒ `manual`；否则文件名 ⇒ `filename-fallback`）。给了就**不再**去查旧映射表（`dir_keys_path`
+    只为老调用方保留）；TIFF 命名规则**一字未改**。
     """
     t0 = time.time()
     try:
@@ -595,7 +569,11 @@ def crop_page(pdf, page: int, boxes, out_dir, pdf_name: str | None = None,
         return {"ok": False, "reason": "ERROR", "msg": f"框格式不对：{exc}"}
 
     name = str(pdf_name or Path(str(pdf)).name)
-    dir_key, dir_key_source = resolve_dir_key(name, dir_keys_path)
+    if dir_key:
+        dir_key = str(dir_key).strip()
+        dir_key_source = str(dir_key_source or "manual")
+    else:
+        dir_key, dir_key_source = resolve_dir_key(name, dir_keys_path)
     target_dir = Path(out_dir) / dir_key
     scale = float(dpi) / float(boxes_dpi)
     order = _norm_order(reading_order)

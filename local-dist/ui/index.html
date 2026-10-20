@@ -119,6 +119,9 @@
         <p class="muted">选中左侧一行后编辑；仅写入本地侧车 <code>local-dist/var/pdf_meta.json</code>。</p>
         <div class="field-block">
           <div class="cur" id="tab1-selected">未选择文件</div>
+          <label class="field"><span>书籍名称（用于目录）</span>
+            <input id="tab1-book-name" type="text" maxlength="80"
+                   placeholder="与 PDF 文件名无关；留空则用文件名作目录"></label>
           <label class="field"><span>朝代</span>
             <select id="tab1-dynasty"></select></label>
           <label class="field"><span>作者</span>
@@ -308,6 +311,7 @@
       <div class="pane">
         <h3>一级子目录</h3>
         <div id="tab3-subdirs" class="subdir-tabs"></div>
+        <div class="caption" id="tab3-dirinfo">目录键：—</div>
         <div class="row" id="tab3-views">
           <button class="btn small view-btn" data-view="large" data-action="tab3-view">🖼️ 大图标</button>
           <button class="btn small view-btn" data-view="medium" data-action="tab3-view">📋 中等图标</button>

@@ -93,6 +93,16 @@ def build_fixture() -> Path:
     # 若 tab3 只认旧模板，这里会显示「命名不合模板」且 P/C/R 空白（本单的阻塞项之一）。
     shutil.copy2(WEBUI_DIR / "assets" / "test_seal.tiff",
                  sub3 / "0424_P370_C1_R1_中羞行府_清中期_吳熙載.tiff")
+    # tab3 **旧目录键只读展示**用：老落点（ISBN 目录键）＋ `_fields.json` 回指本书 PDF。
+    # 目录名特意排在 `A特例` **之后**（'旧' > 'A'）⇒ 默认子目录仍是 `A特例`，不打乱既有断言。
+    old3 = root / lib.TIFF_DIR / "旧键9787000000003"
+    old3.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(WEBUI_DIR / "assets" / "test_seal.tiff",
+                 old3 / "P001-C1-R1-长乐未央-汉-陈巨来.tiff")
+    (old3 / "_fields.json").write_text(json.dumps(
+        {"pdf_name": SOURCE_PDF.name, "page": 1,
+         "items": [{"页": 1, "列": 1, "行": 1, "释文": "长乐未央"}]}, ensure_ascii=False),
+        encoding="utf-8")
     return root
 
 
@@ -148,6 +158,17 @@ JS_TAB1 = """
     src_text: g('tab1-hr-source')?g('tab1-hr-source').textContent:null,
     err_text: err?err.textContent:'', err_class: err?err.className:'',
     goto_label: g('btn-tab1-hr-goto2')?g('btn-tab1-hr-goto2').textContent:''
+  }); })()
+"""
+
+JS_TAB1_BOOKNAME = """
+(() => { const el=document.getElementById('tab1-book-name');
+  return JSON.stringify({
+    exists: !!el, type: el?el.type:null,
+    editable: el?(!el.disabled && !el.readOnly):null,
+    maxlength: el?el.maxLength:0, value: el?el.value:null,
+    placeholder: el?el.placeholder:'',
+    label: (el && el.closest('label'))?el.closest('label').textContent.replace(/\\s+/g,' ').trim():''
   }); })()
 """
 
@@ -237,6 +258,16 @@ def _probe_body() -> None:
     _wait_js("!!document.querySelector('#view-main.active') && !!document.getElementById('tabs')", 30)
     _wait_js("document.querySelectorAll('#tab1-body tr').length > 0", 25)
     time.sleep(1.0)
+
+    # ── ① tab1：**书籍名称**输入框（目录键唯一来源；留空 ⇒ 文件名回落）──
+    t1bn = _read("00_tab1_book_name", JS_TAB1_BOOKNAME)
+    record("tabs/tab1_book_name_input_editable",
+           bool(t1bn.get("exists")) and t1bn.get("type") == "text"
+           and bool(t1bn.get("editable")) and int(t1bn.get("maxlength") or 0) == 80
+           and "书籍名称" in (t1bn.get("label") or ""),
+           f"exists={t1bn.get('exists')} type={t1bn.get('type')!r} "
+           f"editable={t1bn.get('editable')} maxlength={t1bn.get('maxlength')} "
+           f"标签={t1bn.get('label')!r} 占位={t1bn.get('placeholder')!r}")
 
     # ── ① tab1：⚡ 一键高清化卡片（dpi 三档 / 默认 1200 / 进度 / 取消 / 完成后去 tab2）──
     t1 = _read("01_tab1_hr", JS_TAB1)
@@ -333,11 +364,22 @@ def _probe_body() -> None:
            int(cv.get("w") or 0) > 0 and int(cv.get("h") or 0) > 0
            and int(cv.get("css_w") or 0) > 0 and int(cv.get("css_h") or 0) > 0 and bool(cv.get("ctx")),
            f"canvas intrinsic={cv.get('w')}×{cv.get('h')} css={cv.get('css_w')}×{cv.get('css_h')}")
+    # ⚠ 断言口径已随 2026-10-20 目录键改造更新：旧写法要求源信息里出现 ISBN 目录名
+    #   `9787000000001`（`config/book_dir_keys.json` 时代）；现在目录键只认 tab1 书名 /
+    #   文件名主名 ⇒ 不再有 ISBN 目录名，改为校验**文件名主名 + `filename-fallback`**。
+    opts = t2.get("src_options") or []
+    srcinfo = t2.get("srcinfo") or ""
     record("tabs/tab2_sources_listed_from_highres_dir",
-           len(t2.get("src_options") or []) >= 1
-           and any("HighRes.pdf" in (o.get("t") or "") for o in (t2.get("src_options") or []))
-           and "9787000000001" in (t2.get("srcinfo") or ""),
-           f"options={[o.get('t') for o in (t2.get('src_options') or [])]} 源信息={t2.get('srcinfo')!r}")
+           len(opts) >= 1
+           and any("HighRes.pdf" in (o.get("t") or "") for o in opts)
+           and "吴颐人篆刻作品展示-HighRes" in srcinfo
+           and "filename-fallback" in srcinfo,
+           f"options={[o.get('t') for o in opts]} 源信息={srcinfo!r}")
+    capt = t2.get("dir") or ""
+    record("tabs/tab2_head_dir_key_caption",
+           capt.startswith("目录键：") and "⇒ 3_Cropped_Tiff/" in capt
+           and ("manual" in capt or "filename-fallback" in capt),
+           f"#tab2-crop-dir={capt!r}")
     record("tabs/tab2_legacy_render_folded_not_removed",
            t2.get("adv_open") is False and "已由 tab1 一键高清化取代" in (t2.get("adv_summary") or "")
            and not (t2.get("legacy_missing") or [])
@@ -597,6 +639,22 @@ def _probe_body() -> None:
            f"id 数={t3.get('id_count')}（HEAD 静态块 {INFO['tab3_id_count']} 个）"
            f" 视图按钮={t3.get('view_btns')} h2={t3.get('h2')!r}")
 
+    # ── ④-b tab3：**旧目录键按钮只读**（`legacy` 类 + 「只读」提示）＋ 目录键文案 ──
+    t3s = _read("09b_tab3_subdir_legacy",
+                "(() => { const bs=[...document.querySelectorAll('#tab3-subdirs button')];"
+                " return JSON.stringify({count: bs.length,"
+                " items: bs.map(b=>({text: b.textContent.trim(),"
+                " legacy: b.classList.contains('legacy'), title: b.title||''})),"
+                " dirinfo: (document.getElementById('tab3-dirinfo')"
+                "   ?document.getElementById('tab3-dirinfo').textContent:'')}); })()")
+    legs = [x for x in (t3s.get("items") or []) if x.get("legacy")]
+    record("tabs/tab3_legacy_dir_key_button_readonly",
+           int(t3s.get("count") or 0) >= 2 and len(legs) >= 1
+           and all("只读" in (x.get("title") or "") for x in legs)
+           and bool(t3s.get("dirinfo")),
+           f"子目录按钮={t3s.get('count')} 旧键={[(x.get('text'), x.get('legacy')) for x in legs]} "
+           f"目录键文案={t3s.get('dirinfo')!r}")
+
     # ── ⑤ tab3 读**切图台新命名**（`<编号>_P<页>_C<列>_R<行>_…tiff`）──
     #    兼容解析不生效时：这条会看到「命名不合模板」＋三字段空白（＝阻塞项失败）
     new_name = "0424_P370_C1_R1_中羞行府_清中期_吳熙載.tiff"
@@ -645,6 +703,14 @@ def tab3_block(text: str) -> str:
     return text[i:j].strip()
 
 
+def strip_tab3_dirinfo(block: str) -> str:
+    """剔掉本单**新增**的 `#tab3-dirinfo` 一行（`tab3` 静态块唯一允许的改动白名单）。
+
+    除了这一行 caption，tab3 静态块必须与 HEAD **逐字节相同**（渲染后节点另由 `document_id_ok` 复核）。
+    """
+    return re.sub(r'[ \t]*<div class="caption" id="tab3-dirinfo">[^<]*</div>\n', "", block)
+
+
 def head_index_html() -> str:
     try:
         out = subprocess.run(["git", "-C", str(REPO_ROOT), "show", "HEAD:local-dist/ui/index.html"],
@@ -670,13 +736,21 @@ def main(argv: list[str] | None = None) -> int:
     head_html = head_index_html()
     cur_block = tab3_block(cur_html)
     head_block = tab3_block(head_html) if head_html else ""
+    cur_whitelisted = strip_tab3_dirinfo(cur_block)
+    # HEAD 侧同样剔白名单：`#tab3-dirinfo` 那一行**已进 HEAD**（与本单共存），只剔工作区侧
+    # 会让「与 HEAD 逐字节相同」变成恒假（HEAD 留着、工作区被剔掉）。
+    head_whitelisted = strip_tab3_dirinfo(head_block)
+    removed = len(cur_block) - len(cur_whitelisted)
     ids = re.findall(r'id="([^"]+)"', cur_block)
     INFO["tab3_id_count"] = len(ids)
     INFO["tab3_ids"] = sorted(ids)
+    same = bool(cur_block) and (cur_block == head_block
+                                or cur_whitelisted == head_whitelisted)
     record("tabs/tab3_block_byte_identical_to_head",
-           bool(head_block) and cur_block == head_block,
-           f"工作区 tab3 块 {len(cur_block)} 字符 / HEAD {len(head_block)} 字符 "
-           f"（逐字节相同={cur_block == head_block}）")
+           bool(head_block) and same and removed > 0,
+           f"白名单 `#tab3-dirinfo`（工作区 {removed} 字符）外与 HEAD 逐字节相同="
+           f"{cur_whitelisted == head_whitelisted}；工作区 tab3 块 {len(cur_block)} 字符 / "
+           f"HEAD {len(head_block)} 字符")
 
     # 零 CDN / 零新前端依赖：页面无外链脚本样式，app.js 无 import/fetch 外网
     ext = re.findall(r'(?:src|href)="(https?://[^"]+)"', cur_html)

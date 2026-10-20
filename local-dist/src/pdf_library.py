@@ -18,6 +18,7 @@ from __future__ import annotations
 import json
 import re
 import random
+import shutil
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
@@ -286,6 +287,40 @@ def validate_true_dpi(value) -> tuple[bool, int | None | str]:
     return True, n
 
 
+#: 人工确认书名的长度上限（目录名，不是文件名；`filename` 一字不动）。
+BOOK_NAME_MAX = 80
+
+
+def validate_book_name(value) -> tuple[bool, str | None | str]:
+    """校验 **tab1 人工确认的书籍名称**（只用于目录键，**与 PDF 文件名无关**）。
+
+    * `None` / 空串 ⇒ `(True, None)`：不采用书名 ⇒ 目录键回落文件名；
+    * 非空 ⇒ 去首尾空白；**含路径分隔符（`/` `\\`）或控制字符一律拒绝**（不静默剔除，
+      否则两个不同的输入会撞成同一个目录，且给穿越留口子）；
+    * 不得为 `.` / `..`（会命中父目录）；长度 1–80。
+
+    ⇒ `(ok, 规范化后的名字 | 错误提示)`；**不抛**。
+    """
+    if value is None:
+        return True, None
+    try:
+        s = str(value).strip()
+    except Exception:
+        return False, "书籍名称不合法（无法转成文本）"
+    if s == "":
+        return True, None
+    bad = [ch for ch in s if ch in "/\\" or ord(ch) < 32 or ord(ch) == 127]
+    if bad:
+        shown = ", ".join(repr(ch) for ch in bad[:3])
+        return False, (f"书籍名称不能包含路径分隔符（/ \\）或换行/控制字符：{shown}"
+                       f"（当前「{s}」）")
+    if s in (".", ".."):
+        return False, f"书籍名称不能是「{s}」"
+    if len(s) > BOOK_NAME_MAX:
+        return False, f"书籍名称最长 {BOOK_NAME_MAX} 字（当前 {len(s)} 字）"
+    return True, s
+
+
 # ============================================================
 # 书级元数据的**键解析**（2026-10-20 修：高清化后的 PDF 读不到 tab1 元数据）
 # ============================================================
@@ -399,7 +434,7 @@ def resolve_book_meta(pdf_path, *, root=None, books=None) -> tuple[dict, str, st
 
 
 def update_book_meta(filename: str, *, dynasty=None, author=None, notes=None,
-                     reading_order=None, true_dpi=None,
+                     reading_order=None, true_dpi=None, book_name=None,
                      store: Path | str | None = None) -> tuple[bool, str]:
     """人工补填：写入侧车（``local-dist/var/pdf_meta.json``）。缺省键＝不改。
 
@@ -408,6 +443,10 @@ def update_book_meta(filename: str, *, dynasty=None, author=None, notes=None,
 
     `true_dpi`（2026-10-20 新增）：人工填的**真实扫描 dpi**（50–2400 或空），切图算 mm 时优先用；
     空串 ⇒ 清空该键（回落页面尺寸推算）。与探针自动估的 `scan_dpi` **互不覆盖**。
+
+    `book_name`（2026-10-20 新增）：人工确认的**书籍名称**，唯一用途＝ `3_Cropped_Tiff/<书名>/`
+    目录键（见 `resolve_dir_key`）；**与 PDF 文件名无关**（文件名一字不改）。空串 ⇒ 清空
+    （回落文件名作目录键）。非法 ⇒ 拒绝并回提示。
     """
     ok, dyn = validate_dynasty(dynasty)
     if not ok:
@@ -418,6 +457,9 @@ def update_book_meta(filename: str, *, dynasty=None, author=None, notes=None,
     ok, td = validate_true_dpi(true_dpi)
     if not ok:
         return False, td  # type: ignore[return-value]
+    ok, bn = validate_book_name(book_name)
+    if not ok:
+        return False, bn  # type: ignore[return-value]
     data = load_meta(store)
     book = data["books"].setdefault(str(filename), {})
     now = datetime.now().isoformat(timespec="seconds")
@@ -431,9 +473,331 @@ def update_book_meta(filename: str, *, dynasty=None, author=None, notes=None,
         book["reading_order"] = ro
     if true_dpi is not None:
         book["true_dpi"] = td
+    if book_name is not None:
+        book["book_name"] = bn
     book["updated_at"] = now
     save_meta(data, store)
     return True, "元数据已保存"
+
+
+# ============================================================
+# 目录键（2026-10-20 起：**只认 tab1 人工确认的书名**；不再读 config/book_dir_keys.json）
+# ============================================================
+#: 目录键来源值域（UI 原样显示）
+DIR_KEY_SOURCES = ("manual", "filename-fallback")
+
+#: 旧目录键**只用于迁移**的历史映射（`{PDF 名: 旧目录键}`）：`legacy_map=` 入参仅为
+#: 「迁到新键时把旧目录找出来」，**不参与任何新产物命名**。默认不读
+#: `config/book_dir_keys.json`（该文件已退场，仅作历史映射参考）。
+
+
+def resolve_dir_key(pdf_path, *, book=None, root=None, books=None,
+                    legacy_map=None) -> tuple[str, str]:
+    """⇒ `(目录键, 来源)`；来源 ∈ `DIR_KEY_SOURCES`（`manual` / `filename-fallback`）。
+
+    优先级（**只有两级**，与用户 2026-10-20 裁定一致）：
+      1. `book.book_name` 合法非空 ⇒ `(book_name, 'manual')`；
+      2. 否则 ⇒ `(Path(pdf).stem, 'filename-fallback')` ⇒ **UI 提示「建议去 tab1 确认书名」**。
+
+    * `book=` 未给 ⇒ 用 `resolve_book_meta()`（五级键回落）去查侧车；`books=` 给了则零 I/O；
+    * `legacy_map=`（`{PDF 名: 旧目录键}`）**本函数不消费**，只为迁移侧（`find_legacy_dir_key`）
+      保留同一签名；**目录键不再来自 ISBN / 旧配置表**；
+    * **永不抛**（取不到就回落文件名主名）。
+    """
+    try:
+        info = book
+        if not isinstance(info, dict):
+            info = resolve_book_meta(pdf_path, root=root, books=books)[0] or {}
+        ok, name = validate_book_name((info or {}).get("book_name"))
+        if ok and name:
+            return name, "manual"
+        p = Path(str(pdf_path))
+        # 高清化产物名尾带 `-HighRes`/`_高清` ⇒ 先剥一次，否则目录名会带后缀
+        # （与 `1_Original_PDF/秦印类编 检索版.pdf` 对不上，用户困惑）。剥空则回原 stem。
+        stem = strip_highres_suffix(p.stem or p.name) or (p.stem or p.name)
+        return (stem or "unnamed"), "filename-fallback"
+    except Exception:
+        try:
+            _s = Path(str(pdf_path)).stem
+            return (strip_highres_suffix(_s) or _s or "unnamed"), "filename-fallback"
+        except Exception:                                     # pragma: no cover
+            return "unnamed", "filename-fallback"
+
+
+def find_legacy_dir_key(root, pdf_path, *, legacy_map=None) -> str:
+    """找这本书**已存在**的旧目录键（**只用于迁移 / 只读展示**，不参与新命名）。
+
+    两条线索，先到先得：
+      1. `legacy_map`（`{PDF 名|主名: 旧目录键}`）里登记、且 `3_Cropped_Tiff/<键>/` 确实存在；
+      2. `3_Cropped_Tiff/<键>/_fields.json` 的 `pdf_name` 指向本 PDF（切图 sidecar 自带来源）。
+
+    ⇒ 目录名（`str`）；找不到 ⇒ `""`。**永不抛**。
+    """
+    try:
+        root = Path(str(root))
+        name = Path(str(pdf_path)).name
+        stem = Path(name).stem
+        tiff_root = root / TIFF_DIR
+        if not tiff_root.is_dir():
+            return ""
+        if isinstance(legacy_map, dict):
+            for k in (name, stem):
+                v = legacy_map.get(k)
+                if isinstance(v, dict):
+                    v = v.get("dir_key")
+                if isinstance(v, str) and v.strip() and (tiff_root / v).is_dir():
+                    return v.strip()
+        for d in sorted([x for x in tiff_root.iterdir() if x.is_dir()], key=lambda p: p.name):
+            fj = d / "_fields.json"
+            if not fj.is_file():
+                continue
+            try:
+                data = json.loads(fj.read_text(encoding="utf-8"))
+            except Exception:
+                continue
+            pn = str((data or {}).get("pdf_name") or "")
+            if pn and (pn == name or Path(pn).stem == stem):
+                return d.name
+        return ""
+    except Exception:
+        return ""
+
+
+def _dir_file_stats(d: Path) -> tuple[int, int]:
+    """递归统计 `(文件数, 总字节)`；目录不存在 ⇒ `(0, 0)`。"""
+    try:
+        if not Path(d).is_dir():
+            return 0, 0
+        n = total = 0
+        for p in Path(d).rglob("*"):
+            if p.is_file():
+                n += 1
+                total += p.stat().st_size
+        return n, total
+    except Exception:
+        return 0, 0
+
+
+def _sha256(path: Path) -> str:
+    import hashlib
+    h = hashlib.sha256()
+    with open(path, "rb") as fh:
+        for chunk in iter(lambda: fh.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def _free_dup_name(target: Path) -> Path:
+    """同名不同内容 ⇒ `名-dup<N>.扩展名`（`N` 从 1 起，找一个未被占用的）。"""
+    stem, suffix = target.stem, target.suffix
+    n = 1
+    while True:
+        cand = target.with_name(f"{stem}-dup{n}{suffix}")
+        if not cand.exists():
+            return cand
+        n += 1
+
+
+def migrate_dir_key(root, old_key, new_key, *, book_key=None,
+                    store: Path | str | None = None) -> tuple[bool, str, dict]:
+    """把 `3_Cropped_Tiff/<old_key>/` **改名迁移**到 `3_Cropped_Tiff/<new_key>/`（含 TIFF /
+    `_fields.json` 等全部内容），**迁移后回读校验**，失败**回滚**。⇒ `(ok, msg, stats)`。**永不抛**。
+
+    规则（Kevin 2026-10-20 裁定：旧目录＝自动改名迁移）：
+      * 旧目录不存在 ⇒ `(True, '无旧目录，无需迁移')`（不是错误）；
+      * `old_key == new_key` ⇒ no-op；
+      * 旧在 / 新不存在 ⇒ `shutil.move`（整目录一次到位）；
+      * 旧在 / 新已存在 ⇒ **逐项合并**：目标不存在就移过去；同名且**内容相同** ⇒ 丢弃旧副本
+        （先进暂存目录，校验通过才真删）；同名**内容不同** ⇒ 旧件改 `-dupN` 后缀保留**两侧**
+        （**绝不覆盖**）；
+      * **回读校验**：合并后新目录的 文件数 ＋ 总字节 must equal 预期（旧 + 新 − 同内容重复），
+        并**随机抽 1 件**重算 sha256 与迁移前原值比对；不一致 ⇒ 全部回滚（移回原位）＋ 返回失败；
+      * 成功且给了 `book_key` ⇒ 往 `pdf_meta.<book_key>.dir_key_migrations` 追加
+        `{from,to,ts,files,bytes,status}` 留痕（留痕失败**不推翻**已完成的迁移）。
+    """
+    stats: dict = {"from": str(old_key or ""), "to": str(new_key or ""), "files": 0, "bytes": 0,
+                   "status": "noop", "moved": 0, "dup_renamed": 0, "identical_dropped": 0}
+    old_key = str(old_key or "").strip()
+    root_p = Path(str(root)) if root else None
+    try:
+        okn, nn = validate_book_name(new_key)
+        if not (okn and nn):
+            stats["status"] = "invalid"
+            return False, f"新目录键不合法：{nn}", stats
+        new_key = nn
+        stats["to"] = new_key
+        if not old_key:
+            stats["status"] = "invalid"
+            return False, "旧目录键为空（无法定位旧目录）", stats
+        if root_p is None or not root_p.is_dir():
+            stats["status"] = "invalid"
+            return False, f"feicui 根目录不存在：{root!r}", stats
+        if old_key == new_key:
+            stats["status"] = "noop-same"
+            return True, "新旧目录键相同，无需迁移", stats
+
+        tiff_root = root_p / TIFF_DIR
+        old_dir = tiff_root / old_key
+        new_dir = tiff_root / new_key
+        if not old_dir.is_dir():
+            stats["status"] = "no-legacy"
+            return True, "无旧目录，无需迁移", stats
+
+        pre_count, pre_bytes = _dir_file_stats(new_dir)
+        old_count, old_bytes = _dir_file_stats(old_dir)
+        sample_rel, sample_sha = "", ""
+        old_files = [p for p in sorted(old_dir.rglob("*")) if p.is_file()]
+        old_bytes = sum(p.stat().st_size for p in old_files) or old_bytes
+        old_count = len(old_files) or old_count
+        if old_files:
+            pick = random.choice(old_files)
+            try:
+                sample_sha = _sha256(pick)
+                sample_rel = pick.relative_to(old_dir).as_posix()
+            except Exception:
+                sample_rel, sample_sha = "", ""
+
+        moved: list[tuple[Path, Path]] = []      # (src, dest) —— 回滚用
+        holding = old_dir / ".migrate-holding"    # 同内容重复的暂存（成功后连目录一起删）
+        dropped_bytes = 0
+        whole_move = False
+        try:
+            if not new_dir.exists():
+                new_dir.parent.mkdir(parents=True, exist_ok=True)
+                shutil.move(str(old_dir), str(new_dir))
+                moved.append((old_dir, new_dir))
+                whole_move = True
+                stats["moved"] = len(old_files)
+            else:
+                for src in list(old_dir.iterdir()):
+                    dest = new_dir / src.name
+                    if not dest.exists():
+                        shutil.move(str(src), str(dest))
+                        moved.append((src, dest))
+                        stats["moved"] += 1
+                        continue
+                    if src.is_file() and dest.is_file():
+                        same = (src.stat().st_size == dest.stat().st_size
+                                and _sha256(src) == _sha256(dest))
+                        if same:
+                            holding.mkdir(exist_ok=True)
+                            dest_hold = holding / src.name
+                            n = 1
+                            while dest_hold.exists():
+                                n += 1
+                                dest_hold = holding / f"{src.stem}__{n}{src.suffix}"
+                            size = src.stat().st_size
+                            shutil.move(str(src), str(dest_hold))
+                            moved.append((dest_hold, src))
+                            stats["identical_dropped"] += 1
+                            dropped_bytes += size
+                            continue
+                        tgt = _free_dup_name(dest)
+                        shutil.move(str(src), str(tgt))
+                        moved.append((tgt, src))
+                        stats["dup_renamed"] += 1
+                        continue
+                    # 目录/混合类型同名冲突：不覆盖，整块加后缀保留
+                    tgt = _free_dup_name(dest)
+                    shutil.move(str(src), str(tgt))
+                    moved.append((tgt, src))
+                    stats["dup_renamed"] += 1
+        except Exception as exc:
+            _rollback(moved, old_dir, new_dir, created_new=whole_move)
+            stats["status"] = "error"
+            return False, f"迁移失败并已回滚：{exc.__class__.__name__}: {exc}", stats
+
+        # ── 回读校验 ───────────────────────────────────────────────
+        exp_count = pre_count + old_count - stats["identical_dropped"]
+        exp_bytes = pre_bytes + old_bytes - dropped_bytes
+        got_count, got_bytes = _dir_file_stats(new_dir)
+        problems = []
+        if (got_count, got_bytes) != (exp_count, exp_bytes):
+            problems.append(f"件数/字节不一致：预期 {exp_count} 件 / {exp_bytes} B，"
+                            f"实得 {got_count} 件 / {got_bytes} B")
+        if sample_rel and sample_sha:
+            cand = new_dir / sample_rel
+            # 合并冲突可能把这件改名成 `-dupN`（且**同名目标件本身也在**）⇒ 先按搬移表回查
+            # 旧目录里的相对路径，命中就用搬过去的那个落点；查不到才用原相对路径。
+            for d, s in moved:
+                try:
+                    if s.relative_to(old_dir).as_posix() == sample_rel and d.is_file():
+                        cand = d
+                        break
+                except Exception:
+                    continue
+            try:
+                if not cand.is_file() or _sha256(cand) != sample_sha:
+                    problems.append(f"抽样校验失败：{sample_rel} sha256 与原值不一致")
+            except Exception as exc:
+                problems.append(f"抽样校验异常：{exc.__class__.__name__}")
+        if problems:
+            _rollback(moved, old_dir, new_dir, created_new=whole_move)
+            stats["status"] = "verify-failed"
+            return False, "迁移校验失败并已回滚：" + "；".join(problems), stats
+
+        # ── 收尾：清暂存 / 删空旧目录 ───────────────────────────────
+        try:
+            if holding.is_dir():
+                shutil.rmtree(holding)
+            if old_dir.is_dir() and not any(old_dir.iterdir()):
+                old_dir.rmdir()
+        except Exception:
+            pass
+        stats["files"] = got_count
+        stats["bytes"] = got_bytes
+        stats["status"] = "moved" if not pre_count else "merged"
+        msg = (f"目录已从 `{old_key}` 迁移到 `{new_key}`"
+               f"（{stats['moved']} 件 / {got_bytes / 1048576:.1f} MB"
+               + (f"，同名冲突保留两侧 {stats['dup_renamed']} 件" if stats["dup_renamed"] else "")
+               + f"）；回读校验通过")
+        if book_key:
+            _record_migration(book_key, old_key, new_key, stats, store)
+        return True, msg, stats
+    except Exception as exc:                                  # 永不抛
+        stats["status"] = "error"
+        return False, f"迁移失败：{exc.__class__.__name__}: {exc}", stats
+
+
+def _rollback(moved, old_dir: Path, new_dir: Path, *, created_new: bool = False) -> None:
+    """把本次搬过去的条目**逐个移回原位**；`created_new`（整目录 move）⇒ 直接把新目录移回。"""
+    try:
+        if created_new and new_dir.is_dir() and not old_dir.exists():
+            shutil.move(str(new_dir), str(old_dir))
+            return
+    except Exception:
+        pass
+    try:
+        old_dir.mkdir(parents=True, exist_ok=True)
+    except Exception:
+        pass
+    for src, dest in reversed(list(moved)):
+        try:
+            if src.exists() and not dest.exists():
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                shutil.move(str(src), str(dest))
+        except Exception:
+            continue
+
+
+def _record_migration(book_key: str, old_key: str, new_key: str, stats: dict,
+                      store: Path | str | None = None) -> None:
+    """`pdf_meta.<书>.dir_key_migrations` 追加一条留痕（`from/to/ts/files/bytes/status`）。"""
+    try:
+        data = load_meta(store)
+        book = data["books"].setdefault(str(book_key), {})
+        rows = book.setdefault("dir_key_migrations", [])
+        if not isinstance(rows, list):
+            rows = book["dir_key_migrations"] = []
+        rows.append({
+            "from": old_key, "to": new_key,
+            "ts": datetime.now().isoformat(timespec="seconds"),
+            "files": int(stats.get("files") or 0), "bytes": int(stats.get("bytes") or 0),
+            "status": str(stats.get("status") or ""),
+        })
+        save_meta(data, store)
+    except Exception:
+        pass
 
 
 # ============================================================
@@ -455,6 +819,7 @@ class PdfRow:
     notes: str | None = None
     reading_order: str | None = None      # auto|rtl-ttb|…（tab2 C/R 方向；2026-10-20 新增）
     true_dpi: int | None = None           # 人工填的真实 dpi（切图算 mm 优先用；2026-10-20 新增）
+    book_name: str = ""                   # 人工确认的书名（目录键唯一来源；2026-10-20 新增）
     updated_at: str = ""
 
     @property
@@ -580,6 +945,7 @@ def scan(root: Path, *, store: Path | str | None = None, probe: bool = True,
             dynasty=m.get("dynasty"), author=m.get("author"), notes=m.get("notes"),
             reading_order=m.get("reading_order"), updated_at=m.get("updated_at", ""),
             true_dpi=m.get("true_dpi"),
+            book_name=(m.get("book_name") or ""),
         ))
     if probed:
         save_meta(meta, store)

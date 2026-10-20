@@ -670,13 +670,17 @@ class FeicuiApi:
         except Exception as exc:
             return {"ok": False, "msg": f"扫描失败：{exc.__class__.__name__}: {exc}"}
         rows = [r.as_row() for r in res["rows"]]
-        meta = [{"filename": r.filename, "dynasty": r.dynasty or "", "author": r.author or "",
-                 "notes": r.notes or "", "page_count": r.page_count,
-                 "scan_dpi": r.scan_dpi, "probe_error": r.probe_error,
-                 "reading_order": r.reading_order or "",
-                 "true_dpi": r.true_dpi,
-                 "updated_at": r.updated_at}
-                for r in res["rows"]]
+        meta = []
+        for r in res["rows"]:
+            dk, dk_src = lib.resolve_dir_key(Path(r.path), book={"book_name": r.book_name})
+            meta.append({"filename": r.filename, "dynasty": r.dynasty or "", "author": r.author or "",
+                         "notes": r.notes or "", "page_count": r.page_count,
+                         "scan_dpi": r.scan_dpi, "probe_error": r.probe_error,
+                         "reading_order": r.reading_order or "",
+                         "true_dpi": r.true_dpi,
+                         "book_name": r.book_name or "",
+                         "dir_key": dk, "dir_key_source": dk_src,
+                         "updated_at": r.updated_at})
         # 朝代下拉值域：**优先 yinyuan**（/dynasties 的 items[].value，24h 缓存），
         # 拿不到（无 key / 无网 / 缓存空）⇒ 回落本地 15 枚举（`lib.DYNASTY_OPTIONS`）。
         # ⚠️ 这里**只读缓存、不打网络**：tab1 扫描主流程不许被 8 s 超时卡住；
@@ -785,6 +789,17 @@ class FeicuiApi:
             return {"ok": True, "items": [], "count": 0, "degraded": True, "reason": "EXC"}
 
     def tab1_save_meta(self, req: dict | None = None) -> dict:
+        """保存书级元数据（含 **book_name**）⇒ 书名变了就**自动改名迁移**旧目录。
+
+        返回 `{ok, msg, book_name, dir_key, dir_key_source, migration?}`；`migration` ＝
+        `{ok, msg, from, to, files, bytes, status}`（只在本次书名变化时出现，UI 据此提示
+        「目录已从 X 迁移到 Y（N 件 / M MB）」或红条失败原因）。
+
+        旧目录键的取法（不读已退场的 `config/book_dir_keys.json`）：
+          ① `pdf_meta.<书>.dir_key_migrations` 最后一条的 `to`（且盘上确实存在）⇒ 说明上轮迁到那儿；
+          ② `3_Cropped_Tiff/<键>/_fields.json` 的 `pdf_name` 指向本 PDF ⇒ 切图 sidecar 自带来源；
+          ③ 文件名主名（＝未确认书名时的新产物目录）。
+        """
         miss = self._need_root()
         if miss:
             return miss
@@ -792,6 +807,11 @@ class FeicuiApi:
         filename = str(req.get("filename", "")).strip()
         if not filename:
             return {"ok": False, "msg": "未指定文件"}
+        has_book_name = "book_name" in req
+        try:
+            prev = (lib.load_meta().get("books") or {}).get(filename) or {}
+        except Exception:
+            prev = {}
         try:
             ok, msg = lib.update_book_meta(
                 filename,
@@ -801,10 +821,55 @@ class FeicuiApi:
                 reading_order=req.get("reading_order"),
                 # 只有**请求里带了**该键才动它（缺键＝不改；空串＝清空 ⇒ 回落页面尺寸推算）
                 true_dpi=(req.get("true_dpi") if "true_dpi" in req else None),
+                # 同上：缺键＝不改书名；空串＝清空（目录键回落文件名）
+                book_name=(req.get("book_name") if has_book_name else None),
             )
         except Exception as exc:
             return {"ok": False, "msg": f"保存失败：{exc.__class__.__name__}: {exc}"}
-        return {"ok": ok, "msg": msg}
+        if not ok:
+            return {"ok": False, "msg": msg}
+
+        root = self._root_path()
+        pdf = root / lib.ORIGINAL_DIR / filename
+        if not pdf.is_file():
+            pdf = self._resolve_pdf(filename) or pdf
+        new_key, new_src = lib.resolve_dir_key(pdf, root=root)
+        out: dict = {"ok": True, "msg": msg, "book_name": lib.validate_book_name(
+            req.get("book_name"))[1] or "", "dir_key": new_key, "dir_key_source": new_src}
+
+        if has_book_name:
+            prev_name = lib.validate_book_name(prev.get("book_name"))[1] or ""
+            now_name = out["book_name"]
+            if prev_name != now_name:
+                old_key = self._old_dir_key(filename, prev)
+                if old_key and old_key != new_key:
+                    m_ok, m_msg, m_stats = lib.migrate_dir_key(
+                        root, old_key, new_key, book_key=filename)
+                    out["migration"] = {
+                        "ok": bool(m_ok), "msg": m_msg, "from": old_key, "to": new_key,
+                        "files": int(m_stats.get("files") or 0),
+                        "bytes": int(m_stats.get("bytes") or 0),
+                        "status": m_stats.get("status") or "",
+                    }
+                    out["msg"] = (msg if m_ok else f"{msg}（目录迁移未完成：{m_msg}）")
+        return out
+
+    def _old_dir_key(self, filename: str, prev: dict | None = None) -> str:
+        """本书**旧目录键**（迁移用；**不读** `config/book_dir_keys.json`）。见 `tab1_save_meta`。"""
+        root = self._root_path()
+        try:
+            rows = (prev or {}).get("dir_key_migrations") or []
+            if isinstance(rows, list):
+                for row in reversed(rows):
+                    to = str((row or {}).get("to") or "").strip()
+                    if to and (root / lib.TIFF_DIR / to).is_dir():
+                        return to
+            found = lib.find_legacy_dir_key(root, root / lib.ORIGINAL_DIR / filename)
+            if found:
+                return found
+        except Exception:
+            pass
+        return Path(filename).stem
 
     # ---------------- tab1 一键高清化（Phase A：后端与契约；UI 另单）----------------
     #: dpi 白名单（Kevin 2026-10-20 补充口径）：**只三档**，默认 1200。
@@ -951,13 +1016,17 @@ class FeicuiApi:
                 "msg": f"已请求取消（完成 {task.pages_done}/{task.pages_total or '?'} 页，进度保留可续跑）"}
 
     # ---------------- tab2：2_HighRes_PDF ----------------
+    def _dir_key_for(self, pdf) -> tuple[str, str]:
+        """目录键**单一入口**：tab1 人工确认书名（`manual`）优先，否则文件名（`filename-fallback`）。
+
+        口径真源＝`src/pdf_library.resolve_dir_key`（**不再读** `config/book_dir_keys.json`）。
+        """
+        return lib.resolve_dir_key(pdf, root=self._root_path())
+
     def _dir_key_of(self, pdf_name: str) -> str:
-        """目录键＝老工程 `naming.dir_key_for`（ISBN 优先）；不可用时回落 PDF 主名。"""
-        try:
-            from app import naming as _naming  # noqa: WPS433（延迟导入，失败也不致命）
-            return _naming.dir_key_for(pdf_name, _naming.load_dir_keys())
-        except Exception:
-            return Path(pdf_name).stem
+        """按 PDF 名取目录键（tab1 一键高清化的落点用）；取不到 ⇒ 文件名主名。"""
+        pdf = self._resolve_pdf(pdf_name) or Path(str(pdf_name))
+        return self._dir_key_for(pdf)[0]
 
     def tab2_list(self, _req: dict | None = None) -> dict:
         miss = self._need_root()
@@ -998,9 +1067,10 @@ class FeicuiApi:
         mtime, pages}], count, note}`。
 
         口径：
-          * 目录键＝`config/book_dir_keys.json`（经 `server/app/naming.dir_key_entry`：
-            ISBN 优先，未登记标 `fallback_unregistered`）；若该 PDF **已躺在**
-            `2_HighRes_PDF/<目录键>/` 里而未登记 ⇒ 以**所在目录**为准（与裁切落点一致）；
+          * 目录键＝**tab1 人工确认的书名**（`src/pdf_library.resolve_dir_key`）；未确认 ⇒
+            文件名主名并标 `dir_key_source='filename-fallback'`（UI 提示「建议去 tab1 确认书名」）；
+            **不再读** `config/book_dir_keys.json`（ISBN 命名退场）；
+          * `in_dir` ＝ 该 PDF 实际所在的 `2_HighRes_PDF/<子目录>/`（可能是旧目录键，仅供诊断）；
           * 页数用 pymupdf **惰性**打开取 `page_count`，打不开/无库 ⇒ `null`（**不抛**）；
           * 结构化返回，任何异常都变成 `{ok:false, msg}`（桥不许断）。
         """
@@ -1016,32 +1086,19 @@ class FeicuiApi:
             return {"ok": False, "reason": "SCAN_FAILED", "dir": str(base),
                     "msg": f"扫描 2_HighRes_PDF 失败：{exc.__class__.__name__}: {exc}"}
 
-        naming, keys = None, {}
-        try:
-            from app import naming as _naming  # noqa: WPS433（延迟导入，失败也不致命）
-            naming, keys = _naming, _naming.load_dir_keys()
-        except Exception:
-            naming, keys = None, {}
-
         items: list[dict] = []
         for p in files:
             try:
                 stt = p.stat()
             except Exception:
                 continue
-            dir_key, source = p.stem, "fallback_unregistered"
-            if naming is not None:
-                try:
-                    dir_key, source = naming.dir_key_entry(p.name, keys)
-                except Exception:
-                    dir_key, source = p.stem, "fallback_unregistered"
-            # 未登记但已在本目录键子目录里 ⇒ 认所在目录（它是裁切的落点，别再改口径）
-            if source == "fallback_unregistered":
-                try:
-                    if p.parent != base and p.parent.parent == base:
-                        dir_key, source = p.parent.name, "from_dir"
-                except Exception:
-                    pass
+            dir_key, source = self._dir_key_for(p)
+            in_dir = ""
+            try:
+                if p.parent != base and p.parent.parent == base:
+                    in_dir = p.parent.name
+            except Exception:
+                in_dir = ""
             pages = None
             for mod_name in ("pymupdf", "fitz"):   # 老工程 venv 两种模块名都有
                 try:
@@ -1060,13 +1117,15 @@ class FeicuiApi:
                 pass
             items.append({
                 "name": p.name, "rel": rel, "path": str(p),
-                "dir_key": dir_key or p.stem, "dir_key_source": source or "fallback_unregistered",
+                "dir_key": dir_key or p.stem, "dir_key_source": source or "filename-fallback",
+                "in_dir": in_dir,
                 "bytes": int(stt.st_size), "size_mb": round(stt.st_size / 1024 / 1024, 2),
                 "mtime": datetime.fromtimestamp(stt.st_mtime).strftime("%Y-%m-%d %H:%M"),
                 "pages": pages,
             })
         return {"ok": True, "dir": str(base), "items": items, "count": len(items),
-                "note": "页数由 pymupdf 惰性读取（打不开 ⇒ null）；目录键见 config/book_dir_keys.json"}
+                "note": ("页数由 pymupdf 惰性读取（打不开 ⇒ null）；目录键＝tab1 人工确认的书名"
+                         "（未确认 ⇒ 文件名，source=filename-fallback）")}
 
     def tab2_generate(self, req: dict | None = None) -> dict:
         """异步启动一页 HighRes 渲染（1200dpi 单页 ≈64 s）。立即返回 job_id。"""
@@ -1345,7 +1404,8 @@ class FeicuiApi:
           （按页合并；含 `naming` 与字段原值），`per_seal_json=true` 另写每枚 `.json`；
         * **一次调用请传本页全部框**：C/R 按**本次框集合**的网格位次排序 ⇒ 分多次各传一枚会各自
           从 `C1-R1` 起、同名互相覆盖（UI 应攒齐整页框后一次提交）；
-        * 未登记的书 ⇒ 目录键回落书名并标 `dir_key_source='fallback'`；
+        * 目录键＝**tab1 人工确认的书名**（`manual`）；未确认 ⇒ PDF 文件名（`filename-fallback`，
+          UI 提示「建议去 tab1 确认书名」）——**不再走 ISBN / 旧配置表**；
         * **物理尺寸（mm）**：本书元数据 `true_dpi`（tab1 人工填的真实 dpi）非空 ⇒ `manual-dpi`
           口径，否则用渲染页 `page.rect` ⇒ `page-box`；`outputs[]` 每项带
           `width_mm/height_mm/size_source`（整数 mm），TIFF 内另写 `XResolution/YResolution/
@@ -1371,6 +1431,7 @@ class FeicuiApi:
         if err:
             return err
         book, meta_source, meta_key = lib.resolve_book_meta(pdf)   # 五级键回落（高清化名/目录键）
+        dir_key, dir_key_source = self._dir_key_for(pdf)           # tab1 书名 ／ 文件名（不再读旧表）
         fields_req = req.get("fields")
         seals_hint = []
         if isinstance(fields_req, list):
@@ -1397,7 +1458,9 @@ class FeicuiApi:
                                order_source=order_source,
                                dynasty=book.get("dynasty"),
                                author=book.get("author"),
-                               true_dpi=book.get("true_dpi"))
+                               true_dpi=book.get("true_dpi"),
+                               dir_key=dir_key,
+                               dir_key_source=dir_key_source)
         except Exception as exc:
             return {"ok": False, "reason": "ERROR", "msg": f"{exc.__class__.__name__}: {exc}"}
         finally:
@@ -1405,6 +1468,8 @@ class FeicuiApi:
         if isinstance(res, dict):                                   # 诊断：朝代/作者取自哪级键
             res.setdefault("meta_source", meta_source)
             res.setdefault("meta_key", meta_key)
+            res.setdefault("dir_key", dir_key)
+            res.setdefault("dir_key_source", dir_key_source)
             res.setdefault("book_meta", {"dynasty": book.get("dynasty") or "",
                                          "author": book.get("author") or "",
                                          "meta_source": meta_source, "meta_key": meta_key})
@@ -1464,6 +1529,47 @@ class FeicuiApi:
             return {"ok": False, "msg": f"{exc.__class__.__name__}: {exc}"}
 
     # ---------------- tab3：3_Cropped_Tiff ----------------
+    def _tab3_dir_meta(self, root: Path, subs: list[str]) -> dict:
+        """tab3 的**目录键视图**：新键（tab1 书名）＋ **旧键只读展示**。
+
+        ⇒ `{books:[{filename,dir_key,dir_key_source,dir_exists,legacy_dir_key,legacy_dir_exists}],
+        subdir_meta:[{dir_key,files,legacy,legacy_of,read_only}], legacy_dir_keys:{旧键:PDF名}}`。
+
+        * 新键 ＝ `resolve_dir_key`（`manual` / `filename-fallback`）；
+        * 旧键 ＝ `find_legacy_dir_key`（`_fields.json` 的 `pdf_name` 回指）—— **只读展示**，
+          **不自动迁**（自动迁只发生在 tab1 保存书名那一刻，见 `tab1_save_meta`）；
+        * 与任何 PDF 都对不上的子目录照旧列出（`dir_key_source='unregistered'`）。
+        """
+        books: list[dict] = []
+        legacy_dir_keys: dict[str, str] = {}
+        try:
+            pdfs = lib.list_pdf_files(root)
+        except Exception:
+            pdfs = []
+        for p in pdfs:
+            try:
+                dk, src = lib.resolve_dir_key(p, root=root)
+                legacy = lib.find_legacy_dir_key(root, p)
+            except Exception:
+                dk, src, legacy = p.stem, "filename-fallback", ""
+            legacy_exists = bool(legacy) and (root / lib.TIFF_DIR / legacy).is_dir()
+            if legacy and legacy != dk and legacy_exists:
+                legacy_dir_keys[legacy] = p.name
+            books.append({"filename": p.name, "dir_key": dk, "dir_key_source": src,
+                          "dir_exists": (root / lib.TIFF_DIR / dk).is_dir(),
+                          "legacy_dir_key": legacy if legacy_exists and legacy != dk else "",
+                          "legacy_dir_exists": bool(legacy_exists and legacy != dk)})
+        subdir_meta = []
+        for s in subs:
+            try:
+                n = len(lib.list_tiff_files(root, s))
+            except Exception:
+                n = 0
+            subdir_meta.append({"dir_key": s, "files": n, "legacy": s in legacy_dir_keys,
+                                "legacy_of": legacy_dir_keys.get(s, ""),
+                                "read_only": s in legacy_dir_keys})
+        return {"books": books, "subdir_meta": subdir_meta, "legacy_dir_keys": legacy_dir_keys}
+
     def tab3_list(self, req: dict | None = None) -> dict:
         miss = self._need_root()
         if miss:
@@ -1492,9 +1598,30 @@ class FeicuiApi:
                 "path": str(f),
             })
         name, is_admin = self._session_user()
+        dir_meta = self._tab3_dir_meta(root, subs)
+        cur_src = "unregistered"
+        for b in dir_meta["books"]:
+            if b["dir_key"] == cur:
+                cur_src = b["dir_key_source"]
+                break
+        else:
+            if cur in dir_meta["legacy_dir_keys"]:
+                cur_src = "legacy"
+        legacy_of_cur = dir_meta["legacy_dir_keys"].get(cur, "")
+        if legacy_of_cur:
+            for f in files:
+                f["legacy_dir_key"] = cur
         return {"ok": True, "root": str(root), "tab": lib.TIFF_DIR, "subdirs": subs,
                 "current": cur, "files": files,
                 "count": len(files), "template": f"{validator.PREFIX}释文-朝代-作者{validator.SUFFIX}",
+                "dir_key": cur, "dir_key_source": cur_src,
+                "dir_key_book": next((b["filename"] for b in dir_meta["books"]
+                                      if b["dir_key"] == cur), ""),
+                "dir_key_legacy": legacy_of_cur,
+                "dir_key_current_exists": bool(cur) and any(b["dir_key"] == cur and b["dir_exists"]
+                                                           for b in dir_meta["books"]),
+                "books": dir_meta["books"], "subdir_meta": dir_meta["subdir_meta"],
+                "legacy_dir_keys": dir_meta["legacy_dir_keys"],
                 "view_cfg": TAB3_VIEW_CFG, "view_default": TAB3_VIEW_DEFAULT,
                 "thumb_max": TIFF_THUMB_MAX, "preview_max": TIFF_PREVIEW_MAX,
                 "limits": {"shiwen_max": validator.SHIWEN_MAX, "author_max": validator.AUTHOR_MAX},

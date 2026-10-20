@@ -184,6 +184,8 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent-line
 .subdir-tabs button:hover { background: var(--accent-soft); }
 .subdir-tabs button.active { background: var(--accent); border-color: var(--accent); color: var(--on-accent);
   font-weight: 600; }
+/* 旧目录键（非 tab1 确认书名的历史落点）：只读展示，视觉上退一档 */
+.subdir-tabs button.legacy { border-style: dashed; color: var(--muted); }
 
 /* 视图切换按钮（当前档位高亮）*/
 .view-btn.active { background: var(--accent); border-color: var(--accent); color: var(--on-accent); font-weight: 600; }

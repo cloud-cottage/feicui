@@ -189,7 +189,14 @@ def run_autocrop(pdf, root, *, dpi: int = DEFAULT_DPI, detect_dpi: int = DETECT_
     返回（**永不抛**）：
       `{ok, cancelled, pages_total, pages_done, pages_skipped, pages_failed, seals_total,
         dir_key, dir_key_source, reading_order, order_source, ocr_available, elapsed_s,
+        order_audit:{consistent, inconsistent, no-code, pages, inconsistent_pages},
         failed_pages:[{page, reason}], out_dir, progress_path}`
+
+    * **阅读顺序四级优先**：人工 > 编号序列 > **本书元数据**（`book.reading_order`，⇒
+      `order_source='book-meta'`）> 兜底（`fe.FALLBACK_READING_ORDER`＝`rtl-ttb`，中文印谱
+      常态右起）。`fallback` 页不再用 `ltr-ttb` 把 C/R 整体反向。
+    * **`order_audit`** 逐页审计「编号升序是否与 (C,R) 字典序升序一致」，**只标不拦**
+      （不一致不阻断裁切），逐页写进 `_fields.json`，全本计数进返回与进度文件。
 
     * `pages_done` ＝ 本轮**实际裁完**的页数（不含续跑跳过的 `pages_skipped`，不含失败页）；
     * `page_to=None` ⇒ 到末页；`page_to` 超页数 ⇒ 夹到末页；
@@ -330,6 +337,20 @@ def run_autocrop(pdf, root, *, dpi: int = DEFAULT_DPI, detect_dpi: int = DETECT_
                 "eta_s": _eta(), "stage": stage, "dir_key": dir_key, "dpi": dpi,
                 "msg": f"第 {int(page)}/{pages_total} 页 · 已裁 {seals_total} 枚"}
 
+    def _order_audit_summary() -> dict:
+        """全本「编号 ↔ (C,R) 一致性」计数 ⇒ `{consistent, inconsistent, no-code, pages}`。"""
+        counts = {"consistent": 0, "inconsistent": 0, "no-code": 0}
+        bad: list[int] = []
+        for pk, st in (prog.get("order_audit_pages") or {}).items():
+            if st in counts:
+                counts[st] += 1
+                if st == "inconsistent":
+                    try:
+                        bad.append(int(pk))
+                    except Exception:
+                        pass
+        return {**counts, "pages": sum(counts.values()), "inconsistent_pages": sorted(bad)}
+
     def _persist() -> None:
         prog["detected"] = sorted({int(p) for p in prog.get("detected") or []})
         prog["cropped"] = sorted({int(p) for p in prog.get("cropped") or []})
@@ -359,7 +380,9 @@ def run_autocrop(pdf, root, *, dpi: int = DEFAULT_DPI, detect_dpi: int = DETECT_
         try:
             img = sd.render_page(pdf_p, page, detect_dpi)
             fields = fe.extract_fields(img, None, reading_order=extract_order,
-                                       authoritative=authoritative)
+                                       authoritative=authoritative,
+                                       book_reading_order=book_order,
+                                       fallback_order=fe.FALLBACK_READING_ORDER)
             if not isinstance(fields, dict) or not fields.get("ok"):
                 raise RuntimeError(str((fields or {}).get("msg") or "字段提取失败"))
             seals = fields.get("seals") or []
@@ -375,6 +398,7 @@ def run_autocrop(pdf, root, *, dpi: int = DEFAULT_DPI, detect_dpi: int = DETECT_
                                    reading_order=fields.get("reading_order"),
                                    fields=seals,
                                    order_source=fields.get("order_source"),
+                                   order_audit=fields.get("order_audit"),
                                    dynasty=book.get("dynasty"),
                                    author=book.get("author"),
                                    true_dpi=book.get("true_dpi"),
@@ -404,6 +428,9 @@ def run_autocrop(pdf, root, *, dpi: int = DEFAULT_DPI, detect_dpi: int = DETECT_
         seals_total += int(n_out)
         order_final = str(fields.get("reading_order") or order_final)
         source_final = str(fields.get("order_source") or source_final)
+        audit_st = str((fields.get("order_audit") or {}).get("status") or "")
+        if audit_st:
+            prog.setdefault("order_audit_pages", {})[str(page)] = audit_st
         cropped_set.add(int(page))
         done += 1
         processed += 1
@@ -430,6 +457,7 @@ def run_autocrop(pdf, root, *, dpi: int = DEFAULT_DPI, detect_dpi: int = DETECT_
         "dir_key": dir_key, "dir_key_source": dir_key_source,
         "reading_order": order_final, "order_source": source_final,
         "ocr_available": bool(ocr_ok), "elapsed_s": elapsed,
+        "order_audit": _order_audit_summary(),
         "failed_pages": failed_pages,
         "out_dir": str(out_dir), "progress_path": str(prog_file),
         "meta_source": meta_source, "meta_key": meta_key,

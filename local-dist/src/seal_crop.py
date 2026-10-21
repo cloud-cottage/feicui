@@ -470,10 +470,15 @@ def _norm_fields(fields, n: int) -> tuple[list[dict], bool]:
 
 def _write_fields_sidecar(target_dir: Path, *, page: int, dir_key: str, pdf_name: str,
                           reading_order: str, order_source: str, seals: list[dict],
-                          per_seal_json: bool = False) -> tuple[str, int]:
-    """把本页字段汇入 `<dir>/_fields.json`（按 `pages.<页号>` 合并）；可选每枚 `.json`。
+                          per_seal_json: bool = False,
+                          order_audit: dict | None = None) -> tuple[str, int]:
+    """把本页字段汇入 `<dir>/_fields.json`（按页合并）；可选每枚 `.json`。
 
     ⇒ `(sidecar_path, 写入枚数)`；**永不抛**（写不动就返回 `("", 0)`，裁切结果照样返回）。
+
+    `order_audit`（**只标不拦**）：本页「编号升序是否与 (C,R) 字典序升序一致」的审计结果，
+    逐页写进 `pages.<页号>.order_audit`，并按全部已写页重算顶层 `order_audit` 计数
+    （`consistent / inconsistent / no-code` ＋ 不一致页清单）。
     """
     try:
         target_dir.mkdir(parents=True, exist_ok=True)
@@ -499,8 +504,25 @@ def _write_fields_sidecar(target_dir: Path, *, page: int, dir_key: str, pdf_name
                                  "order_source": order_source, "count": len(seals),
                                  "naming": ("with_code" if any(s.get("naming") == "with_code"
                                                                for s in seals) else "legacy"),
+                                 "order_audit": (order_audit if isinstance(order_audit, dict) else {}),
                                  "seals": seals}
         data["pages"] = pages
+        # 顶层审计计数：按**已写入的全部页**重算（续跑/重裁单页都自洽，无需外部累加）
+        audit_counts = {"consistent": 0, "inconsistent": 0, "no-code": 0}
+        audit_bad: list[int] = []
+        for pk, pv in pages.items():
+            if not isinstance(pv, dict):
+                continue
+            st = str(((pv.get("order_audit") or {}) or {}).get("status") or "")
+            if st in audit_counts:
+                audit_counts[st] += 1
+                if st == "inconsistent":
+                    try:
+                        audit_bad.append(int(pk))
+                    except Exception:
+                        pass
+        data["order_audit"] = {**audit_counts, "pages": len(pages),
+                               "inconsistent_pages": sorted(audit_bad)[:200]}
         data["schema"] = FIELDS_SCHEMA
         data["updated_at"] = datetime.now().isoformat(timespec="seconds")
         tmp = path.with_suffix(".json.part")
@@ -530,7 +552,8 @@ def crop_page(pdf, page: int, boxes, out_dir, pdf_name: str | None = None,
               order_source: str | None = None, dynasty: str | None = None,
               author: str | None = None, true_dpi: int | None = None,
               dir_key: str | None = None,
-              dir_key_source: str | None = None) -> dict:
+              dir_key_source: str | None = None,
+              order_audit: dict | None = None) -> dict:
     """渲页 ⇒ 按框裁 ⇒ 写 `P<页>-C<列>-R<行>.tiff`（**永不抛**，返回结构化 dict）。
 
     `boxes` 在 `boxes_dpi`（默认 400，＝库内 bbox 系）坐标系；`dpi` 只影响**切图渲页分辨率**
@@ -660,6 +683,7 @@ def crop_page(pdf, page: int, boxes, out_dir, pdf_name: str | None = None,
                 "inscription": f.get("inscription"), "inscription_score": f.get("inscription_score"),
                 "inscription_verified": f.get("inscription_verified"),
                 "status": f.get("status"), "status_score": f.get("status_score"),
+                "status_legacy": f.get("status_legacy"),
                 "code": f.get("code"), "code_score": f.get("code_score"),
                 "dynasty": f.get("dynasty") or book_dynasty,
                 "author": f.get("author") or book_author,
@@ -672,7 +696,8 @@ def crop_page(pdf, page: int, boxes, out_dir, pdf_name: str | None = None,
         sidecar, per_seal_n = _write_fields_sidecar(
             target_dir, page=page, dir_key=dir_key, pdf_name=name,
             reading_order=order, order_source=str(order_source or "manual"),
-            seals=seals, per_seal_json=bool(per_seal_json))
+            seals=seals, per_seal_json=bool(per_seal_json),
+            order_audit=order_audit)
     return {"ok": True, "outputs": outputs, "skipped": skipped,
             "dir_key": dir_key, "dir_key_source": dir_key_source, "dir": str(target_dir),
             "dpi": dpi, "boxes_dpi": int(boxes_dpi), "scale": round(scale, 3),

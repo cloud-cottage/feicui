@@ -48,8 +48,8 @@ TRUTH = {
     "0425": ("中羞行府", "官"),
     "0426": ("中羞行府", "全"),
 }
-#: 四类过滤计数（inside_seal / edge / far / noise）—— 与上一单实测读数一致
-TRUTH_DROPPED = {"inside_seal": 7, "edge": 2, "far": 0, "noise": 5}
+#: 五类过滤计数（inside_seal / edge / far / noise / **noise_text**＝释文污染）—— 与实测读数一致
+TRUTH_DROPPED = {"inside_seal": 7, "edge": 2, "far": 0, "noise": 5, "noise_text": 0}
 
 
 @unittest.skipUnless(FIXTURE.is_file() and HAS_CV2 and HAS_OCR,
@@ -273,6 +273,195 @@ class Tab3CompatParse(unittest.TestCase):
                          self.OLD)
         self.assertEqual(validator.build_crop_filename(370, 1, 1, "中羞行府", "清中期", "吳熙載",
                                                        code="0424"), self.NEW)
+
+
+def _ocr(texts, boxes, scores=None):
+    """注入式假 OCR（**不碰引擎**）：`texts/boxes` 等长。"""
+    scores = scores or [0.99] * len(texts)
+    return lambda _img: {"texts": list(texts), "scores": list(scores),
+                         "boxes": [list(b) for b in boxes]}
+
+
+def _run(texts, boxes, *, size=(2400, 1600), seal_boxes=None, **kw):
+    """900 行×1600 列 纯黑页 ＋ 注入 OCR ＋ 手给印章框 ⇒ `extract_fields` 结果。"""
+    img = np.zeros((size[0], size[1], 3), np.uint8)
+    return fe.extract_fields(img, seal_boxes, ocr_fn=_ocr(texts, boxes), **kw)
+
+
+class NoiseTextRules(unittest.TestCase):
+    """**释文污染判定**（`is_noise_text`）——页码 / 类目标题 / 纯编号。"""
+
+    def test_chinese_numeral_page_numbers(self):
+        for t in ("〇〇三", "〇七二", "二七二", "〇", "一二", "三百二十", "〇九二"):
+            with self.subTest(text=t):
+                self.assertTrue(fe.is_noise_text(t), t)
+
+    def test_category_titles(self):
+        for t in ("單姓單名字印", "複姓單名字印", "官印目錄", "姓名印表"):
+            with self.subTest(text=t):
+                self.assertTrue(fe.is_noise_text(t), t)
+
+    def test_two_char_words_not_noise(self):
+        """2 字 `官印`/`私印` 可能是**真释文** ⇒ 不得当类目标题剔掉（只剔 ≥4 字标题）。"""
+        for t in ("官印", "私印", "中候", "中羞行府", "都司馬印"):
+            with self.subTest(text=t):
+                self.assertFalse(fe.is_noise_text(t), t)
+
+    def test_pure_code_is_noise_text_but_kept_as_code(self):
+        """纯编号命中「污染」，但归属时按 `code` 走 ⇒ 编号字段照旧填上（防回流成释文）。"""
+        self.assertTrue(fe.is_noise_text("0424"))
+        res = _run(["0424"], [[[520, 760], [680, 760], [680, 820], [520, 820]]],
+                   seal_boxes=[[500, 500, 700, 700]])
+        s = res["seals"][0]
+        self.assertEqual(s.get("code"), "0424")
+        self.assertIsNone(s.get("inscription"))
+        self.assertEqual(res["dropped"].get("noise_text"), 0)
+
+    def test_custom_words_whitelist(self):
+        self.assertFalse(fe.is_noise_text("本書索引"))
+        self.assertTrue(fe.is_noise_text("本書索引", extra_words=("本書索引",)))
+
+    def test_empty_is_not_noise(self):
+        for t in ("", None, "   "):
+            self.assertFalse(fe.is_noise_text(t))
+
+
+class NoiseTextFiltering(unittest.TestCase):
+    """污染在**归属前**剔掉；剔完无释文 ⇒ 留空 ＋ `needs_review`。"""
+
+    SEAL = [[500, 500, 700, 700]]
+
+    def test_page_number_does_not_become_inscription(self):
+        res = _run(["〇七二"], [[[560, 740], [640, 740], [640, 800], [560, 800]]],
+                   seal_boxes=self.SEAL)
+        s = res["seals"][0]
+        self.assertIsNone(s.get("inscription"))
+        self.assertEqual(res["dropped"].get("noise_text"), 1)
+        self.assertIn("〇七二", res["dropped_texts"]["noise_text"])
+        self.assertTrue(s.get("needs_review"))
+
+    def test_category_title_does_not_become_inscription(self):
+        res = _run(["單姓單名字印"], [[[500, 200], [700, 200], [700, 460], [500, 460]]],
+                   seal_boxes=self.SEAL)
+        s = res["seals"][0]
+        self.assertIsNone(s.get("inscription"))
+        self.assertEqual(res["dropped_texts"]["noise_text"], ["單姓單名字印"])
+        self.assertTrue(s.get("needs_review"))
+
+    def test_clean_inscription_survives(self):
+        res = _run(["中羞行府"], [[[560, 300], [640, 300], [640, 460], [560, 460]]],
+                   seal_boxes=self.SEAL)
+        self.assertEqual(res["seals"][0].get("inscription"), "中羞行府")
+        self.assertEqual(res["dropped"].get("noise_text"), 0)
+
+
+class StatusPositionRule(unittest.TestCase):
+    """状态字：**位置窗口**（本格左侧字栏/编号行）＋ 一对一贪心；抢不到留空。"""
+
+    SEAL = [[500, 500, 700, 700]]          # 200×200
+
+    def test_in_window_left_of_seal_is_assigned(self):
+        self.assertEqual(fe.status_window(self.SEAL[0], 200)[0], 500 - 1.6 * 200)
+        res = _run(["官"], [[[390, 750], [410, 750], [410, 810], [390, 810]]],
+                   seal_boxes=self.SEAL)      # 中心 (400,780)：左下字栏
+        self.assertEqual(res["seals"][0].get("status"), "官")
+
+    def test_out_of_window_is_left_empty_even_if_nearest(self):
+        """右侧的单字**虽最近**也不得归它（旧口径就是在这里串格）。"""
+        res = _run(["故"], [[[900, 750], [920, 750], [920, 810], [900, 810]]],
+                   seal_boxes=self.SEAL)
+        s = res["seals"][0]
+        self.assertIsNone(s.get("status"))
+        self.assertEqual(s.get("status_legacy"), "故")      # 旧口径会拿它 ⇒ 对照证据
+        self.assertIsNone(s.get("status_score"))
+
+    def test_above_seal_is_not_a_status_candidate(self):
+        """印章**上方**的单字（上一格的字）同样不归它：y 窗口只认底边下方。"""
+        res = _run(["風"], [[[560, 380], [640, 380], [640, 480], [560, 480]]],
+                   seal_boxes=self.SEAL)
+        self.assertIsNone(res["seals"][0].get("status"))
+
+    def test_one_to_one_greedy_gives_nearest_only(self):
+        """两印章争一个字 ⇒ **只给近者**，另一枚留空（不重复、不猜）。"""
+        seals = [[200, 500, 400, 700], [500, 500, 700, 700]]     # 相邻两印
+        res = _run(["官"], [[[390, 750], [410, 750], [410, 810], [390, 810]]],
+                   seal_boxes=seals)                              # 中心 (400,780) 在两者窗口内
+        got = [s.get("status") for s in res["seals"]]
+        self.assertEqual(got, ["官", None])
+
+    def test_strict_false_restores_legacy_behaviour(self):
+        """`strict_status=False` ⇒ **完全回落旧口径**：不看位置、取最近单字（本例右侧那个 `故`）。"""
+        texts, boxes = ["故"], [[[900, 750], [920, 750], [920, 810], [900, 810]]]
+        strict = _run(texts, boxes, seal_boxes=self.SEAL)
+        legacy = _run(texts, boxes, seal_boxes=self.SEAL, strict_status=False)
+        self.assertIsNone(strict["seals"][0].get("status"))          # 新口径：窗口外 ⇒ 留空
+        self.assertEqual(legacy["seals"][0].get("status"), "故")      # 旧口径：照拿最近单字
+        self.assertFalse(legacy.get("strict_status"))
+        self.assertTrue(strict.get("strict_status"))
+
+    def test_status_legacy_kept_for_comparison(self):
+        res = _run(["官"], [[[390, 750], [410, 750], [410, 810], [390, 810]]],
+                   seal_boxes=self.SEAL)
+        self.assertEqual(res["seals"][0].get("status_legacy"), "官")
+
+
+class ReadingOrderSources(unittest.TestCase):
+    """阅读顺序四级：编号 > 书级元数据（`book-meta`）> 兜底（切图台传 `rtl-ttb`）。"""
+
+    SEALS = [[600, 400, 800, 600], [600, 1400, 800, 1600]]        # 两枚、**无编号**
+
+    def test_book_meta_used_when_no_codes(self):
+        res = _run(["中候"], [[[560, 260], [640, 260], [640, 380], [560, 380]]],
+                   seal_boxes=self.SEALS, book_reading_order="rtl-ttb")
+        self.assertEqual(res.get("reading_order"), "rtl-ttb")
+        self.assertEqual(res.get("order_source"), "book-meta")
+
+    def test_fallback_order_defaults_to_unchanged_ltr(self):
+        res = _run(["中候"], [[[560, 260], [640, 260], [640, 380], [560, 380]]],
+                   seal_boxes=self.SEALS)
+        self.assertEqual(res.get("reading_order"), "ltr-ttb")     # 老行为一字不改
+        self.assertEqual(res.get("order_source"), "fallback")
+
+    def test_caller_fallback_order_is_honoured(self):
+        res = _run(["中候"], [[[560, 260], [640, 260], [640, 380], [560, 380]]],
+                   seal_boxes=self.SEALS, fallback_order="rtl-ttb")
+        self.assertEqual(res.get("reading_order"), "rtl-ttb")
+        self.assertEqual(res.get("order_source"), "fallback")
+
+    def test_code_sequence_beats_book_meta(self):
+        res = _run(["0601", "0602"],
+                   [[[560, 260], [640, 260], [640, 380], [560, 380]],
+                    [[560, 1260], [640, 1260], [640, 1380], [560, 1380]]],
+                   seal_boxes=self.SEALS, book_reading_order="ltr-ttb")
+        self.assertEqual(res.get("order_source"), "code-sequence")
+
+
+class OrderAudit(unittest.TestCase):
+    """`audit_order`：编号升序 vs (C,R) 字典序升序（**只审计、不阻断裁切**）。"""
+
+    def test_consistent(self):
+        a = fe.audit_order([{"code": "0001", "c": 1, "r": 1}, {"code": "0002", "c": 1, "r": 2}])
+        self.assertEqual(a["status"], "consistent")
+
+    def test_inconsistent_lists_violations(self):
+        a = fe.audit_order([{"code": "0001", "c": 1, "r": 2}, {"code": "0002", "c": 1, "r": 1}])
+        self.assertEqual(a["status"], "inconsistent")
+        self.assertEqual(a["violations"][0]["code"], "0002")
+
+    def test_no_code(self):
+        self.assertEqual(fe.audit_order([{"code": "", "c": 1, "r": 1}])["status"], "no-code")
+        self.assertEqual(fe.audit_order([])["status"], "no-code")
+
+    def test_page_audit_is_flagged_but_cropping_not_blocked(self):
+        """编号逆序的一页：`order_audit=inconsistent`，但印章数/裁切字段照旧齐全。"""
+        seals = [[600, 200, 800, 400], [600, 700, 800, 900]]
+        res = _run(["0002", "0001"],
+                   [[[660, 440], [740, 440], [740, 500], [660, 500]],
+                    [[660, 940], [740, 940], [740, 1000], [660, 1000]]],
+                   seal_boxes=seals)
+        self.assertEqual(res["count"], 2)
+        self.assertEqual(res.get("order_audit", {}).get("status"), "inconsistent")
+        self.assertEqual(sorted(s.get("code") for s in res["seals"]), ["0001", "0002"])
 
 
 if __name__ == "__main__":

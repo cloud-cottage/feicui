@@ -163,12 +163,14 @@
             <b>1200 ≈ 13.3 MB/页（1200 反而最小，PNG 对硬边更友好）</b>｜耗时约 6.2 s/页</p>
         </div>
         <div>
-          <label class="field"><span>页区间（留空＝全部）</span></label>
+          <label class="field"><span id="tab1-hr-range-label">高清化页范围（其余页原样保留，页码不变）</span></label>
           <div class="row tight">
-            <input id="tab1-hr-from" type="number" min="1" placeholder="从第 1 页" class="w-num">
+            <input id="tab1-hr-from" type="number" min="1" placeholder="起始页（留空＝全书）" class="w-num">
             <span class="muted">→</span>
-            <input id="tab1-hr-to" type="number" min="1" placeholder="到末页" class="w-num">
+            <input id="tab1-hr-to" type="number" min="1" placeholder="结束页（留空＝末页）" class="w-num">
           </div>
+          <p class="caption hr-note2" id="tab1-hr-note2">未选中的页按原样保留在输出 PDF 中
+            （全文页数不变，页码与原件一一对应）；若该页已做过<b>更高</b>档位，则跳过不降级。</p>
           <div class="row">
             <button id="btn-tab1-hr-start" class="btn primary">⚡ 开始高清化</button>
             <button id="btn-tab1-hr-cancel" class="btn" disabled>✖ 取消</button>

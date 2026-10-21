@@ -283,8 +283,10 @@
   }
 
   // ── tab1 · ⚡ 一键高清化（Phase A 后端：tab1_highres_start / status / cancel）──
-  //   源＝**当前选中行**；三档 dpi（300/600/1200，默认 1200）＋页区间；后台线程跑，
+  //   源＝**当前选中行**；三档 dpi（300/600/1200，默认 1200）＋页范围；后台线程跑，
   //   本页 900 ms 轮询 + `window.onProgress({kind:'tab1_highres'})` 推送兜底。
+  //   v2 口径：页范围只决定**哪些页渲高清**；输出 PDF **恒含全部页**，范围外的页原样保留
+  //   （页码与原件一一对应），已做过更高档位的页跳过不降级 ⇒ 状态行显示 已渲/跳过/原样/共。
   var hrTimer = null;
 
   function hrSource() { var m = ST.tab1.selected; return m ? (m.filename || '') : ''; }
@@ -324,8 +326,13 @@
     var pct = total ? Math.min(100, Math.round(done * 100 / total)) :
       (st.state === 'done' ? 100 : 0);
     var mb = ((st.bytes || 0) / 1048576).toFixed(1);
+    // v2：全页输出口径 —— 已渲 / 跳过（已达标）/ 原样保留 / 输出总页数（running 与 done 都显示）
+    var rt = st.rendered_pages || 0, sk = st.skipped_pages || 0, pt = st.passthrough_pages || 0;
+    var all = st.pdf_pages_total || total || 0;
     $('tab1-hr-bar').style.width = pct + '%';
-    var line = '[' + (st.state || 'idle') + '] ' + done + '/' + (total || '?') + ' 页 · 累计 ' + mb + ' MB';
+    var line = '[' + (st.state || 'idle') + '] ' + done + '/' + (total || '?') + ' 页 · 累计 ' + mb + ' MB'
+      + ' · 已渲 ' + rt + ' 页 · 跳过 ' + sk + ' 页（已达标）· 原样保留 ' + pt + ' 页'
+      + ' · 共 ' + (all || '?') + ' 页';
     if (st.page) { line += ' · 当前页 ' + st.page; }
     if (st.elapsed_s) { line += ' · ' + st.elapsed_s + ' s'; }
     if (st.msg) { line += ' · ' + st.msg; }
@@ -335,7 +342,8 @@
     if (running) { hrStartPoll(); } else { hrStopPoll(); }
     if (st.state === 'done') {
       $('tab1-hr-done').hidden = false;
-      $('tab1-hr-out').textContent = '✅ ' + (st.out || '—') + '（' + done + ' 页 · ' + mb + ' MB）';
+      $('tab1-hr-out').textContent = '✅ ' + (st.out || '—') + '（共 ' + (all || '?') + ' 页 · 已渲 ' +
+        rt + ' · 跳过 ' + sk + ' · 原样 ' + pt + ' · ' + mb + ' MB）';
       setMsg('tab1-hr-err', '完成：' + (st.out || ''), 'ok');
     } else if (st.state === 'failed') {
       $('tab1-hr-done').hidden = true;

@@ -155,6 +155,8 @@ JS_TAB1 = """
     hr_msg: g('tab1-hr-msg')?g('tab1-hr-msg').textContent:'',
     out_text: g('tab1-hr-out')?g('tab1-hr-out').textContent:'',
     hint: hint?hint.textContent.replace(/\\s+/g,' ').trim():'',
+    range_label: (function(){ var e=g('tab1-hr-range-label'); return e?e.textContent.replace(/\\s+/g,' ').trim():''; })(),
+    note2: (function(){ var e=g('tab1-hr-note2'); return e?e.textContent.replace(/\\s+/g,' ').trim():''; })(),
     src_text: g('tab1-hr-source')?g('tab1-hr-source').textContent:null,
     err_text: err?err.textContent:'', err_class: err?err.className:'',
     goto_label: g('btn-tab1-hr-goto2')?g('btn-tab1-hr-goto2').textContent:''
@@ -393,6 +395,12 @@ def _probe_body() -> None:
            ("300" in hint and "5.4" in hint and "600" in hint and "15.5" in hint
             and "1200" in hint and "13.3" in hint and "反而最小" in hint and "6.2" in hint),
            f"提示={hint!r}")
+    # v2 口径文案：页范围标签 + 「未选中页原样保留 / 页码一一对应 / 更高档位不降级」说明
+    rlabel, note2 = (t1.get("range_label") or ""), (t1.get("note2") or "")
+    record("tabs/tab1_range_label_and_passthrough_note",
+           "原样保留" in rlabel and "页码" in rlabel
+           and "原样保留" in note2 and "页码" in note2 and "更高" in note2 and "不降级" in note2,
+           f"页范围标签={rlabel!r} 说明={note2!r}")
     record("tabs/tab1_cancel_starts_disabled",
            t1.get("cancel_disabled") is True,
            f"取消按钮初始 disabled={t1.get('cancel_disabled')}")
@@ -570,9 +578,12 @@ def _probe_body() -> None:
         "running": True, "page": 2, "pages_total": 5, "pages_done": 2,
         "bytes": 27 * 1024 * 1024, "msg": "渲页中（2/5）", "dpi": 1200,
         "out": "/x/9787000000001/吴-HighRes.pdf", "elapsed_s": 12.4,
+        # v2：全页输出口径（已渲 / 跳过已达标 / 原样保留 / 输出总页数）
+        "rendered_pages": 2, "skipped_pages": 0, "passthrough_pages": 3, "pdf_pages_total": 5,
     }
     done = dict(running, state="done", running=False, page=5, pages_done=5,
                 bytes=66 * 1024 * 1024, msg="完成", elapsed_s=31.0,
+                rendered_pages=2, skipped_pages=1, passthrough_pages=2,
                 out="/x/2_HighRes_PDF/9787000000001/吴颐人篆刻作品展示-HighRes.pdf")
     _ev("(() => { window.pywebview.api.tab1_highres_status = function(){ return Promise.resolve("
         + json.dumps(running, ensure_ascii=False) + "); }; return 1; })()")
@@ -586,6 +597,12 @@ def _probe_body() -> None:
            and t1d.get("done_hidden") is True,
            f"bar={t1d.get('bar_width')!r} 文案={t1d.get('hr_msg')!r} "
            f"开始禁用={t1d.get('start_disabled')} 取消可用={t1d.get('cancel_disabled') is False}")
+    # v2：running 态状态行必须出现 已渲/跳过/原样/共（跳过＝已达标，原样＝未选中且从未高清化）
+    rmsg = t1d.get("hr_msg") or ""
+    record("tabs/tab1_status_line_shows_rendered_skipped_passthrough",
+           "已渲 2 页" in rmsg and "跳过 0 页（已达标）" in rmsg
+           and "原样保留 3 页" in rmsg and "共 5 页" in rmsg,
+           f"running 文案={rmsg!r}")
 
     out_path = str(done["out"])
     _ev("(() => { window.pywebview.api.tab1_highres_status = function(){ return Promise.resolve("
@@ -599,6 +616,12 @@ def _probe_body() -> None:
            and "去 tab2" in (t1e.get("goto_label") or ""),
            f"done 显示={t1e.get('done_hidden') is False} 产物={t1e.get('out_text')!r} "
            f"bar={t1e.get('bar_width')!r} 按钮={t1e.get('goto_label')!r}")
+    # v2：完成态也要带 全页数 + 跳过/原样（旧版只有「N 页 · MB」）
+    out_text = t1e.get("out_text") or ""
+    record("tabs/tab1_done_status_line_has_v2_counts",
+           "共 5 页" in out_text and "跳过 1" in out_text and "原样 2" in out_text
+           and "已渲 2" in out_text,
+           f"done 产物行={out_text!r}")
 
     # 「➡ 去 tab2 切图」⇒ 真切页（同时把后续断言带进 tab2）
     _ev("document.getElementById('btn-tab1-hr-goto2').click()")

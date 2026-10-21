@@ -127,3 +127,23 @@ cd /Users/kevin/bistro/feicui
 `reading_order=rtl-ttb`、`order_source=code-sequence`；`tab2_crop`（**传 `reading_order='auto'`**，
 带 fields）⇒ 6 件全 `naming=with_code`、回 `code-sequence`；回读 `_fields.json` 与 `tab3_list`
 ⇒ 6 件都能读出 page/col/row ＋ 三字段。
+
+### 7. tab1 一键高清化 v2 口径（全页输出 · 已达标页跳过）
+
+真源：`src/highres_pdf.py`（模块 docstring 即契约）。**输出 PDF 恒含源 PDF 全部页**，第 i 页 ≡ 源第 i 页
+（页数 / 顺序 / pt 尺寸不变）⇒ tab2 按页索引切图时页码与原件一一对应。`page_from/page_to` 只决定
+**哪些页渲高清**，其余页三分：`highres`（已达标，嵌旧位图，跳过渲染）/ `render`（范围内且无达标位图，
+含档位更低 ⇒ 升级重渲）/ `passthrough`（范围外且从未高清化 ⇒ `insert_pdf` 原样复制，保文字层）。
+**曾经高清化过、本次不在范围内**的页保持原档，不降级成 passthrough。
+
+进度文件升 schema **v2**（`units` 页级 dpi 登记表 ＋ `run` 本次读数），**兼容读 v1**（`done` 按 `prog.dpi` 迁移）。
+位图可得性：① `var/highres_pages/…/P####.png` 缓存 → ② 旧 `out_pdf` 同页 `extract_image`（校验 px 一致，
+range-only 旧输出按进度页清单做页映射）→ ③ 重渲。取回的位图**不写回缓存**。`CANCELLED`/`SIZE_LIMIT`/
+`PAGE_COUNT_MISMATCH` 一律不覆盖上一版 `out_pdf`；体积只累计高清 PNG 字节（passthrough 不计）。
+
+| 面 | 命令 | 读数（2026-10-21 本机） |
+| --- | --- | --- |
+| 高清化 v2 单测 | `tests/test_highres_pdf.py` | **7 OK / 0 FAIL**，0.8 s（全页+passthrough 文字层、1200→600 跳过 3 页、幂等 rendered=0、清缓存靠旧 PDF 恢复、v1 迁移、range-only 重建、CANCELLED 不动产物） |
+| 全部单测 | `python -m unittest discover -s local-dist/tests` | **188 OK** |
+| 逻辑层自检 | `selftest.py --no-e2e` | **80 PASS / 0 FAIL**（不变） |
+| tab1/tab2 渲染后 DOM | `domtest_tabs.py` | **52 PASS / 0 FAIL**（含新增 3 条：页范围文案、running 行「已渲/跳过/原样/共」、done 行同口径） |

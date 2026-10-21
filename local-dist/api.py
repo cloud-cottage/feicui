@@ -479,9 +479,14 @@ class HighResTask:
         self.cancel_event = threading.Event()
         self.state = "queued"
         self.page = 0                 # 最近完成的页号
-        self.pages_total = 0
+        self.pages_total = 0          # 本次**范围内**页数（UI 进度条分母）
         self.pages_done = 0
         self.bytes = 0
+        # v2：全页输出口径的计数（渲 / 跳过已达标 / 原样保留 / 输出总页数）
+        self.rendered_pages = 0
+        self.skipped_pages = 0
+        self.passthrough_pages = 0
+        self.pdf_pages_total = 0
         self.msg = "排队中"
         self.result: dict | None = None
         self.error = ""
@@ -497,6 +502,9 @@ class HighResTask:
                 "task_id": self.id, "state": self.state, "running": self.state in ("queued", "running"),
                 "page": self.page, "pages_total": self.pages_total, "pages_done": self.pages_done,
                 "bytes": self.bytes, "msg": self.msg, "dpi": self.dpi,
+                "rendered_pages": self.rendered_pages, "skipped_pages": self.skipped_pages,
+                "passthrough_pages": self.passthrough_pages,
+                "pdf_pages_total": self.pdf_pages_total,
                 "pdf": self.pdf.name, "out": str(self.out),
                 "page_from": self.page_from, "page_to": self.page_to,
                 "page_bytes_dir": str(self.page_bytes_dir) if self.page_bytes_dir else "",
@@ -521,6 +529,10 @@ class HighResTask:
             self.pages_total = int(rec.get("pages_total") or self.pages_total)
             self.pages_done = int(rec.get("pages_done") or 0)
             self.bytes = int(rec.get("bytes") or 0)
+            self.rendered_pages = int(rec.get("rendered") or self.rendered_pages)
+            self.skipped_pages = int(rec.get("skipped") or self.skipped_pages)
+            self.passthrough_pages = int(rec.get("passthrough") or self.passthrough_pages)
+            self.pdf_pages_total = int(rec.get("pdf_pages_total") or self.pdf_pages_total)
             self.msg = f"{rec.get('msg') or ''}（{self.pages_done}/{self.pages_total}）"
         self._emit()
 
@@ -529,15 +541,26 @@ class HighResTask:
             self.result = result
             ok = bool(result.get("ok"))
             reason = str(result.get("reason") or "")
+            # v2 计数：成功/取消/失败回执都带上（旧键仍在 ⇒ 只加不删）
+            for key, attr in (("rendered_pages", "rendered_pages"),
+                              ("skipped_pages", "skipped_pages"),
+                              ("passthrough_pages", "passthrough_pages"),
+                              ("pdf_pages_total", "pdf_pages_total")):
+                if result.get(key) is not None:
+                    setattr(self, attr, int(result.get(key) or 0))
             if ok:
                 self.state = "done"
                 self.pages_done = int(result.get("pages_done") or self.pages_done)
                 self.bytes = int(result.get("bytes") or self.bytes)
-                self.msg = f"完成：{self.out.name}（{self.pages_done} 页，{self.bytes/1024**2:.1f} MB）"
+                self.msg = (f"完成：{self.out.name}（已渲 {self.rendered_pages} 页 · "
+                            f"跳过 {self.skipped_pages} 页（已达标）· "
+                            f"原样保留 {self.passthrough_pages} 页 · "
+                            f"共 {self.pdf_pages_total or '?'} 页，{self.bytes/1024**2:.1f} MB）")
             elif reason == "CANCELLED":
                 self.state = "cancelled"
                 self.pages_done = int(result.get("pages_done") or self.pages_done)
-                self.msg = f"已取消（完成 {self.pages_done}/{self.pages_total or '?'} 页）"
+                self.msg = (f"已取消（本次已渲 {self.rendered_pages} 页 · 完成 "
+                            f"{self.pages_done}/{self.pages_total or '?'} 页，进度保留可续跑）")
             else:
                 self.state = "failed"
                 self.error = f"{reason}: {result.get('msg') or ''}".strip(": ")
@@ -1098,7 +1121,18 @@ class FeicuiApi:
         契约：`{pdf, dpi=1200, page_from, page_to, keep_page_pngs=true, overwrite=false}`
         ⇒ `{ok, task_id, out, dpi, pages_total?, note}`；已运行 ⇒ `{ok:false, reason:'BUSY'}`。
         **1100 页级的书 ≈ 6 s/页**（本机实测）⇒ 一律异步，UI 轮询 `tab1_highres_status`。
+
+        v2 口径（Zang 定，见 `src/highres_pdf.py` 模块 docstring）：
+        * 输出 PDF **恒含源 PDF 全部页**（第 i 页 ≡ 源第 i 页，页码锚定，供 tab2 按页索引切图）；
+          `page_from/page_to` 只决定**哪些页渲高清**，范围外的页要么嵌已存高清位图（曾做过），
+          要么 `insert_pdf` 原样复制（从未做过的 ⇒ 不重渲、不降质、保留文字层）；
+        * **可反复实施**：页级 dpi 登记表（进度 schema v2）＋ 位图可得性
+          （页缓存 → 旧 out_pdf 同页 → 重渲）⇒ 已达标页跳过不重做，`rendered_pages` 为 0 也算成功；
+        * 状态/回执新增 `rendered_pages` / `skipped_pages` / `passthrough_pages` /
+          `pdf_pages_total`（旧键全保留）；`pages_total` 仍是**本次范围内**页数（进度条分母）；
+        * `overwrite=true` ⇒ 先清 out_pdf ＋ 进度 ⇒ 全量重渲（默认是续跑/增量）。
         """
+
         miss = self._need_root()
         if miss:
             return miss

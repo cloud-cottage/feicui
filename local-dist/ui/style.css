@@ -308,6 +308,19 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent-line
 #tab1-pv-img[hidden] { display: none; }
 .pv-hint { font-size: 12px; color: var(--muted); padding: 44px 8px; }
 .pv-hint[hidden] { display: none; }
+/* 预览网格：一「屏」最多 10 张＝2 行 × 5 列；每张＝缩略图＋左上角页码角标；
+ * 焦点页（单击选中）＝accent 描边；起始页（#tab1-hr-from）＝深阶描边（两态可叠加）。 */
+.pv-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.pv-grid[hidden] { display: none; }
+.pv-tile { position: relative; border: 1px solid var(--line); border-radius: 6px;
+  background: #fff; cursor: pointer; overflow: hidden; padding: 0; line-height: 0; }
+.pv-tile img { display: block; width: 100%; height: auto; }
+.pv-tile:hover { border-color: var(--accent-line); }
+.pv-tile.pv-focus { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.pv-tile.pv-start { outline: 2px solid var(--accent-deep); outline-offset: -2px; }
+.pv-badge { position: absolute; top: 0; left: 0; padding: 1px 6px; font-size: 10px;
+  line-height: 1.5; background: rgba(4, 32, 26, 0.72); color: #fff;   /* --on-accent 半透明垫底 */
+  border-radius: 0 0 6px 0; user-select: none; }
 select.grow { flex: 1 1 320px; min-width: 240px; }
 
 /* 切图台 */

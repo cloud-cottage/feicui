@@ -1198,9 +1198,13 @@ class FeicuiApi:
     # ---------------- tab1 PDF 快速预览（低清缩略；先看清内容再定「从第几页开始高清化」）----------------
     #: 预览 dpi：**一律低清**（96 左右）。**绝不用 1200dpi 渲整页**（≈6 s/页、吃 GB 内存）。
     PREVIEW_DPI_DEFAULT = 96
-    PREVIEW_DPI_MIN, PREVIEW_DPI_MAX = 36, 200
+    PREVIEW_DPI_MIN, PREVIEW_DPI_MAX = 24, 200   # 下限 36⇒24：批量缩略图 24dpi 也够看排版
     PREVIEW_MAX_W_DEFAULT = 760
-    PREVIEW_CACHE_SIZE = 8                # 内存 LRU：最近 8 张（翻页往返不重渲）
+    PREVIEW_CACHE_SIZE = 24              # 内存 LRU：最近 24 张（8⇒24：批量一屏最多 10 张，与单页共池）
+    #: 批量预览（一「屏」1–10 张，2 行 × 5 列）：小图 max_w 240 ⇒ 72dpi 下单页 <0.1s、整屏 <1.5s。
+    PREVIEW_BATCH_COUNT_DEFAULT = 10
+    PREVIEW_BATCH_COUNT_MAX = 10         # 单屏上限 10 页（用户裁定）
+    PREVIEW_BATCH_MAX_W_DEFAULT = 240
 
     @staticmethod
     def _pv_fitz():
@@ -1232,8 +1236,9 @@ class FeicuiApi:
 
         契约：`{ok, page, total, png_b64, px_w, px_h, page_mm_w, page_mm_h, dpi, dpi_used,
         cached, elapsed_s}`；失败一律**结构化**（`PDF_NOT_FOUND` / `PAGE_OUT_OF_PDF` /
-        `RENDER_FAILED`），**绝不抛 500 / 不炸桥**。dpi 夹紧到 36–200（超范围不报错）；
-        宽度超过 `max_w` ⇒ 降低**有效 dpi** 等比缩（只渲一次，比「先渲大图再缩」省内存）。
+        `RENDER_FAILED`），**绝不抛 500 / 不炸桥**。dpi 夹紧到 24–200（超范围不报错）；
+        宽度超过 `max_w` ⇒ 降低**有效 dpi** 等比缩（只渲一次，比「先渲大图再缩」省内存）；
+        缓存与 `tab1_preview_batch` **共池**（同 key 口径，容量见 `PREVIEW_CACHE_SIZE`）。
         """
         t0 = time.perf_counter()
         req = req or {}
@@ -1287,10 +1292,10 @@ class FeicuiApi:
             mm_h = round(rect.height / 72.0 * 25.4, 1)
             dpi_used = float(dpi)
             if rect.width > 0 and rect.width * dpi / 72.0 > max_w:
-                dpi_used = max(36.0, max_w * 72.0 / rect.width)
+                dpi_used = max(float(self.PREVIEW_DPI_MIN), max_w * 72.0 / rect.width)
             # ⚠️ 本机 PyMuPDF 的 `get_pixmap(dpi=…)` 只吃 **int**（float ⇒ fz_pixmap_xres_set
             #    TypeError）⇒ 向下取整（保证宽度不超 max_w）。
-            dpi_used = float(max(36, int(dpi_used)))
+            dpi_used = float(max(self.PREVIEW_DPI_MIN, int(dpi_used)))
             pix = pg.get_pixmap(dpi=int(dpi_used), alpha=False, colorspace=fitz.csRGB)
             png = pix.tobytes("png")
             px_w, px_h = int(pix.width), int(pix.height)
@@ -1310,6 +1315,99 @@ class FeicuiApi:
                "dpi": dpi, "dpi_used": round(dpi_used, 1),
                "pdf": str(pdf), "cached": False}
         self._pv_cache_put(key, dict(out))
+        return {**out, "elapsed_s": round(time.perf_counter() - t0, 3)}
+
+    def tab1_preview_batch(self, req: dict | None = None) -> dict:
+        """tab1 批量低清预览（一「屏」最多 10 张）：`{pdf, page_from=1, count=10, dpi=72, max_w=240}`。
+
+        契约：`{ok, total, start_page, count, count_returned,
+        pages:[{page, png_b64, px_w, px_h, dpi, dpi_used, cached}], dpi, max_w, cached,
+        elapsed_s}`。与 `tab1_preview` **共享同一 LRU 池**（key 同口径 `pdf|page|dpi|max_w`，
+        单页渲过的页批量直接命中、反之亦然）；窗口越界**自动截到 total**（不足处**不补占位**，
+        `count_returned` 反映实际张数；`page_from` 整个越出 ⇒ 空列表）；失败一律**结构化**
+        （`PDF_NOT_FOUND` / `RENDER_FAILED`），**绝不抛**。count 夹紧 1–10、dpi 夹紧 24–200
+        （超范围不报错）。逐页低 dpi 渲染（**绝不用 1200dpi 渲整页**）。
+        """
+        t0 = time.perf_counter()
+        req = req or {}
+        raw = req.get("pdf") or req.get("filename") or req.get("name")
+        pdf = self._resolve_pdf(raw)
+        if pdf is None:
+            return {"ok": False, "reason": "PDF_NOT_FOUND", "page_from": req.get("page_from"),
+                    "msg": f"找不到 PDF：{str(raw or '')!r}"
+                           f"（可给绝对路径，或 1_Original_PDF 下的文件名）"}
+        try:
+            page_from = int(req.get("page_from") or 1)
+        except Exception:
+            page_from = 1
+        page_from = max(1, page_from)
+        raw_count = req.get("count")
+        if raw_count in (None, ""):
+            raw_count = self.PREVIEW_BATCH_COUNT_DEFAULT
+        try:
+            count = int(raw_count)                           # 0/负数照收，下面真夹紧（1–10）
+        except Exception:
+            count = self.PREVIEW_BATCH_COUNT_DEFAULT         # 非数字 ⇒ 默认
+        count = max(1, min(self.PREVIEW_BATCH_COUNT_MAX, count))     # 单屏上限 10
+        try:
+            dpi = int(req.get("dpi") or self.PREVIEW_DPI_DEFAULT)
+        except Exception:
+            dpi = self.PREVIEW_DPI_DEFAULT
+        dpi = max(self.PREVIEW_DPI_MIN, min(self.PREVIEW_DPI_MAX, dpi))   # 夹紧，不报错
+        try:
+            max_w = int(req.get("max_w") or self.PREVIEW_BATCH_MAX_W_DEFAULT)
+        except Exception:
+            max_w = self.PREVIEW_BATCH_MAX_W_DEFAULT
+        max_w = max(80, min(2400, max_w))
+
+        fitz, ferr = self._pv_fitz()
+        if fitz is None:
+            return {**(ferr or {}), "page_from": page_from}
+        try:
+            doc = fitz.open(str(pdf))
+        except Exception as exc:
+            return {"ok": False, "reason": "RENDER_FAILED", "page_from": page_from,
+                    "msg": f"打开 PDF 失败：{exc.__class__.__name__}: {exc}"}
+        pages: list[dict] = []
+        try:
+            total = int(doc.page_count)
+            for page in range(page_from, min(total, page_from + count - 1) + 1):
+                if page < 1:
+                    continue
+                key = f"{pdf}|{page}|{dpi}|{max_w}"       # 与单页端点**同 key** ⇒ 同一缓存池
+                hit = self._pv_cache_get(key)
+                if hit is not None:
+                    pages.append({**hit, "cached": True})
+                    continue
+                try:
+                    pg = doc[page - 1]
+                    rect = pg.rect
+                    dpi_used = float(dpi)
+                    if rect.width > 0 and rect.width * dpi / 72.0 > max_w:
+                        dpi_used = max(float(self.PREVIEW_DPI_MIN), max_w * 72.0 / rect.width)
+                    dpi_used = float(max(self.PREVIEW_DPI_MIN, int(dpi_used)))
+                    pix = pg.get_pixmap(dpi=int(dpi_used), alpha=False, colorspace=fitz.csRGB)
+                    entry = {"page": page, "total": total,
+                             "png_b64": base64.b64encode(pix.tobytes("png")).decode("ascii"),
+                             "px_w": int(pix.width), "px_h": int(pix.height),
+                             "dpi": dpi, "dpi_used": round(dpi_used, 1), "pdf": str(pdf)}
+                except Exception as exc:
+                    return {"ok": False, "reason": "RENDER_FAILED", "page_from": page_from,
+                            "total": total, "pages": pages, "count_returned": len(pages),
+                            "msg": f"渲染第 {page} 页失败：{exc.__class__.__name__}: {exc}",
+                            "elapsed_s": round(time.perf_counter() - t0, 3)}
+                self._pv_cache_put(key, dict(entry))
+                pages.append({**entry, "cached": False})
+        finally:
+            try:
+                doc.close()
+            except Exception:
+                pass
+
+        out = {"ok": True, "total": total, "start_page": page_from, "count": count,
+               "count_returned": len(pages), "pages": pages,
+               "dpi": dpi, "max_w": max_w, "pdf": str(pdf),
+               "cached": bool(pages) and all(p["cached"] for p in pages)}
         return {**out, "elapsed_s": round(time.perf_counter() - t0, 3)}
 
     # ---------------- tab2：2_HighRes_PDF ----------------

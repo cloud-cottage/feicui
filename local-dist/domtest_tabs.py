@@ -173,10 +173,18 @@ JS_TAB1_PV = """
                   editable: pi?(!pi.disabled && !pi.readOnly):null,
                   value: pi?pi.value:null, max: pi?pi.max:'' },
     nodes: { prev: !!g('btn-tab1-pv-prev'), next: !!g('btn-tab1-pv-next'),
+             first: !!g('btn-tab1-pv-first'), prev10: !!g('btn-tab1-pv-prev10'),
+             next10: !!g('btn-tab1-pv-next10'), last: !!g('btn-tab1-pv-last'),
+             count: !!g('tab1-pv-count'), dpi: !!g('tab1-pv-dpi'), grid: !!g('tab1-pv-grid'),
              setfrom: !!g('btn-tab1-pv-setfrom'), img: !!img, hint: !!hint,
              info: !!g('tab1-pv-info'), msg: !!g('tab1-pv-msg') },
     prev_disabled: g('btn-tab1-pv-prev')?g('btn-tab1-pv-prev').disabled:null,
     next_disabled: g('btn-tab1-pv-next')?g('btn-tab1-pv-next').disabled:null,
+    first_disabled: g('btn-tab1-pv-first')?g('btn-tab1-pv-first').disabled:null,
+    prev10_disabled: g('btn-tab1-pv-prev10')?g('btn-tab1-pv-prev10').disabled:null,
+    next10_disabled: g('btn-tab1-pv-next10')?g('btn-tab1-pv-next10').disabled:null,
+    last_disabled: g('btn-tab1-pv-last')?g('btn-tab1-pv-last').disabled:null,
+    prev10_label: g('btn-tab1-pv-prev10')?g('btn-tab1-pv-prev10').textContent:'',
     setfrom_disabled: g('btn-tab1-pv-setfrom')?g('btn-tab1-pv-setfrom').disabled:null,
     setfrom_label: g('btn-tab1-pv-setfrom')?g('btn-tab1-pv-setfrom').textContent:'',
     info: g('tab1-pv-info')?g('tab1-pv-info').textContent:'',
@@ -187,7 +195,17 @@ JS_TAB1_PV = """
     hint_hidden: hint?hint.hidden:null,
     msg: g('tab1-pv-msg')?g('tab1-pv-msg').textContent:'',
     msg_class: g('tab1-pv-msg')?g('tab1-pv-msg').className:'',
-    hr_from: g('tab1-hr-from')?g('tab1-hr-from').value:''
+    hr_from: g('tab1-hr-from')?g('tab1-hr-from').value:'',
+    count_opts: (function(){ var s=g('tab1-pv-count'); return s?Array.prototype.map.call(s.options,function(o){return o.value;}):[]; })(),
+    count_val: g('tab1-pv-count')?g('tab1-pv-count').value:'',
+    dpi_opts: (function(){ var s=g('tab1-pv-dpi'); return s?Array.prototype.map.call(s.options,function(o){return o.value;}):[]; })(),
+    dpi_val: g('tab1-pv-dpi')?g('tab1-pv-dpi').value:'',
+    grid_hidden: g('tab1-pv-grid')?g('tab1-pv-grid').hidden:null,
+    grid_tiles: g('tab1-pv-grid')?g('tab1-pv-grid').querySelectorAll('.pv-tile').length:0,
+    grid_cols: (function(){ var g2=g('tab1-pv-grid'); if(!g2||g2.hidden) { return 0; } return (getComputedStyle(g2).gridTemplateColumns||'').split(' ').filter(function(x){return x;}).length; })(),
+    grid_first: (function(){ var g2=g('tab1-pv-grid'); var t=g2?g2.querySelector('.pv-tile'):null; return t?t.getAttribute('data-page'):''; })(),
+    grid_focus: (function(){ var g2=g('tab1-pv-grid'); return g2?Array.prototype.map.call(g2.querySelectorAll('.pv-tile.pv-focus'), function(t){ return t.getAttribute('data-page'); }):[]; })(),
+    grid_start: (function(){ var g2=g('tab1-pv-grid'); return g2?Array.prototype.map.call(g2.querySelectorAll('.pv-tile.pv-start'), function(t){ return t.getAttribute('data-page'); }):[]; })()
   }); })()
 """
 
@@ -412,6 +430,9 @@ def _probe_body() -> None:
         " return Promise.resolve({ok:true, page:n, total:5, png_b64:B64, px_w:714, px_h:1000,"
         " page_mm_w:179.9, page_mm_h:259.0, dpi:96, dpi_used:96, cached:false, elapsed_s:0.08}); };"
         " return 1; })()")
+    # 新 UI 默认 10 页/屏（批量网格）；先切 1 页/屏 ⇒ 走旧「单页大图」路径（下面原断言口径不变）
+    _ev("(() => { const el=document.getElementById('tab1-pv-count');"
+        " el.value='1'; el.dispatchEvent(new Event('change')); return el.value; })()")
     _wait_js("(document.getElementById('tab1-pv-info')||{}).textContent"
              " && document.getElementById('tab1-pv-info').textContent.indexOf('/ 5 页')>=0", 10)
     _ev("(() => { const el=document.getElementById('tab1-pv-page'); el.value='3';"
@@ -465,6 +486,83 @@ def _probe_body() -> None:
            f"末页夹紧={pv_last.get('page_input', {}).get('value')!r} "
            f"失败提示={pv_err.get('msg')!r} class={pv_err.get('msg_class')!r} "
            f"图隐藏={pv_err.get('img_hidden')}")
+
+    # ── ①b tab1 预览·网格模式（新）：10 页/屏 2×5、页码角标、点选焦点、双击设起始页、屏翻页 ──
+    # 假批量桥：total=858（与真书「秦印类编 检索版」同规模 ⇒ 末页＝最后完整一屏起始 858−10+1=849）
+    _ev("(() => { const B64=" + json.dumps(tiny_png()) + ";"
+        " window.pywebview.api.tab1_preview_batch = function(p){"
+        " var from=Math.max(1,(p&&p.page_from)||1), c=Math.max(1,Math.min(10,(p&&p.count)||10));"
+        " var total=858, pages=[];"
+        " for (var i=from; i<=Math.min(total, from+c-1); i++) {"
+        " pages.push({page:i, png_b64:B64, px_w:240, px_h:345, cached:false}); }"
+        " return Promise.resolve({ok:true, total:total, start_page:from, count:c,"
+        " count_returned:pages.length, pages:pages, dpi:(p&&p.dpi)||72, cached:false,"
+        " elapsed_s:0.12}); }; return 1; })()")
+    _ev("(() => { const el=document.getElementById('tab1-pv-count');"
+        " el.value='10'; el.dispatchEvent(new Event('change')); return el.value; })()")
+    _wait_js("document.querySelectorAll('#tab1-pv-grid .pv-tile').length === 10", 10)
+    time.sleep(0.3)
+    pg = _read("03g_tab1_pv_grid_toolbar", JS_TAB1_PV)
+    record("tabs/tab1_pv_grid_toolbar_and_2x5",
+           all((pg.get("nodes") or {}).values())
+           and pg.get("count_opts") == ["1", "2", "4", "10"] and pg.get("count_val") == "10"
+           and pg.get("dpi_opts") == ["48", "72", "96", "144"] and pg.get("dpi_val") == "72"
+           and pg.get("grid_tiles") == 10 and pg.get("grid_cols") == 5
+           and pg.get("grid_first") == "1" and pg.get("grid_hidden") is False
+           and pg.get("img_hidden") is True and pg.get("grid_focus") == ["4"],
+           f"工具行齐={all((pg.get('nodes') or {}).values())} "
+           f"count={pg.get('count_opts')}/{pg.get('count_val')} dpi={pg.get('dpi_opts')}/{pg.get('dpi_val')} "
+           f"张数={pg.get('grid_tiles')} 列数={pg.get('grid_cols')} 首张={pg.get('grid_first')!r} "
+           f"焦点张={pg.get('grid_focus')} 网格显示={pg.get('grid_hidden') is False} "
+           f"大图隐藏={pg.get('img_hidden')}")
+
+    # 点第 3 张 ⇒ 焦点页（页码输入同步＋高亮）；双击 ⇒ 直接设为起始页（#tab1-hr-from 同步＋描边）
+    _ev("(() => { var t=document.querySelectorAll('#tab1-pv-grid .pv-tile')[2];"
+        " t.click(); return t.getAttribute('data-page'); })()")
+    _wait_js("(document.getElementById('tab1-pv-page')||{}).value === '3'", 10)
+    time.sleep(0.2)
+    click3 = _read("03h_tab1_pv_tile_click", JS_TAB1_PV)
+    _ev("(() => { var t=document.querySelectorAll('#tab1-pv-grid .pv-tile')[2];"
+        " t.dispatchEvent(new MouseEvent('dblclick', {bubbles:true})); return 1; })()")
+    _wait_js("(document.getElementById('tab1-hr-from')||{}).value === '3'", 10)
+    time.sleep(0.2)
+    dbl3 = _read("03i_tab1_pv_tile_dblclick", JS_TAB1_PV)
+    record("tabs/tab1_pv_tile_click_focus_and_dblclick_setfrom",
+           str((click3.get("page_input") or {}).get("value")) == "3"
+           and click3.get("grid_focus") == ["3"]
+           and dbl3.get("hr_from") == "3"
+           and dbl3.get("grid_start") == ["3"]
+           and "设为起始页" in (dbl3.get("msg") or "")
+           and "err" not in (dbl3.get("msg_class") or ""),
+           f"点第3张⇒页码输入={(click3.get('page_input') or {}).get('value')!r} "
+           f"焦点描边={click3.get('grid_focus')} 双击⇒hr-from={dbl3.get('hr_from')!r} "
+           f"起始描边={dbl3.get('grid_start')} 提示={dbl3.get('msg')!r}")
+
+    # 屏翻页：末页 ⇒ 最后完整一屏起始 849（不整除也对）；越界按钮禁用；首页 ⇒ 回 1、首端禁用
+    _ev("document.getElementById('btn-tab1-pv-last').click()")
+    _wait_js("(function(){ var g=document.getElementById('tab1-pv-grid');"
+             " return g && g.querySelector('.pv-tile') &&"
+             " g.querySelector('.pv-tile').getAttribute('data-page')==='849'; })()", 10)
+    time.sleep(0.2)
+    lastp = _read("03j_tab1_pv_last_screen", JS_TAB1_PV)
+    _ev("document.getElementById('btn-tab1-pv-first').click()")
+    _wait_js("(function(){ var g=document.getElementById('tab1-pv-grid');"
+             " return g && g.querySelector('.pv-tile') &&"
+             " g.querySelector('.pv-tile').getAttribute('data-page')==='1'; })()", 10)
+    time.sleep(0.2)
+    firstp = _read("03k_tab1_pv_first_screen", JS_TAB1_PV)
+    record("tabs/tab1_pv_screen_paging_bounds",
+           lastp.get("grid_first") == "849" and lastp.get("grid_tiles") == 10
+           and lastp.get("next10_disabled") is True and lastp.get("last_disabled") is True
+           and lastp.get("prev10_disabled") is False and lastp.get("first_disabled") is False
+           and firstp.get("grid_first") == "1"
+           and firstp.get("first_disabled") is True and firstp.get("prev10_disabled") is True
+           and firstp.get("prev_disabled") is True and firstp.get("next_disabled") is False,
+           f"末屏首张={lastp.get('grid_first')!r} 张数={lastp.get('grid_tiles')} "
+           f"末页态禁用(+10/末页)={lastp.get('next10_disabled')},{lastp.get('last_disabled')} "
+           f"首页态禁用(首页/−10/−1/+1)=({firstp.get('first_disabled')},"
+           f"{firstp.get('prev10_disabled')},{firstp.get('prev_disabled')},"
+           f"{firstp.get('next_disabled')})")
 
     # 进度 / 完成态（注入 onProgress 推送 + 假 status，避免真跑 ≈6.2 s/页 的渲染）
     running = {

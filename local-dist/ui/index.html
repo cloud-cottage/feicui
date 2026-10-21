@@ -185,21 +185,37 @@
         </div>
       </div>
 
-      <!-- ── tab1 · PDF 快速预览（低清 96dpi 缩略；先看清内容 ⇒ 再决定从第几页开始高清化）── -->
+      <!-- ── tab1 · PDF 快速预览（低清缩略网格：默认 10 页/屏 2×5 · 先看清内容 ⇒ 再定从第几页开始高清化）── -->
       <div class="pv-card" id="tab1-pv-card">
         <div class="pv-head">
-          <h4 class="pv-title">🔍 PDF 预览<span class="muted">（低清 96 dpi 缩略 · 用来看从哪页开始高清化）</span></h4>
+          <h4 class="pv-title">🔍 PDF 预览<span class="muted">（低清缩略 · 默认 10 页/屏 · 用来看从哪页开始高清化）</span></h4>
           <div class="row tight pv-nav">
-            <span class="muted">页码</span>
+            <button id="btn-tab1-pv-first" class="btn" disabled title="跳到第 1 页">« 首页</button>
+            <button id="btn-tab1-pv-prev10" class="btn" disabled title="上一屏（往前翻一屏页数）">‹‹ −10</button>
+            <button id="btn-tab1-pv-prev" class="btn" disabled title="上一页">‹ −1</button>
             <input id="tab1-pv-page" type="number" min="1" step="1" class="w-num"
                    placeholder="第 1 页" title="输入页码后回车即可跳到该页">
-            <button id="btn-tab1-pv-prev" class="btn" disabled>◀ 上一页</button>
-            <button id="btn-tab1-pv-next" class="btn" disabled>下一页 ▶</button>
+            <button id="btn-tab1-pv-next" class="btn" disabled title="下一页">+1 ›</button>
+            <button id="btn-tab1-pv-next10" class="btn" disabled title="下一屏（往后翻一屏页数）">+10 ››</button>
+            <button id="btn-tab1-pv-last" class="btn" disabled title="跳到最后完整一屏的起始页">末页 »</button>
             <span class="muted" id="tab1-pv-info">第 — / — 页</span>
+            <select id="tab1-pv-count" class="w-num" title="每屏页数（10 页/屏＝2 行 × 5 列）">
+              <option value="1">1 页/屏</option>
+              <option value="2">2 页/屏</option>
+              <option value="4">4 页/屏</option>
+              <option value="10" selected>10 页/屏</option>
+            </select>
+            <select id="tab1-pv-dpi" class="w-num" title="预览清晰度（dpi，越低越快）">
+              <option value="48">48 dpi</option>
+              <option value="72" selected>72 dpi</option>
+              <option value="96">96 dpi</option>
+              <option value="144">144 dpi</option>
+            </select>
             <button id="btn-tab1-pv-setfrom" class="btn" disabled>📌 把第 — 页设为起始页</button>
           </div>
         </div>
         <div class="pv-frame">
+          <div id="tab1-pv-grid" class="pv-grid" hidden></div>
           <img id="tab1-pv-img" alt="PDF 预览" hidden>
           <div class="pv-hint" id="tab1-pv-hint">未选择文件（在上方表格点一行即可预览第 1 页）</div>
         </div>

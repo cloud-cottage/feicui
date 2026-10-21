@@ -388,14 +388,30 @@
     }).catch(function () { });
   }
 
-  // ── tab1 · PDF 快速预览（后端 `tab1_preview`：96 dpi 单页、限宽 760、LRU 8 张）──
+  // ── tab1 · PDF 快速预览（低清缩略网格：默认 10 页/屏 2×5，后端 `tab1_preview_batch`）──
   //   用途：**先看清页面内容**，再决定「从第几页开始高清化」（配合 #tab1-hr-from）。
-  //   选书 ⇒ 自动预览第 1 页；翻页/输入页码跳页；「设为起始页」直接写 #tab1-hr-from。
+  //   选书 ⇒ 自动载第 1 屏；每屏页数下拉 [1|2|4|10]（=1 走旧单页大图 `tab1_preview`）；
+  //   dpi 下拉 [48|72|96|144]；细翻页＝首页/−1 屏/−1 页/页码/+1 页/+1 屏/末页；
+  //   单击张＝设焦点页，双击张＝直接设起始页；±1 屏与首末在越界时禁用（不报错）。
   var pvSeq = 0;                          // 请求序号：翻页太快时只认最后一发（防止旧图盖新图）
 
   function pvState() {
-    if (!ST.tab1.pv) { ST.tab1.pv = { pdf: '', page: 1, total: 0 }; }
+    if (!ST.tab1.pv) {
+      ST.tab1.pv = { pdf: '', page: 1, total: 0, from: 1, pages: [],
+                     count: parseInt(($('tab1-pv-count') || {}).value || '10', 10) || 10,
+                     dpi: parseInt(($('tab1-pv-dpi') || {}).value || '72', 10) || 72 };
+    }
     return ST.tab1.pv;
+  }
+
+  function pvCount() {
+    var n = parseInt(($('tab1-pv-count') || {}).value, 10);
+    return (isFinite(n) && n >= 1) ? n : pvState().count;
+  }
+
+  function pvDpi() {
+    var n = parseInt(($('tab1-pv-dpi') || {}).value, 10);
+    return (isFinite(n) && n >= 24) ? n : pvState().dpi;
   }
 
   function pvClamp(p) {
@@ -405,8 +421,20 @@
     return n;
   }
 
+  function pvLastStart() {                // 最后**完整**一屏的起始页：max(1, total − count + 1)
+    var st = pvState();
+    if (!st.total) { return 1; }
+    return Math.max(1, st.total - pvCount() + 1);
+  }
+
+  function pvScreenOf(p) {                // 页码 ⇒ 所属屏的起始页（按每屏页数对齐）
+    var c = pvCount(), n = parseInt(p, 10);
+    if (!isFinite(n) || isNaN(n) || n < 1) { n = 1; }
+    return Math.floor((n - 1) / c) * c + 1;
+  }
+
   function pvRenderNav() {
-    var st = pvState(), total = st.total || 0, page = st.page || 1;
+    var st = pvState(), total = st.total || 0, page = st.page || 1, from = st.from || 1, c = pvCount();
     if ($('tab1-pv-page')) {
       $('tab1-pv-page').value = String(page);
       if (total) { $('tab1-pv-page').max = String(total); } else { $('tab1-pv-page').removeAttribute('max'); }
@@ -414,8 +442,19 @@
     if ($('tab1-pv-info')) {
       $('tab1-pv-info').textContent = total ? ('第 ' + page + ' / ' + total + ' 页') : '第 — / — 页';
     }
+    // ±1 页＝焦点页走到头即禁用；首/末/±1 屏＝屏越界即禁用（disabled，不报错）
     if ($('btn-tab1-pv-prev')) { $('btn-tab1-pv-prev').disabled = !total || page <= 1; }
     if ($('btn-tab1-pv-next')) { $('btn-tab1-pv-next').disabled = !total || page >= total; }
+    if ($('btn-tab1-pv-first')) { $('btn-tab1-pv-first').disabled = !total || from <= 1; }
+    if ($('btn-tab1-pv-prev10')) {
+      $('btn-tab1-pv-prev10').disabled = !total || from - c < 1;
+      $('btn-tab1-pv-prev10').textContent = '‹‹ −' + c;
+    }
+    if ($('btn-tab1-pv-next10')) {
+      $('btn-tab1-pv-next10').disabled = !total || from + c > total;
+      $('btn-tab1-pv-next10').textContent = '+' + c + ' ››';
+    }
+    if ($('btn-tab1-pv-last')) { $('btn-tab1-pv-last').disabled = !total || from >= pvLastStart(); }
     if ($('btn-tab1-pv-setfrom')) {
       $('btn-tab1-pv-setfrom').disabled = !total;
       $('btn-tab1-pv-setfrom').textContent = '📌 把第 ' + (total ? page : '—') + ' 页设为起始页';
@@ -426,69 +465,201 @@
     var h = $('tab1-pv-hint');
     if (h) { h.hidden = false; h.textContent = text; }
     if ($('tab1-pv-img')) { $('tab1-pv-img').hidden = true; }
+    if ($('tab1-pv-grid')) { $('tab1-pv-grid').hidden = true; }
   }
 
   function pvClear(text) {
     var st = pvState();
-    st.pdf = ''; st.page = 1; st.total = 0;
+    st.pdf = ''; st.page = 1; st.total = 0; st.from = 1; st.pages = [];
     pvSeq++;
     var img = $('tab1-pv-img');
     if (img) { img.removeAttribute('src'); img.hidden = true; }
+    var grid = $('tab1-pv-grid');
+    if (grid) { grid.innerHTML = ''; grid.hidden = true; }
     pvHint(text || '未选择文件（在上方表格点一行即可预览第 1 页）');
     pvRenderNav();
     setMsg('tab1-pv-msg', '');
   }
 
-  function pvLoad(page) {
+  function pvMarkTiles() {                // 焦点页高亮 ＋ 起始页（#tab1-hr-from）描边
+    var st = pvState(), grid = $('tab1-pv-grid');
+    if (!grid) { return; }
+    var start = parseInt(($('tab1-hr-from') || {}).value, 10);
+    var tiles = grid.querySelectorAll('.pv-tile');
+    for (var i = 0; i < tiles.length; i++) {
+      var p = parseInt(tiles[i].getAttribute('data-page'), 10);
+      tiles[i].classList.toggle('pv-focus', p === st.page);
+      tiles[i].classList.toggle('pv-start', isFinite(start) && p === start);
+    }
+  }
+
+  function pvRenderTiles() {              // 网格：每张＝缩略图＋页码角标（点选焦点 / 双击设起始页）
+    var st = pvState(), grid = $('tab1-pv-grid'), img = $('tab1-pv-img');
+    if (!grid) { return; }
+    grid.innerHTML = '';
+    (st.pages || []).forEach(function (p) {
+      var tile = document.createElement('div');
+      tile.className = 'pv-tile';
+      tile.setAttribute('data-page', String(p.page));
+      tile.setAttribute('title', '第 ' + p.page + ' 页（单击设焦点 · 双击设为起始页）');
+      var im = document.createElement('img');
+      im.src = 'data:image/png;base64,' + p.png_b64;
+      im.alt = '第 ' + p.page + ' 页预览';
+      im.draggable = false;
+      var badge = document.createElement('span');
+      badge.className = 'pv-badge';
+      badge.textContent = String(p.page);
+      tile.appendChild(im);
+      tile.appendChild(badge);
+      tile.addEventListener('click', function () { pvFocus(p.page); });
+      tile.addEventListener('dblclick', function () { pvSetFrom(p.page); });
+      grid.appendChild(tile);
+    });
+    var n = (st.pages || []).length;
+    grid.hidden = n === 0;
+    if (img) { img.hidden = true; }
+    if ($('tab1-pv-hint')) { $('tab1-pv-hint').hidden = n > 0; }
+    pvMarkTiles();
+  }
+
+  function pvFocus(page) {                // 单击张：设焦点页（同步页码输入），不重渲
+    var st = pvState();
+    st.page = pvClamp(page);
+    pvRenderNav();
+    pvMarkTiles();
+  }
+
+  function safeCall(method, payload) {    // 桥缺方法时 `call` 会同步抛 ⇒ 兜成 rejected promise
+    try { return call(method, payload); }
+    catch (e) { return Promise.reject(e); }
+  }
+
+  function pvLoad(fromPage, focusPage) {
     var m = ST.tab1.selected;
     if (!m) { pvClear(); return; }
     var st = pvState();
-    if (st.pdf !== m.filename) { st.pdf = m.filename; st.page = 1; st.total = m.page_count || 0; }
-    st.page = pvClamp(page === undefined || page === null ? st.page : page);
-    var want = st.page;
+    if (st.pdf !== m.filename) {          // 换书 ⇒ 回第 1 屏
+      st.pdf = m.filename; st.total = m.page_count || 0; st.page = 1; st.from = 1; st.pages = [];
+    }
+    st.count = pvCount();
+    st.dpi = pvDpi();
+    var from = parseInt(fromPage, 10);
+    if (!isFinite(from) || isNaN(from) || from < 1) { from = 1; }
+    if (st.total && from > st.total) { from = st.total; }        // 越界 ⇒ 截到 total
+    st.from = from;
+    st.page = pvClamp(focusPage === undefined || focusPage === null ? st.page : focusPage);
     pvRenderNav();
     var seq = ++pvSeq;
-    pvHint('第 ' + want + ' 页 · 渲染中…');
-    setMsg('tab1-pv-msg', '第 ' + want + ' 页 渲染中…');
-    call('tab1_preview', { pdf: m.filename, page: want, dpi: 96, max_w: 760 }).then(function (r) {
-      if (seq !== pvSeq) { return; }                    // 已有更新的一发 ⇒ 丢弃本次结果
-      if (!r || !r.ok) {                                 // 结构化失败（不 alert、不炸桥）
+    var want = st.page;
+    if (st.count === 1) {                 // 单页模式：保持旧「单张大图」体验（max_w 760）
+      pvHint('第 ' + want + ' 页 · 渲染中…');
+      setMsg('tab1-pv-msg', '第 ' + want + ' 页 渲染中…');
+      safeCall('tab1_preview', { pdf: m.filename, page: want, dpi: st.dpi, max_w: 760 }).then(function (r) {
+        if (seq !== pvSeq) { return; }                  // 已有更新的一发 ⇒ 丢弃本次结果
+        if (!r || !r.ok) {                              // 结构化失败（不 alert、不炸桥）
+          var why = (r && r.reason) || 'RENDER_FAILED';
+          var msg = (r && r.msg) || '预览失败';
+          pvHint('第 ' + want + ' 页 无法预览：' + why);
+          setMsg('tab1-pv-msg', '❌ ' + why + ' · ' + msg, 'err');
+          return;
+        }
+        st.total = r.total || st.total;
+        st.page = r.page || want;
+        st.from = st.page; st.pages = [];
+        var grid = $('tab1-pv-grid');
+        if (grid) { grid.innerHTML = ''; grid.hidden = true; }
+        if ($('tab1-pv-img')) {
+          $('tab1-pv-img').src = 'data:image/png;base64,' + r.png_b64;
+          $('tab1-pv-img').hidden = false;
+        }
+        if ($('tab1-pv-hint')) { $('tab1-pv-hint').hidden = true; }
+        pvRenderNav();
+        setMsg('tab1-pv-msg', '第 ' + st.page + ' / ' + st.total + ' 页 · ' +
+          r.px_w + '×' + r.px_h + ' px · ' + r.page_mm_w + '×' + r.page_mm_h + ' mm · ' +
+          (r.cached ? '缓存命中' : r.elapsed_s + ' s'), 'ok');
+      }).catch(function (e) {
+        if (seq !== pvSeq) { return; }
+        pvHint('第 ' + want + ' 页 无法预览');
+        setMsg('tab1-pv-msg', '❌ 预览请求失败：' + ((e && e.message) || e), 'err');
+      });
+      return;
+    }
+    // 网格模式：一「屏」st.count 张（后端越界自动截 ⇒ count_returned 反映实际张数）
+    pvHint('渲染 ' + st.count + ' 页中…');
+    setMsg('tab1-pv-msg', '渲染第 ' + st.from + ' 页起 ' + st.count + ' 页中…');
+    safeCall('tab1_preview_batch', { pdf: m.filename, page_from: st.from, count: st.count,
+                                     dpi: st.dpi, max_w: 240 }).then(function (r) {
+      if (seq !== pvSeq) { return; }
+      if (!r || !r.ok) {                                // 结构化失败（不 alert、不炸桥）
         var why = (r && r.reason) || 'RENDER_FAILED';
         var msg = (r && r.msg) || '预览失败';
-        pvHint('第 ' + want + ' 页 无法预览：' + why);
+        pvHint('无法预览：' + why);
         setMsg('tab1-pv-msg', '❌ ' + why + ' · ' + msg, 'err');
         return;
       }
       st.total = r.total || st.total;
-      st.page = r.page || want;
-      if ($('tab1-pv-img')) {
-        $('tab1-pv-img').src = 'data:image/png;base64,' + r.png_b64;
-        $('tab1-pv-img').hidden = false;
+      st.from = r.start_page || st.from;
+      st.pages = r.pages || [];
+      if (st.pages.length && (st.page < st.from || st.page > st.from + st.pages.length - 1)) {
+        st.page = st.from;                              // 焦点不在本屏 ⇒ 落到屏首（保险）
       }
-      if ($('tab1-pv-hint')) { $('tab1-pv-hint').hidden = true; }
+      pvRenderTiles();
       pvRenderNav();
-      setMsg('tab1-pv-msg', '第 ' + st.page + ' / ' + st.total + ' 页 · ' +
-        r.px_w + '×' + r.px_h + ' px · ' + r.page_mm_w + '×' + r.page_mm_h + ' mm · ' +
+      setMsg('tab1-pv-msg', '第 ' + st.from + '–' + (st.from + st.pages.length - 1) +
+        ' / ' + st.total + ' 页 · ' + st.pages.length + ' 张 · ' +
+        ((st.pages[0] || {}).px_w || 0) + '×' + ((st.pages[0] || {}).px_h || 0) + ' px · ' +
         (r.cached ? '缓存命中' : r.elapsed_s + ' s'), 'ok');
     }).catch(function (e) {
       if (seq !== pvSeq) { return; }
-      pvHint('第 ' + want + ' 页 无法预览');
+      pvHint('无法预览');
       setMsg('tab1-pv-msg', '❌ 预览请求失败：' + ((e && e.message) || e), 'err');
     });
   }
 
-  function pvStep(delta) {
+  function pvGoto(page) {                 // 跳到某页：已在当前屏 ⇒ 只设焦点；否则载入所属屏
     var st = pvState();
-    if (!st.total) { return; }
-    pvLoad(pvClamp((st.page || 1) + delta));
+    var p = pvClamp(page);
+    var from = pvScreenOf(p);
+    if (st.pages.length && st.from === from && p >= st.from && p <= st.from + st.pages.length - 1) {
+      pvFocus(p);
+      return;
+    }
+    pvLoad(from, p);
   }
 
-  function pvSetFrom() {
+  function pvStep(delta) {                // ±1 页：屏内只挪焦点；出屏 ⇒ 翻到相邻屏
+    var st = pvState();
+    if (!st.total) { return; }
+    var p = pvClamp((st.page || 1) + delta);
+    if (p === st.page) { pvRenderNav(); return; }
+    if (st.pages.length && p >= st.from && p <= st.from + st.pages.length - 1) {
+      pvFocus(p);
+      return;
+    }
+    pvLoad(pvScreenOf(p), p);
+  }
+
+  function pvStepScreens(delta) {         // ±一屏（±每屏页数）：page_from ± count
+    var st = pvState();
+    if (!st.total) { return; }
+    var from = st.from + delta * pvCount();
+    if (from < 1) { from = 1; }
+    if (st.total && from > st.total) { from = st.total; }
+    pvLoad(from, from);
+  }
+
+  function pvFirst() { pvLoad(1, 1); }
+  function pvLast() { var f = pvLastStart(); pvLoad(f, f); }
+
+  function pvSetFrom(page) {
     var st = pvState();
     if (!st.total) { setMsg('tab1-pv-msg', '请先在上方表格选一行并翻到要用的页', 'err'); return; }
-    var page = pvClamp(st.page);
-    if ($('tab1-hr-from')) { $('tab1-hr-from').value = String(page); }
-    setMsg('tab1-pv-msg', '✅ 已把第 ' + page + ' 页设为起始页（高清化从第 ' + page + ' 页开始）', 'ok');
+    var p = pvClamp(page === undefined || page === null ? st.page : page);
+    st.page = p;
+    if ($('tab1-hr-from')) { $('tab1-hr-from').value = String(p); }
+    pvRenderNav();
+    pvMarkTiles();
+    setMsg('tab1-pv-msg', '✅ 已把第 ' + p + ' 页设为起始页（高清化从第 ' + p + ' 页开始）', 'ok');
   }
 
   // ── tab2 ──
@@ -2084,13 +2255,25 @@
     $('btn-tab1-hr-start').addEventListener('click', hrStart);
     $('btn-tab1-hr-cancel').addEventListener('click', hrCancel);
     $('btn-tab1-hr-goto2').addEventListener('click', function () { activateTab('2_HighRes_PDF'); });
-    // tab1 · PDF 快速预览（页码输入 / 上下页 / 设为起始页）
+    // tab1 · PDF 快速预览（首/末屏、±1 屏、±1 页、页码跳页、每屏页数与 dpi、设为起始页）
+    $('btn-tab1-pv-first').addEventListener('click', pvFirst);
+    $('btn-tab1-pv-prev10').addEventListener('click', function () { pvStepScreens(-1); });
     $('btn-tab1-pv-prev').addEventListener('click', function () { pvStep(-1); });
     $('btn-tab1-pv-next').addEventListener('click', function () { pvStep(1); });
-    $('btn-tab1-pv-setfrom').addEventListener('click', pvSetFrom);
-    $('tab1-pv-page').addEventListener('change', function () { pvLoad(this.value); });
+    $('btn-tab1-pv-next10').addEventListener('click', function () { pvStepScreens(1); });
+    $('btn-tab1-pv-last').addEventListener('click', pvLast);
+    $('btn-tab1-pv-setfrom').addEventListener('click', function () { pvSetFrom(); });
+    $('tab1-pv-page').addEventListener('change', function () { pvGoto(this.value); });
     $('tab1-pv-page').addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') { e.preventDefault(); pvLoad(this.value); }
+      if (e.key === 'Enter') { e.preventDefault(); pvGoto(this.value); }
+    });
+    $('tab1-pv-count').addEventListener('change', function () {
+      var st = pvState();
+      pvLoad(pvScreenOf(st.page), st.page);   // 换每屏页数 ⇒ 以焦点页所在屏重载（=1 回单页大图）
+    });
+    $('tab1-pv-dpi').addEventListener('change', function () {
+      var st = pvState();
+      pvLoad(st.from, st.page);               // 换 dpi ⇒ 原屏原焦点重渲
     });
     ctBind();                               // tab2 切图台（画布 / 检测 / 裁切 / 选页）
     $('btn-tab2-refresh').addEventListener('click', loadTab2);

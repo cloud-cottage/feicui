@@ -28,6 +28,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 WEBUI_DIR = Path(__file__).resolve().parents[1]           # local-dist/
 if str(WEBUI_DIR) not in sys.path:
@@ -280,6 +281,64 @@ class HighResV2Test(unittest.TestCase):
         self.assertEqual(texts[0], "PAGE-1")                # 顺序没被 4–6 顶掉
         self.assertEqual(texts[9], "PAGE-10")
         self.assertEqual(texts[3], "")
+
+    # ── t8：页缓存被换成 10×10 假 PNG + 旧 out.pdf 删掉 ⇒ 必须重渲（不把错图当整页嵌）──
+    def test_t8_poisoned_cache_png_is_re_rendered(self) -> None:
+        args: dict = dict(dpi=300, page_from=1, page_to=10, page_bytes_dir=self.cache)
+        r1 = render_pdf_to_pdf(self.src, self.out, **args)
+        self.assertTrue(r1["ok"], r1)
+        self.assertEqual(r1["rendered_pages"], 10)
+        px_before = [int(v) for v in read_progress(self.out)["units"]["1"]["px"]]
+        self.assertNotEqual(px_before, [10, 10])
+
+        self.out.unlink()                                  # 只能靠页缓存（旧 PDF 恢复路走不通）
+        fake = fitz.Pixmap(fitz.csRGB, fitz.IRect(0, 0, 10, 10), False)
+        (self.cache / "P0001.png").write_bytes(fake.tobytes("png"))
+
+        r2 = render_pdf_to_pdf(self.src, self.out, **args)
+        self.assertTrue(r2["ok"], r2)
+        self.assertGreaterEqual(r2["rendered_pages"], 1)   # 缓存不可信 ⇒ 不静默 skipped
+        self.assertEqual(r2["pdf_pages_total"], N_PAGES)
+
+        px_after = [int(v) for v in read_progress(self.out)["units"]["1"]["px"]]
+        self.assertEqual(px_after, px_before)              # 登记表是重渲后的真尺寸
+        doc = fitz.open(str(self.out))
+        xref, _smask, w, h = doc[0].get_images(full=True)[0][:4]
+        self.assertEqual([int(w), int(h)], px_after)       # 输出页位图 ≠ 10×10
+        self.assertNotEqual([int(w), int(h)], [10, 10])
+        doc.close()
+
+    # ── t9：resumed_from 口径 = skipped（passthrough 不是「续跑」）──
+    def test_t9_resumed_from_counts_only_skipped(self) -> None:
+        src6 = self.tmp / "src6.pdf"
+        out6 = self.tmp / "out6" / "b6-HighRes.pdf"
+        _make_src(src6, n=6)
+        res = render_pdf_to_pdf(src6, out6, dpi=300, page_from=2, page_to=3,
+                                page_bytes_dir=self.tmp / "cache6")
+        self.assertTrue(res["ok"], res)
+        self.assertEqual(res["rendered_pages"], 2)
+        self.assertEqual(res["skipped_pages"], 0)
+        self.assertEqual(res["passthrough_pages"], 4)
+        self.assertEqual(res["resumed_from"], 0)           # 全新首跑：没有「续跑」可言
+        self.assertEqual(res["pdf_pages_total"], 6)
+
+    # ── t10：落盘后复核不通过 ⇒ PAGE_COUNT_MISMATCH，且 out.pdf 逐字节不变、无 .part 残留 ──
+    def test_t10_page_count_mismatch_after_save_keeps_artifact(self) -> None:
+        r1 = render_pdf_to_pdf(self.src, self.out, dpi=300, page_from=1, page_to=10,
+                               page_bytes_dir=self.cache)
+        self.assertTrue(r1["ok"], r1)
+        sha_before = _sha(self.out)
+
+        fake_bad = {"expected_pages": N_PAGES, "actual_pages": N_PAGES - 1, "page": 0}
+        with mock.patch("src.highres_pdf._verify_saved_pdf", return_value=fake_bad):
+            r2 = render_pdf_to_pdf(self.src, self.out, dpi=600, page_from=1, page_to=10,
+                                   page_bytes_dir=self.cache)
+        self.assertFalse(r2["ok"], r2)
+        self.assertEqual(r2["reason"], "PAGE_COUNT_MISMATCH")
+        self.assertEqual(r2["expected_pages"], N_PAGES)
+        self.assertEqual(r2["actual_pages"], N_PAGES - 1)
+        self.assertEqual(_sha(self.out), sha_before)       # 一字节不变
+        self.assertEqual(list(self.out.parent.glob("*.part")), [])   # 无残留
 
     # ── t7：CANCELLED 时 out_pdf 不变、units 保留；BAD_DPI / BAD_RANGE 仍前置拒绝 ──
     def test_t7_cancel_keeps_out_pdf_and_units(self) -> None:

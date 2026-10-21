@@ -8,9 +8,11 @@
 
 输出 PDF **恒含源 PDF 的全部页**，且 **输出第 i 页 ≡ 源第 i 页**（页数 / 顺序 / pt 尺寸一致）
 ⇒ 下游 tab2 切图台按页索引取页、命名 `P<页>` 时，**页索引与原件页码一一对应**（v1 只输出页段，
-页码锚定丢失，这是 v2 修掉的结构性缺陷）。组装完必须断言
-`built.page_count == src.page_count`，不等 ⇒ 结构化失败
-`{"ok": False, "reason": "PAGE_COUNT_MISMATCH", …}` 且**不覆盖**已有 `out_pdf`。
+页码锚定丢失，这是 v2 修掉的结构性缺陷）。组装、**落盘后必须把 `.part` 重新打开真校验**：
+页数 = 源页数，且逐页 `rect` 与源页误差 ≤ 0.01pt（内存里 `built.page_count` 是构造即知的
+恒真断言 —— 死分支，已删）。不符 ⇒ 删 `.part`、结构化失败
+`{"ok": False, "reason": "PAGE_COUNT_MISMATCH", "expected_pages", "actual_pages", "page"}`，
+**`out_pdf` 一字节不变**；通过才 `replace(out)`。
 
 ### 页的角色三分（每页恰好一种）
 
@@ -25,8 +27,10 @@
 ### 位图可得性优先级（D：多次实施不重复做）
 
 1. 页缓存 `page_bytes_dir/P####.png`（`api.tab1_highres_start` 默认 `keep_page_pngs=true`
-   ⇒ `var/highres_pages/<目录键>/<书名>/`，显式目录**本模块不删**）；
-2. **已存在的 `out_pdf` 同页** `doc.extract_image(xref)` 取回 —— 校验像素尺寸与登记表 `px` 一致方可用
+   ⇒ `var/highres_pages/<目录键>/<书名>/`，显式目录**本模块不删**）—— **必须验像素**：
+   用 `fitz.open(png)` 读真实宽高与登记表 `px` **逐值相等**才可用（缓存被换/截断成错尺寸图 ⇒
+   当「不可用」走下一级，不静默把错图当整页嵌）；
+2. **已存在的 `out_pdf` 同页** `doc.extract_image(xref)` 取回 —— 同样校验像素尺寸与登记表 `px` 一致方可用
    （旧版 range-only 输出用进度里的页清单做**页映射**，不会张冠李戴）；
 3. 都没有 ⇒ 重渲该页，并更新登记表（按**本次**档位登记）。
 
@@ -54,7 +58,8 @@
 ### 幂等 / 空转
 
 同参数连跑两次，第二次 `rendered_pages = 0`。全部页都已是 `highres` 时先**校验** `out_pdf`
-（页数 = 源页数、每张高清页位图 `px` 与登记表一致）⇒ 合格就**不重建**（省掉整本组装），
+（页数 = 源页数、每张高清页位图 `px` 与登记表一致；页缓存里的 PNG 若被判为错尺寸则不算达标
+⇒ 走重渲/旧 PDF 恢复）⇒ 合格就**不重建**（省掉整本组装），
 不合格（例：旧版 range-only）⇒ 重建为全页数，**已达标页不重渲**。
 `overwrite=true` 由 `api.tab1_highres_start` 先清 `out_pdf` + 进度 ⇒ 全量重渲。
 
@@ -107,6 +112,8 @@ v2 的 `passthrough` 页只做页对象复制（**≪ 0.1 s/页**），所以「
 "units_total", "units_best_dpi"}`
 
 * `pages_total` = **本次范围内**页数（UI 进度条分母）；`pdf_pages_total` = **输出**页数（= 源页数）；
+* `resumed_from` = **`skipped`**（＝本次因已达标而跳过的页数；**不含** `passthrough` ——
+  那些页是从未处理过的，不是「续跑」）；
 * `skipped_pages` = 复用已存位图**未重渲**的页数（含「范围外仍保持高清」的页）；
 * `rendered_pages` / `passthrough_pages` 同名字面义 ⇒ `rendered + skipped + passthrough == pdf_pages_total`；
 * `units_total` = 登记表里已高清化的页数；`units_best_dpi` = 登记表里的最高档。
@@ -324,31 +331,80 @@ def _out_has_bitmap(out_doc, out_map, pno: int, unit: dict) -> bool:
     return True
 
 
-def _bitmap_how(pno: int, unit, cache_dir: Path, out_doc, out_map) -> str | None:
-    """⇒ `"cache"` / `"out"` / `None`（都没有 ⇒ 该页必须重渲）。"""
+def _png_px(path: Path):
+    """PNG **真实**像素宽高 `(w, h)`（`fitz.open` 读回图像对象；读不出 ⇒ None）。
+
+    缓存可能被外部替换 / 截断 / 换成别的页 ⇒ **不许只看文件存在就信**（否则错图会被当整页嵌）。
+    """
+    doc = None
+    try:
+        doc = fitz.open(str(path))
+        if int(getattr(doc, "page_count", 0) or 0) < 1:
+            return None
+        # 图像文档：`get_image_info` 给的是**真实像素**（page.rect 是按 96dpi 折算的 pt，
+        # 拿它当像素会小 25%，故不能用 rect）
+        for inf in doc[0].get_image_info(xrefs=True) or []:
+            w, h = int(inf.get("width") or 0), int(inf.get("height") or 0)
+            if w > 0 and h > 0:
+                return w, h
+        pix = fitz.Pixmap(str(path))                 # 兜底：直接解图像
+        return int(pix.width), int(pix.height)
+    except Exception:
+        return None
+    finally:
+        try:
+            if doc is not None:
+                doc.close()
+        except Exception:
+            pass
+
+
+def _cache_png(unit, cache_dir: Path):
+    """页缓存可用 ⇒ 返回 `Path`；不可用（无名 / 空文件 / **像素与登记表不符**）⇒ None。
+
+    像素校验口径：`unit["px"]` 必须齐备，且与 `fitz.open(png)` 读回的真实宽高**逐值相等**。
+    """
     if not unit:
         return None
     name = str(unit.get("png") or "")
-    if name:
-        f = cache_dir / name
-        try:
-            if f.is_file() and f.stat().st_size > 0:
-                return "cache"
-        except Exception:
-            pass
+    if not name:
+        return None
+    px = list(unit.get("px") or [])
+    if len(px) != 2:
+        return None
+    try:
+        want = (int(px[0]), int(px[1]))
+    except Exception:
+        return None
+    f = cache_dir / name
+    try:
+        if not f.is_file() or f.stat().st_size <= 0:
+            return None
+    except Exception:
+        return None
+    got = _png_px(f)
+    if got is None or (int(got[0]), int(got[1])) != want:
+        return None                                  # 错尺寸 ⇒ 当不可用（走下一级 / 重渲）
+    return f
+
+
+def _bitmap_how(pno: int, unit, cache_dir: Path, out_doc, out_map) -> str | None:
+    """⇒ `"cache"` / `"out"` / `None`（都没有 ⇒ 该页必须重渲）。缓存命中须过像素校验。"""
+    if not unit:
+        return None
+    if _cache_png(unit, cache_dir) is not None:
+        return "cache"
     if _out_has_bitmap(out_doc, out_map, pno, unit):
         return "out"
     return None
 
 
 def _bitmap_bytes(pno: int, unit: dict, cache_dir: Path, out_doc, out_map):
-    """取位图字节（缓存优先，其次旧 PDF）；取不到 ⇒ None。"""
-    name = str(unit.get("png") or "")
-    if name:
-        f = cache_dir / name
+    """取位图字节（缓存优先，其次旧 PDF）；取不到 ⇒ None。与 `_bitmap_how` 同一套校验。"""
+    f = _cache_png(unit, cache_dir)
+    if f is not None:
         try:
-            if f.is_file() and f.stat().st_size > 0:
-                return f.read_bytes()
+            return f.read_bytes()
         except Exception:
             pass
     hit = _out_page_image(out_doc, out_map, pno, unit)
@@ -359,6 +415,38 @@ def _bitmap_bytes(pno: int, unit: dict, cache_dir: Path, out_doc, out_map):
         return out_doc.extract_image(xref).get("image")
     except Exception:
         return None
+
+
+#: 落盘复核的页尺寸容差（pt）：组装是「按源 rect 新建页」，正常应为 0 误差
+_RECT_TOL_PT = 0.01
+
+
+def _verify_saved_pdf(pdf_path, src_doc, total_pages: int) -> dict | None:
+    """**落盘后**把 `.part` 重新打开真校验：页数 + 逐页 `rect`（容差 ≤0.01pt）。
+
+    合格 ⇒ `None`；不合格 ⇒ `{"expected_pages", "actual_pages", "page"}`
+    （`page` = 首个尺寸不符页，1-based；页数不符 / 打不开 ⇒ 0）。纯读，不改文件。
+    """
+    doc = None
+    try:
+        doc = fitz.open(str(pdf_path))
+        actual = int(doc.page_count)
+        if actual != int(total_pages):
+            return {"expected_pages": int(total_pages), "actual_pages": actual, "page": 0}
+        for i in range(actual):
+            got, want = doc[i].rect, src_doc[i].rect
+            if (abs(float(got.width) - float(want.width)) > _RECT_TOL_PT
+                    or abs(float(got.height) - float(want.height)) > _RECT_TOL_PT):
+                return {"expected_pages": int(total_pages), "actual_pages": actual, "page": i + 1}
+        return None
+    except Exception:
+        return {"expected_pages": int(total_pages), "actual_pages": 0, "page": 0}
+    finally:
+        try:
+            if doc is not None:
+                doc.close()
+        except Exception:
+            pass
 
 
 def _verify_out(out_doc, out_map, roles: dict, units: dict, total_pages: int) -> bool:
@@ -498,7 +586,8 @@ def render_pdf_to_pdf(src_pdf, out_pdf, dpi: int = DEFAULT_DPI, page_from: int =
                    "pages_done": len(want),     # 成功返回时 want 内每页都已达标（渲完或复用）
                    "pages_total": len(want), "pages": pages_meta, "dpi": dpi,
                    "elapsed_s": round(time.time() - t_start, 2),
-                   "resumed_from": skipped + passthrough,
+                   # 续跑口径：只数「因已达标而跳过」的页；passthrough 是从未处理过的，不算续跑
+                   "resumed_from": skipped,
                    "rendered_pages": rendered, "skipped_pages": skipped,
                    "passthrough_pages": passthrough, "pdf_pages_total": int(pdf_pages_total),
                    "units_total": len(units),
@@ -595,18 +684,7 @@ def render_pdf_to_pdf(src_pdf, out_pdf, dpi: int = DEFAULT_DPI, page_from: int =
                 np_page = built.new_page(width=float(rect.width), height=float(rect.height))
                 np_page.insert_image(np_page.rect, stream=stream)
                 del stream
-            if built.page_count != doc.page_count:
-                built.close()
-                try:
-                    tmp_out.unlink()
-                except Exception:
-                    pass
-                return _fail("PAGE_COUNT_MISMATCH", src_pages=int(doc.page_count),
-                             built_pages=int(built.page_count), out=str(out), dpi=dpi,
-                             rendered_pages=rendered, skipped_pages=skipped,
-                             passthrough_pages=passthrough,
-                             msg=(f"组装页数({built.page_count}) ≠ 源页数({doc.page_count})，"
-                                  f"已放弃写入（out_pdf 保持上一版不变）"))
+            # 内存页数断言是死分支（每轮必定 new_page / insert_pdf）⇒ 改为**落盘后真复核**
             built.save(str(tmp_out), deflate=True)   # deflate=True：未压缩流压掉；图像流已是 Flate
             built.close()
         finally:
@@ -614,6 +692,26 @@ def render_pdf_to_pdf(src_pdf, out_pdf, dpi: int = DEFAULT_DPI, page_from: int =
                 built.close()
             except Exception:
                 pass
+        bad = _verify_saved_pdf(tmp_out, doc, total_pages)
+        if bad:
+            try:
+                tmp_out.unlink()                     # 失败不留半截 / 不留 .part
+            except Exception:
+                pass
+            return _fail("PAGE_COUNT_MISMATCH",
+                         expected_pages=int(bad.get("expected_pages") or total_pages),
+                         actual_pages=int(bad.get("actual_pages") or 0),
+                         page=int(bad.get("page") or 0),
+                         src_pages=int(doc.page_count),        # 旧键保留（兼容）
+                         built_pages=int(bad.get("actual_pages") or 0),
+                         out=str(out), dpi=dpi,
+                         rendered_pages=rendered, skipped_pages=skipped,
+                         passthrough_pages=passthrough,
+                         elapsed_s=round(time.time() - t_start, 2),
+                         msg=(f"落盘复核失败：期望 {total_pages} 页 / 源页尺寸一致，"
+                              f"实得 {bad.get('actual_pages')} 页"
+                              f"（首个不符页 {bad.get('page') or '-'}），"
+                              f"已删 .part（out_pdf 保持上一版不变）"))
         tmp_out.replace(out)
 
         out_bytes = out.stat().st_size

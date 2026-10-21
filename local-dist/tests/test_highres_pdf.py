@@ -15,6 +15,10 @@
   四项计数闭合）；t12 **同尺寸**换页的脏缓存必须靠内容指纹抓出（不得静默错页）；
   t13 `_verify_saved_pdf` 抛异常时不留 `.part`、`out_pdf` 不变；t14 登记项缺 `px` ⇒
   缓存侧与旧 PDF 侧都不放行（走修复重渲）。
+* **终验 medium（Neng 实测）**：t15 `SIZE_LIMIT` 必须按**真实总量**计 —— 升级重渲
+  （300⇒600）会**覆盖**旧页登记，旧代码 `bytes_total += len(png)` 只加不减 ⇒ 报数虚高
+  （实测真 49756 B 报 63954 B）、限额虚警。t15 断言回调/返回/progress 三处 `bytes` 恒等于
+  `sum(units[*].png_bytes)`，并验「限量 = 真实总量 ±1」的边界行为。
 
 用**合成 PDF**（页宽 60+i × 高 80 pt，页内只有一行文字 `PAGE-i`）⇒ 300dpi 渲一页约 10 ms，
 整套 < 10 s。**不碰 output/ 真实数据**（`tempfile.mkdtemp`）。
@@ -511,6 +515,101 @@ class HighResV2Test(unittest.TestCase):
         prog = read_progress(out)
         self.assertEqual([int(v) for v in prog["units"]["1"]["px"]], px1)   # 重渲回填真尺寸
         self.assertEqual(int(prog["units"]["1"]["dpi"]), 300)
+
+    # ── t15（终验 medium）：SIZE_LIMIT 按**真实总量**（净增量）计 —— 升级重渲不得虚高 ──
+    def test_t15_size_limit_counts_net_increase(self) -> None:
+        """4 页书 @300 全渲 ⇒ 升 1–4 到 @600：报数恒等于 `sum(units[*].png_bytes)`，
+        且「限量 = 真实总量 -1」必触发 SIZE_LIMIT、「= 真实总量」不得触发。
+
+        旧代码坑：`render` 分支 `bytes_total += len(png)` 没扣掉被覆盖旧页的 `png_bytes`
+        ⇒ 升级第 1 页就把 300 的那份也算上（真 49756 B 报 63954 B）⇒ 真体积远低于阈值
+        却被叫停。这里第 1 页就做**逐值**对拍，虚高必然红。
+        """
+        def _units_sum(units: dict) -> int:
+            return sum(int((u or {}).get("png_bytes") or 0) for u in (units or {}).values())
+
+        def _fixture(tag: str) -> tuple[Path, Path, Path, dict[int, int]]:
+            """4 页书 @300 全渲（页缓存保留）⇒ `(src, out, cache, {页号: png_bytes@300})`。"""
+            src = self.tmp / f"src15{tag}.pdf"
+            out = self.tmp / f"out15{tag}" / "hr15-HighRes.pdf"
+            cache = self.tmp / f"cache15{tag}"
+            _make_src(src, n=4)
+            r = render_pdf_to_pdf(src, out, dpi=300, page_from=1, page_to=4,
+                                  page_bytes_dir=cache)
+            self.assertTrue(r["ok"], r)
+            self.assertEqual(r["rendered_pages"], 4)
+            units = read_progress(out)["units"]
+            self.assertEqual(r["page_png_bytes"], _units_sum(units))     # 首跑：返回 = units 和
+            return src, out, cache, {int(k): int(v["png_bytes"]) for k, v in units.items()}
+
+        # ── ① 先量「600 档真实总量」（size_limit_bytes=0 ⇒ 关掉限额），逐页对拍累计值 ──
+        src, out, cache, at300 = _fixture("a")
+        true300 = sum(at300.values())
+        seen: list[tuple[int, int, int]] = []          # (页号, 回调报的累计 B, units 真和 B)
+
+        def _cb(rec: dict) -> None:
+            # 回调前一轮 progress 已落盘 ⇒ 现场读真和（这就是「UI 累计 MB」的同源数据）
+            seen.append((int(rec["page"]), int(rec["bytes"]),
+                         _units_sum(read_progress(out)["units"])))
+
+        r600 = render_pdf_to_pdf(src, out, dpi=600, page_from=1, page_to=4,
+                                 page_bytes_dir=cache, progress_cb=_cb, size_limit_bytes=0)
+        self.assertTrue(r600["ok"], r600)
+        self.assertEqual(r600["rendered_pages"], 4)     # 4 页都升级重渲
+        self.assertEqual([s[0] for s in seen], [1, 2, 3, 4])
+        for pno, reported, truth in seen:
+            self.assertEqual(reported, truth,
+                             f"第 {pno} 页累计体积≠units 和（报 {reported} / 真 {truth}）")
+        true600 = _units_sum(read_progress(out)["units"])
+        self.assertEqual(r600["page_png_bytes"], true600)
+        self.assertEqual(seen[-1][1], true600)          # 回调末值 = 返回 = units 和
+
+        # 净增量口径（逐值）：第 1 页 = 真300 - 旧1 + 新1；旧口径会多算一整份「旧1」
+        new1 = int(read_progress(out)["units"]["1"]["png_bytes"])
+        self.assertEqual(seen[0][1], true300 - at300[1] + new1)
+        self.assertLess(seen[0][1], true300 + new1, "升级第 1 页就把旧页字节算两遍（虚高）")
+        self.assertGreater(new1, at300[1], "本用前置：600 档第 1 页必须比 300 大")
+        self.assertGreater(true600 - true300, 0, "本用前置：升级必增体积")
+        print(f"\n[t15] 真300={true300} 真600={true600} 第1页净增='{at300[1]}→{new1}' "
+              f"回调='{seen}' 旧口径虚高值={true300 + new1}")
+
+        # ── ② 限量 = 真实总量 - 1 ⇒ 必须 SIZE_LIMIT（且报数就是真实总量、产物不动）──
+        src, out, cache, at300_b = _fixture("b")
+        self.assertEqual(at300_b, at300)                # 同一合成书 ⇒ 逐页字节可复现
+        sha300 = _sha(out)
+        lim_low = true600 - 1
+        r_low = render_pdf_to_pdf(src, out, dpi=600, page_from=1, page_to=4,
+                                  page_bytes_dir=cache, size_limit_bytes=lim_low)
+        self.assertFalse(r_low["ok"], r_low)
+        self.assertEqual(r_low["reason"], "SIZE_LIMIT")
+        self.assertEqual(r_low["limit_bytes"], lim_low)
+        self.assertEqual(r_low["bytes"], _units_sum(read_progress(out)["units"]))
+        self.assertEqual(r_low["bytes"], true600)       # 4 页都升级完才越线 ⇒ 恰好真总量
+        self.assertGreater(r_low["bytes"], lim_low)
+        self.assertEqual(r_low["pages_done"], 4)
+        self.assertEqual(read_progress(out)["bytes"], true600)
+        self.assertEqual(_sha(out), sha300)             # 失败不写半截
+        print(f"[t15] limit={lim_low}（真{true600}-1）⇒ reason={r_low['reason']} "
+              f"bytes={r_low['bytes']} pages_done={r_low['pages_done']}")
+
+        # ── ③ 限量 = 真实总量 ⇒ 不得触发（`>` 严格比较；虚高口径在这里会误停）──
+        src, out, cache, at300_c = _fixture("c")
+        self.assertEqual(at300_c, at300)
+        r_eq = render_pdf_to_pdf(src, out, dpi=600, page_from=1, page_to=4,
+                                 page_bytes_dir=cache, size_limit_bytes=true600)
+        self.assertTrue(r_eq["ok"], r_eq)
+        self.assertIsNone(r_eq.get("reason"))
+        self.assertEqual(r_eq["rendered_pages"], 4)
+        self.assertEqual(r_eq["page_png_bytes"], true600)
+        self.assertEqual(r_eq["page_png_bytes"], _units_sum(read_progress(out)["units"]))
+        self.assertEqual(read_progress(out)["bytes"], true600)
+        doc = fitz.open(str(out))                       # 产物本身正常（4 页、每页一张位图）
+        self.assertEqual(doc.page_count, 4)
+        for pno in range(4):
+            self.assertEqual(len(doc[pno].get_images(full=True)), 1)
+        doc.close()
+        print(f"[t15] limit={true600}（=真总量）⇒ ok={r_eq['ok']} "
+              f"page_png_bytes={r_eq['page_png_bytes']} rendered={r_eq['rendered_pages']}")
 
     # ── t7：CANCELLED 时 out_pdf 不变、units 保留；BAD_DPI / BAD_RANGE 仍前置拒绝 ──
     def test_t7_cancel_keeps_out_pdf_and_units(self) -> None:

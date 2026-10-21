@@ -84,6 +84,9 @@
 * **体积告警**：累计**高清 PNG 字节**（`units` 的 `png_bytes` 之和）超 `size_limit_bytes`
   （默认 15 GiB）⇒ 结构化 `{"ok": False, "reason": "SIZE_LIMIT", …}`
   （**不静默继续**，也不删已有产物/进度）。**`passthrough` 页不计入**（它们不是本次新增的高清位图）。
+  这个和是**唯一派生量**（`_png_bytes_total`，每落一页重算）⇒ 升级重渲（300⇒600/1200）按
+  **净增量**记：被覆盖旧页的 `png_bytes` 先扣掉，不再把新旧两份都算进去（否则限额虚高、真体积
+  远低于阈值却被叫停）。`SIZE_LIMIT` / progress 的 `bytes` / 返回的 `page_png_bytes` 全部同源。
 * **可取消**：`cancel_event.is_set()` ⇒ 结构化 `{"ok": False, "reason": "CANCELLED", …}`。
 * **失败不写半截**：`CANCELLED` / `SIZE_LIMIT` / `PAGE_COUNT_MISMATCH` / 任何异常 ⇒
   `out_pdf` **保持上一版不变**（只写 `.part` 再 `replace`），进度与 `units` 保留可续。
@@ -139,6 +142,9 @@ v2 的 `passthrough` 页只做页对象复制（**≪ 0.1 s/页**），所以「
 * 四项**恒闭合**：`rendered_pages + repaired_pages + skipped_pages + passthrough_pages
   == pdf_pages_total`（每页恰好落到一个角色里）；
 * `units_total` = 登记表里已高清化的页数；`units_best_dpi` = 登记表里的最高档。
+* **`pages` 按 `page` 号索引**：`pages[].page` 是**真实页号**，可含**范围外** `role="repair"`
+  的页号（F1 修复重渲）；列表顺序是「先范围外 repair、后范围内」，**不是** `page_from..page_to`
+  的顺序 ⇒ **勿按 `want` 下标对齐**（要第 7 页就读 `{p["page"]: p}` 而不是 `pages[6]`）。
 
 失败：`{"ok": False, "reason": <BAD_DPI|BAD_RANGE|SRC_MISSING|PAGE_COUNT_MISMATCH|SIZE_LIMIT|
 CANCELLED|ERROR>, …, "pages_done", "pages_total"}` —— 除 `BAD_*` / `SRC_MISSING` 外
@@ -318,6 +324,20 @@ def _load_units(prog: dict, total_pages: int) -> dict[int, dict]:
             "at": str(rec.get("at") or ""),
         }
     return units
+
+
+def _png_bytes_total(units: dict) -> int:
+    """登记表里**全部**高清 PNG 字节之和 —— 体积口径的**唯一派生源**。
+
+    每落一页 unit 后重算（≈O(已登记页数)，851 页也只是 851 次整数加，远小于单页
+    PNG 编码的 ~2.8 s），替掉早先各分支手工 `+=` 的口径：`render` 分支曾只加不减，
+    升级重渲（300⇒600/1200）时把**被覆盖旧页的字节算了两遍**，`SIZE_LIMIT` 因而虚高
+    （实测 300⇒600 第 1 页：真 49756 B，报 63954 B）。
+
+    ⇒ 不变式：任何时刻 `bytes_total == sum(units[*].png_bytes)`，`SIZE_LIMIT` /
+    progress / 返回里的 `page_png_bytes` 全部同源。
+    """
+    return sum(int((u or {}).get("png_bytes") or 0) for u in (units or {}).values())
 
 
 # ── 位图可得性：① 页缓存 → ② 旧 out_pdf → ③ None（需重渲）───────────────────
@@ -674,7 +694,8 @@ def render_pdf_to_pdf(src_pdf, out_pdf, dpi: int = DEFAULT_DPI, page_from: int =
                     passthrough += 1
 
         cache_dir.mkdir(parents=True, exist_ok=True)
-        bytes_total = sum(int((u or {}).get("png_bytes") or 0) for u in units.values())
+        # 体积口径**唯一派生源**（见 `_png_bytes_total`）：任何时刻 == sum(units[*].png_bytes)
+        bytes_total = _png_bytes_total(units)
         run = {"dpi": dpi, "want": list(want), "rendered": 0, "repaired": 0, "skipped": skipped,
                "passthrough": passthrough, "at": _now()}
 
@@ -747,7 +768,8 @@ def render_pdf_to_pdf(src_pdf, out_pdf, dpi: int = DEFAULT_DPI, page_from: int =
             units[pno] = unit
             rendered += 1
             run["rendered"] = rendered
-            bytes_total += len(png)
+            # 升级重渲会**覆盖**旧页登记 ⇒ 必须重算，不能只 `+= len(png)`（旧页字节会算两遍）
+            bytes_total = _png_bytes_total(units)
             _write_json(prog_file, _state())
             pages_meta.append({"page": pno, "role": "render", "dpi": dpi,
                                "px": [w_px, h_px], "png_bytes": len(png),
@@ -797,7 +819,6 @@ def render_pdf_to_pdf(src_pdf, out_pdf, dpi: int = DEFAULT_DPI, page_from: int =
             rdpi = int(repair_dpi.get(pno) or dpi)
             png, w_px, h_px = _render_png(page, rdpi)
             png_file = cache_dir / f"P{pno:04d}.png"
-            old_bytes = int((units.get(pno) or {}).get("png_bytes") or 0)
             png_file.write_bytes(png)
             units[pno] = {"dpi": rdpi, "px": [w_px, h_px], "png": png_file.name,
                           "png_bytes": len(png),
@@ -807,7 +828,7 @@ def render_pdf_to_pdf(src_pdf, out_pdf, dpi: int = DEFAULT_DPI, page_from: int =
                           "at": _now(), "repaired": True}
             repaired += 1
             run["repaired"] = repaired
-            bytes_total += len(png) - old_bytes     # 旧登记那几条已计入，别重复计数
+            bytes_total = _png_bytes_total(units)     # 重算：旧页登记已被覆盖，别手工加减
             _write_json(prog_file, _state())
             pages_meta.append({"page": pno, "role": "repair", "dpi": rdpi,
                                "px": [w_px, h_px], "png_bytes": len(png),

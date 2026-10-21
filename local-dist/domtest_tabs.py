@@ -815,27 +815,49 @@ def _probe_body() -> None:
            f" lite_hidden={ac0.get('lite_hidden')} 提示={ac0.get('lite_text')!r}"
            f"（应：{want_desc}）")
 
-    # 假桥：先是 running，第二次轮询变 done（带 1 条失败页）⇒ 验进度/ETA/汇总/失败清单渲染
-    _ev("(() => { window.__realAcStart = window.pywebview.api.tab2_autocrop_start;"
-        " window.__realAcStatus = window.pywebview.api.tab2_autocrop_status; window.__acN = 0;"
-        " window.__acPayload = null;"
-        " window.pywebview.api.tab2_autocrop_start = function(p){ window.__acPayload = p;"
-        " return Promise.resolve({ok:true, job:{state:'queued', running:true, progress:{pages_total:3}}}); };"
-        " window.pywebview.api.tab2_autocrop_status = function(){ window.__acN += 1;"
-        " var run = window.__acN < 2;"
-        " return Promise.resolve({ok:true, state: run?'running':'done', running: run, cancelled:false,"
-        " cancelled_:false, dir_key:'合成目录键', msg: run?'第 2/3 页 · 已裁 2 枚':'完成：裁 2 页 / 跳过 1 页 / 失败 1 页',"
-        " elapsed_s: 9.5, progress:{page: run?2:3, pages_total:3, pages_done: run?1:2, pages_skipped:1,"
-        " pages_failed: run?0:1, seals_total: run?2:5, current_page_elapsed_s:4.5, eta_s: run?30:0},"
-        " result:{failed_pages:[{page:2, reason:'IndexError: 合成故障'}]}}); }; return 1; })()")
+    # 假桥：**钉在 running，直到测试放行（window.__acFlip）**，放行后才变 done（带 1 条失败页）。
+    # ⚠ 本单修的 flaky（实测 45/1）：原写法假桥第 2 次轮询就翻 done，而断言在轮询中途抓快照
+    #    —— 汇总还是 '—' 却被要求有汇总。根因还有一层：ui/app.js 的轮询循环在
+    #    `document.hidden` 时**直接跳过**（「页面隐藏 ⇒ 不轮询」），pywebview 测试窗被遮挡/
+    #    失焦时 hidden=true ⇒ done 永远不来，_wait_js 只能超时，快照停在中途态。
+    #    故测试期把 document.hidden 临时钉成 false（跑完 delete 还原，仅测试运行期，非产品改动）。
+    # 断言改**两阶段**：running 阶段只断中间态**格式**（页码/枚数/ETA/当前页耗时/进度条，
+    # 值可变不断死）；放行到 done 后才断 汇总/失败清单/按钮态。两阶段互不交叉 ⇒ 时序不再抖。
+    _ev("""(() => { try { Object.defineProperty(document, 'hidden',
+              {configurable: true, get: function(){ return false; }}); } catch (e) {}
+      window.__realAcStart = window.pywebview.api.tab2_autocrop_start;
+      window.__realAcStatus = window.pywebview.api.tab2_autocrop_status;
+      window.__acN = 0; window.__acPayload = null; window.__acFlip = false;
+      window.pywebview.api.tab2_autocrop_start = function(p){ window.__acPayload = p;
+        return Promise.resolve({ok:true, job:{state:'queued', running:true, progress:{pages_total:3}}}); };
+      window.pywebview.api.tab2_autocrop_status = function(){ window.__acN += 1;
+        var run = !window.__acFlip;
+        return Promise.resolve({ok:true, state: run?'running':'done', running: run, cancelled:false,
+        cancelled_:false, dir_key:'合成目录键', msg: run?'第 2/3 页 · 已裁 2 枚':'完成：裁 2 页 / 跳过 1 页 / 失败 1 页',
+        elapsed_s: 9.5, progress:{page: run?2:3, pages_total:3, pages_done: run?1:2, pages_skipped:1,
+        pages_failed: run?0:1, seals_total: run?2:5, current_page_elapsed_s:4.5, eta_s: run?30:0},
+        result:{failed_pages:[{page:2, reason:'IndexError: 合成故障'}]}}); }; return 1; })()""")
     _ev("document.getElementById('btn-tab2-ac-start').click()")
-    ac_wait = _wait_js("(document.getElementById('tab2-ac-summary')||{}).textContent"
-                       ".indexOf('失败 1 页')>=0", 12)
+    # ── 阶段 A（running）：等进度区渲染出「第 X / Y 页」再抓快照；假桥未放行 ⇒ 快照必为中途态 ──
+    ac_wait_run = _wait_js("(document.getElementById('tab2-ac-progress')||{}).textContent"
+                           ".indexOf('第 2 / 3 页')>=0", 12)
+    ac_run = _read("08e1_tab2_autocrop_poll_running", JS_TAB2_AC)
+    # ── 阶段 B（done）：放行假桥，等汇总出现「失败 1 页」再抓快照 ──
+    _ev("window.__acFlip = true; 1")
+    ac_wait_done = _wait_js("(document.getElementById('tab2-ac-summary')||{}).textContent"
+                            ".indexOf('失败 1 页')>=0", 12)
     time.sleep(0.4)
-    ac1 = _read("08e_tab2_autocrop_poll", JS_TAB2_AC)
+    ac1 = _read("08e2_tab2_autocrop_poll_done", JS_TAB2_AC)
     pl = ac1.get("payload") or {}
     record("tabs/tab2_autocrop_poll_progress_eta_and_summary",
-           bool(ac_wait)
+           bool(ac_wait_run and ac_wait_done
+           # 阶段 A（running 中间态）：只断格式/非空，不断具体值、不断汇总与按钮
+           and re.search(r"第 \d+ / \d+ 页", ac_run.get("progress_text") or "")
+           and re.search(r"已裁 \d+ 枚", ac_run.get("seals_text") or "")
+           and re.search(r"ETA 约 \d+ 秒", ac_run.get("eta_text") or "")
+           and re.search(r"当前页 \d+(\.\d+)? s", ac_run.get("page_s_text") or "")
+           and re.search(r"^\d+%$", ac_run.get("bar_width") or "")
+           # 阶段 B（done 终态）：汇总/失败行/按钮态/完成态数值
            and "第 3 / 3 页" in (ac1.get("progress_text") or "")
            and "已裁 5 枚" in (ac1.get("seals_text") or "")
            and "ETA" in (ac1.get("eta_text") or "")
@@ -845,10 +867,13 @@ def _probe_body() -> None:
            and ac1.get("fail_rows") == 1
            and "第 2 页" in (ac1.get("fails_text") or "")
            and ac1.get("start_disabled") is False and ac1.get("cancel_disabled") is True
-           and pl.get("dpi") == 1200 and pl.get("resume") is True,
-           f"等待={ac_wait} 页={ac1.get('progress_text')!r} 枚={ac1.get('seals_text')!r} "
-           f"ETA={ac1.get('eta_text')!r} 当前页={ac1.get('page_s_text')!r} "
-           f"汇总={ac1.get('summary')!r} 失败行={ac1.get('fail_rows')} "
+           and pl.get("dpi") == 1200 and pl.get("resume") is True),
+           f"running等待={ac_wait_run} done等待={ac_wait_done} "
+           f"[A] 页={ac_run.get('progress_text')!r} 枚={ac_run.get('seals_text')!r} "
+           f"ETA={ac_run.get('eta_text')!r} 当前页={ac_run.get('page_s_text')!r} "
+           f"进度条={ac_run.get('bar_width')!r} 汇总={ac_run.get('summary')!r} "
+           f"[B] 页={ac1.get('progress_text')!r} 枚={ac1.get('seals_text')!r} "
+           f"ETA={ac1.get('eta_text')!r} 汇总={ac1.get('summary')!r} 失败行={ac1.get('fail_rows')} "
            f"失败文本={ac1.get('fails_text')!r} 进度条={ac1.get('bar_width')!r} "
            f"start_disabled={ac1.get('start_disabled')} cancel_disabled={ac1.get('cancel_disabled')} "
            f"payload={pl}")
@@ -857,7 +882,8 @@ def _probe_body() -> None:
            f"js_errors={RESULT.get('js_errors')}")
     _ev("window.pywebview.api.tab2_autocrop_start = window.__realAcStart;"
         " window.pywebview.api.tab2_autocrop_status = window.__realAcStatus;"
-        " window.__acPayload = null; 1")
+        " window.__acPayload = null; window.__acFlip = false;"
+        " try { delete document.hidden; } catch (e) {} 1")
 
     # ── ④ 切到 tab3：原节点一字未变（渲染后）──
     _ev("document.querySelector('#tabs .tab[data-tab=\"3_Cropped_Tiff\"]').click()")

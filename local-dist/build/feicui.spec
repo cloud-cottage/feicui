@@ -138,6 +138,7 @@ SRC_FILES = ["__init__.py", "pdf_library.py", "validator.py",
              "yinyuan_client.py",
              "highres_pdf.py", "seal_detect.py", "seal_crop.py",  # v1.0.1：tab1 高清化 + tab2 切图台
              "field_extract.py",                                  # 2026-10-20：tab2 三字段提取 + 阅读顺序（seal_crop.grid_order 依赖它）
+             "autocrop.py",                                       # v1.1.2：tab2 一键全自动（api._src_module 动态 import ⇒ datas+hiddenimports 缺一不可）
              "paths.py"]                                          # 全阶段必需（paths.py = 用户目录单一真源）
 if WITH_OCR:
     SRC_FILES += ["ocr_rapid.py", "ocr_corrector.py"]
@@ -157,6 +158,7 @@ hiddenimports = [
     "src.paths",                                                 # 用户目录单一真源（pack_main 也 import 它）
     "src.highres_pdf", "src.seal_detect", "src.seal_crop",       # v1.0.1：tab1 高清化 + tab2 切图台（api._src_module 动态 import ⇒ 必须显式列）
     "src.field_extract",                                         # 2026-10-20：字段提取（缺它 ⇒ seal_crop.grid_order 静默退回「仅 ltr-ttb」＝RTF 方向静默错）
+    "src.autocrop",                                              # v1.1.2：tab2 一键全自动（api._src_module 动态 import ⇒ 缺它 ⇒ 点击即 ModuleNotFoundError）
     "cv2", "tifffile", "pymupdf", "numpy", "PIL", "PIL.Image",   # 引擎（render_page_2400.py）渲染栈
 ]
 

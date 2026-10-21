@@ -359,8 +359,18 @@
         <div class="card" id="changelog">
             <h2>版本迭代 · 本地分发版</h2>
             <p class="muted" style="font-size:13px;color:#666;margin:-4px 0 16px">
-                按时间倒序。当前最新 <strong>v1.1.1</strong>；<strong>v1.0.0</strong> 是首个公开分发的版本；其前的条目为内部迭代阶段（按日期记录，未编版本号）。
+                按时间倒序。当前最新 <strong>v1.1.2</strong>；<strong>v1.0.0</strong> 是首个公开分发的版本；其前的条目为内部迭代阶段（按日期记录，未编版本号）。
             </p>
+
+            <div class="log-item">
+                <div class="log-head"><span class="log-ver">v1.1.2</span><span class="log-date">2026-10-21 · 一键全自动与批量预览</span></div>
+                <ul>
+                    <li><strong>tab2 一键全自动批处理</strong>（新）：识别＋切图一次跑整本，进度每页落盘、断点续跑、可取消、单页失败不中断；真 PDF 3 页实测出图 <strong>18 枚、编号连续</strong>，整本批量切图 851 页 <strong>21 分 10 秒 / 失败 0</strong></li>
+                    <li><strong>字段规则修复</strong>：状态字下方约束＋一对一归属、释文页码/类目剔除、fallback 版序与编号一致性审计；整本 851 页重跑实测释文污染 <strong>13.7% → 0</strong>、释文一致率 47.1% → <strong>51.6%</strong>、状态字一对一归属命中 <strong>83.3%</strong>，检出不降</li>
+                    <li><strong>tab1 预览批量网格化</strong>：一屏 1–10 张 2×5 网格、细翻页、dpi 下限 24、点选焦点/双击设起始页；真 PDF 批量 10 张实测 <strong>1.0 s</strong></li>
+                    <li><strong>窗口标题区分 Lite / Pro</strong>：随 v1.1.1 的运行期能力派生标题继续生效，本次重打包确认两包标题分别为 <code>· Lite</code> / <code>· Pro</code></li>
+                </ul>
+            </div>
 
             <div class="log-item">
                 <div class="log-head"><span class="log-ver">v1.1.1</span><span class="log-date">2026-10-20 · 预览、标题与底层口径修正</span></div>

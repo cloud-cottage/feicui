@@ -482,8 +482,9 @@ class HighResTask:
         self.pages_total = 0          # 本次**范围内**页数（UI 进度条分母）
         self.pages_done = 0
         self.bytes = 0
-        # v2：全页输出口径的计数（渲 / 跳过已达标 / 原样保留 / 输出总页数）
+        # v2：全页输出口径的计数（渲 / 修复重渲 / 跳过已达标 / 原样保留 / 输出总页数）
         self.rendered_pages = 0
+        self.repaired_pages = 0       # 范围外曾高清化、位图丢失 ⇒ 按原 dpi 修复重渲的页数
         self.skipped_pages = 0
         self.passthrough_pages = 0
         self.pdf_pages_total = 0
@@ -503,6 +504,7 @@ class HighResTask:
                 "page": self.page, "pages_total": self.pages_total, "pages_done": self.pages_done,
                 "bytes": self.bytes, "msg": self.msg, "dpi": self.dpi,
                 "rendered_pages": self.rendered_pages, "skipped_pages": self.skipped_pages,
+                "repaired_pages": self.repaired_pages,
                 "passthrough_pages": self.passthrough_pages,
                 "pdf_pages_total": self.pdf_pages_total,
                 "pdf": self.pdf.name, "out": str(self.out),
@@ -530,6 +532,7 @@ class HighResTask:
             self.pages_done = int(rec.get("pages_done") or 0)
             self.bytes = int(rec.get("bytes") or 0)
             self.rendered_pages = int(rec.get("rendered") or self.rendered_pages)
+            self.repaired_pages = int(rec.get("repaired") or self.repaired_pages)
             self.skipped_pages = int(rec.get("skipped") or self.skipped_pages)
             self.passthrough_pages = int(rec.get("passthrough") or self.passthrough_pages)
             self.pdf_pages_total = int(rec.get("pdf_pages_total") or self.pdf_pages_total)
@@ -543,6 +546,7 @@ class HighResTask:
             reason = str(result.get("reason") or "")
             # v2 计数：成功/取消/失败回执都带上（旧键仍在 ⇒ 只加不删）
             for key, attr in (("rendered_pages", "rendered_pages"),
+                              ("repaired_pages", "repaired_pages"),
                               ("skipped_pages", "skipped_pages"),
                               ("passthrough_pages", "passthrough_pages"),
                               ("pdf_pages_total", "pdf_pages_total")):
@@ -552,10 +556,13 @@ class HighResTask:
                 self.state = "done"
                 self.pages_done = int(result.get("pages_done") or self.pages_done)
                 self.bytes = int(result.get("bytes") or self.bytes)
+                fix = (f" · 修复 {self.repaired_pages} 页（原 dpi 重渲）"
+                       if self.repaired_pages else "")
                 self.msg = (f"完成：{self.out.name}（已渲 {self.rendered_pages} 页 · "
                             f"跳过 {self.skipped_pages} 页（已达标）· "
                             f"原样保留 {self.passthrough_pages} 页 · "
-                            f"共 {self.pdf_pages_total or '?'} 页，{self.bytes/1024**2:.1f} MB）")
+                            f"共 {self.pdf_pages_total or '?'} 页，"
+                            f"{self.bytes/1024**2:.1f} MB{fix}）")
             elif reason == "CANCELLED":
                 self.state = "cancelled"
                 self.pages_done = int(result.get("pages_done") or self.pages_done)
@@ -1128,7 +1135,10 @@ class FeicuiApi:
           要么 `insert_pdf` 原样复制（从未做过的 ⇒ 不重渲、不降质、保留文字层）；
         * **可反复实施**：页级 dpi 登记表（进度 schema v2）＋ 位图可得性
           （页缓存 → 旧 out_pdf 同页 → 重渲）⇒ 已达标页跳过不重做，`rendered_pages` 为 0 也算成功；
-        * 状态/回执新增 `rendered_pages` / `skipped_pages` / `passthrough_pages` /
+        * **范围外曾高清化的页绝不降级**：位图丢了（缓存/旧件都没了）⇒ 按 unit 记录的 dpi
+          **修复重渲**，计入 `repaired_pages`（缺失档位记录才回落本次 dpi，回执 `note` 标明）；
+          计数恒闭合 `rendered + repaired + skipped + passthrough == pdf_pages_total`；
+        * 状态/回执新增 `rendered_pages` / `repaired_pages` / `skipped_pages` / `passthrough_pages` /
           `pdf_pages_total`（旧键全保留）；`pages_total` 仍是**本次范围内**页数（进度条分母）；
         * `overwrite=true` ⇒ 先清 out_pdf ＋ 进度 ⇒ 全量重渲（默认是续跑/增量）。
         """

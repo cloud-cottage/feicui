@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # local-dist/src/highres_pdf.py
-"""tab1 一键高清化 **v2**：源 PDF → **全页**高清 PDF（选定页段渲高清位图 · 其余页原样复制）。
+"""tab1 一键高清化 **v2**：源 PDF → **全页**高清 PDF（选定页段渲高清位图 · 曾高清化过的页保持高清 · 其余页原样复制）。
 
 ## 干什么
 
@@ -14,25 +14,34 @@
 `{"ok": False, "reason": "PAGE_COUNT_MISMATCH", "expected_pages", "actual_pages", "page"}`，
 **`out_pdf` 一字节不变**；通过才 `replace(out)`。
 
-### 页的角色三分（每页恰好一种）
+### 页的角色四分（每页恰好一种）
 
 | 角色 | 条件 | 组装动作 |
 | --- | --- | --- |
-| `highres` | 该页登记表里有 **dpi ≥ 本次档位**的位图且位图取得到（或该页不在本次范围内，但已有位图：**保持原档不降级**） | **跳过渲染**，嵌已存位图 |
-| `render` | 在本次页范围内，且无达标位图（含「有位图但 dpi 更低」⇒ 升级重渲） | 渲本次档位 |
-| `passthrough` | 不在本次范围内，且**从未高清化过** | `built.insert_pdf(src, p-1, p-1)` 原样复制页对象（不重渲、不降质、页尺寸不变、文字层保留） |
+| `highres` | 位图取得到，且（在本次范围内时）登记 **dpi ≥ 本次档位**；或该页不在本次范围内但已有位图 | **跳过渲染**，嵌已存位图 |
+| `render` | 在本次页范围内，且无达标位图（含「有位图但 dpi 更低」⇒ 升级重渲） | 渲**本次**档位 |
+| `repair` | **不在**本次范围内，但登记表里有该页（曾经高清化过），而位图**取不到**（缓存被删/被换、旧件里也没有） | 按 **unit 记录的 dpi** 重渲（保原档不降级）；unit 缺 dpi 无法重建 ⇒ 退本次请求 dpi，同样计入 `repair` |
+| `passthrough` | 不在本次范围内，且**从未高清化过**（登记表无此项） | `built.insert_pdf(src, p-1, p-1)` 原样复制页对象（不重渲、不降质、页尺寸不变、文字层保留） |
 
-⚠ **曾经高清化过、本次不在范围内**的页必须**保持高清**（嵌已存位图），不能降级成 `passthrough`。
+⚠ **曾经高清化过、本次不在范围内**的页必须**保持高清**：位图还在就嵌（`highres`），
+位图丢了就**按原 dpi 重渲**（`repair`）—— **绝不允许**降级成 `passthrough`（源页原样复制
+= 页上连位图都没了，等于把之前的高清化白做，且会让 `skipped_pages` 谎报「已达标」）。
 
 ### 位图可得性优先级（D：多次实施不重复做）
 
 1. 页缓存 `page_bytes_dir/P####.png`（`api.tab1_highres_start` 默认 `keep_page_pngs=true`
-   ⇒ `var/highres_pages/<目录键>/<书名>/`，显式目录**本模块不删**）—— **必须验像素**：
-   用 `fitz.open(png)` 读真实宽高与登记表 `px` **逐值相等**才可用（缓存被换/截断成错尺寸图 ⇒
-   当「不可用」走下一级，不静默把错图当整页嵌）；
-2. **已存在的 `out_pdf` 同页** `doc.extract_image(xref)` 取回 —— 同样校验像素尺寸与登记表 `px` 一致方可用
-   （旧版 range-only 输出用进度里的页清单做**页映射**，不会张冠李戴）；
-3. 都没有 ⇒ 重渲该页，并更新登记表（按**本次**档位登记）。
+   ⇒ `var/highres_pages/<目录键>/<书名>/`，显式目录**本模块不删**）—— **必须验内容**：
+   登记表 `px` 必须齐备（缺 ⇒ 一律不可用，与旧 PDF 侧同口径）；文件 **字节数与 `png_bytes`
+   相等且 `png_mtime` 相等** ⇒ 认为就是当初写的那份，**信任**（不读文件，`stat` ≈ 0.003 ms）；
+   任一不等（截断/被换/拷贝改 mtime）⇒ 读文件算 `sha256` 前 16 位与 `png_sha256` 比对，
+   不符 ⇒ 判「不可用」走下一级（**不静默把错图当整页嵌**）。老登记（v1 / 无指纹的 v2）
+   没有 `png_sha256` ⇒ 退回像素宽高校验。**同尺寸换内容只能靠 sha 抓**（宽高相等唬不住）。
+   sha 开销真尺寸实测：13.3 MB 单页 **5.6 ms**、32.8 MB **14.0 ms**（≈2.36 GB/s）—— 只在
+   「尺寸或 mtime 变了」时才付，正常命中走 `stat` 快路；
+2. **已存在的 `out_pdf` 同页** `doc.extract_image(xref)` 取回 —— 校验像素尺寸与登记表 `px`
+   一致方可用（`px` 缺 ⇒ 一律不可用，与缓存侧同一口径；旧版 range-only 输出用进度里的页清单做
+   **页映射**，不会张冠李戴）；
+3. 都没有 ⇒ 重渲该页（范围内 ⇒ 本次档位；范围外曾高清化 ⇒ **原档 dpi**），并更新登记表。
 
 ⇒ 即使页缓存被清理、只要旧 PDF 还在，多次运行仍不重复做已达标页。
 **不把取回的位图写回页缓存**（避免重新膨胀几个 GB 的隐藏目录）：下次仍从旧 PDF 取，
@@ -45,11 +54,16 @@
 ```
 {"schema": "feicui.highres.progress.v2", "src", "out", "pages_total",
  "units": {"7": {"dpi": 1200, "px": [w, h], "png": "P0007.png", "png_bytes": 13300000,
+                 "png_sha256": "3f2a…(前16位)", "png_mtime": 1761000000123456789,
                  "pt": [w_pt, h_pt], "at": "2026-…"}},
- "run": {"dpi": 600, "want": [1, …, 10], "rendered": 7, "skipped": 3, "passthrough": 0,
-         "at": "2026-…"},
+ "run": {"dpi": 600, "want": [1, …, 10], "rendered": 7, "repaired": 2, "skipped": 3,
+         "passthrough": 0, "at": "2026-…"},
  "bytes", "updated_at"[, "finished_at", "out_bytes", "status": "done"]}
 ```
+
+`png_sha256` / `png_mtime` 是**缓存内容指纹**（sha 取前 16 位；mtime 为落盘瞬时的 `st_mtime_ns`）：
+`_cache_png` 先比「字节数 + mtime」，两者都等才免读文件；任一不等就真的算 sha256，
+防「同尺寸被换成别的页」这类宽高校验抓不到的静默错页。老进度没有这两键 ⇒ 退回宽高校验（可续跑）。
 
 `units` 是**按页**的登记表（v1 是「单一 dpi + 本次区间 done」，换档/换区间就整段丢弃重来 ⇒ v2 改掉）。
 **兼容读 v1**：`prog.done` 各项以 `prog.dpi` 迁成 `units`（仅当该页 PNG 缓存仍在或可从旧 PDF 恢复时）。
@@ -73,6 +87,9 @@
 * **可取消**：`cancel_event.is_set()` ⇒ 结构化 `{"ok": False, "reason": "CANCELLED", …}`。
 * **失败不写半截**：`CANCELLED` / `SIZE_LIMIT` / `PAGE_COUNT_MISMATCH` / 任何异常 ⇒
   `out_pdf` **保持上一版不变**（只写 `.part` 再 `replace`），进度与 `units` 保留可续。
+  「组装 → 保存 → 落盘复核 → `replace`」整段用 `try/finally` 守着：**非成功路径一律删 `.part`**
+  （复核函数自己抛异常也一样，不会被外层兜底成 ERROR 后留下 GB 级 `<out>.part`）；
+  删 `.part` 失败只吞掉这个次生异常，**不遮蔽原错误**。
 * **永不抛**：任何异常都变成 `{"ok": False, "reason": "ERROR", "msg": …}`（js_api 桥不许断）。
 
 ## dpi 白名单（Kevin 2026-10-20 补充口径）
@@ -108,14 +125,19 @@ v2 的 `passthrough` 页只做页对象复制（**≪ 0.1 s/页**），所以「
 
 成功：`{"ok": True, "out", "bytes", "pages_done", "pages_total", "pages", "dpi", "elapsed_s",
 "resumed_from", "page_bytes_dir", "page_png_bytes", "note",
-"pdf_pages_total", "rendered_pages", "skipped_pages", "passthrough_pages",
+"pdf_pages_total", "rendered_pages", "repaired_pages", "skipped_pages", "passthrough_pages",
 "units_total", "units_best_dpi"}`
 
 * `pages_total` = **本次范围内**页数（UI 进度条分母）；`pdf_pages_total` = **输出**页数（= 源页数）；
 * `resumed_from` = **`skipped`**（＝本次因已达标而跳过的页数；**不含** `passthrough` ——
-  那些页是从未处理过的，不是「续跑」）；
+  那些页是从未处理过的，不是「续跑」，也**不含** `repair` —— 那些页是真重渲了）；
 * `skipped_pages` = 复用已存位图**未重渲**的页数（含「范围外仍保持高清」的页）；
-* `rendered_pages` / `passthrough_pages` 同名字面义 ⇒ `rendered + skipped + passthrough == pdf_pages_total`；
+* `rendered_pages` = 范围内按**本次** dpi 渲的页数；
+* `repaired_pages` = **范围外**、登记表曾高清化过但位图丢失 ⇒ **按原 dpi 重渲**救回来的页数
+  （不计入 `skipped`，因为确实占用渲染时间；少 dpi 记录而回落本次档位的也在内，`note` 会标明）；
+* `passthrough_pages` = 范围外且**从未**高清化过、原样复制的页数；
+* 四项**恒闭合**：`rendered_pages + repaired_pages + skipped_pages + passthrough_pages
+  == pdf_pages_total`（每页恰好落到一个角色里）；
 * `units_total` = 登记表里已高清化的页数；`units_best_dpi` = 登记表里的最高档。
 
 失败：`{"ok": False, "reason": <BAD_DPI|BAD_RANGE|SRC_MISSING|PAGE_COUNT_MISMATCH|SIZE_LIMIT|
@@ -130,6 +152,7 @@ CANCELLED|ERROR>, …, "pages_done", "pages_total"}` —— 除 `BAD_*` / `SRC_M
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import time
 from pathlib import Path
@@ -158,6 +181,8 @@ DEFAULT_DPI = 1200
 DEFAULT_SIZE_LIMIT_BYTES = 15 * 1024 ** 3
 #: 进度文件 schema（v2：页级 dpi 登记表 `units`；加法字段随时加，不改既有键）。
 PROGRESS_SCHEMA = "feicui.highres.progress.v2"
+#: 缓存 PNG 内容指纹长度（sha256 十六进制前 N 位）：够抓「同尺寸换页」，进度 JSON 也不膨胀。
+PNG_SHA_HEX = 16
 #: 旧 schema（v1：单一 dpi + 本次区间 `done`）—— **只读兼容**，写完一律升 v2。
 PROGRESS_SCHEMA_V1 = "feicui.highres.progress.v1"
 
@@ -210,13 +235,39 @@ def _render_png(page, dpi: int) -> tuple[bytes, int, int]:
     return pix.tobytes("png"), pix.width, pix.height
 
 
+def _png_sha256(data: bytes) -> str:
+    """位图内容的短指纹（`PNG_SHA_HEX` 位）。实测本机 ≈2.36 GB/s ⇒ 13 MB 页 ~5.6 ms。"""
+    return hashlib.sha256(data).hexdigest()[:PNG_SHA_HEX]
+
+
+def _file_sha256(path: Path) -> str | None:
+    """文件内容的短指纹（分块读，别把 13 MB 一次吃进内存的拷贝里）；读不出 ⇒ None。"""
+    try:
+        h = hashlib.sha256()
+        with path.open("rb") as fh:
+            for chunk in iter(lambda: fh.read(1 << 20), b""):
+                h.update(chunk)
+        return h.hexdigest()[:PNG_SHA_HEX]
+    except Exception:
+        return None
+
+
+def _png_mtime_ns(path: Path) -> int:
+    """落盘瞬间的 mtime（纳秒）—— 与 `png_bytes` 一起做「同一份文件」的廉价判据。"""
+    try:
+        return int(path.stat().st_mtime_ns)
+    except Exception:
+        return 0
+
+
 # ── 进度：读 + v1→v2 迁移 ────────────────────────────────────────────────────
 def _load_units(prog: dict, total_pages: int) -> dict[int, dict]:
     """进度 ⇒ `{页号: unit}`（**兼容 v1**：`done` 各项以 `prog.dpi` 迁成 units）。
 
     v1 的 `done` 只记「本次区间做过的页」，`dpi` 是整段单一档 ⇒ 迁移即按页补 `dpi`。
     位图是否真的还取得到，留给调用方用 `_bitmap_how` 逐页探（D 优先级）；取不到的页
-    会被判成 `render`，等于「迁移了登记但重渲」，不会误跳。
+    会被判成 `render`/`repair`（按原档重渲），不会误跳。档位与 `px` **都**丢的登记项才丢弃
+    （纯垃圾）；只丢档位、`px` 还在的 ⇒ 留 `dpi=0`，交给修复路径按本次档位重渲并标明回落。
     """
     schema = str(prog.get("schema") or "")
     if schema == PROGRESS_SCHEMA:
@@ -246,12 +297,23 @@ def _load_units(prog: dict, total_pages: int) -> dict[int, dict]:
         except Exception:
             unit_dpi = 0
         if unit_dpi <= 0:
-            continue
+            # 档位丢了：有 `px` 说明**确实渲过**（老 v1 / 手改进度都可能这样）⇒ 留登记（dpi=0），
+            # 由 F1 的修复路径按「本次档位」重渲并在 note 标明回落；连 px 都没有才是纯垃圾 ⇒ 丢
+            try:
+                px_rec = list(rec.get("px") or [])
+                keep = len(px_rec) == 2 and int(px_rec[0]) > 0 and int(px_rec[1]) > 0
+            except Exception:
+                keep = False
+            if not keep:
+                continue
         units[pno] = {
             "dpi": unit_dpi,
             "px": list(rec.get("px") or []),
             "png": str(rec.get("png") or ""),
             "png_bytes": int(rec.get("png_bytes") or 0),
+            # 缓存内容指纹：老进度没有 ⇒ 空（`_cache_png` 退回宽高校验，可续跑）
+            "png_sha256": str(rec.get("png_sha256") or ""),
+            "png_mtime": int(rec.get("png_mtime") or 0),
             "pt": list(rec.get("pt") or []),
             "at": str(rec.get("at") or ""),
         }
@@ -316,25 +378,33 @@ def _out_page_image(out_doc, out_map, pno: int, unit: dict):
 
 
 def _out_has_bitmap(out_doc, out_map, pno: int, unit: dict) -> bool:
-    """旧 PDF 同页位图是否存在**且像素与登记表一致**（D② 的校验门槛）。"""
+    """旧 PDF 同页位图存在**且像素与登记表一致**（D② 的校验门槛）。
+
+    口径与缓存侧**完全对称**：`unit` 缺 `px`（或 `px` 不是两个整数）⇒ 一律 **False**
+    —— 宁可按原 dpi 重渲一页，也不把一张没校验过的图当整页嵌进输出。
+    """
+    px = list((unit or {}).get("px") or [])
+    if len(px) != 2:
+        return False
+    try:
+        want = (int(px[0]), int(px[1]))
+    except Exception:
+        return False
     hit = _out_page_image(out_doc, out_map, pno, unit)
     if hit is None:
         return False
     _xref, w, h = hit
-    px = (unit or {}).get("px") or []
-    if len(px) == 2:
-        try:
-            if [int(px[0]), int(px[1])] != [int(w), int(h)]:
-                return False
-        except Exception:
-            return False
-    return True
+    try:
+        return want == (int(w), int(h))
+    except Exception:
+        return False
 
 
 def _png_px(path: Path):
     """PNG **真实**像素宽高 `(w, h)`（`fitz.open` 读回图像对象；读不出 ⇒ None）。
 
-    缓存可能被外部替换 / 截断 / 换成别的页 ⇒ **不许只看文件存在就信**（否则错图会被当整页嵌）。
+    只验「宽高对不对」：缓存被截断 / 换成**尺寸不同**的图能抓到；
+    **同尺寸换成别的页抓不到**（宽高一样）—— 内容真伪靠 `unit["png_sha256"]`（见 `_cache_png`）。
     """
     doc = None
     try:
@@ -360,36 +430,60 @@ def _png_px(path: Path):
 
 
 def _cache_png(unit, cache_dir: Path):
-    """页缓存可用 ⇒ 返回 `Path`；不可用（无名 / 空文件 / **像素与登记表不符**）⇒ None。
+    """页缓存可用 ⇒ 返回 `Path`；不可用（无名 / 空文件 / **内容对不上**）⇒ None。
 
-    像素校验口径：`unit["px"]` 必须齐备，且与 `fitz.open(png)` 读回的真实宽高**逐值相等**。
+    校验分两级（**先廉价后昂贵**）：
+
+    1. `unit["px"]` 必须齐备（缺 ⇒ **一律不可用**，与旧 PDF 侧 `_out_has_bitmap` 同一口径）；
+    2. 文件字节数 == `png_bytes` **且** `st_mtime_ns == png_mtime` ⇒ 就是当初写的那份，**信任**
+       （只 `stat`，≈0.003 ms，不读 13 MB）；
+    3. 任一不等（被截断 / 被换 / 拷贝改了 mtime）⇒ 真算 sha256 前 16 位与 `png_sha256` 比对：
+       相符 ⇒ 可用（内容没变，只是 mtime 变了）；不符 ⇒ **不可用**（同尺寸换页也抓得住）。
+    4. 老登记没有 `png_sha256`（v1 / 指纹之前的 v2）⇒ 退回像素宽高校验。
     """
     if not unit:
+        return None
+    px = list(unit.get("px") or [])
+    if len(px) != 2:                                 # 没登记尺寸 ⇒ 无从校验 ⇒ 不信
+        return None
+    try:
+        want_px = (int(px[0]), int(px[1]))
+    except Exception:
         return None
     name = str(unit.get("png") or "")
     if not name:
         return None
-    px = list(unit.get("px") or [])
-    if len(px) != 2:
-        return None
-    try:
-        want = (int(px[0]), int(px[1]))
-    except Exception:
-        return None
     f = cache_dir / name
     try:
-        if not f.is_file() or f.stat().st_size <= 0:
+        if not f.is_file():
             return None
+        st = f.stat()
+        if st.st_size <= 0:
+            return None
+        size, mtime = int(st.st_size), int(st.st_mtime_ns)
     except Exception:
         return None
+
+    sha_want = str(unit.get("png_sha256") or "")
+    if sha_want:
+        if int(unit.get("png_bytes") or 0) == size and int(unit.get("png_mtime") or 0) == mtime:
+            return f                                 # 同一份文件 ⇒ 免读
+        if _file_sha256(f) == sha_want:
+            return f                                 # 内容仍是当初那份（mtime 变了）
+        return None                                  # 同尺寸换了内容 / 截断 ⇒ 不可用
+    # 老登记：只有宽高可比
     got = _png_px(f)
-    if got is None or (int(got[0]), int(got[1])) != want:
-        return None                                  # 错尺寸 ⇒ 当不可用（走下一级 / 重渲）
+    if got is None or (int(got[0]), int(got[1])) != want_px:
+        return None
     return f
 
 
 def _bitmap_how(pno: int, unit, cache_dir: Path, out_doc, out_map) -> str | None:
-    """⇒ `"cache"` / `"out"` / `None`（都没有 ⇒ 该页必须重渲）。缓存命中须过像素校验。"""
+    """⇒ `"cache"` / `"out"` / `None`（都没有 ⇒ 该页必须重渲/修复重渲）。
+
+    缓存命中须过 `_cache_png` 的内容校验（`px` 齐备 + 字节数/mtime 或 sha256 相符），
+    旧 PDF 命中须过 `_out_has_bitmap` 的 `px` 校验 —— 两侧同口径，缺 `px` 一律不算命中。
+    """
     if not unit:
         return None
     if _cache_png(unit, cache_dir) is not None:
@@ -540,9 +634,12 @@ def render_pdf_to_pdf(src_pdf, out_pdf, dpi: int = DEFAULT_DPI, page_from: int =
         out_doc = _open_existing(out)
         out_map = _out_page_map(out_doc, prog, total_pages)
 
-        # ── 3. 页角色三分（B）─────────────────────────────────────────────────────
+        # ── 3. 页角色四分（B + F1：范围外曾高清化 ⇒ 位图丢了就按原 dpi 重渲，不许降级）──
         roles: dict[int, str] = {}
         to_render: list[int] = []
+        to_repair: list[int] = []
+        repair_dpi: dict[int, int] = {}
+        repair_fallback: list[int] = []          # unit 缺 dpi ⇒ 回落本次档位的页
         skipped = 0
         passthrough = 0
         for pno in range(1, total_pages + 1):
@@ -559,26 +656,41 @@ def render_pdf_to_pdf(src_pdf, out_pdf, dpi: int = DEFAULT_DPI, page_from: int =
                 if how:
                     roles[pno] = "highres"              # 曾高清化 ⇒ 保持高清，不降级
                     skipped += 1
+                elif unit is not None:
+                    # 曾高清化过、位图却取不到（缓存/旧件都丢了）⇒ **按原档 dpi 重渲**（计入 repair）
+                    roles[pno] = "repair"
+                    to_repair.append(pno)
+                    try:
+                        unit_dpi = int(unit.get("dpi") or 0)
+                    except Exception:
+                        unit_dpi = 0
+                    if unit_dpi > 0:
+                        repair_dpi[pno] = unit_dpi
+                    else:                               # 连档位都没记 ⇒ 退本次档位（note 标明）
+                        repair_dpi[pno] = dpi
+                        repair_fallback.append(pno)
                 else:
                     roles[pno] = "passthrough"          # 从未高清化 ⇒ 原样复制页对象
                     passthrough += 1
 
         cache_dir.mkdir(parents=True, exist_ok=True)
         bytes_total = sum(int((u or {}).get("png_bytes") or 0) for u in units.values())
-        run = {"dpi": dpi, "want": list(want), "rendered": 0, "skipped": skipped,
+        run = {"dpi": dpi, "want": list(want), "rendered": 0, "repaired": 0, "skipped": skipped,
                "passthrough": passthrough, "at": _now()}
 
         def _state(**extra) -> dict:
             data = {"schema": PROGRESS_SCHEMA, "src": str(src), "out": str(out),
                     "pages_total": total_pages,
                     "units": {str(k): v for k, v in sorted(units.items())},
-                    "run": dict(run, skipped=skipped, passthrough=passthrough),
+                    "run": dict(run, repaired=repaired, skipped=skipped,
+                                passthrough=passthrough),
                     "bytes": bytes_total, "updated_at": _now()}
             data.update(extra)
             return data
 
         pages_meta: list[dict] = []
         rendered = 0
+        repaired = 0
 
         def _ok(pdf_pages_total: int, note: str, **extra) -> dict:
             res = {"ok": True, "out": str(out),
@@ -586,9 +698,11 @@ def render_pdf_to_pdf(src_pdf, out_pdf, dpi: int = DEFAULT_DPI, page_from: int =
                    "pages_done": len(want),     # 成功返回时 want 内每页都已达标（渲完或复用）
                    "pages_total": len(want), "pages": pages_meta, "dpi": dpi,
                    "elapsed_s": round(time.time() - t_start, 2),
-                   # 续跑口径：只数「因已达标而跳过」的页；passthrough 是从未处理过的，不算续跑
+                   # 续跑口径：只数「因已达标而跳过」的页；passthrough 是从未处理过的，
+                   # repair 是真重渲了，都不算续跑
                    "resumed_from": skipped,
-                   "rendered_pages": rendered, "skipped_pages": skipped,
+                   "rendered_pages": rendered, "repaired_pages": repaired,
+                   "skipped_pages": skipped,
                    "passthrough_pages": passthrough, "pdf_pages_total": int(pdf_pages_total),
                    "units_total": len(units),
                    "units_best_dpi": max([int(u["dpi"]) for u in units.values()] or [0]),
@@ -598,7 +712,8 @@ def render_pdf_to_pdf(src_pdf, out_pdf, dpi: int = DEFAULT_DPI, page_from: int =
             return res
 
         # ── 4. 全部页已达标 ⇒ 先**校验** out_pdf（合格就不重建，省掉整本组装）──
-        if not to_render:
+        #    注意：`to_repair` 非空说明「曾高清化但位图丢了」，必须重建才能救回来，不算空转
+        if not to_render and not to_repair:
             if _verify_out(out_doc, out_map, roles, units, total_pages):
                 _write_json(prog_file, _state(finished_at=_now(), status="done",
                                               out_bytes=(out.stat().st_size
@@ -615,7 +730,8 @@ def render_pdf_to_pdf(src_pdf, out_pdf, dpi: int = DEFAULT_DPI, page_from: int =
                              pages_total=len(want), bytes=bytes_total,
                              page_bytes_dir=str(cache_dir) if not cache_owned else None,
                              out=str(out), dpi=dpi,
-                             rendered_pages=rendered, skipped_pages=skipped,
+                             rendered_pages=rendered, repaired_pages=repaired,
+                             skipped_pages=skipped,
                              passthrough_pages=passthrough, pdf_pages_total=total_pages,
                              elapsed_s=round(time.time() - t_start, 2),
                              msg=f"已取消（本次已渲 {rendered}/{len(to_render)} 页，进度保留可续跑）")
@@ -625,6 +741,7 @@ def render_pdf_to_pdf(src_pdf, out_pdf, dpi: int = DEFAULT_DPI, page_from: int =
             png_file.write_bytes(png)
             unit = {"dpi": dpi, "px": [w_px, h_px], "png": png_file.name,
                     "png_bytes": len(png),
+                    "png_sha256": _png_sha256(png), "png_mtime": _png_mtime_ns(png_file),
                     "pt": [round(float(page.rect.width), 3), round(float(page.rect.height), 3)],
                     "at": _now()}
             units[pno] = unit
@@ -640,7 +757,8 @@ def render_pdf_to_pdf(src_pdf, out_pdf, dpi: int = DEFAULT_DPI, page_from: int =
                     progress_cb({"page": pno, "pages_total": len(want),
                                  "pages_done": len(want) - len(to_render) + rendered,
                                  "bytes": bytes_total, "png_bytes": len(png), "reused": False,
-                                 "rendered": rendered, "skipped": skipped,
+                                 "rendered": rendered, "repaired": repaired,
+                                 "skipped": skipped,
                                  "passthrough": passthrough, "pdf_pages_total": total_pages,
                                  "msg": f"第 {pno} 页 {w_px}×{h_px}"})
                 except Exception:
@@ -652,12 +770,72 @@ def render_pdf_to_pdf(src_pdf, out_pdf, dpi: int = DEFAULT_DPI, page_from: int =
                              pages_done=len(want) - len(to_render) + rendered,
                              pages_total=len(want), out=str(out), dpi=dpi,
                              page_bytes_dir=str(cache_dir) if not cache_owned else None,
-                             rendered_pages=rendered, skipped_pages=skipped,
+                             rendered_pages=rendered, repaired_pages=repaired,
+                             skipped_pages=skipped,
                              passthrough_pages=passthrough, pdf_pages_total=total_pages,
                              elapsed_s=round(time.time() - t_start, 2),
                              msg=(f"体积已超阈值（{bytes_total/1024**3:.2f} GiB > "
                                   f"{int(size_limit_bytes)/1024**3:.2f} GiB），已停在第 {pno} 页；"
                                   f"进度与页缓存已保留，可续跑"))
+
+        # ── 5b. 修复重渲（F1）：范围外**曾高清化过**但位图丢失的页，按 **unit 记录的 dpi** 重渲 ──
+        for pno in to_repair:
+            if _cancelled(cancel_event):
+                _write_json(prog_file, _state())
+                return _fail("CANCELLED",
+                             pages_done=len(want) - len(to_render) + rendered,
+                             pages_total=len(want), bytes=bytes_total,
+                             page_bytes_dir=str(cache_dir) if not cache_owned else None,
+                             out=str(out), dpi=dpi,
+                             rendered_pages=rendered, repaired_pages=repaired,
+                             skipped_pages=skipped,
+                             passthrough_pages=passthrough, pdf_pages_total=total_pages,
+                             elapsed_s=round(time.time() - t_start, 2),
+                             msg=(f"已取消（本次已渲 {rendered} 页 / 修复 {repaired}/"
+                                  f"{len(to_repair)} 页，进度保留可续跑）"))
+            page = doc[pno - 1]
+            rdpi = int(repair_dpi.get(pno) or dpi)
+            png, w_px, h_px = _render_png(page, rdpi)
+            png_file = cache_dir / f"P{pno:04d}.png"
+            old_bytes = int((units.get(pno) or {}).get("png_bytes") or 0)
+            png_file.write_bytes(png)
+            units[pno] = {"dpi": rdpi, "px": [w_px, h_px], "png": png_file.name,
+                          "png_bytes": len(png),
+                          "png_sha256": _png_sha256(png), "png_mtime": _png_mtime_ns(png_file),
+                          "pt": [round(float(page.rect.width), 3),
+                                 round(float(page.rect.height), 3)],
+                          "at": _now(), "repaired": True}
+            repaired += 1
+            run["repaired"] = repaired
+            bytes_total += len(png) - old_bytes     # 旧登记那几条已计入，别重复计数
+            _write_json(prog_file, _state())
+            pages_meta.append({"page": pno, "role": "repair", "dpi": rdpi,
+                               "px": [w_px, h_px], "png_bytes": len(png),
+                               "png": png_file.name, "reused": False})
+            if progress_cb is not None:
+                try:
+                    progress_cb({"page": pno, "pages_total": len(want),
+                                 "pages_done": len(want) - len(to_render) + rendered,
+                                 "bytes": bytes_total, "png_bytes": len(png), "reused": False,
+                                 "rendered": rendered, "repaired": repaired,
+                                 "skipped": skipped, "passthrough": passthrough,
+                                 "pdf_pages_total": total_pages,
+                                 "msg": f"第 {pno} 页修复重渲 {w_px}×{h_px}（{rdpi}dpi）"})
+                except Exception:
+                    pass
+            if size_limit_bytes and bytes_total > int(size_limit_bytes):
+                _write_json(prog_file, _state())
+                return _fail("SIZE_LIMIT", bytes=bytes_total, limit_bytes=int(size_limit_bytes),
+                             pages_done=len(want) - len(to_render) + rendered,
+                             pages_total=len(want), out=str(out), dpi=dpi,
+                             page_bytes_dir=str(cache_dir) if not cache_owned else None,
+                             rendered_pages=rendered, repaired_pages=repaired,
+                             skipped_pages=skipped,
+                             passthrough_pages=passthrough, pdf_pages_total=total_pages,
+                             elapsed_s=round(time.time() - t_start, 2),
+                             msg=(f"体积已超阈值（{bytes_total/1024**3:.2f} GiB > "
+                                  f"{int(size_limit_bytes)/1024**3:.2f} GiB），"
+                                  f"已停在第 {pno} 页（修复重渲）；进度与页缓存已保留，可续跑"))
 
         for pno in want:
             role = roles[pno]
@@ -669,9 +847,12 @@ def render_pdf_to_pdf(src_pdf, out_pdf, dpi: int = DEFAULT_DPI, page_from: int =
                                    "png": u.get("png") or "", "reused": True})
 
         # ── 6. 组装**全页** PDF：范围内嵌高清位图 / 范围外原样复制页对象（A、B）──
+        #    「组装 → 保存 → 落盘复核 → replace」整段由 try/finally 守：**非成功路径一律删 .part**
+        #    （复核自身抛异常也一样，否则外层兜底成 ERROR 时会留下 GB 级 `<out>.part`）
         out.parent.mkdir(parents=True, exist_ok=True)
         built = fitz.open()
         tmp_out = out.with_name(out.name + ".part")
+        saved = False                                # 只有 replace 成功才算成功路径
         try:
             for pno in range(1, total_pages + 1):
                 if roles[pno] == "passthrough":
@@ -687,32 +868,37 @@ def render_pdf_to_pdf(src_pdf, out_pdf, dpi: int = DEFAULT_DPI, page_from: int =
             # 内存页数断言是死分支（每轮必定 new_page / insert_pdf）⇒ 改为**落盘后真复核**
             built.save(str(tmp_out), deflate=True)   # deflate=True：未压缩流压掉；图像流已是 Flate
             built.close()
+            bad = _verify_saved_pdf(tmp_out, doc, total_pages)
+            if bad:
+                return _fail("PAGE_COUNT_MISMATCH",
+                             expected_pages=int(bad.get("expected_pages") or total_pages),
+                             actual_pages=int(bad.get("actual_pages") or 0),
+                             page=int(bad.get("page") or 0),
+                             src_pages=int(doc.page_count),        # 旧键保留（兼容）
+                             built_pages=int(bad.get("actual_pages") or 0),
+                             out=str(out), dpi=dpi,
+                             rendered_pages=rendered, repaired_pages=repaired,
+                             skipped_pages=skipped,
+                             passthrough_pages=passthrough,
+                             elapsed_s=round(time.time() - t_start, 2),
+                             msg=(f"落盘复核失败：期望 {total_pages} 页 / 源页尺寸一致，"
+                                  f"实得 {bad.get('actual_pages')} 页"
+                                  f"（首个不符页 {bad.get('page') or '-'}），"
+                                  f"已删 .part（out_pdf 保持上一版不变）"))
+            tmp_out.replace(out)
+            saved = True
         finally:
             try:
                 built.close()
             except Exception:
                 pass
-        bad = _verify_saved_pdf(tmp_out, doc, total_pages)
-        if bad:
-            try:
-                tmp_out.unlink()                     # 失败不留半截 / 不留 .part
-            except Exception:
-                pass
-            return _fail("PAGE_COUNT_MISMATCH",
-                         expected_pages=int(bad.get("expected_pages") or total_pages),
-                         actual_pages=int(bad.get("actual_pages") or 0),
-                         page=int(bad.get("page") or 0),
-                         src_pages=int(doc.page_count),        # 旧键保留（兼容）
-                         built_pages=int(bad.get("actual_pages") or 0),
-                         out=str(out), dpi=dpi,
-                         rendered_pages=rendered, skipped_pages=skipped,
-                         passthrough_pages=passthrough,
-                         elapsed_s=round(time.time() - t_start, 2),
-                         msg=(f"落盘复核失败：期望 {total_pages} 页 / 源页尺寸一致，"
-                              f"实得 {bad.get('actual_pages')} 页"
-                              f"（首个不符页 {bad.get('page') or '-'}），"
-                              f"已删 .part（out_pdf 保持上一版不变）"))
-        tmp_out.replace(out)
+            if not saved:
+                # 删不掉只吞这个次生异常（**不遮蔽**上面的原错误），但一定尝试
+                try:
+                    if tmp_out.exists():
+                        tmp_out.unlink()
+                except Exception:
+                    pass
 
         out_bytes = out.stat().st_size
         _write_json(prog_file, _state(finished_at=_now(), out_bytes=out_bytes, status="done"))
@@ -730,10 +916,24 @@ def render_pdf_to_pdf(src_pdf, out_pdf, dpi: int = DEFAULT_DPI, page_from: int =
         else:
             note = (f"未重渲（渲 0 页 · 跳过 {skipped} 页 · 原样保留 {passthrough} 页），"
                     f"已按全页重建输出 {total_pages} 页")
+        if repaired:
+            # F1 口径：范围外曾高清化的页绝不降级 —— 位图丢了就按原 dpi 重渲救回来，并在 note 里说清
+            note += f" · 修复 {repaired} 页（缓存/旧件位图丢失，"
+            if not repair_fallback:
+                note += "按原 dpi 重渲）"
+            elif len(repair_fallback) == repaired:      # 全都缺原档记录 ⇒ 只能回落
+                note += f"缺原 dpi 记录 ⇒ 按本次 {dpi}dpi 重渲）"
+            else:
+                note += (f"按原 dpi 重渲；其中 {len(repair_fallback)} 页缺原 dpi 记录 ⇒ "
+                         f"档位回落至本次 {dpi}dpi）")
         return _ok(total_pages, note)
     except Exception as exc:                       # 兜底：桥不许断
         return _fail("ERROR", msg=f"{exc.__class__.__name__}: {exc}", src=str(src), out=str(out),
                      pages_done=len(locals().get("units") or {}),
+                     rendered_pages=int(locals().get("rendered") or 0),
+                     repaired_pages=int(locals().get("repaired") or 0),
+                     skipped_pages=int(locals().get("skipped") or 0),
+                     passthrough_pages=int(locals().get("passthrough") or 0),
                      elapsed_s=round(time.time() - t_start, 2))
     finally:
         for d in (doc, out_doc):

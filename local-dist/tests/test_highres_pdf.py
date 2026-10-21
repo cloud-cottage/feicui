@@ -11,6 +11,10 @@
 * **D 位图可得性**：① 页缓存 → ② 旧 `out_pdf` 同页 `extract_image`（校验 px）→ ③ 重渲；
 * **E/F/G**：新字段、失败不动 `out_pdf`、同参数幂等（第二次 `rendered_pages=0`）、
   旧 range-only 输出被重建为全页数且已达标页不重渲。
+* **二轮复验（Neng F1–F4）**：t11 范围外页位图丢失必须**按原 dpi 重渲**（`repaired_pages`，
+  四项计数闭合）；t12 **同尺寸**换页的脏缓存必须靠内容指纹抓出（不得静默错页）；
+  t13 `_verify_saved_pdf` 抛异常时不留 `.part`、`out_pdf` 不变；t14 登记项缺 `px` ⇒
+  缓存侧与旧 PDF 侧都不放行（走修复重渲）。
 
 用**合成 PDF**（页宽 60+i × 高 80 pt，页内只有一行文字 `PAGE-i`）⇒ 300dpi 渲一页约 10 ms，
 整套 < 10 s。**不碰 output/ 真实数据**（`tempfile.mkdtemp`）。
@@ -86,6 +90,42 @@ def _texts(path: Path) -> list[str]:
     out = [p.get_text().strip() for p in doc]
     doc.close()
     return out
+
+
+def _make_src_uniform(path: Path, n: int = 3) -> None:
+    """合成源 PDF：每页**同尺寸** 120×160 pt，但**内容不同**（左半黑 / 下半黑 / 一行文字）。
+
+    专门用于「同尺寸换页」脏缓存：宽高完全一样，只有内容指纹（`png_sha256`）抓得住。
+    """
+    doc = fitz.open()
+    for i in range(1, n + 1):
+        page = doc.new_page(width=120, height=160)
+        if i % 3 == 1:
+            page.draw_rect(fitz.Rect(0, 0, 60, 160), color=(0, 0, 0), fill=(0, 0, 0))
+            page.insert_text((10, 150), "AAA", fontsize=20)
+        elif i % 3 == 2:
+            page.draw_rect(fitz.Rect(0, 80, 120, 160), color=(0, 0, 0), fill=(0, 0, 0))
+            page.insert_text((10, 40), "BBB", fontsize=20)
+        else:
+            page.insert_text((10, 20), f"PAGE-{i}", fontsize=8)
+    doc.save(str(path))
+    doc.close()
+
+
+def _gray_px(path: Path, idx: int, dpi: int = 50) -> tuple[int, int, bytes]:
+    """按 50dpi 渲一页成灰度 ⇒ `(w, h, samples)`（比像素用，不落盘）。"""
+    doc = fitz.open(str(path))
+    pix = doc[idx].get_pixmap(dpi=dpi, colorspace=fitz.csGRAY, alpha=False)
+    out = (pix.width, pix.height, pix.samples)
+    doc.close()
+    return out
+
+
+def _mad(a: tuple[int, int, bytes], b: tuple[int, int, bytes]) -> float:
+    """两页灰度图逐像素平均绝对差（0–255）。尺寸不同 ⇒ 255（视作完全不同）。"""
+    if a[:2] != b[:2] or not a[2]:
+        return 255.0
+    return sum(abs(x - y) for x, y in zip(a[2], b[2])) / len(a[2])
 
 
 def _write_v1_progress(out: Path, src: Path, dpi: int, pages: list[int],
@@ -339,6 +379,138 @@ class HighResV2Test(unittest.TestCase):
         self.assertEqual(r2["actual_pages"], N_PAGES - 1)
         self.assertEqual(_sha(self.out), sha_before)       # 一字节不变
         self.assertEqual(list(self.out.parent.glob("*.part")), [])   # 无残留
+
+    # ── t11（F1）：范围外页位图彻底丢失 ⇒ **按原 dpi 重渲**（不许降级成 passthrough）──
+    def test_t11_out_of_range_pages_with_lost_bitmap_are_repaired(self) -> None:
+        src = self.tmp / "src4.pdf"
+        out = self.tmp / "out4" / "b4-HighRes.pdf"
+        cache = self.tmp / "cache4"
+        _make_src(src, n=4)
+        r1 = render_pdf_to_pdf(src, out, dpi=300, page_from=1, page_to=4, page_bytes_dir=cache)
+        self.assertTrue(r1["ok"], r1)
+        self.assertEqual(r1["rendered_pages"], 4)
+        prog = read_progress(out)
+        px_before = {pno: [int(v) for v in prog["units"][str(pno)]["px"]] for pno in (1, 2)}
+
+        for pno in (1, 2):                                  # 缓存截断成 0 字节
+            (cache / f"P{pno:04d}.png").write_bytes(b"")
+        out.unlink()                                        # 旧件位图也没了
+
+        r2 = render_pdf_to_pdf(src, out, dpi=300, page_from=3, page_to=4,
+                               page_bytes_dir=cache)
+        self.assertTrue(r2["ok"], r2)
+        self.assertEqual(r2["repaired_pages"], 2)            # 救回来，不是 passthrough
+        self.assertEqual(r2["passthrough_pages"], 0)
+        self.assertEqual(r2["skipped_pages"], 2)             # 3–4 页本身达标 ⇒ 跳过
+        self.assertEqual(r2["rendered_pages"], 0)
+        self.assertEqual(
+            r2["rendered_pages"] + r2["repaired_pages"] + r2["skipped_pages"]
+            + r2["passthrough_pages"], r2["pdf_pages_total"])   # 四项闭合
+        self.assertEqual(r2["pdf_pages_total"], 4)
+        self.assertIn("修复 2 页（缓存/旧件位图丢失，按原 dpi 重渲）", r2["note"])
+
+        doc = fitz.open(str(out))
+        for pno in (1, 2):
+            imgs = doc[pno - 1].get_images(full=True)
+            self.assertEqual(len(imgs), 1, f"第 {pno} 页位图丢了（被降级成源页复制）")
+            self.assertEqual([int(imgs[0][2]), int(imgs[0][3])], px_before[pno])
+        doc.close()
+
+        prog = read_progress(out)
+        for pno in (1, 2):
+            self.assertEqual(int(prog["units"][str(pno)]["dpi"]), 300)   # 原档不降级
+            self.assertTrue(prog["units"][str(pno)].get("png_sha256"))
+        self.assertEqual(prog["run"]["repaired"], 2)
+
+        # 修复完再跑一次同参数 ⇒ 不该反复修复（修复结果也该是「达标」）
+        r3 = render_pdf_to_pdf(src, out, dpi=300, page_from=3, page_to=4,
+                               page_bytes_dir=cache)
+        self.assertTrue(r3["ok"], r3)
+        self.assertEqual(r3["repaired_pages"], 0)
+        self.assertEqual(r3["skipped_pages"], 4)
+
+    # ── t12（F2）：两页**同尺寸**互换缓存 ⇒ 宽高相等也得抓出来 ⇒ 改按原 dpi 修复重渲 ──
+    def test_t12_same_size_swapped_cache_is_detected_and_repaired(self) -> None:
+        src = self.tmp / "src_u3.pdf"
+        out = self.tmp / "out_u3" / "u3-HighRes.pdf"
+        cache = self.tmp / "cache_u3"
+        _make_src_uniform(src, n=3)
+        r1 = render_pdf_to_pdf(src, out, dpi=300, page_from=1, page_to=2, page_bytes_dir=cache)
+        self.assertTrue(r1["ok"], r1)
+        self.assertEqual(r1["rendered_pages"], 2)
+        px = {int(k): [int(v) for v in v["px"]] for k, v in read_progress(out)["units"].items()}
+        self.assertEqual(px[1], px[2], "本用前置：两页必须同尺寸，否则宽高校验也能抓住")
+
+        out.unlink()                                        # 只剩页缓存可走
+        p1, p2 = cache / "P0001.png", cache / "P0002.png"
+        b1, b2 = p1.read_bytes(), p2.read_bytes()
+        p1.write_bytes(b2)                                  # 互换（尺寸不变、内容换了）
+        p2.write_bytes(b1)
+
+        r2 = render_pdf_to_pdf(src, out, dpi=300, page_from=3, page_to=3, page_bytes_dir=cache)
+        self.assertTrue(r2["ok"], r2)
+        self.assertGreaterEqual(r2["repaired_pages"], 1)     # 不静默复用错页
+        self.assertEqual(
+            r2["rendered_pages"] + r2["repaired_pages"] + r2["skipped_pages"]
+            + r2["passthrough_pages"], r2["pdf_pages_total"])
+
+        out_p1 = _gray_px(out, 0)
+        src_p1, src_p2 = _gray_px(src, 0), _gray_px(src, 1)
+        d1, d2 = _mad(out_p1, src_p1), _mad(out_p1, src_p2)
+        self.assertLess(d1, 8.0, f"输出第 1 页 ≠ 源第 1 页（mean|Δ|={d1:.2f}）")   # 实测 ≈2.0
+        self.assertGreater(d2, 40.0, f"判别力不足：换页差只有 {d2:.2f}")            # 实测 ≈127
+
+        doc = fitz.open(str(out))
+        xref, _sm, w, h = doc[0].get_images(full=True)[0][:4]
+        self.assertEqual([int(w), int(h)], px[1])            # 像素尺寸仍是原登记
+        doc.close()
+
+    # ── t13（F3）：`_verify_saved_pdf` 自己抛异常 ⇒ ERROR，且**不留 GB 级 .part** ──
+    def test_t13_verify_exception_leaves_no_part_file(self) -> None:
+        r1 = render_pdf_to_pdf(self.src, self.out, dpi=300, page_from=1, page_to=10,
+                               page_bytes_dir=self.cache)
+        self.assertTrue(r1["ok"], r1)
+        sha_before = _sha(self.out)
+
+        with mock.patch("src.highres_pdf._verify_saved_pdf",
+                        side_effect=RuntimeError("verify boom")):
+            r2 = render_pdf_to_pdf(self.src, self.out, dpi=600, page_from=1, page_to=10,
+                                   page_bytes_dir=self.cache)
+        self.assertFalse(r2["ok"], r2)
+        self.assertEqual(r2["reason"], "ERROR")
+        self.assertIn("verify boom", r2["msg"])               # 原错误没被「删 .part 失败」遮蔽
+        self.assertEqual(_sha(self.out), sha_before)          # out_pdf 一字节不变
+        self.assertEqual(list(self.out.parent.glob("*.part")), [])
+
+    # ── t14（F4）：登记项缺 `px` ⇒ 两侧都不许放行 ⇒ 走修复重渲，且 ok ──
+    def test_t14_unit_without_px_is_not_reused(self) -> None:
+        src = self.tmp / "src_nopx.pdf"
+        out = self.tmp / "out_nopx" / "nopx-HighRes.pdf"
+        cache = self.tmp / "cache_nopx"
+        _make_src_uniform(src, n=3)
+        r1 = render_pdf_to_pdf(src, out, dpi=300, page_from=1, page_to=2, page_bytes_dir=cache)
+        self.assertTrue(r1["ok"], r1)
+        px1 = [int(v) for v in read_progress(out)["units"]["1"]["px"]]
+
+        prog = read_progress(out)
+        prog["units"]["1"].pop("px", None)                    # 手造：第 1 页登记项缺 px
+        progress_path(out).write_text(json.dumps(prog, ensure_ascii=False), encoding="utf-8")
+
+        # out.pdf 还在（同页有位图）—— 旧 PDF 侧也必须拒收缺 px 的登记
+        r2 = render_pdf_to_pdf(src, out, dpi=300, page_from=3, page_to=3, page_bytes_dir=cache)
+        self.assertTrue(r2["ok"], r2)
+        self.assertEqual(r2["repaired_pages"], 1)             # 没被静默复用
+        self.assertEqual(r2["skipped_pages"], 1)              # 第 2 页 px 齐备 ⇒ 正常复用
+        self.assertEqual(
+            r2["rendered_pages"] + r2["repaired_pages"] + r2["skipped_pages"]
+            + r2["passthrough_pages"], r2["pdf_pages_total"])
+
+        doc = fitz.open(str(out))
+        self.assertEqual(len(doc[0].get_images(full=True)), 1)   # 修复后第 1 页仍有位图
+        doc.close()
+        prog = read_progress(out)
+        self.assertEqual([int(v) for v in prog["units"]["1"]["px"]], px1)   # 重渲回填真尺寸
+        self.assertEqual(int(prog["units"]["1"]["dpi"]), 300)
 
     # ── t7：CANCELLED 时 out_pdf 不变、units 保留；BAD_DPI / BAD_RANGE 仍前置拒绝 ──
     def test_t7_cancel_keeps_out_pdf_and_units(self) -> None:

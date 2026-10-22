@@ -359,8 +359,19 @@
         <div class="card" id="changelog">
             <h2>版本迭代 · 本地分发版</h2>
             <p class="muted" style="font-size:13px;color:#666;margin:-4px 0 16px">
-                按时间倒序。当前最新 <strong>v1.1.2</strong>；<strong>v1.0.0</strong> 是首个公开分发的版本；其前的条目为内部迭代阶段（按日期记录，未编版本号）。
+                按时间倒序。当前最新 <strong>v1.1.3</strong>；<strong>v1.0.0</strong> 是首个公开分发的版本；其前的条目为内部迭代阶段（按日期记录，未编版本号）。
             </p>
+
+            <div class="log-item">
+                <div class="log-head"><span class="log-ver">v1.1.3</span><span class="log-date">2026-10-22 · 目录初始化不再迷路</span></div>
+                <ul>
+                    <li><strong>目录初始化页重做</strong>（新）：新增「直接输入 / 粘贴路径」输入框（支持 <code>~</code> 与绝对路径，回车即进）与 <strong>🔍 自动发现</strong> —— 一键扫 6 个根（家目录、Downloads、Documents、Desktop、CloudStorage、Volumes），深度 ≤ 4，跳过隐藏目录与 <code>Library</code> 等系统目录，符号链接按 realpath 去重防回环，只列<strong>通过校验</strong>的 <code>feicui</code> 目录（按 mtime 倒序，可一键校验进入）；实测扫 <strong>619 个目录 0.056 s / 0.133 s</strong>（两次冷/热扫描）出候选</li>
+                    <li><strong>空目录按成因提示</strong>（新）：不再只显示干瘪的「（无子目录）」—— 区分 <code>empty</code> 真空 / <code>all_hidden</code> 全隐藏 / <code>permission</code> 无权限 / <code>not_exist</code> 不存在 / <code>not_dir</code> 是文件，各给可操作下一步（启动并登录同步盘、去 macOS 文件夹授权、上一级、自动发现、粘贴路径）；<code>domtest_dir</code> 真窗口 <strong>22/22 断言全 PASS（0 FAIL）</strong></li>
+                    <li><strong>「🏠 家目录」真正回家</strong>（修正）：此前点击等价于刷新当前目录（被「上次浏览路径」覆盖），现固定回到家目录；实测点后 <code>#dir-path=/Users/kevin</code>、列出 <strong>22 项</strong>且与后端 <code>browse(home)</code> 的 22 项完全一致</li>
+                    <li><strong>失效 root 启动横幅</strong>（新）：上次的目录被改名、或同步盘变成只剩空壳时，启动即明示「上次的目录已不存在：&lt;路径&gt;」并自动跑一次候选发现（结果追加、不顶掉提示）；会话 root 与 <code>.env</code> root 同时失效时合并为一条横幅、<strong>两条失效路径并列展示</strong>（同路径只列一次），不再静默进主界面或只给一个空列表</li>
+                    <li><strong>tab1 一键高清化体积口径修正</strong>：<code>SIZE_LIMIT</code> 改为按真实总量（净增量）计 —— 体积改由登记表单一派生（<code>_png_bytes_total</code>），升级重渲（300⇒600/1200）覆盖旧页时先扣掉旧字节，不再把新旧两份都算进去而虚高、把真体积远低于阈值的任务误叫停（实测 300⇒600 第 1 页真 <strong>49,756 B</strong>，旧口径报 <strong>63,954 B</strong>）；<code>SIZE_LIMIT</code> / 进度 <code>bytes</code> / 返回 <code>page_png_bytes</code> 三处同源</li>
+                </ul>
+            </div>
 
             <div class="log-item">
                 <div class="log-head"><span class="log-ver">v1.1.2</span><span class="log-date">2026-10-21 · 一键全自动与批量预览</span></div>

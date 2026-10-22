@@ -125,19 +125,25 @@
     }
     show('view-dir');
     browseHome();                                   // P1：目录页起点＝家目录
+    var staleSessionRoot = '';
     if (r.feicui_root && r.feicui_root_exists === false) {
+      staleSessionRoot = r.feicui_root;             // F4：会话失效先记下，交给 checkEnvRoot 合并
       setHint('stale_session', '上次使用的目录已不存在：' + r.feicui_root, 'warn');
     }
-    checkEnvRoot(r);
+    checkEnvRoot(r, staleSessionRoot);
   }
 
-  //: `.env` 里 FEICUI_ROOT 的现状（P5）：失效必须**显式提示 + 自动找一次**，不许静默空列表
-  function checkEnvRoot(r) {
+  //: `.env` 里 FEICUI_ROOT 的现状（P5）：失效必须**显式提示 + 自动找一次**，不许静默空列表。
+  //: F4：会话 root 与 .env root **同失效** ⇒ 合并成**一条**横幅（两个路径都列出），
+  //: 不得让 .env 的提示把会话的顶掉（同一路径只列一次）。
+  function checkEnvRoot(r, staleSessionRoot) {
     var env = (r && r.env_root) || '';
     if (!env) { return; }
     if (r.env_root_exists === false) {
-      ST.staleRoot = env;                 // 失效横幅要**一直挂着**（自动发现的结果只作补充，不许顶掉它）
-      setHint('stale_root', '上次的目录已不存在：' + env
+      var stalePaths = (staleSessionRoot && staleSessionRoot !== env)
+        ? [staleSessionRoot, env] : [env];
+      ST.staleRoot = stalePaths.join(' 与 ');   // 失效横幅要**一直挂着**（自动发现的结果只作补充，不许顶掉它）
+      setHint('stale_root', '上次的目录已不存在：' + ST.staleRoot
         + '（同步盘可能未挂载、或目录已改名/删除）。正在自动查找本机可用的 feicui 目录…', 'warn');
       discoverDirs();
     } else if (r.env_root_verified === false) {
@@ -163,6 +169,8 @@
                  '请到「系统设置 → 隐私与安全性 → 文件与文件夹」给「斐萃」勾选该文件夹后重试。'],
     not_exist: ['这个路径不存在（同步盘可能未挂载，或目录已改名/删除）。',
                 '请确认同步盘已登录挂载；或点「🔍 自动发现 feicui 目录」。'],
+    not_dir:    ['这是文件不是目录。',
+                 '请确认粘贴的是 feicui 目录本身（不是其中的某个文件）；或点「🔍 自动发现 feicui 目录」。'],
     error: ['无法读取这个目录。']
   };
 

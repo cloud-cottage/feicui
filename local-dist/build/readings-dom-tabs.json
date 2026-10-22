@@ -1,18 +1,18 @@
 {
   "schema": "feicui.webui.domtest_tabs.v1",
-  "at": "2026-10-20T13:15:17",
+  "at": "2026-10-22T11:52:05",
   "python": "/Users/kevin/bistro/feicui/venv/bin/python",
-  "app_title": "「斐萃」玺印解析任务台 · 本地封装分发版",
+  "app_title": "「斐萃」玺印解析任务台 · 本地封装分发版 · Pro",
   "counts": {
-    "PASS": 20,
+    "PASS": 52,
     "FAIL": 0
   },
   "fixture": {
-    "scratch": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-tabs-t_drzxov",
-    "fixture": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-tabs-t_drzxov/feicui",
-    "data_dir": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-tabs-t_drzxov/data",
+    "scratch": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-tabs-l21c1xhg",
+    "fixture": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-tabs-l21c1xhg/feicui",
+    "data_dir": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-tabs-l21c1xhg/data",
     "source_pdf": "吴颐人篆刻作品展示.pdf",
-    "tab3_id_count": 41,
+    "tab3_id_count": 42,
     "tab3_ids": [
       "btn-tab3-corr-apply",
       "btn-tab3-next",
@@ -30,6 +30,7 @@
       "tab3-corr-list",
       "tab3-counts",
       "tab3-current",
+      "tab3-dirinfo",
       "tab3-dynasty",
       "tab3-edit",
       "tab3-grid",
@@ -64,12 +65,32 @@
     {
       "check": "tabs/tab3_block_byte_identical_to_head",
       "status": "PASS",
-      "detail": "工作区 tab3 块 4868 字符 / HEAD 4868 字符 （逐字节相同=True）"
+      "detail": "白名单 `#tab3-dirinfo`（工作区 59 字符）外与 HEAD 逐字节相同=True；工作区 tab3 块 4927 字符 / HEAD 4927 字符"
     },
     {
       "check": "tabs/no_new_frontend_deps",
       "status": "PASS",
       "detail": "外链资源=[] 页面仅引本地 app.js=True 前端无外网 URL=True"
+    },
+    {
+      "check": "tabs/app_title_has_edition",
+      "status": "PASS",
+      "detail": "document.title='「斐萃」玺印解析任务台 · 本地封装分发版 · Pro'（要求基础串 + `· Lite|Pro`）"
+    },
+    {
+      "check": "tabs/app_title_matches_backend_actual",
+      "status": "PASS",
+      "detail": "document.title='「斐萃」玺印解析任务台 · 本地封装分发版 · Pro' api.app_title()='「斐萃」玺印解析任务台 · 本地封装分发版 · Pro' APP_TITLE='「斐萃」玺印解析任务台 · 本地封装分发版 · Pro'"
+    },
+    {
+      "check": "tabs/app_info_title_name_same_source",
+      "status": "PASS",
+      "detail": "app_info.title='「斐萃」玺印解析任务台 · 本地封装分发版 · Pro' app_info.app='斐萃 · 本地封装分发版 · Pro' app_name()='斐萃 · 本地封装分发版 · Pro' edition='Pro' brand='「斐萃」玺印解析任务台 · 本地封装分发版 · Pro' topbar='「斐萃」玺印解析任务台 · 本地封装分发版 · Pro'"
+    },
+    {
+      "check": "tabs/tab1_book_name_input_editable",
+      "status": "PASS",
+      "detail": "exists=True type='text' editable=True maxlength=80 标签='书籍名称（用于目录）' 占位='与 PDF 文件名无关；留空则用文件名作目录'"
     },
     {
       "check": "tabs/tab1_hr_nodes_present",
@@ -87,6 +108,11 @@
       "detail": "提示='体积实测：300 ≈ 5.4 MB/页｜600 ≈ 15.5 MB/页｜ 1200 ≈ 13.3 MB/页（1200 反而最小，PNG 对硬边更友好）｜耗时约 6.2 s/页'"
     },
     {
+      "check": "tabs/tab1_range_label_and_passthrough_note",
+      "status": "PASS",
+      "detail": "页范围标签='高清化页范围（其余页原样保留，页码不变）' 说明='未选中的页按原样保留在输出 PDF 中 （全文页数不变，页码与原件一一对应）；若该页已做过更高档位，则跳过不降级。'"
+    },
+    {
       "check": "tabs/tab1_cancel_starts_disabled",
       "status": "PASS",
       "detail": "取消按钮初始 disabled=True"
@@ -102,14 +128,54 @@
       "detail": "源行='源 PDF：吴颐人篆刻作品展示.pdf（32 页）'"
     },
     {
+      "check": "tabs/tab1_pv_region_and_page_input",
+      "status": "PASS",
+      "detail": "卡片=True 在 hr-card 内=True 在起止页行下方=True nodes={'prev': True, 'next': True, 'first': True, 'prev10': True, 'next10': True, 'last': True, 'count': True, 'dpi': True, 'grid': True, 'setfrom': True, 'img': True, 'hint': True, 'info': True, 'msg': True} 页码输入={'exists': True, 'type': 'number', 'min': '1', 'editable': True, 'value': '1', 'max': '32'}"
+    },
+    {
+      "check": "tabs/tab1_pv_paging_and_setfrom",
+      "status": "PASS",
+      "detail": "读数='第 3 / 5 页' 图隐藏=False src='data:image/png;base64,' maxW='100%' 上页禁用=False 下页禁用=False → hr-from='3' 提示='✅ 已把第 3 页设为起始页（高清化从第 3 页开始）'"
+    },
+    {
+      "check": "tabs/tab1_pv_bounds_and_error_reason",
+      "status": "PASS",
+      "detail": "首/末页禁用=(True,False)/(False,True) 末页夹紧='5' 失败提示='❌ PAGE_OUT_OF_PDF · 第 4 页超出范围（本书共 5 页）' class='msg err' 图隐藏=True"
+    },
+    {
+      "check": "tabs/tab1_pv_grid_toolbar_and_2x5",
+      "status": "PASS",
+      "detail": "工具行齐=True count=['1', '2', '4', '10']/10 dpi=['48', '72', '96', '144']/72 张数=10 列数=5 首张='1' 焦点张=['4'] 网格显示=True 大图隐藏=True"
+    },
+    {
+      "check": "tabs/tab1_pv_tile_click_focus_and_dblclick_setfrom",
+      "status": "PASS",
+      "detail": "点第3张⇒页码输入='3' 焦点描边=['3'] 双击⇒hr-from='3' 起始描边=['3'] 提示='✅ 已把第 3 页设为起始页（高清化从第 3 页开始）'"
+    },
+    {
+      "check": "tabs/tab1_pv_screen_paging_bounds",
+      "status": "PASS",
+      "detail": "末屏首张='849' 张数=10 末页态禁用(+10/末页)=True,True 首页态禁用(首页/−10/−1/+1)=(True,True,True,False)"
+    },
+    {
       "check": "tabs/tab1_progress_bar_and_counters",
       "status": "PASS",
-      "detail": "bar='40%' 文案='[running] 2/5 页 · 累计 27.0 MB · 当前页 2 · 12.4 s · 渲页中（2/5）' 开始禁用=True 取消可用=True"
+      "detail": "bar='40%' 文案='[running] 2/5 页 · 累计 27.0 MB · 已渲 2 页 · 跳过 0 页（已达标）· 原样保留 3 页 · 共 5 页 · 当前页 2 · 12.4 s · 渲页中（2/5）' 开始禁用=True 取消可用=True"
+    },
+    {
+      "check": "tabs/tab1_status_line_shows_rendered_skipped_passthrough",
+      "status": "PASS",
+      "detail": "running 文案='[running] 2/5 页 · 累计 27.0 MB · 已渲 2 页 · 跳过 0 页（已达标）· 原样保留 3 页 · 共 5 页 · 当前页 2 · 12.4 s · 渲页中（2/5）'"
     },
     {
       "check": "tabs/tab1_done_shows_out_path_and_goto",
       "status": "PASS",
-      "detail": "done 显示=True 产物='✅ /x/2_HighRes_PDF/9787000000001/吴颐人篆刻作品展示-HighRes.pdf（5 页 · 66.0 MB）' bar='100%' 按钮='➡ 去 tab2 切图'"
+      "detail": "done 显示=True 产物='✅ /x/2_HighRes_PDF/9787000000001/吴颐人篆刻作品展示-HighRes.pdf（共 5 页 · 已渲 2 · 跳过 1 · 原样 2 · 66.0 MB）' bar='100%' 按钮='➡ 去 tab2 切图'"
+    },
+    {
+      "check": "tabs/tab1_done_status_line_has_v2_counts",
+      "status": "PASS",
+      "detail": "done 产物行='✅ /x/2_HighRes_PDF/9787000000001/吴颐人篆刻作品展示-HighRes.pdf（共 5 页 · 已渲 2 · 跳过 1 · 原样 2 · 66.0 MB）'"
     },
     {
       "check": "tabs/tab1_goto2_switches_to_tab2",
@@ -129,7 +195,12 @@
     {
       "check": "tabs/tab2_sources_listed_from_highres_dir",
       "status": "PASS",
-      "detail": "options=['吴颐人篆刻作品展示-HighRes.pdf  →  9787000000001（32 页） · 2 MB'] 源信息='吴颐人篆刻作品展示-HighRes.pdf · 2 MB · 目录键 9787000000001（from_dir）· 32 页 · 改于 2026-10-11 10:35'"
+      "detail": "options=['吴颐人篆刻作品展示-HighRes.pdf  →  吴颐人篆刻作品展示（32 页） · 2 MB'] 源信息='吴颐人篆刻作品展示-HighRes.pdf · 2 MB · 目录键 吴颐人篆刻作品展示（filename-fallback）· 32 页 · 改于 2026-10-11 10:35 · 建议去 tab1 确认书名'"
+    },
+    {
+      "check": "tabs/tab2_head_dir_key_caption",
+      "status": "PASS",
+      "detail": "#tab2-crop-dir='目录键：吴颐人篆刻作品展示（filename-fallback）⇒ 3_Cropped_Tiff/吴颐人篆刻作品展示/ · 建议去 tab1 确认书名'"
     },
     {
       "check": "tabs/tab2_legacy_render_folded_not_removed",
@@ -140,6 +211,46 @@
       "check": "tabs/tab2_detect_draws_boxes_on_canvas",
       "status": "PASS",
       "detail": "canvas.dataset.boxes=3 canvas=714×1000 计数='检测到 3 枚' 裁切按钮='✂️ 裁切选中（3）' disabled=False"
+    },
+    {
+      "check": "tabs/tab2_fields_one_row_per_box_editable",
+      "status": "PASS",
+      "detail": "行数=3 每行输入框=[3, 3, 3] 全部可编辑=[True, True, True]"
+    },
+    {
+      "check": "tabs/tab2_fields_show_extracted_values",
+      "status": "PASS",
+      "detail": "释文=['中候', '中羞行府', ''] 状态=['蟫', '故', ''] 编号=['0425', '0424', '']"
+    },
+    {
+      "check": "tabs/tab2_read_order_select_five_options_default_auto",
+      "status": "PASS",
+      "detail": "选项=['auto', 'rtl-ttb', 'ltr-ttb', 'rtl-btt', 'ltr-btt'] 当前='auto' 顺序来源='自动 ⇒ rtl-ttb（code-sequence：按编号序列推断）'"
+    },
+    {
+      "check": "tabs/tab2_needs_review_visible",
+      "status": "PASS",
+      "detail": "待确认行=[('1', '0.61 ⚠')]"
+    },
+    {
+      "check": "tabs/tab2_crop_name_preview_matches_backend",
+      "status": "PASS",
+      "detail": "DOM=['0425_P370_C2_R1_中候_清中期_吳熙載.tiff', '0424_P370_C1_R1_中羞行府_清中期_吳熙載.tiff', 'P370-C1-R2.tiff'] Python=['0425_P370_C2_R1_中候_清中期_吳熙載.tiff', '0424_P370_C1_R1_中羞行府_清中期_吳熙載.tiff', 'P370-C1-R2.tiff']"
+    },
+    {
+      "check": "tabs/tab2_field_edit_cleans_name_and_keeps_parity",
+      "status": "PASS",
+      "detail": "DOM=['0425_P370_C2_R1_中候_清中期_吳熙載.tiff', '0424_P370_C1_R1_中羞行府_清中期_吳熙載.tiff', '04-24_P370_C1_R2_NA_清中期_吳熙載.tiff'] Python=['0425_P370_C2_R1_中候_清中期_吳熙載.tiff', '0424_P370_C1_R1_中羞行府_清中期_吳熙載.tiff', '04-24_P370_C1_R2_NA_清中期_吳熙載.tiff']"
+    },
+    {
+      "check": "tabs/tab2_long_inscription_truncated_parity",
+      "status": "PASS",
+      "detail": "DOM 长度=[179, 33, 32] Python 长度=[179, 33, 32] 逐字相同=True"
+    },
+    {
+      "check": "tabs/tab2_crop_payload_auto_and_order_source_code_sequence",
+      "status": "PASS",
+      "detail": "payload.reading_order='auto' boxes=3 fields=3 后端复算=(rtl-ttb,code-sequence) 界面来源='自动 ⇒ rtl-ttb（code-sequence：按编号序列推断）'"
     },
     {
       "check": "tabs/tab2_single_click_box_deletes",
@@ -157,12 +268,76 @@
       "detail": "框数=0 裁切 disabled=True"
     },
     {
+      "check": "tabs/tab2_clear_also_clears_fields_and_order",
+      "status": "PASS",
+      "detail": "字段行数=0 顺序来源='—'"
+    },
+    {
+      "check": "tabs/tab2_lite_no_ocr_ok_info_banner",
+      "status": "PASS",
+      "detail": "框数=3 消息='已检测 3 枚印章（本版无 OCR，字段请手动填写）· 0.42 s · 页 3400×4760' class='msg info' 提示条='本版不含 OCR（lite）：释文/状态/编号需手动填写；要自动识别请用斐萃_pro' 字段=[('', '', ''), ('', '', ''), ('', '', '')]"
+    },
+    {
+      "check": "tabs/tab2_lite_order_falls_back_not_code_sequence",
+      "status": "PASS",
+      "detail": "顺序来源='兜底：ltr-ttb（fallback）'"
+    },
+    {
+      "check": "tabs/tab2_autocrop_card_nodes",
+      "status": "PASS",
+      "detail": "card=True in_panel=True nodes={'start': True, 'cancel': True, 'bar': True, 'progress': True, 'seals': True, 'eta': True, 'page_s': True, 'from': True, 'to': True, 'resume': True, 'done': True, 'fails': True, 'goto3': True, 'msg': True} dpi=['300', '600', '1200', '2400'] value='1200' resume=True cancel_disabled=True"
+    },
+    {
+      "check": "tabs/tab2_autocrop_lite_wording_matches_capability",
+      "status": "PASS",
+      "detail": "ocr_capable=True 按钮='🚀 开始全自动' lite_hidden=True 提示='本版无 OCR（斐萃_lite）：字段留空，文件名会带你手填的朝代/作者（NA 若无）。'（应：按钮='🚀 开始全自动' 且 lite 提示条 hidden）"
+    },
+    {
+      "check": "tabs/tab2_autocrop_poll_progress_eta_and_summary",
+      "status": "PASS",
+      "detail": "running等待=True done等待=True [A] 页='第 2 / 3 页' 枚='已裁 2 枚' ETA='ETA 约 30 秒' 当前页='当前页 4.5 s' 进度条='67%' 汇总='—' [B] 页='第 3 / 3 页' 枚='已裁 5 枚' ETA='ETA ≈ 0 秒' 汇总='✅ 完成：成功 2 页 / 跳过 1 页 / 失败 1 页 · 共 5 枚 · 9.5 s · 合成目录键' 失败行=1 失败文本='第 2 页IndexError: 合成故障' 进度条='100%' start_disabled=False cancel_disabled=True payload={'pdf': '/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-tabs-l21c1xhg/feicui/2_HighRes_PDF/9787000000001/吴颐人篆刻作品展示-HighRes.pdf', 'dpi': 1200, 'resume': True}"
+    },
+    {
+      "check": "tabs/tab2_autocrop_poll_no_js_errors",
+      "status": "PASS",
+      "detail": "js_errors=None"
+    },
+    {
       "check": "tabs/tab3_dom_intact_after_tab2_rewrite",
       "status": "PASS",
-      "detail": "id 数=41（HEAD 静态块 41 个） 视图按钮=4 h2='3_Cropped_Tiff · 印面切片（选件 / 解析 / 重命名）'"
+      "detail": "id 数=42（HEAD 静态块 42 个） 视图按钮=4 h2='3_Cropped_Tiff · 印面切片（选件 / 解析 / 重命名）'"
+    },
+    {
+      "check": "tabs/tab3_legacy_dir_key_button_readonly",
+      "status": "PASS",
+      "detail": "子目录按钮=2 旧键=[('🔖 旧键9787000000003', True)] 目录键文案='目录键：A特例（unregistered）'"
+    },
+    {
+      "check": "tabs/tab3_new_naming_shows_page_col_row_and_fields",
+      "status": "PASS",
+      "detail": "命中=True 标坏=False 释文='中羞行府' 朝代='清中期' 作者='吳熙載' 解析提示='已自动解析：第 370 页 · 第 1 列 · 第 1 行（前缀 0424_P370_C1_R1_）'"
+    },
+    {
+      "check": "tabs/tab3_new_naming_rename_preview_keeps_code_scheme",
+      "status": "PASS",
+      "detail": "新名预览='0424_P370_C1_R1_中羞行府_清中期_吳熙載.tiff' 改名按钮 disabled=True"
     }
   ],
   "dom": {
+    "00_app_title": {
+      "title": "「斐萃」玺印解析任务台 · 本地封装分发版 · Pro",
+      "brand": "「斐萃」玺印解析任务台 · 本地封装分发版 · Pro",
+      "topbar": "「斐萃」玺印解析任务台 · 本地封装分发版 · Pro"
+    },
+    "00_tab1_book_name": {
+      "exists": true,
+      "type": "text",
+      "editable": true,
+      "maxlength": 80,
+      "value": "",
+      "placeholder": "与 PDF 文件名无关；留空则用文件名作目录",
+      "label": "书籍名称（用于目录）"
+    },
     "01_tab1_hr": {
       "has_card": true,
       "dpi_exists": true,
@@ -191,9 +366,11 @@
       "start_disabled": false,
       "bar_width": "0%",
       "done_hidden": true,
-      "hr_msg": "[idle] 0/? 页 · 累计 0.0 MB · 空闲（未跑过高清化）",
+      "hr_msg": "[idle] 0/? 页 · 累计 0.0 MB · 已渲 0 页 · 跳过 0 页（已达标）· 原样保留 0 页 · 共 ? 页 · 空闲（未跑过高清化）",
       "out_text": "—",
       "hint": "体积实测：300 ≈ 5.4 MB/页｜600 ≈ 15.5 MB/页｜ 1200 ≈ 13.3 MB/页（1200 反而最小，PNG 对硬边更友好）｜耗时约 6.2 s/页",
+      "range_label": "高清化页范围（其余页原样保留，页码不变）",
+      "note2": "未选中的页按原样保留在输出 PDF 中 （全文页数不变，页码与原件一一对应）；若该页已做过更高档位，则跳过不降级。",
       "src_text": "源 PDF：未选择文件（请先在上方表格点一行）",
       "err_text": "",
       "err_class": "msg",
@@ -227,9 +404,11 @@
       "start_disabled": false,
       "bar_width": "0%",
       "done_hidden": true,
-      "hr_msg": "[idle] 0/? 页 · 累计 0.0 MB · 空闲（未跑过高清化）",
+      "hr_msg": "[idle] 0/? 页 · 累计 0.0 MB · 已渲 0 页 · 跳过 0 页（已达标）· 原样保留 0 页 · 共 ? 页 · 空闲（未跑过高清化）",
       "out_text": "—",
       "hint": "体积实测：300 ≈ 5.4 MB/页｜600 ≈ 15.5 MB/页｜ 1200 ≈ 13.3 MB/页（1200 反而最小，PNG 对硬边更友好）｜耗时约 6.2 s/页",
+      "range_label": "高清化页范围（其余页原样保留，页码不变）",
+      "note2": "未选中的页按原样保留在输出 PDF 中 （全文页数不变，页码与原件一一对应）；若该页已做过更高档位，则跳过不降级。",
       "src_text": "源 PDF：未选择文件（请先在上方表格点一行）",
       "err_text": "请先在上方表格选中一行（源 PDF 取当前选中行）",
       "err_class": "msg err",
@@ -263,13 +442,772 @@
       "start_disabled": false,
       "bar_width": "0%",
       "done_hidden": true,
-      "hr_msg": "[idle] 0/? 页 · 累计 0.0 MB · 空闲（未跑过高清化）",
+      "hr_msg": "[idle] 0/? 页 · 累计 0.0 MB · 已渲 0 页 · 跳过 0 页（已达标）· 原样保留 0 页 · 共 ? 页 · 空闲（未跑过高清化）",
       "out_text": "—",
       "hint": "体积实测：300 ≈ 5.4 MB/页｜600 ≈ 15.5 MB/页｜ 1200 ≈ 13.3 MB/页（1200 反而最小，PNG 对硬边更友好）｜耗时约 6.2 s/页",
+      "range_label": "高清化页范围（其余页原样保留，页码不变）",
+      "note2": "未选中的页按原样保留在输出 PDF 中 （全文页数不变，页码与原件一一对应）；若该页已做过更高档位，则跳过不降级。",
       "src_text": "源 PDF：吴颐人篆刻作品展示.pdf（32 页）",
       "err_text": "请先在上方表格选中一行（源 PDF 取当前选中行）",
       "err_class": "msg err",
       "goto_label": "➡ 去 tab2 切图"
+    },
+    "03a_tab1_pv_nodes": {
+      "card": true,
+      "in_hr_card": true,
+      "after_range": true,
+      "page_input": {
+        "exists": true,
+        "type": "number",
+        "min": "1",
+        "editable": true,
+        "value": "1",
+        "max": "32"
+      },
+      "nodes": {
+        "prev": true,
+        "next": true,
+        "first": true,
+        "prev10": true,
+        "next10": true,
+        "last": true,
+        "count": true,
+        "dpi": true,
+        "grid": true,
+        "setfrom": true,
+        "img": true,
+        "hint": true,
+        "info": true,
+        "msg": true
+      },
+      "prev_disabled": true,
+      "next_disabled": false,
+      "first_disabled": true,
+      "prev10_disabled": true,
+      "next10_disabled": false,
+      "last_disabled": false,
+      "prev10_label": "‹‹ −10",
+      "setfrom_disabled": false,
+      "setfrom_label": "📌 把第 1 页设为起始页",
+      "info": "第 1 / 32 页",
+      "img_hidden": true,
+      "img_src_prefix": "",
+      "img_maxw": "100%",
+      "hint_text": "渲染 10 页中…",
+      "hint_hidden": true,
+      "msg": "第 1–10 / 32 页 · 10 张 · 238×441 px · 0.073 s",
+      "msg_class": "msg ok",
+      "hr_from": "",
+      "count_opts": [
+        "1",
+        "2",
+        "4",
+        "10"
+      ],
+      "count_val": "10",
+      "dpi_opts": [
+        "48",
+        "72",
+        "96",
+        "144"
+      ],
+      "dpi_val": "72",
+      "grid_hidden": false,
+      "grid_tiles": 10,
+      "grid_cols": 5,
+      "grid_first": "1",
+      "grid_focus": [
+        "1"
+      ],
+      "grid_start": []
+    },
+    "03b_tab1_pv_page3": {
+      "card": true,
+      "in_hr_card": true,
+      "after_range": true,
+      "page_input": {
+        "exists": true,
+        "type": "number",
+        "min": "1",
+        "editable": true,
+        "value": "3",
+        "max": "5"
+      },
+      "nodes": {
+        "prev": true,
+        "next": true,
+        "first": true,
+        "prev10": true,
+        "next10": true,
+        "last": true,
+        "count": true,
+        "dpi": true,
+        "grid": true,
+        "setfrom": true,
+        "img": true,
+        "hint": true,
+        "info": true,
+        "msg": true
+      },
+      "prev_disabled": false,
+      "next_disabled": false,
+      "first_disabled": false,
+      "prev10_disabled": false,
+      "next10_disabled": false,
+      "last_disabled": false,
+      "prev10_label": "‹‹ −1",
+      "setfrom_disabled": false,
+      "setfrom_label": "📌 把第 3 页设为起始页",
+      "info": "第 3 / 5 页",
+      "img_hidden": false,
+      "img_src_prefix": "data:image/png;base64,",
+      "img_maxw": "100%",
+      "hint_text": "第 3 页 · 渲染中…",
+      "hint_hidden": true,
+      "msg": "第 3 / 5 页 · 714×1000 px · 179.9×259 mm · 0.08 s",
+      "msg_class": "msg ok",
+      "hr_from": "",
+      "count_opts": [
+        "1",
+        "2",
+        "4",
+        "10"
+      ],
+      "count_val": "1",
+      "dpi_opts": [
+        "48",
+        "72",
+        "96",
+        "144"
+      ],
+      "dpi_val": "72",
+      "grid_hidden": true,
+      "grid_tiles": 0,
+      "grid_cols": 0,
+      "grid_first": "",
+      "grid_focus": [],
+      "grid_start": []
+    },
+    "03c_tab1_pv_setfrom": {
+      "card": true,
+      "in_hr_card": true,
+      "after_range": true,
+      "page_input": {
+        "exists": true,
+        "type": "number",
+        "min": "1",
+        "editable": true,
+        "value": "3",
+        "max": "5"
+      },
+      "nodes": {
+        "prev": true,
+        "next": true,
+        "first": true,
+        "prev10": true,
+        "next10": true,
+        "last": true,
+        "count": true,
+        "dpi": true,
+        "grid": true,
+        "setfrom": true,
+        "img": true,
+        "hint": true,
+        "info": true,
+        "msg": true
+      },
+      "prev_disabled": false,
+      "next_disabled": false,
+      "first_disabled": false,
+      "prev10_disabled": false,
+      "next10_disabled": false,
+      "last_disabled": false,
+      "prev10_label": "‹‹ −1",
+      "setfrom_disabled": false,
+      "setfrom_label": "📌 把第 3 页设为起始页",
+      "info": "第 3 / 5 页",
+      "img_hidden": false,
+      "img_src_prefix": "data:image/png;base64,",
+      "img_maxw": "100%",
+      "hint_text": "第 3 页 · 渲染中…",
+      "hint_hidden": true,
+      "msg": "✅ 已把第 3 页设为起始页（高清化从第 3 页开始）",
+      "msg_class": "msg ok",
+      "hr_from": "3",
+      "count_opts": [
+        "1",
+        "2",
+        "4",
+        "10"
+      ],
+      "count_val": "1",
+      "dpi_opts": [
+        "48",
+        "72",
+        "96",
+        "144"
+      ],
+      "dpi_val": "72",
+      "grid_hidden": true,
+      "grid_tiles": 0,
+      "grid_cols": 0,
+      "grid_first": "",
+      "grid_focus": [],
+      "grid_start": []
+    },
+    "03d_tab1_pv_first": {
+      "card": true,
+      "in_hr_card": true,
+      "after_range": true,
+      "page_input": {
+        "exists": true,
+        "type": "number",
+        "min": "1",
+        "editable": true,
+        "value": "1",
+        "max": "5"
+      },
+      "nodes": {
+        "prev": true,
+        "next": true,
+        "first": true,
+        "prev10": true,
+        "next10": true,
+        "last": true,
+        "count": true,
+        "dpi": true,
+        "grid": true,
+        "setfrom": true,
+        "img": true,
+        "hint": true,
+        "info": true,
+        "msg": true
+      },
+      "prev_disabled": true,
+      "next_disabled": false,
+      "first_disabled": true,
+      "prev10_disabled": true,
+      "next10_disabled": false,
+      "last_disabled": false,
+      "prev10_label": "‹‹ −1",
+      "setfrom_disabled": false,
+      "setfrom_label": "📌 把第 1 页设为起始页",
+      "info": "第 1 / 5 页",
+      "img_hidden": false,
+      "img_src_prefix": "data:image/png;base64,",
+      "img_maxw": "100%",
+      "hint_text": "第 1 页 · 渲染中…",
+      "hint_hidden": true,
+      "msg": "第 1 / 5 页 · 714×1000 px · 179.9×259 mm · 0.08 s",
+      "msg_class": "msg ok",
+      "hr_from": "3",
+      "count_opts": [
+        "1",
+        "2",
+        "4",
+        "10"
+      ],
+      "count_val": "1",
+      "dpi_opts": [
+        "48",
+        "72",
+        "96",
+        "144"
+      ],
+      "dpi_val": "72",
+      "grid_hidden": true,
+      "grid_tiles": 0,
+      "grid_cols": 0,
+      "grid_first": "",
+      "grid_focus": [],
+      "grid_start": []
+    },
+    "03e_tab1_pv_last": {
+      "card": true,
+      "in_hr_card": true,
+      "after_range": true,
+      "page_input": {
+        "exists": true,
+        "type": "number",
+        "min": "1",
+        "editable": true,
+        "value": "5",
+        "max": "5"
+      },
+      "nodes": {
+        "prev": true,
+        "next": true,
+        "first": true,
+        "prev10": true,
+        "next10": true,
+        "last": true,
+        "count": true,
+        "dpi": true,
+        "grid": true,
+        "setfrom": true,
+        "img": true,
+        "hint": true,
+        "info": true,
+        "msg": true
+      },
+      "prev_disabled": false,
+      "next_disabled": true,
+      "first_disabled": false,
+      "prev10_disabled": false,
+      "next10_disabled": true,
+      "last_disabled": true,
+      "prev10_label": "‹‹ −1",
+      "setfrom_disabled": false,
+      "setfrom_label": "📌 把第 5 页设为起始页",
+      "info": "第 5 / 5 页",
+      "img_hidden": false,
+      "img_src_prefix": "data:image/png;base64,",
+      "img_maxw": "100%",
+      "hint_text": "第 5 页 · 渲染中…",
+      "hint_hidden": true,
+      "msg": "第 5 / 5 页 · 714×1000 px · 179.9×259 mm · 0.08 s",
+      "msg_class": "msg ok",
+      "hr_from": "3",
+      "count_opts": [
+        "1",
+        "2",
+        "4",
+        "10"
+      ],
+      "count_val": "1",
+      "dpi_opts": [
+        "48",
+        "72",
+        "96",
+        "144"
+      ],
+      "dpi_val": "72",
+      "grid_hidden": true,
+      "grid_tiles": 0,
+      "grid_cols": 0,
+      "grid_first": "",
+      "grid_focus": [],
+      "grid_start": []
+    },
+    "03f_tab1_pv_error": {
+      "card": true,
+      "in_hr_card": true,
+      "after_range": true,
+      "page_input": {
+        "exists": true,
+        "type": "number",
+        "min": "1",
+        "editable": true,
+        "value": "4",
+        "max": "5"
+      },
+      "nodes": {
+        "prev": true,
+        "next": true,
+        "first": true,
+        "prev10": true,
+        "next10": true,
+        "last": true,
+        "count": true,
+        "dpi": true,
+        "grid": true,
+        "setfrom": true,
+        "img": true,
+        "hint": true,
+        "info": true,
+        "msg": true
+      },
+      "prev_disabled": false,
+      "next_disabled": false,
+      "first_disabled": false,
+      "prev10_disabled": false,
+      "next10_disabled": false,
+      "last_disabled": false,
+      "prev10_label": "‹‹ −1",
+      "setfrom_disabled": false,
+      "setfrom_label": "📌 把第 4 页设为起始页",
+      "info": "第 4 / 5 页",
+      "img_hidden": true,
+      "img_src_prefix": "data:image/png;base64,",
+      "img_maxw": "100%",
+      "hint_text": "第 4 页 无法预览：PAGE_OUT_OF_PDF",
+      "hint_hidden": false,
+      "msg": "❌ PAGE_OUT_OF_PDF · 第 4 页超出范围（本书共 5 页）",
+      "msg_class": "msg err",
+      "hr_from": "3",
+      "count_opts": [
+        "1",
+        "2",
+        "4",
+        "10"
+      ],
+      "count_val": "1",
+      "dpi_opts": [
+        "48",
+        "72",
+        "96",
+        "144"
+      ],
+      "dpi_val": "72",
+      "grid_hidden": true,
+      "grid_tiles": 0,
+      "grid_cols": 0,
+      "grid_first": "",
+      "grid_focus": [],
+      "grid_start": []
+    },
+    "03g_tab1_pv_grid_toolbar": {
+      "card": true,
+      "in_hr_card": true,
+      "after_range": true,
+      "page_input": {
+        "exists": true,
+        "type": "number",
+        "min": "1",
+        "editable": true,
+        "value": "4",
+        "max": "858"
+      },
+      "nodes": {
+        "prev": true,
+        "next": true,
+        "first": true,
+        "prev10": true,
+        "next10": true,
+        "last": true,
+        "count": true,
+        "dpi": true,
+        "grid": true,
+        "setfrom": true,
+        "img": true,
+        "hint": true,
+        "info": true,
+        "msg": true
+      },
+      "prev_disabled": false,
+      "next_disabled": false,
+      "first_disabled": true,
+      "prev10_disabled": true,
+      "next10_disabled": false,
+      "last_disabled": false,
+      "prev10_label": "‹‹ −10",
+      "setfrom_disabled": false,
+      "setfrom_label": "📌 把第 4 页设为起始页",
+      "info": "第 4 / 858 页",
+      "img_hidden": true,
+      "img_src_prefix": "data:image/png;base64,",
+      "img_maxw": "100%",
+      "hint_text": "渲染 10 页中…",
+      "hint_hidden": true,
+      "msg": "第 1–10 / 858 页 · 10 张 · 240×345 px · 0.12 s",
+      "msg_class": "msg ok",
+      "hr_from": "3",
+      "count_opts": [
+        "1",
+        "2",
+        "4",
+        "10"
+      ],
+      "count_val": "10",
+      "dpi_opts": [
+        "48",
+        "72",
+        "96",
+        "144"
+      ],
+      "dpi_val": "72",
+      "grid_hidden": false,
+      "grid_tiles": 10,
+      "grid_cols": 5,
+      "grid_first": "1",
+      "grid_focus": [
+        "4"
+      ],
+      "grid_start": [
+        "3"
+      ]
+    },
+    "03h_tab1_pv_tile_click": {
+      "card": true,
+      "in_hr_card": true,
+      "after_range": true,
+      "page_input": {
+        "exists": true,
+        "type": "number",
+        "min": "1",
+        "editable": true,
+        "value": "3",
+        "max": "858"
+      },
+      "nodes": {
+        "prev": true,
+        "next": true,
+        "first": true,
+        "prev10": true,
+        "next10": true,
+        "last": true,
+        "count": true,
+        "dpi": true,
+        "grid": true,
+        "setfrom": true,
+        "img": true,
+        "hint": true,
+        "info": true,
+        "msg": true
+      },
+      "prev_disabled": false,
+      "next_disabled": false,
+      "first_disabled": true,
+      "prev10_disabled": true,
+      "next10_disabled": false,
+      "last_disabled": false,
+      "prev10_label": "‹‹ −10",
+      "setfrom_disabled": false,
+      "setfrom_label": "📌 把第 3 页设为起始页",
+      "info": "第 3 / 858 页",
+      "img_hidden": true,
+      "img_src_prefix": "data:image/png;base64,",
+      "img_maxw": "100%",
+      "hint_text": "渲染 10 页中…",
+      "hint_hidden": true,
+      "msg": "第 1–10 / 858 页 · 10 张 · 240×345 px · 0.12 s",
+      "msg_class": "msg ok",
+      "hr_from": "3",
+      "count_opts": [
+        "1",
+        "2",
+        "4",
+        "10"
+      ],
+      "count_val": "10",
+      "dpi_opts": [
+        "48",
+        "72",
+        "96",
+        "144"
+      ],
+      "dpi_val": "72",
+      "grid_hidden": false,
+      "grid_tiles": 10,
+      "grid_cols": 5,
+      "grid_first": "1",
+      "grid_focus": [
+        "3"
+      ],
+      "grid_start": [
+        "3"
+      ]
+    },
+    "03i_tab1_pv_tile_dblclick": {
+      "card": true,
+      "in_hr_card": true,
+      "after_range": true,
+      "page_input": {
+        "exists": true,
+        "type": "number",
+        "min": "1",
+        "editable": true,
+        "value": "3",
+        "max": "858"
+      },
+      "nodes": {
+        "prev": true,
+        "next": true,
+        "first": true,
+        "prev10": true,
+        "next10": true,
+        "last": true,
+        "count": true,
+        "dpi": true,
+        "grid": true,
+        "setfrom": true,
+        "img": true,
+        "hint": true,
+        "info": true,
+        "msg": true
+      },
+      "prev_disabled": false,
+      "next_disabled": false,
+      "first_disabled": true,
+      "prev10_disabled": true,
+      "next10_disabled": false,
+      "last_disabled": false,
+      "prev10_label": "‹‹ −10",
+      "setfrom_disabled": false,
+      "setfrom_label": "📌 把第 3 页设为起始页",
+      "info": "第 3 / 858 页",
+      "img_hidden": true,
+      "img_src_prefix": "data:image/png;base64,",
+      "img_maxw": "100%",
+      "hint_text": "渲染 10 页中…",
+      "hint_hidden": true,
+      "msg": "✅ 已把第 3 页设为起始页（高清化从第 3 页开始）",
+      "msg_class": "msg ok",
+      "hr_from": "3",
+      "count_opts": [
+        "1",
+        "2",
+        "4",
+        "10"
+      ],
+      "count_val": "10",
+      "dpi_opts": [
+        "48",
+        "72",
+        "96",
+        "144"
+      ],
+      "dpi_val": "72",
+      "grid_hidden": false,
+      "grid_tiles": 10,
+      "grid_cols": 5,
+      "grid_first": "1",
+      "grid_focus": [
+        "3"
+      ],
+      "grid_start": [
+        "3"
+      ]
+    },
+    "03j_tab1_pv_last_screen": {
+      "card": true,
+      "in_hr_card": true,
+      "after_range": true,
+      "page_input": {
+        "exists": true,
+        "type": "number",
+        "min": "1",
+        "editable": true,
+        "value": "849",
+        "max": "858"
+      },
+      "nodes": {
+        "prev": true,
+        "next": true,
+        "first": true,
+        "prev10": true,
+        "next10": true,
+        "last": true,
+        "count": true,
+        "dpi": true,
+        "grid": true,
+        "setfrom": true,
+        "img": true,
+        "hint": true,
+        "info": true,
+        "msg": true
+      },
+      "prev_disabled": false,
+      "next_disabled": false,
+      "first_disabled": false,
+      "prev10_disabled": false,
+      "next10_disabled": true,
+      "last_disabled": true,
+      "prev10_label": "‹‹ −10",
+      "setfrom_disabled": false,
+      "setfrom_label": "📌 把第 849 页设为起始页",
+      "info": "第 849 / 858 页",
+      "img_hidden": true,
+      "img_src_prefix": "data:image/png;base64,",
+      "img_maxw": "100%",
+      "hint_text": "渲染 10 页中…",
+      "hint_hidden": true,
+      "msg": "第 849–858 / 858 页 · 10 张 · 240×345 px · 0.12 s",
+      "msg_class": "msg ok",
+      "hr_from": "3",
+      "count_opts": [
+        "1",
+        "2",
+        "4",
+        "10"
+      ],
+      "count_val": "10",
+      "dpi_opts": [
+        "48",
+        "72",
+        "96",
+        "144"
+      ],
+      "dpi_val": "72",
+      "grid_hidden": false,
+      "grid_tiles": 10,
+      "grid_cols": 5,
+      "grid_first": "849",
+      "grid_focus": [
+        "849"
+      ],
+      "grid_start": []
+    },
+    "03k_tab1_pv_first_screen": {
+      "card": true,
+      "in_hr_card": true,
+      "after_range": true,
+      "page_input": {
+        "exists": true,
+        "type": "number",
+        "min": "1",
+        "editable": true,
+        "value": "1",
+        "max": "858"
+      },
+      "nodes": {
+        "prev": true,
+        "next": true,
+        "first": true,
+        "prev10": true,
+        "next10": true,
+        "last": true,
+        "count": true,
+        "dpi": true,
+        "grid": true,
+        "setfrom": true,
+        "img": true,
+        "hint": true,
+        "info": true,
+        "msg": true
+      },
+      "prev_disabled": true,
+      "next_disabled": false,
+      "first_disabled": true,
+      "prev10_disabled": true,
+      "next10_disabled": false,
+      "last_disabled": false,
+      "prev10_label": "‹‹ −10",
+      "setfrom_disabled": false,
+      "setfrom_label": "📌 把第 1 页设为起始页",
+      "info": "第 1 / 858 页",
+      "img_hidden": true,
+      "img_src_prefix": "data:image/png;base64,",
+      "img_maxw": "100%",
+      "hint_text": "渲染 10 页中…",
+      "hint_hidden": true,
+      "msg": "第 1–10 / 858 页 · 10 张 · 240×345 px · 0.12 s",
+      "msg_class": "msg ok",
+      "hr_from": "3",
+      "count_opts": [
+        "1",
+        "2",
+        "4",
+        "10"
+      ],
+      "count_val": "10",
+      "dpi_opts": [
+        "48",
+        "72",
+        "96",
+        "144"
+      ],
+      "dpi_val": "72",
+      "grid_hidden": false,
+      "grid_tiles": 10,
+      "grid_cols": 5,
+      "grid_first": "1",
+      "grid_focus": [
+        "1"
+      ],
+      "grid_start": [
+        "3"
+      ]
     },
     "03b_tab1_progress": {
       "has_card": true,
@@ -299,9 +1237,11 @@
       "start_disabled": true,
       "bar_width": "40%",
       "done_hidden": true,
-      "hr_msg": "[running] 2/5 页 · 累计 27.0 MB · 当前页 2 · 12.4 s · 渲页中（2/5）",
+      "hr_msg": "[running] 2/5 页 · 累计 27.0 MB · 已渲 2 页 · 跳过 0 页（已达标）· 原样保留 3 页 · 共 5 页 · 当前页 2 · 12.4 s · 渲页中（2/5）",
       "out_text": "—",
       "hint": "体积实测：300 ≈ 5.4 MB/页｜600 ≈ 15.5 MB/页｜ 1200 ≈ 13.3 MB/页（1200 反而最小，PNG 对硬边更友好）｜耗时约 6.2 s/页",
+      "range_label": "高清化页范围（其余页原样保留，页码不变）",
+      "note2": "未选中的页按原样保留在输出 PDF 中 （全文页数不变，页码与原件一一对应）；若该页已做过更高档位，则跳过不降级。",
       "src_text": "源 PDF：吴颐人篆刻作品展示.pdf（32 页）",
       "err_text": "请先在上方表格选中一行（源 PDF 取当前选中行）",
       "err_class": "msg err",
@@ -335,9 +1275,11 @@
       "start_disabled": false,
       "bar_width": "100%",
       "done_hidden": false,
-      "hr_msg": "[done] 5/5 页 · 累计 66.0 MB · 当前页 5 · 31 s · 完成",
-      "out_text": "✅ /x/2_HighRes_PDF/9787000000001/吴颐人篆刻作品展示-HighRes.pdf（5 页 · 66.0 MB）",
+      "hr_msg": "[done] 5/5 页 · 累计 66.0 MB · 已渲 2 页 · 跳过 1 页（已达标）· 原样保留 2 页 · 共 5 页 · 当前页 5 · 31 s · 完成",
+      "out_text": "✅ /x/2_HighRes_PDF/9787000000001/吴颐人篆刻作品展示-HighRes.pdf（共 5 页 · 已渲 2 · 跳过 1 · 原样 2 · 66.0 MB）",
       "hint": "体积实测：300 ≈ 5.4 MB/页｜600 ≈ 15.5 MB/页｜ 1200 ≈ 13.3 MB/页（1200 反而最小，PNG 对硬边更友好）｜耗时约 6.2 s/页",
+      "range_label": "高清化页范围（其余页原样保留，页码不变）",
+      "note2": "未选中的页按原样保留在输出 PDF 中 （全文页数不变，页码与原件一一对应）；若该页已做过更高档位，则跳过不降级。",
       "src_text": "源 PDF：吴颐人篆刻作品展示.pdf（32 页）",
       "err_text": "完成：/x/2_HighRes_PDF/9787000000001/吴颐人篆刻作品展示-HighRes.pdf",
       "err_class": "msg ok",
@@ -391,17 +1333,33 @@
       },
       "src_options": [
         {
-          "v": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-tabs-t_drzxov/feicui/2_HighRes_PDF/9787000000001/吴颐人篆刻作品展示-HighRes.pdf",
-          "t": "吴颐人篆刻作品展示-HighRes.pdf  →  9787000000001（32 页） · 2 MB"
+          "v": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-tabs-l21c1xhg/feicui/2_HighRes_PDF/9787000000001/吴颐人篆刻作品展示-HighRes.pdf",
+          "t": "吴颐人篆刻作品展示-HighRes.pdf  →  吴颐人篆刻作品展示（32 页） · 2 MB"
         }
       ],
       "count_text": "检测到 0 枚",
       "crop_label": "✂️ 裁切选中（0）",
       "crop_disabled": true,
       "pageinfo": "第 1 / 32 页 · 检测坐标系 400dpi",
-      "srcinfo": "吴颐人篆刻作品展示-HighRes.pdf · 2 MB · 目录键 9787000000001（from_dir）· 32 页 · 改于 2026-10-11 10:35",
+      "srcinfo": "吴颐人篆刻作品展示-HighRes.pdf · 2 MB · 目录键 吴颐人篆刻作品展示（filename-fallback）· 32 页 · 改于 2026-10-11 10:35 · 建议去 tab1 确认书名",
       "msg": "",
-      "dir": "目录键：9787000000001（from_dir）⇒ 3_Cropped_Tiff/9787000000001/"
+      "dir": "目录键：吴颐人篆刻作品展示（filename-fallback）⇒ 3_Cropped_Tiff/吴颐人篆刻作品展示/ · 建议去 tab1 确认书名",
+      "read_order": {
+        "count": 5,
+        "options": [
+          "auto",
+          "rtl-ttb",
+          "ltr-ttb",
+          "rtl-btt",
+          "ltr-btt"
+        ],
+        "value": "auto"
+      },
+      "order_src": "—",
+      "fields": {
+        "rows": 0,
+        "cells": []
+      }
     },
     "05_tab2_after_detect": {
       "panel_active": true,
@@ -439,25 +1397,345 @@
       "canvas": {
         "w": 714,
         "h": 1000,
-        "css_w": 722,
-        "css_h": 1011,
+        "css_w": 851,
+        "css_h": 1192,
         "boxes": "3",
         "scale": "0.2101",
         "ctx": true
       },
       "src_options": [
         {
-          "v": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-tabs-t_drzxov/feicui/2_HighRes_PDF/9787000000001/吴颐人篆刻作品展示-HighRes.pdf",
-          "t": "吴颐人篆刻作品展示-HighRes.pdf  →  9787000000001（32 页） · 2 MB"
+          "v": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-tabs-l21c1xhg/feicui/2_HighRes_PDF/9787000000001/吴颐人篆刻作品展示-HighRes.pdf",
+          "t": "吴颐人篆刻作品展示-HighRes.pdf  →  吴颐人篆刻作品展示（32 页） · 2 MB"
         }
       ],
       "count_text": "检测到 3 枚",
       "crop_label": "✂️ 裁切选中（3）",
       "crop_disabled": false,
-      "pageinfo": "第 1 / 32 页 · 检测坐标系 400dpi",
-      "srcinfo": "吴颐人篆刻作品展示-HighRes.pdf · 2 MB · 目录键 9787000000001（from_dir）· 32 页 · 改于 2026-10-11 10:35",
-      "msg": "检测到 3 枚（0.31 s · 框坐标 400dpi · 页 3400×4760)",
-      "dir": "目录键：9787000000001（from_dir）⇒ 3_Cropped_Tiff/9787000000001/"
+      "pageinfo": "第 370 / 32 页 · 检测坐标系 400dpi",
+      "srcinfo": "吴颐人篆刻作品展示-HighRes.pdf · 2 MB · 目录键 吴颐人篆刻作品展示（filename-fallback）· 32 页 · 改于 2026-10-11 10:35 · 建议去 tab1 确认书名",
+      "msg": "检测到 3 枚 · 字段 3 组（阅读顺序 rtl-ttb / code-sequence · ⚠ 待人工确认 1）· 0.42 s · 页 3400×4760",
+      "dir": "目录键：吴颐人篆刻作品展示（filename-fallback）⇒ 3_Cropped_Tiff/吴颐人篆刻作品展示/ · 建议去 tab1 确认书名",
+      "read_order": {
+        "count": 5,
+        "options": [
+          "auto",
+          "rtl-ttb",
+          "ltr-ttb",
+          "rtl-btt",
+          "ltr-btt"
+        ],
+        "value": "auto"
+      },
+      "order_src": "自动 ⇒ rtl-ttb（code-sequence：按编号序列推断）",
+      "fields": {
+        "rows": 3,
+        "cells": [
+          {
+            "i": "0",
+            "rev": false,
+            "inputs": 3,
+            "editable": true,
+            "ins": "中候",
+            "status": "蟫",
+            "code": "0425",
+            "score": "0.99",
+            "name": "0425_P370_C2_R1_中候_清中期_吳熙載.tiff"
+          },
+          {
+            "i": "1",
+            "rev": true,
+            "inputs": 3,
+            "editable": true,
+            "ins": "中羞行府",
+            "status": "故",
+            "code": "0424",
+            "score": "0.61 ⚠",
+            "name": "0424_P370_C1_R1_中羞行府_清中期_吳熙載.tiff"
+          },
+          {
+            "i": "2",
+            "rev": false,
+            "inputs": 3,
+            "editable": true,
+            "ins": "",
+            "status": "",
+            "code": "",
+            "score": "—",
+            "name": "P370-C1-R2.tiff"
+          }
+        ]
+      }
+    },
+    "06_tab2_field_edit": {
+      "panel_active": true,
+      "nodes": {
+        "detect": true,
+        "redetect": true,
+        "clear": true,
+        "crop": true,
+        "canvas": true,
+        "count": true,
+        "pageinfo": true,
+        "page": true,
+        "prev": true,
+        "next": true,
+        "src": true,
+        "cropout": true,
+        "cropdir": true,
+        "adv": true,
+        "reload": true
+      },
+      "adv_open": false,
+      "adv_summary": "高级：单页预览渲染（已由 tab1 一键高清化取代）",
+      "legacy_inside_adv": [
+        "btn-tab2-generate",
+        "btn-tab2-cancel",
+        "tab2-page",
+        "tab2-dpi",
+        "tab2-source",
+        "tab2-products",
+        "tab2-progress-bar",
+        "tab2-progress-msg",
+        "tab2-log"
+      ],
+      "legacy_missing": [],
+      "canvas": {
+        "w": 714,
+        "h": 1000,
+        "css_w": 851,
+        "css_h": 1192,
+        "boxes": "3",
+        "scale": "0.2101",
+        "ctx": true
+      },
+      "src_options": [
+        {
+          "v": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-tabs-l21c1xhg/feicui/2_HighRes_PDF/9787000000001/吴颐人篆刻作品展示-HighRes.pdf",
+          "t": "吴颐人篆刻作品展示-HighRes.pdf  →  吴颐人篆刻作品展示（32 页） · 2 MB"
+        }
+      ],
+      "count_text": "检测到 3 枚",
+      "crop_label": "✂️ 裁切选中（3）",
+      "crop_disabled": false,
+      "pageinfo": "第 370 / 32 页 · 检测坐标系 400dpi",
+      "srcinfo": "吴颐人篆刻作品展示-HighRes.pdf · 2 MB · 目录键 吴颐人篆刻作品展示（filename-fallback）· 32 页 · 改于 2026-10-11 10:35 · 建议去 tab1 确认书名",
+      "msg": "检测到 3 枚 · 字段 3 组（阅读顺序 rtl-ttb / code-sequence · ⚠ 待人工确认 1）· 0.42 s · 页 3400×4760",
+      "dir": "目录键：吴颐人篆刻作品展示（filename-fallback）⇒ 3_Cropped_Tiff/吴颐人篆刻作品展示/ · 建议去 tab1 确认书名",
+      "read_order": {
+        "count": 5,
+        "options": [
+          "auto",
+          "rtl-ttb",
+          "ltr-ttb",
+          "rtl-btt",
+          "ltr-btt"
+        ],
+        "value": "auto"
+      },
+      "order_src": "自动 ⇒ rtl-ttb（code-sequence：按编号序列推断）",
+      "fields": {
+        "rows": 3,
+        "cells": [
+          {
+            "i": "0",
+            "rev": false,
+            "inputs": 3,
+            "editable": true,
+            "ins": "中候",
+            "status": "蟫",
+            "code": "0425",
+            "score": "0.99",
+            "name": "0425_P370_C2_R1_中候_清中期_吳熙載.tiff"
+          },
+          {
+            "i": "1",
+            "rev": true,
+            "inputs": 3,
+            "editable": true,
+            "ins": "中羞行府",
+            "status": "故",
+            "code": "0424",
+            "score": "0.61 ⚠",
+            "name": "0424_P370_C1_R1_中羞行府_清中期_吳熙載.tiff"
+          },
+          {
+            "i": "2",
+            "rev": false,
+            "inputs": 3,
+            "editable": true,
+            "ins": "",
+            "status": "",
+            "code": "04/24",
+            "score": "—",
+            "name": "04-24_P370_C1_R2_NA_清中期_吳熙載.tiff"
+          }
+        ]
+      }
+    },
+    "07_tab2_long_inscription": {
+      "panel_active": true,
+      "nodes": {
+        "detect": true,
+        "redetect": true,
+        "clear": true,
+        "crop": true,
+        "canvas": true,
+        "count": true,
+        "pageinfo": true,
+        "page": true,
+        "prev": true,
+        "next": true,
+        "src": true,
+        "cropout": true,
+        "cropdir": true,
+        "adv": true,
+        "reload": true
+      },
+      "adv_open": false,
+      "adv_summary": "高级：单页预览渲染（已由 tab1 一键高清化取代）",
+      "legacy_inside_adv": [
+        "btn-tab2-generate",
+        "btn-tab2-cancel",
+        "tab2-page",
+        "tab2-dpi",
+        "tab2-source",
+        "tab2-products",
+        "tab2-progress-bar",
+        "tab2-progress-msg",
+        "tab2-log"
+      ],
+      "legacy_missing": [],
+      "canvas": {
+        "w": 714,
+        "h": 1000,
+        "css_w": 2380,
+        "css_h": 3334,
+        "boxes": "3",
+        "scale": "0.2101",
+        "ctx": true
+      },
+      "src_options": [
+        {
+          "v": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-tabs-l21c1xhg/feicui/2_HighRes_PDF/9787000000001/吴颐人篆刻作品展示-HighRes.pdf",
+          "t": "吴颐人篆刻作品展示-HighRes.pdf  →  吴颐人篆刻作品展示（32 页） · 2 MB"
+        }
+      ],
+      "count_text": "检测到 3 枚",
+      "crop_label": "✂️ 裁切选中（3）",
+      "crop_disabled": false,
+      "pageinfo": "第 370 / 32 页 · 检测坐标系 400dpi",
+      "srcinfo": "吴颐人篆刻作品展示-HighRes.pdf · 2 MB · 目录键 吴颐人篆刻作品展示（filename-fallback）· 32 页 · 改于 2026-10-11 10:35 · 建议去 tab1 确认书名",
+      "msg": "检测到 3 枚 · 字段 3 组（阅读顺序 rtl-ttb / code-sequence · ⚠ 待人工确认 1）· 0.42 s · 页 3400×4760",
+      "dir": "目录键：吴颐人篆刻作品展示（filename-fallback）⇒ 3_Cropped_Tiff/吴颐人篆刻作品展示/ · 建议去 tab1 确认书名",
+      "read_order": {
+        "count": 5,
+        "options": [
+          "auto",
+          "rtl-ttb",
+          "ltr-ttb",
+          "rtl-btt",
+          "ltr-btt"
+        ],
+        "value": "auto"
+      },
+      "order_src": "自动 ⇒ rtl-ttb（code-sequence：按编号序列推断）",
+      "fields": {
+        "rows": 3,
+        "cells": [
+          {
+            "i": "0",
+            "rev": false,
+            "inputs": 3,
+            "editable": true,
+            "ins": "甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲",
+            "status": "蟫",
+            "code": "0425",
+            "score": "0.99",
+            "name": "0425_P370_C2_R1_甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲_清中期_吳熙載.tiff"
+          },
+          {
+            "i": "1",
+            "rev": true,
+            "inputs": 3,
+            "editable": true,
+            "ins": "中羞行府",
+            "status": "故",
+            "code": "0424",
+            "score": "0.61 ⚠",
+            "name": "0424_P370_C1_R1_中羞行府_清中期_吳熙載.tiff"
+          },
+          {
+            "i": "2",
+            "rev": false,
+            "inputs": 3,
+            "editable": true,
+            "ins": "",
+            "status": "",
+            "code": "04/24",
+            "score": "—",
+            "name": "04-24_P370_C1_R2_NA_清中期_吳熙載.tiff"
+          }
+        ]
+      }
+    },
+    "08a_tab2_crop_payload": {
+      "req": {
+        "pdf": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-tabs-l21c1xhg/feicui/2_HighRes_PDF/9787000000001/吴颐人篆刻作品展示-HighRes.pdf",
+        "page": 370,
+        "boxes": [
+          {
+            "x1": 300,
+            "y1": 300,
+            "x2": 900,
+            "y2": 900
+          },
+          {
+            "x1": 1400,
+            "y1": 600,
+            "x2": 2000,
+            "y2": 1200
+          },
+          {
+            "x1": 800,
+            "y1": 2400,
+            "x2": 1500,
+            "y2": 3100
+          }
+        ],
+        "dpi": 1200,
+        "reading_order": "auto",
+        "fields": [
+          {
+            "inscription": "甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲甲",
+            "status": "蟫",
+            "code": "0425",
+            "inscription_score": 0.9912,
+            "inscription_verified": true,
+            "needs_review": false,
+            "read_order": 2
+          },
+          {
+            "inscription": "中羞行府",
+            "status": "故",
+            "code": "0424",
+            "inscription_score": 0.612,
+            "inscription_verified": false,
+            "needs_review": true,
+            "read_order": 1
+          },
+          {
+            "inscription": "",
+            "status": "",
+            "code": "04/24",
+            "inscription_score": null,
+            "inscription_verified": false,
+            "needs_review": false,
+            "read_order": 3
+          }
+        ]
+      },
+      "src": "自动 ⇒ rtl-ttb（code-sequence：按编号序列推断）"
     },
     "06_tab2_click_deletes": {
       "panel_active": true,
@@ -495,25 +1773,64 @@
       "canvas": {
         "w": 714,
         "h": 1000,
-        "css_w": 722,
-        "css_h": 1011,
+        "css_w": 851,
+        "css_h": 1192,
         "boxes": "2",
         "scale": "0.2101",
         "ctx": true
       },
       "src_options": [
         {
-          "v": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-tabs-t_drzxov/feicui/2_HighRes_PDF/9787000000001/吴颐人篆刻作品展示-HighRes.pdf",
-          "t": "吴颐人篆刻作品展示-HighRes.pdf  →  9787000000001（32 页） · 2 MB"
+          "v": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-tabs-l21c1xhg/feicui/2_HighRes_PDF/9787000000001/吴颐人篆刻作品展示-HighRes.pdf",
+          "t": "吴颐人篆刻作品展示-HighRes.pdf  →  吴颐人篆刻作品展示（32 页） · 2 MB"
         }
       ],
       "count_text": "检测到 2 枚",
       "crop_label": "✂️ 裁切选中（2）",
       "crop_disabled": false,
-      "pageinfo": "第 1 / 32 页 · 检测坐标系 400dpi",
-      "srcinfo": "吴颐人篆刻作品展示-HighRes.pdf · 2 MB · 目录键 9787000000001（from_dir）· 32 页 · 改于 2026-10-11 10:35",
-      "msg": "检测到 3 枚（0.31 s · 框坐标 400dpi · 页 3400×4760)",
-      "dir": "目录键：9787000000001（from_dir）⇒ 3_Cropped_Tiff/9787000000001/"
+      "pageinfo": "第 370 / 32 页 · 检测坐标系 400dpi",
+      "srcinfo": "吴颐人篆刻作品展示-HighRes.pdf · 2 MB · 目录键 吴颐人篆刻作品展示（filename-fallback）· 32 页 · 改于 2026-10-11 10:35 · 建议去 tab1 确认书名",
+      "msg": "检测到 3 枚 · 字段 3 组（阅读顺序 rtl-ttb / code-sequence · ⚠ 待人工确认 1）· 0.42 s · 页 3400×4760",
+      "dir": "目录键：9787000000001（from_dir）⇒ 3_Cropped_Tiff/9787000000001/",
+      "read_order": {
+        "count": 5,
+        "options": [
+          "auto",
+          "rtl-ttb",
+          "ltr-ttb",
+          "rtl-btt",
+          "ltr-btt"
+        ],
+        "value": "auto"
+      },
+      "order_src": "自动 ⇒ rtl-ttb（code-sequence：按编号序列推断）",
+      "fields": {
+        "rows": 2,
+        "cells": [
+          {
+            "i": "0",
+            "rev": true,
+            "inputs": 3,
+            "editable": true,
+            "ins": "中羞行府",
+            "status": "故",
+            "code": "0424",
+            "score": "0.61 ⚠",
+            "name": "0424_P370_C1_R1_中羞行府_清中期_吳熙載.tiff"
+          },
+          {
+            "i": "1",
+            "rev": false,
+            "inputs": 3,
+            "editable": true,
+            "ins": "",
+            "status": "",
+            "code": "04/24",
+            "score": "—",
+            "name": "04-24_P370_C1_R2_NA_清中期_吳熙載.tiff"
+          }
+        ]
+      }
     },
     "07_tab2_dblclick_adds": {
       "panel_active": true,
@@ -551,25 +1868,75 @@
       "canvas": {
         "w": 714,
         "h": 1000,
-        "css_w": 722,
-        "css_h": 1011,
+        "css_w": 851,
+        "css_h": 1192,
         "boxes": "3",
         "scale": "0.2101",
         "ctx": true
       },
       "src_options": [
         {
-          "v": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-tabs-t_drzxov/feicui/2_HighRes_PDF/9787000000001/吴颐人篆刻作品展示-HighRes.pdf",
-          "t": "吴颐人篆刻作品展示-HighRes.pdf  →  9787000000001（32 页） · 2 MB"
+          "v": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-tabs-l21c1xhg/feicui/2_HighRes_PDF/9787000000001/吴颐人篆刻作品展示-HighRes.pdf",
+          "t": "吴颐人篆刻作品展示-HighRes.pdf  →  吴颐人篆刻作品展示（32 页） · 2 MB"
         }
       ],
       "count_text": "检测到 3 枚",
       "crop_label": "✂️ 裁切选中（3）",
       "crop_disabled": false,
-      "pageinfo": "第 1 / 32 页 · 检测坐标系 400dpi",
-      "srcinfo": "吴颐人篆刻作品展示-HighRes.pdf · 2 MB · 目录键 9787000000001（from_dir）· 32 页 · 改于 2026-10-11 10:35",
+      "pageinfo": "第 370 / 32 页 · 检测坐标系 400dpi",
+      "srcinfo": "吴颐人篆刻作品展示-HighRes.pdf · 2 MB · 目录键 吴颐人篆刻作品展示（filename-fallback）· 32 页 · 改于 2026-10-11 10:35 · 建议去 tab1 确认书名",
       "msg": "已新增 1 枚手绘框（拖角手柄可改大小）",
-      "dir": "目录键：9787000000001（from_dir）⇒ 3_Cropped_Tiff/9787000000001/"
+      "dir": "目录键：9787000000001（from_dir）⇒ 3_Cropped_Tiff/9787000000001/",
+      "read_order": {
+        "count": 5,
+        "options": [
+          "auto",
+          "rtl-ttb",
+          "ltr-ttb",
+          "rtl-btt",
+          "ltr-btt"
+        ],
+        "value": "auto"
+      },
+      "order_src": "自动 ⇒ rtl-ttb（code-sequence：按编号序列推断）",
+      "fields": {
+        "rows": 3,
+        "cells": [
+          {
+            "i": "0",
+            "rev": true,
+            "inputs": 3,
+            "editable": true,
+            "ins": "中羞行府",
+            "status": "故",
+            "code": "0424",
+            "score": "0.61 ⚠",
+            "name": "0424_P370_C1_R1_中羞行府_清中期_吳熙載.tiff"
+          },
+          {
+            "i": "1",
+            "rev": false,
+            "inputs": 3,
+            "editable": true,
+            "ins": "",
+            "status": "",
+            "code": "04/24",
+            "score": "—",
+            "name": "04-24_P370_C1_R2_NA_清中期_吳熙載.tiff"
+          },
+          {
+            "i": "2",
+            "rev": false,
+            "inputs": 3,
+            "editable": true,
+            "ins": "",
+            "status": "",
+            "code": "",
+            "score": "—",
+            "name": "P370-C1-R3.tiff"
+          }
+        ]
+      }
     },
     "08_tab2_clear": {
       "panel_active": true,
@@ -615,17 +1982,288 @@
       },
       "src_options": [
         {
-          "v": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-tabs-t_drzxov/feicui/2_HighRes_PDF/9787000000001/吴颐人篆刻作品展示-HighRes.pdf",
-          "t": "吴颐人篆刻作品展示-HighRes.pdf  →  9787000000001（32 页） · 2 MB"
+          "v": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-tabs-l21c1xhg/feicui/2_HighRes_PDF/9787000000001/吴颐人篆刻作品展示-HighRes.pdf",
+          "t": "吴颐人篆刻作品展示-HighRes.pdf  →  吴颐人篆刻作品展示（32 页） · 2 MB"
         }
       ],
       "count_text": "检测到 0 枚",
       "crop_label": "✂️ 裁切选中（0）",
       "crop_disabled": true,
-      "pageinfo": "第 1 / 32 页 · 检测坐标系 400dpi",
-      "srcinfo": "吴颐人篆刻作品展示-HighRes.pdf · 2 MB · 目录键 9787000000001（from_dir）· 32 页 · 改于 2026-10-11 10:35",
+      "pageinfo": "第 370 / 32 页 · 检测坐标系 400dpi",
+      "srcinfo": "吴颐人篆刻作品展示-HighRes.pdf · 2 MB · 目录键 吴颐人篆刻作品展示（filename-fallback）· 32 页 · 改于 2026-10-11 10:35 · 建议去 tab1 确认书名",
       "msg": "已清空本页框（底图保留；「全部重检」可拿回自动框）",
-      "dir": "目录键：9787000000001（from_dir）⇒ 3_Cropped_Tiff/9787000000001/"
+      "dir": "目录键：9787000000001（from_dir）⇒ 3_Cropped_Tiff/9787000000001/",
+      "read_order": {
+        "count": 5,
+        "options": [
+          "auto",
+          "rtl-ttb",
+          "ltr-ttb",
+          "rtl-btt",
+          "ltr-btt"
+        ],
+        "value": "auto"
+      },
+      "order_src": "—",
+      "fields": {
+        "rows": 0,
+        "cells": []
+      }
+    },
+    "08b_tab2_lite_no_ocr": {
+      "panel_active": true,
+      "nodes": {
+        "detect": true,
+        "redetect": true,
+        "clear": true,
+        "crop": true,
+        "canvas": true,
+        "count": true,
+        "pageinfo": true,
+        "page": true,
+        "prev": true,
+        "next": true,
+        "src": true,
+        "cropout": true,
+        "cropdir": true,
+        "adv": true,
+        "reload": true
+      },
+      "adv_open": false,
+      "adv_summary": "高级：单页预览渲染（已由 tab1 一键高清化取代）",
+      "legacy_inside_adv": [
+        "btn-tab2-generate",
+        "btn-tab2-cancel",
+        "tab2-page",
+        "tab2-dpi",
+        "tab2-source",
+        "tab2-products",
+        "tab2-progress-bar",
+        "tab2-progress-msg",
+        "tab2-log"
+      ],
+      "legacy_missing": [],
+      "canvas": {
+        "w": 714,
+        "h": 1000,
+        "css_w": 722,
+        "css_h": 1011,
+        "boxes": "3",
+        "scale": "0.2101",
+        "ctx": true
+      },
+      "src_options": [
+        {
+          "v": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-tabs-l21c1xhg/feicui/2_HighRes_PDF/9787000000001/吴颐人篆刻作品展示-HighRes.pdf",
+          "t": "吴颐人篆刻作品展示-HighRes.pdf  →  吴颐人篆刻作品展示（32 页） · 2 MB"
+        }
+      ],
+      "count_text": "检测到 3 枚",
+      "crop_label": "✂️ 裁切选中（3）",
+      "crop_disabled": false,
+      "pageinfo": "第 370 / 32 页 · 检测坐标系 400dpi",
+      "srcinfo": "吴颐人篆刻作品展示-HighRes.pdf · 2 MB · 目录键 吴颐人篆刻作品展示（filename-fallback）· 32 页 · 改于 2026-10-11 10:35 · 建议去 tab1 确认书名",
+      "msg": "已检测 3 枚印章（本版无 OCR，字段请手动填写）· 0.42 s · 页 3400×4760",
+      "dir": "目录键：9787000000001（from_dir）⇒ 3_Cropped_Tiff/9787000000001/",
+      "read_order": {
+        "count": 5,
+        "options": [
+          "auto",
+          "rtl-ttb",
+          "ltr-ttb",
+          "rtl-btt",
+          "ltr-btt"
+        ],
+        "value": "auto"
+      },
+      "order_src": "兜底：ltr-ttb（fallback）",
+      "fields": {
+        "rows": 3,
+        "cells": [
+          {
+            "i": "0",
+            "rev": false,
+            "inputs": 3,
+            "editable": true,
+            "ins": "",
+            "status": "",
+            "code": "",
+            "score": "—",
+            "name": "P370-C1-R1.tiff"
+          },
+          {
+            "i": "1",
+            "rev": false,
+            "inputs": 3,
+            "editable": true,
+            "ins": "",
+            "status": "",
+            "code": "",
+            "score": "—",
+            "name": "P370-C2-R1.tiff"
+          },
+          {
+            "i": "2",
+            "rev": false,
+            "inputs": 3,
+            "editable": true,
+            "ins": "",
+            "status": "",
+            "code": "",
+            "score": "—",
+            "name": "P370-C1-R2.tiff"
+          }
+        ]
+      }
+    },
+    "08c_tab2_lite_ocr_banner": {
+      "hidden": false,
+      "note": "本版不含 OCR（lite）：释文/状态/编号需手动填写；要自动识别请用斐萃_pro",
+      "cls": "msg info",
+      "msg": "已检测 3 枚印章（本版无 OCR，字段请手动填写）· 0.42 s · 页 3400×4760"
+    },
+    "08d_tab2_autocrop_card": {
+      "card": true,
+      "in_panel": true,
+      "nodes": {
+        "start": true,
+        "cancel": true,
+        "bar": true,
+        "progress": true,
+        "seals": true,
+        "eta": true,
+        "page_s": true,
+        "from": true,
+        "to": true,
+        "resume": true,
+        "done": true,
+        "fails": true,
+        "goto3": true,
+        "msg": true
+      },
+      "dpi_options": [
+        "300",
+        "600",
+        "1200",
+        "2400"
+      ],
+      "dpi_value": "1200",
+      "resume_checked": true,
+      "btn_text": "🚀 开始全自动",
+      "start_disabled": false,
+      "cancel_disabled": true,
+      "lite_hidden": true,
+      "lite_text": "本版无 OCR（斐萃_lite）：字段留空，文件名会带你手填的朝代/作者（NA 若无）。",
+      "bar_width": "0%",
+      "progress_text": "第 0 / 0 页",
+      "seals_text": "已裁 0 枚",
+      "eta_text": "ETA —",
+      "page_s_text": "当前页 —",
+      "done_hidden": true,
+      "summary": "—",
+      "fail_rows": 0,
+      "fails_text": "",
+      "msg_text": "",
+      "msg_class": "msg",
+      "payload": null
+    },
+    "08e1_tab2_autocrop_poll_running": {
+      "card": true,
+      "in_panel": true,
+      "nodes": {
+        "start": true,
+        "cancel": true,
+        "bar": true,
+        "progress": true,
+        "seals": true,
+        "eta": true,
+        "page_s": true,
+        "from": true,
+        "to": true,
+        "resume": true,
+        "done": true,
+        "fails": true,
+        "goto3": true,
+        "msg": true
+      },
+      "dpi_options": [
+        "300",
+        "600",
+        "1200",
+        "2400"
+      ],
+      "dpi_value": "1200",
+      "resume_checked": true,
+      "btn_text": "🚀 开始全自动",
+      "start_disabled": true,
+      "cancel_disabled": false,
+      "lite_hidden": true,
+      "lite_text": "本版无 OCR（斐萃_lite）：字段留空，文件名会带你手填的朝代/作者（NA 若无）。",
+      "bar_width": "67%",
+      "progress_text": "第 2 / 3 页",
+      "seals_text": "已裁 2 枚",
+      "eta_text": "ETA 约 30 秒",
+      "page_s_text": "当前页 4.5 s",
+      "done_hidden": true,
+      "summary": "—",
+      "fail_rows": 0,
+      "fails_text": "",
+      "msg_text": "第 2/3 页 · 已裁 2 枚",
+      "msg_class": "msg",
+      "payload": {
+        "pdf": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-tabs-l21c1xhg/feicui/2_HighRes_PDF/9787000000001/吴颐人篆刻作品展示-HighRes.pdf",
+        "dpi": 1200,
+        "resume": true
+      }
+    },
+    "08e2_tab2_autocrop_poll_done": {
+      "card": true,
+      "in_panel": true,
+      "nodes": {
+        "start": true,
+        "cancel": true,
+        "bar": true,
+        "progress": true,
+        "seals": true,
+        "eta": true,
+        "page_s": true,
+        "from": true,
+        "to": true,
+        "resume": true,
+        "done": true,
+        "fails": true,
+        "goto3": true,
+        "msg": true
+      },
+      "dpi_options": [
+        "300",
+        "600",
+        "1200",
+        "2400"
+      ],
+      "dpi_value": "1200",
+      "resume_checked": true,
+      "btn_text": "🚀 开始全自动",
+      "start_disabled": false,
+      "cancel_disabled": true,
+      "lite_hidden": true,
+      "lite_text": "本版无 OCR（斐萃_lite）：字段留空，文件名会带你手填的朝代/作者（NA 若无）。",
+      "bar_width": "100%",
+      "progress_text": "第 3 / 3 页",
+      "seals_text": "已裁 5 枚",
+      "eta_text": "ETA ≈ 0 秒",
+      "page_s_text": "当前页 4.5 s",
+      "done_hidden": false,
+      "summary": "✅ 完成：成功 2 页 / 跳过 1 页 / 失败 1 页 · 共 5 枚 · 9.5 s · 合成目录键",
+      "fail_rows": 1,
+      "fails_text": "第 2 页IndexError: 合成故障",
+      "msg_text": "完成：裁 2 页 / 跳过 1 页 / 失败 1 页",
+      "msg_class": "msg ok",
+      "payload": {
+        "pdf": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-tabs-l21c1xhg/feicui/2_HighRes_PDF/9787000000001/吴颐人篆刻作品展示-HighRes.pdf",
+        "dpi": 1200,
+        "resume": true
+      }
     },
     "09_tab3_dom": {
       "panel_active": true,
@@ -633,6 +2271,7 @@
         "btn-tab3-refresh",
         "btn-tab3-test",
         "tab3-subdirs",
+        "tab3-dirinfo",
         "tab3-views",
         "tab3-pageinfo",
         "btn-tab3-prev",
@@ -672,7 +2311,7 @@
         "tab3-log-body",
         "tab3-log-path"
       ],
-      "id_count": 41,
+      "id_count": 42,
       "h2": "3_Cropped_Tiff · 印面切片（选件 / 解析 / 重命名）",
       "view_btns": 4,
       "head_btns": [
@@ -680,6 +2319,33 @@
         "btn-tab3-test"
       ],
       "template": "P???-C?-R?-释文-朝代-作者.tiff"
+    },
+    "09b_tab3_subdir_legacy": {
+      "count": 2,
+      "items": [
+        {
+          "text": "📁 A特例",
+          "legacy": false,
+          "title": "A特例"
+        },
+        {
+          "text": "🔖 旧键9787000000003",
+          "legacy": true,
+          "title": "旧目录键（吴颐人篆刻作品展示.pdf 的历史落点）· 只读展示，不自动迁移；去 tab1 确认书名后保存 ⇒ 自动改名迁移"
+        }
+      ],
+      "dirinfo": "目录键：A特例（unregistered）"
+    },
+    "10_tab3_new_naming": {
+      "found": true,
+      "bad_class": false,
+      "shiwen": "中羞行府",
+      "dynasty": "清中期",
+      "author": "吳熙載",
+      "parsed_msg": "已自动解析：第 370 页 · 第 1 列 · 第 1 行（前缀 0424_P370_C1_R1_）",
+      "newname": "0424_P370_C1_R1_中羞行府_清中期_吳熙載.tiff",
+      "rename_disabled": true,
+      "current": "当前文件：0424_P370_C1_R1_中羞行府_清中期_吳熙載.tiff（0.25 MB · 2026-10-16 10:49）"
     }
   },
   "js_errors": []

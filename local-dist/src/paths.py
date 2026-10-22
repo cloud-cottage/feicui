@@ -10,6 +10,8 @@
     ⇒ Windows 上这三处会一起把 `.env` / `yinyuan.json` / `var/**` / 日志写进
       `C:\\Users\\<u>\\Library\\Application Support\\斐萃`（一个 macOS 味道的假目录），且**没人拦得住**。
     现在所有平台派生**只在本文件**，其余模块一律调用 `data_dir() ` / `log_dir()`。
+目录自动发现的**跨平台常量**同样只收在这里（2026-10-22）：`FIND_SKIP`（发现时**不进入**
+    的子目录名）与 `cloud_storage_roots()`（云盘探测根）⇒ macOS 路径字面量全仓**只剩本文件**。
 
 口径（**优先级自高到低**）：
 
@@ -42,11 +44,22 @@ APP_DIRNAME = "斐萃"
 DATA_ENV = "FEICUI_DATA_DIR"
 #: 日志目录覆盖变量（同上）
 LOG_ENV = "FEICUI_LOG_DIR"
+#: 目录自动发现（`api.find_feicui_dirs`）**不进入**的子目录名：性能（node_modules/venv）
+#: ＋语义（这些子树里不可能有使用者要的「斐萃同步目录」，进了只会拖长扫描）。
+#: ⚠️ macOS 用户目录字面量（`"Library"` / `"Applications"` / `"System"`）**只允许出现在
+#: 本文件**（`tests/test_paths.py::test_no_macos_literals_outside_paths` 守卫，其余 `*.py`
+#: 一律 import 这份），Windows 上才不会又冒出 `...\Library\...` 假目录。
+FIND_SKIP = frozenset({
+    "node_modules", "__pycache__", ".git", ".svn", ".hg", "venv", ".venv", "env",
+    "site-packages", "dist-packages", "Library", "Applications", "System",
+    ".Trash", ".cache", ".npm", ".local", "Caches", "Containers", "Group Containers",
+    "python3.9", "python3.10", "python3.11", "python3.12", "python3.13",
+})
 
 __all__ = [
-    "APP_DIRNAME", "DATA_ENV", "LOG_ENV",
+    "APP_DIRNAME", "DATA_ENV", "LOG_ENV", "FIND_SKIP",
     "data_dir", "log_dir", "user_dirs", "var_dir", "jobs_dir", "env_file", "session_file",
-    "ensure_dirs", "describe", "platform_tag",
+    "ensure_dirs", "describe", "platform_tag", "cloud_storage_roots",
 ]
 
 
@@ -74,6 +87,25 @@ def platform_tag(platform: str | None = None) -> str:
     if p == "win32":
         return "windows"
     return "linux"
+
+
+def cloud_storage_roots(*, platform: str | None = None, environ=None, home=None) -> list[Path]:
+    """云盘文件的**候选探测根**（iCloud Drive / OneDrive / Dropbox 类；**不查存在性**）。
+
+    `api.find_feicui_dirs` 靠它才扫得进云盘：macOS 各同步盘统一挂在
+    `~/Library/CloudStorage`（File Provider），而 `Library` 在 `FIND_SKIP` 里 ⇒
+    必须显式给根。Windows 用 `OneDrive` 环境变量（资源管理器同口径），缺失退
+    `<home>/OneDrive`；Linux 没有统一挂载点 ⇒ 列常见同步客户端默认根。
+    返回的路径**可能不存在**，由调用方按存在性自滤（与其他派生函数口径一致）。
+    """
+    p = _plat(platform)
+    h = _home(home)
+    if p == "darwin":
+        return [h / "Library" / "CloudStorage"]
+    if p == "win32":
+        od = _env(environ, "OneDrive")
+        return [Path(od)] if od else [h / "OneDrive"]
+    return [h / n for n in ("Dropbox", "Nextcloud")]
 
 
 def _default_root(kind: str, *, platform: str | None, environ, home) -> Path:

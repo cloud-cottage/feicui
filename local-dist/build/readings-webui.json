@@ -1,22 +1,22 @@
 {
   "schema": "feicui.webui.selftest.v1",
   "app_version": "0.3.0-pywebview",
-  "at": "2026-10-19T11:18:49",
+  "at": "2026-10-22T11:50:48",
   "python": "/Users/kevin/bistro/feicui/venv/bin/python",
   "engine_python": "/Users/kevin/bistro/feicui/venv/bin/python",
   "engine_script": "/Users/kevin/bistro/feicui/ops/book-page-2400/render_page_2400.py",
-  "data_dir": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-selftest-data-j0v9t7d4",
+  "data_dir": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-selftest-data-4f7hclmx",
   "counts": {
-    "PASS": 80,
+    "PASS": 86,
     "FAIL": 0,
-    "NOT_MEASURED": 3
+    "NOT_MEASURED": 2
   },
-  "elapsed_s": 2.2,
+  "elapsed_s": 87.4,
   "checks": [
     {
       "check": "fixture",
       "status": "PASS",
-      "detail": "夹具 /var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-selftest-r1tgpeda/feicui（含 2 份真 PDF：吴颐人篆刻作品展示.pdf 2098940 B / tmp.pdf 39722457 B）"
+      "detail": "夹具 /var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-selftest-7vy6qvag/feicui（含 2 份真 PDF：吴颐人篆刻作品展示.pdf 2098940 B / tmp.pdf 39722457 B）"
     },
     {
       "check": "dir/verify_reject_wrong_name",
@@ -36,7 +36,7 @@
     {
       "check": "api/root_bound_to_fixture",
       "status": "PASS",
-      "detail": "_root=/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-selftest-r1tgpeda/feicui"
+      "detail": "_root=/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-selftest-7vy6qvag/feicui"
     },
     {
       "check": "api/verify_dir_missing",
@@ -81,7 +81,7 @@
     {
       "check": "tab3/generate_test_tiff",
       "status": "PASS",
-      "detail": "已生成：P001-C2-R8-吉祥如意-清-陈巨来.tiff"
+      "detail": "已生成：P001-C2-R4-清心-明-齐白石.tiff"
     },
     {
       "check": "tab3/list_ok",
@@ -91,7 +91,7 @@
     {
       "check": "tab3/filename_template",
       "status": "PASS",
-      "detail": "name=P001-C2-R8-吉祥如意-清-陈巨来.tiff standard=True"
+      "detail": "name=P001-C2-R4-清心-明-齐白石.tiff standard=True"
     },
     {
       "check": "tab3/unknown_subdir_fallback",
@@ -101,12 +101,12 @@
     {
       "check": "tab3b/list_counts_files_only",
       "status": "PASS",
-      "detail": "files=5 names=['P001-C2-R3-长乐未央-汉-陈巨来.tiff', 'P001-C2-R8-吉祥如意-清-陈巨来.tiff', 'P002-C4-R5-吉祥如意-唐-吴昌硕.tiff', 'P003-C6-R7-清心-宋-齐白石.tif', '未命名副本.tiff']"
+      "detail": "files=5 names=['P001-C2-R3-长乐未央-汉-陈巨来.tiff', 'P001-C2-R4-清心-明-齐白石.tiff', 'P002-C4-R5-吉祥如意-唐-吴昌硕.tiff', 'P003-C6-R7-清心-宋-齐白石.tif', '未命名副本.tiff']"
     },
     {
       "check": "tab3b/standard_flag",
       "status": "PASS",
-      "detail": "standard 面：[('P001-C2-R3-长', True), ('P001-C2-R8-吉', True), ('P002-C4-R5-吉', True), ('P003-C6-R7-清', False), ('未命名副本.tiff', False)]"
+      "detail": "standard 面：[('P001-C2-R3-长', True), ('P001-C2-R4-清', True), ('P002-C4-R5-吉', True), ('P003-C6-R7-清', False), ('未命名副本.tiff', False)]"
     },
     {
       "check": "tab3b/view_cfg_matches_old",
@@ -231,7 +231,7 @@
     {
       "check": "tab3b/no_gui_import_in_logic_layer",
       "status": "PASS",
-      "detail": "扫描 ['api.py', '__init__.py', 'baidu_disk_api.py', 'ocr_corrector.py', 'ocr_rapid.py', 'pdf_library.py', 'tencent_doc_api.py', 'validator.py', 'yinyuan_client.py']；offenders=[]"
+      "detail": "扫描 ['api.py', '__init__.py', 'autocrop.py', 'baidu_disk_api.py', 'field_extract.py', 'highres_pdf.py', 'ocr_corrector.py', 'ocr_rapid.py', 'paths.py', 'pdf_library.py', 'seal_crop.py', 'seal_detect.py', 'tencent_doc_api.py', 'validator.py', 'yinyuan_client.py']；offenders=[]"
     },
     {
       "check": "tab3b/legacy_streamlit_page_retained",
@@ -311,12 +311,12 @@
     {
       "check": "ocrui/unavailable_is_structured_not_raise",
       "status": "PASS",
-      "detail": "ok=False reason=OCR_UNAVAILABLE msg=本版本不含 OCR 引擎：本版（阶段 1 包）未内置 rapidocr，OCR 试试看不可用；请手动填写释文。"
+      "detail": "ok=False reason=OCR_UNAVAILABLE msg=本版本不含 OCR 引擎（斐萃_lite / 阶段 1 包未内置 rapidocr）：OCR 试试看不可用，释文请手动填写；要自动识别请用斐萃_pro。"
     },
     {
       "check": "ocrui/unavailable_reported_in_list",
       "status": "PASS",
-      "detail": "ocr_available=False ocr_note='本版本未内置 OCR 引擎（rapidocr 未随包提供）'（UI 据此置灰按钮并给可读提示）"
+      "detail": "ocr_available=False ocr_note='本版本未内置 OCR 引擎（rapidocr 未随包提供） ⇒ 释文请手动填写；要自动识别请用 斐萃_pro（含 OCR）'（UI 据此置灰按钮并给可读提示）"
     },
     {
       "check": "ocrui/corrector_works_without_engine",
@@ -351,17 +351,17 @@
     {
       "check": "tab2/dir_key_resolved",
       "status": "PASS",
-      "detail": "dir_key=tmp.pdf（复用 server/app/naming.py）"
+      "detail": "dir_key=tmp（复用 server/app/naming.py）"
     },
     {
       "check": "tab2/e2e_source_present",
       "status": "PASS",
-      "detail": "tmp.pdf dir_key=tmp.pdf"
+      "detail": "tmp.pdf dir_key=tmp"
     },
     {
       "check": "tab2/reject_missing_pdf",
       "status": "PASS",
-      "detail": "源 PDF 不存在：/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-selftest-r1tgpeda/feicui/1_Original_PDF/不存在.pdf"
+      "detail": "源 PDF 不存在：/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-selftest-7vy6qvag/feicui/1_Original_PDF/不存在.pdf"
     },
     {
       "check": "tab2/reject_bad_dpi",
@@ -409,9 +409,40 @@
       "detail": "state=error err=引擎退出码 1（引擎对非整数倍 dpi 的硬断言，与预检一致）"
     },
     {
+      "check": "e2e/submit_job",
+      "status": "PASS",
+      "detail": "已开始渲染（异步）"
+    },
+    {
       "check": "e2e/render_one_page_1200dpi",
-      "status": "NOT_MEASURED",
-      "detail": "--no-e2e 跳过"
+      "status": "PASS",
+      "detail": "82.8s state=done out=P1-1200dpi-48bit.tif size=469.7 MB",
+      "seconds": 82.8,
+      "out": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-selftest-7vy6qvag/feicui/2_HighRes_PDF/tmp/P1-1200dpi-48bit.tif",
+      "size_mb": 469.7,
+      "progress_pushes": 52,
+      "max_percent": 100,
+      "log_tail": "      1\n    ],\n    \"observed_max_u8_round\": [\n      255,\n      255,\n      255\n    ],\n    \"outside_declared_range_px\": 1296,\n    \"outside_declared_range_and_outside_halo_px\": 0\n  },\n  \"crop\": null\n}"
+    },
+    {
+      "check": "e2e/tiff_magic",
+      "status": "PASS",
+      "detail": "magic=b'II*\\x00'"
+    },
+    {
+      "check": "e2e/progress_pushed",
+      "status": "PASS",
+      "detail": "pushes=52（native 下同一路径＝window.evaluate_js）"
+    },
+    {
+      "check": "tab2/cancel_requested",
+      "status": "PASS",
+      "detail": "已请求取消"
+    },
+    {
+      "check": "tab2/cancel_effect",
+      "status": "PASS",
+      "detail": "state=cancelled rc=-15 out_exists=False"
     },
     {
       "check": "guard/no_root_blocks_tab1",

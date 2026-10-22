@@ -73,6 +73,7 @@ VENV_PYTHON = REPO_ROOT / "venv" / "bin" / "python"
 sys.path.insert(0, str(WEBUI_DIR))
 sys.path.insert(0, str(REPO_ROOT / "server"))  # `app.naming`（纯 stdlib，无图像栈）
 
+from src import paths  # noqa: E402  （目录派生/发现常量单一真源，见 src/paths.py）
 from src import pdf_library as lib  # noqa: E402
 from src import validator  # noqa: E402
 from src import yinyuan_client as yy  # noqa: E402
@@ -841,9 +842,10 @@ class FeicuiApi:
             return None, False, ""
 
     # ---------------- 目录选择 / 校验 ----------------
-    #: 目录“看起来是空的”有三种成因（P2）——前端必须能分辨并给可操作提示，
+    #: 目录「打不开 / 看起来是空的」的成因（P2 ＋ F2）——前端必须能分辨并给可操作提示，
     #: 否则使用者只会看到一行「（无子目录）」而不知道该去挂载同步盘还是去授权。
-    BROWSE_EMPTY_REASONS = ("empty", "all_hidden", "permission", "not_exist")
+    #: `not_dir`＝路径**存在但是文件**（F2 契约纯增量：不与 not_exist 混说）。
+    BROWSE_EMPTY_REASONS = ("empty", "all_hidden", "permission", "not_exist", "not_dir")
 
     def browse(self, req: dict | None = None) -> dict:
         """列目录。
@@ -856,19 +858,24 @@ class FeicuiApi:
         raw = str(req.get("path", "")).strip()
         want_home = bool(req.get("home"))
         home = str(Path.home())
-        path = Path(raw or self._nav_root)
+        # F3：原「path = Path(raw or self._nav_root)」是死赋值（try 内三分支全覆写）。
+        # 无 path（且无 home）⇒ 旧语义＝上次浏览过的路径，这就是这里的初值本身
+        # （兼作 except 分支的展示兜底，Pyright 亦不再报 possibly-unbound）。
+        path = Path(self._nav_root)
         try:
             if want_home:
                 path = Path(home)
             elif raw:
                 path = Path(raw).expanduser()
-            else:
-                path = Path(self._nav_root)
             path = path.resolve()
-            if not path.is_dir():
+            if not path.exists():
                 return {"ok": False, "reason": "not_exist", "path": str(path), "entries": [],
                         "parent": str(path.parent), "home": home, "exists": False,
                         "msg": f"目录不存在：{path}"}
+            if not path.is_dir():          # F2：存在但是文件 ⇒ 单独成因，文案不冒充「不存在」
+                return {"ok": False, "reason": "not_dir", "path": str(path), "entries": [],
+                        "parent": str(path.parent), "home": home, "exists": True,
+                        "msg": f"这是文件不是目录：{path}"}
             all_dirs = [e.name for e in path.iterdir() if e.is_dir()]
             entries = sorted(n for n in all_dirs if not n.startswith("."))
             hidden = sorted(n for n in all_dirs if n.startswith("."))
@@ -888,19 +895,10 @@ class FeicuiApi:
             return {"ok": False, "reason": "error", "entries": [], "path": raw,
                     "msg": f"{exc.__class__.__name__}: {exc}"}
 
-    #: 自动发现时**不进入**的目录名：性能（node_modules/venv）+ 语义（这些子树里
-    #: 不可能有使用者要的「斐萃同步目录」，进了只会拖长时间）
-    FIND_SKIP = frozenset({
-        "node_modules", "__pycache__", ".git", ".svn", ".hg", "venv", ".venv", "env",
-        "site-packages", "dist-packages", "Library", "Applications", "System",
-        ".Trash", ".cache", ".npm", ".local", "Caches", "Containers", "Group Containers",
-        "python3.9", "python3.10", "python3.11", "python3.12", "python3.13",
-    })
-
     def _find_roots(self) -> list[str]:
         home = Path.home()
         roots = [str(home / n) for n in ("Downloads", "Documents", "Desktop")]
-        roots.append(str(home / "Library" / "CloudStorage"))
+        roots += [str(r) for r in paths.cloud_storage_roots()]   # F1：云盘根单一真源在 paths
         roots.append("/Volumes")
         roots.append(str(home))
         return roots
@@ -967,7 +965,7 @@ class FeicuiApi:
                     except OSError:
                         continue
                     nm = e.name
-                    if nm.startswith(".") or nm in self.FIND_SKIP:
+                    if nm.startswith(".") or nm in paths.FIND_SKIP:   # F1：跳过名单单一真源
                         continue
                     child = Path(e.path)
                     if nm == lib.FEICUI_NAME:

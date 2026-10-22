@@ -15,12 +15,16 @@ P5 失效 root 启动提示 / P6 校验原文 + 引导建子目录）：
  ⑤ 浏览空壳 `/Users/kevin/Downloads/同步空间` ⇒ 列表区（不是只在小 msg 行）给出
     reason=all_hidden/empty + 可操作提示；
  ⑥ 另测 reason=permission / empty / all_hidden 三种成因，及校验失败时**原始 msg** +
-    「🛠 创建标准子目录」引导（真点一次，闭环进主界面）。
+    「🛠 创建标准子目录」引导（真点一次，闭环进主界面）；
+ ⑦ F5：浏览**不存在的路径** ⇒ reason=not_exist；浏览**普通文件** ⇒ reason=not_dir
+    （文案「这是文件不是目录」，可操作提示出现在列表区，不是只在小 msg 行）；
+ ⑧ F4：会话 root 与 `.env` root 指向**两个不同**的失效路径 ⇒ 启动横幅**合并成一条**、
+    两个路径都列出（`stale_session` 不得被 `stale_root` 顶掉）。
 
 隔离（**不碰仓内/使用者真目录**）：
   * 本脚本在 import `api` **之前**把 `FEICUI_DATA_DIR` 指到临时目录 ⇒ `.env` / `.session.json` /
     `var/**` 全落临时目录（`verify_dir` 回写的 FEICUI_ROOT 也只落临时 `.env`）；
-  * 夹具目录（空目录 / 只有隐藏目录 / 无权限目录 / 缺子目录的 feicui）全在临时目录里建。
+  * 夹具目录（空目录 / 只有隐藏目录 / 无权限目录 / 缺子目录的 feicui / 普通文件）全在临时目录里建。
 
 跑法：
     ./venv/bin/python local-dist/domtest_dir.py           # 打印 JSON ＋ 落盘 local-dist/build/readings-dom-dir.json
@@ -66,6 +70,9 @@ REAL = Path("/Users/kevin/Downloads/金石印源同步空间/feicui")
 #: 旧 `.env` 里指向的**已不存在**的路径（父目录 同步空间/ 只剩 .cache 与 Icon\r）
 STALE = Path("/Users/kevin/Downloads/同步空间/feicui")
 SHELL_DIR = Path("/Users/kevin/Downloads/同步空间")
+#: F4：`.env` FEICUI_ROOT 指向的**另一个**失效路径（会话里存的是 STALE，两者不同 ⇒
+#: 横幅必须合并成一条、两个路径都列出）。只记不建 ⇒ env_root_exists=False。
+ENV_STALE = SCRATCH / "env-stale-root"
 HOME = str(Path.home())
 
 WIN = None
@@ -162,10 +169,13 @@ def make_fixtures() -> dict:
     (fx / "hidden_dir" / ".only_hidden").mkdir(parents=True, exist_ok=True)
     (fx / "perm_dir").mkdir(parents=True, exist_ok=True)
     (fx / "feicui").mkdir(parents=True, exist_ok=True)          # 名为 feicui 但无标准子目录
+    (fx / "plain_file.txt").write_text("斐萃 domtest 夹具：普通文件（不是目录）\n", encoding="utf-8")
     os.chmod(fx / "perm_dir", 0o000)
     return {"root": str(fx), "empty_dir": str(fx / "empty_dir"),
             "hidden_dir": str(fx / "hidden_dir"), "perm_dir": str(fx / "perm_dir"),
-            "feicui_nosub": str(fx / "feicui")}
+            "feicui_nosub": str(fx / "feicui"),
+            "plain_file": str(fx / "plain_file.txt"),          # F5：存在但是文件 ⇒ not_dir
+            "no_such_dir": str(fx / "no_such_dir")}            # F5：不存在 ⇒ not_exist（不创建）
 
 
 # ───────────────────────── probe ─────────────────────────
@@ -208,6 +218,15 @@ def _probe_body() -> None:
     record("dom/P4_discovery_finds_real_feicui_dir",
            str(REAL) in (d1.get("cands") or []),
            f"候选里含 {REAL} ⇒ {str(REAL) in (d1.get('cands') or [])}；全部候选={d1.get('cands')}")
+
+    # F4：发现完成后的横幅是**一条**合并横幅（会话 STALE ＋ .env ENV_STALE 都列出），
+    # 而不是 stale_root 把 stale_session 顶掉后只剩一个路径
+    record("dom/F4_session_and_env_stale_roots_merge_into_one_banner",
+           str(STALE) in (d1.get("hint") or "") and str(ENV_STALE) in (d1.get("hint") or "")
+           and (d1.get("hint") or "").count("上次的目录已不存在") == 1
+           and d1.get("hint_kind") == "stale_root",
+           f"合并横幅（kind={d1.get('hint_kind')}）：{(d1.get('hint') or '')[:170]!r}"
+           f"（期望同时含 {STALE} 与 {ENV_STALE}）")
 
     # ── P1：先逛去 ~/Downloads，再点「🏠 家目录」 ──
     tick("P1_navigate")
@@ -262,6 +281,21 @@ def _probe_body() -> None:
         time.sleep(0.4)
         rr = _read(f"06_reason_{key}", JS_DIR)
         record(f"dom/P2_reason_{key}",
+               rr.get("reason") == want_reason and want_word in (rr.get("empty_text") or ""),
+               f"reason={rr.get('reason')!r}（期望 {want_reason}）列表区提示="
+               f"{(rr.get('empty_text') or '')[:110]!r}")
+
+    # ── F5：not_exist（不存在的路径）与 not_dir（普通文件，F2 新成因）──
+    #     与上面同一风格：只断言 data-reason 与列表区文案（/var ⇒ /private/var 不比路径串）
+    for key, want_reason, want_word in (("no_such_dir", "not_exist", "路径不存在"),
+                                        ("plain_file", "not_dir", "这是文件不是目录")):
+        tick(f"F5_reason_{key}")
+        type_path(WIN, fx[key])
+        press_enter()
+        _wait_js(f"(document.getElementById('dir-entries').dataset.reason||'')==={json.dumps(want_reason)}", 20)
+        time.sleep(0.4)
+        rr = _read(f"06b_reason_{key}", JS_DIR)
+        record(f"dom/F5_reason_{want_reason}",
                rr.get("reason") == want_reason and want_word in (rr.get("empty_text") or ""),
                f"reason={rr.get('reason')!r}（期望 {want_reason}）列表区提示="
                f"{(rr.get('empty_text') or '')[:110]!r}")
@@ -348,8 +382,9 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
 
     fixtures = make_fixtures()
-    # 现场事实复刻：`.env` 的 FEICUI_ROOT 指向已不存在路径；会话里也存着同一个失效 root
-    ENV_FILE.write_text(f"FEICUI_ROOT={STALE}\n", encoding="utf-8")
+    # F4 夹具：会话 root＝STALE（现场失效路径）、`.env` FEICUI_ROOT＝ENV_STALE（另一个也不存在）
+    # ⇒ 两个**不同**的失效 root，启动横幅必须合并成一条、两个路径都列出
+    ENV_FILE.write_text(f"FEICUI_ROOT={ENV_STALE}\n", encoding="utf-8")
     api = FeicuiApi()
     admin = [u for u, v in api._users.items() if v["is_admin"]][0]
     (DATA_DIR / ".session.json").write_text(json.dumps({
@@ -359,7 +394,8 @@ def main(argv: list[str] | None = None) -> int:
     }, ensure_ascii=False), encoding="utf-8")
 
     INFO.update({"scratch": str(SCRATCH), "data_dir": str(DATA_DIR), "fixtures": fixtures,
-                 "real": str(REAL), "stale": str(STALE), "shell_dir": str(SHELL_DIR),
+                 "real": str(REAL), "stale": str(STALE), "env_stale": str(ENV_STALE),
+                 "shell_dir": str(SHELL_DIR),
                  "admin": admin, "env_file": str(ENV_FILE),
                  "real_verify": list(_verify(str(REAL))),
                  "shell_verify": list(_verify(str(SHELL_DIR)))})
@@ -398,6 +434,14 @@ def main(argv: list[str] | None = None) -> int:
            f"count={post['find']['count']} 扫 {post['find']['scanned_dirs']} 个目录 / "
            f"{post['find']['elapsed_s']}s truncated={post['find']['truncated']} "
            f"候选={post['find']['candidates']}")
+    post["browse_reasons"] = {
+        "plain_file": api.browse({"path": fixtures["plain_file"]}).get("reason"),
+        "no_such_dir": api.browse({"path": fixtures["no_such_dir"]}).get("reason"),
+    }
+    record("api/browse_file_is_not_dir_and_missing_is_not_exist",
+           post["browse_reasons"]["plain_file"] == "not_dir"
+           and post["browse_reasons"]["no_such_dir"] == "not_exist",
+           f"F2 契约（纯增量）读数={post['browse_reasons']}")
 
     counts = {s: sum(1 for c in RESULT["checks"] if c["status"] == s) for s in ("PASS", "FAIL")}
     summary = {"schema": "feicui.webui.domtest.dir.v1",

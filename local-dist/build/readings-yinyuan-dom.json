@@ -1,6 +1,6 @@
 {
   "schema": "feicui.yinyuan.domtest.v1",
-  "generated_at": "2026-10-19T11:20:05",
+  "generated_at": "2026-10-22T11:52:16",
   "counts": {
     "PASS": 11,
     "FAIL": 0
@@ -29,12 +29,12 @@
     {
       "check": "dom/full_key_never_in_dom",
       "status": "PASS",
-      "detail": "整页 DOM 含完整明文=False DOM 长度=15301"
+      "detail": "整页 DOM 含完整明文=False DOM 长度=27800"
     },
     {
       "check": "dom/key_file_600",
       "status": "PASS",
-      "detail": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-yy-dom-d08syrs8/yy/yinyuan.json mode=0o600"
+      "detail": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-yy-dom-azroio9n/yy/yinyuan.json mode=0o600"
     },
     {
       "check": "dom/tab1_dynasty_from_yinyuan_cache",
@@ -93,7 +93,7 @@
         "远1",
         "远2"
       ],
-      "bodyLen": 15301
+      "bodyLen": 27800
     },
     "after_disconnect": {
       "formVisible": true,
@@ -130,9 +130,9 @@
     }
   },
   "fixture": {
-    "root": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-yy-dom-d08syrs8/feicui",
-    "data_dir": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-yy-dom-d08syrs8/data",
-    "yy_dir": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-yy-dom-d08syrs8/yy",
+    "root": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-yy-dom-azroio9n/feicui",
+    "data_dir": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-yy-dom-azroio9n/data",
+    "yy_dir": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-yy-dom-azroio9n/yy",
     "seeded": {
       "dynasty_values": [
         "远1",

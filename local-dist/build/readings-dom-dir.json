@@ -1,27 +1,30 @@
 {
   "schema": "feicui.webui.domtest.dir.v1",
-  "at": "2026-10-22T10:18:45",
+  "at": "2026-10-22T11:52:37",
   "python": "/Users/kevin/bistro/feicui/venv/bin/python",
   "window_title": "「斐萃」玺印解析任务台 · 本地封装分发版 · Pro",
   "counts": {
-    "PASS": 18,
+    "PASS": 22,
     "FAIL": 0
   },
   "info": {
-    "scratch": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon",
-    "data_dir": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/data",
+    "scratch": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1",
+    "data_dir": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/data",
     "fixtures": {
-      "root": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx",
-      "empty_dir": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/empty_dir",
-      "hidden_dir": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/hidden_dir",
-      "perm_dir": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/perm_dir",
-      "feicui_nosub": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/feicui"
+      "root": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/fx",
+      "empty_dir": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/fx/empty_dir",
+      "hidden_dir": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/fx/hidden_dir",
+      "perm_dir": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/fx/perm_dir",
+      "feicui_nosub": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/fx/feicui",
+      "plain_file": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/fx/plain_file.txt",
+      "no_such_dir": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/fx/no_such_dir"
     },
     "real": "/Users/kevin/Downloads/金石印源同步空间/feicui",
     "stale": "/Users/kevin/Downloads/同步空间/feicui",
+    "env_stale": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/env-stale-root",
     "shell_dir": "/Users/kevin/Downloads/同步空间",
     "admin": "ji",
-    "env_file": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/data/.env",
+    "env_file": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/data/.env",
     "real_verify": [
       true,
       "目录校验通过"
@@ -59,7 +62,7 @@
     {
       "check": "dom/P5_boot_shows_stale_root_notice_and_stays_on_dir_page",
       "status": "PASS",
-      "detail": "view_dir=True view_main=False hint_kind='stale_root' 提示原文='上次的目录已不存在：/Users/kevin/Downloads/同步空间/feicui —— 发现 1 个通过校验的 feicui 目录（扫 600 个目录 / 0.124s）⇒ 点下面候选即校验并进入'"
+      "detail": "view_dir=True view_main=False hint_kind='stale_root' 提示原文='上次的目录已不存在：/Users/kevin/Downloads/同步空间/feicui 与 /var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8'"
     },
     {
       "check": "dom/boot_dir_page_starts_at_home",
@@ -74,12 +77,17 @@
     {
       "check": "dom/P5_boot_autorun_discovery_lists_candidates",
       "status": "PASS",
-      "detail": "候选=['/Users/kevin/Downloads/金石印源同步空间/feicui'] 计数=1 隐藏=False 提示=(stale_root) '上次的目录已不存在：/Users/kevin/Downloads/同步空间/feicui —— 发现 1 个通过校验的 feicui 目录（扫 600 个目录 / 0.124s）⇒ 点下面候选即校验并进入'"
+      "detail": "候选=['/Users/kevin/Downloads/金石印源同步空间/feicui'] 计数=1 隐藏=False 提示=(stale_root) '上次的目录已不存在：/Users/kevin/Downloads/同步空间/feicui 与 /var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8'"
     },
     {
       "check": "dom/P4_discovery_finds_real_feicui_dir",
       "status": "PASS",
       "detail": "候选里含 /Users/kevin/Downloads/金石印源同步空间/feicui ⇒ True；全部候选=['/Users/kevin/Downloads/金石印源同步空间/feicui']"
+    },
+    {
+      "check": "dom/F4_session_and_env_stale_roots_merge_into_one_banner",
+      "status": "PASS",
+      "detail": "合并横幅（kind=stale_root）：'上次的目录已不存在：/Users/kevin/Downloads/同步空间/feicui 与 /var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/env-stale-root —— 发现 1 个通过校验的 feicui 目录（扫 619 '（期望同时含 /Users/kevin/Downloads/同步空间/feicui 与 /var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/env-stale-root）"
     },
     {
       "check": "dom/P3_paste_path_enter_navigates",
@@ -109,12 +117,22 @@
     {
       "check": "dom/P2_reason_perm_dir",
       "status": "PASS",
-      "detail": "reason='permission'（期望 permission）列表区提示='macOS 未授权本应用访问这个文件夹。\\n无权限访问该目录：/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49c'"
+      "detail": "reason='permission'（期望 permission）列表区提示='macOS 未授权本应用访问这个文件夹。\\n无权限访问该目录：/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn'"
+    },
+    {
+      "check": "dom/F5_reason_not_exist",
+      "status": "PASS",
+      "detail": "reason='not_exist'（期望 not_exist）列表区提示='这个路径不存在（同步盘可能未挂载，或目录已改名/删除）。\\n目录不存在：/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir'"
+    },
+    {
+      "check": "dom/F5_reason_not_dir",
+      "status": "PASS",
+      "detail": "reason='not_dir'（期望 not_dir）列表区提示='这是文件不是目录。\\n这是文件不是目录：/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/fx/pla'"
     },
     {
       "check": "dom/P6_verify_failure_shows_raw_msg_and_guides_ensure",
       "status": "PASS",
-      "detail": "#dir-msg 原文=\"feicui 根目录必须恰好包含：['1_Original_PDF', '2_HighRes_PDF', '3_Cropped_Tiff']，当前为：[]\" hint_kind='need_subdirs' 引导='目录结构不合规（原文见右栏）。可直接点上面的「🛠 创建标准子目录」，在 /var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckc' 按钮高亮=True"
+      "detail": "#dir-msg 原文=\"feicui 根目录必须恰好包含：['1_Original_PDF', '2_HighRes_PDF', '3_Cropped_Tiff']，当前为：[]\" hint_kind='need_subdirs' 引导='目录结构不合规（原文见右栏）。可直接点上面的「🛠 创建标准子目录」，在 /var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8c' 按钮高亮=True"
     },
     {
       "check": "dom/P6_ensure_subdirs_then_verify_enters_main",
@@ -124,7 +142,7 @@
     {
       "check": "dom/P6_verify_after_ensure_enters_main",
       "status": "PASS",
-      "detail": "view_main=True root_pill='📁 /private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u4'"
+      "detail": "view_main=True root_pill='📁 /private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9'"
     },
     {
       "check": "dom/P3_paste_real_sync_dir_verifies_and_enters_main",
@@ -144,7 +162,12 @@
     {
       "check": "api/find_feicui_dirs_backend",
       "status": "PASS",
-      "detail": "count=1 扫 600 个目录 / 0.065s truncated=False 候选=['/Users/kevin/Downloads/金石印源同步空间/feicui']"
+      "detail": "count=1 扫 619 个目录 / 0.056s truncated=False 候选=['/Users/kevin/Downloads/金石印源同步空间/feicui']"
+    },
+    {
+      "check": "api/browse_file_is_not_dir_and_missing_is_not_exist",
+      "status": "PASS",
+      "detail": "F2 契约（纯增量）读数={'plain_file': 'not_dir', 'no_such_dir': 'not_exist'}"
     }
   ],
   "dom": {
@@ -182,7 +205,7 @@
       "empty_reason": "",
       "hint_kind": "stale_root",
       "hint_hidden": false,
-      "hint": "上次的目录已不存在：/Users/kevin/Downloads/同步空间/feicui —— 发现 1 个通过校验的 feicui 目录（扫 600 个目录 / 0.124s）⇒ 点下面候选即校验并进入",
+      "hint": "上次的目录已不存在：/Users/kevin/Downloads/同步空间/feicui 与 /var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/env-stale-root —— 发现 1 个通过校验的 feicui 目录（扫 619 个目录 / 0.133s）⇒ 点下面候选即校验并进入",
       "hint_class": "dir-hint warn",
       "cands_hidden": false,
       "cands": [
@@ -238,7 +261,7 @@
       "empty_reason": "",
       "hint_kind": "stale_root",
       "hint_hidden": false,
-      "hint": "上次的目录已不存在：/Users/kevin/Downloads/同步空间/feicui —— 发现 1 个通过校验的 feicui 目录（扫 600 个目录 / 0.124s）⇒ 点下面候选即校验并进入",
+      "hint": "上次的目录已不存在：/Users/kevin/Downloads/同步空间/feicui 与 /var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/env-stale-root —— 发现 1 个通过校验的 feicui 目录（扫 619 个目录 / 0.133s）⇒ 点下面候选即校验并进入",
       "hint_class": "dir-hint warn",
       "cands_hidden": false,
       "cands": [
@@ -282,7 +305,7 @@
       "empty_reason": "",
       "hint_kind": "stale_root",
       "hint_hidden": false,
-      "hint": "上次的目录已不存在：/Users/kevin/Downloads/同步空间/feicui —— 发现 1 个通过校验的 feicui 目录（扫 600 个目录 / 0.124s）⇒ 点下面候选即校验并进入",
+      "hint": "上次的目录已不存在：/Users/kevin/Downloads/同步空间/feicui 与 /var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/env-stale-root —— 发现 1 个通过校验的 feicui 目录（扫 619 个目录 / 0.133s）⇒ 点下面候选即校验并进入",
       "hint_class": "dir-hint warn",
       "cands_hidden": false,
       "cands": [
@@ -338,7 +361,7 @@
       "empty_reason": "",
       "hint_kind": "stale_root",
       "hint_hidden": false,
-      "hint": "上次的目录已不存在：/Users/kevin/Downloads/同步空间/feicui —— 发现 1 个通过校验的 feicui 目录（扫 600 个目录 / 0.124s）⇒ 点下面候选即校验并进入",
+      "hint": "上次的目录已不存在：/Users/kevin/Downloads/同步空间/feicui 与 /var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/env-stale-root —— 发现 1 个通过校验的 feicui 目录（扫 619 个目录 / 0.133s）⇒ 点下面候选即校验并进入",
       "hint_class": "dir-hint warn",
       "cands_hidden": false,
       "cands": [
@@ -371,7 +394,7 @@
       "empty_reason": "all_hidden",
       "hint_kind": "stale_root",
       "hint_hidden": false,
-      "hint": "上次的目录已不存在：/Users/kevin/Downloads/同步空间/feicui —— 发现 1 个通过校验的 feicui 目录（扫 600 个目录 / 0.124s）⇒ 点下面候选即校验并进入",
+      "hint": "上次的目录已不存在：/Users/kevin/Downloads/同步空间/feicui 与 /var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/env-stale-root —— 发现 1 个通过校验的 feicui 目录（扫 619 个目录 / 0.133s）⇒ 点下面候选即校验并进入",
       "hint_class": "dir-hint warn",
       "cands_hidden": false,
       "cands": [
@@ -396,7 +419,7 @@
     "06_reason_empty_dir": {
       "view_dir": true,
       "view_main": false,
-      "path": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/empty_dir",
+      "path": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/fx/empty_dir",
       "entries": [],
       "entries_total": 1,
       "reason": "empty",
@@ -404,7 +427,7 @@
       "empty_reason": "empty",
       "hint_kind": "stale_root",
       "hint_hidden": false,
-      "hint": "上次的目录已不存在：/Users/kevin/Downloads/同步空间/feicui —— 发现 1 个通过校验的 feicui 目录（扫 600 个目录 / 0.124s）⇒ 点下面候选即校验并进入",
+      "hint": "上次的目录已不存在：/Users/kevin/Downloads/同步空间/feicui 与 /var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/env-stale-root —— 发现 1 个通过校验的 feicui 目录（扫 619 个目录 / 0.133s）⇒ 点下面候选即校验并进入",
       "hint_class": "dir-hint warn",
       "cands_hidden": false,
       "cands": [
@@ -412,7 +435,7 @@
       ],
       "cands_label": "1",
       "msg": "",
-      "input": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/empty_dir",
+      "input": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/fx/empty_dir",
       "root_pill": "📁 —",
       "dir_user": "ji（管理员）",
       "ensure_pulse": false,
@@ -429,7 +452,7 @@
     "06_reason_hidden_dir": {
       "view_dir": true,
       "view_main": false,
-      "path": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/hidden_dir",
+      "path": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/fx/hidden_dir",
       "entries": [],
       "entries_total": 1,
       "reason": "all_hidden",
@@ -437,7 +460,7 @@
       "empty_reason": "all_hidden",
       "hint_kind": "stale_root",
       "hint_hidden": false,
-      "hint": "上次的目录已不存在：/Users/kevin/Downloads/同步空间/feicui —— 发现 1 个通过校验的 feicui 目录（扫 600 个目录 / 0.124s）⇒ 点下面候选即校验并进入",
+      "hint": "上次的目录已不存在：/Users/kevin/Downloads/同步空间/feicui 与 /var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/env-stale-root —— 发现 1 个通过校验的 feicui 目录（扫 619 个目录 / 0.133s）⇒ 点下面候选即校验并进入",
       "hint_class": "dir-hint warn",
       "cands_hidden": false,
       "cands": [
@@ -445,7 +468,7 @@
       ],
       "cands_label": "1",
       "msg": "",
-      "input": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/hidden_dir",
+      "input": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/fx/hidden_dir",
       "root_pill": "📁 —",
       "dir_user": "ji（管理员）",
       "ensure_pulse": false,
@@ -462,23 +485,89 @@
     "06_reason_perm_dir": {
       "view_dir": true,
       "view_main": false,
-      "path": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/perm_dir",
+      "path": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/fx/perm_dir",
       "entries": [],
       "entries_total": 1,
       "reason": "permission",
-      "empty_text": "macOS 未授权本应用访问这个文件夹。\n无权限访问该目录：/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/perm_dir（macOS 需在「系统设置 → 隐私与安全性 → 文件与文件夹」授权）\n请到「系统设置 → 隐私与安全性 → 文件与文件夹」给「斐萃」勾选该文件夹后重试。\n",
+      "empty_text": "macOS 未授权本应用访问这个文件夹。\n无权限访问该目录：/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/fx/perm_dir（macOS 需在「系统设置 → 隐私与安全性 → 文件与文件夹」授权）\n请到「系统设置 → 隐私与安全性 → 文件与文件夹」给「斐萃」勾选该文件夹后重试。\n",
       "empty_reason": "permission",
       "hint_kind": "stale_root",
       "hint_hidden": false,
-      "hint": "上次的目录已不存在：/Users/kevin/Downloads/同步空间/feicui —— 发现 1 个通过校验的 feicui 目录（扫 600 个目录 / 0.124s）⇒ 点下面候选即校验并进入",
+      "hint": "上次的目录已不存在：/Users/kevin/Downloads/同步空间/feicui 与 /var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/env-stale-root —— 发现 1 个通过校验的 feicui 目录（扫 619 个目录 / 0.133s）⇒ 点下面候选即校验并进入",
       "hint_class": "dir-hint warn",
       "cands_hidden": false,
       "cands": [
         "/Users/kevin/Downloads/金石印源同步空间/feicui"
       ],
       "cands_label": "1",
-      "msg": "无权限访问该目录：/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/perm_dir（macOS 需在「系统设置 → 隐私与安全性 → 文件与文件夹」授权）",
-      "input": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/perm_dir",
+      "msg": "无权限访问该目录：/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/fx/perm_dir（macOS 需在「系统设置 → 隐私与安全性 → 文件与文件夹」授权）",
+      "input": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/fx/perm_dir",
+      "root_pill": "📁 —",
+      "dir_user": "ji（管理员）",
+      "ensure_pulse": false,
+      "buttons": [
+        "btn-home:true",
+        "btn-up:true",
+        "btn-ensure:true",
+        "btn-discover:true",
+        "btn-goto:true",
+        "btn-verify:true",
+        "dir-input:true"
+      ]
+    },
+    "06b_reason_no_such_dir": {
+      "view_dir": true,
+      "view_main": false,
+      "path": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/fx/no_such_dir",
+      "entries": [],
+      "entries_total": 1,
+      "reason": "not_exist",
+      "empty_text": "这个路径不存在（同步盘可能未挂载，或目录已改名/删除）。\n目录不存在：/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/fx/no_such_dir\n请确认同步盘已登录挂载；或点「🔍 自动发现 feicui 目录」。\n",
+      "empty_reason": "not_exist",
+      "hint_kind": "stale_root",
+      "hint_hidden": false,
+      "hint": "上次的目录已不存在：/Users/kevin/Downloads/同步空间/feicui 与 /var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/env-stale-root —— 发现 1 个通过校验的 feicui 目录（扫 619 个目录 / 0.133s）⇒ 点下面候选即校验并进入",
+      "hint_class": "dir-hint warn",
+      "cands_hidden": false,
+      "cands": [
+        "/Users/kevin/Downloads/金石印源同步空间/feicui"
+      ],
+      "cands_label": "1",
+      "msg": "目录不存在：/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/fx/no_such_dir",
+      "input": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/fx/no_such_dir",
+      "root_pill": "📁 —",
+      "dir_user": "ji（管理员）",
+      "ensure_pulse": false,
+      "buttons": [
+        "btn-home:true",
+        "btn-up:true",
+        "btn-ensure:true",
+        "btn-discover:true",
+        "btn-goto:true",
+        "btn-verify:true",
+        "dir-input:true"
+      ]
+    },
+    "06b_reason_plain_file": {
+      "view_dir": true,
+      "view_main": false,
+      "path": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/fx/plain_file.txt",
+      "entries": [],
+      "entries_total": 1,
+      "reason": "not_dir",
+      "empty_text": "这是文件不是目录。\n这是文件不是目录：/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/fx/plain_file.txt\n请确认粘贴的是 feicui 目录本身（不是其中的某个文件）；或点「🔍 自动发现 feicui 目录」。\n",
+      "empty_reason": "not_dir",
+      "hint_kind": "stale_root",
+      "hint_hidden": false,
+      "hint": "上次的目录已不存在：/Users/kevin/Downloads/同步空间/feicui 与 /var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/env-stale-root —— 发现 1 个通过校验的 feicui 目录（扫 619 个目录 / 0.133s）⇒ 点下面候选即校验并进入",
+      "hint_class": "dir-hint warn",
+      "cands_hidden": false,
+      "cands": [
+        "/Users/kevin/Downloads/金石印源同步空间/feicui"
+      ],
+      "cands_label": "1",
+      "msg": "这是文件不是目录：/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/fx/plain_file.txt",
+      "input": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/fx/plain_file.txt",
       "root_pill": "📁 —",
       "dir_user": "ji（管理员）",
       "ensure_pulse": false,
@@ -495,15 +584,15 @@
     "07_verify_missing_subdirs": {
       "view_dir": true,
       "view_main": false,
-      "path": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/perm_dir",
+      "path": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/fx/plain_file.txt",
       "entries": [],
       "entries_total": 1,
-      "reason": "permission",
-      "empty_text": "macOS 未授权本应用访问这个文件夹。\n无权限访问该目录：/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/perm_dir（macOS 需在「系统设置 → 隐私与安全性 → 文件与文件夹」授权）\n请到「系统设置 → 隐私与安全性 → 文件与文件夹」给「斐萃」勾选该文件夹后重试。\n",
-      "empty_reason": "permission",
+      "reason": "not_dir",
+      "empty_text": "这是文件不是目录。\n这是文件不是目录：/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/fx/plain_file.txt\n请确认粘贴的是 feicui 目录本身（不是其中的某个文件）；或点「🔍 自动发现 feicui 目录」。\n",
+      "empty_reason": "not_dir",
       "hint_kind": "need_subdirs",
       "hint_hidden": false,
-      "hint": "目录结构不合规（原文见右栏）。可直接点上面的「🛠 创建标准子目录」，在 /var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/feicui 下补齐 1_Original_PDF / 2_HighRes_PDF / 3_Cropped_Tiff，再回来校验。",
+      "hint": "目录结构不合规（原文见右栏）。可直接点上面的「🛠 创建标准子目录」，在 /var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/fx/feicui 下补齐 1_Original_PDF / 2_HighRes_PDF / 3_Cropped_Tiff，再回来校验。",
       "hint_class": "dir-hint warn",
       "cands_hidden": false,
       "cands": [
@@ -511,7 +600,7 @@
       ],
       "cands_label": "1",
       "msg": "feicui 根目录必须恰好包含：['1_Original_PDF', '2_HighRes_PDF', '3_Cropped_Tiff']，当前为：[]",
-      "input": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/feicui",
+      "input": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/fx/feicui",
       "root_pill": "📁 —",
       "dir_user": "ji（管理员）",
       "ensure_pulse": true,
@@ -528,7 +617,7 @@
     "08_after_ensure_subdirs": {
       "view_dir": true,
       "view_main": false,
-      "path": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/feicui",
+      "path": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/fx/feicui",
       "entries": [
         "1_Original_PDF",
         "2_HighRes_PDF",
@@ -548,7 +637,7 @@
       ],
       "cands_label": "1",
       "msg": "这是 feicui 目录，可以点「✅ 校验目录并进入」",
-      "input": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/feicui",
+      "input": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/fx/feicui",
       "root_pill": "📁 —",
       "dir_user": "ji（管理员）",
       "ensure_pulse": true,
@@ -565,7 +654,7 @@
     "09_entered_main_fixture": {
       "view_dir": false,
       "view_main": true,
-      "path": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/feicui",
+      "path": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/fx/feicui",
       "entries": [
         "1_Original_PDF",
         "2_HighRes_PDF",
@@ -585,8 +674,8 @@
       ],
       "cands_label": "1",
       "msg": "目录校验通过",
-      "input": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/feicui",
-      "root_pill": "📁 /private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/feicui",
+      "input": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/fx/feicui",
+      "root_pill": "📁 /private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-i9mn8cc1/fx/feicui",
       "dir_user": "ji（管理员）",
       "ensure_pulse": true,
       "buttons": [
@@ -684,8 +773,8 @@
     "browse_legacy_ok": true,
     "find": {
       "count": 1,
-      "scanned_dirs": 600,
-      "elapsed_s": 0.065,
+      "scanned_dirs": 619,
+      "elapsed_s": 0.056,
       "truncated": false,
       "roots": [
         "/Users/kevin/Downloads",
@@ -706,7 +795,11 @@
       ]
     },
     "env_after": "FEICUI_ROOT=/Users/kevin/Downloads/金石印源同步空间/feicui",
-    "session_after": "{\"username\": \"ji\", \"expire\": \"2026-10-29T10:18:43.083563\", \"feicui_root\": \"/Users/kevin/Downloads/金石印源同步空间/feicui\"}"
+    "session_after": "{\"username\": \"ji\", \"expire\": \"2026-10-29T11:52:35.803111\", \"feicui_root\": \"/Users/kevin/Downloads/金石印源同步空间/feicui\"}",
+    "browse_reasons": {
+      "plain_file": "not_dir",
+      "no_such_dir": "not_exist"
+    }
   },
   "js_errors": [],
   "probe_error": null

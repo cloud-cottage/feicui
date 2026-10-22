@@ -7,7 +7,7 @@
   'use strict';
 
   var ST = {                     // 页面状态（单页应用的手写小 store）
-    user: null, root: '', navPath: '',
+    user: null, root: '', navPath: '', staleRoot: '',   // staleRoot＝已失效的上次目录（P5 横幅）
     yy: { connected: false, prefix: '', label: '' },   // yinyuan 连接态（**只有 prefix**）
     tab1: { rows: [], items: [], selected: null, options: [], pv: { pdf: '', page: 1, total: 0 } },
     tab2: {
@@ -104,48 +104,226 @@
   function afterAuth() {
     $('dir-user').textContent = ST.user.username + (ST.user.is_admin ? '（管理员）' : '');
     $('user-pill').textContent = '👤 ' + ST.user.username + (ST.user.is_admin ? ' · 管理员' : '');
-    if (ST.user.feicui_root) { show('view-main'); enterMain(); } else { show('view-dir'); browseHome(); }
+    // 登录后再问一次会话：**带上 root 是否仍然存在**（旧版只凭字符串就进主界面 ⇒ 空列表）
+    call('session_state').then(function (r) {
+      if (r && r.ok && r.logged_in) { applySessionState(r); return; }
+      if (ST.user && ST.user.feicui_root) { ST.root = ST.user.feicui_root; show('view-main'); enterMain(); }
+      else { show('view-dir'); browseHome(); }
+    }).catch(function () {
+      if (ST.user && ST.user.feicui_root) { ST.root = ST.user.feicui_root; show('view-main'); enterMain(); }
+      else { show('view-dir'); browseHome(); }
+    });
+  }
+
+  //: 会话落地：**root 存在**才进主界面；否则停在目录页并明确说明「上次的目录已不存在」（P5）
+  function applySessionState(r) {
+    ST.user = { username: r.username, is_admin: r.is_admin, feicui_root: r.feicui_root };
+    $('dir-user').textContent = r.username + (r.is_admin ? '（管理员）' : '');
+    $('user-pill').textContent = '👤 ' + r.username + (r.is_admin ? ' · 管理员' : '');
+    if (r.feicui_root && r.feicui_root_exists !== false) {
+      ST.root = r.feicui_root; show('view-main'); enterMain(); return;
+    }
+    show('view-dir');
+    browseHome();                                   // P1：目录页起点＝家目录
+    if (r.feicui_root && r.feicui_root_exists === false) {
+      setHint('stale_session', '上次使用的目录已不存在：' + r.feicui_root, 'warn');
+    }
+    checkEnvRoot(r);
+  }
+
+  //: `.env` 里 FEICUI_ROOT 的现状（P5）：失效必须**显式提示 + 自动找一次**，不许静默空列表
+  function checkEnvRoot(r) {
+    var env = (r && r.env_root) || '';
+    if (!env) { return; }
+    if (r.env_root_exists === false) {
+      ST.staleRoot = env;                 // 失效横幅要**一直挂着**（自动发现的结果只作补充，不许顶掉它）
+      setHint('stale_root', '上次的目录已不存在：' + env
+        + '（同步盘可能未挂载、或目录已改名/删除）。正在自动查找本机可用的 feicui 目录…', 'warn');
+      discoverDirs();
+    } else if (r.env_root_verified === false) {
+      setHint('env_bad', '上次的目录还在但不合规：' + env + ' —— ' + (r.env_root_msg || ''), 'warn');
+      var el = $('dir-input'); if (el && !el.value.trim()) { el.value = env; }
+    } else {
+      setHint('env_ok', '上次的目录仍可用：' + env + '（点「✅ 校验目录并进入」可直接进入）', 'ok');
+      var el2 = $('dir-input'); if (el2 && !el2.value.trim()) { el2.value = env; }
+    }
   }
 
   // ───────────── 目录选择 / 校验 ─────────────
-  function browse(path, silent) {
-    call('browse', { path: path || '' }).then(function (r) {
-      if (!r || !r.ok) { if (!silent) setMsg('dir-msg', (r && r.msg) || '浏览失败', 'err'); return; }
-      ST.navPath = r.path;
-      $('dir-path').textContent = r.path;
+  //: 空目录的成因（后端 browse.reason）⇒ 各自的**可操作**提示（P2：提示要在列表区里，
+  //: 不能只塞进一行小 msg，否则使用者不知道是「没挂载」还是「没授权」）
+  var EMPTY_HINT = {
+    empty: ['此目录下没有任何子目录。',
+            '如果这里本该有同步盘：请确认同步客户端已启动并登录（坚果云 / 百度网盘 / iCloud 等）。',
+            '也可以点「🔍 自动发现 feicui 目录」，或在输入框直接粘贴路径。'],
+    all_hidden: ['此目录只有隐藏目录（以 . 开头），没有可选子目录。',
+                 '请点「⬆️ 上一级」，或在输入框直接粘贴 feicui 目录的完整路径。',
+                 '也可以点「🔍 自动发现 feicui 目录」自动找一次。'],
+    permission: ['macOS 未授权本应用访问这个文件夹。',
+                 '请到「系统设置 → 隐私与安全性 → 文件与文件夹」给「斐萃」勾选该文件夹后重试。'],
+    not_exist: ['这个路径不存在（同步盘可能未挂载，或目录已改名/删除）。',
+                '请确认同步盘已登录挂载；或点「🔍 自动发现 feicui 目录」。'],
+    error: ['无法读取这个目录。']
+  };
+
+  function setHint(kind, text, cls) {
+    var box = $('dir-hint');
+    if (!box) { return; }
+    box.dataset.kind = kind || '';
+    box.className = 'dir-hint' + (cls ? ' ' + cls : '');
+    box.textContent = text || '';
+    box.hidden = !text;
+  }
+
+  function renderDirEmpty(box, reason, extra) {
+    var lines = (EMPTY_HINT[reason] || EMPTY_HINT.error).slice();
+    var li = document.createElement('li');
+    li.className = 'empty-state';
+    li.dataset.reason = reason || 'empty';
+    var html = '<b>' + esc(lines.shift()) + '</b>';
+    if (extra) { html += '<div class="muted">' + esc(extra) + '</div>'; }
+    lines.forEach(function (s) { html += '<div class="muted">' + esc(s) + '</div>'; });
+    li.innerHTML = html;
+    box.appendChild(li);
+  }
+
+  function browse(path, silent, opts) {
+    opts = opts || {};
+    var payload = opts.home ? { home: true } : { path: path || '' };
+    return call('browse', payload).then(function (r) {
       var box = $('dir-entries');
       box.innerHTML = '';
+      if (!r || !r.ok) {
+        var reason = (r && r.reason) || 'error';
+        if (r && r.path) { $('dir-path').textContent = r.path; }
+        box.dataset.reason = reason;
+        renderDirEmpty(box, reason, r && r.msg);
+        if (!silent) { setMsg('dir-msg', (r && r.msg) || '浏览失败', 'err'); }
+        return r;
+      }
+      ST.navPath = r.path;
+      $('dir-path').textContent = r.path;
+      box.dataset.reason = r.reason || '';
       r.entries.forEach(function (name) {
         var li = document.createElement('li');
         li.textContent = '📁 ' + name;
+        li.dataset.name = name;
         li.addEventListener('click', function () { browse(r.path + '/' + name, false); });
         box.appendChild(li);
       });
-      if (!r.entries.length) { box.innerHTML = '<li class="muted">（无子目录）</li>'; }
-      if (r.is_feicui) { setMsg('dir-msg', '这是 feicui 目录，可以校验并进入', 'ok'); }
+      if (!r.entries.length) { renderDirEmpty(box, r.reason || 'empty'); }
+      if (r.is_feicui) { setMsg('dir-msg', '这是 feicui 目录，可以点「✅ 校验目录并进入」', 'ok'); }
       else { setMsg('dir-msg', ''); }
+      return r;
     });
   }
-  function browseHome() { browse(''); }
+  function browseHome() { return browse('', false, { home: true }); }   // P1：真回家
+
   function browseUp() {
     call('browse', { path: ST.navPath || '' }).then(function (r) {
-      if (r && r.ok) browse(r.parent, true);
+      if (r && r.ok) { browse(r.parent, true); } else { browseHome(); }
     });
   }
-  function verifyDir() {
-    call('verify_dir', { path: ST.navPath }).then(function (r) {
-      if (!r || !r.ok) { setMsg('dir-msg', (r && r.msg) || '校验失败', 'err'); return; }
-      ST.root = r.feicui_root; ST.user.feicui_root = ST.root;
+
+  function typedPath() { var el = $('dir-input'); return el ? el.value.trim() : ''; }
+
+  function verifyDir(target) {
+    var path = target || typedPath() || ST.navPath;    // P3：优先用输入框里的路径
+    if (!path) { setMsg('dir-msg', '请先选择目录，或在输入框粘贴路径', 'err'); return; }
+    call('verify_dir', { path: path }).then(function (r) {
+      if (!r || !r.ok) {
+        var raw = (r && (r.raw_msg || r.msg)) || '校验失败';       // P6：原始 msg 原样显示
+        setMsg('dir-msg', raw, 'err');
+        if (r && r.need_subdirs) {
+          setHint('need_subdirs', '目录结构不合规（原文见右栏）。可直接点上面的「🛠 创建标准子目录」，在 '
+            + (r.path || path) + ' 下补齐 1_Original_PDF / 2_HighRes_PDF / 3_Cropped_Tiff，再回来校验。', 'warn');
+          var b = $('btn-ensure');
+          if (b) { b.classList.add('pulse'); setTimeout(function () { b.classList.remove('pulse'); }, 4000); }
+        } else if (r && r.exists === false) {
+          setHint('not_exist', '路径不存在：' + (r.path || path) + '（同步盘可能未挂载）。'
+            + '可点「🔍 自动发现 feicui 目录」。', 'warn');
+        } else {
+          setHint('verify_failed', '校验未通过：' + raw, 'warn');
+        }
+        return;
+      }
+      ST.root = r.feicui_root; ST.user.feicui_root = ST.root; ST.navPath = ST.root;
+      ST.staleRoot = '';                             // 进了有效目录 ⇒ 失效横幅使命完成
+      var inp = $('dir-input'); if (inp) { inp.value = ST.root; }
+      setHint('', '');
       setMsg('dir-msg', r.msg, 'ok');
       show('view-main'); enterMain();
     });
   }
-  function ensureSubdirs() {
-    call('ensure_subdirs', { path: ST.navPath }).then(function (r) {
-      setMsg('dir-msg', (r && r.msg) || '', r && r.ok ? 'ok' : 'err');
+
+  //: 输入框路径 ⇒ 进入（若是 feicui 目录，顺手校验并进入）
+  function gotoPath() {
+    var p = typedPath();
+    if (!p) { setMsg('dir-msg', '请输入或粘贴一个路径（支持 ~ 与绝对路径）', 'err'); return; }
+    browse(p, false).then(function (r) {
+      if (r && r.ok && r.is_feicui) { verifyDir(p); }
     });
   }
-  function changeDir() { show('view-dir'); browse(ST.root || ''); }
+
+  //: P4 自动发现：列出本机所有通过校验的 feicui 目录，点一下即进入
+  function discoverDirs() {
+    setHint('discovering', '正在扫描本机目录（家目录 / Downloads / Documents / Desktop / 云盘 / 外置卷，深度 4）…', '');
+    setMsg('dir-msg', '正在自动发现…');
+    return call('find_feicui_dirs', {}).then(function (r) {
+      var box = $('dir-cands'), list = $('dir-cand-list');
+      if (!r || !r.ok) { setMsg('dir-msg', (r && r.msg) || '自动发现失败', 'err'); return r; }
+      ST.discover = r;
+      list.innerHTML = '';
+      if ($('dir-cands-count')) { $('dir-cands-count').textContent = String(r.count || 0); }
+      // 失效横幅不许被自动发现的结果顶掉（P5）：结果只作**追加**说明
+      var staleHead = ST.staleRoot ? ('上次的目录已不存在：' + ST.staleRoot + ' —— ') : '';
+      var staleKind = ST.staleRoot ? 'stale_root' : '';
+      if (!r.candidates.length) {
+        box.hidden = true;
+        setHint(staleKind || 'discover_none', staleHead + '没找到通过校验的 feicui 目录（扫了 ' + r.scanned_dirs
+          + ' 个目录，用时 ' + r.elapsed_s + 's）。请确认同步盘已挂载并登录，或在输入框直接粘贴路径。',
+          ST.staleRoot ? 'warn' : 'warn');
+        setMsg('dir-msg', '');
+        return r;
+      }
+      r.candidates.forEach(function (c) {
+        var li = document.createElement('li');
+        li.dataset.path = c.path;
+        li.innerHTML = '📁 ' + esc(c.path) + ' <span class="muted">· 修改于 ' + esc(c.mtime_iso || '未知') + '</span>';
+        li.title = c.path;
+        li.addEventListener('click', function () { pickCandidate(c.path); });
+        list.appendChild(li);
+      });
+      box.hidden = false;
+      setHint(staleKind || 'discover_ok', staleHead + '发现 ' + r.count + ' 个通过校验的 feicui 目录（扫 '
+        + r.scanned_dirs + ' 个目录 / ' + r.elapsed_s + 's）⇒ 点下面候选即校验并进入',
+        ST.staleRoot ? 'warn' : 'ok');
+      setMsg('dir-msg', '');
+      return r;
+    });
+  }
+
+  function pickCandidate(path) {
+    var el = $('dir-input'); if (el) { el.value = path; }
+    browse(path, true).then(function () { verifyDir(path); });
+  }
+
+  function ensureSubdirs() {
+    var path = typedPath() || ST.navPath;
+    call('ensure_subdirs', { path: path }).then(function (r) {
+      setMsg('dir-msg', (r && r.msg) || '', r && r.ok ? 'ok' : 'err');
+      if (r && r.ok) {
+        browse(path, true).then(function () {
+          setHint('need_subdirs', '标准子目录已创建 ⇒ 现在可以点「✅ 校验目录并进入」。', 'ok');
+        });
+      }
+    });
+  }
+  function changeDir() {
+    show('view-dir');
+    setHint('', '');
+    browse(ST.root || '', false).then(function (r) { if (!r || !r.ok) { browseHome(); } });
+  }
 
   // ───────────── 主界面 ─────────────
   function enterMain() {
@@ -2255,8 +2433,13 @@
     bindLogin(); bindTabs(); bindYinyuan();
     $('btn-home').addEventListener('click', browseHome);
     $('btn-up').addEventListener('click', browseUp);
-    $('btn-verify').addEventListener('click', verifyDir);
+    $('btn-verify').addEventListener('click', function () { verifyDir(); });
     $('btn-ensure').addEventListener('click', ensureSubdirs);
+    $('btn-discover').addEventListener('click', discoverDirs);
+    $('btn-goto').addEventListener('click', gotoPath);
+    $('dir-input').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') { e.preventDefault(); gotoPath(); }
+    });
     $('btn-tab1-rescan').addEventListener('click', function () { loadTab1($('tab1-force').checked); });
     $('btn-tab1-save').addEventListener('click', saveTab1);
     // tab1 · ⚡ 一键高清化（三档 dpi / 页区间 / 开始 / 取消 / 去 tab2）
@@ -2325,11 +2508,8 @@
       if (!hasBridge()) { if (t > 40) { clearInterval(iv); setModeLabel(false); } return; }
       clearInterval(iv); setModeLabel(true);
       call('session_state').then(function (r) {
-        if (r && r.logged_in) {
-          ST.user = { username: r.username, is_admin: r.is_admin, feicui_root: r.feicui_root };
-          if (r.feicui_root) { ST.root = r.feicui_root; show('view-main'); enterMain(); }
-          else { show('view-dir'); browseHome(); }
-        } else { show('view-login'); }
+        if (r && r.logged_in) { applySessionState(r); return; }
+        show('view-login');
       });
     }, 250);
   }

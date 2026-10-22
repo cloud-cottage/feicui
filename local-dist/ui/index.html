@@ -55,15 +55,27 @@
       <button id="btn-home" class="btn" data-action="browse-home">🏠 家目录</button>
       <button id="btn-up" class="btn" data-action="browse-up">⬆️ 上一级</button>
       <button id="btn-ensure" class="btn" data-action="ensure-subdirs">🛠 创建标准子目录</button>
+      <button id="btn-discover" class="btn" data-action="discover">🔍 自动发现 feicui 目录</button>
+    </div>
+    <!-- 直接输入 / 粘贴路径（支持 ~ 与绝对路径；「校验目录并进入」优先用它） -->
+    <div class="path-input-row">
+      <input id="dir-input" class="path-input" type="text" spellcheck="false" autocomplete="off"
+        placeholder="直接输入或粘贴路径，支持 ~ 与绝对路径（例：~/Downloads/金石印源同步空间/feicui）">
+      <button id="btn-goto" class="btn" data-action="goto-path">↵ 进入该路径</button>
     </div>
     <div class="path-line">当前位置：<code id="dir-path">—</code></div>
+    <div id="dir-hint" class="dir-hint" data-kind="" hidden></div>
     <div class="two-col">
-      <ul id="dir-entries" class="list scroll"></ul>
+      <ul id="dir-entries" class="list scroll" data-reason=""></ul>
       <div class="hint-col">
         <p class="muted">逐级进入，直到目录名为 <code>feicui</code>，再点「校验目录并进入」。</p>
         <button id="btn-verify" class="btn primary block" data-action="verify">✅ 校验目录并进入</button>
         <div id="dir-msg" class="msg"></div>
       </div>
+    </div>
+    <div id="dir-cands" class="cands" hidden>
+      <div class="cands-head">自动发现候选 · 点击即校验并进入（<span id="dir-cands-count">0</span>）</div>
+      <ul id="dir-cand-list" class="list scroll"></ul>
     </div>
     <hr>
     <div class="row">

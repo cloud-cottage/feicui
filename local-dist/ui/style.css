@@ -124,6 +124,28 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent-line
 .list li:hover { background: var(--accent-soft); }
 .list li.active { background: var(--accent-soft-2); font-weight: 600; }
 
+/* ── 目录初始化页：粘贴路径 / 空目录成因 / 自动发现候选 ── */
+.path-input-row { display: flex; gap: 8px; margin-top: 10px; align-items: center; }
+.path-input { flex: 1; min-width: 0; font: inherit; font-size: 13px; padding: 6px 10px;
+  border: 1px solid var(--line); border-radius: 8px; background: #fff; color: inherit; }
+.path-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
+.dir-hint { margin-top: 10px; padding: 8px 10px; border-radius: 8px; font-size: 12px; line-height: 1.55;
+  background: var(--accent-wash); border: 1px solid var(--line); color: var(--text); }
+.dir-hint.warn { background: #fff7e6; border-color: #ffd591; color: #8a5300; }
+.dir-hint.ok { background: #f0fbf3; border-color: #b7e1c1; color: #1a7f37; }
+.dir-hint.err { background: #fff1f0; border-color: #ffc9c4; color: var(--err); }
+.list li.empty-state { cursor: default; background: #fff; border: 1px dashed var(--line);
+  border-radius: 8px; padding: 10px 12px; line-height: 1.6; }
+.list li.empty-state:hover { background: #fff; }
+.list li.empty-state b { display: block; margin-bottom: 4px; }
+.list li.empty-state .muted { display: block; margin-top: 3px; }
+.btn.pulse { box-shadow: 0 0 0 3px var(--accent-soft-2); animation: pulse 1.1s ease-in-out 3; }
+@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+.cands { margin-top: 12px; border: 1px solid var(--line); border-radius: 10px; padding: 10px; background: #fff; }
+.cands-head { font-size: 12px; font-weight: 600; margin-bottom: 6px; }
+.cands ul { max-height: 22vh; }
+.cands li { font-size: 12px; }
+
 .grid { width: 100%; border-collapse: collapse; font-size: 12px; }
 .grid th, .grid td { border-bottom: 1px solid var(--line); padding: 5px 6px; text-align: left; white-space: nowrap; }
 .grid th { position: sticky; top: 0; background: #fafafa; font-weight: 600; z-index: 1; }

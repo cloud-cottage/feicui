@@ -758,13 +758,36 @@ class FeicuiApi:
         }
 
     # ---------------- 登录 / 会话（口令仅在后端） ----------------
+    def _env_root_info(self) -> dict:
+        """`.env` 里上次记住的 `FEICUI_ROOT` 现状（启动提示用，P5）。
+
+        为什么单独抽出来：UI 启动时要能**明确告知**「上次的目录已不存在」，
+        而旧版只把它塞进 `app_info.feicui_root_env`（纯字符串，前端无法判断真假）。
+        """
+        raw = str(_load_env().get("FEICUI_ROOT", "")).strip()
+        if not raw:
+            return {"env_root": "", "env_root_exists": False, "env_root_verified": False,
+                    "env_root_msg": ""}
+        p = Path(raw).expanduser()
+        exists = p.is_dir()
+        ok, msg = (False, "目录不存在") if not exists else lib.verify_feicui_dir(p)
+        return {"env_root": str(p), "env_root_exists": bool(exists),
+                "env_root_verified": bool(ok), "env_root_msg": msg}
+
     def session_state(self, _req: dict | None = None) -> dict:
         name, is_admin, root = self._load_session()
         if name:
             self._nav_root = root or self._nav_root
-        return {"ok": True, "logged_in": bool(name), "username": name or "",
-                "is_admin": bool(is_admin), "feicui_root": root or self._root or "",
-                "dir_verified": bool(root and self._root == root)}
+        session_root = root or self._root or ""
+        # 会话里的 root 也可能已失效（同步盘卸载/改名）⇒ 一并暴露，前端不得静默进空列表
+        root_exists = bool(session_root) and Path(session_root).expanduser().is_dir()
+        out = {"ok": True, "logged_in": bool(name), "username": name or "",
+               "is_admin": bool(is_admin), "feicui_root": session_root,
+               "dir_verified": bool(root and self._root == root),
+               "feicui_root_exists": root_exists,
+               "home": str(Path.home())}
+        out.update(self._env_root_info())
+        return out
 
     def login(self, req: dict | None = None) -> dict:
         req = req or {}
@@ -818,24 +841,168 @@ class FeicuiApi:
             return None, False, ""
 
     # ---------------- 目录选择 / 校验 ----------------
+    #: 目录“看起来是空的”有三种成因（P2）——前端必须能分辨并给可操作提示，
+    #: 否则使用者只会看到一行「（无子目录）」而不知道该去挂载同步盘还是去授权。
+    BROWSE_EMPTY_REASONS = ("empty", "all_hidden", "permission", "not_exist")
+
     def browse(self, req: dict | None = None) -> dict:
-        """列目录（默认起点＝家目录；`path` 给绝对路径则列它）。只列子目录 + 常用候选。"""
+        """列目录。
+
+        * `{"home": true}` ⇒ **家目录**（P1：修复「🏠 家目录」其实只是刷新当前目录）；
+        * `{"path": "~/x"}` / 绝对路径 ⇒ 列它（`expanduser`，支持 `~`）；
+        * 无 `path`（且无 `home`）⇒ 旧语义＝上次浏览过的路径（**向后兼容**，不动老调用方）。
+        """
         req = req or {}
         raw = str(req.get("path", "")).strip()
+        want_home = bool(req.get("home"))
+        home = str(Path.home())
+        path = Path(raw or self._nav_root)
         try:
-            path = Path(raw).expanduser().resolve() if raw else Path(self._nav_root)
+            if want_home:
+                path = Path(home)
+            elif raw:
+                path = Path(raw).expanduser()
+            else:
+                path = Path(self._nav_root)
+            path = path.resolve()
             if not path.is_dir():
-                return {"ok": False, "msg": f"不是目录：{path}"}
-            entries = sorted([e.name for e in path.iterdir()
-                              if e.is_dir() and not e.name.startswith(".")])
+                return {"ok": False, "reason": "not_exist", "path": str(path), "entries": [],
+                        "parent": str(path.parent), "home": home, "exists": False,
+                        "msg": f"目录不存在：{path}"}
+            all_dirs = [e.name for e in path.iterdir() if e.is_dir()]
+            entries = sorted(n for n in all_dirs if not n.startswith("."))
+            hidden = sorted(n for n in all_dirs if n.startswith("."))
+            reason = "" if entries else ("all_hidden" if hidden else "empty")
             self._nav_root = str(path)
             return {"ok": True, "path": str(path), "parent": str(path.parent),
                     "entries": entries, "is_feicui": path.name == lib.FEICUI_NAME,
-                    "home": str(Path.home())}
+                    "home": home, "reason": reason,
+                    "hidden_count": len(hidden), "dir_count": len(all_dirs),
+                    "is_home": str(path) == home}
         except PermissionError:
-            return {"ok": False, "msg": "无权限访问该目录", "path": raw}
+            return {"ok": False, "reason": "permission", "path": str(path), "entries": [],
+                    "parent": str(path.parent), "home": home, "need_auth": True,
+                    "msg": f"无权限访问该目录：{path}"
+                           "（macOS 需在「系统设置 → 隐私与安全性 → 文件与文件夹」授权）"}
         except Exception as exc:
-            return {"ok": False, "msg": f"{exc.__class__.__name__}: {exc}"}
+            return {"ok": False, "reason": "error", "entries": [], "path": raw,
+                    "msg": f"{exc.__class__.__name__}: {exc}"}
+
+    #: 自动发现时**不进入**的目录名：性能（node_modules/venv）+ 语义（这些子树里
+    #: 不可能有使用者要的「斐萃同步目录」，进了只会拖长时间）
+    FIND_SKIP = frozenset({
+        "node_modules", "__pycache__", ".git", ".svn", ".hg", "venv", ".venv", "env",
+        "site-packages", "dist-packages", "Library", "Applications", "System",
+        ".Trash", ".cache", ".npm", ".local", "Caches", "Containers", "Group Containers",
+        "python3.9", "python3.10", "python3.11", "python3.12", "python3.13",
+    })
+
+    def _find_roots(self) -> list[str]:
+        home = Path.home()
+        roots = [str(home / n) for n in ("Downloads", "Documents", "Desktop")]
+        roots.append(str(home / "Library" / "CloudStorage"))
+        roots.append("/Volumes")
+        roots.append(str(home))
+        return roots
+
+    def find_feicui_dirs(self, req: dict | None = None) -> dict:
+        """自动发现本机所有**通过校验**的 `feicui` 目录（P4）。
+
+        扫 `~`、`~/Downloads`、`~/Documents`、`~/Desktop`、`~/Library/CloudStorage/*`、
+        `/Volumes/*`，深度 ≤ `max_depth`（默认 4）；跳过 `FIND_SKIP` 与隐藏目录，
+        符号链接**按 realpath 去重**防回环。返回 candidates（按 mtime 倒序）+ 扫描读数。
+        """
+        req = req or {}
+        max_depth = int(req.get("max_depth") or 4)
+        timeout_s = float(req.get("timeout_s") or 8.0)
+        roots = [str(r) for r in (req.get("roots") or self._find_roots())]
+        # 展开通配（`/Volumes/*`、`~/Library/CloudStorage/*` 这类带 * 的根）
+        expanded: list[str] = []
+        for r in roots:
+            rp = Path(r).expanduser()
+            if any(ch in str(rp) for ch in "*?["):
+                expanded.extend(sorted(str(p) for p in Path(rp.anchor or "/").glob(str(rp.relative_to(rp.anchor)))))
+            else:
+                expanded.append(str(rp))
+        roots = expanded
+        t0 = time.time()
+        deadline = t0 + timeout_s
+        visited: set[str] = set()
+        candidates: list[dict] = []
+        seen: set[str] = set()
+        skipped: list[dict] = []
+        scanned = 0
+        truncated = False
+        for root in roots:
+            if time.time() > deadline:
+                truncated = True
+                break
+            rp = Path(root)
+            if not rp.is_dir():
+                continue
+            stack: list[tuple[Path, int]] = [(rp, 0)]
+            while stack:
+                cur, dep = stack.pop()
+                if time.time() > deadline:
+                    truncated = True
+                    break
+                try:
+                    key = str(cur.resolve())
+                except OSError:
+                    continue
+                if key in visited:          # 符号链接回环 / 重复根 ⇒ 不重复走
+                    continue
+                visited.add(key)
+                scanned += 1
+                try:
+                    with os.scandir(cur) as it:
+                        items = list(it)
+                except (PermissionError, OSError) as exc:
+                    skipped.append({"path": str(cur), "why": exc.__class__.__name__})
+                    continue
+                for e in items:
+                    try:
+                        if not e.is_dir():
+                            continue
+                    except OSError:
+                        continue
+                    nm = e.name
+                    if nm.startswith(".") or nm in self.FIND_SKIP:
+                        continue
+                    child = Path(e.path)
+                    if nm == lib.FEICUI_NAME:
+                        try:
+                            rpath = str(child.resolve())
+                        except OSError:
+                            continue
+                        if rpath in seen:
+                            continue
+                        ok, msg = lib.verify_feicui_dir(child)
+                        if ok:
+                            seen.add(rpath)
+                            try:
+                                mt = child.stat().st_mtime
+                            except OSError:
+                                mt = 0.0
+                            candidates.append({
+                                "path": rpath, "name": nm, "verified": True, "msg": msg,
+                                "mtime": mt,
+                                "mtime_iso": datetime.fromtimestamp(mt).isoformat(timespec="seconds")
+                                if mt else "",
+                            })
+                        elif bool(req.get("include_bad")):
+                            seen.add(rpath)
+                            candidates.append({"path": rpath, "name": nm, "verified": False,
+                                               "msg": msg, "mtime": 0.0, "mtime_iso": ""})
+                        continue               # feicui 的子目录里不会有 feicui，不再下钻
+                    if dep + 1 <= max_depth:
+                        stack.append((child, dep + 1))
+        candidates.sort(key=lambda c: (-float(c.get("mtime") or 0), c["path"]))
+        return {"ok": True, "roots": roots, "max_depth": max_depth,
+                "candidates": candidates, "count": len(candidates),
+                "scanned_dirs": scanned, "elapsed_s": round(time.time() - t0, 3),
+                "timeout_s": timeout_s, "truncated": truncated,
+                "skipped_count": len(skipped), "skipped": skipped[:10]}
 
     def verify_dir(self, req: dict | None = None) -> dict:
         """校验并（通过后）记住 feicui 根：`src/pdf_library.verify_feicui_dir` 逐字复用。"""
@@ -843,9 +1010,15 @@ class FeicuiApi:
         path = str(req.get("path", "")).strip()
         if not path:
             return {"ok": False, "msg": "未指定目录"}
-        ok, msg = lib.verify_feicui_dir(Path(path).expanduser())
+        target = Path(path).expanduser()
+        ok, msg = lib.verify_feicui_dir(target)
         if not ok:
-            return {"ok": False, "msg": msg, "path": path}
+            # P6：把 verify 的**原始 msg** 原样带回（前端要显示原文，不许改写/吞咽），
+            # 并标出「缺标准子目录 / 根目录有文件」⇒ 前端引导到「🛠 创建标准子目录」
+            missing = bool(target.is_dir() and target.name == lib.FEICUI_NAME
+                           and ("必须恰好包含" in msg or "不能包含文件" in msg))
+            return {"ok": False, "msg": msg, "path": str(target), "raw_msg": msg,
+                    "need_subdirs": missing, "exists": target.is_dir()}
         name, _, _ = self._load_session()          # 先取登录名（_load_session 会顺带套用旧 root）
         self._root = str(Path(path).expanduser().resolve())   # 再钉新 root（顺序不可颠倒）
         self._nav_root = self._root

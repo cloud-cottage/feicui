@@ -1,0 +1,713 @@
+{
+  "schema": "feicui.webui.domtest.dir.v1",
+  "at": "2026-10-22T10:18:45",
+  "python": "/Users/kevin/bistro/feicui/venv/bin/python",
+  "window_title": "「斐萃」玺印解析任务台 · 本地封装分发版 · Pro",
+  "counts": {
+    "PASS": 18,
+    "FAIL": 0
+  },
+  "info": {
+    "scratch": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon",
+    "data_dir": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/data",
+    "fixtures": {
+      "root": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx",
+      "empty_dir": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/empty_dir",
+      "hidden_dir": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/hidden_dir",
+      "perm_dir": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/perm_dir",
+      "feicui_nosub": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/feicui"
+    },
+    "real": "/Users/kevin/Downloads/金石印源同步空间/feicui",
+    "stale": "/Users/kevin/Downloads/同步空间/feicui",
+    "shell_dir": "/Users/kevin/Downloads/同步空间",
+    "admin": "ji",
+    "env_file": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/data/.env",
+    "real_verify": [
+      true,
+      "目录校验通过"
+    ],
+    "shell_verify": [
+      false,
+      "目录名称必须是 `feicui`，当前为 `同步空间`"
+    ],
+    "home_entries": [
+      "Applications",
+      "Assets",
+      "Backup",
+      "Coze",
+      "Desktop",
+      "Documents",
+      "Doubao",
+      "Downloads",
+      "EsLog",
+      "Google Drive",
+      "Library",
+      "Movies",
+      "Music",
+      "My Drive",
+      "Pictures",
+      "Public",
+      "bistro",
+      "cloudbase-framework",
+      "countyard",
+      "hermes-backups",
+      "jiazu-backups",
+      "repos"
+    ]
+  },
+  "checks": [
+    {
+      "check": "dom/P5_boot_shows_stale_root_notice_and_stays_on_dir_page",
+      "status": "PASS",
+      "detail": "view_dir=True view_main=False hint_kind='stale_root' 提示原文='上次的目录已不存在：/Users/kevin/Downloads/同步空间/feicui —— 发现 1 个通过校验的 feicui 目录（扫 600 个目录 / 0.124s）⇒ 点下面候选即校验并进入'"
+    },
+    {
+      "check": "dom/boot_dir_page_starts_at_home",
+      "status": "PASS",
+      "detail": "#dir-path='/Users/kevin'（启动即家目录，不再是「上次浏览过的路径」）"
+    },
+    {
+      "check": "dom/buttons_present",
+      "status": "PASS",
+      "detail": "控件=['btn-home:true', 'btn-up:true', 'btn-ensure:true', 'btn-discover:true', 'btn-goto:true', 'btn-verify:true', 'dir-input:true']"
+    },
+    {
+      "check": "dom/P5_boot_autorun_discovery_lists_candidates",
+      "status": "PASS",
+      "detail": "候选=['/Users/kevin/Downloads/金石印源同步空间/feicui'] 计数=1 隐藏=False 提示=(stale_root) '上次的目录已不存在：/Users/kevin/Downloads/同步空间/feicui —— 发现 1 个通过校验的 feicui 目录（扫 600 个目录 / 0.124s）⇒ 点下面候选即校验并进入'"
+    },
+    {
+      "check": "dom/P4_discovery_finds_real_feicui_dir",
+      "status": "PASS",
+      "detail": "候选里含 /Users/kevin/Downloads/金石印源同步空间/feicui ⇒ True；全部候选=['/Users/kevin/Downloads/金石印源同步空间/feicui']"
+    },
+    {
+      "check": "dom/P3_paste_path_enter_navigates",
+      "status": "PASS",
+      "detail": "#dir-path='/Users/kevin/Downloads' 条目数=10 （输入框+回车进入，path='/Users/kevin/Downloads'）"
+    },
+    {
+      "check": "dom/P1_home_button_goes_home",
+      "status": "PASS",
+      "detail": "点「🏠 家目录」后 #dir-path='/Users/kevin'（期望 /Users/kevin） 条目 22 项，与后端 browse(home) 22 项一致=True"
+    },
+    {
+      "check": "dom/P2_empty_shell_dir_reason_in_list_area",
+      "status": "PASS",
+      "detail": "reason='all_hidden' 列表区提示='此目录只有隐藏目录（以 . 开头），没有可选子目录。\\n请点「⬆️ 上一级」，或在输入框直接粘贴 feicui 目录的完整路径。\\n也可以点「🔍 自动发现 feicui 目录」自动找一次。\\n' （已不再是干瘪的「（无子目录）」）"
+    },
+    {
+      "check": "dom/P2_reason_empty_dir",
+      "status": "PASS",
+      "detail": "reason='empty'（期望 empty）列表区提示='此目录下没有任何子目录。\\n如果这里本该有同步盘：请确认同步客户端已启动并登录（坚果云 / 百度网盘 / iCloud 等）。\\n也可以点「🔍 自动发现 feicui 目录」，或在输入框直接粘贴路径。\\n'"
+    },
+    {
+      "check": "dom/P2_reason_hidden_dir",
+      "status": "PASS",
+      "detail": "reason='all_hidden'（期望 all_hidden）列表区提示='此目录只有隐藏目录（以 . 开头），没有可选子目录。\\n请点「⬆️ 上一级」，或在输入框直接粘贴 feicui 目录的完整路径。\\n也可以点「🔍 自动发现 feicui 目录」自动找一次。\\n'"
+    },
+    {
+      "check": "dom/P2_reason_perm_dir",
+      "status": "PASS",
+      "detail": "reason='permission'（期望 permission）列表区提示='macOS 未授权本应用访问这个文件夹。\\n无权限访问该目录：/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49c'"
+    },
+    {
+      "check": "dom/P6_verify_failure_shows_raw_msg_and_guides_ensure",
+      "status": "PASS",
+      "detail": "#dir-msg 原文=\"feicui 根目录必须恰好包含：['1_Original_PDF', '2_HighRes_PDF', '3_Cropped_Tiff']，当前为：[]\" hint_kind='need_subdirs' 引导='目录结构不合规（原文见右栏）。可直接点上面的「🛠 创建标准子目录」，在 /var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckc' 按钮高亮=True"
+    },
+    {
+      "check": "dom/P6_ensure_subdirs_then_verify_enters_main",
+      "status": "PASS",
+      "detail": "建完子目录后列表=['1_Original_PDF', '2_HighRes_PDF', '3_Cropped_Tiff'] msg='这是 feicui 目录，可以点「✅ 校验目录并进入」'"
+    },
+    {
+      "check": "dom/P6_verify_after_ensure_enters_main",
+      "status": "PASS",
+      "detail": "view_main=True root_pill='📁 /private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u4'"
+    },
+    {
+      "check": "dom/P3_paste_real_sync_dir_verifies_and_enters_main",
+      "status": "PASS",
+      "detail": "view_main=True root_pill='📁 /Users/kevin/Downloads/金石印源同步空间/feicui'（输入框='/Users/kevin/Downloads/金石印源同步空间/feicui' 回车后校验进入）"
+    },
+    {
+      "check": "dom/change_dir_button_reopens_dir_page",
+      "status": "PASS",
+      "detail": "view_dir=True #dir-path='/Users/kevin/Downloads/金石印源同步空间/feicui'"
+    },
+    {
+      "check": "api/browse_backward_compatible",
+      "status": "PASS",
+      "detail": "无 path ⇒ 上次浏览路径（'/Users/kevin/Downloads'）；home=true / path=~ ⇒ /Users/kevin；读数={'after_browse_downloads': '/Users/kevin/Downloads', 'then_no_path': '/Users/kevin/Downloads', 'home_flag': '/Users/kevin', 'tilde': '/Users/kevin'}"
+    },
+    {
+      "check": "api/find_feicui_dirs_backend",
+      "status": "PASS",
+      "detail": "count=1 扫 600 个目录 / 0.065s truncated=False 候选=['/Users/kevin/Downloads/金石印源同步空间/feicui']"
+    }
+  ],
+  "dom": {
+    "01_boot_stale_root": {
+      "view_dir": true,
+      "view_main": false,
+      "path": "/Users/kevin",
+      "entries": [
+        "Applications",
+        "Assets",
+        "Backup",
+        "Coze",
+        "Desktop",
+        "Documents",
+        "Doubao",
+        "Downloads",
+        "EsLog",
+        "Google Drive",
+        "Library",
+        "Movies",
+        "Music",
+        "My Drive",
+        "Pictures",
+        "Public",
+        "bistro",
+        "cloudbase-framework",
+        "countyard",
+        "hermes-backups",
+        "jiazu-backups",
+        "repos"
+      ],
+      "entries_total": 22,
+      "reason": "",
+      "empty_text": "",
+      "empty_reason": "",
+      "hint_kind": "stale_root",
+      "hint_hidden": false,
+      "hint": "上次的目录已不存在：/Users/kevin/Downloads/同步空间/feicui —— 发现 1 个通过校验的 feicui 目录（扫 600 个目录 / 0.124s）⇒ 点下面候选即校验并进入",
+      "hint_class": "dir-hint warn",
+      "cands_hidden": false,
+      "cands": [
+        "/Users/kevin/Downloads/金石印源同步空间/feicui"
+      ],
+      "cands_label": "1",
+      "msg": "",
+      "input": "",
+      "root_pill": "📁 —",
+      "dir_user": "ji（管理员）",
+      "ensure_pulse": false,
+      "buttons": [
+        "btn-home:true",
+        "btn-up:true",
+        "btn-ensure:true",
+        "btn-discover:true",
+        "btn-goto:true",
+        "btn-verify:true",
+        "dir-input:true"
+      ]
+    },
+    "02_autodiscover_after_boot": {
+      "view_dir": true,
+      "view_main": false,
+      "path": "/Users/kevin",
+      "entries": [
+        "Applications",
+        "Assets",
+        "Backup",
+        "Coze",
+        "Desktop",
+        "Documents",
+        "Doubao",
+        "Downloads",
+        "EsLog",
+        "Google Drive",
+        "Library",
+        "Movies",
+        "Music",
+        "My Drive",
+        "Pictures",
+        "Public",
+        "bistro",
+        "cloudbase-framework",
+        "countyard",
+        "hermes-backups",
+        "jiazu-backups",
+        "repos"
+      ],
+      "entries_total": 22,
+      "reason": "",
+      "empty_text": "",
+      "empty_reason": "",
+      "hint_kind": "stale_root",
+      "hint_hidden": false,
+      "hint": "上次的目录已不存在：/Users/kevin/Downloads/同步空间/feicui —— 发现 1 个通过校验的 feicui 目录（扫 600 个目录 / 0.124s）⇒ 点下面候选即校验并进入",
+      "hint_class": "dir-hint warn",
+      "cands_hidden": false,
+      "cands": [
+        "/Users/kevin/Downloads/金石印源同步空间/feicui"
+      ],
+      "cands_label": "1",
+      "msg": "",
+      "input": "",
+      "root_pill": "📁 —",
+      "dir_user": "ji（管理员）",
+      "ensure_pulse": false,
+      "buttons": [
+        "btn-home:true",
+        "btn-up:true",
+        "btn-ensure:true",
+        "btn-discover:true",
+        "btn-goto:true",
+        "btn-verify:true",
+        "dir-input:true"
+      ]
+    },
+    "03_at_downloads": {
+      "view_dir": true,
+      "view_main": false,
+      "path": "/Users/kevin/Downloads",
+      "entries": [
+        "1",
+        "feicui-seal-detect-poc",
+        "feicui-win-s1",
+        "image",
+        "infini",
+        "sealbank-sbidx",
+        "triniti",
+        "wav10",
+        "同步空间",
+        "金石印源同步空间"
+      ],
+      "entries_total": 10,
+      "reason": "",
+      "empty_text": "",
+      "empty_reason": "",
+      "hint_kind": "stale_root",
+      "hint_hidden": false,
+      "hint": "上次的目录已不存在：/Users/kevin/Downloads/同步空间/feicui —— 发现 1 个通过校验的 feicui 目录（扫 600 个目录 / 0.124s）⇒ 点下面候选即校验并进入",
+      "hint_class": "dir-hint warn",
+      "cands_hidden": false,
+      "cands": [
+        "/Users/kevin/Downloads/金石印源同步空间/feicui"
+      ],
+      "cands_label": "1",
+      "msg": "",
+      "input": "/Users/kevin/Downloads",
+      "root_pill": "📁 —",
+      "dir_user": "ji（管理员）",
+      "ensure_pulse": false,
+      "buttons": [
+        "btn-home:true",
+        "btn-up:true",
+        "btn-ensure:true",
+        "btn-discover:true",
+        "btn-goto:true",
+        "btn-verify:true",
+        "dir-input:true"
+      ]
+    },
+    "04_after_home_click": {
+      "view_dir": true,
+      "view_main": false,
+      "path": "/Users/kevin",
+      "entries": [
+        "Applications",
+        "Assets",
+        "Backup",
+        "Coze",
+        "Desktop",
+        "Documents",
+        "Doubao",
+        "Downloads",
+        "EsLog",
+        "Google Drive",
+        "Library",
+        "Movies",
+        "Music",
+        "My Drive",
+        "Pictures",
+        "Public",
+        "bistro",
+        "cloudbase-framework",
+        "countyard",
+        "hermes-backups",
+        "jiazu-backups",
+        "repos"
+      ],
+      "entries_total": 22,
+      "reason": "",
+      "empty_text": "",
+      "empty_reason": "",
+      "hint_kind": "stale_root",
+      "hint_hidden": false,
+      "hint": "上次的目录已不存在：/Users/kevin/Downloads/同步空间/feicui —— 发现 1 个通过校验的 feicui 目录（扫 600 个目录 / 0.124s）⇒ 点下面候选即校验并进入",
+      "hint_class": "dir-hint warn",
+      "cands_hidden": false,
+      "cands": [
+        "/Users/kevin/Downloads/金石印源同步空间/feicui"
+      ],
+      "cands_label": "1",
+      "msg": "",
+      "input": "/Users/kevin/Downloads",
+      "root_pill": "📁 —",
+      "dir_user": "ji（管理员）",
+      "ensure_pulse": false,
+      "buttons": [
+        "btn-home:true",
+        "btn-up:true",
+        "btn-ensure:true",
+        "btn-discover:true",
+        "btn-goto:true",
+        "btn-verify:true",
+        "dir-input:true"
+      ]
+    },
+    "05_shell_dir": {
+      "view_dir": true,
+      "view_main": false,
+      "path": "/Users/kevin/Downloads/同步空间",
+      "entries": [],
+      "entries_total": 1,
+      "reason": "all_hidden",
+      "empty_text": "此目录只有隐藏目录（以 . 开头），没有可选子目录。\n请点「⬆️ 上一级」，或在输入框直接粘贴 feicui 目录的完整路径。\n也可以点「🔍 自动发现 feicui 目录」自动找一次。\n",
+      "empty_reason": "all_hidden",
+      "hint_kind": "stale_root",
+      "hint_hidden": false,
+      "hint": "上次的目录已不存在：/Users/kevin/Downloads/同步空间/feicui —— 发现 1 个通过校验的 feicui 目录（扫 600 个目录 / 0.124s）⇒ 点下面候选即校验并进入",
+      "hint_class": "dir-hint warn",
+      "cands_hidden": false,
+      "cands": [
+        "/Users/kevin/Downloads/金石印源同步空间/feicui"
+      ],
+      "cands_label": "1",
+      "msg": "",
+      "input": "/Users/kevin/Downloads/同步空间",
+      "root_pill": "📁 —",
+      "dir_user": "ji（管理员）",
+      "ensure_pulse": false,
+      "buttons": [
+        "btn-home:true",
+        "btn-up:true",
+        "btn-ensure:true",
+        "btn-discover:true",
+        "btn-goto:true",
+        "btn-verify:true",
+        "dir-input:true"
+      ]
+    },
+    "06_reason_empty_dir": {
+      "view_dir": true,
+      "view_main": false,
+      "path": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/empty_dir",
+      "entries": [],
+      "entries_total": 1,
+      "reason": "empty",
+      "empty_text": "此目录下没有任何子目录。\n如果这里本该有同步盘：请确认同步客户端已启动并登录（坚果云 / 百度网盘 / iCloud 等）。\n也可以点「🔍 自动发现 feicui 目录」，或在输入框直接粘贴路径。\n",
+      "empty_reason": "empty",
+      "hint_kind": "stale_root",
+      "hint_hidden": false,
+      "hint": "上次的目录已不存在：/Users/kevin/Downloads/同步空间/feicui —— 发现 1 个通过校验的 feicui 目录（扫 600 个目录 / 0.124s）⇒ 点下面候选即校验并进入",
+      "hint_class": "dir-hint warn",
+      "cands_hidden": false,
+      "cands": [
+        "/Users/kevin/Downloads/金石印源同步空间/feicui"
+      ],
+      "cands_label": "1",
+      "msg": "",
+      "input": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/empty_dir",
+      "root_pill": "📁 —",
+      "dir_user": "ji（管理员）",
+      "ensure_pulse": false,
+      "buttons": [
+        "btn-home:true",
+        "btn-up:true",
+        "btn-ensure:true",
+        "btn-discover:true",
+        "btn-goto:true",
+        "btn-verify:true",
+        "dir-input:true"
+      ]
+    },
+    "06_reason_hidden_dir": {
+      "view_dir": true,
+      "view_main": false,
+      "path": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/hidden_dir",
+      "entries": [],
+      "entries_total": 1,
+      "reason": "all_hidden",
+      "empty_text": "此目录只有隐藏目录（以 . 开头），没有可选子目录。\n请点「⬆️ 上一级」，或在输入框直接粘贴 feicui 目录的完整路径。\n也可以点「🔍 自动发现 feicui 目录」自动找一次。\n",
+      "empty_reason": "all_hidden",
+      "hint_kind": "stale_root",
+      "hint_hidden": false,
+      "hint": "上次的目录已不存在：/Users/kevin/Downloads/同步空间/feicui —— 发现 1 个通过校验的 feicui 目录（扫 600 个目录 / 0.124s）⇒ 点下面候选即校验并进入",
+      "hint_class": "dir-hint warn",
+      "cands_hidden": false,
+      "cands": [
+        "/Users/kevin/Downloads/金石印源同步空间/feicui"
+      ],
+      "cands_label": "1",
+      "msg": "",
+      "input": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/hidden_dir",
+      "root_pill": "📁 —",
+      "dir_user": "ji（管理员）",
+      "ensure_pulse": false,
+      "buttons": [
+        "btn-home:true",
+        "btn-up:true",
+        "btn-ensure:true",
+        "btn-discover:true",
+        "btn-goto:true",
+        "btn-verify:true",
+        "dir-input:true"
+      ]
+    },
+    "06_reason_perm_dir": {
+      "view_dir": true,
+      "view_main": false,
+      "path": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/perm_dir",
+      "entries": [],
+      "entries_total": 1,
+      "reason": "permission",
+      "empty_text": "macOS 未授权本应用访问这个文件夹。\n无权限访问该目录：/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/perm_dir（macOS 需在「系统设置 → 隐私与安全性 → 文件与文件夹」授权）\n请到「系统设置 → 隐私与安全性 → 文件与文件夹」给「斐萃」勾选该文件夹后重试。\n",
+      "empty_reason": "permission",
+      "hint_kind": "stale_root",
+      "hint_hidden": false,
+      "hint": "上次的目录已不存在：/Users/kevin/Downloads/同步空间/feicui —— 发现 1 个通过校验的 feicui 目录（扫 600 个目录 / 0.124s）⇒ 点下面候选即校验并进入",
+      "hint_class": "dir-hint warn",
+      "cands_hidden": false,
+      "cands": [
+        "/Users/kevin/Downloads/金石印源同步空间/feicui"
+      ],
+      "cands_label": "1",
+      "msg": "无权限访问该目录：/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/perm_dir（macOS 需在「系统设置 → 隐私与安全性 → 文件与文件夹」授权）",
+      "input": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/perm_dir",
+      "root_pill": "📁 —",
+      "dir_user": "ji（管理员）",
+      "ensure_pulse": false,
+      "buttons": [
+        "btn-home:true",
+        "btn-up:true",
+        "btn-ensure:true",
+        "btn-discover:true",
+        "btn-goto:true",
+        "btn-verify:true",
+        "dir-input:true"
+      ]
+    },
+    "07_verify_missing_subdirs": {
+      "view_dir": true,
+      "view_main": false,
+      "path": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/perm_dir",
+      "entries": [],
+      "entries_total": 1,
+      "reason": "permission",
+      "empty_text": "macOS 未授权本应用访问这个文件夹。\n无权限访问该目录：/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/perm_dir（macOS 需在「系统设置 → 隐私与安全性 → 文件与文件夹」授权）\n请到「系统设置 → 隐私与安全性 → 文件与文件夹」给「斐萃」勾选该文件夹后重试。\n",
+      "empty_reason": "permission",
+      "hint_kind": "need_subdirs",
+      "hint_hidden": false,
+      "hint": "目录结构不合规（原文见右栏）。可直接点上面的「🛠 创建标准子目录」，在 /var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/feicui 下补齐 1_Original_PDF / 2_HighRes_PDF / 3_Cropped_Tiff，再回来校验。",
+      "hint_class": "dir-hint warn",
+      "cands_hidden": false,
+      "cands": [
+        "/Users/kevin/Downloads/金石印源同步空间/feicui"
+      ],
+      "cands_label": "1",
+      "msg": "feicui 根目录必须恰好包含：['1_Original_PDF', '2_HighRes_PDF', '3_Cropped_Tiff']，当前为：[]",
+      "input": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/feicui",
+      "root_pill": "📁 —",
+      "dir_user": "ji（管理员）",
+      "ensure_pulse": true,
+      "buttons": [
+        "btn-home:true",
+        "btn-up:true",
+        "btn-ensure:true",
+        "btn-discover:true",
+        "btn-goto:true",
+        "btn-verify:true",
+        "dir-input:true"
+      ]
+    },
+    "08_after_ensure_subdirs": {
+      "view_dir": true,
+      "view_main": false,
+      "path": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/feicui",
+      "entries": [
+        "1_Original_PDF",
+        "2_HighRes_PDF",
+        "3_Cropped_Tiff"
+      ],
+      "entries_total": 3,
+      "reason": "",
+      "empty_text": "",
+      "empty_reason": "",
+      "hint_kind": "need_subdirs",
+      "hint_hidden": false,
+      "hint": "标准子目录已创建 ⇒ 现在可以点「✅ 校验目录并进入」。",
+      "hint_class": "dir-hint ok",
+      "cands_hidden": false,
+      "cands": [
+        "/Users/kevin/Downloads/金石印源同步空间/feicui"
+      ],
+      "cands_label": "1",
+      "msg": "这是 feicui 目录，可以点「✅ 校验目录并进入」",
+      "input": "/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/feicui",
+      "root_pill": "📁 —",
+      "dir_user": "ji（管理员）",
+      "ensure_pulse": true,
+      "buttons": [
+        "btn-home:true",
+        "btn-up:true",
+        "btn-ensure:true",
+        "btn-discover:true",
+        "btn-goto:true",
+        "btn-verify:true",
+        "dir-input:true"
+      ]
+    },
+    "09_entered_main_fixture": {
+      "view_dir": false,
+      "view_main": true,
+      "path": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/feicui",
+      "entries": [
+        "1_Original_PDF",
+        "2_HighRes_PDF",
+        "3_Cropped_Tiff"
+      ],
+      "entries_total": 3,
+      "reason": "",
+      "empty_text": "",
+      "empty_reason": "",
+      "hint_kind": "",
+      "hint_hidden": true,
+      "hint": "",
+      "hint_class": "dir-hint",
+      "cands_hidden": false,
+      "cands": [
+        "/Users/kevin/Downloads/金石印源同步空间/feicui"
+      ],
+      "cands_label": "1",
+      "msg": "目录校验通过",
+      "input": "/private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/feicui",
+      "root_pill": "📁 /private/var/folders/19/cqv1pr9n7tq5_75h0tgp7pqr0000gn/T/feicui-domtest-dir-u49ckcon/fx/feicui",
+      "dir_user": "ji（管理员）",
+      "ensure_pulse": true,
+      "buttons": [
+        "btn-home:true",
+        "btn-up:true",
+        "btn-ensure:true",
+        "btn-discover:true",
+        "btn-goto:true",
+        "btn-verify:true",
+        "dir-input:true"
+      ]
+    },
+    "10_real_dir_entered": {
+      "view_dir": false,
+      "view_main": true,
+      "path": "/Users/kevin/Downloads/金石印源同步空间/feicui",
+      "entries": [
+        "1_Original_PDF",
+        "2_HighRes_PDF",
+        "3_Cropped_Tiff"
+      ],
+      "entries_total": 3,
+      "reason": "",
+      "empty_text": "",
+      "empty_reason": "",
+      "hint_kind": "",
+      "hint_hidden": true,
+      "hint": "",
+      "hint_class": "dir-hint",
+      "cands_hidden": false,
+      "cands": [
+        "/Users/kevin/Downloads/金石印源同步空间/feicui"
+      ],
+      "cands_label": "1",
+      "msg": "目录校验通过",
+      "input": "/Users/kevin/Downloads/金石印源同步空间/feicui",
+      "root_pill": "📁 /Users/kevin/Downloads/金石印源同步空间/feicui",
+      "dir_user": "ji（管理员）",
+      "ensure_pulse": false,
+      "buttons": [
+        "btn-home:true",
+        "btn-up:true",
+        "btn-ensure:true",
+        "btn-discover:true",
+        "btn-goto:true",
+        "btn-verify:true",
+        "dir-input:true"
+      ]
+    },
+    "11_change_dir_back": {
+      "view_dir": true,
+      "view_main": false,
+      "path": "/Users/kevin/Downloads/金石印源同步空间/feicui",
+      "entries": [
+        "1_Original_PDF",
+        "2_HighRes_PDF",
+        "3_Cropped_Tiff"
+      ],
+      "entries_total": 3,
+      "reason": "",
+      "empty_text": "",
+      "empty_reason": "",
+      "hint_kind": "",
+      "hint_hidden": true,
+      "hint": "",
+      "hint_class": "dir-hint",
+      "cands_hidden": false,
+      "cands": [
+        "/Users/kevin/Downloads/金石印源同步空间/feicui"
+      ],
+      "cands_label": "1",
+      "msg": "这是 feicui 目录，可以点「✅ 校验目录并进入」",
+      "input": "/Users/kevin/Downloads/金石印源同步空间/feicui",
+      "root_pill": "📁 /Users/kevin/Downloads/金石印源同步空间/feicui",
+      "dir_user": "ji（管理员）",
+      "ensure_pulse": false,
+      "buttons": [
+        "btn-home:true",
+        "btn-up:true",
+        "btn-ensure:true",
+        "btn-discover:true",
+        "btn-goto:true",
+        "btn-verify:true",
+        "dir-input:true"
+      ]
+    }
+  },
+  "post": {
+    "browse_legacy_semantics": {
+      "after_browse_downloads": "/Users/kevin/Downloads",
+      "then_no_path": "/Users/kevin/Downloads",
+      "home_flag": "/Users/kevin",
+      "tilde": "/Users/kevin"
+    },
+    "browse_legacy_ok": true,
+    "find": {
+      "count": 1,
+      "scanned_dirs": 600,
+      "elapsed_s": 0.065,
+      "truncated": false,
+      "roots": [
+        "/Users/kevin/Downloads",
+        "/Users/kevin/Documents",
+        "/Users/kevin/Desktop",
+        "/Users/kevin/Library/CloudStorage",
+        "/Volumes",
+        "/Users/kevin"
+      ],
+      "candidates": [
+        "/Users/kevin/Downloads/金石印源同步空间/feicui"
+      ],
+      "candidate_msgs": [
+        [
+          "/Users/kevin/Downloads/金石印源同步空间/feicui",
+          "目录校验通过"
+        ]
+      ]
+    },
+    "env_after": "FEICUI_ROOT=/Users/kevin/Downloads/金石印源同步空间/feicui",
+    "session_after": "{\"username\": \"ji\", \"expire\": \"2026-10-29T10:18:43.083563\", \"feicui_root\": \"/Users/kevin/Downloads/金石印源同步空间/feicui\"}"
+  },
+  "js_errors": [],
+  "probe_error": null
+}

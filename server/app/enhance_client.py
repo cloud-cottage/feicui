@@ -8,6 +8,8 @@
 
 本模块**不碰 DB、不建 job、不落任何文件**：上传字节进、成品 PNG 以 base64 回，进程用完即退
 （无守护、无池、无进程内状态），符合 §1.1 / §3.2 S-4「接口层不落业务真值」。
+
+超时可用 `FEICUI_ENHANCE_TIMEOUT_S` 覆盖，非法值（非数字或 ≤0）回落 120 s。
 """
 from __future__ import annotations
 
@@ -23,6 +25,20 @@ RUNNER = Path(__file__).resolve().parent / "enhance_runner.py"
 MARKER = "FEICUI_ENHANCE="
 # 1200px 画布实测 ≈1 s；给 4000px 宽（竖图 long_side 可达 12000）留足余量。
 DEFAULT_TIMEOUT_S = 120.0
+ENV_TIMEOUT = "FEICUI_ENHANCE_TIMEOUT_S"
+
+
+def timeout_s() -> float:
+    """本次调用的超时（env 可改；非法值回落默认，不静默变 NaN）。"""
+    raw = os.environ.get(ENV_TIMEOUT)
+    if raw:
+        try:
+            v = float(raw)
+            if v > 0:
+                return v
+        except ValueError:
+            pass
+    return DEFAULT_TIMEOUT_S
 
 
 class RunnerError(RuntimeError):
@@ -40,7 +56,7 @@ def run_enhance(
     *,
     width: int,
     background: str,
-    timeout_s: float = DEFAULT_TIMEOUT_S,
+    timeout: float | None = None,
 ) -> dict:
     """把上传字节 + 参数交给 `enhance_runner.py`（worker 解释器）算一遍，返回其 JSON 结果。
 
@@ -60,6 +76,7 @@ def run_enhance(
     env = os.environ.copy()
     env["FEICUI_ROOT"] = str(st.root)
     env["PYTHONUNBUFFERED"] = "1"
+    tmo = float(timeout) if timeout else timeout_s()
     try:
         proc = subprocess.run(  # noqa: S603 - 路径来自配置，非用户输入
             [str(py), str(RUNNER)],
@@ -67,10 +84,10 @@ def run_enhance(
             capture_output=True,
             cwd=str(st.root),
             env=env,
-            timeout=timeout_s,
+            timeout=tmo,
         )
     except subprocess.TimeoutExpired as exc:
-        raise RunnerError("RUNNER_TIMEOUT", f"worker 子进程超时（>{timeout_s:g}s）") from exc
+        raise RunnerError("RUNNER_TIMEOUT", f"worker 子进程超时（>{tmo:g}s）") from exc
 
     stdout = proc.stdout.decode("utf-8", "replace")
     line = next((ln for ln in stdout.splitlines() if ln.startswith(MARKER)), None)

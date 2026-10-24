@@ -40,6 +40,7 @@ onMounted(() => {
           <RouterLink to="/items">印谱采集</RouterLink>
           <RouterLink to="/seals">印章采集</RouterLink>
           <RouterLink to="/pdf-records">PDF 资料</RouterLink>
+          <RouterLink to="/enhance">图片高清化</RouterLink>
         </nav>
       </div>
       <div class="shell__head-right">

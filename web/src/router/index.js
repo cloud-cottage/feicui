@@ -7,6 +7,7 @@ import PersonsPage from '@/pages/PersonsPage.vue'
 import ItemsPage from '@/pages/ItemsPage.vue'
 import SealsPage from '@/pages/SealsPage.vue'
 import PdfRecordsPage from '@/pages/PdfRecordsPage.vue'
+import EnhancePage from '@/pages/EnhancePage.vue'
 
 // 路由对应 spec §3 的页面职责：
 //   /                     印谱解析（E1）
@@ -29,6 +30,8 @@ export default createRouter({
     { path: '/items', name: 'items', component: ItemsPage },
     { path: '/seals', name: 'seals', component: SealsPage },
     { path: '/pdf-records', name: 'pdf-records', component: PdfRecordsPage },
+    // 图片高清化＝成品化（换纸底/统一尺寸输出；不承诺提升真实分辨率）
+    { path: '/enhance', name: 'enhance', component: EnhancePage },
     { path: '/jobs/:job_id', name: 'job-detail', component: JobDetailPage },
     { path: '/jobs/:job_id/results', name: 'job-results', component: ResultsPage },
     { path: '/jobs/:job_id/missing', name: 'job-missing', component: MissingPage },

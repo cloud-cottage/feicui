@@ -1,0 +1,88 @@
+"""`enhance` 端点 → worker 解释器的**子进程桥**——Kong。
+
+## 为什么必须走子进程（而不是在本进程里算）
+
+规范 §6.5 解释器矩阵：接口层 `server/.venv` **没有 numpy / cv2**（传上去的图片要过
+`app.seal_canvas.compose()`：红掩膜检测 + Lanczos 重采样 + 宣纸底纹 + 晕染）。图像栈只存在于
+`feicui/venv`（worker 解释器）⇒ 与 `square_client.py` / `pdfmeta.py` **同构**：子进程 ＋ **标记行**解析。
+
+本模块**不碰 DB、不建 job、不落任何文件**：上传字节进、成品 PNG 以 base64 回，进程用完即退
+（无守护、无池、无进程内状态），符合 §1.1 / §3.2 S-4「接口层不落业务真值」。
+"""
+from __future__ import annotations
+
+import base64
+import json
+import os
+import subprocess
+from pathlib import Path
+
+from .config import Settings
+
+RUNNER = Path(__file__).resolve().parent / "enhance_runner.py"
+MARKER = "FEICUI_ENHANCE="
+# 1200px 画布实测 ≈1 s；给 4000px 宽（竖图 long_side 可达 12000）留足余量。
+DEFAULT_TIMEOUT_S = 120.0
+
+
+class RunnerError(RuntimeError):
+    """子进程桥的任何失败（都可映射成结构化 500 错误体）。"""
+
+    def __init__(self, code: str, detail: str) -> None:
+        super().__init__(f"{code}: {detail}")
+        self.code = code
+        self.detail = detail
+
+
+def run_enhance(
+    st: Settings,
+    image_bytes: bytes,
+    *,
+    width: int,
+    background: str,
+    timeout_s: float = DEFAULT_TIMEOUT_S,
+) -> dict:
+    """把上传字节 + 参数交给 `enhance_runner.py`（worker 解释器）算一遍，返回其 JSON 结果。
+
+    抛 `RunnerError` 的情形（调用侧一律落 500，带可读 `reason`）：
+      * `RUNNER_PYTHON_MISSING`：worker 解释器不存在（§6.5）；
+      * `RUNNER_TIMEOUT` / `RUNNER_EXIT_NONZERO` / `RUNNER_NO_OUTPUT` / `RUNNER_BAD_OUTPUT`。
+    业务性失败（无法解码 / 无印泥）**不抛**，按 `{"ok": False, "error": ...}` 原样返回给调用侧。
+    """
+    py = Path(st.worker_python)
+    if not py.is_file():
+        raise RunnerError("RUNNER_PYTHON_MISSING", f"worker 解释器不存在：{py}")
+    payload = {
+        "image_b64": base64.b64encode(image_bytes).decode("ascii"),
+        "width": int(width),
+        "background": str(background),
+    }
+    env = os.environ.copy()
+    env["FEICUI_ROOT"] = str(st.root)
+    env["PYTHONUNBUFFERED"] = "1"
+    try:
+        proc = subprocess.run(  # noqa: S603 - 路径来自配置，非用户输入
+            [str(py), str(RUNNER)],
+            input=json.dumps(payload).encode("utf-8"),
+            capture_output=True,
+            cwd=str(st.root),
+            env=env,
+            timeout=timeout_s,
+        )
+    except subprocess.TimeoutExpired as exc:
+        raise RunnerError("RUNNER_TIMEOUT", f"worker 子进程超时（>{timeout_s:g}s）") from exc
+
+    stdout = proc.stdout.decode("utf-8", "replace")
+    line = next((ln for ln in stdout.splitlines() if ln.startswith(MARKER)), None)
+    if line is None:
+        tail = (proc.stderr.decode("utf-8", "replace") or "")[-500:]
+        if proc.returncode != 0:
+            raise RunnerError("RUNNER_EXIT_NONZERO", f"worker 子进程 exit={proc.returncode}；stderr 尾部：{tail}")
+        raise RunnerError("RUNNER_NO_OUTPUT", f"worker 子进程未输出标记行；stderr 尾部：{tail}")
+    try:
+        out = json.loads(line[len(MARKER):])
+    except Exception as exc:  # pragma: no cover - 只可能是 runner 自身 bug
+        raise RunnerError("RUNNER_BAD_OUTPUT", f"标记行不是合法 JSON：{exc!r}") from exc
+    if not isinstance(out, dict):
+        raise RunnerError("RUNNER_BAD_OUTPUT", "标记行 JSON 不是对象")
+    return out
